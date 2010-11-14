@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B928D6CB-9199-4679-8EF6-A489F167D400}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SimLinkup</RootNamespace>
+    <AssemblyName>SimLinkup</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;PHCC_COMMUNICATION_DISABLED</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CSScriptLibrary, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.JScript" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Content\Scripts\Loop.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Content\Scripts\Setup.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101091HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101082HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101082HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101081HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101081HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100335015HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100335015HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek10058102HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek10058102HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100285HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100285HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100194HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100194HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100207HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100207HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100216HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100216HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101084HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101084HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101090HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101090HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101091HardwareSupportModule.cs" />
+    <Compile Include="Runtime\Runtime.cs" />
+    <Compile Include="Scripting\CSSCodeProvider.cs" />
+    <Compile Include="Scripting\Script.cs" />
+    <Compile Include="Scripting\ScriptingContext.cs" />
+    <Compile Include="Scripting\ScriptRegistry.cs" />
+    <Compile Include="Signals\MappingProfile.cs" />
+    <Compile Include="Signals\MappingType.cs" />
+    <Compile Include="Signals\SignalMapping.cs" />
+    <Compile Include="UI\frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UI\frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\frmOptions.resx">
+      <DependentUpon>frmOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\HelpAbout.resx">
+      <DependentUpon>HelpAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SignalPicker.resx">
+      <DependentUpon>SignalPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Content\Mapping\altimeter.mapping.BAK">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\standbyADI.mapping.bak" />
+    <None Include="HardwareSupportModule.registry">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="PhccHardwareSupportModule.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="phcc.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="SimSupportModule.registry">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="UI\frmOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\frmOptions.Designer.cs">
+      <DependentUpon>frmOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\HelpAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\HelpAbout.Designer.cs">
+      <DependentUpon>HelpAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SignalPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SignalPicker.Designer.cs">
+      <DependentUpon>SignalPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AnalogDevices\AnalogDevices.csproj">
+      <Project>{E8F9E0E2-6DCA-4C39-8E0C-2818C1D87DA9}</Project>
+      <Name>AnalogDevices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\F4Utils\F4Utils.csproj">
+      <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
+      <Name>F4Utils</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\LightningGauges\LightningGauges\LightningGauges.csproj">
+      <Project>{E3E09957-DD05-4DEC-961A-915A082C0BC4}</Project>
+      <Name>LightningGauges</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhccDeviceManager\PhccDeviceManager.csproj">
+      <Project>{52AB07AF-C7BB-4586-BC5E-34759831CB08}</Project>
+      <Name>PhccDeviceManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PHCC\PHCC.csproj">
+      <Project>{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}</Project>
+      <Name>PHCC</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Mapping\machmeter.mapping">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Content\Scripts\Scripts.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ThirdParty\log4net.dll" />
+    <Content Include="ThirdParty\CSScriptLibrary.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

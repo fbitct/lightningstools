@@ -1,0 +1,273 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.ComponentModel;
+namespace F4Utils.Speech
+{
+    public class SpeexCodec : IDisposable, F4Utils.Speech.IAudioCodec
+    {
+        private bool _disposed = false;
+        private const int MAX_FRAME_SIZE = 2000;
+
+        public SpeexCodec()
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+        }
+        ~SpeexCodec()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!this._disposed)
+            {
+                if (disposing)
+                {
+                    //dispose of managed resources here
+                }
+                //dispose of unmanaged resources here
+                _disposed = true;
+            }
+        }
+        
+        public int Decode(byte[] inputBuffer, int inputBufferOffset, int dataLength, ref byte[] outputBuffer, int outputBufferOffset)
+        {
+            Speex.SpeexBits speexBits = new Speex.SpeexBits();
+            IntPtr decoderState=IntPtr.Zero;
+
+            int bytesWritten =0;
+
+            byte[] compressedBits=new byte[200];
+            short[] decompressedBits=new short[MAX_FRAME_SIZE];
+            int frameSize=0;
+
+            IntPtr unmanagedStoragePointer=IntPtr.Zero;
+            GCHandle compressedBitsGCHandle=new GCHandle();
+            GCHandle decompressedBitsGCHandle=new GCHandle();
+            try {
+                unmanagedStoragePointer=Marshal.AllocHGlobal(4);
+                compressedBitsGCHandle = GCHandle.Alloc(compressedBits, GCHandleType.Pinned);
+                decompressedBitsGCHandle = GCHandle.Alloc(decompressedBits, GCHandleType.Pinned);
+
+                try {
+                    Speex.speex_bits_init(ref speexBits );
+                    IntPtr mode = Speex.speex_lib_get_mode(Speex.SPEEX_MODEID_NB);
+                    decoderState=Speex.speex_decoder_init( mode);
+                    Marshal.WriteInt32(unmanagedStoragePointer, 0);
+                    Speex.speex_decoder_ctl(decoderState,Speex.SPEEX_SET_ENH, unmanagedStoragePointer);
+
+                    Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_GET_FRAME_SIZE, unmanagedStoragePointer);
+                    frameSize = Marshal.ReadInt32(unmanagedStoragePointer);
+
+                    int rate = 8000;
+                    Marshal.WriteInt32(unmanagedStoragePointer, rate);
+                    Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_SET_SAMPLING_RATE, unmanagedStoragePointer);
+
+                    int lookahead;
+                    Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_GET_LOOKAHEAD, unmanagedStoragePointer);
+                    lookahead = Marshal.ReadInt32(unmanagedStoragePointer);
+
+                    using (MemoryStream inStream = new MemoryStream(inputBuffer, inputBufferOffset, dataLength))
+                    using (MemoryStream outstream=new MemoryStream(outputBuffer, outputBufferOffset, outputBuffer.Length - outputBufferOffset))
+                    {
+                        while (true)
+                        {
+                            int numBytesThisFrame= inStream.ReadByte();
+                            if (numBytesThisFrame<1) 
+                                break;
+                            int bytesRead=inStream.Read(compressedBits, 0, numBytesThisFrame);
+                            if (bytesRead < numBytesThisFrame) throw new IOException("Unexpected end of stream encountered.");
+	                        Speex.speex_bits_read_from(ref speexBits,compressedBits,numBytesThisFrame);
+
+	                        int returnVal = Speex.speex_decode_int(decoderState, ref speexBits, decompressedBits);
+                            int bitsRemaining = Speex.speex_bits_remaining(ref speexBits);
+	                        if (returnVal==-1)
+                            {
+		                        break;
+                            }
+	                        else if (returnVal==-2)
+	                        {
+		                        throw new IOException("Decoding error: corrupted stream?\n");
+	                        }
+                            else if (bitsRemaining < 0)
+                            {
+                                throw new IOException("Decoding overflow: corrupted stream?\n");
+                            }
+
+                            for (int i = 0; i < frameSize; i++)
+                            {
+                                if (outstream.Position > outstream.Length - 2) break;
+                                outstream.Write(BitConverter.GetBytes(decompressedBits[i]), 0, 2);
+                                bytesWritten += 2;
+                            }
+                        }
+                        outstream.Flush();
+                        outstream.Close();
+                        inStream.Close();
+                    }
+                }
+                finally 
+                {
+                    Speex.speex_decoder_destroy(decoderState);
+                    Speex.speex_bits_destroy(ref speexBits);
+                }
+            }
+            finally 
+            {
+                Marshal.FreeHGlobal(unmanagedStoragePointer);
+                compressedBitsGCHandle.Free();
+                decompressedBitsGCHandle.Free();
+                //modeGCHandle.Free();
+            }
+            return bytesWritten;
+        }
+        public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer, int outputBufferOffset)
+        {
+            return Encode(inputBuffer, inputBufferOffset, dataLength, outputBuffer, outputBufferOffset, 3);
+        }
+        public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer, int outputBufferOffset, int quality)
+        {
+            int compressedSize = 0;
+	        Speex.SpeexBits speexBits=new Speex.SpeexBits();
+	        byte[] compressedBits=new byte[MAX_FRAME_SIZE];
+            IntPtr unmanagedStorage = IntPtr.Zero;
+            try
+            {
+                IntPtr encoderState = IntPtr.Zero;
+                unmanagedStorage = Marshal.AllocHGlobal(4);
+                try
+                {
+                    IntPtr mode = Speex.speex_lib_get_mode(Speex.SPEEX_MODEID_NB);
+
+                    Speex.SpeexHeader header = new Speex.SpeexHeader();
+                    int rate = 8000;
+                    Speex.speex_init_header(ref header, rate, 1, mode);
+                    header.frames_per_packet = 1;
+                    header.vbr = 0;
+                    header.nb_channels = 1;
+
+                    encoderState = Speex.speex_encoder_init(mode);
+
+                    Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_GET_FRAME_SIZE, unmanagedStorage);
+                    int frame_size = Marshal.ReadInt32(unmanagedStorage);
+
+                    int complexity = 10;
+                    Marshal.WriteInt32(unmanagedStorage, complexity);
+                    Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_SET_COMPLEXITY, unmanagedStorage);
+
+                    Marshal.WriteInt32(unmanagedStorage, rate);
+                    Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_SET_SAMPLING_RATE, unmanagedStorage);
+
+                    Marshal.WriteInt32(unmanagedStorage, quality);
+                    Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_SET_QUALITY, unmanagedStorage);
+
+                    int lookahead = 0;
+                    Marshal.WriteInt32(unmanagedStorage, lookahead);
+                    Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_GET_LOOKAHEAD, unmanagedStorage);
+
+                    Speex.speex_bits_init(ref speexBits);
+
+                    byte[] input=new byte[MAX_FRAME_SIZE];
+                    using (MemoryStream inStream = new MemoryStream(inputBuffer, inputBufferOffset, dataLength))
+                    using (MemoryStream outStream= new MemoryStream(outputBuffer, outputBufferOffset, outputBuffer.Length - outputBufferOffset))
+                    {
+                        while (true)
+                        {
+                            int pcmBytesToRead = 16 / 8 * header.nb_channels * frame_size;
+                            int numBytesRead = inStream.Read(input, 0, pcmBytesToRead);
+                            if (numBytesRead == 0) break;
+                            int numSamplesToBlank = (pcmBytesToRead - numBytesRead) / (16 / 8 * header.nb_channels);
+                            int numSamplesRead = numBytesRead / (16 / 8 * header.nb_channels);
+
+                            for (int i = numSamplesRead; i < numSamplesRead + numSamplesToBlank; i++)
+                            {
+                                input[(i * 2)] = 0;
+                                input[(i * 2)+1] = 0;
+                            }
+                            short[] thisFrameBytesAsShort = new short[input.Length / 2];
+                            for (int i = 0; i < thisFrameBytesAsShort.Length; i++)
+                            {
+                                thisFrameBytesAsShort[i] = BitConverter.ToInt16(input, (i * 2));
+                            }
+                            Speex.speex_encode_int(encoderState, thisFrameBytesAsShort, ref speexBits);
+                            Speex.speex_bits_insert_terminator(ref speexBits);
+
+                            byte numBytesEncodedThisFrame = (byte)Speex.speex_bits_write(ref speexBits, compressedBits, MAX_FRAME_SIZE);
+                            Speex.speex_bits_reset(ref speexBits);
+
+                            outStream.WriteByte(numBytesEncodedThisFrame);
+                            compressedSize += 1;
+
+                            outStream.Write(compressedBits, 0, numBytesEncodedThisFrame);
+                            compressedSize += numBytesEncodedThisFrame;
+                        }
+                    }
+                }
+                finally
+                {
+                    Speex.speex_encoder_destroy(encoderState);
+                    Speex.speex_bits_destroy(ref speexBits);
+                }
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(unmanagedStorage);
+            }
+            return compressedSize;
+        }
+        public int Encode(Stream inputStream, int dataLength, Stream outputStream)
+        {
+            return Encode(inputStream, dataLength, outputStream, 3);
+        }
+        public int Encode(Stream inputStream, int dataLength, Stream outputStream, int quality)
+        {
+            byte[] inputBytes = new byte[dataLength];
+            int bytesRead=inputStream.Read(inputBytes, 0, dataLength);
+            if (bytesRead < dataLength)
+            {
+                throw new IOException("Unexpected end of stream encountered.");
+            }
+
+            byte[] outputBytes = new byte[dataLength*2];
+            int encodedLength=Encode(inputBytes, 0, dataLength, outputBytes, 0, quality);
+            outputStream.Write(outputBytes, 0, encodedLength);
+            outputStream.Flush();
+            return encodedLength;
+        }
+
+        public int Decode(Stream inputStream, int dataLength, int uncompressedLength, Stream outputStream)
+        {
+            byte[] inputBytes = new byte[dataLength];
+            int bytesRead=inputStream.Read(inputBytes, 0, dataLength);
+            if (bytesRead < dataLength) throw new IOException("Unexpected end of stream encountered.");
+            byte[] outputBytes = new byte[uncompressedLength + 200];
+            int decodedLength = Decode(inputBytes, 0, dataLength, ref outputBytes, 0);
+            outputStream.Write(outputBytes, 0, decodedLength);
+            if (decodedLength < uncompressedLength)
+            {
+                for (int i = 0; i < uncompressedLength - decodedLength; i++)
+                {
+                    outputStream.WriteByte(0); //fill rest of stream with NULLs
+                }
+            }
+            outputStream.Flush();
+            return decodedLength;
+        }
+
+    }
+}

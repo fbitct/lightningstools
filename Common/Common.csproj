@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Common</RootNamespace>
+    <AssemblyName>Common</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>sn.key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.ThirdParty.DdsFileType, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL" />
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL" />
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.Compatibility" />
+    <Reference Include="System" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Application\SingleInstanceApplication.cs" />
+    <Compile Include="Collections\SerializableDictionary.cs" />
+    <Compile Include="Compression\Zip\Util.cs" />
+    <Compile Include="Exceptions\OperationFailedException.cs" />
+    <Compile Include="ExtensionAttribute.cs" />
+    <Compile Include="Generic\PropertyInvoker.cs" />
+    <Compile Include="HardwareSupport\CompositeControl.cs" />
+    <Compile Include="HardwareSupport\HardwareSupportModuleBase.cs" />
+    <Compile Include="HardwareSupport\HardwareSupportModuleRegistry.cs" />
+    <Compile Include="HardwareSupport\IHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\MotorControl\DirectionalMotor.cs" />
+    <Compile Include="HardwareSupport\MotorControl\MotorControlBase.cs" />
+    <Compile Include="HardwareSupport\MotorControl\MotorControlFactory.cs" />
+    <Compile Include="HardwareSupport\MotorControl\PositionableMotor.cs" />
+    <Compile Include="HardwareSupport\MotorControl\PositionableMotorWithFeedback.cs" />
+    <Compile Include="HardwareSupport\MotorControl\StepperMotor.cs" />
+    <Compile Include="HardwareSupport\TextOutput\DotMatrixCharacterDisplay.cs" />
+    <Compile Include="HardwareSupport\TextOutput\SegmentedDisplay.cs" />
+    <Compile Include="HardwareSupport\TextOutput\SevenSegmentDisplay.cs" />
+    <Compile Include="HardwareSupport\TextOutput\TextDisplay.cs" />
+    <Compile Include="Imaging\DDS.cs" />
+    <Compile Include="Imaging\ImageMaskPair.cs" />
+    <Compile Include="Imaging\Internal\PCXHeader.cs" />
+    <Compile Include="Imaging\PCX.cs" />
+    <Compile Include="Imaging\Util.cs" />
+    <Compile Include="InputSupport\AxisType.cs" />
+    <Compile Include="InputSupport\BetaInnovations\BIDeviceManager.cs" />
+    <Compile Include="InputSupport\BetaInnovations\BIDeviceMonitor.cs" />
+    <Compile Include="InputSupport\BetaInnovations\BIException.cs" />
+    <Compile Include="InputSupport\BetaInnovations\BIPhysicalControlInfo.cs" />
+    <Compile Include="InputSupport\BetaInnovations\BIPhysicalDeviceInfo.cs" />
+    <Compile Include="InputSupport\Phcc\PHCCDeviceManager.cs" />
+    <Compile Include="InputSupport\Phcc\PHCCDeviceMonitor.cs" />
+    <Compile Include="InputSupport\Phcc\PHCCInputState.cs" />
+    <Compile Include="InputSupport\Phcc\PHCCPhysicalControlInfo.cs" />
+    <Compile Include="InputSupport\Phcc\PHCCPhysicalDeviceInfo.cs" />
+    <Compile Include="InputSupport\PhysicalControlInfoNumericComparer.cs" />
+    <Compile Include="InputSupport\UI\InputControlSelection.cs" />
+    <Compile Include="InputSupport\ControlType.cs" />
+    <Compile Include="InputSupport\DeviceMonitor.cs" />
+    <Compile Include="InputSupport\DirectInput\DIDeviceMonitor.cs" />
+    <Compile Include="InputSupport\DirectInput\DIPhysicalControlInfo.cs" />
+    <Compile Include="InputSupport\DirectInput\DIPhysicalDeviceInfo.cs" />
+    <Compile Include="InputSupport\DirectInput\DIStateChangedEventArgs.cs" />
+    <Compile Include="InputSupport\DirectInput\Mediator.cs" />
+    <Compile Include="InputSupport\KeyboardHookSupport.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InputSupport\PhysicalControlInfo.cs" />
+    <Compile Include="InputSupport\PhysicalControlStateChangedEventArgs.cs" />
+    <Compile Include="InputSupport\PhysicalDeviceInfo.cs" />
+    <Compile Include="InputSupport\PovDirections.cs" />
+    <Compile Include="InputSupport\StateType.cs" />
+    <Compile Include="InputSupport\UI\InputSourceSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InputSupport\UI\InputSourceSelector.designer.cs">
+      <DependentUpon>InputSourceSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InputSupport\Util.cs" />
+    <Compile Include="MacroProgramming\AnalogPassthrough.cs" />
+    <Compile Include="MacroProgramming\AnalogSignal.cs" />
+    <Compile Include="MacroProgramming\AnalogSignalNormalizer.cs" />
+    <Compile Include="MacroProgramming\BinaryCodedDecimalDigitDecoder.cs" />
+    <Compile Include="MacroProgramming\BinaryCodedDecimalDigitEncoder.cs" />
+    <Compile Include="MacroProgramming\Chainable.cs" />
+    <Compile Include="MacroProgramming\Counter.cs" />
+    <Compile Include="MacroProgramming\DataPoint.cs" />
+    <Compile Include="MacroProgramming\Delay.cs" />
+    <Compile Include="MacroProgramming\DigitalPassthrough.cs" />
+    <Compile Include="MacroProgramming\DigitalSignal.cs" />
+    <Compile Include="MacroProgramming\DigitalSignalList.cs" />
+    <Compile Include="MacroProgramming\ExecuteCommand.cs" />
+    <Compile Include="MacroProgramming\FlipFlop.cs" />
+    <Compile Include="MacroProgramming\ForcedPriorityTask.cs" />
+    <Compile Include="MacroProgramming\Inverter.cs" />
+    <Compile Include="MacroProgramming\Join.cs" />
+    <Compile Include="MacroProgramming\KeyAndMouseFunctions.cs" />
+    <Compile Include="MacroProgramming\KeyPress.cs" />
+    <Compile Include="MacroProgramming\LogicGate.cs" />
+    <Compile Include="MacroProgramming\Macro.cs" />
+    <Compile Include="MacroProgramming\MathOperation.cs" />
+    <Compile Include="MacroProgramming\MouseClick.cs" />
+    <Compile Include="MacroProgramming\MouseDoubleClick.cs" />
+    <Compile Include="MacroProgramming\MouseMovement.cs" />
+    <Compile Include="MacroProgramming\MouseRotator.cs" />
+    <Compile Include="MacroProgramming\MouseWheelMovement.cs" />
+    <Compile Include="MacroProgramming\NativeMethods.cs" />
+    <Compile Include="MacroProgramming\Pulser.cs" />
+    <Compile Include="MacroProgramming\Range.cs" />
+    <Compile Include="MacroProgramming\RangeEvaluator.cs" />
+    <Compile Include="MacroProgramming\Repeater.cs" />
+    <Compile Include="MacroProgramming\Signal.cs" />
+    <Compile Include="MacroProgramming\SignalList.cs" />
+    <Compile Include="MacroProgramming\Split.cs" />
+    <Compile Include="MacroProgramming\TextPassthrough.cs" />
+    <Compile Include="MacroProgramming\TextSignal.cs" />
+    <Compile Include="MacroProgramming\MacroProgrammingException.cs" />
+    <Compile Include="MacroProgramming\Timeout.cs" />
+    <Compile Include="MacroProgramming\Timer.cs" />
+    <Compile Include="MacroProgramming\Toggle.cs" />
+    <Compile Include="MacroProgramming\Util.cs" />
+    <Compile Include="Math\Constants.cs" />
+    <Compile Include="Math\Util.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Screen\Util.cs" />
+    <Compile Include="Serialization\Util.cs" />
+    <Compile Include="SimSupport\AnalogSimOutput.cs" />
+    <Compile Include="SimSupport\DigitalSimOutput.cs" />
+    <Compile Include="SimSupport\IInstrumentRenderer.cs" />
+    <Compile Include="SimSupport\InstrumentRendererBase.cs" />
+    <Compile Include="SimSupport\InstrumentStateBase.cs" />
+    <Compile Include="SimSupport\ISimOutput.cs" />
+    <Compile Include="SimSupport\SimCommand.cs" />
+    <Compile Include="SimSupport\SimSupportModule.cs" />
+    <Compile Include="SimSupport\SimSupportModuleRegistry.cs" />
+    <Compile Include="SimSupport\TextSimOutput.cs" />
+    <Compile Include="Strings\NumericComparer.cs" />
+    <Compile Include="Strings\StringLogicalComparer.cs" />
+    <Compile Include="Strings\Util.cs" />
+    <Compile Include="UI\GDIPlusOptions.cs" />
+    <Compile Include="UI\ListViewColumnSorter.cs" />
+    <Compile Include="UI\TreeNodeNumericComparer.cs" />
+    <Compile Include="UI\Wizard\Header.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Wizard\HeaderDesigner.cs" />
+    <Compile Include="UI\Wizard\InfoContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Wizard\InfoContainerDesigner.cs" />
+    <Compile Include="UI\Wizard\InfoPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Wizard\InfoPageDesigner.cs" />
+    <Compile Include="UI\Wizard\PageCollection.cs" />
+    <Compile Include="UI\Wizard\PageEventHandler.cs" />
+    <Compile Include="UI\Wizard\Wizard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Wizard\WizardDesigner.cs" />
+    <Compile Include="UI\Wizard\WizardPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\Wizard\WizardPageDesigner.cs" />
+    <Compile Include="UI\UserControls\DotControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\UserControls\FieldControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\UserControls\FloatControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\UserControls\IPAddressControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\UserControls\IPAddressControlDesigner.cs" />
+    <Compile Include="UI\UserControls\ShortcutInput.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\Util.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Win32\NativeMethods.cs" />
+    <Compile Include="Win32\Paths\Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="InputSupport\UI\InputSourceSelector.resx">
+      <DependentUpon>InputSourceSelector.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Wizard\Header.resx">
+      <DependentUpon>Header.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Wizard\InfoContainer.resx">
+      <DependentUpon>InfoContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Wizard\InfoPage.resx">
+      <DependentUpon>InfoPage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Wizard\Wizard.resx">
+      <DependentUpon>Wizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Wizard\WizardPage.resx">
+      <DependentUpon>WizardPage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\UserControls\ShortcutInput.resx">
+      <DependentUpon>ShortcutInput.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sn.key.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BIUSB.DLL">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ThirdParty\Log4Net\log4net.dll" />
+    <Content Include="ThirdParty\DDSUtils\Common.ThirdParty.DdsFileType.dll" />
+    <Content Include="ThirdParty\DDSUtils\Common.ThirdParty.DdsFileType.pdb" />
+    <Content Include="ThirdParty\DDSUtils\Common.ThirdParty.DdsFileType.xml" />
+    <Content Include="squishinterface_Win32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="squishinterface_x64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="UI\Wizard\Wizard.bmp" />
+    <Content Include="UI\Wizard\wizBigOnlineFolder.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BIUSBWrapper\BIUSBWrapper.csproj">
+      <Project>{6A686BC3-E2A2-4E46-A175-B318FF0A2646}</Project>
+      <Name>BIUSBWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PHCC\PHCC.csproj">
+      <Project>{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}</Project>
+      <Name>PHCC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PPJoyWrapper\PPJoyWrapper.csproj">
+      <Project>{78555A0E-5D2F-4328-A4F0-67B5D7E51871}</Project>
+      <Name>PPJoyWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

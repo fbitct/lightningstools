@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4SharedMemMirror", "F4SharedMemMirror\F4SharedMemMirror.csproj", "{86FAAD28-7697-4497-BD7B-9794FADB41D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4SharedMem", "..\F4SharedMem\F4SharedMem.csproj", "{517D1B4D-E8C7-4331-BBE7-300FD6B78441}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "F4SharedMemMirrorSetup", "F4SharedMemMirrorSetup\F4SharedMemMirrorSetup.vdproj", "{C2879FDA-BB09-4413-9DB0-D8F8767E99B2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{86FAAD28-7697-4497-BD7B-9794FADB41D6}.Debug|x86.ActiveCfg = Debug|x86
+		{86FAAD28-7697-4497-BD7B-9794FADB41D6}.Debug|x86.Build.0 = Debug|x86
+		{86FAAD28-7697-4497-BD7B-9794FADB41D6}.Release|x86.ActiveCfg = Release|x86
+		{86FAAD28-7697-4497-BD7B-9794FADB41D6}.Release|x86.Build.0 = Release|x86
+		{517D1B4D-E8C7-4331-BBE7-300FD6B78441}.Debug|x86.ActiveCfg = Debug|x86
+		{517D1B4D-E8C7-4331-BBE7-300FD6B78441}.Debug|x86.Build.0 = Debug|x86
+		{517D1B4D-E8C7-4331-BBE7-300FD6B78441}.Release|x86.ActiveCfg = Release|x86
+		{517D1B4D-E8C7-4331-BBE7-300FD6B78441}.Release|x86.Build.0 = Release|x86
+		{C2879FDA-BB09-4413-9DB0-D8F8767E99B2}.Debug|x86.ActiveCfg = Debug
+		{C2879FDA-BB09-4413-9DB0-D8F8767E99B2}.Debug|x86.Build.0 = Debug
+		{C2879FDA-BB09-4413-9DB0-D8F8767E99B2}.Release|x86.ActiveCfg = Release
+		{C2879FDA-BB09-4413-9DB0-D8F8767E99B2}.Release|x86.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

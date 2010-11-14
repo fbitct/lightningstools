@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BA414112-2EAB-496B-83DC-2005018A827C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>F4Utils</RootNamespace>
+    <AssemblyName>F4Utils</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <StartupObject>
+    </StartupObject>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Campaign\AirTaskingManager.cs" />
+    <Compile Include="Campaign\AirUnit.cs" />
+    <Compile Include="Campaign\ATMAirbase.cs" />
+    <Compile Include="Campaign\Battalion.cs" />
+    <Compile Include="Campaign\Brigade.cs" />
+    <Compile Include="Campaign\Campaign.cs" />
+    <Compile Include="Campaign\CampaignBase.cs" />
+    <Compile Include="Campaign\CampaignManager.cs" />
+    <Compile Include="Campaign\ClassTable.cs" />
+    <Compile Include="Campaign\CmpFile.cs" />
+    <Compile Include="Campaign\EvtFile.cs" />
+    <Compile Include="Campaign\F4CampaignFileBundleReader.cs" />
+    <Compile Include="Campaign\F4Structs.cs" />
+    <Compile Include="Campaign\Flight.cs" />
+    <Compile Include="Campaign\GroundTaskingManager.cs" />
+    <Compile Include="Campaign\GroundUnit.cs" />
+    <Compile Include="Campaign\NavalTaskingManager.cs" />
+    <Compile Include="Campaign\ObdFile.cs" />
+    <Compile Include="Campaign\Objective.cs" />
+    <Compile Include="Campaign\ObjFile.cs" />
+    <Compile Include="Campaign\Package.cs" />
+    <Compile Include="Campaign\Pilot.cs" />
+    <Compile Include="Campaign\PltFile.cs" />
+    <Compile Include="Campaign\PolFile.cs" />
+    <Compile Include="Campaign\PstFile.cs" />
+    <Compile Include="Campaign\Squadron.cs" />
+    <Compile Include="Campaign\TaskForce.cs" />
+    <Compile Include="Campaign\TeaFile.cs" />
+    <Compile Include="Campaign\Team.cs" />
+    <Compile Include="Campaign\UniFile.cs" />
+    <Compile Include="Campaign\Unit.cs" />
+    <Compile Include="Campaign\Waypoint.cs" />
+    <Compile Include="Campaign\WthFile.cs" />
+    <Compile Include="Process\Util.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\F4ResourceBundleReader.cs" />
+    <Compile Include="SimSupport\F4SimOutputs.cs" />
+    <Compile Include="SimSupport\F4SimSupportModule.cs" />
+    <Compile Include="SimSupport\NonImplementedGaugeCalculations.cs" />
+    <Compile Include="Terrain\Constants.cs" />
+    <Compile Include="Terrain\Structs\FarTilesDotPalFileInfo.cs" />
+    <Compile Include="Terrain\Structs\TextureBinAreaRecord.cs" />
+    <Compile Include="Terrain\Structs\TextureBinPathRecord.cs" />
+    <Compile Include="Terrain\Structs\TextureBinSetRecord.cs" />
+    <Compile Include="Terrain\Structs\TextureBinTileRecord.cs" />
+    <Compile Include="Terrain\Structs\TextureDotBinFileInfo.cs" />
+    <Compile Include="Terrain\Structs\TheaterDotLxFileInfo.cs" />
+    <Compile Include="Terrain\Structs\TheaterDotLxFileRecord.cs" />
+    <Compile Include="Terrain\Structs\TheaterDotMapFileInfo.cs" />
+    <Compile Include="Terrain\Structs\TheaterDotOxFlieRecord.cs" />
+    <Compile Include="Terrain\Structs\TheaterDotTdfFileInfo.cs" />
+    <Compile Include="Terrain\TerrainBrowser.cs" />
+    <Compile Include="Terrain\Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\F4KeyFile\F4KeyFile.csproj">
+      <Project>{EEED5595-6EB8-473D-B487-334B45D753A6}</Project>
+      <Name>F4KeyFile</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\F4SharedMem\F4SharedMem.csproj">
+      <Project>{517D1B4D-E8C7-4331-BBE7-300FD6B78441}</Project>
+      <Name>F4SharedMem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lzss\LzssManaged\LzssManaged.csproj">
+      <Project>{04F20E15-844A-4D30-9EC4-E8FD61A043A9}</Project>
+      <Name>LzssManaged</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LzssNative.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ST80W.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

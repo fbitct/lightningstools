@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common.csproj", "{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIUSBWrapper", "..\BIUSBWrapper\BIUSBWrapper.csproj", "{6A686BC3-E2A2-4E46-A175-B318FF0A2646}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHCC", "..\PHCC\PHCC.csproj", "{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPJoyWrapper", "..\PPJoyWrapper\PPJoyWrapper.csproj", "{78555A0E-5D2F-4328-A4F0-67B5D7E51871}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Debug|x86.ActiveCfg = Debug|x86
+		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Debug|x86.Build.0 = Debug|x86
+		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Release|x86.ActiveCfg = Release|x86
+		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Release|x86.Build.0 = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|x86.ActiveCfg = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|x86.Build.0 = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|x86.ActiveCfg = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|x86.Build.0 = Release|x86
+		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Debug|x86.ActiveCfg = Debug|x86
+		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Debug|x86.Build.0 = Debug|x86
+		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Release|x86.ActiveCfg = Release|x86
+		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Release|x86.Build.0 = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|x86.ActiveCfg = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|x86.Build.0 = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|x86.ActiveCfg = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
