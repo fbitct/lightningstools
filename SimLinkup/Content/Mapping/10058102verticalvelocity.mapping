@@ -5,29 +5,29 @@
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM F4 SIM VALUES TO SIMTEK HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
-    <!-- MACH NUMBER (DECIMAL) -->
+    <!-- VERTICAL VELOCITY (DECIMAL) -->
      <SignalMapping>
-      <!-- F4 MACH NUMBER OUTPUT -->
+      <!-- F4 VERTICAL VELOCITY (FPM) OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_AIRSPEED_MACH_INDICATOR__MACH_NUMBER</Id>
+        <Id>F4_VVI__VERTICAL_VELOCITY_FPM</Id>
       </Source>
-      <!-- SIMTEK MACH NUMBER INPUT-->
+      <!-- SIMTEK VVI (FPM) INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>100194_Mach_From_Sim</Id>
+        <Id>10058102_VVI_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
 
-    <!-- AIRSPEED (KNOTS) -->
+    <!-- VVI OFF FLAG -->
     <SignalMapping>
-      <!-- F4 AIRSPEED OUTPUT -->
+      <!-- F4 VVI OFF FLAG OUTPUT -->
     <Source xsi:type="AnalogSignal">
-      <Id>F4_AIRSPEED_MACH_INDICATOR__INDICATED_AIRSPEED_KNOTS</Id>
+      <Id>F4_VVI__OFF_FLAG</Id>
     </Source>
-    <!-- SIMTEK AIRSPEED INPUT-->
+    <!-- SIMTEK VVI OFF FLAG INPUT-->
     <Destination xsi:type="AnalogSignal">
-      <Id>100194_Airspeed_From_Sim</Id>
+      <Id>10058102_VVI_Power_Off_Flag_From_Sim </Id>
     </Destination>
     <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -38,23 +38,13 @@
     <!-- *********************************************************************-->
     <!-- MACH NUMBER (  -->
     <SignalMapping>
-      <!-- SIMTEK MACHMETER HARDWARE SUPPORT MODULE MACH NUMBER OUTPUT -->
+      <!-- SIMTEK VVI HARDWARE SUPPORT MODULE VVI OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>100194_Mach_To_Instrument</Id>
+        <Id>10058102_VVI_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 1 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 6 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][0]</Id>
-      </Destination>
-      <MappingType>StraightThrough</MappingType>
-
-      <!-- SIMTEK MACHMETER HARDWARE SUPPORT MODULE AIRSPEED OUTPUT -->
-      <Source xsi:type="AnalogSignal">
-        <Id>100194_Airspeed_To_Instrument</Id>
-      </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 2 -->
-      <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][1]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][6]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>

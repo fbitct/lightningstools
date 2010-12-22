@@ -7,6 +7,8 @@ using log4net;
 using System.Runtime.Remoting;
 using a=global::AnalogDevices;
 using AnalogDevices;
+using System.Threading;
+using System.Windows.Forms;
 namespace SimLinkup.HardwareSupport.AnalogDevices
 {
     public class AnalogDevicesHardwareSupportModule:HardwareSupportModuleBase, IDisposable
@@ -16,6 +18,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #endregion
 
         #region Instance variables
+        private object _deviceLock = new object();
         private a.DenseDacEvalBoard _device = null;
         private bool _isDisposed=false;
         private AnalogSignal[] _analogOutputSignals = null;
@@ -48,21 +51,35 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 int index = 0;
                 foreach (var device in a.DenseDacEvalBoard.Enumerate())
                 {
-                    index++;
+                    MessageBox.Show("An AD536x/537x device has been found and a Reset operation was initated.");
+                    device.Reset();
+                    MessageBox.Show("Reset operation completed.");
                     device.DacPrecision = DacPrecision.SixteenBit;
+                    MessageBox.Show("About to update Group 0 and Group 1 offsets.");
                     device.Group0Offset = 0x2000;
                     device.Group1Offset = 0x2000;
-                    device.Groups2Thru4Offset = 0x2000;
-                    device.SetDacChannelGain(ChannelAddress.AllGroupsAllChannels, 0xFFFF);
-                    device.SetDacChannelOffset(ChannelAddress.AllGroupsAllChannels, 0x8000);
+                    MessageBox.Show("Group 0 and Group 1 offsets have been set.");
+                    //device.Groups2Thru4Offset = 0x2000;
+                    //device.SetDacChannelOffset(ChannelAddress.AllGroupsAllChannels, 0x8000);
+                    //device.SetDacChannelGain(ChannelAddress.AllGroupsAllChannels, 0xFFFF);
+                    //Thread.Sleep(500);
+                    MessageBox.Show("About to update DAC channel gains (M) to 0xFFFF and DAC channel offsets (C) to 0x8000 on all channels.");
                     for (int j = 0; j < 40; j++)
                     {
+                        device.SetDacChannelOffset((ChannelAddress)j + 8, 0x8000);
                         device.SetDacChannelGain((ChannelAddress)j+8, 0xFFFF);
-                        device.SetDacChannelOffset((ChannelAddress)j+8, 0x8000);
+                        device.SetDacChannelDataSource((ChannelAddress)j + 8, DacChannelDataSource.DataValueA);
+                        device.SetDacChannelDataValueA((ChannelAddress)j + 8, 0x7FFF);
                     }
+                    MessageBox.Show("Updated DAC channel gains and offsets on all channels, now going to pulse LDAC.");
+                    device.UpdateAllDacOutputs();
+                    MessageBox.Show("LDAC pulsed.");
+                    //device.ResumeAllDacOutputs();
+                    //device.UpdateAllDacOutputs();
 
                     IHardwareSupportModule thisHsm = new AnalogDevicesHardwareSupportModule(device, index);
                     toReturn.Add(thisHsm);
+                    index++;
                 }
             }
             catch (Exception e)
@@ -138,8 +155,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             
             if (senderSignal.Index.HasValue) 
             {
-                _device.SetDacChannelDataValueA((ChannelAddress)senderSignal.Index.Value+8, (ushort)(senderSignal.State * (double)0xFFFF));
-                _device.UpdateAllDacOutputs();
+                lock (_deviceLock)
+                {
+                    _device.SetDacChannelDataValueA((ChannelAddress)senderSignal.Index.Value + 8, (ushort)(senderSignal.State * (double)0xFFFF));
+                    _device.UpdateAllDacOutputs();
+                }
             }
         }
         #endregion

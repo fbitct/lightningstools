@@ -5,61 +5,60 @@
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM F4 SIM VALUES TO SIMTEK HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
-    <!-- ALTITUDE IN FEET -->
-    <SignalMapping>
-      <!-- F4 ALTITUDE IN FEET OUTPUT-->
+    <!-- MACH NUMBER (DECIMAL) -->
+     <SignalMapping>
+      <!-- F4 MACH NUMBER OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_ALTIMETER__INDICATED_ALTITUDE__MSL</Id>
+        <Id>F4_AIRSPEED_MACH_INDICATOR__MACH_NUMBER</Id>
       </Source>
-      <!-- SIMTEK ALTITUDE IN FEET INPUT-->
+      <!-- SIMTEK MACH NUMBER INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>101081_Altitude_From_Sim</Id>
+        <Id>100194_Mach_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
+
+    <!-- AIRSPEED (KNOTS) -->
+    <SignalMapping>
+      <!-- F4 AIRSPEED OUTPUT -->
+    <Source xsi:type="AnalogSignal">
+      <Id>F4_AIRSPEED_MACH_INDICATOR__INDICATED_AIRSPEED_KNOTS</Id>
+    </Source>
+    <!-- SIMTEK AIRSPEED INPUT-->
+    <Destination xsi:type="AnalogSignal">
+      <Id>100194_Airspeed_From_Sim</Id>
+    </Destination>
+    <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+    
+    
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
     <!-- *********************************************************************-->
-    <!-- FIN (SIN ) -->
+    <!-- MACH NUMBER (  -->
     <SignalMapping>
-      <!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE (SIN) OUTPUT -->
+      <!-- SIMTEK MACHMETER HARDWARE SUPPORT MODULE MACH NUMBER OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>101081_Altitude_Fine_SIN_To_Instrument</Id>
+        <Id>100194_Mach_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 1 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 4 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][0]</Id>
-      </Destination>
-      <MappingType>StraightThrough</MappingType>
-    </SignalMapping>
-
-    <!-- FIN (COS) -->
-    <SignalMapping>
-      <!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE (COS) OUTPUT -->
-      <Source xsi:type="AnalogSignal">
-        <Id>101081_Altitude_Fine_COS_To_Instrument</Id>
-      </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 2 -->
-      <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][1]</Id>
-      </Destination>
-      <MappingType>StraightThrough</MappingType>
-    </SignalMapping>
-
-
-    <!-- COARSE  -->
-    <SignalMapping>
-      <!-- SIMTEK ALTIMETER HARDWARE SUPPORT MODULE FINE (COS) OUTPUT -->
-      <Source xsi:type="AnalogSignal">
-        <Id>101081_Altitude_Coarse_To_Instrument</Id>
-      </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 3 -->
-      <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][2]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][4]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
     
+    <SignalMapping>
+      <!-- SIMTEK MACHMETER HARDWARE SUPPORT MODULE AIRSPEED OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>100194_Airspeed_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 5 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][5]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
   </SignalMappings>
 </MappingProfile>

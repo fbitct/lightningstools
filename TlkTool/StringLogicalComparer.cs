@@ -1,11 +1,12 @@
 ﻿#region Using statements
 using System;
+using System.Collections;
 #endregion
 namespace Common.Strings
 {
 
     // emulates StrCmpLogicalW, but not fully
-    public sealed class StringLogicalComparer
+    public sealed class StringLogicalComparer:IComparer
     {
         #region Public methods
         public static int Compare(string s1, string s2)
@@ -127,6 +128,23 @@ namespace Common.Strings
                 if (end >= s.Length) break;
             }
         }
+        #endregion
+
+        #region IComparer Members
+
+        public int Compare(object x, object y)
+        {
+            if (null == x && null == y) return 0;
+            if (null == x) return -1;
+            if (null == y) return 1;
+
+            if (x is string && y is string)
+                return Compare((string)x, (string)y);
+
+            return string.Compare(x.ToString(), y.ToString());
+
+        }
+
         #endregion
     }//EOC
 }

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C# Express 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimLinkup", "SimLinkup.csproj", "{B928D6CB-9199-4679-8EF6-A489F167D400}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}"
@@ -20,6 +20,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4KeyFile", "..\F4KeyFile\F4KeyFile.csproj", "{EEED5595-6EB8-473D-B487-334B45D753A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LzssManaged", "..\Lzss\LzssManaged\LzssManaged.csproj", "{04F20E15-844A-4D30-9EC4-E8FD61A043A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIUSBWrapper", "..\BIUSBWrapper\BIUSBWrapper.csproj", "{6A686BC3-E2A2-4E46-A175-B318FF0A2646}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPJoyWrapper", "..\PPJoyWrapper\PPJoyWrapper.csproj", "{78555A0E-5D2F-4328-A4F0-67B5D7E51871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -142,6 +146,26 @@ Global
 		{04F20E15-844A-4D30-9EC4-E8FD61A043A9}.Release|Mixed Platforms.Build.0 = Release|x86
 		{04F20E15-844A-4D30-9EC4-E8FD61A043A9}.Release|x86.ActiveCfg = Release|x86
 		{04F20E15-844A-4D30-9EC4-E8FD61A043A9}.Release|x86.Build.0 = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|x86.ActiveCfg = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|x86.Build.0 = Debug|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|Any CPU.ActiveCfg = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|Mixed Platforms.Build.0 = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|x86.ActiveCfg = Release|x86
+		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|x86.Build.0 = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|x86.ActiveCfg = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|x86.Build.0 = Debug|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|Any CPU.ActiveCfg = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|Mixed Platforms.Build.0 = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|x86.ActiveCfg = Release|x86
+		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

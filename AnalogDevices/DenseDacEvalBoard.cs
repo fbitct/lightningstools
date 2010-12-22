@@ -19,7 +19,10 @@ namespace AnalogDevices
         public DenseDacEvalBoard(UsbDevice device)
             : base()
         {
-            _usbDevice = device;
+            lock (_instanceStateLock)
+            {
+                _usbDevice = device;
+            }
             UploadFirmware(new IhxFile("AD5371SPI.hex"));
         }
         #endregion
@@ -130,29 +133,32 @@ namespace AnalogDevices
             {
                 ChannelMonitorSource source = ChannelMonitorSource.None;
                 byte channelNumberOrInputPinNumber = 0;
-                if ((_monitorFlags & 0x20) == 0x20)
+                lock (_instanceStateLock)
                 {
-                    if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
+                    if ((_monitorFlags & 0x20) == 0x20)
                     {
-                        source = ChannelMonitorSource.InputPin;
-                        if ((_monitorFlags & 0x01) == 0x01) //if input pin 1 is being monitored
+                        if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
                         {
-                            channelNumberOrInputPinNumber = 1;
+                            source = ChannelMonitorSource.InputPin;
+                            if ((_monitorFlags & 0x01) == 0x01) //if input pin 1 is being monitored
+                            {
+                                channelNumberOrInputPinNumber = 1;
+                            }
+                            else
+                            {
+                                channelNumberOrInputPinNumber = 0; //else input pin 0 is being monitored
+                            }
                         }
-                        else
+                        else //Dac monitoring is on
                         {
-                            channelNumberOrInputPinNumber = 0; //else input pin 0 is being monitored
+                            source = ChannelMonitorSource.DacChannel;
+                            channelNumberOrInputPinNumber = (byte)(_monitorFlags & 0x0F);
                         }
                     }
-                    else //Dac monitoring is on
+                    else
                     {
-                        source = ChannelMonitorSource.DacChannel;
-                        channelNumberOrInputPinNumber = (byte)(_monitorFlags & 0x0F);
+                        //source already == ChannelMonitorSources.None
                     }
-                }
-                else
-                {
-                    //source already == ChannelMonitorSources.None
                 }
                 ChannelMonitorOptions toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
                 toReturn.PropertyChanged += new PropertyChangedEventHandler(MonitorOptionsPropertyChangedHandler);
@@ -191,11 +197,17 @@ namespace AnalogDevices
         {
             get
             {
-                return _thisDevicePrecision;
+                lock (_instanceStateLock)
+                {
+                    return _thisDevicePrecision;
+                }
             }
             set
             {
-                _thisDevicePrecision = value;
+                lock (_instanceStateLock)
+                {
+                    _thisDevicePrecision = value;
+                }
             }
         }
         public bool PECErrorOccurred
@@ -755,53 +767,59 @@ namespace AnalogDevices
         }
         #endregion
         #region Instance Variables
+        private object _instanceStateLock = new object();
         private UsbDevice _usbDevice = null;
         private bool _spiInitialized;
-        private byte[] _emptyBuf = new byte[0];
+        private readonly byte[] _emptyBuf = new byte[0];
         private byte _monitorFlags;
         private DacPrecision _thisDevicePrecision = DacPrecision.SixteenBit;
+
         #endregion
         #region Channel Monitoring Options Change Handling
         private void SendNewChannelMonitorOptionsToDevice(ChannelMonitorOptions value)
         {
             if (value == null) throw new ArgumentNullException("value");
-            if (value.ChannelMonitorSource == ChannelMonitorSource.None)
+
+            lock (_instanceStateLock)
             {
-                _monitorFlags &= 0xDF;
-            }
-            else
-            {
-                _monitorFlags |= 0x20;
-                if (value.ChannelMonitorSource == ChannelMonitorSource.InputPin)
+                if (value.ChannelMonitorSource == ChannelMonitorSource.None)
                 {
-                    if (value.ChannelNumberOrInputPinNumber == 0)
-                    {
-                        _monitorFlags |= 0x18;
-                        _monitorFlags &= 0xF0;
-                    }
-                    else if (value.ChannelNumberOrInputPinNumber == 1)
-                    {
-                        _monitorFlags |= 0x18;
-                        _monitorFlags &= 0xF0;
-                        _monitorFlags |= (1);
-                    }
-                    else
-                    {
-                        throw new ArgumentOutOfRangeException("value", "value.ChannelNumberOrInputPinNumber is out of range with respect to ChannelMonitorSource.");
-                    }
-                }
-                else if (value.ChannelMonitorSource == ChannelMonitorSource.DacChannel)
-                {
-                    _monitorFlags |= 0x20;
-                    _monitorFlags &= 0xE0;
-                    _monitorFlags |= (byte)(value.ChannelNumberOrInputPinNumber & 0x0F);
+                    _monitorFlags &= 0xDF;
                 }
                 else
                 {
-                    throw new ArgumentOutOfRangeException("value", "value.ChannelMonitorSource is not valid.");
+                    _monitorFlags |= 0x20;
+                    if (value.ChannelMonitorSource == ChannelMonitorSource.InputPin)
+                    {
+                        if (value.ChannelNumberOrInputPinNumber == 0)
+                        {
+                            _monitorFlags |= 0x18;
+                            _monitorFlags &= 0xF0;
+                        }
+                        else if (value.ChannelNumberOrInputPinNumber == 1)
+                        {
+                            _monitorFlags |= 0x18;
+                            _monitorFlags &= 0xF0;
+                            _monitorFlags |= (1);
+                        }
+                        else
+                        {
+                            throw new ArgumentOutOfRangeException("value", "value.ChannelNumberOrInputPinNumber is out of range with respect to ChannelMonitorSource.");
+                        }
+                    }
+                    else if (value.ChannelMonitorSource == ChannelMonitorSource.DacChannel)
+                    {
+                        _monitorFlags |= 0x20;
+                        _monitorFlags &= 0xE0;
+                        _monitorFlags |= (byte)(value.ChannelNumberOrInputPinNumber & 0x0F);
+                    }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException("value", "value.ChannelMonitorSource is not valid.");
+                    }
                 }
+                SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
             }
-            SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
         }
         private void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
@@ -955,8 +973,11 @@ namespace AnalogDevices
         }
         private void InitializeSPIPins()
         {
-            SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
-            _spiInitialized = true;
+            lock (_instanceStateLock)
+            {
+                SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
+                _spiInitialized = true;
+            }
         }
         #endregion
 
@@ -974,9 +995,12 @@ namespace AnalogDevices
 
         private ushort ReadSPI()
         {
-            if (!_spiInitialized)
+            lock (_instanceStateLock)
             {
-                InitializeSPIPins();
+                if (!_spiInitialized)
+                {
+                    InitializeSPIPins();
+                }
             }
             byte bRequest = (byte)DeviceCommand.SendSPI;
 
@@ -989,8 +1013,15 @@ namespace AnalogDevices
             setupPacket.Length = (short)len;
             setupPacket.Value = 0;
             int lengthTransferred = 0;
-            _usbDevice.ControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
+            UsbControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
             return (ushort)((ushort)buf[0] + (ushort)(buf[1] * 256));
+        }
+        private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength, out int lengthTransferred)
+        {
+            lock (_usbDevice)
+            {
+                _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
+            }
         }
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData)
         {
@@ -998,7 +1029,10 @@ namespace AnalogDevices
         }
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData, byte[] data)
         {
-            if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
+            lock (_instanceStateLock)
+            {
+                if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
+            }
             byte bRequest = (byte)command;
             UsbSetupPacket setupPacket = new UsbSetupPacket();
             setupPacket.Request = (DeviceRequestType)bRequest;
@@ -1007,7 +1041,7 @@ namespace AnalogDevices
             setupPacket.RequestType = UsbRequestType.TypeVendor;
             setupPacket.Length = 0;
             int lengthTransferred = 0;
-            _usbDevice.ControlTransfer(ref setupPacket, data, data.Length, out lengthTransferred);
+            UsbControlTransfer(ref setupPacket, data, data.Length, out lengthTransferred);
             return lengthTransferred;
         }
         #endregion
@@ -1026,7 +1060,7 @@ namespace AnalogDevices
             }
             setupPacket.Index = 0;
             int lengthTransferred = 0;
-            _usbDevice.ControlTransfer(ref setupPacket, buffer, buffer.Length, out lengthTransferred);
+            UsbControlTransfer(ref setupPacket, buffer, buffer.Length, out lengthTransferred);
             Thread.Sleep(r ? 50 : 400);	// give the firmware some time for initialization
         }
 
@@ -1051,7 +1085,7 @@ namespace AnalogDevices
                         setupPacket.Value = (short)(i - j);
                         setupPacket.Index = 0;
                         int k = 0;
-                        _usbDevice.ControlTransfer(ref setupPacket, buffer, j, out k);
+                        UsbControlTransfer(ref setupPacket, buffer, j, out k);
                         if (k < 0 || k != j)
                         {
                             throw new ApplicationException();

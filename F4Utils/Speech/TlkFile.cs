@@ -186,7 +186,7 @@ namespace F4Utils.Speech
                 }
             }
         }
-        public void WriteRecordToStream(TlkFileRecord record, FileStream stream)
+        public void WriteRecordToStream(TlkFileRecord record, Stream stream)
         {
             Array.Clear(_compressedAudioBuffer, 0, _compressedAudioBuffer.Length);
             GetCompressedAudioDataFromRecord(record, _compressedAudioBuffer, 0);

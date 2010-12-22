@@ -6,6 +6,7 @@ using Common.MacroProgramming;
 using SimLinkup.Signals;
 using log4net;
 using System.Reflection;
+using System.Text;
 
 class Loop
 {
@@ -13,6 +14,7 @@ class Loop
     public static void SomeMethod(ScriptingContext context)
     {
         _logger.Debug(MethodInfo.GetCurrentMethod().Name + " called");
+       
         Signal adiPitchValueFromSim = context.AllSignals["F4_STBY_ADI__PITCH_DEGREES"];
         Signal adiPitchSignalInputIntoSimtek = context.AllSignals["10033501_Pitch_From_Sim"];
         Signal adiPitchSinSignalOutputFromSimtek = context.AllSignals["10033501_Pitch_SIN_To_Instrument"];

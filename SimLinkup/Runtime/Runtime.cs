@@ -159,10 +159,10 @@ namespace SimLinkup.Runtime
             if (_initialized) return;
             _scriptingContext = new ScriptingContext();
 
-            GetRegisteredHardwareSupportModules();
+            //GetRegisteredHardwareSupportModules();
 
             _scriptingContext.SimSupportModules = GetRegisteredSimSupportModules();
-            _scriptingContext.HardwareSupportModules = GetRegisteredHardwareSupportModules(); ;
+            _scriptingContext.HardwareSupportModules = GetRegisteredHardwareSupportModules();
 
             LoadScripts();
             InitializeMappings();
