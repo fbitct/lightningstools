@@ -45,9 +45,16 @@ namespace Common.MacroProgramming
         [field: NonSerializedAttribute()]
         public event AnalogSignalChangedEventHandler SignalChanged;
         private double _state = 0;
+        private double _previousState = 0;
+        private int _precision = 5; //# decimal places to compare to determine if change is present 
         public AnalogSignal()
             : base()
         {
+        }
+        public int Precision
+        {
+            get { return _precision; }
+            set { _precision = value; }
         }
         [XmlIgnore]
         public double State
@@ -58,13 +65,14 @@ namespace Common.MacroProgramming
             }
             set
             {
-                if (_state != value)
+                //if magnitude of change is at least in the minimum order of magnitude, forward it on
+                if (System.Math.Abs(_state - value) > (System.Math.Pow(10, -_precision))) 
                 {
-                    double previousState = _state;
+                    _previousState = _state;
                     _state = value;
                     if (SignalChanged != null)
                     {
-                        SignalChanged(this, new AnalogSignalChangedEventArgs(value, previousState));
+                        SignalChanged(this, new AnalogSignalChangedEventArgs(value, _previousState));
                     }
                 }
             }
