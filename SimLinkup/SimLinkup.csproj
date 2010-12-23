@@ -158,6 +158,9 @@
     <None Include="Content\Mapping\10058102verticalvelocity.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Mapping\128710primaryADI.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="HardwareSupportModule.registry">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

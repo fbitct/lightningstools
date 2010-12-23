@@ -68,7 +68,6 @@ namespace SimLinkup.Runtime
                         RunLoopScripts();
                     }
                 }
-                Thread.Sleep(50);
             _isRunning = false;
         }
         private void UpdateSimSignals()
@@ -208,23 +207,25 @@ namespace SimLinkup.Runtime
 
                             Common.MacroProgramming.AnalogPassthrough passthru = new AnalogPassthrough();
                             passthru.In = mappingSource;
-                            passthru.Out = (AnalogSignal)mappingDestination;
+                            passthru.Out = mappingDestination;
                             _passthroughs.Add(passthru);
                         }
                         else if (mapping.Source is DigitalSignal)
                         {
                             DigitalSignal mappingSource = mapping.Source as DigitalSignal;
+                            DigitalSignal mappingDestination = (DigitalSignal)mapping.Destination;
                             Common.MacroProgramming.DigitalPassthrough passthru = new DigitalPassthrough();
                             passthru.In = mappingSource;
-                            passthru.Out = (DigitalSignal)mapping.Destination;
+                            passthru.Out = mappingDestination;
                             _passthroughs.Add(passthru);
                         }
                         else if (mapping.Source is TextSignal)
                         {
                             TextSignal mappingSource = mapping.Source as TextSignal;
+                            TextSignal mappingDestination = (TextSignal)mapping.Destination;
                             Common.MacroProgramming.TextPassthrough passthru = new TextPassthrough();
                             passthru.In = mappingSource;
-                            passthru.Out = (TextSignal)mapping.Destination;
+                            passthru.Out = mappingDestination;
                             _passthroughs.Add(passthru);
                         }
                     }
