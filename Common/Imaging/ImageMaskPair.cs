@@ -122,11 +122,11 @@ namespace Common.Imaging
         }
         public static ImageMaskPair CreateFromFiles(string imagePath, string maskPath)
         {
-            Bitmap image = (Bitmap)Bitmap.FromFile(imagePath);
-            Bitmap mask = (Bitmap)Bitmap.FromFile(maskPath);
+            Image image = System.Drawing.Bitmap.FromFile(imagePath);
+            Image mask = System.Drawing.Bitmap.FromFile(maskPath);
             Common.Imaging.Util.ConvertPixelFormat(ref image, PixelFormat.Format32bppArgb);
             Common.Imaging.Util.ConvertPixelFormat(ref mask, PixelFormat.Format32bppArgb);
-            return new ImageMaskPair(image, mask,true);
+            return new ImageMaskPair((Bitmap)image, (Bitmap)mask,true);
         }
         ~ImageMaskPair()
         {

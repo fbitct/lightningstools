@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
-    //Simtek 10-0216 F-16 VVI Indicator
+    //Simtek 10-0581-02 F-16 VVI Indicator
     public class Simtek10058102HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
@@ -160,7 +160,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = (-10.00 + 10.00) / 20.00;
             return thisSignal;
         }
 
@@ -188,7 +188,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            thisSignal.State = true;
             return thisSignal;
         }
         private void vvi_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
@@ -222,7 +222,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                     {
                         if (vviInput <-6000)
                         {
-                            vviOutputValue = -10;
+                            vviOutputValue = -6.37;
                         }
                         else if (vviInput >= -6000 && vviInput < -3000)
                         {

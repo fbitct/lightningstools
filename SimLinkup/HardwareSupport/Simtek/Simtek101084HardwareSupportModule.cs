@@ -193,7 +193,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = (0.00 + 10.00) / 20.00 ;
             return thisSignal;
         }
         private AnalogSignal CreatePitchCosOutputSignal()
@@ -206,7 +206,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 10;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private AnalogSignal CreateRollSinOutputSignal()
@@ -219,7 +219,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = (0.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private AnalogSignal CreateRollCosOutputSignal()
@@ -232,7 +232,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 10;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)

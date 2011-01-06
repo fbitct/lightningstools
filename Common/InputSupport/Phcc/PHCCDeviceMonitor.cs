@@ -228,7 +228,6 @@ namespace Common.InputSupport.Phcc
                 try
                 {
                     firmwareVersion = _deviceInterface.FirmwareVersion;
-                    Debug.WriteLine(firmwareVersion);
                 }
                 catch (InvalidOperationException e)
                 {

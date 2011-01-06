@@ -18,34 +18,34 @@ namespace Common.Imaging
         /// <summary>
         /// Given an Image object, returns a greyscale equivalent Image object
         /// </summary>
-        /// <param name="source">an Image object to conver to greyscale</param>
-        /// <returns>an Image object based on the input Image, but converted to greyscale</returns>
-        public static Bitmap ConvertImageToGreyscale(Bitmap source)
+        /// <param name="source">a Bitmap object to conver to greyscale</param>
+        /// <returns>an Image object based on the input Bitmap, but converted to greyscale</returns>
+        public static Image ConvertImageToGreyscale(Bitmap source)
         {
-            Bitmap bm = new Bitmap(source.Width, source.Height);
-            for (int y = 0; y < bm.Height; y++)
+            Bitmap bitmap= new Bitmap(source.Width, source.Height);
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                for (int x = 0; x < bm.Width; x++)
+                for (int x = 0; x < bitmap.Width; x++)
                 {
                     Color c = source.GetPixel(x, y);
                     int luma = (int)(c.R * 0.3 + c.G * 0.59 + c.B * 0.11);
-                    bm.SetPixel(x, y, Color.FromArgb(luma, luma, luma));
+                    bitmap.SetPixel(x, y, Color.FromArgb(luma, luma, luma));
                 }
             }
-            return bm;
+            return bitmap;
         }
-        public static Bitmap LoadBitmapFromFile(string filename)
+        public static Image LoadBitmapFromFile(string filename)
         {
-            Bitmap temp = (Bitmap)Bitmap.FromFile(filename);
+            Image temp = Image.FromFile(filename);
             ConvertPixelFormat(ref temp, PixelFormat.Format32bppPArgb);
             return temp;
         }
-        public static Icon IconFromBitmap(Bitmap bmp)
+        public static Icon IconFromBitmap(Bitmap bitmap)
         {
-            if (bmp == null) return null;
+            if (bitmap == null) return null;
 
             Bitmap toIconify = null;
-            toIconify = bmp;
+            toIconify = bitmap;
             Icon toReturn = null;
             IntPtr hIcon = IntPtr.Zero;
             hIcon = toIconify.GetHicon();
@@ -65,7 +65,7 @@ namespace Common.Imaging
         /// Convert's a <see cref="Bitmap"/> to a different pixel format
         /// </summary>
         /// <param name="img">a <see cref="Bitmap"/> Bitmap to convert</param>
-        public static void ConvertPixelFormat(ref Bitmap img, PixelFormat format)
+        public static void ConvertPixelFormat(ref Image img, PixelFormat format)
         {
             if (img == null) return;
             bool areSame = false;
@@ -83,8 +83,8 @@ namespace Common.Imaging
             }
             if (areSame) return;
 
-            Bitmap originalImg = img;
-            Bitmap converted = null;
+            Image originalImg = img;
+            Image converted = null;
             Graphics graphics = null;
             bool success = false;
             try
@@ -113,26 +113,26 @@ namespace Common.Imaging
                 }
             }
         }
-        public static Bitmap BitmapFromBytes(byte[] bitmapBytes)
+        public static Image BitmapFromBytes(byte[] bitmapBytes)
         {
-            Bitmap toReturn = null;
+            Image toReturn = null;
             if (bitmapBytes != null && bitmapBytes.Length > 0)
             {
                 using (MemoryStream ms = new MemoryStream(bitmapBytes))
                 {
-                    toReturn = (Bitmap)Bitmap.FromStream(ms);
+                    toReturn = Image.FromStream(ms);
                 }
             }
             return toReturn;
         }
-        public static byte[] BytesFromBitmap(Bitmap bitmap, String compressionType, String imageFormat)
+        public static byte[] BytesFromBitmap(Image image, String compressionType, String imageFormat)
         {
             byte[] toReturn = null;
-            if (bitmap != null)
+            if (image != null)
             {
                 try
                 {
-                    int x = bitmap.Width;
+                    int x = image.Width;
                 }
                 catch (Exception e)
                 {
@@ -195,7 +195,7 @@ namespace Common.Imaging
                     }
                     try
                     {
-                        bitmap.Save(ms, codecToUse, codecParams);
+                        image.Save(ms, codecToUse, codecParams);
                         toReturn = ms.ToArray();
                     }
                     catch (Exception e)
@@ -207,32 +207,32 @@ namespace Common.Imaging
             return toReturn;
         }
 
-        public static Bitmap RotateBitmap(Bitmap b, float angle)
+        public static Image RotateBitmap(Image image, float angle)
         {
             angle = -angle;
             //create a new empty bitmap to hold rotated Bitmap
-            Bitmap returnBitmap = new Bitmap(System.Math.Max(b.Width, b.Height), System.Math.Max(b.Width, b.Height), b.PixelFormat);
+            Image returnBitmap = new Bitmap(System.Math.Max(image.Width, image.Height), System.Math.Max(image.Width, image.Height), image.PixelFormat);
             //make a graphics object from the empty bitmap
             Graphics g = Graphics.FromImage(returnBitmap);
             //move rotation point to center of Bitmap
-            g.TranslateTransform((float)b.Width / 2, (float)b.Height / 2);
+            g.TranslateTransform((float)image.Width / 2, (float)image.Height / 2);
             //rotate
             g.RotateTransform(angle);
             //move Bitmap back
-            g.TranslateTransform(-(float)b.Width / 2, -(float)b.Height / 2);
+            g.TranslateTransform(-(float)image.Width / 2, -(float)image.Height / 2);
             //draw passed in Bitmap onto graphics object
-            g.DrawImage(b, new Point(0, 0));
+            g.DrawImage(image, new Point(0, 0));
             return returnBitmap;
         }
 
-        public static Bitmap CropBitmap(Bitmap img, Rectangle cropArea)
+        public static Image CropBitmap(Image img, Rectangle cropArea)
         {
-            Bitmap bmpCrop = ((Bitmap)img).Clone(cropArea,
+            Image bmpCrop = ((Bitmap)img).Clone(cropArea,
                                             img.PixelFormat);
-            return (Bitmap)(bmpCrop);
+            return bmpCrop;
         }
 
-        public static Bitmap ResizeBitmap(Bitmap imgToResize, Size size)
+        public static Image ResizeBitmap(Image imgToResize, Size size)
         {
             int sourceWidth = imgToResize.Width;
             int sourceHeight = imgToResize.Height;
@@ -252,18 +252,18 @@ namespace Common.Imaging
             int destWidth = (int)(sourceWidth * nPercent);
             int destHeight = (int)(sourceHeight * nPercent);
 
-            Bitmap b = new Bitmap(destWidth, destHeight, imgToResize.PixelFormat);
-            Graphics g = Graphics.FromImage((Bitmap)b);
+            Bitmap bitmap = new Bitmap(destWidth, destHeight, imgToResize.PixelFormat);
+            Graphics g = Graphics.FromImage((Bitmap)bitmap);
 
             g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
             g.Dispose();
 
-            return (Bitmap)b;
+            return bitmap;
         }
-        public static Bitmap CopyBitmap(Bitmap toCopy)
+        public static Image CopyBitmap(Image toCopy)
         {
             if (toCopy == null) return null;
-            Bitmap toReturn = new Bitmap(toCopy.Width, toCopy.Height, toCopy.PixelFormat);
+            Image toReturn = new Bitmap(toCopy.Width, toCopy.Height, toCopy.PixelFormat);
             using (Graphics g = Graphics.FromImage(toReturn))
             {
                 g.DrawImageUnscaled(toCopy, 0, 0, toCopy.Width, toCopy.Height);
@@ -271,18 +271,18 @@ namespace Common.Imaging
             return toReturn;
         }
 
-        public static Bitmap CloneBitmap(Bitmap bmp)
+        public static Image CloneBitmap(Image image)
         {
-            if (bmp == null)
+            if (image == null)
             {
                 return null;
             }
             else
             {
-                Bitmap toReturn = null;
+                Image toReturn = null;
                 try
                 {
-                    toReturn = (Bitmap)bmp.Clone();
+                    toReturn = (Image)image.Clone();
                 }
                 catch (Exception e)
                 {
@@ -293,10 +293,10 @@ namespace Common.Imaging
             }
 
         }
-        public static Bitmap GetDimmerImage(Bitmap toProcess, float percentLuminanceRetained)
+        public static Image GetDimmerImage(Image toProcess, float percentLuminanceRetained)
         {
             if (toProcess == null) return null;
-            Bitmap toReturn = new Bitmap(toProcess.Width, toProcess.Height);
+            Image toReturn = new Bitmap(toProcess.Width, toProcess.Height);
             ImageAttributes ia = new ImageAttributes();
             ColorMatrix cm = GetDimmingColorMatrix(percentLuminanceRetained);
             ia.SetColorMatrix(cm);
@@ -314,10 +314,10 @@ namespace Common.Imaging
             cm.Matrix00 = cm.Matrix11 = cm.Matrix22 = percentLuminanceRetained;
             return cm;
         }
-        public static Bitmap GetDimmerImage(Bitmap toProcess)
+        public static Image GetDimmerImage(Image toProcess)
         {
             if (toProcess == null) return null;
-            Bitmap toReturn = new Bitmap(toProcess.Width, toProcess.Height);
+            Image toReturn = new Bitmap(toProcess.Width, toProcess.Height);
             ImageAttributes ia = new ImageAttributes();
             ColorMatrix cm = GetDimmingColorMatrix(0.8f);
             ia.SetColorMatrix(cm);
@@ -327,10 +327,10 @@ namespace Common.Imaging
             }
             return toReturn;
         }
-        public static Bitmap GetNegativeImage(Bitmap toProcess)
+        public static Image GetNegativeImage(Image toProcess)
         {
             if (toProcess == null) return null;
-            Bitmap toReturn = new Bitmap(toProcess.Width, toProcess.Height);
+            Image toReturn = new Bitmap(toProcess.Width, toProcess.Height);
             ImageAttributes ia = new ImageAttributes();
             ColorMatrix cm = new ColorMatrix();
             cm.Matrix00 = cm.Matrix11 = cm.Matrix22 = -1;
@@ -340,6 +340,23 @@ namespace Common.Imaging
                 g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width, toProcess.Height, GraphicsUnit.Pixel, ia);
             }
             return toReturn;
+        }
+        public static ColorMatrix GetGreyscaleColorMatrix()
+        {
+            //ColorMatrix cm = new ColorMatrix(new float[][]{   new float[]{0.3f,0.3f,0.3f,0,0},
+            //                      new float[]{0.59f,0.59f,0.59f,0,0},
+            //                      new float[]{0.11f,0.11f,0.11f,0,0},
+            //                      new float[]{0,0,0,1,0,0},
+            //                      new float[]{0,0,0,0,1,0},
+            //                      new float[]{0,0,0,0,0,1}});
+            ColorMatrix cm = new ColorMatrix(new float[][]{   
+                                  new float[]{0.33f,0.33f,0.33f,0,0},
+                                  new float[]{0.33f,0.33f,0.33f,0,0},
+                                  new float[]{0.33f,0.33f,0.33f,0,0},
+                                  new float[]{0,0,0,1,0,0},
+                                  new float[]{0,0,0,0,1,0},
+                                  new float[]{0,0,0,0,0,1}});
+            return cm;
         }
         public static ColorMatrix GetNVISColorMatrix(int brightnessLevel, int maxBrightnessLevel)
         {
@@ -364,9 +381,12 @@ namespace Common.Imaging
             Common.Util.DisposeObject(image);
             image = croppped;
         }
-        public static Bitmap CropToContent(Bitmap image)
+        public static Bitmap CropToContent(Bitmap bitmap)
         {
-            Common.Imaging.Util.ConvertPixelFormat(ref image, PixelFormat.Format32bppPArgb);
+            Image asImage = bitmap;
+            Common.Imaging.Util.ConvertPixelFormat(ref asImage, PixelFormat.Format32bppPArgb);
+            bitmap = (Bitmap)asImage;
+
             Rectangle cropRectangle;
             int minXNonBlackPixel = 0;
             int maxXNonBlackPixel = 0;
@@ -375,20 +395,20 @@ namespace Common.Imaging
             BitmapData sourceImageLock = null;
             try
             {
-                sourceImageLock = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
-                byte[] bytes = new byte[image.Width * image.Height * 4];
+                sourceImageLock = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+                byte[] bytes = new byte[bitmap.Width * bitmap.Height * 4];
                 Marshal.Copy(sourceImageLock.Scan0, bytes, 0, bytes.Length);
-                for (int y = 0; y < image.Height; y++)
+                for (int y = 0; y < bitmap.Height; y++)
                 {
-                    for (int x = 0; x < image.Width; x++)
+                    for (int x = 0; x < bitmap.Width; x++)
                     {
                         if
                         (
-                            bytes[(y * image.Width * 4) + (x * 4)] != (byte)0
+                            bytes[(y * bitmap.Width * 4) + (x * 4)] != (byte)0
                                     ||
-                            bytes[(y * image.Width * 4) + (x * 4) + 1] != (byte)0
+                            bytes[(y * bitmap.Width * 4) + (x * 4) + 1] != (byte)0
                                     ||
-                            bytes[(y * image.Width * 4) + (x * 4) + 2] != (byte)0
+                            bytes[(y * bitmap.Width * 4) + (x * 4) + 2] != (byte)0
                         )
                         {
                             if (minXNonBlackPixel == 0) minXNonBlackPixel = x;
@@ -403,20 +423,20 @@ namespace Common.Imaging
             {
                 if (sourceImageLock != null)
                 {
-                    image.UnlockBits(sourceImageLock);
+                    bitmap.UnlockBits(sourceImageLock);
                 }
             }
             cropRectangle = new Rectangle(minXNonBlackPixel, minYNonBlackPixel, maxXNonBlackPixel - minXNonBlackPixel, maxYNonBlackPixel - minYNonBlackPixel);
-            Bitmap toReturn = new Bitmap(cropRectangle.Width, cropRectangle.Height, image.PixelFormat);
+            Bitmap toReturn = new Bitmap(cropRectangle.Width, cropRectangle.Height, bitmap.PixelFormat);
             using (Graphics g = Graphics.FromImage(toReturn))
             {
-                g.DrawImage(image, new Rectangle(0, 0, cropRectangle.Width, cropRectangle.Height), cropRectangle, GraphicsUnit.Pixel);
+                g.DrawImage(bitmap, new Rectangle(0, 0, cropRectangle.Width, cropRectangle.Height), cropRectangle, GraphicsUnit.Pixel);
             }
             return toReturn;
         }
-        public static void InvertImage(ref Bitmap bitmap)
+        public static void InvertImage(ref Image bitmap)
         {
-            Bitmap inverted = GetNegativeImage(bitmap);
+            Image inverted = GetNegativeImage(bitmap);
             Common.Util.DisposeObject(bitmap);
             bitmap = inverted;
         }
@@ -427,7 +447,7 @@ namespace Common.Imaging
         /// <param name="b">original bitmap</param>
         /// <param name="bpp">1 or 8, target bpp</param>
         /// <returns>a 1bpp copy of the bitmap</returns>
-        public static Bitmap CopyToBpp(System.Drawing.Bitmap b, int bpp)
+        public static Image CopyToBpp(System.Drawing.Bitmap b, int bpp)
         {
             if (bpp != 1 && bpp != 8) throw new System.ArgumentException("1 or 8", "bpp");
             int w = b.Width, h = b.Height;

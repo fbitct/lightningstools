@@ -46,7 +46,7 @@ namespace LightningGauges.Renderers
                 using (Bitmap markerDiamond = (Bitmap)Common.Imaging.Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + ISIS_ILS_DOT_IMAGE_FILENAME))
                 {
                     markerDiamond.MakeTransparent(Color.FromArgb(255, 0, 255));
-                    _markerDiamond = Common.Imaging.Util.ResizeBitmap(markerDiamond, new Size(15, 15));
+                    _markerDiamond = (Bitmap)Common.Imaging.Util.ResizeBitmap(markerDiamond, new Size(15, 15));
                 }
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Common.MacroProgramming;
 using Common.SimSupport;
+using F4SharedMem.Headers;
 namespace F4Utils.SimSupport
 {
     public class Falcon4SimSupportModule : SimSupportModule
@@ -144,6 +145,7 @@ namespace F4Utils.SimSupport
             toReturn.DataFormat = F4SharedMem.FalconDataFormats.BMS4;
             return toReturn;
         }
+        private double _origCabinAlt=0.0f;
         private void UpdateSimOutputValues()
         {
             if (_simOutputs == null) return;
@@ -254,6 +256,11 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT:
                         ((AnalogSignal)output).State = _lastFlightData.oilPressure2;
+                        break;
+                    case F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL:
+			            bool pressurization = ((_lastFlightData.lightBits & (int)LightBits.CabinPress) == (int)LightBits.CabinPress);
+                        ((AnalogSignal)output).State = NonImplementedGaugeCalculations.CabinAlt((float)_origCabinAlt,_lastFlightData.z, pressurization) ;
+			            _origCabinAlt = ((AnalogSignal)output).State;
                         break;
                     case F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES:
                         ((AnalogSignal)output).State = _lastFlightData.yaw;
@@ -862,13 +869,16 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__NEWDETECTION_FLAG:
-                        if (_lastFlightData.newDetection.Length > ((Signal)output).Index)
+                        if (_lastFlightData.newDetection != null)
                         {
-                            ((DigitalSignal)output).State = _lastFlightData.newDetection[((Signal)output).Index.Value] == 1;
-                        }
-                        else
-                        {
-                            ((DigitalSignal)output).State = false;
+                            if (_lastFlightData.newDetection.Length > ((Signal)output).Index)
+                            {
+                                ((DigitalSignal)output).State = _lastFlightData.newDetection[((Signal)output).Index.Value] == 1;
+                            }
+                            else
+                            {
+                                ((DigitalSignal)output).State = false;
+                            }
                         }
                         break;
 
@@ -967,6 +977,7 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("EPU FUEL", "EPU fuel (Percent 0-100)", (int)F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT, typeof(float)));
             AddF4SimOutput(CreateNewF4SimOutput("OIL PRESS 1", "Engine 1 Oil Pressure (Percent 0-100)", (int)F4SimOutputs.OIL_PRESS1__OIL_PRESS_PERCENT, typeof(float)));
             AddF4SimOutput(CreateNewF4SimOutput("OIL PRESS 2", "Engine 2 Oil Pressure (Percent 0-100)", (int)F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("CABIN PRESS", "Cabin Pressure Altitude (in Feet MSL)", (int)F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL, typeof(float)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Compass", "Magnetic Heading (degrees)", (int)F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES, typeof(float)));
 

@@ -413,7 +413,7 @@ namespace F4Utils.Terrain
                     Rectangle destRect = new Rectangle(0, 0, sizeToReturn.Width, sizeToReturn.Height);
                     Rectangle sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
 
-                    toReturn = Common.Imaging.Util.CropBitmap(bigTexture, sourceRect);
+                    toReturn = (Bitmap)Common.Imaging.Util.CropBitmap(bigTexture, sourceRect);
                     _elevationPostTextures.Add(key, toReturn);
                 }
             }

@@ -48,11 +48,20 @@ namespace Common.MacroProgramming
                 _out = value;
             }
         }
+        public void Refresh()
+        {
+            UpdateOutputValue(_in.State);
+        }
         private void _in_SignalChanged(object sender, AnalogSignalChangedEventArgs e)
+        {
+            UpdateOutputValue(e.CurrentState);
+        }
+
+        private void UpdateOutputValue(double outputState)
         {
             if (_out != null)
             {
-                _out.State = e.CurrentState;
+                _out.State = outputState;
             }
         }
     }

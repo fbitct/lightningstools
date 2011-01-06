@@ -530,7 +530,6 @@ namespace Phcc
             _writeBuffer[0] = (byte)Host2PhccCommands.Reset;
             _writeBuffer[1] = (byte)Host2PhccCommands.Reset;
             _writeBuffer[2] = (byte)Host2PhccCommands.Reset;
-            Debug.WriteLine("In Reset, Writing 3 bytes to the serial port.");
             RS232Write(_writeBuffer, 0, 3);
         }
         /// <summary>
@@ -924,7 +923,6 @@ namespace Phcc
             _writeBuffer[1] = addr;
             _writeBuffer[2] = subAddr;
             _writeBuffer[3] = data;
-            Debug.WriteLine("In DoaSendRaw, Writing 4 bytes to the serial port.");
             RS232Write(_writeBuffer, 0, 4);
         }
         /// <summary>
@@ -941,7 +939,6 @@ namespace Phcc
             _writeBuffer[0] = (byte)Host2PhccCommands.DobSend;
             _writeBuffer[1] = addr;
             _writeBuffer[2] = data;
-            Debug.WriteLine("In DobSendRaw, Writing 3 bytes to the serial port.");
             RS232Write(_writeBuffer, 0, 3);
         }
         /// <summary>
@@ -961,7 +958,6 @@ namespace Phcc
             _writeBuffer[1] = addr;
             _writeBuffer[2] = subAddr;
             _writeBuffer[3] = data;
-            Debug.WriteLine("In I2CSend, Writing 4 bytes to the serial port.");
             RS232Write(_writeBuffer, 0, 4);
         }
         /// <summary>
@@ -969,7 +965,6 @@ namespace Phcc
         /// </summary>
         public void StopTalking()
         {
-            Debug.WriteLine("StopTalking entered.");
             /*
             if (!_talking)
             {
@@ -982,7 +977,6 @@ namespace Phcc
             {
                 WaitForInputBufferQuiesce();
                 _writeBuffer[0] = (byte)Host2PhccCommands.StopTalking;
-                Debug.WriteLine("In StopTalking, writing 1 byte to the serial port.");
                 RS232Write(_writeBuffer, 0, 1);
                 WaitForInputBufferQuiesce();
                 _talking = false;
@@ -996,13 +990,11 @@ namespace Phcc
         {
             lock (_rs232lock)
             {
-                Debug.WriteLine("Discarding RS232 port's input buffer contents.");
                 _serialPort.DiscardInBuffer();
             }
         }
         private void WaitForInputBufferQuiesce()
         {
-            Debug.WriteLine("Waiting for input buffer to quiesce...");
             EnsurePortIsReady();
             bool oldDontRead = _dontRead;
             try
@@ -1023,7 +1015,6 @@ namespace Phcc
             {
                 _dontRead = oldDontRead;
             }
-            Debug.WriteLine("Done waiting for input buffer to quiesce.");
         }
         /// <summary>
         /// Reads a packet from the RS232 serial port containing a report on 
@@ -1031,7 +1022,6 @@ namespace Phcc
         /// </summary>
         private void ReadI2CDataReceivedPacket()
         {
-            Debug.WriteLine("In ReadI2CDataReceivedPacket, about to read 70 bytes from the serial port.");
             Rs232Read(_readBuffer, 1, 2);
             byte addressLowOrderBits = _readBuffer[1];
             byte addressHighOrderBits = (byte)(_readBuffer[0] | I2CDataReceivedAddressHighOrderBitsMask);
@@ -1059,7 +1049,6 @@ namespace Phcc
         /// </summary>
         private void ReadAnalogInputUpdatePacket()
         {
-            Debug.WriteLine("In ReadAnalogInputUpdatePacket, about to read 2 bytes from the serial port.");
             Rs232Read(_readBuffer, 1, 2);
             //ushort bits = ConvertBytesToUShort(_readBuffer, 0);
             ushort bits = (ushort)_readBuffer[1];
@@ -1079,7 +1068,6 @@ namespace Phcc
         /// </summary>
         private void ReadDigitalInputUpdatePacket()
         {
-            Debug.WriteLine("In ReadDigitalInputUpdatePacket, about to read 1 bytes from the serial port.");
             Rs232Read(_readBuffer, 1, 1);
             ushort bits = ConvertBytesToUShort(_readBuffer, 0);
             ushort index = (ushort)((bits & DigitalInputUpdatedIndexMask) >>1);
@@ -1100,7 +1088,6 @@ namespace Phcc
             try
             {
                 _dontRead = true;
-                Debug.WriteLine("In ReadDigitalInputFullDumpPacket, about to read 128 bytes from the serial port.");
                 Rs232Read(_currentDigitalInputValues, 0, 128);
             }
             finally
@@ -1120,10 +1107,8 @@ namespace Phcc
                 _dontRead = true;
                 /* 
                 //this is the implementation that matches the PHCC2HostProtocol documentation, but this is not how it is implemented in Firmware18
-                Debug.WriteLine("In ReadAnalogInputFullDumpPacket, about to read 45 bytes from the serial port.");
                 Rs232Read(_currentAnalogInputsRaw, 0, 45);
                 */
-                Debug.WriteLine("In ReadAnalogInputFullDumpPacket, about to read 70 bytes from the serial port.");
                 Rs232Read(_currentAnalogInputsRaw, 0, 70);
 
             }
@@ -1139,10 +1124,8 @@ namespace Phcc
         /// </summary>
         public void StartTalking()
         {
-            Debug.Write("StartTalking entered.");
             EnsurePortIsReady();
             _writeBuffer[0] = (byte)Host2PhccCommands.StartTalking;
-            Debug.WriteLine("In StartTalking, Writing 1 byte to the serial port.");
             RS232Write(_writeBuffer, 0, 1);
             _talking = true;
         }
@@ -1172,7 +1155,6 @@ namespace Phcc
                             //when needed elsewhere, then yield before reading any
                             //here
             {
-                Debug.WriteLine("In ProcessBufferContents, the dontRead flag is enabled so skipping");
                 return;
             }
             _readBuffer.Initialize();
@@ -1180,36 +1162,27 @@ namespace Phcc
             {
                 while (_serialPort.BytesToRead > 0)
                 {
-                    Debug.WriteLine("In ProcessBufferContents, about to read one byte from the serial port.");
                     Rs232Read(_readBuffer, 0, 1);
-                    Debug.WriteLine("In ProcessBufferContents, just finished reading one byte from the serial port."); 
                     switch ((byte)(_readBuffer[0] & (byte)Phcc2HostPacketTypes.PacketTypeMask))
                     {
                         case (byte)Phcc2HostPacketTypes.I2CDataReceivedPacket:
-                            Debug.WriteLine("I2CDataReceived packet received");
                             ReadI2CDataReceivedPacket();
                             break;
                         case (byte)Phcc2HostPacketTypes.AnalogInputUpdatePacket:
-                            Debug.WriteLine("AnalogInputUpdate packet received");
                             ReadAnalogInputUpdatePacket();
                             break;
                         case (byte)Phcc2HostPacketTypes.DigitalInputUpdatePacket:
-                            Debug.WriteLine("DigitalInputUpdate packet received");
                             ReadDigitalInputUpdatePacket();
                             break;
                         case (byte)Phcc2HostPacketTypes.DigitalInputsFullDumpPacket:
-                            Debug.WriteLine("DigitalInputFullDump packet received");
                             ReadDigitalInputFullDumpPacket();
                             break;
                         case (byte)Phcc2HostPacketTypes.AnalogInputsFullDumpPacket:
-                            Debug.WriteLine("AnalogInputFullDump packet received");
                             ReadAnalogInputFullDumpPacket();
                             break;
                         case (byte)Phcc2HostPacketTypes.AllBitsOne:
-                            Debug.WriteLine("AllBitsOne packet received");
                             break;
                         case (byte)Phcc2HostPacketTypes.AllBitsZero:
-                            Debug.WriteLine("AllBitsZero packet received");
                             break;
                         default:
                             break;
@@ -1255,7 +1228,6 @@ namespace Phcc
                 StopTalking();
             }
             _writeBuffer[0] = (byte)Host2PhccCommands.GetCurrentDigitalInputValues;
-            Debug.WriteLine("In PollDigitalInputs, Writing 1 byte to the serial port.");
             RS232Write(_writeBuffer, 0, 1);
             ProcessBufferContents();
             if (wasTalking) {
@@ -1295,7 +1267,6 @@ namespace Phcc
                 StopTalking();
             }
             _writeBuffer[0] = (byte)Host2PhccCommands.GetCurrentAnalogInputValues;
-            Debug.WriteLine("In PollAnalogInputs, Writing 1 byte to the serial port.");
             RS232Write(_writeBuffer, 0, 1);
             ProcessBufferContents();
             if (wasTalking)
@@ -1399,7 +1370,6 @@ namespace Phcc
         {
             EnsurePortIsReady(); 
             _writeBuffer[0] = (byte)Host2PhccCommands.Idle;
-            Debug.WriteLine("In SetIdle, Writing 1 byte to the serial port.");
             RS232Write(_writeBuffer, 0, 1);
         }
         /// <summary>
@@ -1427,12 +1397,10 @@ namespace Phcc
                     {
                         WaitForInputBufferQuiesce();
                     }
-                    Debug.WriteLine("In FirmwareVersion, Writing 1 byte to the serial port.");
                     RS232Write(" ");
                     _readBuffer.Initialize();
                     Rs232Read(_readBuffer, 0, 10);
                     toReturn = Encoding.ASCII.GetString(_readBuffer, 0, 10);
-                    Debug.WriteLine("In FirmwareVersion, bytes read = " + toReturn);
                 }
                 finally
                 {
@@ -1484,31 +1452,19 @@ namespace Phcc
                         timeOut = _serialPort.ReadTimeout;
                     }
 
-                    Debug.WriteLine("Waiting for " + count + " bytes to appear at the serial port.");
                     int bytesAvailable = Rs232BytesAvailable();
                     while (bytesAvailable < count)
                     {
-                        Debug.WriteLine("There are currently " + bytesAvailable + " bytes already at the serial port.");
                         bytesAvailable = Rs232BytesAvailable();
                         if (DateTime.Now > startTime.AddMilliseconds(timeOut) && timeOut != Timeout.Infinite)
                         {
-                            Debug.WriteLine("A timeout occurred waiting for data on the serial port.");
                             throw new TimeoutException();
                         }
                         System.Windows.Forms.Application.DoEvents();
                     }
-                    Debug.WriteLine("There are currently " + bytesAvailable + " bytes already at the serial port.");
                     _serialPort.Read(buffer, index, count);
-                    Debug.WriteLine("Read these bytes:");
-                    for (int i = index; i < (index + count); i++)
-                    {
-                        System.Diagnostics.Debug.Write(buffer[i].ToString() + " ");
-                    }
-                    Debug.WriteLine("");
-                    Debug.WriteLine("Finished reading " + count + " bytes from the serial port.");
                     if (Rs232BytesAvailable() > 0)
                     {
-                        Debug.WriteLine("There are still " + Rs232BytesAvailable() + " bytes waiting at the serial port.");
                     }
                 }
                 finally

@@ -112,12 +112,16 @@ namespace Common.Serialization
         public static T DeserializeFromXmlFile<T>(string fileName)
         {
             if (fileName == null) throw new ArgumentNullException();
-            using (FileStream fs = new FileStream(fileName, FileMode.Open))
+            if (new FileInfo(fileName).Exists)
             {
-                T toReturn = DeserializeFromXmlStream<T>(fs);
-                fs.Close();
-                return toReturn;
+                using (FileStream fs = new FileStream(fileName, FileMode.Open))
+                {
+                    T toReturn = DeserializeFromXmlStream<T>(fs);
+                    fs.Close();
+                    return toReturn;
+                }
             }
+            return default(T);
         }
         public static T DeserializeFromXmlStream<T>(Stream xmlStream)
         {

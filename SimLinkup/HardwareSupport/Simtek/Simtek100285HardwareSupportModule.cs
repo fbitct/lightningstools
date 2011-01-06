@@ -159,7 +159,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = (0.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private AnalogSignal CreateAltitudeFineCosOutputSignal()
@@ -172,7 +172,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 10;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private AnalogSignal CreateAltitudeCoarseSinOutputSignal()
@@ -185,7 +185,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = (0.00 + 10.00) / 20.00; 
             return thisSignal;
         }
         private AnalogSignal CreateAltitudeCoarseCosOutputSignal()
@@ -198,7 +198,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 10;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private void altitude_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)

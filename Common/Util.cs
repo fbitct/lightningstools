@@ -58,7 +58,7 @@ namespace Common
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e);
+                    //_log.Debug(e.Message, e);
                 }
 
                 obj = null;

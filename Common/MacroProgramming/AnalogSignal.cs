@@ -44,8 +44,8 @@ namespace Common.MacroProgramming
         public delegate void AnalogSignalChangedEventHandler(object sender, AnalogSignalChangedEventArgs args);
         [field: NonSerializedAttribute()]
         public event AnalogSignalChangedEventHandler SignalChanged;
-        private double _state = 0;
-        private double _previousState = 0;
+        private double _state = 0.00000;
+        private double _previousState = 0.00000;
         private int _precision = 5; //# decimal places to compare to determine if change is present 
         public AnalogSignal()
             : base()
@@ -70,11 +70,16 @@ namespace Common.MacroProgramming
                 {
                     _previousState = _state;
                     _state = value;
-                    if (SignalChanged != null)
-                    {
-                        SignalChanged(this, new AnalogSignalChangedEventArgs(value, _previousState));
-                    }
+                    UpdateEventListeners();
                 }
+            }
+        }
+       
+        public void UpdateEventListeners()
+        {
+            if (SignalChanged != null)
+            {
+                SignalChanged(this, new AnalogSignalChangedEventArgs(_state, _previousState));
             }
         }
         public override string SignalType

@@ -56,12 +56,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -102,7 +96,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\F4Utils\F4Utils.csproj">
+    <ProjectReference Include="..\F4Utils\F4Utils.csproj">
       <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
       <Name>F4Utils</Name>
     </ProjectReference>

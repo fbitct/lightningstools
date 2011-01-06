@@ -11,20 +11,20 @@ namespace Common.Generic
 
         public PropertyInvoker(string PropertyName, object o)
         {
+            propInfo = o.GetType().GetProperty(PropertyName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.IgnoreCase);
             obj = o;
-            propInfo = o.GetType().GetProperty(PropertyName);
         }
 
         public T Property
         {
             get
             {
-                return (T)propInfo.GetValue(obj, null);
+                return propInfo != null ? (T)propInfo.GetValue(obj, null) : default(T);
             }
 
             set
             {
-                propInfo.SetValue(obj, value, null);
+                if (propInfo != null) propInfo.SetValue(obj, value,null);
             }
         }
 

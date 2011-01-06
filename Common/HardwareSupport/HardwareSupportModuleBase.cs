@@ -17,6 +17,9 @@ namespace Common.HardwareSupport
         public abstract AnalogSignal[] AnalogOutputs { get; }
         public abstract DigitalSignal[] DigitalOutputs { get; }
         public abstract string FriendlyName { get; }
+        public virtual void Synchronize()
+        {
+        }
         #endregion
     }
 }

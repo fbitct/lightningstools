@@ -236,12 +236,12 @@ namespace F4SharedMem
         public int hsiBits;      // HSI flags
 
         //DED Lines
-        public string[] DEDLines;  //25 usable chars
-        public string[] Invert;    //25 usable chars
+        public string[] DEDLines=new string[5];  //25 usable chars
+        public string[] Invert = new string[5];    //25 usable chars
 
         //PFL Lines
-        public string[] PFLLines;  //25 usable chars
-        public string[] PFLInvert; //25 usable chars
+        public string[] PFLLines = new string[5];  //25 usable chars
+        public string[] PFLInvert = new string[5]; //25 usable chars
 
         //TacanChannel
         public int UFCTChan;
@@ -249,13 +249,13 @@ namespace F4SharedMem
 
         //RWR
         public int RwrObjectCount;
-        public int[] RWRsymbol;
-        public float[] bearing;
-        public int[] missileActivity;
-        public int[] missileLaunch;
-        public int[] selected;
-        public float[] lethality;
-        public int[] newDetection;
+        public int[] RWRsymbol=new int[40];
+        public float[] bearing=new float[40];
+        public int[] missileActivity = new int[40];
+        public int[] missileLaunch = new int[40];
+        public int[] selected= new int[40];
+        public float[] lethality= new float[40];
+        public int[] newDetection= new int[40];
 
         //fuel values
         public float fwd;
@@ -269,9 +269,9 @@ namespace F4SharedMem
         public int MainPower;
         public byte navMode; //HSI nav mode (new in BMS4)
         public float aauz; //AAU altimeter indicated altitude (new in BMS4)
-        public byte[] tacanInfo; //TACAN info (new in BMS4)
-        public OptionSelectButtonLabel[] leftMFD;
-        public OptionSelectButtonLabel[] rightMFD;
+        public byte[] tacanInfo=new byte[2]; //TACAN info (new in BMS4)
+        public OptionSelectButtonLabel[] leftMFD=new OptionSelectButtonLabel[20];
+        public OptionSelectButtonLabel[] rightMFD = new OptionSelectButtonLabel[20];
         public FalconDataFormats DataFormat;
         public object ExtensionData;
 

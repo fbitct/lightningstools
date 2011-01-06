@@ -33,28 +33,28 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
-            this.tabPlugins = new System.Windows.Forms.TabPage();
-            this.tabPluginsSubtabs = new System.Windows.Forms.TabControl();
-            this.tabHardwareSupport = new System.Windows.Forms.TabPage();
-            this.tabSimSupport = new System.Windows.Forms.TabPage();
             this.tabStartup = new System.Windows.Forms.TabPage();
             this.gbStartupOptions = new System.Windows.Forms.GroupBox();
             this.chkMinimizeWhenStarted = new System.Windows.Forms.CheckBox();
             this.chkMinimizeToSystemTray = new System.Windows.Forms.CheckBox();
             this.chkStartAutomaticallyWhenLaunched = new System.Windows.Forms.CheckBox();
             this.chkLaunchAtSystemStartup = new System.Windows.Forms.CheckBox();
+            this.tabPlugins = new System.Windows.Forms.TabPage();
+            this.tabPluginsSubtabs = new System.Windows.Forms.TabControl();
+            this.tabHardwareSupport = new System.Windows.Forms.TabPage();
             this.lblHardwareSupportModules = new System.Windows.Forms.Label();
+            this.tabSimSupport = new System.Windows.Forms.TabPage();
             this.lblSimSupportModules = new System.Windows.Forms.Label();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.tabStartup.SuspendLayout();
+            this.gbStartupOptions.SuspendLayout();
             this.tabPlugins.SuspendLayout();
             this.tabPluginsSubtabs.SuspendLayout();
             this.tabHardwareSupport.SuspendLayout();
             this.tabSimSupport.SuspendLayout();
-            this.tabStartup.SuspendLayout();
-            this.gbStartupOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // cmdOK
@@ -112,6 +112,7 @@
             // 
             // tabGeneral
             // 
+            this.tabGeneral.AutoScroll = true;
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -120,52 +121,9 @@
             this.tabGeneral.Text = "General";
             this.tabGeneral.UseVisualStyleBackColor = true;
             // 
-            // tabPlugins
-            // 
-            this.tabPlugins.Controls.Add(this.tabPluginsSubtabs);
-            this.tabPlugins.Location = new System.Drawing.Point(4, 22);
-            this.tabPlugins.Name = "tabPlugins";
-            this.tabPlugins.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPlugins.Size = new System.Drawing.Size(566, 224);
-            this.tabPlugins.TabIndex = 2;
-            this.tabPlugins.Text = "Plug-ins";
-            this.tabPlugins.UseVisualStyleBackColor = true;
-            // 
-            // tabPluginsSubtabs
-            // 
-            this.tabPluginsSubtabs.Controls.Add(this.tabHardwareSupport);
-            this.tabPluginsSubtabs.Controls.Add(this.tabSimSupport);
-            this.tabPluginsSubtabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabPluginsSubtabs.Location = new System.Drawing.Point(3, 3);
-            this.tabPluginsSubtabs.Name = "tabPluginsSubtabs";
-            this.tabPluginsSubtabs.SelectedIndex = 0;
-            this.tabPluginsSubtabs.Size = new System.Drawing.Size(560, 218);
-            this.tabPluginsSubtabs.TabIndex = 0;
-            // 
-            // tabHardwareSupport
-            // 
-            this.tabHardwareSupport.Controls.Add(this.lblHardwareSupportModules);
-            this.tabHardwareSupport.Location = new System.Drawing.Point(4, 22);
-            this.tabHardwareSupport.Name = "tabHardwareSupport";
-            this.tabHardwareSupport.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHardwareSupport.Size = new System.Drawing.Size(552, 192);
-            this.tabHardwareSupport.TabIndex = 0;
-            this.tabHardwareSupport.Text = "Hardware Support Modules";
-            this.tabHardwareSupport.UseVisualStyleBackColor = true;
-            // 
-            // tabSimSupport
-            // 
-            this.tabSimSupport.Controls.Add(this.lblSimSupportModules);
-            this.tabSimSupport.Location = new System.Drawing.Point(4, 22);
-            this.tabSimSupport.Name = "tabSimSupport";
-            this.tabSimSupport.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSimSupport.Size = new System.Drawing.Size(552, 192);
-            this.tabSimSupport.TabIndex = 1;
-            this.tabSimSupport.Text = "Sim Support Modules";
-            this.tabSimSupport.UseVisualStyleBackColor = true;
-            // 
             // tabStartup
             // 
+            this.tabStartup.AutoScroll = true;
             this.tabStartup.Controls.Add(this.gbStartupOptions);
             this.tabStartup.Location = new System.Drawing.Point(4, 22);
             this.tabStartup.Name = "tabStartup";
@@ -229,6 +187,40 @@
             this.chkLaunchAtSystemStartup.Text = "&Launch at System Startup";
             this.chkLaunchAtSystemStartup.UseVisualStyleBackColor = true;
             // 
+            // tabPlugins
+            // 
+            this.tabPlugins.Controls.Add(this.tabPluginsSubtabs);
+            this.tabPlugins.Location = new System.Drawing.Point(4, 22);
+            this.tabPlugins.Name = "tabPlugins";
+            this.tabPlugins.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPlugins.Size = new System.Drawing.Size(566, 224);
+            this.tabPlugins.TabIndex = 2;
+            this.tabPlugins.Text = "Plug-ins";
+            this.tabPlugins.UseVisualStyleBackColor = true;
+            // 
+            // tabPluginsSubtabs
+            // 
+            this.tabPluginsSubtabs.Controls.Add(this.tabHardwareSupport);
+            this.tabPluginsSubtabs.Controls.Add(this.tabSimSupport);
+            this.tabPluginsSubtabs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabPluginsSubtabs.Location = new System.Drawing.Point(3, 3);
+            this.tabPluginsSubtabs.Name = "tabPluginsSubtabs";
+            this.tabPluginsSubtabs.SelectedIndex = 0;
+            this.tabPluginsSubtabs.Size = new System.Drawing.Size(560, 218);
+            this.tabPluginsSubtabs.TabIndex = 0;
+            // 
+            // tabHardwareSupport
+            // 
+            this.tabHardwareSupport.AutoScroll = true;
+            this.tabHardwareSupport.Controls.Add(this.lblHardwareSupportModules);
+            this.tabHardwareSupport.Location = new System.Drawing.Point(4, 22);
+            this.tabHardwareSupport.Name = "tabHardwareSupport";
+            this.tabHardwareSupport.Padding = new System.Windows.Forms.Padding(3);
+            this.tabHardwareSupport.Size = new System.Drawing.Size(552, 192);
+            this.tabHardwareSupport.TabIndex = 0;
+            this.tabHardwareSupport.Text = "Hardware Support Modules";
+            this.tabHardwareSupport.UseVisualStyleBackColor = true;
+            // 
             // lblHardwareSupportModules
             // 
             this.lblHardwareSupportModules.AutoSize = true;
@@ -237,6 +229,18 @@
             this.lblHardwareSupportModules.Name = "lblHardwareSupportModules";
             this.lblHardwareSupportModules.Size = new System.Drawing.Size(0, 13);
             this.lblHardwareSupportModules.TabIndex = 0;
+            // 
+            // tabSimSupport
+            // 
+            this.tabSimSupport.AutoScroll = true;
+            this.tabSimSupport.Controls.Add(this.lblSimSupportModules);
+            this.tabSimSupport.Location = new System.Drawing.Point(4, 22);
+            this.tabSimSupport.Name = "tabSimSupport";
+            this.tabSimSupport.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSimSupport.Size = new System.Drawing.Size(552, 192);
+            this.tabSimSupport.TabIndex = 1;
+            this.tabSimSupport.Text = "Sim Support Modules";
+            this.tabSimSupport.UseVisualStyleBackColor = true;
             // 
             // lblSimSupportModules
             // 
@@ -269,15 +273,15 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
+            this.tabStartup.ResumeLayout(false);
+            this.gbStartupOptions.ResumeLayout(false);
+            this.gbStartupOptions.PerformLayout();
             this.tabPlugins.ResumeLayout(false);
             this.tabPluginsSubtabs.ResumeLayout(false);
             this.tabHardwareSupport.ResumeLayout(false);
             this.tabHardwareSupport.PerformLayout();
             this.tabSimSupport.ResumeLayout(false);
             this.tabSimSupport.PerformLayout();
-            this.tabStartup.ResumeLayout(false);
-            this.gbStartupOptions.ResumeLayout(false);
-            this.gbStartupOptions.PerformLayout();
             this.ResumeLayout(false);
 
         }

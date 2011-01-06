@@ -1,0 +1,92 @@
+﻿<?xml version="1.0"?>
+<MappingProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SignalMappings>
+
+    <!-- *********************************************************************-->
+    <!-- MAPPINGS FROM F4 SIM VALUES TO ASTRONAUTICS ADI HARDWARE SUPPORT MODULE INPUTS -->
+    <!-- *********************************************************************-->
+    <!-- PITCH DEGREES -->
+    <SignalMapping>
+      <!-- F4 ADI PITCH DEGREES OUTPUT-->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__PITCH_DEGREES</Id>
+      </Source>
+      <!-- ASTRONAUTICS ADI PITCH DEGREES INPUT-->
+      <Destination xsi:type="AnalogSignal">
+        <Id>12871_Pitch_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- ROLL DEGREES -->
+    <SignalMapping>
+      <!-- F4 ADI ROLL DEGREES OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__ROLL_DEGREES</Id>
+      </Source>
+      <!-- ASTRONAUTICS ADI ROLL DEGREES INPUT -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>12871_Roll_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+
+
+    <!-- *********************************************************************-->
+    <!-- MAPPINGS FROM ASTRONAUTICS HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
+    <!-- *********************************************************************-->
+    <!-- ROLL (SIN ) -->
+    <SignalMapping>
+      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE ROLL (SIN) OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>12871_Roll_SIN_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 7 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][7]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- ROLL (COS) -->
+    <SignalMapping>
+      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE ROLL (COS) OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>12871_Roll_COS_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 8 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][8]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+
+    <!-- PITCH (SIN) -->
+    <SignalMapping>
+      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE PITCH (SIN) OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>12871_Pitch_SIN_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 9 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][9]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- PITCH (COS) -->
+    <SignalMapping>
+      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE PITCH (COS) OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>12871_Pitch_COS_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 10 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][10]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+  </SignalMappings>
+</MappingProfile>

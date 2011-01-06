@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Generic;
 namespace MFDExtractor.UI
 {
     public enum VVIStyles
@@ -1274,6 +1275,7 @@ namespace MFDExtractor.UI
                 settings.TestMode = false; //clear test mode flag from the current settings cache (in-memory)
                 _extractorRunningStateOnFormOpen = _extractor.Running; //store current Extractor instance's "isRunning" state
                 settings.Save(); //save our new settings to the current settings cache (on-disk)
+                settings.Reload();
                 settings.TestMode = testMode; //reset the test-mode flag in the current settings cache
 
                 //we have to do the above steps because we don't want the test-mode flag
@@ -1666,26 +1668,26 @@ namespace MFDExtractor.UI
 
         private void cmdRecoverMfd4_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverMfd4Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("MFD4", Screen.FromPoint(this.Location)); 
         }
         private void cmdRecoverMfd3_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverMfd3Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("MFD3", Screen.FromPoint(this.Location));
         }
 
         private void cmdRecoverLeftMfd_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverLeftMfdWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("LMFD", Screen.FromPoint(this.Location));
         }
 
         private void cmdRecoverRightMfd_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRightMfdWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("RMFD", Screen.FromPoint(this.Location));
         }
 
         private void cmdRecoverHud_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHudWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("HUD", Screen.FromPoint(this.Location));
         }
 
         private void cmdImportCoordinates_Click(object sender, EventArgs e)
@@ -2140,10 +2142,6 @@ namespace MFDExtractor.UI
                 } //end if (result == DialogResult.OK)
             }//end if (result == DialogResult.OK)
         }
-        private void LoadInstrumentTimings()
-        {
-            //dgvInstrumentTimings.Rows.Add(n
-        }
         private void cmdExportCoordinates_Click(object sender, EventArgs e)
         {
             if (!ValidateSettings())
@@ -2543,171 +2541,165 @@ namespace MFDExtractor.UI
 
         private void pbRecoverADI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverADIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("ADI", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverAltimeter_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAltimeterWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("Altimeter", Screen.FromPoint(this.Location));
 
         }
 
         private void pbRecoverAOAIndexer_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAOAIndexerWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverInstrumentForm("AOAIndexer", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverAOAIndicator_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAOAIndicatorWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverInstrumentForm("AOAIndicator", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverCautionPanel_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCautionPanelWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverInstrumentForm("CautionPanel", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverCMDSPanel_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCMDSPanelWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverInstrumentForm("CMDSPanel", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverCompass_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCompassWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverInstrumentForm("Compass", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverDED_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverDEDWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("DED", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFTIT1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFTIT1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("FTIT", Screen.FromPoint(this.Location));
         }
         private void pbRecoverAccelerometer_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAccelerometerWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("Accelerometer", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverNozPos1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverNOZ1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("NOZ1", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverOil1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverOil1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("OIL1", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverRPM1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRPM1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("RPM1", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFTIT2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFTIT2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("FTIT2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverNozPos2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverNOZ2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("NOZ2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverOil2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverOil2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("OIL2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverRPM2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRPM2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("RPM2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverEPU_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverEPUFuelWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("EPU", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFuelFlow_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFuelFlowWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("FuelFlow", Screen.FromPoint(this.Location));
         }
         private void pbRecoverISIS_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverISISWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("ISIS", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverNWS_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverNWSWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("NWS", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverPFL_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverPFLWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("PFL", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverSpeedbrake_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverSpeedbrakeWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("Speedbrake", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverVVI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverVVIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("VVI", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverHSI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHSIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("HSI", Screen.FromPoint(this.Location));
         }
         private void pbRecoverEHSI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverEHSIWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverInstrumentForm("EHSI", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverGearLights_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverLandingGearLightsWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("LandingGearLights", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFuelQuantity_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFuelQuantityWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("FuelQuantityIndicator", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverStandbyADI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverBackupADIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("StandbyADI", Screen.FromPoint(this.Location));
         }
         private void pbRecoverHydA_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHydAWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("HYDA", Screen.FromPoint(this.Location));
         }
         private void pbRecoverHydB_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHydBWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("HYDB", Screen.FromPoint(this.Location));
         }
         private void pbRecoverCabinPress_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCabinPressWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("CabinPress", Screen.FromPoint(this.Location));
         }
         private void pbRecoverRollTrim_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRollTrimWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("RollTrim", Screen.FromPoint(this.Location));
         }
         private void pbRecoverPitchTrim_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverPitchTrimWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("PitchTrim", Screen.FromPoint(this.Location));
         }
 
         private void cmdNV_Click(object sender, EventArgs e)
@@ -2812,12 +2804,12 @@ namespace MFDExtractor.UI
 
         private void pbRecoverASI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverASIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("Airspeed", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverAzimuthIndicator_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAzimuthIndicatorWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverInstrumentForm("RWR", Screen.FromPoint(this.Location));
         }
 
 
@@ -2897,361 +2889,99 @@ namespace MFDExtractor.UI
 
         private void cmdAirspeedIndexIncreaseHotkey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AirspeedIndexIncreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AirspeedIndexIncreaseKey = serialized;
-            }
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AirspeedIndexIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdAirspeedIndexDecreaseHotkey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AirspeedIndexDecreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AirspeedIndexDecreaseKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AirspeedIndexDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSIMenuButtonHotkey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSIMenuButtonKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSIMenuButtonKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSIMenuButtonKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSIHeadingIncreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSIHeadingIncreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSIHeadingIncreaseKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSIHeadingIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSIHeadingDecreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSIHeadingDecreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSIHeadingDecreaseKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSIHeadingDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSICourseIncreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSICourseIncreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSICourseIncreaseKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSICourseIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSICourseDecreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSICourseDecreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSICourseDecreaseKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSICourseDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSICourseKnobDepressedKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSICourseKnobDepressedKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSICourseKnobDepressedKey = serialized;
-            }
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSICourseKnobDepressedKey", Properties.Settings.Default), this);
         }
 
         private void cmdAzimuthIndicatorBrightnessIncrease_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AzimuthIndicatorBrightnessIncreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AzimuthIndicatorBrightnessIncreaseKey = serialized;
-            }
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AzimuthIndicatorBrightnessIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdAzimuthIndicatorBrightnessDecrease_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AzimuthIndicatorBrightnessDecreaseKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AzimuthIndicatorBrightnessDecreaseKey = serialized;
-            }
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AzimuthIndicatorBrightnessDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdISISBrightButtonPressed_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.ISISBrightButtonKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.ISISBrightButtonKey = serialized;
-            }   
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("ISISBrightButtonKey", Properties.Settings.Default), this);
         }
 
         private void cmdISISStandardBrightnessButtonPressed_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.ISISStandardButtonKey;
-
-            InputControlSelection keyFromSettings = null;
-            try
-            {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
-            }
-            catch (Exception ex)
-            {
-            }
-            if (keyFromSettings != null)
-            {
-                toShow.SelectedControl = keyFromSettings;
-            }
-            toShow.ShowDialog(this);
-            InputControlSelection selection = toShow.SelectedControl;
-            if (selection != null)
-            {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.ISISStandardButtonKey = serialized;
-            }   
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("ISISStandardButtonKey", Properties.Settings.Default), this);
         }
 
         private void cmdAccelerometerResetButtonPressed_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AccelerometerResetKey;
-
+            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AccelerometerResetKey", Properties.Settings.Default), this);
+        }
+        
+        private static InputControlSelection DeserializeInputControlSelection(PropertyInvoker<string> settingsProperty)
+        {
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(settingsProperty.GetProperty(), typeof(InputControlSelection));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
+            return keyFromSettings;
+        }
+        private static void ShowKeySelectionDialog(Mediator mediator,PropertyInvoker<string> settingsProperty, Form parentForm)
+        {
+            InputSourceSelector toShow = new InputSourceSelector();
+            toShow.Mediator = mediator;
+            InputControlSelection keyFromSettings = DeserializeInputControlSelection(settingsProperty);
             if (keyFromSettings != null)
             {
                 toShow.SelectedControl = keyFromSettings;
             }
-            toShow.ShowDialog(this);
+            toShow.ShowDialog(parentForm);
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
                 string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AccelerometerResetKey = serialized;
+                settingsProperty.SetProperty(serialized);
             }   
         }
+
 
         private void chkHighlightOutputWindowsWhenContainMouseCursor_CheckedChanged(object sender, EventArgs e)
         {
@@ -3262,12 +2992,5 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
         }
-
-
-
-
-
-
-
     }
 }

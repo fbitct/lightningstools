@@ -18,7 +18,6 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #endregion
 
         #region Instance variables
-        private object _deviceLock = new object();
         private a.DenseDacEvalBoard _device = null;
         private bool _isDisposed=false;
         private AnalogSignal[] _analogOutputSignals = null;
@@ -31,7 +30,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
         private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex):this()
         {
-            if (device == null) throw new ArgumentNullException("device");
+            //if (device == null) throw new ArgumentNullException("device");
             _device = device;
             CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
         }
@@ -49,37 +48,37 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             try
             {
                 int index = 0;
-                foreach (var device in a.DenseDacEvalBoard.Enumerate())
+                DenseDacEvalBoard[] boards=a.DenseDacEvalBoard.Enumerate();
+                if (boards != null && boards.Length > 0)
                 {
-                    MessageBox.Show("An AD536x/537x device has been found and a Reset operation was initated.");
-                    device.Reset();
-                    MessageBox.Show("Reset operation completed.");
-                    device.DacPrecision = DacPrecision.SixteenBit;
-                    MessageBox.Show("About to update Group 0 and Group 1 offsets.");
-                    device.Group0Offset = 0x2000;
-                    device.Group1Offset = 0x2000;
-                    MessageBox.Show("Group 0 and Group 1 offsets have been set.");
-                    //device.Groups2Thru4Offset = 0x2000;
-                    //device.SetDacChannelOffset(ChannelAddress.AllGroupsAllChannels, 0x8000);
-                    //device.SetDacChannelGain(ChannelAddress.AllGroupsAllChannels, 0xFFFF);
-                    //Thread.Sleep(500);
-                    MessageBox.Show("About to update DAC channel gains (M) to 0xFFFF and DAC channel offsets (C) to 0x8000 on all channels.");
-                    for (int j = 0; j < 40; j++)
+                    foreach (var device in boards)
                     {
-                        device.SetDacChannelOffset((ChannelAddress)j + 8, 0x8000);
-                        device.SetDacChannelGain((ChannelAddress)j+8, 0xFFFF);
-                        device.SetDacChannelDataSource((ChannelAddress)j + 8, DacChannelDataSource.DataValueA);
-                        device.SetDacChannelDataValueA((ChannelAddress)j + 8, 0x7FFF);
-                    }
-                    MessageBox.Show("Updated DAC channel gains and offsets on all channels, now going to pulse LDAC.");
-                    device.UpdateAllDacOutputs();
-                    MessageBox.Show("LDAC pulsed.");
-                    //device.ResumeAllDacOutputs();
-                    //device.UpdateAllDacOutputs();
+                        if (device == null) continue;
+                        device.Reset();
+                        device.DacPrecision = DacPrecision.SixteenBit;
+                        device.Group0Offset = 0x2000;
+                        device.Group1Offset = 0x2000;
+                        //device.Groups2Thru4Offset = 0x2000;
+                        for (int j = 0; j < 40; j++)
+                        {
+                            device.SetDacChannelOffset((ChannelAddress)j + 8, 0x8000);
+                            device.SetDacChannelGain((ChannelAddress)j + 8, 0xFFFF);
+                            device.SetDacChannelDataSource((ChannelAddress)j + 8, DacChannelDataSource.DataValueA);
+                            device.SetDacChannelDataValueA((ChannelAddress)j + 8, 0x7FFF);
+                        }
+                        device.UpdateAllDacOutputs();
+                        //device.ResumeAllDacOutputs();
+                        //device.UpdateAllDacOutputs();
 
-                    IHardwareSupportModule thisHsm = new AnalogDevicesHardwareSupportModule(device, index);
-                    toReturn.Add(thisHsm);
-                    index++;
+                        IHardwareSupportModule thisHsm = new AnalogDevicesHardwareSupportModule(device, index);
+                        toReturn.Add(thisHsm);
+                        index++;
+                    }
+                }
+                else
+                {
+                    IHardwareSupportModule fakeHsm = new AnalogDevicesHardwareSupportModule(null, index);
+                    toReturn.Add(fakeHsm);
                 }
             }
             catch (Exception e)
@@ -126,7 +125,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
        
         private void CreateOutputSignals(a.DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
         {
-            if (device == null) throw new ArgumentNullException("device");
+            //if (device == null) throw new ArgumentNullException("device");
             List<AnalogSignal> analogSignalsToReturn= new List<AnalogSignal>();
             for (int i = 0; i < 40; i++)
             {
@@ -138,11 +137,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.PublisherObject = this; 
                 thisSignal.Source = device;
                 thisSignal.SourceFriendlyName = "Analog Devices AD536x/AD537x";
-                thisSignal.SourceAddress = device.SymbolicName;
+                thisSignal.SourceAddress = device != null ? device.SymbolicName : null;
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
+                thisSignal.State = 0.500;
                 thisSignal.SignalChanged += new AnalogSignal.AnalogSignalChangedEventHandler(DAC_OutputSignalChanged);
                 analogSignalsToReturn.Add(thisSignal);
             }
@@ -151,15 +150,28 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            AnalogSignal senderSignal = (AnalogSignal)sender;
-            
-            if (senderSignal.Index.HasValue) 
+            UpdateOutputSignal((AnalogSignal)sender);
+        }
+
+        private void UpdateOutputSignal(AnalogSignal outputSignal)
+        {
+            if (outputSignal.Index.HasValue)
             {
-                lock (_deviceLock)
+                if (_device != null)
                 {
-                    _device.SetDacChannelDataValueA((ChannelAddress)senderSignal.Index.Value + 8, (ushort)(senderSignal.State * (double)0xFFFF));
-                    _device.UpdateAllDacOutputs();
+                    _device.SetDacChannelDataValueA((ChannelAddress)outputSignal.Index.Value + 8, (ushort)(outputSignal.State * (double)0xFFFF));
                 }
+            }
+        }
+        public override void Synchronize()
+        {
+            foreach (var signal in _analogOutputSignals)
+            {
+                UpdateOutputSignal(signal);
+            }
+            if (_device != null)
+            {
+                _device.UpdateAllDacOutputs();
             }
         }
         #endregion

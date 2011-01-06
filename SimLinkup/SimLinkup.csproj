@@ -14,6 +14,8 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>
     </TargetFrameworkSubset>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <SignManifests>false</SignManifests>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -26,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -41,6 +42,8 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -76,9 +79,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Lilbern\Lilbern3239HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Lilbern\Lilbern3239HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek10058101HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek10058101HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101091HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101082HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101082HardwareSupportModule.cs" />
@@ -90,7 +101,8 @@
     <Compile Include="HardwareSupport\Simtek\Simtek10058102HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100285HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100285HardwareSupportModule.cs" />
-    <Compile Include="HardwareSupport\Simtek\Simtek100194HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100194HardwareSupportModuleConfig.cs">
+    </Compile>
     <Compile Include="HardwareSupport\Simtek\Simtek100194HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100207HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100207HardwareSupportModuleConfig.cs" />
@@ -143,22 +155,46 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <None Include="app.config" />
-    <None Include="Content\Mapping\100181altimeter.mapping.bak">
+    <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\100194machmeter.mapping">
+    <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\100285altimeter.mapping">
+    <None Include="Content\Mapping\Simtek10058101angleofattack2.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\10033501standbyADI.mapping.bak">
+    <None Include="Content\Mapping\Simtek10058102verticalvelocity2.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\10058102verticalvelocity.mapping">
+    <None Include="Content\Mapping\Simtek100181altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\128710primaryADI.mapping">
+    <None Include="Content\Mapping\Simtek100194machmeter.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek100285altimeter.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek10033501standbyADI1.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek10058101angleofattack1.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek10058102verticalvelocity1.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Astronautics128710primaryADI1.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Astronautics128710primaryADI2.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek10033501standbyADI2.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\AMI900157501angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="HardwareSupportModule.registry">

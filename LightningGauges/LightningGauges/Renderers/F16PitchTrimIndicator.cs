@@ -46,7 +46,7 @@ namespace LightningGauges.Renderers
                     ))
                 {
                     needleWithMask.Use1BitAlpha = true;
-                    _needle = Common.Imaging.Util.CropBitmap(needleWithMask.MaskedImage, new Rectangle(97, 68, 60, 60));
+                    _needle = (Bitmap)Common.Imaging.Util.CropBitmap(needleWithMask.MaskedImage, new Rectangle(97, 68, 60, 60));
                     _needle.MakeTransparent(Color.Black);
                 }
 

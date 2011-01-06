@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Diagnostics;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
+using log4net;
 
 namespace AnalogDevices
 {
@@ -16,13 +17,15 @@ namespace AnalogDevices
     {
         #region Public stuff
         #region Class Constructors
+        private static ILog _log = LogManager.GetLogger(typeof(DenseDacEvalBoard));
+
         public DenseDacEvalBoard(UsbDevice device)
             : base()
         {
-            lock (_instanceStateLock)
-            {
+            //lock (_instanceStateLock)
+            //{
                 _usbDevice = device;
-            }
+            //}
             UploadFirmware(new IhxFile("AD5371SPI.hex"));
         }
         #endregion
@@ -133,8 +136,8 @@ namespace AnalogDevices
             {
                 ChannelMonitorSource source = ChannelMonitorSource.None;
                 byte channelNumberOrInputPinNumber = 0;
-                lock (_instanceStateLock)
-                {
+                //lock (_instanceStateLock)
+                //{
                     if ((_monitorFlags & 0x20) == 0x20)
                     {
                         if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
@@ -159,7 +162,7 @@ namespace AnalogDevices
                     {
                         //source already == ChannelMonitorSources.None
                     }
-                }
+                //}
                 ChannelMonitorOptions toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
                 toReturn.PropertyChanged += new PropertyChangedEventHandler(MonitorOptionsPropertyChangedHandler);
                 return toReturn;
@@ -197,17 +200,17 @@ namespace AnalogDevices
         {
             get
             {
-                lock (_instanceStateLock)
-                {
+                //lock (_instanceStateLock)
+                //{
                     return _thisDevicePrecision;
-                }
+                //}
             }
             set
             {
-                lock (_instanceStateLock)
-                {
+                //lock (_instanceStateLock)
+                //{
                     _thisDevicePrecision = value;
-                }
+                //}
             }
         }
         public bool PECErrorOccurred
@@ -678,19 +681,23 @@ namespace AnalogDevices
             UsbRegDeviceList devs = LibUsbDotNet.UsbDevice.AllDevices;
             for (int i = 0; i < devs.Count; i++)
             {
-                var device = devs[i].Device;
-                if (
-                        device.UsbRegistryInfo.Vid == 0x0456
-                         &&
-                        (
-                            (ushort)device.UsbRegistryInfo.Pid == (ushort)0xB20F
-                                ||
-                            (ushort)device.UsbRegistryInfo.Pid == (ushort)0xB20E
-                        )
-                    )
+                UsbDevice device = devs[i].Device;
+                if (device != null)
                 {
-                    toReturn.Add(new DenseDacEvalBoard(device));
+                    if (
+                            device.UsbRegistryInfo.Vid == 0x0456
+                             &&
+                            (
+                                (ushort)device.UsbRegistryInfo.Pid == (ushort)0xB20F
+                                    ||
+                                (ushort)device.UsbRegistryInfo.Pid == (ushort)0xB20E
+                            )
+                        )
+                    {
+                        toReturn.Add(new DenseDacEvalBoard(device));
+                    }
                 }
+
             }
             return toReturn.ToArray();
         }
@@ -780,8 +787,8 @@ namespace AnalogDevices
         {
             if (value == null) throw new ArgumentNullException("value");
 
-            lock (_instanceStateLock)
-            {
+            //lock (_instanceStateLock)
+            //{
                 if (value.ChannelMonitorSource == ChannelMonitorSource.None)
                 {
                     _monitorFlags &= 0xDF;
@@ -819,7 +826,7 @@ namespace AnalogDevices
                     }
                 }
                 SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
-            }
+            //}
         }
         private void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
@@ -973,11 +980,11 @@ namespace AnalogDevices
         }
         private void InitializeSPIPins()
         {
-            lock (_instanceStateLock)
-            {
+            //lock (_instanceStateLock)
+            //{
                 SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
                 _spiInitialized = true;
-            }
+            //}
         }
         #endregion
 
@@ -995,13 +1002,13 @@ namespace AnalogDevices
 
         private ushort ReadSPI()
         {
-            lock (_instanceStateLock)
-            {
+            //lock (_instanceStateLock)
+            //{
                 if (!_spiInitialized)
                 {
                     InitializeSPIPins();
                 }
-            }
+            //}
             byte bRequest = (byte)DeviceCommand.SendSPI;
 
             ushort len = 3;
@@ -1018,10 +1025,10 @@ namespace AnalogDevices
         }
         private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength, out int lengthTransferred)
         {
-            lock (_usbDevice)
-            {
+            //lock (_usbDevice)
+            //{
                 _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
-            }
+            //}
         }
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData)
         {
@@ -1029,10 +1036,10 @@ namespace AnalogDevices
         }
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData, byte[] data)
         {
-            lock (_instanceStateLock)
-            {
+            //lock (_instanceStateLock)
+            //{
                 if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
-            }
+            //}
             byte bRequest = (byte)command;
             UsbSetupPacket setupPacket = new UsbSetupPacket();
             setupPacket.Request = (DeviceRequestType)bRequest;

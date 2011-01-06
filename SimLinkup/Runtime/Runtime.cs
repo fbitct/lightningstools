@@ -11,6 +11,7 @@ using System.Threading;
 using log4net;
 using SimLinkup.Signals;
 using Common.MacroProgramming;
+using System.Diagnostics;
 
 namespace SimLinkup.Runtime
 {
@@ -57,18 +58,47 @@ namespace SimLinkup.Runtime
         }
         private void MainLoop()
         {
+            const int MIN_LOOP_TIME = 1; //milliseconds
             _keepRunning = true;
             _isRunning = true;
+            Random rnd = new Random();
                 while (_keepRunning)
                 {
+                    DateTime startTime = DateTime.Now;
                     UpdateSimSignals();
+                    Application.DoEvents();
+                    Synchronize();
                     Application.DoEvents();
                     if (_loopScripts != null && _loopScripts.Length > 0)
                     {
                         RunLoopScripts();
                     }
+                    Application.DoEvents();
+                    DateTime endTime = DateTime.Now;
+                    TimeSpan timedelta = endTime.Subtract(startTime);
+                    if (timedelta.Milliseconds < MIN_LOOP_TIME)
+                    {
+                        Thread.Sleep(MIN_LOOP_TIME);
+                    }
                 }
             _isRunning = false;
+        }
+        private void Synchronize()
+        {
+            if (_scriptingContext.HardwareSupportModules != null)
+            {
+                foreach (IHardwareSupportModule hsm in _scriptingContext.HardwareSupportModules)
+                {
+                    try
+                    {
+                        hsm.Synchronize();
+                    }
+                    catch (Exception e)
+                    {
+                        _log.Error(e.ToString(), e);
+                    }
+                }
+            }
         }
         private void UpdateSimSignals()
         {
@@ -172,7 +202,17 @@ namespace SimLinkup.Runtime
             if (signalToResolve == null) return null;
             foreach (var signal in this.ScriptingContext.AllSignals)
             {
-                if (signal.Id == signalToResolve.Id)
+                if (
+                    signal.Id !=null 
+                        && 
+                    signalToResolve.Id !=null 
+                        && 
+                        signal.Id.Trim().Equals
+                        (
+                                    signalToResolve.Id.Trim(), 
+                                    StringComparison.InvariantCultureIgnoreCase
+                        )
+                    )
                 {
                     return signal;
                 }
@@ -198,6 +238,7 @@ namespace SimLinkup.Runtime
                         mapping.Destination = ResolveSignal(mapping.Destination);
                         if (mapping.Source == null || mapping.Destination == null)
                         {
+                            _log.Warn(string.Format("A mapping defined in file {0} had an unresolvable source or destination signal.", profileToLoad));
                             continue;
                         }
                         if (mapping.Source is AnalogSignal)
@@ -208,6 +249,7 @@ namespace SimLinkup.Runtime
                             Common.MacroProgramming.AnalogPassthrough passthru = new AnalogPassthrough();
                             passthru.In = mappingSource;
                             passthru.Out = mappingDestination;
+                            passthru.Refresh();
                             _passthroughs.Add(passthru);
                         }
                         else if (mapping.Source is DigitalSignal)
@@ -217,6 +259,7 @@ namespace SimLinkup.Runtime
                             Common.MacroProgramming.DigitalPassthrough passthru = new DigitalPassthrough();
                             passthru.In = mappingSource;
                             passthru.Out = mappingDestination;
+                            passthru.Refresh();
                             _passthroughs.Add(passthru);
                         }
                         else if (mapping.Source is TextSignal)
@@ -226,6 +269,7 @@ namespace SimLinkup.Runtime
                             Common.MacroProgramming.TextPassthrough passthru = new TextPassthrough();
                             passthru.In = mappingSource;
                             passthru.Out = mappingDestination;
+                            passthru.Refresh();
                             _passthroughs.Add(passthru);
                         }
                     }

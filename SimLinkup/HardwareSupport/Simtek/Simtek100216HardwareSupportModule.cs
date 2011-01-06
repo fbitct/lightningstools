@@ -139,7 +139,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = this.FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            thisSignal.State = (-10.00 + 10.00) / 20.00; ;
             return thisSignal;
         }
 

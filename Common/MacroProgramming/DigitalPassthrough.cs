@@ -50,9 +50,17 @@ namespace Common.MacroProgramming
         }
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
+            UpdateOutputValue(e.CurrentState);
+        }
+        public void Refresh()
+        {
+            UpdateOutputValue(_in.State);
+        }
+        private void UpdateOutputValue(bool outputValue)
+        {
             if (_out != null)
             {
-                _out.State = e.CurrentState;
+                _out.State = outputValue;
             }
         }
     }

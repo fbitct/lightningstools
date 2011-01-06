@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EEED5595-6EB8-473D-B487-334B45D753A6}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -61,6 +61,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <RegisterForComInterop>false</RegisterForComInterop>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>

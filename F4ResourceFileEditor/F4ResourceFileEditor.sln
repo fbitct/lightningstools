@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4ResourceFileEditor", "F4ResourceFileEditor.csproj", "{25AFABB4-A3BF-40CA-AB6B-D0A71BC8A2C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils", "..\..\F4Utils\F4Utils.csproj", "{BA414112-2EAB-496B-83DC-2005018A827C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils", "..\F4Utils\F4Utils.csproj", "{BA414112-2EAB-496B-83DC-2005018A827C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
