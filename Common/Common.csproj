@@ -178,48 +178,48 @@
     <Compile Include="Strings\NumericComparer.cs" />
     <Compile Include="Strings\StringLogicalComparer.cs" />
     <Compile Include="Strings\Util.cs" />
-    <Compile Include="ThirdParty\UI\GDIPlusOptions.cs" />
-    <Compile Include="ThirdParty\UI\ListViewColumnSorter.cs" />
-    <Compile Include="ThirdParty\UI\TreeNodeNumericComparer.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\Header.cs">
+    <Compile Include="UI\GDIPlusOptions.cs" />
+    <Compile Include="UI\ListViewColumnSorter.cs" />
+    <Compile Include="UI\TreeNodeNumericComparer.cs" />
+    <Compile Include="UI\Wizard\Header.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\Wizard\HeaderDesigner.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\InfoContainer.cs">
+    <Compile Include="UI\Wizard\HeaderDesigner.cs" />
+    <Compile Include="UI\Wizard\InfoContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\Wizard\InfoContainerDesigner.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\InfoPage.cs">
+    <Compile Include="UI\Wizard\InfoContainerDesigner.cs" />
+    <Compile Include="UI\Wizard\InfoPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\Wizard\InfoPageDesigner.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\PageCollection.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\PageEventHandler.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\Wizard.cs">
+    <Compile Include="UI\Wizard\InfoPageDesigner.cs" />
+    <Compile Include="UI\Wizard\PageCollection.cs" />
+    <Compile Include="UI\Wizard\PageEventHandler.cs" />
+    <Compile Include="UI\Wizard\Wizard.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\Wizard\WizardDesigner.cs" />
-    <Compile Include="ThirdParty\UI\Wizard\WizardPage.cs">
+    <Compile Include="UI\Wizard\WizardDesigner.cs" />
+    <Compile Include="UI\Wizard\WizardPage.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\Wizard\WizardPageDesigner.cs" />
-    <Compile Include="ThirdParty\UI\UserControls\DotControl.cs">
+    <Compile Include="UI\Wizard\WizardPageDesigner.cs" />
+    <Compile Include="UI\UserControls\DotControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\UserControls\FieldControl.cs">
+    <Compile Include="UI\UserControls\FieldControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\UserControls\FloatControl.cs">
+    <Compile Include="UI\UserControls\FloatControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\UserControls\IPAddressControl.cs">
+    <Compile Include="UI\UserControls\IPAddressControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\UserControls\IPAddressControlDesigner.cs" />
-    <Compile Include="ThirdParty\UI\UserControls\ShortcutInput.cs">
+    <Compile Include="UI\UserControls\IPAddressControlDesigner.cs" />
+    <Compile Include="UI\UserControls\ShortcutInput.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ThirdParty\UI\Util.cs" />
+    <Compile Include="UI\Util.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="Win32\NativeMethods.cs" />
     <Compile Include="Win32\Paths\Util.cs" />
@@ -229,27 +229,27 @@
       <DependentUpon>InputSourceSelector.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\UI\Wizard\Header.resx">
+    <EmbeddedResource Include="UI\Wizard\Header.resx">
       <DependentUpon>Header.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\UI\Wizard\InfoContainer.resx">
+    <EmbeddedResource Include="UI\Wizard\InfoContainer.resx">
       <DependentUpon>InfoContainer.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\UI\Wizard\InfoPage.resx">
+    <EmbeddedResource Include="UI\Wizard\InfoPage.resx">
       <DependentUpon>InfoPage.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\UI\Wizard\Wizard.resx">
+    <EmbeddedResource Include="UI\Wizard\Wizard.resx">
       <DependentUpon>Wizard.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\UI\Wizard\WizardPage.resx">
+    <EmbeddedResource Include="UI\Wizard\WizardPage.resx">
       <DependentUpon>WizardPage.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ThirdParty\UI\UserControls\ShortcutInput.resx">
+    <EmbeddedResource Include="UI\UserControls\ShortcutInput.resx">
       <DependentUpon>ShortcutInput.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -272,8 +272,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll" />
-    <Content Include="ThirdParty\UI\Wizard\Wizard.bmp" />
-    <Content Include="ThirdParty\UI\Wizard\wizBigOnlineFolder.gif" />
+    <Content Include="UI\Wizard\Wizard.bmp" />
+    <Content Include="UI\Wizard\wizBigOnlineFolder.gif" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BIUSBWrapper\BIUSBWrapper.csproj">
