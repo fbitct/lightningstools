@@ -677,6 +677,7 @@ namespace AnalogDevices
         #region Device Enumeration
         public static DenseDacEvalBoard[] Enumerate()
         {
+            List<string> discoveredDevices = new List<string>();
             List<DenseDacEvalBoard> toReturn = new List<DenseDacEvalBoard>();
             UsbRegDeviceList devs = LibUsbDotNet.UsbDevice.AllDevices;
             for (int i = 0; i < devs.Count; i++)
@@ -694,7 +695,11 @@ namespace AnalogDevices
                             )
                         )
                     {
-                        toReturn.Add(new DenseDacEvalBoard(device));
+                        if (!discoveredDevices.Contains(device.UsbRegistryInfo.SymbolicName))
+                        {
+                            toReturn.Add(new DenseDacEvalBoard(device));
+                        }
+                        discoveredDevices.Add(device.UsbRegistryInfo.SymbolicName);
                     }
                 }
 
