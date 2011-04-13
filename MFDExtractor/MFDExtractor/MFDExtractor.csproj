@@ -106,16 +106,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CaptureCoordinatesSet.cs" />
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FlightDataExtension.cs" />
-    <Compile Include="FlightDataToRendererStateTranslator.cs" />
-    <Compile Include="NetworkMode.cs" />
+    <Compile Include="Networking\ImageObjectStore.cs" />
+    <Compile Include="Networking\ObjectStore.cs" />
+    <Compile Include="Runtime\FormManager.cs" />
+    <Compile Include="Runtime\Settings\SettingsManager.cs" />
+    <Compile Include="Runtime\SimSupport\Falcon4\FlightDataExtension.cs" />
+    <Compile Include="Runtime\SimSupport\Falcon4\FlightDataToRendererStateTranslator.cs" />
+    <Compile Include="Networking\ExtractorClient.cs" />
+    <Compile Include="Runtime\NetworkManager.cs">
+    </Compile>
+    <Compile Include="Networking\ExtractorServer.cs" />
+    <Compile Include="Networking\IExtractorClient.cs" />
+    <Compile Include="Networking\IExtractorServer.cs" />
+    <Compile Include="Networking\Message.cs" />
+    <Compile Include="Networking\MessageTypes.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="InstrumentRenderers.cs" />
     <Compile Include="CaptureCoordinates.cs" />
-    <Compile Include="SettingsHelper.cs" />
+    <Compile Include="Runtime\InputSupport.cs" />
+    <Compile Include="Runtime\Settings\GDIPlusSettings.cs" />
+    <Compile Include="Runtime\Settings\KeySettings.cs" />
+    <Compile Include="Runtime\MessageManager.cs" />
+    <Compile Include="Runtime\SimSupport\Falcon4\Falcon4SimSupport.cs" />
     <Compile Include="UI\CanvasRenderer.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>

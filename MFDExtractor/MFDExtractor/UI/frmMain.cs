@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.DirectX.DirectInput;
 using log4net;
+using Common.Networking;
 namespace MFDExtractor.UI
 {
     /// <summary>

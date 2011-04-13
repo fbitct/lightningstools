@@ -16,6 +16,8 @@ using System.Threading;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using Common.Generic;
+using MFDExtractor.Networking;
+using Common.Networking;
 namespace MFDExtractor.UI
 {
     public enum VVIStyles

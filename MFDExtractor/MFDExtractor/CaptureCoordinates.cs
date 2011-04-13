@@ -16,14 +16,5 @@ namespace MFDExtractor
         public Rectangle OutputWindowCoords { get; set; }
         public Screen OutputScreen { get; set; }
     }
-    public class CaptureCoordinatesSet
-    {
-        public CaptureCoordinates LMFD = new CaptureCoordinates();
-        public CaptureCoordinates RMFD = new CaptureCoordinates();
-        public CaptureCoordinates MFD3 = new CaptureCoordinates();
-        public CaptureCoordinates MFD4 = new CaptureCoordinates();
-        public CaptureCoordinates HUD = new CaptureCoordinates();
-
-    }
 
 }

@@ -1,0 +1,541 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using F4SharedMem;
+using System.Diagnostics;
+using Common.Networking;
+using MFDExtractor.Networking;
+using System.Threading;
+using log4net;
+using System.IO;
+using System.Drawing;
+using MFDExtractor.Runtime.Settings;
+
+namespace MFDExtractor.Runtime.SimSupport.Falcon4
+{
+    public class Falcon4SimSupport:IDisposable
+    {
+        #region Class variables
+        private static ILog _log = LogManager.GetLogger(typeof(Falcon4SimSupport));
+        #endregion
+
+        #region Instance variables
+        private bool _disposed = false;
+        #region Falcon 4 Sharedmem Readers & status flags
+        private F4Utils.Terrain.TerrainBrowser _terrainBrowser = new F4Utils.Terrain.TerrainBrowser(false);
+        /// <summary>
+        /// Reference to a Reader object that can read images from BMS's "textures shared memory" 
+        /// area -- this reference is used to perform the actual 3D-mode image extraction
+        /// </summary>
+        private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
+        /// <summary>
+        /// Reference to a Reader object that can read images from BMS's "textures shared memory" area 
+        /// -- this reference is used to detect whether the 3D-mode shared 
+        /// memory images actually exist or not (can be recreated at certain 
+        /// intervals without affecting code using the other reference)
+        /// </summary>
+        private F4TexSharedMem.Reader _texSmStatusReader = new F4TexSharedMem.Reader();
+        /// <summary>
+        /// Reference to a Reader object that can read values from Falcon's basic (non-textures) shared
+        /// memory area.  This is used to detect whether Falcon is running and to provide flight data to rendered instruments
+        /// </summary>
+        private F4SharedMem.Reader _falconSmReader = null;
+        private F4SharedMem.FlightData _flightData = null;
+        private bool _useBMSAdvancedSharedmemValues = false;
+        /// <summary>
+        /// Flag to indicate whether the sim is running
+        /// </summary>
+        public bool _simRunning = false;
+        /// <summary>
+        /// Flag to indicate whether BMS's 3D textures shared memory area is available and has data
+        /// </summary>
+        private bool _sim3DDataAvailable = false;
+
+        private SettingsManager _settingsManager = null;
+        private NetworkManager _networkManager = null;
+        private CaptureCoordinatesSet _captureCoordinatesSet = null;
+        #endregion
+
+        /// <summary>
+        /// Reference to the sim-is-running status monitor thread 
+        /// </summary>
+        private Thread _simStatusMonitorThread = null;
+        #endregion
+
+        #region Constructors
+        private Falcon4SimSupport() : base() { }
+        internal Falcon4SimSupport(SettingsManager settingsManager, NetworkManager networkManager, CaptureCoordinatesSet captureCoordinatesSet)
+            : this()
+        {
+            _settingsManager = settingsManager;
+            _networkManager = networkManager;
+            _captureCoordinatesSet = captureCoordinatesSet;
+        }
+
+        #endregion
+
+        private void SetupSimStatusMonitorThread()
+        {
+            Common.Threading.Util.AbortThread(ref _simStatusMonitorThread);
+            _simStatusMonitorThread = new Thread(SimStatusMonitorThreadWork);
+            _simStatusMonitorThread.Priority = _settingsManager.ThreadPriority;
+            _simStatusMonitorThread.IsBackground = true;
+            _simStatusMonitorThread.Name = "SimStatusMonitorThread";
+        }
+        private FlightData GetFlightData()
+        {
+            FlightData toReturn = null;
+            if (!_settingsManager.TestMode)
+            {
+                if (_simRunning || _settingsManager.NetworkMode == NetworkMode.Client)
+                {
+                    if (_settingsManager.NetworkMode == NetworkMode.Server || _settingsManager.NetworkMode == NetworkMode.Standalone)
+                    {
+                        FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
+#if (ALLIEDFORCE)
+                        format = FalconDataFormats.AlliedForce;
+#endif
+                        //set automatic 3D mode for BMS
+                        if (format.HasValue && format.Value == FalconDataFormats.BMS4) _threeDeeMode = true;
+
+                        bool doMore = true;
+                        bool newReader = false;
+                        if (_falconSmReader == null)
+                        {
+                            if (format.HasValue)
+                            {
+                                _falconSmReader = new Reader(format.Value);
+                                newReader = true;
+                            }
+                            else
+                            {
+                                _falconSmReader = new Reader();
+                                newReader = true;
+                            }
+                        }
+                        else
+                        {
+                            if (format.HasValue)
+                            {
+                                if (format.Value != _falconSmReader.DataFormat)
+                                {
+                                    _falconSmReader = new Reader(format.Value);
+                                    newReader = true;
+                                }
+                            }
+                            else
+                            {
+                                doMore = false;
+                                Common.Util.DisposeObject(_falconSmReader);
+                                _falconSmReader = null;
+                                _useBMSAdvancedSharedmemValues = false;
+                                newReader = false;
+                            }
+                        }
+                        if (newReader)
+                        {
+                            string exePath = F4Utils.Process.Util.GetFalconExePath();
+                            FileVersionInfo verInfo = null;
+                            if (exePath != null) verInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(exePath);
+                            if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null && ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) || (verInfo.ProductMajorPart > 4)))
+                            {
+                                EnableBMSAdvancedSharedmemValues();
+                            }
+                            else
+                            {
+                                DisableBMSAdvancedSharedmemValues();
+                            }
+
+                        }
+                        if (doMore)
+                        {
+                            toReturn = _falconSmReader.GetCurrentData();
+
+                            bool computeRalt = false;
+                            if (Properties.Settings.Default.EnableISISOutput)
+                            {
+                                computeRalt = true;
+                            }
+                            if (computeRalt)
+                            {
+                                if (_terrainBrowser == null)
+                                {
+                                    _terrainBrowser = new F4Utils.Terrain.TerrainBrowser(false);
+                                    _terrainBrowser.LoadCurrentTheaterTerrainDatabase();
+                                }
+                                if (_terrainBrowser != null && toReturn != null)
+                                {
+                                    FlightDataExtension extensionData = new FlightDataExtension();
+                                    float terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
+                                    float ralt = -toReturn.z - terrainHeight;
+
+                                    //reset AGL altitude to zero if we're on the ground
+                                    if (
+                                        ((toReturn.lightBits & (int)F4SharedMem.Headers.LightBits.WOW) == (int)F4SharedMem.Headers.LightBits.WOW)
+                                          ||
+                                          (
+                                            ((toReturn.lightBits3 & (int)F4SharedMem.Headers.Bms4LightBits3.OnGround) == (int)F4SharedMem.Headers.Bms4LightBits3.OnGround)
+                                                 &&
+                                             toReturn.DataFormat == FalconDataFormats.BMS4
+                                             )
+                                        )
+                                    {
+                                        ralt = 0;
+                                    }
+
+                                    if (ralt < 0)
+                                    {
+                                        ralt = 0;
+                                    }
+                                    extensionData.RadarAltitudeFeetAGL = ralt;
+                                    toReturn.ExtensionData = extensionData;
+                                }
+                            }
+                        }
+                    }
+                    else if (_settingsManager.NetworkMode == NetworkMode.Client)
+                    {
+                        toReturn = _networkManager.ReadFlightDataFromServer();
+                    }
+                }
+            }
+            if (toReturn == null)
+            {
+                toReturn = new FlightData();
+                toReturn.hsiBits = Int32.MaxValue;
+            }
+            return toReturn;
+        }
+        private void DisableBMSAdvancedSharedmemValues()
+        {
+            _useBMSAdvancedSharedmemValues = false;
+            if (_settingsManager.NetworkMode == NetworkMode.Server)
+            {
+                Networking.Message msg = new MFDExtractor.Networking.Message(MessageTypes.DisableBMSAdvancedSharedmemValues.ToString(), null);
+                _networkManager.SubmitMessageToClientFromServer(msg);
+            }
+        }
+        private void EnableBMSAdvancedSharedmemValues()
+        {
+            _useBMSAdvancedSharedmemValues = true;
+            if (_settingsManager.NetworkMode == NetworkMode.Server)
+            {
+                Networking.Message msg = new MFDExtractor.Networking.Message(MessageTypes.EnableBMSAdvancedSharedmemValues.ToString(), null);
+                _networkManager.SubmitMessageToClientFromServer(msg);
+            }
+        }
+        #region RTT support functions
+        private static void ReadRTTCoords(Dictionary<string, Rectangle> items)
+        {
+            FileInfo file = FindBms3DCockpitFile();
+            if (file == null)
+            {
+                return;
+            }
+
+            using (FileStream stream = file.OpenRead())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string currentLine = reader.ReadLine();
+                    foreach (string itemName in items.Keys)
+                    {
+                        if (currentLine.ToLowerInvariant().StartsWith(itemName.ToLowerInvariant()))
+                        {
+                            Rectangle thisItemRect = new Rectangle();
+                            List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
+                            if (tokens.Count > 12)
+                            {
+                                try
+                                {
+                                    thisItemRect.X = Convert.ToInt32(tokens[10]);
+                                    thisItemRect.Y = Convert.ToInt32(tokens[11]);
+                                    thisItemRect.Width = Math.Abs(Convert.ToInt32(tokens[12]) - thisItemRect.X);
+                                    thisItemRect.Height = Math.Abs(Convert.ToInt32(tokens[13]) - thisItemRect.Y);
+                                    items[itemName] = thisItemRect;
+                                }
+                                catch (Exception e)
+                                {
+                                    _log.Error(e.Message, e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private static void ReadRTTCoords(CaptureCoordinatesSet captureCoordinatesSet)
+        {
+            Dictionary<string, CaptureCoordinates> items = new Dictionary<string, CaptureCoordinates>();
+            items.Add("LMFD", captureCoordinatesSet.LMFD);
+            items.Add("RMFD", captureCoordinatesSet.RMFD);
+            items.Add("MFD3", captureCoordinatesSet.MFD3);
+            items.Add("MFD4", captureCoordinatesSet.MFD4);
+            items.Add("HUD", captureCoordinatesSet.HUD);
+        }
+        private static string RunningBmsInstanceBasePath()
+        {
+            string toReturn = null;
+            string exePath = F4Utils.Process.Util.GetFalconExePath();
+            if (!string.IsNullOrEmpty(exePath))
+            {
+                toReturn = new FileInfo(exePath).Directory.FullName;
+            }
+            else
+            {
+            }
+            return toReturn;
+        }
+        private static FileInfo FindBms3DCockpitFile()
+        {
+            string basePath = RunningBmsInstanceBasePath();
+            string path = null;
+            if (basePath != null)
+            {
+
+                path = basePath + @"\art\ckptartn";
+                DirectoryInfo dir = new DirectoryInfo(path);
+                if (dir.Exists)
+                {
+                    DirectoryInfo[] subDirs = dir.GetDirectories();
+                    FileInfo file = null;
+                    foreach (DirectoryInfo thisDir in subDirs)
+                    {
+                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
+                        if (file.Exists)
+                        {
+                            try
+                            {
+                                using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                                {
+                                    fs.Close();
+                                }
+                            }
+                            catch (System.IO.IOException)
+                            {
+                                return file;
+                            }
+                        }
+                    }
+
+                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
+                    if (file.Exists)
+                    {
+                        try
+                        {
+                            using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                            {
+                                fs.Close();
+                            }
+                        }
+                        catch (System.IO.IOException)
+                        {
+                            return file;
+                        }
+                    }
+
+                }
+
+                path = basePath + @"\art\ckptart";
+                dir = new DirectoryInfo(path);
+                if (dir.Exists)
+                {
+                    DirectoryInfo[] subDirs = dir.GetDirectories();
+                    FileInfo file = null;
+                    foreach (DirectoryInfo thisDir in subDirs)
+                    {
+                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
+                        if (file.Exists)
+                        {
+                            try
+                            {
+                                using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                                {
+                                    fs.Close();
+                                }
+                            }
+                            catch (System.IO.IOException)
+                            {
+                                return file;
+                            }
+                        }
+                    }
+
+                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
+                    if (file.Exists)
+                    {
+                        return file;
+                    }
+                }
+            }
+            return null;
+        }
+        private static Image ReadRTTImage(Rectangle areaToCapture, F4TexSharedMem.Reader texSharedmemReader)
+        {
+            Image toReturn = null;
+            try
+            {
+                if (texSharedmemReader != null)
+                {
+                    toReturn = texSharedmemReader.GetImage(areaToCapture);//Common.Imaging.Util.CloneBitmap();
+                }
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message.ToString(), e);
+            }
+            return toReturn;
+        }
+
+        /// <summary>
+        /// Worker thread method for monitoring whether the sim is running
+        /// </summary>
+        private void SimStatusMonitorThreadWork()
+        {
+            try
+            {
+                int count = 0;
+
+                while (_keepRunning)
+                {
+                    count++;
+                    if (_settingsManager.NetworkMode == NetworkMode.Server || _settingsManager.NetworkMode == NetworkMode.Standalone)
+                    {
+                        bool simWasRunning = _simRunning;
+
+                        //TODO:make this check optional via the user-config file
+                        if (count % 1 == 0)
+                        {
+                            count = 0;
+                            Common.Util.DisposeObject(_texSmStatusReader);
+                            _texSmStatusReader = new F4TexSharedMem.Reader();
+
+#if SIMRUNNING
+                            _simRunning = true;
+#else
+                            try
+                            {
+                                _simRunning = _settingsManager.NetworkMode == NetworkMode.Client || F4Utils.Process.Util.IsFalconRunning();
+                            }
+                            catch (Exception ex)
+                            {
+                                _log.Error(ex.Message, ex);
+                            }
+#endif
+                            _sim3DDataAvailable = _simRunning && (_settingsManager.NetworkMode == NetworkMode.Client || _texSmStatusReader.IsDataAvailable);
+
+                            if (_sim3DDataAvailable)
+                            {
+                                try
+                                {
+                                    if (_threeDeeMode)
+                                    {
+                                        if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
+                                        if ((Properties.Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server))
+                                        {
+                                            if (
+                                                    (_captureCoordinatesSet.HUD.RTTSourceCoords == Rectangle.Empty)
+                                                        ||
+                                                    (_captureCoordinatesSet.LMFD.RTTSourceCoords == Rectangle.Empty)
+                                                        ||
+                                                    (_captureCoordinatesSet.RMFD.RTTSourceCoords == Rectangle.Empty)
+                                                        ||
+                                                    (_captureCoordinatesSet.MFD3.RTTSourceCoords == Rectangle.Empty)
+                                                        ||
+                                                    (_captureCoordinatesSet.MFD4.RTTSourceCoords == Rectangle.Empty)
+                                             )
+                                            {
+                                                ReadRTTCoords(_captureCoordinatesSet);
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                }
+                            }
+                            else
+                            {
+                                _captureCoordinatesSet.HUD.RTTSourceCoords = Rectangle.Empty;
+                                _captureCoordinatesSet.LMFD.RTTSourceCoords = Rectangle.Empty;
+                                _captureCoordinatesSet.RMFD.RTTSourceCoords = Rectangle.Empty;
+                                _captureCoordinatesSet.MFD3.RTTSourceCoords = Rectangle.Empty;
+                                _captureCoordinatesSet.MFD4.RTTSourceCoords = Rectangle.Empty;
+                            }
+                            if (simWasRunning && !_simRunning)
+                            {
+                                CloseAndDisposeSharedmemReaders();
+
+                                if (_settingsManager.NetworkMode == NetworkMode.Server)
+                                {
+                                    TearDownImageServer();
+                                }
+                            }
+                            if (_settingsManager.NetworkMode == NetworkMode.Server && (!simWasRunning && _simRunning))
+                            {
+                                SetupNetworkingServer();
+                            }
+                        }
+                    }
+                    Thread.Sleep(500);
+                    //System.GC.Collect();
+                }
+                Debug.WriteLine("SimStatusMonitorThreadWork has exited.");
+            }
+            catch (ThreadAbortException)
+            {
+            }
+            catch (ThreadInterruptedException)
+            {
+            }
+        }
+
+        private void CloseAndDisposeSharedmemReaders()
+        {
+            Common.Util.DisposeObject(_terrainBrowser);
+            _terrainBrowser = null;
+
+            Common.Util.DisposeObject(_texSmStatusReader);
+            _texSmStatusReader = null;
+
+            Common.Util.DisposeObject(_texSmReader);
+            _texSmReader = null;
+
+            Common.Util.DisposeObject(_falconSmReader);
+            _falconSmReader = null;
+        }
+
+        #endregion
+
+        #region Object Disposal & Destructors
+        /// <summary>
+        /// Public implementation of the IDisposable pattern
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        /// <summary>
+        /// Private implementation of the IDisposable pattern
+        /// </summary>
+        /// <param name="disposing"></param>
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Common.Util.DisposeObject(_texSmReader);
+                    Common.Util.DisposeObject(_texSmStatusReader);
+                    Common.Util.DisposeObject(_falconSmReader);
+                }
+            }
+            _disposed = true;
+        }
+        #endregion
+
+    }
+}

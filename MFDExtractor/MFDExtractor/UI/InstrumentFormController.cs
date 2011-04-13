@@ -112,6 +112,8 @@ namespace MFDExtractor.UI
                     controller.InstrumentForm.Monochrome = controller.PropertyInvokers.Monochrome.GetProperty();
                     controller.InstrumentForm.Rotation = controller.PropertyInvokers.RotateFlipType.GetProperty();
                     controller.InstrumentForm.WindowState = FormWindowState.Normal;
+                if (controller.PropertyInvokers.IsEnabled.GetProperty())
+                {
                     Common.Screen.Util.OpenFormOnSpecificMonitor(controller.InstrumentForm, parentForm, controller.OutputScreen, location, size, true, true);
 
                     if (initialImage != null)
