@@ -51,8 +51,11 @@ namespace MFDExtractor.UI
                 foreach (var instanceKey in _instances.Keys.ToArray())
                 {
                     InstrumentFormController instance = _instances[instanceKey];
-                    instance.InstrumentForm.Close();
-                    Common.Util.DisposeObject(instance.InstrumentForm);//TODO: make the outer object implement IDisposable
+                    if (instance.InstrumentForm != null)
+                    {
+                        instance.InstrumentForm.Close();
+                        Common.Util.DisposeObject(instance.InstrumentForm);//TODO: make the outer object implement IDisposable
+                    }
                     _instances.Remove(instanceKey);
                 }
             }
@@ -83,31 +86,32 @@ namespace MFDExtractor.UI
 
                 InstrumentFormController controller = new InstrumentFormController(instrumentName, settingsObject, formTitle, initialImage, renderer);
 
-                Point location;
-                Size size = new Size();
-                controller.InstrumentForm = new InstrumentForm();
-                controller.InstrumentForm.ShowInTaskbar = false;
-                controller.InstrumentForm.ShowIcon = false;
-                controller.InstrumentForm.Text = formTitle;
-                if (controller.PropertyInvokers.StretchToFit.GetProperty())
-                {
-                    controller.InstrumentForm.Size = controller.OutputRectangle.Size;
-                    controller.InstrumentForm.Location = controller.OutputRectangle.Location;
-                    controller.InstrumentForm.StretchToFill = true;
-                    location = new Point(0, 0);
-                    size = controller.OutputScreen.Bounds.Size;
-                }
-                else
-                {
-                    location = controller.OutputRectangle.Location;
-                    size = controller.OutputRectangle.Size;
-                }
-                controller.InstrumentForm.AlwaysOnTop = controller.PropertyInvokers.AlwaysOnTop.GetProperty();
-                controller.InstrumentForm.Monochrome = controller.PropertyInvokers.Monochrome.GetProperty();
-                controller.InstrumentForm.Rotation = controller.PropertyInvokers.RotateFlipType.GetProperty();
-                controller.InstrumentForm.WindowState = FormWindowState.Normal;
                 if (controller.PropertyInvokers.IsEnabled.GetProperty())
                 {
+                    Point location;
+                    Size size = new Size();
+                    controller.InstrumentForm = new InstrumentForm();
+                    controller.InstrumentForm.ShowInTaskbar = false;
+                    controller.InstrumentForm.ShowIcon = false;
+                    controller.InstrumentForm.Text = formTitle;
+                    if (controller.PropertyInvokers.StretchToFit.GetProperty())
+                    {
+                        controller.InstrumentForm.Size = controller.OutputRectangle.Size;
+                        controller.InstrumentForm.Location = controller.OutputRectangle.Location;
+                        controller.InstrumentForm.StretchToFill = true;
+                        location = new Point(0, 0);
+                        size = controller.OutputScreen.Bounds.Size;
+                    }
+                    else
+                    {
+                        location = controller.OutputRectangle.Location;
+                        size = controller.OutputRectangle.Size;
+                    }
+                    controller.InstrumentForm.InstrumentEnabled = controller.PropertyInvokers.IsEnabled.GetProperty();
+                    controller.InstrumentForm.AlwaysOnTop = controller.PropertyInvokers.AlwaysOnTop.GetProperty();
+                    controller.InstrumentForm.Monochrome = controller.PropertyInvokers.Monochrome.GetProperty();
+                    controller.InstrumentForm.Rotation = controller.PropertyInvokers.RotateFlipType.GetProperty();
+                    controller.InstrumentForm.WindowState = FormWindowState.Normal;
                     Common.Screen.Util.OpenFormOnSpecificMonitor(controller.InstrumentForm, parentForm, controller.OutputScreen, location, size, true, true);
 
                     if (initialImage != null)
@@ -117,8 +121,8 @@ namespace MFDExtractor.UI
                             graphics.DrawImage(initialImage, controller.InstrumentForm.ClientRectangle);
                         }
                     }
+                    controller.RegisterForFormEvents();
                 }
-                controller.RegisterForFormEvents();
                 controller.StatePersisted += statePersistedEventHandler;
                 _instances.Add(instrumentName, controller);
             }
@@ -414,6 +418,7 @@ namespace MFDExtractor.UI
                     {
                         InstrumentForm iForm = instance.InstrumentForm;
                         if (
+                            iForm !=null && 
                             iForm.Visible && iForm.SizingOrMovingCursorsAreDisplayed
                                 &&
                             (
@@ -524,7 +529,7 @@ namespace MFDExtractor.UI
                 this.PropertyInvokers.LocationLRX.SetProperty((location.X - screen.Bounds.Location.X) + size.Width);
                 this.PropertyInvokers.LocationLRY.SetProperty((location.Y - screen.Bounds.Location.Y) + size.Height);
             }
-            this.PropertyInvokers.IsEnabled.SetProperty(this.InstrumentForm.Visible);
+            this.PropertyInvokers.IsEnabled.SetProperty(this.InstrumentForm.InstrumentEnabled);
             this.PropertyInvokers.RotateFlipType.SetProperty(this.InstrumentForm.Rotation);
             this.PropertyInvokers.AlwaysOnTop.SetProperty(this.InstrumentForm.AlwaysOnTop);
             this.PropertyInvokers.Monochrome.SetProperty(this.InstrumentForm.Monochrome);

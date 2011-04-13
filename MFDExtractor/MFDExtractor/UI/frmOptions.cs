@@ -1274,8 +1274,7 @@ namespace MFDExtractor.UI
                 bool testMode = _extractor.TestMode; //store whether we're in test mode
                 settings.TestMode = false; //clear test mode flag from the current settings cache (in-memory)
                 _extractorRunningStateOnFormOpen = _extractor.Running; //store current Extractor instance's "isRunning" state
-                settings.Save(); //save our new settings to the current settings cache (on-disk)
-                settings.Reload();
+                SettingsHelper.SaveAndReloadSettings();
                 settings.TestMode = testMode; //reset the test-mode flag in the current settings cache
 
                 //we have to do the above steps because we don't want the test-mode flag
@@ -1364,7 +1363,7 @@ namespace MFDExtractor.UI
         {
             try
             {
-                Properties.Settings.Default.Reload(); //re-load the on-disk user settings into the in-memory user config cache
+                SettingsHelper.ReloadSettings();
                 if (_extractor.Running)
                 {
                     _extractor.Stop(); //stop the Extractor engine if it's running
@@ -1531,6 +1530,7 @@ namespace MFDExtractor.UI
             if (_formLoading) return;
             if (_extractor.Running)
             {
+                _extractor.LoadSettings();
                 _extractor.Stop();
                 _extractor.LoadSettings();
                 _extractor.Start();
@@ -1542,21 +1542,21 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.EnableMfd4Output = chkEnableMFD4.Checked;
             cmdRecoverMfd4.Enabled = chkEnableMFD4.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
         private void chkEnableMFD3_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableMfd3Output = chkEnableMFD3.Checked;
             cmdRecoverMfd3.Enabled = chkEnableMFD3.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
         private void chkEnableLeftMFD_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
             cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
@@ -1564,7 +1564,7 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.EnableRightMFDOutput = chkEnableRightMFD.Checked;
             cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
@@ -1572,7 +1572,7 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.EnableHudOutput = chkEnableHud.Checked;
             cmdRecoverHud.Enabled = chkEnableHud.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
@@ -2265,7 +2265,7 @@ namespace MFDExtractor.UI
         private void chkAOAIndicator_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableAOAIndicatorOutput = chkAOAIndicator.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2274,14 +2274,14 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.EnableRWROutput = chkAzimuthIndicator.Checked;
             grpAzimuthIndicatorStyle.Enabled = chkAzimuthIndicator.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
         private void chkADI_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableADIOutput = chkADI.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2289,7 +2289,7 @@ namespace MFDExtractor.UI
         private void chkAirspeedIndicator_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableASIOutput = chkAirspeedIndicator.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2299,7 +2299,7 @@ namespace MFDExtractor.UI
             Properties.Settings.Default.EnableAltimeterOutput = chkAltimeter.Checked;
             grpAltimeterStyle.Enabled = chkAltimeter.Checked;
             //grpPressureAltitudeSettings.Enabled = chkAltimeter.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2307,7 +2307,7 @@ namespace MFDExtractor.UI
         private void chkAOAIndexer_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableAOAIndexerOutput = chkAOAIndexer.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2315,7 +2315,7 @@ namespace MFDExtractor.UI
         private void chkCautionPanel_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableCautionPanelOutput = chkCautionPanel.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2323,7 +2323,7 @@ namespace MFDExtractor.UI
         private void chkCMDSPanel_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableCMDSOutput = chkCMDSPanel.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2331,7 +2331,7 @@ namespace MFDExtractor.UI
         private void chkCompass_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableCompassOutput = chkCompass.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2339,7 +2339,7 @@ namespace MFDExtractor.UI
         private void chkDED_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableDEDOutput = chkDED.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2347,21 +2347,21 @@ namespace MFDExtractor.UI
         private void chkFTIT1_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableFTIT1Output = chkFTIT1.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
         private void chkAccelerometer_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableAccelerometerOutput = chkAccelerometer.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
         private void chkNOZ1_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableNOZ1Output = chkNOZ1.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2369,7 +2369,7 @@ namespace MFDExtractor.UI
         private void chkOIL1_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableOIL1Output = chkOIL1.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2377,7 +2377,7 @@ namespace MFDExtractor.UI
         private void chkRPM1_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableRPM1Output = chkRPM1.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2385,7 +2385,7 @@ namespace MFDExtractor.UI
         private void chkFTIT2_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableFTIT2Output = chkFTIT2.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2393,7 +2393,7 @@ namespace MFDExtractor.UI
         private void chkNOZ2_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableNOZ2Output = chkNOZ2.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2401,7 +2401,7 @@ namespace MFDExtractor.UI
         private void chkOIL2_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableOIL2Output = chkOIL2.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2409,7 +2409,7 @@ namespace MFDExtractor.UI
         private void chkRPM2_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableRPM2Output = chkRPM2.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2417,7 +2417,7 @@ namespace MFDExtractor.UI
         private void chkEPU_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableEPUFuelOutput = chkEPU.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2425,14 +2425,14 @@ namespace MFDExtractor.UI
         private void chkFuelFlow_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableFuelFlowOutput = chkFuelFlow.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
         private void chkISIS_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableISISOutput = chkISIS.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2441,7 +2441,7 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.EnableFuelQuantityOutput = chkFuelQty.Checked;
             gbFuelQuantityOptions.Enabled = chkFuelQty.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2449,7 +2449,7 @@ namespace MFDExtractor.UI
         private void chkGearLights_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableGearLightsOutput = chkGearLights.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2457,21 +2457,21 @@ namespace MFDExtractor.UI
         private void chkHSI_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableHSIOutput = chkHSI.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
         private void chkEHSI_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableEHSIOutput = chkEHSI.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
         private void chkNWSIndexer_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableNWSIndexerOutput = chkNWSIndexer.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2479,15 +2479,14 @@ namespace MFDExtractor.UI
         private void chkPFL_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnablePFLOutput = chkPFL.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
-
         }
 
         private void chkSpeedbrake_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableSpeedbrakeOutput = chkSpeedbrake.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2495,7 +2494,7 @@ namespace MFDExtractor.UI
         private void chkStandbyADI_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableBackupADIOutput = chkStandbyADI.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
 
@@ -2503,38 +2502,38 @@ namespace MFDExtractor.UI
         {
             Properties.Settings.Default.EnableVVIOutput = chkVVI.Checked;
             grpVVIOptions.Enabled = chkVVI.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
         private void chkHydA_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableHYDAOutput = chkHydA.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
         private void chkHydB_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableHYDBOutput = chkHydB.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
         private void chkCabinPress_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableCabinPressOutput = chkCabinPress.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
         private void chkRollTrim_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnableRollTrimOutput = chkRollTrim.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
         }
         private void chkPitchTrim_CheckedChanged(object sender, EventArgs e)
         {
             Properties.Settings.Default.EnablePitchTrimOutput = chkPitchTrim.Checked;
-            //StopAndRestartExtractor();
+            
             this.BringToFront();
 
         }
@@ -2753,7 +2752,7 @@ namespace MFDExtractor.UI
             {
                 Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                 Properties.Settings.Default.AzimuthIndicator_ShowBezel = true;
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2763,7 +2762,7 @@ namespace MFDExtractor.UI
             {
                 Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
                 Properties.Settings.Default.AzimuthIndicator_ShowBezel = true;
-                //StopAndRestartExtractor();
+                
             }
 
         }
@@ -2774,7 +2773,7 @@ namespace MFDExtractor.UI
             {
                 Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                 Properties.Settings.Default.AzimuthIndicator_ShowBezel = false;
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2798,7 +2797,7 @@ namespace MFDExtractor.UI
             if (rdoATDPlus.Checked)
             {
                 Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2818,7 +2817,7 @@ namespace MFDExtractor.UI
             if (rdoAltimeterStyleElectromechanical.Checked)
             {
                 Properties.Settings.Default.Altimeter_Style = F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2827,7 +2826,7 @@ namespace MFDExtractor.UI
             if (rdoAltimeterStyleDigital.Checked)
             {
                 Properties.Settings.Default.Altimeter_Style = F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
-                //StopAndRestartExtractor();
+                
             }
 
         }
@@ -2837,7 +2836,7 @@ namespace MFDExtractor.UI
             if (rdoInchesOfMercury.Checked)
             {
                 Properties.Settings.Default.Altimeter_PressureUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2846,7 +2845,7 @@ namespace MFDExtractor.UI
             if (rdoMillibars.Checked)
             {
                 Properties.Settings.Default.Altimeter_PressureUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars.ToString();
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2855,7 +2854,7 @@ namespace MFDExtractor.UI
             if (rdoVVIStyleTape.Checked)
             {
                 Properties.Settings.Default.VVI_Style = VVIStyles.Tape.ToString();
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2864,7 +2863,7 @@ namespace MFDExtractor.UI
             if (rdoVVIStyleNeedle.Checked)
             {
                 Properties.Settings.Default.VVI_Style = VVIStyles.Needle.ToString();
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2873,7 +2872,7 @@ namespace MFDExtractor.UI
             if (rdoFuelQuantityNeedleCModel.Checked)
             {
                 Properties.Settings.Default.FuelQuantityIndicator_NeedleCModel = true;
-                //StopAndRestartExtractor();
+                
             }
         }
 
@@ -2882,7 +2881,7 @@ namespace MFDExtractor.UI
             if (rdoFuelQuantityDModel.Checked)
             {
                 Properties.Settings.Default.FuelQuantityIndicator_NeedleCModel = false;
-                //StopAndRestartExtractor();
+                
             }
         }
 

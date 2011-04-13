@@ -1,8 +1,6 @@
 using System;
 using System.Windows.Forms;
-using log4net;
 using MFDExtractor.UI;
-using Common.SimSupport;
 using System.Diagnostics;
 using Common.UI;
 using System.Threading;
@@ -14,50 +12,30 @@ using Common.InputSupport.UI;
 using Common.InputSupport.DirectInput;
 using Common.InputSupport;
 using F4SharedMem;
-using System.Drawing.Imaging;
 using System.IO;
 using Common.Win32;
 using LightningGauges.Renderers;
 using MFDExtractor.Networking;
-using F4SharedMem.Headers;
-using F4Utils.SimSupport;
-using System.Text;
-using System.Runtime.InteropServices;
 using Microsoft.DirectX.DirectInput;
-using System.Reflection;
 using Common.Generic;
+using log4net;
 namespace MFDExtractor
 {
-    /// <summary>
-    /// Enumeration of possible networking modes that an Extractor instance can operate under
-    /// </summary>
-    public enum NetworkMode
-    {
-        /// <summary>
-        /// Standalone (non-networked) mode
-        /// </summary>
-        Standalone,
-        /// <summary>
-        /// Server mode (provides images to remote clients in addition to providing local images)
-        /// </summary>
-        Server,
-        /// <summary>
-        /// Client mode (receives images from a remote server)
-        /// </summary>
-        Client
-    }
+    
 
     public sealed class Extractor : IDisposable
     {
-        #region Instance Variables
+        #region Class variables
         private static ILog _log = LogManager.GetLogger(typeof(Extractor));
-        private bool _disposed = false;
         /// <summary>
         /// Reference to an instance of this class -- this reference is required so that we
         /// can implement the Singleton pattern, which allows only a single instance of this
         /// class to be created as an object, per app-domain
         /// </summary>
         private static Extractor _extractor;
+        #endregion
+        #region Instance state
+        private bool _disposed = false;
 
         #region MFD & HUD Output Screens
         /// <summary>
@@ -111,9 +89,9 @@ namespace MFDExtractor
         #endregion
 
         #region Capture Coordinates
-        private CaptureCoordinatesSet _captureCoordinatesSet=new CaptureCoordinatesSet();
+        private CaptureCoordinatesSet _captureCoordinatesSet = new CaptureCoordinatesSet();
         #endregion
-        #endregion
+
 
         #region Falcon 4 Sharedmem Readers & status flags
         private F4Utils.Terrain.TerrainBrowser _terrainBrowser = new F4Utils.Terrain.TerrainBrowser(false);
@@ -214,34 +192,6 @@ namespace MFDExtractor
         /// Service name to use for this instance of the Extractor engine, if running in Server mode
         /// </summary>
         private const string _serviceName = "MFDExtractorService";
-        #endregion
-
-        #region Public Events
-        /// <summary>
-        /// Event declaration for the DataChanged event
-        /// </summary>
-        public event EventHandler DataChanged;
-        /// <summary>
-        /// Event declaration for the Started event
-        /// </summary>
-        public event EventHandler Started;
-        /// <summary>
-        /// Event declaration for the Stopping event
-        /// </summary>
-        public event EventHandler Stopping;
-        /// <summary>
-        /// Event declaration for the Stopped event
-        /// </summary>
-        public event EventHandler Stopped;
-        /// <summary>
-        /// Event declaration for the Starting event
-        /// </summary>
-        public event EventHandler Starting;
-        #endregion
-
-
-
-
         #region Threads
         private volatile bool _settingsSaveScheduled = false;
         private volatile bool _settingsLoadScheduled = false;
@@ -284,6 +234,34 @@ namespace MFDExtractor
 
         private Mediator.PhysicalControlStateChangedEventHandler _mediatorEventHandler = null;
         #endregion
+
+        #endregion
+
+
+        #endregion
+        #region Public Events
+        /// <summary>
+        /// Event declaration for the DataChanged event
+        /// </summary>
+        public event EventHandler DataChanged;
+        /// <summary>
+        /// Event declaration for the Started event
+        /// </summary>
+        public event EventHandler Started;
+        /// <summary>
+        /// Event declaration for the Stopping event
+        /// </summary>
+        public event EventHandler Stopping;
+        /// <summary>
+        /// Event declaration for the Stopped event
+        /// </summary>
+        public event EventHandler Stopped;
+        /// <summary>
+        /// Event declaration for the Starting event
+        /// </summary>
+        public event EventHandler Starting;
+        #endregion
+
 
         #region Constructors
         /// <summary>
@@ -1514,7 +1492,7 @@ namespace MFDExtractor
             {
                 this.Mediator.PhysicalControlStateChanged += _mediatorEventHandler;
             }
-            
+
             SetInstrumentImage(null, "MFD4", _networkMode);
             SetInstrumentImage(null, "MFD3", _networkMode);
             SetInstrumentImage(null, "LMFD", _networkMode);
@@ -1584,7 +1562,6 @@ namespace MFDExtractor
             TimeSpan totalElapsed = endStoppingTime.Subtract(beginStoppingTime);
             _log.DebugFormat("Extractor engine stopped at : {0}", DateTime.Now.ToString());
             _log.DebugFormat("Total time taken to stop the extractor engine (in milliseconds): {0}", totalElapsed.TotalMilliseconds);
-
         }
         /// <summary>
         /// Calls Dispose() on the current Extractor instance
@@ -1891,8 +1868,7 @@ namespace MFDExtractor
 
         private void _settingsSaverAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            Properties.Settings.Default.Save();
-            Properties.Settings.Default.Reload();
+            SettingsHelper.SaveAndReloadSettings();
             _settingsSaveScheduled = false;
         }
         #endregion
@@ -2201,7 +2177,11 @@ namespace MFDExtractor
         private static void SetInstrumentImage(Image image, string instrumentName, NetworkMode networkMode)
         {
             if (image== null) return;
-            (InstrumentFormController.Instances[instrumentName].Renderer as CanvasRenderer).Image = image;
+            InstrumentFormController controller=InstrumentFormController.Instances[instrumentName];
+            if (controller == null) return;
+            CanvasRenderer renderer = (controller.Renderer as CanvasRenderer);
+            if (renderer == null) return;
+            renderer.Image = image;
             if (networkMode == NetworkMode.Server)
             {
 
@@ -2475,7 +2455,7 @@ namespace MFDExtractor
                     }
                     catch (Exception e)
                     {
-                        _log.Debug(e.Message, e);
+                        if (!(e is ThreadAbortException))_log.Debug(e.Message, e);
                     }
                 }
             }
@@ -2583,7 +2563,10 @@ namespace MFDExtractor
                     }
                     catch (Exception e)
                     {
-                        _log.Error(e.Message.ToString(), e);
+                        if (!(e is ThreadAbortException))
+                        {
+                            _log.Error(e.Message.ToString(), e);
+                        }
                     }
 
                     DateTime thisLoopFinishTime = DateTime.Now;

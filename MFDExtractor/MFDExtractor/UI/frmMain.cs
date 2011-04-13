@@ -284,7 +284,12 @@ namespace MFDExtractor.UI
 
             //load the application's settings from the config file
             Properties.Settings settings = Properties.Settings.Default;
-
+            if (settings.UpgradeNeeded)
+            {
+                settings.Upgrade();
+                settings.UpgradeNeeded = false;
+                settings.Save();
+            }
             //configure an instance of the main Extractor engine 
             Extractor extractor = Extractor.GetInstance();
             extractor.ApplicationForm = this; //register the main form with the Extractor engine so that
@@ -321,7 +326,6 @@ namespace MFDExtractor.UI
         /// </summary>
         internal void SetupHotkeys()
         {
-            Properties.Settings settings = Properties.Settings.Default;
             _twoDPrimaryViewKeyCode = KeyConverter.ConvertFrom(((Keys)Properties.Settings.Default.TwoDPrimaryHotkey) & Keys.KeyCode);
             _twoDSecondaryViewKeyCode = KeyConverter.ConvertFrom(((Keys)Properties.Settings.Default.TwoDSecondaryHotkey) & Keys.KeyCode);
             _threeDKeyCode = KeyConverter.ConvertFrom(((Keys)Properties.Settings.Default.ThreeDHotkey) & Keys.KeyCode);

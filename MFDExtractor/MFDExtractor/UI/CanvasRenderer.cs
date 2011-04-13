@@ -12,7 +12,10 @@ namespace MFDExtractor.UI
         public Image Image { get; set; }
         public void Render(System.Drawing.Graphics g, System.Drawing.Rectangle bounds)
         {
-            g.DrawImage(this.Image, bounds);
+            if (this.Image != null)
+            {
+                g.DrawImage(this.Image, bounds);
+            }
         }
     }
 }

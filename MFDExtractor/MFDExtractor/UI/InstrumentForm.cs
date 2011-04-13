@@ -11,6 +11,7 @@ namespace MFDExtractor.UI
     {
         private bool _stretchToFill = false;
         private bool _adjustLocation = false;
+        private bool _instrumentEnabled = true;
         private ResizeHelper _resizeHelper;
         public event EventHandler DataChanged;
         private RotateFlipType _rotation;
@@ -34,6 +35,14 @@ namespace MFDExtractor.UI
             if (!base.DesignMode)
             {
                 _resizeHelper = new ResizeHelper(this);
+            }
+        }
+        public bool InstrumentEnabled
+        {
+            get { return _instrumentEnabled; }
+            set 
+            { 
+                _instrumentEnabled = value;
             }
         }
         public bool StretchToFill

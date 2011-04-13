@@ -4,11 +4,38 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
-
+namespace DdsFileTypePlugin
+{
+    public class DdsFile 
+    {
+        public struct DDSHeader 
+        {
+            public int m_pitchOrLinearSize;
+        }
+        public DDSHeader m_header;
+        public void Load(Stream stream) 
+        {
+        }
+        public byte[] GetPixelData() 
+        {
+            return new byte[]{};
+        }
+        public int GetWidth() 
+        {
+            return 0;
+        }
+        public int GetHeight() 
+        {
+            return 0;
+        }
+    }
+}
 namespace Common.Imaging
 {
+
     public static class DDS
     {
+
         public unsafe static Bitmap Load(string filePath)
         {
             if (filePath == null) throw new ArgumentNullException("filePath");
