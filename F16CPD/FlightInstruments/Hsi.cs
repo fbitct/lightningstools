@@ -278,7 +278,7 @@ namespace F16CPD.FlightInstruments
                     crg.ResetTransform();
 
                 }
-                compassRose = Common.Imaging.Util.RotateBitmap((Bitmap)compassRose, currentHeadingInDecimalDegrees);
+                compassRose = (Bitmap)Common.Imaging.Util.RotateBitmap((Bitmap)compassRose, currentHeadingInDecimalDegrees);
                 g.DrawImageUnscaled(compassRose, new Point(120, 29));
 
                 whitePen.Width = 3;

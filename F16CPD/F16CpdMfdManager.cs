@@ -2185,8 +2185,8 @@ namespace F16CPD
                 {
                     if (_nightMode)
                     {
-                        using (Bitmap copy = Common.Imaging.Util.CopyBitmap(_lastRenderedChecklistPdfPage)) 
-                        using (Bitmap reverseVideo = Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
+                        using (Bitmap copy = (Bitmap)Common.Imaging.Util.CopyBitmap(_lastRenderedChecklistPdfPage)) 
+                        using (Bitmap reverseVideo = (Bitmap)Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
                             target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height, GraphicsUnit.Pixel);
                         }
@@ -2225,8 +2225,8 @@ namespace F16CPD
                 {
                     if (_nightMode)
                     {
-                        using (Bitmap copy = Common.Imaging.Util.CopyBitmap(_lastRenderedChartPdfPage))
-                        using (Bitmap reverseVideo = Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
+                        using (Bitmap copy = (Bitmap)Common.Imaging.Util.CopyBitmap(_lastRenderedChartPdfPage))
+                        using (Bitmap reverseVideo = (Bitmap)Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
                             target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height, GraphicsUnit.Pixel);
                         }

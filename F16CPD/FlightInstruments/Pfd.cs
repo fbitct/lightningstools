@@ -160,7 +160,7 @@ namespace F16CPD.FlightInstruments
             {
                 Bitmap markerDiamond = Properties.Resources.adidiamond;
                 markerDiamond.MakeTransparent(Color.FromArgb(255, 0, 255));
-                _markerDiamond = Common.Imaging.Util.ResizeBitmap(markerDiamond, new Size(15, 15));
+                _markerDiamond = (Bitmap)Common.Imaging.Util.ResizeBitmap(markerDiamond, new Size(15, 15));
             }
 
             //prepare draw localizer indicator line
@@ -1315,7 +1315,7 @@ namespace F16CPD.FlightInstruments
                 h.Transform = origTransform;
             }
 
-            Bitmap cropped = Common.Imaging.Util.CropBitmap(start, cropRectangle);
+            Bitmap cropped = (Bitmap)Common.Imaging.Util.CropBitmap(start, cropRectangle);
             return cropped;
         }
 
@@ -1364,7 +1364,7 @@ namespace F16CPD.FlightInstruments
                 if (bottomRightCrop.Y > start.Height) bottomRightCrop.Y = start.Height;
 
                 Rectangle cropRectangle = new Rectangle(topLeftCrop.X, topLeftCrop.Y, bottomRightCrop.X - topLeftCrop.X, bottomRightCrop.Y - topLeftCrop.Y);
-                Bitmap cropped = Common.Imaging.Util.CropBitmap(start, cropRectangle);
+                Bitmap cropped = (Bitmap)Common.Imaging.Util.CropBitmap(start, cropRectangle);
 
                 //cut zero-mark cutout into tape
                 using (Graphics g = Graphics.FromImage(cropped))
@@ -1449,7 +1449,7 @@ namespace F16CPD.FlightInstruments
             if (bottomRightCrop.Y > start.Height) bottomRightCrop.Y = start.Height;
 
             Rectangle cropRectangle = new Rectangle(topLeftCrop.X, topLeftCrop.Y, bottomRightCrop.X - topLeftCrop.X, bottomRightCrop.Y - topLeftCrop.Y);
-            Bitmap cropped = Common.Imaging.Util.CropBitmap(start, cropRectangle);
+            Bitmap cropped = (Bitmap)Common.Imaging.Util.CropBitmap(start, cropRectangle);
 
             return cropped;
         }
@@ -1537,7 +1537,7 @@ namespace F16CPD.FlightInstruments
 
 
 
-            Bitmap cropped = Common.Imaging.Util.CropBitmap(start, cropRectangle);
+            Bitmap cropped = (Bitmap)Common.Imaging.Util.CropBitmap(start, cropRectangle);
             return cropped;
         }
 

@@ -1854,7 +1854,7 @@ namespace F16CPD.SimSupport.Falcon4
                     {
                         _mapAirplaneBitmap = (Bitmap)Properties.Resources.F16Symbol.Clone(); ;
                         _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255,0,255));
-                        _mapAirplaneBitmap = Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap, new Size((int)Math.Floor(((float)_mapAirplaneBitmap.Width)), (int)Math.Floor(((float)_mapAirplaneBitmap.Height))));
+                        _mapAirplaneBitmap = (Bitmap)Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap, new Size((int)Math.Floor(((float)_mapAirplaneBitmap.Width)), (int)Math.Floor(((float)_mapAirplaneBitmap.Height))));
                     }
                     g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width) / 2)), (((renderRectangle.Height - _mapAirplaneBitmap.Height) / 2)));
 
