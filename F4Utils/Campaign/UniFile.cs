@@ -93,6 +93,7 @@ namespace F4Utils.Campaign
                 }
                 else
                 {
+                    System.Diagnostics.Debug.WriteLine(string.Format("unexpected unit type:{0} at location: {1}", thisUnitType, curByte));
                 }
             }
 
