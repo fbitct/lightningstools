@@ -151,6 +151,7 @@ namespace Common.MacroProgramming
                 {
                     input.ki.dwFlags |= KEYEVENTF.EXTENDEDKEY;
                 }
+                System.Diagnostics.Debug.WriteLine(input.ki.wScan);
                 input.type = INPUT_TYPE.INPUT_KEYBOARD;
                 inputs[curInput] = input;
                 curInput++;
