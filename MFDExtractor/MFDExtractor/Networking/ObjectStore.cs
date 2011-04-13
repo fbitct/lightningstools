@@ -59,7 +59,7 @@ namespace MFDExtractor.Networking
         }
         public byte[] GetSerializedObject(string objectName)
         {
-            if (!Extractor._simRunning)
+            if (!Extractor.GetInstance().Running)
             {
                 return null;
             }

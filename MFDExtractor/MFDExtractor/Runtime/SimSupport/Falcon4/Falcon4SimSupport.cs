@@ -372,7 +372,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             return null;
         }
-        private static Image ReadRTTImage(Rectangle areaToCapture, F4TexSharedMem.Reader texSharedmemReader)
+        internal static Image ReadRTTImage(Rectangle areaToCapture, F4TexSharedMem.Reader texSharedmemReader)
         {
             Image toReturn = null;
             try
@@ -433,7 +433,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                                     if (_threeDeeMode)
                                     {
                                         if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
-                                        if ((Properties.Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server))
+                                        if ((Properties.Settings.Default.EnableHudOutput || _settingsManager.NetworkMode == NetworkMode.Server))
                                         {
                                             if (
                                                     (_captureCoordinatesSet.HUD.RTTSourceCoords == Rectangle.Empty)

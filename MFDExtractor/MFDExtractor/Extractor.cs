@@ -369,6 +369,7 @@ namespace MFDExtractor
         /// </summary>
         /// <returns>a Bitmap containing the current MFD #4 image</returns>
         private static Image GetCurrentBitmap(
+            bool simRunning,
             bool testMode, 
             NetworkMode networkMode, 
             bool threeDeeMode, 
@@ -386,7 +387,7 @@ namespace MFDExtractor
             }
             else
             {
-                if (_simRunning || networkMode == NetworkMode.Client)
+                if (simRunning || networkMode == NetworkMode.Client)
                 {
                     if (threeDeeMode && (networkMode == NetworkMode.Server || networkMode== NetworkMode.Standalone))
                     {
@@ -407,54 +408,50 @@ namespace MFDExtractor
             }
             return toReturn;
         }
-        private static Image GetCurrentInstrumentImage(bool testMode,NetworkMode networkMode,bool threeDeeMode,bool twoDeePrimaryView,Image testAlignmentBitmap,CaptureCoordinates coordinates,Func<Image> readBitmapFromNetworkFunc,F4TexSharedMem.Reader rttReader)
+        private static Image GetCurrentInstrumentImage(bool simRunning, bool testMode,NetworkMode networkMode,bool threeDeeMode,bool twoDeePrimaryView,Image testAlignmentBitmap,CaptureCoordinates coordinates,Func<Image> readBitmapFromNetworkFunc,F4TexSharedMem.Reader rttReader)
         {
-            return GetCurrentBitmap(testMode, networkMode, threeDeeMode, twoDeePrimaryView, testAlignmentBitmap, coordinates, readBitmapFromNetworkFunc, (coords)=> ReadRTTImage(coords, rttReader));
+            return GetCurrentBitmap(simRunning, testMode, networkMode, threeDeeMode, twoDeePrimaryView, testAlignmentBitmap, coordinates, readBitmapFromNetworkFunc, (coords)=> ReadRTTImage(coords, rttReader));
         }
-
-
-
-
 
         /// <summary>
         /// Returns the current MFD #4 image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
         /// </summary>
         /// <returns>a Bitmap containing the current MFD #4 image</returns>
-        private Image GetMfd4Bitmap()
+        private Image GetMfd4Bitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _mfd4TestAlignmentImage, _captureCoordinatesSet.MFD4, ()=>ReadInstrumentImageFromNetwork("MFD4"), _texSmReader);
+            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _mfd4TestAlignmentImage, coordinatesSet.MFD4, () => ReadInstrumentImageFromNetwork("MFD4"), _texSmReader);
         }
         /// <summary>
         /// Returns the current MFD #3 image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
         /// </summary>
         /// <returns>a Bitmap containing the current MFD #3 image</returns>
-        private Image GetMfd3Bitmap()
+        private Image GetMfd3Bitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _mfd3TestAlignmentImage, _captureCoordinatesSet.MFD3, () => ReadInstrumentImageFromNetwork("MFD3"), _texSmReader);
+            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _mfd3TestAlignmentImage, coordinatesSet.MFD3, () => ReadInstrumentImageFromNetwork("MFD3"), _texSmReader);
         }
         /// <summary>
         /// Returns the current Left MFD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
         /// </summary>
         /// <returns>a Bitmap containing the current Left MFD image</returns>
-        private Image GetLeftMfdBitmap()
+        private Image GetLeftMfdBitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _leftMfdTestAlignmentImage, _captureCoordinatesSet.LMFD, () => ReadInstrumentImageFromNetwork("LMFD"), _texSmReader);
+            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _leftMfdTestAlignmentImage, coordinatesSet.LMFD, () => ReadInstrumentImageFromNetwork("LMFD"), _texSmReader);
         }
         /// <summary>
         /// Returns the current Right MFD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
         /// </summary>
         /// <returns>a Bitmap containing the current Right MFD image</returns>
-        private Image GetRightMfdBitmap()
+        private Image GetRightMfdBitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _rightMfdTestAlignmentImage, _captureCoordinatesSet.RMFD, () => ReadInstrumentImageFromNetwork("RMFD"), _texSmReader);
+            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _rightMfdTestAlignmentImage, coordinatesSet.RMFD, () => ReadInstrumentImageFromNetwork("RMFD"), _texSmReader);
         }
         /// <summary>
         /// Returns the current HUD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
         /// </summary>
         /// <returns>a Bitmap containing the current HUD image</returns>
-        private Image GetHudBitmap()
+        private Image GetHudBitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _hudTestAlignmentImage, _captureCoordinatesSet.HUD, () => ReadInstrumentImageFromNetwork("HUD"), _texSmReader);
+            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _hudTestAlignmentImage, coordinatesSet.HUD, () => ReadInstrumentImageFromNetwork("HUD"), _texSmReader);
         }
         
         #endregion
@@ -716,13 +713,14 @@ namespace MFDExtractor
             {
                 while (_keepRunning)
                 {
-                    _windowSizingOrMoving = InstrumentFormController.IsWindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
+                    bool windowSizingOrMoving = InstrumentFormController.IsWindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
+
                     Application.DoEvents();
-                    if (_settingsSaveScheduled && !_windowSizingOrMoving)
+                    if (_settingsSaveScheduled && !windowSizingOrMoving)
                     {
                         SaveSettingsAsync();
                     }
-                    if (_settingsLoadScheduled && !_windowSizingOrMoving)
+                    if (_settingsLoadScheduled && !windowSizingOrMoving)
                     {
                         LoadSettingsAsync();
                     }
@@ -739,7 +737,7 @@ namespace MFDExtractor
                     }
 
 
-                    if (_simRunning || _testMode || NetworkMode == NetworkMode.Client)
+                    if (simRunning || testMode||  NetworkMode == NetworkMode.Client)
                     {
                         FlightData current = GetFlightData();
                         SetFlightData(current);
@@ -747,7 +745,7 @@ namespace MFDExtractor
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
                             _flightData,
                             _settingsManager.NetworkMode, 
-                            _simRunning, 
+                            simRunning, 
                             _renderers, 
                             _useBMSAdvancedSharedmemValues, 
                             UpdateEHSIBrightnessLabelVisibility);
@@ -760,7 +758,7 @@ namespace MFDExtractor
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
                             _flightData, 
                             _settingsManager.NetworkMode, 
-                            _simRunning, 
+                            simRunning, 
                             _renderers, 
                             _useBMSAdvancedSharedmemValues, 
                             UpdateEHSIBrightnessLabelVisibility);
@@ -803,7 +801,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!_simRunning && !(_settingsManager.NetworkMode == NetworkMode.Client)) && !_settingsManager.TestMode)
+                    if ((!simRunning && !(_settingsManager.NetworkMode == NetworkMode.Client)) && !_settingsManager.TestMode)
                     {
                         Application.DoEvents();
                         Thread.Sleep(5); //sleep an additional half-second or so here if we're not a client and there's no sim running and we're not in test mode

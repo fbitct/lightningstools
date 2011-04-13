@@ -110,6 +110,8 @@
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FlightDataExtension.cs" />
+    <Compile Include="FlightDataToRendererStateTranslator.cs" />
     <Compile Include="Networking\ImageObjectStore.cs" />
     <Compile Include="Networking\ObjectStore.cs" />
     <Compile Include="Runtime\FormManager.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Runtime\Settings\KeySettings.cs" />
     <Compile Include="Runtime\MessageManager.cs" />
     <Compile Include="Runtime\SimSupport\Falcon4\Falcon4SimSupport.cs" />
+    <Compile Include="SettingsHelper.cs" />
     <Compile Include="UI\CanvasRenderer.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>
@@ -146,7 +149,6 @@
       <DependentUpon>frmSelectImportExportCoordinates.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Networking.cs" />
     <Compile Include="UI\DraggableForm.cs">
       <SubType>Form</SubType>
     </Compile>

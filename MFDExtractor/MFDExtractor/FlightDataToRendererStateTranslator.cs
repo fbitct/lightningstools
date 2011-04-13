@@ -6,6 +6,7 @@ using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
 using F4Utils.SimSupport;
+using Common.Networking;
 
 namespace MFDExtractor
 {

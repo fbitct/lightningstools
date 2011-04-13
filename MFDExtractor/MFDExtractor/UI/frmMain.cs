@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Microsoft.DirectX.DirectInput;
 using log4net;
 using Common.Networking;
+using MFDExtractor.Runtime;
 namespace MFDExtractor.UI
 {
     /// <summary>
@@ -293,7 +294,7 @@ namespace MFDExtractor.UI
             }
             //configure an instance of the main Extractor engine 
             Extractor extractor = Extractor.GetInstance();
-            extractor.ApplicationForm = this; //register the main form with the Extractor engine so that
+            FormManager.ApplicationForm = this; //register the main form with the Extractor engine so that
                                               //the Extractor can inform the main form of any updates to
                                               //the position of visible forms
 

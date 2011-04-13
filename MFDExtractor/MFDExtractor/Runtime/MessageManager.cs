@@ -132,7 +132,7 @@ namespace MFDExtractor.Runtime
                     default:
                         break;
                 }
-                pendingMessage = _client.GetNextMessageToClientFromServer();
+                pendingMessage = _networkManager.GetNextPendingMessageToClientFromServer();
             }
         }
 

@@ -70,11 +70,11 @@ namespace MFDExtractor.UI
         public static void Create
         (
             string instrumentName,
-            string formTitle, 
-            Form parentForm, 
+            string formTitle,
+            Form parentForm,
             Image initialImage,
             EventHandler statePersistedEventHandler,
-            object settingsObject, 
+            object settingsObject,
             IInstrumentRenderer renderer
         )
         {
@@ -112,21 +112,22 @@ namespace MFDExtractor.UI
                     controller.InstrumentForm.Monochrome = controller.PropertyInvokers.Monochrome.GetProperty();
                     controller.InstrumentForm.Rotation = controller.PropertyInvokers.RotateFlipType.GetProperty();
                     controller.InstrumentForm.WindowState = FormWindowState.Normal;
-                if (controller.PropertyInvokers.IsEnabled.GetProperty())
-                {
-                    Common.Screen.Util.OpenFormOnSpecificMonitor(controller.InstrumentForm, parentForm, controller.OutputScreen, location, size, true, true);
-
-                    if (initialImage != null)
+                    if (controller.PropertyInvokers.IsEnabled.GetProperty())
                     {
-                        using (Graphics graphics = controller.InstrumentForm.CreateGraphics())
+                        Common.Screen.Util.OpenFormOnSpecificMonitor(controller.InstrumentForm, parentForm, controller.OutputScreen, location, size, true, true);
+
+                        if (initialImage != null)
                         {
-                            graphics.DrawImage(initialImage, controller.InstrumentForm.ClientRectangle);
+                            using (Graphics graphics = controller.InstrumentForm.CreateGraphics())
+                            {
+                                graphics.DrawImage(initialImage, controller.InstrumentForm.ClientRectangle);
+                            }
                         }
+                        controller.RegisterForFormEvents();
                     }
-                    controller.RegisterForFormEvents();
+                    controller.StatePersisted += statePersistedEventHandler;
+                    _instances.Add(instrumentName, controller);
                 }
-                controller.StatePersisted += statePersistedEventHandler;
-                _instances.Add(instrumentName, controller);
             }
         }
         private static void CreatePerformanceCounters()
