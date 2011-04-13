@@ -7,16 +7,27 @@ PROXY CLASS FOR THE IDIRECT3D7 COM INTERFACE
 // ---------------------------------------------------------------------------------------
 myID3D7::myID3D7(LPDIRECT3D7 pOriginal)
 {
+   	m_pID3D7=NULL;
+	m_pID3DDevice7=NULL;
+
 	//OutputDebugString("DDRAWPROXY: myID3D7::Constructor reached.\r\n");
-	m_pID3D7 = pOriginal;
+	if (pOriginal) 
+	{
+		m_pID3D7 = pOriginal;
+		m_pID3D7->AddRef();
+	}
 	//OutputDebugString("DDRAWPROXY: myID3D7::Constructor exited.\r\n");
 }
 
 // ---------------------------------------------------------------------------------------
 myID3D7::~myID3D7(void)
 {
-	//OutputDebugString("DDRAWPROXY: myID3D7::default Constructor reached.\r\n");
-	//OutputDebugString("DDRAWPROXY: myID3D7::default Constructor exited.\r\n");
+	if (m_pID3D7) 
+	{
+		m_pID3D7->Release();
+	}
+	//OutputDebugString("DDRAWPROXY: myID3D7::default destructor reached.\r\n");
+	//OutputDebugString("DDRAWPROXY: myID3D7::default destructor exited.\r\n");
 }
 
 // ---------------------------------------------------------------------------------------
@@ -29,7 +40,8 @@ HRESULT WINAPI myID3D7::QueryInterface (REFIID riid, LPVOID* obp)
 	// and to check if such an interface is there
 	//OutputDebugString("DDRAWPROXY: myID3D7::QueryInterface (v7) reached.\r\n");
 	 HRESULT hRes = m_pID3D7->QueryInterface(riid, obp); 
-	 if (riid==IID_IDirect3D7 && hRes == DD_OK && *obp) {
+
+	 if (riid==IID_IDirect3D7 && SUCCEEDED(hRes) && *obp) {
 		 *obp = static_cast<IDirect3D7 *>(this);
 	 }
 	//OutputDebugString("DDRAWPROXY: myID3D7::QueryInterface exited.\r\n");
@@ -77,8 +89,11 @@ HRESULT WINAPI myID3D7::CreateDevice(
 {
 	//OutputDebugString("DDRAWPROXY: myID3D7::CreateDevice reached.\r\n");
 	HRESULT toReturn=m_pID3D7->CreateDevice(rclsid, lpDDS, lplpD3DDevice);
-	m_pID3DDevice7 = static_cast<IDirect3DDevice7 *>( new myID3DDevice7(*lplpD3DDevice));
-	*lplpD3DDevice= m_pID3DDevice7;
+	if (SUCCEEDED(toReturn) && lplpD3DDevice && *lplpD3DDevice) 
+	{
+		m_pID3DDevice7 = static_cast<IDirect3DDevice7 *>( new myID3DDevice7(*lplpD3DDevice));
+		*lplpD3DDevice= m_pID3DDevice7;
+	}
 	//OutputDebugString("DDRAWPROXY: myID3D7::CreateDevice exited.\r\n");
 	return (toReturn);
 }

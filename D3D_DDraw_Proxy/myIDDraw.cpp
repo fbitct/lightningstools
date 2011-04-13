@@ -12,13 +12,22 @@ static BOOL m_bIDDS1HookSet=false;
 myIDDraw::myIDDraw(LPDIRECTDRAW7 pOriginal)
 {
 	//OutputDebugString("DDRAWPROXY: myIDDraw Constructor reached.\r\n");
-	m_pIDDraw = pOriginal;
+	m_pIDDraw =NULL;
+	if (pOriginal) 
+	{
+		m_pIDDraw = pOriginal;
+		m_pIDDraw->AddRef();
+	}
 	//OutputDebugString("DDRAWPROXY: myIDDraw Constructor exited.\r\n");
 }
 
 // ---------------------------------------------------------------------------------------
 myIDDraw::~myIDDraw(void)
 {
+	if (m_pIDDraw)
+	{
+		m_pIDDraw->Release();
+	}
 	//OutputDebugString("DDRAWPROXY: myIDDraw Destructor reached.\r\n");
 	//OutputDebugString("DDRAWPROXY: myIDDraw Destructor exited.\r\n");
 }
@@ -36,7 +45,7 @@ HRESULT WINAPI myIDDraw::QueryInterface (REFIID riid, LPVOID* obp)
 	{
 		LPDIRECT3D7 lpd3d7=NULL;
 		hRes = m_pIDDraw->QueryInterface(riid, ( void** ) &lpd3d7);
-		if (lpd3d7 && hRes == DD_OK) {
+		if (lpd3d7 && SUCCEEDED(hRes)) {
 			m_pID3D7 = static_cast <IDirect3D7 *>( new myID3D7(lpd3d7));
 			*obp=m_pID3D7;
 		}
@@ -44,7 +53,7 @@ HRESULT WINAPI myIDDraw::QueryInterface (REFIID riid, LPVOID* obp)
 	else if (riid == IID_IDirectDraw7) 
 	{
 		hRes = m_pIDDraw->QueryInterface(riid,obp);
-		if (*obp && hRes == DD_OK) {
+		if (*obp && SUCCEEDED(hRes)) {
 			*obp = static_cast<IDirectDraw7 *>(this);
 		}
 	}
@@ -115,6 +124,8 @@ HRESULT  WINAPI myIDDraw::CreatePalette(DWORD dwFlags,LPPALETTEENTRY lpDDColorAr
 // ---------------------------------------------------------------------------------------
 HRESULT  WINAPI myIDDraw::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2,LPDIRECTDRAWSURFACE7 FAR *lplpDDSurface,IUnknown FAR *pUnkOuter)
 {
+	extern LPDIRECTDRAWSURFACE7 g_p3dCockpitRTT;
+
 	//OutputDebugString("DDRAWPROXY: myIDDraw::CreateSurface reached.\r\n");
 	LPDIRECTDRAWSURFACE7 lpDDS7 = NULL;
 	*lplpDDSurface = NULL;
@@ -125,27 +136,41 @@ HRESULT  WINAPI myIDDraw::CreateSurface(LPDDSURFACEDESC2 lpDDSurfaceDesc2,LPDIRE
 				&& 
 				((lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_TEXTURE) == DDSCAPS_TEXTURE) 
 				&& 
-				(lpDDSurfaceDesc2->dwHeight ==512) 
+				((lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_3DDEVICE) == DDSCAPS_3DDEVICE) 
 				&& 
-				(lpDDSurfaceDesc2->dwWidth ==512)
+				!((lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_FRONTBUFFER) == DDSCAPS_FRONTBUFFER) 
+				&&
+				!((lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_BACKBUFFER) == DDSCAPS_BACKBUFFER) 
+				&&
+				!((lpDDSurfaceDesc2->ddsCaps.dwCaps & DDSCAPS_BACKBUFFER) == DDSCAPS_COMPLEX) 
+				&&
+				(lpDDSurfaceDesc2->dwHeight >=512)
+				&& 
+				(lpDDSurfaceDesc2->dwWidth >=512)
+				
 			)
 		{
+			//lpDDSurfaceDesc2->dwHeight =1024;
+			//lpDDSurfaceDesc2->dwWidth=1024;
 
-			//if a vidmem texture is being requested and its size is 512x512, then let's try to create it in non-local vidmem first; if that fails we'll create it
+			//lpDDSurfaceDesc2->dwFlags |= DDSD_CAPS;
+			//lpDDSurfaceDesc2->ddsCaps.dwCaps2 |= DDSCAPS2_HINTDYNAMIC;
+
+			//if a vidmem RTT is being requested and its size is >=512x512, then let's try to create it in non-local vidmem first; if that fails we'll create it
 			//in local vidmem per the original request -- but the advantage of creating it in nonlocal vidmem is we can blit it to system memory without incurring a bus
 			//penalty
-			lpDDSurfaceDesc2->ddsCaps.dwCaps |= (DDSCAPS_NONLOCALVIDMEM);
+			//lpDDSurfaceDesc2->ddsCaps.dwCaps |= (DDSCAPS_NONLOCALVIDMEM);
 			retVal = m_pIDDraw->CreateSurface(lpDDSurfaceDesc2, &lpDDS7, pUnkOuter);
-			if (retVal != DD_OK) 
-			{
-				lpDDSurfaceDesc2->ddsCaps.dwCaps &= (~DDSCAPS_NONLOCALVIDMEM);
-				retVal = m_pIDDraw->CreateSurface(lpDDSurfaceDesc2, &lpDDS7, pUnkOuter);
-			}
+			//if (FAILED(retVal)) 
+			//{
+			//	lpDDSurfaceDesc2->ddsCaps.dwCaps &= (~DDSCAPS_NONLOCALVIDMEM);
+			//	retVal = m_pIDDraw->CreateSurface(lpDDSurfaceDesc2, &lpDDS7, pUnkOuter);
+			//}
 		}
 		else {
 			retVal = m_pIDDraw->CreateSurface(lpDDSurfaceDesc2, &lpDDS7, pUnkOuter);
 		}
-		if (lpDDS7 && (retVal == DD_OK)) {
+		if (lpDDS7 && SUCCEEDED(retVal)) {
 			//*lplpDDSurface = new myIDDS7(lpDDS7);
 			
 			*lplpDDSurface = lpDDS7;

@@ -87,7 +87,7 @@ HRESULT WINAPI DirectDrawCreateEx(GUID FAR * lpGuid, LPVOID  *lplpDD, REFIID  ii
 		LPDIRECTDRAW7 dummy=NULL;
 		*lplpDD = NULL;
 		h = DirectDrawCreateEx_fn(lpGuid, (LPVOID *)&dummy, iid, pUnkOuter);
-		if (h == DD_OK && dummy) {
+		if (SUCCEEDED(h) && dummy) {
 			gl_myIDD = static_cast<IDirectDraw7 *>( new myIDDraw(dummy));
 			*lplpDD = gl_myIDD;
 		}

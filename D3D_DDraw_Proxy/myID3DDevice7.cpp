@@ -1,4 +1,9 @@
 #include "StdAfx.h"
+
+extern LPDIRECTDRAWSURFACE7 g_p3dCockpitRTT=NULL;
+extern LPDIRECTDRAWSURFACE7 g_pCurrentRenderTarget=NULL;
+static int m_lFrameCount=0;
+
 /*
 PROXY CLASS FOR THE IDIRECT3DDEVICE7 COM INTERFACE
 */
@@ -8,13 +13,22 @@ PROXY CLASS FOR THE IDIRECT3DDEVICE7 COM INTERFACE
 myID3DDevice7::myID3DDevice7(LPDIRECT3DDEVICE7 pOriginal)
 {
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::Constructor reached.\r\n");
-	m_pID3DDevice7 = pOriginal;
+   	m_pID3DDevice7 = NULL;
+	if (pOriginal) 
+	{
+		m_pID3DDevice7 = pOriginal;
+		m_pID3DDevice7->AddRef();
+	}
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::Constructor exited.\r\n");
 }
 
 // ---------------------------------------------------------------------------------------
 myID3DDevice7::~myID3DDevice7(void)
 {
+	if (m_pID3DDevice7)
+	{
+		m_pID3DDevice7->Release();
+	}
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::default Constructor reached.\r\n");
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::default Constructor exited.\r\n");
 }
@@ -28,7 +42,7 @@ HRESULT WINAPI myID3DDevice7::QueryInterface (REFIID riid, LPVOID* obp)
 	// call this to increase AddRef at original object
 	// and to check if such an interface is there
 	HRESULT hRes= m_pID3DDevice7->QueryInterface(riid, obp); 
-	if (riid == IID_IDirect3DDevice7 && *obp && hRes == DD_OK) {
+	if (riid == IID_IDirect3DDevice7 && *obp && SUCCEEDED(hRes)) {
 		*obp = static_cast<IDirect3DDevice7 *>(this);
 	}
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::QueryInterface exited.\r\n");
@@ -56,7 +70,10 @@ ULONG   WINAPI myID3DDevice7::Release(void)
 		if (count == 0) 
 		{
 			m_pID3DDevice7 = NULL;		
+			//CloseTexturesSharedMemoryArea();
+			g_p3dCockpitRTT=NULL;
 			delete(this); 
+
 		}
 	}
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::Release exited.\r\n");
@@ -84,7 +101,14 @@ HRESULT  WINAPI myID3DDevice7::BeginScene(void)
 HRESULT  WINAPI myID3DDevice7::EndScene(void)
 {
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::EndScene reached.\r\n");
-	return m_pID3DDevice7->EndScene();
+	HRESULT retVal = m_pID3DDevice7->EndScene();
+	if (g_pCurrentRenderTarget != g_p3dCockpitRTT) 
+	{
+		m_lFrameCount++;
+		if (m_lFrameCount >1000) m_lFrameCount=0;
+		if (m_lFrameCount % 2==0) Copy3DCockpitRTTToSharedMemory(g_p3dCockpitRTT, NULL);
+	}
+	return retVal;
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::EndScene exited.\r\n");
 }
 HRESULT  WINAPI myID3DDevice7::GetDirect3D(LPDIRECT3D7 *lplpD3D)
@@ -94,7 +118,7 @@ HRESULT  WINAPI myID3DDevice7::GetDirect3D(LPDIRECT3D7 *lplpD3D)
 	LPDIRECT3D7 newDirect3D;		
 	*lplpD3D = NULL;
 	toReturn=m_pID3DDevice7->GetDirect3D(&newDirect3D);
-	if (newDirect3D && toReturn == DD_OK) {
+	if (newDirect3D && SUCCEEDED(toReturn)) {
 		*lplpD3D = static_cast<IDirect3D7 *>( new myID3D7(newDirect3D));
 	}
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::GetDirect3D exited.\r\n");
@@ -102,8 +126,44 @@ HRESULT  WINAPI myID3DDevice7::GetDirect3D(LPDIRECT3D7 *lplpD3D)
 }
 HRESULT  WINAPI myID3DDevice7::SetRenderTarget(LPDIRECTDRAWSURFACE7 lpNewRenderTarget, DWORD dwFlags)
 {
+	HRESULT res=S_OK;
+	BOOL newRenderTargetIs3dCockpitRTT=FALSE;
+	if (lpNewRenderTarget && !g_p3dCockpitRTT ) 
+	{
+		DDSURFACEDESC2 desc; memset(&desc,0, sizeof(DDSURFACEDESC2)); desc.dwSize=sizeof(DDSURFACEDESC2);
+		res= lpNewRenderTarget->GetSurfaceDesc(&desc);
+		if (SUCCEEDED(res))
+		{
+			if (
+				((desc.ddsCaps.dwCaps & DDSCAPS_VIDEOMEMORY) == DDSCAPS_VIDEOMEMORY) 
+				&& 
+				((desc.ddsCaps.dwCaps & DDSCAPS_TEXTURE) == DDSCAPS_TEXTURE) 
+				&& 
+				((desc.ddsCaps.dwCaps & DDSCAPS_3DDEVICE) == DDSCAPS_3DDEVICE) 
+				&& 
+				!((desc.ddsCaps.dwCaps & DDSCAPS_FRONTBUFFER) == DDSCAPS_FRONTBUFFER) 
+				&&
+				!((desc.ddsCaps.dwCaps & DDSCAPS_BACKBUFFER) == DDSCAPS_BACKBUFFER) 
+				&&
+				!((desc.ddsCaps.dwCaps & DDSCAPS_COMPLEX) == DDSCAPS_COMPLEX) 
+				&&
+				(desc.dwHeight >=512)
+				&& 
+				(desc.dwWidth >=512)
+				) newRenderTargetIs3dCockpitRTT = TRUE;
+		}
+	}
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::SetRenderTarget reached.\r\n");
-	return m_pID3DDevice7->SetRenderTarget(lpNewRenderTarget,dwFlags);
+	res = m_pID3DDevice7->SetRenderTarget(lpNewRenderTarget,dwFlags);
+	if (SUCCEEDED(res))
+	{
+		if (g_pCurrentRenderTarget) g_pCurrentRenderTarget->Release();
+		if (lpNewRenderTarget) lpNewRenderTarget->AddRef();
+
+		if (newRenderTargetIs3dCockpitRTT) g_p3dCockpitRTT = lpNewRenderTarget;
+		g_pCurrentRenderTarget = lpNewRenderTarget;
+	}
+	return res;
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::SetRenderTarget exited.\r\n");
 }
 HRESULT  WINAPI myID3DDevice7::GetRenderTarget(LPDIRECTDRAWSURFACE7 *lplpRenderTarget)
@@ -280,12 +340,12 @@ HRESULT  WINAPI myID3DDevice7::SetTexture(DWORD dwStage,LPDIRECTDRAWSURFACE7 lpT
 		}
 		else 
 		{
-			toReturn = S_FALSE;
+			toReturn = E_FAIL;
 		}
 	}
 	catch (...) 
 	{
-		toReturn = S_FALSE;
+		toReturn = E_FAIL;
 	}
 	return toReturn;					
 	//OutputDebugString("DDRAWPROXY: myID3DDevice7::SetTexture exited.\r\n");

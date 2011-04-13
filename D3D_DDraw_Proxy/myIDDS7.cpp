@@ -764,7 +764,7 @@ void HookDirectDrawSurface7Interface (LPDIRECTDRAWSURFACE7 lpInterface)
 		OutputDebugString("DetourTransactionCommit failed.\r\n");
 	}
 	*/
-	OutputDebugString("HookInterface for IDirectDrawSurface7 exited.\r\n");
+	//OutputDebugString("HookInterface for IDirectDrawSurface7 exited.\r\n");
 	
 	
 }

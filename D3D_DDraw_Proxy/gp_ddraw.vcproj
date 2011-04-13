@@ -111,7 +111,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy /y &quot;C:\svnlayout\trunk\D3D_DDraw_Proxy\Debug\ddraw.dll&quot; &quot;c:\Microprose\Falcon4\ddraw.dll&quot;"
+				CommandLine="copy $(TargetPath) c:\FreeFalcon5&#x0D;&#x0A;copy $(TargetDir)$(TargetName).pdb c:\FreeFalcon5&#x0D;&#x0A;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration

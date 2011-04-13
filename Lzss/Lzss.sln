@@ -1,8 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LzssManaged", "LzssManaged\LzssManaged.csproj", "{04F20E15-844A-4D30-9EC4-E8FD61A043A9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LzssNative", "LzssNative\LzssNative.vcproj", "{689C0FBB-46F1-4F2E-9ACD-8A3206262505}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LzssNative", "LzssNative\LzssNative.vcxproj", "{689C0FBB-46F1-4F2E-9ACD-8A3206262505}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
