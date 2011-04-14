@@ -46,7 +46,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         /// <summary>
         /// Flag to indicate whether the sim is running
         /// </summary>
-        public bool _simRunning = false;
+        private bool _simRunning = false;
         /// <summary>
         /// Flag to indicate whether BMS's 3D textures shared memory area is available and has data
         /// </summary>
@@ -54,7 +54,8 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
 
         private SettingsManager _settingsManager = null;
         private NetworkManager _networkManager = null;
-        private CaptureCoordinatesSet _captureCoordinatesSet = null;
+        private Extractor _extractor = null;
+
         #endregion
 
         /// <summary>
@@ -65,16 +66,33 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
 
         #region Constructors
         private Falcon4SimSupport() : base() { }
-        internal Falcon4SimSupport(SettingsManager settingsManager, NetworkManager networkManager, CaptureCoordinatesSet captureCoordinatesSet)
+        internal Falcon4SimSupport(SettingsManager settingsManager, NetworkManager networkManager, Extractor extractor )
             : this()
         {
             _settingsManager = settingsManager;
             _networkManager = networkManager;
-            _captureCoordinatesSet = captureCoordinatesSet;
+            _extractor = extractor;
+            SetupSimStatusMonitorThread();
         }
 
         #endregion
-
+        #region Public Properties
+        public bool IsSimRunning
+        {
+            get { return _simRunning; }
+        }
+        public bool UseBMSAdvancedSharedmemValues
+        {
+            get { return _useBMSAdvancedSharedmemValues; }
+            internal set { _useBMSAdvancedSharedmemValues = value; }
+        }
+        #endregion
+        #region Public Methods
+        public Image ReadRTTImage(Rectangle areaToCapture)
+        {
+            return ReadRTTImage(areaToCapture, _texSmReader);
+        }
+        #endregion
         private void SetupSimStatusMonitorThread()
         {
             Common.Threading.Util.AbortThread(ref _simStatusMonitorThread);
@@ -97,7 +115,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         format = FalconDataFormats.AlliedForce;
 #endif
                         //set automatic 3D mode for BMS
-                        if (format.HasValue && format.Value == FalconDataFormats.BMS4) _threeDeeMode = true;
+                        if (format.HasValue && format.Value == FalconDataFormats.BMS4) _extractor.ThreeDeeMode = true;
 
                         bool doMore = true;
                         bool newReader = false;
@@ -129,7 +147,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                                 doMore = false;
                                 Common.Util.DisposeObject(_falconSmReader);
                                 _falconSmReader = null;
-                                _useBMSAdvancedSharedmemValues = false;
+                                DisableBMSAdvancedSharedmemValues();
                                 newReader = false;
                             }
                         }
@@ -430,24 +448,24 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             {
                                 try
                                 {
-                                    if (_threeDeeMode)
+                                    if (_extractor.ThreeDeeMode)
                                     {
                                         if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
                                         if ((Properties.Settings.Default.EnableHudOutput || _settingsManager.NetworkMode == NetworkMode.Server))
                                         {
                                             if (
-                                                    (_captureCoordinatesSet.HUD.RTTSourceCoords == Rectangle.Empty)
+                                                    (_settingsManager.CaptureCoordinatesSet.HUD.RTTSourceCoords == Rectangle.Empty)
                                                         ||
-                                                    (_captureCoordinatesSet.LMFD.RTTSourceCoords == Rectangle.Empty)
+                                                    (_settingsManager.CaptureCoordinatesSet.LMFD.RTTSourceCoords == Rectangle.Empty)
                                                         ||
-                                                    (_captureCoordinatesSet.RMFD.RTTSourceCoords == Rectangle.Empty)
+                                                    (_settingsManager.CaptureCoordinatesSet.RMFD.RTTSourceCoords == Rectangle.Empty)
                                                         ||
-                                                    (_captureCoordinatesSet.MFD3.RTTSourceCoords == Rectangle.Empty)
+                                                    (_settingsManager.CaptureCoordinatesSet.MFD3.RTTSourceCoords == Rectangle.Empty)
                                                         ||
-                                                    (_captureCoordinatesSet.MFD4.RTTSourceCoords == Rectangle.Empty)
+                                                    (_settingsManager.CaptureCoordinatesSet.MFD4.RTTSourceCoords == Rectangle.Empty)
                                              )
                                             {
-                                                ReadRTTCoords(_captureCoordinatesSet);
+                                                ReadRTTCoords(_settingsManager.CaptureCoordinatesSet);
                                             }
                                         }
                                     }
@@ -458,11 +476,11 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             }
                             else
                             {
-                                _captureCoordinatesSet.HUD.RTTSourceCoords = Rectangle.Empty;
-                                _captureCoordinatesSet.LMFD.RTTSourceCoords = Rectangle.Empty;
-                                _captureCoordinatesSet.RMFD.RTTSourceCoords = Rectangle.Empty;
-                                _captureCoordinatesSet.MFD3.RTTSourceCoords = Rectangle.Empty;
-                                _captureCoordinatesSet.MFD4.RTTSourceCoords = Rectangle.Empty;
+                                _settingsManager.CaptureCoordinatesSet.HUD.RTTSourceCoords = Rectangle.Empty;
+                                _settingsManager.CaptureCoordinatesSet.LMFD.RTTSourceCoords = Rectangle.Empty;
+                                _settingsManager.CaptureCoordinatesSet.RMFD.RTTSourceCoords = Rectangle.Empty;
+                                _settingsManager.CaptureCoordinatesSet.MFD3.RTTSourceCoords = Rectangle.Empty;
+                                _settingsManager.CaptureCoordinatesSet.MFD4.RTTSourceCoords = Rectangle.Empty;
                             }
                             if (simWasRunning && !_simRunning)
                             {

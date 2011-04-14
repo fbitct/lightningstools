@@ -23,18 +23,22 @@ namespace MFDExtractor.Runtime
         private Mediator _mediator = null;
         private SettingsManager _settingsManager= null;
         private MessageManager _messageManager = null;
+        private Extractor _extractor = null;
+        public Mediator Mediator { get { return _mediator; } }
         private InputSupport() : base() 
         {
             Initialize();
         }
-        public InputSupport(SettingsManager settingsManager, MessageManager messageManager):this()
+        public InputSupport(SettingsManager settingsManager, MessageManager messageManager, Extractor extractor):this()
         {
+            _extractor = extractor;
             _settingsManager = settingsManager;
             _messageManager = messageManager;
         }
         private void Initialize()
         {
             CreateMediator();
+            SetupKeyboardWatcherThread();
         }
 
         private void CreateMediator()
@@ -62,7 +66,7 @@ namespace MFDExtractor.Runtime
         }
         private void Mediator_PhysicalControlStateChanged(object sender, Common.InputSupport.PhysicalControlStateChangedEventArgs e)
         {
-            if (_keySettingsLoaded == false) LoadKeySettings();
+            _settingsManager.KeySettings.Reload();
 
             if (DirectInputEventIsHotkey(e, _settingsManager.KeySettings.NVISKey))
             {
@@ -256,7 +260,7 @@ namespace MFDExtractor.Runtime
         }
         public void ProcessKeyUpEvent(KeyEventArgs e)
         {
-            if (_keySettingsLoaded == false) LoadKeySettings();
+            _settingsManager.KeySettings.Reload();
             if (_settingsManager.KeySettings.EHSICourseDepressedKey == null) return;
             Keys modifiersPressedRightNow = UpdateKeyEventArgsWithExtendedKeyInfo(Keys.None);
             Keys modifiersInHotkey = (_settingsManager.KeySettings.EHSICourseDepressedKey.Keys & Keys.Modifiers);
@@ -292,7 +296,7 @@ namespace MFDExtractor.Runtime
         }
         public void ProcessKeyDownEvent(KeyEventArgs e)
         {
-            if (_keySettingsLoaded == false) LoadKeySettings();
+            _settingsManager.KeySettings.Reload();
             Keys keys = UpdateKeyEventArgsWithExtendedKeyInfo(e.KeyData);
 
             if (KeyIsHotkey(_settingsManager.KeySettings.NVISKey, keys))

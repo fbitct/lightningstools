@@ -41,7 +41,6 @@ namespace MFDExtractor.UI
         /// <summary>
         ///the current Extractor engine instance
         /// </summary>
-        private Extractor _extractor = Extractor.GetInstance();
         private bool _formLoading = true;
         private volatile bool _restartScheduled = false;
         /// <summary>
@@ -61,19 +60,19 @@ namespace MFDExtractor.UI
         private void frmOptions_Load(object sender, EventArgs e)
         {
 
-            _extractorRunningStateOnFormOpen = _extractor.Running; //store current running
+            _extractorRunningStateOnFormOpen = Extractor.GetInstance().Running; //store current running
             //state of the Extractor engine
             //stop the Extractor engine
-            if (_extractor.Running)
+            if (Extractor.GetInstance().Running)
             {
-                _extractor.Stop();
+                Extractor.GetInstance().Stop();
             }
 
             //register for the Extractor's DataChanged event
-            _extractor.DataChanged += new EventHandler(extractor_DataChanged);
+            Extractor.GetInstance().DataChanged += new EventHandler(extractor_DataChanged);
 
             //put the Extractor into Test mode (displays the Test/Blank images)
-            _extractor.TestMode = true;
+            Extractor.GetInstance().TestMode = true;
             //set the titlebar for the Options form
             this.Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
 
@@ -100,7 +99,7 @@ namespace MFDExtractor.UI
             //force a reload of the user settings from the in-memory user-config
             LoadSettings();
 
-            _extractor.Start();
+            Extractor.GetInstance().Start();
             _formLoading = false;
 
         }
@@ -1059,11 +1058,11 @@ namespace MFDExtractor.UI
                     }
                     else
                     {
-                        if (_extractor.Running)
+                        if (Extractor.GetInstance().Running)
                         {
-                            _extractor.Stop(); //stop the Extractor if it's currently running
+                            Extractor.GetInstance().Stop(); //stop the Extractor if it's currently running
                         }
-                        _extractor.LoadSettings(); //tell the Extractor to reload its settings (will use the in-
+                        Extractor.GetInstance().LoadSettings(); //tell the Extractor to reload its settings (will use the in-
                     }
                 }
                 else
@@ -1273,9 +1272,9 @@ namespace MFDExtractor.UI
             Properties.Settings.Default.RenderInstrumentsOnlyOnStatechanges= chkOnlyUpdateImagesWhenDataChanges.Checked;
             if (persist)                 //persist the user settings to disk
             {
-                bool testMode = _extractor.TestMode; //store whether we're in test mode
+                bool testMode = Extractor.GetInstance().TestMode; //store whether we're in test mode
                 settings.TestMode = false; //clear test mode flag from the current settings cache (in-memory)
-                _extractorRunningStateOnFormOpen = _extractor.Running; //store current Extractor instance's "isRunning" state
+                _extractorRunningStateOnFormOpen = Extractor.GetInstance().Running; //store current Extractor instance's "isRunning" state
                 SettingsHelper.SaveAndReloadSettings();
                 settings.TestMode = testMode; //reset the test-mode flag in the current settings cache
 
@@ -1366,11 +1365,11 @@ namespace MFDExtractor.UI
             try
             {
                 SettingsHelper.ReloadSettings();
-                if (_extractor.Running)
+                if (Extractor.GetInstance().Running)
                 {
-                    _extractor.Stop(); //stop the Extractor engine if it's running
+                    Extractor.GetInstance().Stop(); //stop the Extractor engine if it's running
                 }
-                _extractor.LoadSettings(); //tell the Extractor engine to reload its settings
+                Extractor.GetInstance().LoadSettings(); //tell the Extractor engine to reload its settings
             }
             catch (Exception ex)
             {
@@ -1386,19 +1385,19 @@ namespace MFDExtractor.UI
         /// <param name="e">Event arguments for the Click event</param>
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _extractor.TestMode = false;
+            Extractor.GetInstance().TestMode = false;
             if (_extractorRunningStateOnFormOpen)
             {
-                if (!_extractor.Running)
+                if (!Extractor.GetInstance().Running)
                 {
-                    _extractor.Start();
+                    Extractor.GetInstance().Start();
                 }
             }
             else
             {
-                if (_extractor.Running)
+                if (Extractor.GetInstance().Running)
                 {
-                    _extractor.Stop();
+                    Extractor.GetInstance().Stop();
                 }
             }
         }
@@ -1530,12 +1529,12 @@ namespace MFDExtractor.UI
         private void StopAndRestartExtractor()
         {
             if (_formLoading) return;
-            if (_extractor.Running)
+            if (Extractor.GetInstance().Running)
             {
-                _extractor.LoadSettings();
-                _extractor.Stop();
-                _extractor.LoadSettings();
-                _extractor.Start();
+                Extractor.GetInstance().LoadSettings();
+                Extractor.GetInstance().Stop();
+                Extractor.GetInstance().LoadSettings();
+                Extractor.GetInstance().Start();
             }
 
        }
@@ -1653,16 +1652,16 @@ namespace MFDExtractor.UI
             {
                 Properties.Settings.Default.Reset();
                 Properties.Settings.Default.UpgradeNeeded = false;
-                bool extractorRunning = _extractor.Running;
+                bool extractorRunning = Extractor.GetInstance().Running;
                 if (extractorRunning)
                 {
-                    _extractor.Stop();
-                    _extractor.LoadSettings();
-                    _extractor.TestMode = true;
+                    Extractor.GetInstance().Stop();
+                    Extractor.GetInstance().LoadSettings();
+                    Extractor.GetInstance().TestMode = true;
                 }
                 if (extractorRunning)
                 {
-                    _extractor.Start();
+                    Extractor.GetInstance().Start();
                 }
                 LoadSettings();
             }
@@ -1670,26 +1669,26 @@ namespace MFDExtractor.UI
 
         private void cmdRecoverMfd4_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("MFD4", Screen.FromPoint(this.Location)); 
+            Extractor.GetInstance().RecoverInstrumentForm("MFD4", Screen.FromPoint(this.Location)); 
         }
         private void cmdRecoverMfd3_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("MFD3", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("MFD3", Screen.FromPoint(this.Location));
         }
 
         private void cmdRecoverLeftMfd_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("LMFD", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("LMFD", Screen.FromPoint(this.Location));
         }
 
         private void cmdRecoverRightMfd_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("RMFD", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("RMFD", Screen.FromPoint(this.Location));
         }
 
         private void cmdRecoverHud_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("HUD", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("HUD", Screen.FromPoint(this.Location));
         }
 
         private void cmdImportCoordinates_Click(object sender, EventArgs e)
@@ -2542,171 +2541,171 @@ namespace MFDExtractor.UI
 
         private void pbRecoverADI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("ADI", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("ADI", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverAltimeter_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("Altimeter", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("Altimeter", Screen.FromPoint(this.Location));
 
         }
 
         private void pbRecoverAOAIndexer_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("AOAIndexer", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("AOAIndexer", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverAOAIndicator_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("AOAIndicator", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("AOAIndicator", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverCautionPanel_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("CautionPanel", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("CautionPanel", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverCMDSPanel_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("CMDSPanel", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("CMDSPanel", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverCompass_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("Compass", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("Compass", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverDED_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("DED", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("DED", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFTIT1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("FTIT", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("FTIT", Screen.FromPoint(this.Location));
         }
         private void pbRecoverAccelerometer_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("Accelerometer", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("Accelerometer", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverNozPos1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("NOZ1", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("NOZ1", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverOil1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("OIL1", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("OIL1", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverRPM1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("RPM1", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("RPM1", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFTIT2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("FTIT2", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("FTIT2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverNozPos2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("NOZ2", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("NOZ2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverOil2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("OIL2", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("OIL2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverRPM2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("RPM2", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("RPM2", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverEPU_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("EPU", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("EPU", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFuelFlow_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("FuelFlow", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("FuelFlow", Screen.FromPoint(this.Location));
         }
         private void pbRecoverISIS_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("ISIS", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("ISIS", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverNWS_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("NWS", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("NWS", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverPFL_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("PFL", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("PFL", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverSpeedbrake_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("Speedbrake", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("Speedbrake", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverVVI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("VVI", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("VVI", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverHSI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("HSI", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("HSI", Screen.FromPoint(this.Location));
         }
         private void pbRecoverEHSI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("EHSI", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("EHSI", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverGearLights_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("LandingGearLights", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("LandingGearLights", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverFuelQuantity_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("FuelQuantityIndicator", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("FuelQuantityIndicator", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverStandbyADI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("StandbyADI", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("StandbyADI", Screen.FromPoint(this.Location));
         }
         private void pbRecoverHydA_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("HYDA", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("HYDA", Screen.FromPoint(this.Location));
         }
         private void pbRecoverHydB_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("HYDB", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("HYDB", Screen.FromPoint(this.Location));
         }
         private void pbRecoverCabinPress_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("CabinPress", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("CabinPress", Screen.FromPoint(this.Location));
         }
         private void pbRecoverRollTrim_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("RollTrim", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("RollTrim", Screen.FromPoint(this.Location));
         }
         private void pbRecoverPitchTrim_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("PitchTrim", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("PitchTrim", Screen.FromPoint(this.Location));
         }
 
         private void cmdNV_Click(object sender, EventArgs e)
         {
             InputSourceSelector toShow = new InputSourceSelector();
-            toShow.Mediator = _extractor.Mediator;
+            toShow.Mediator = Extractor.GetInstance().Mediator;
             string keyFromSettingsString = Properties.Settings.Default.NVISKey;
 
             InputControlSelection keyFromSettings = null;
@@ -2805,12 +2804,12 @@ namespace MFDExtractor.UI
 
         private void pbRecoverASI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("Airspeed", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("Airspeed", Screen.FromPoint(this.Location));
         }
 
         private void pbRecoverAzimuthIndicator_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverInstrumentForm("RWR", Screen.FromPoint(this.Location));
+            Extractor.GetInstance().RecoverInstrumentForm("RWR", Screen.FromPoint(this.Location));
         }
 
 
@@ -2890,67 +2889,67 @@ namespace MFDExtractor.UI
 
         private void cmdAirspeedIndexIncreaseHotkey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AirspeedIndexIncreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("AirspeedIndexIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdAirspeedIndexDecreaseHotkey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AirspeedIndexDecreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("AirspeedIndexDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSIMenuButtonHotkey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSIMenuButtonKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("EHSIMenuButtonKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSIHeadingIncreaseKey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSIHeadingIncreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("EHSIHeadingIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSIHeadingDecreaseKey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSIHeadingDecreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("EHSIHeadingDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSICourseIncreaseKey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSICourseIncreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("EHSICourseIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSICourseDecreaseKey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSICourseDecreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("EHSICourseDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdEHSICourseKnobDepressedKey_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("EHSICourseKnobDepressedKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("EHSICourseKnobDepressedKey", Properties.Settings.Default), this);
         }
 
         private void cmdAzimuthIndicatorBrightnessIncrease_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AzimuthIndicatorBrightnessIncreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("AzimuthIndicatorBrightnessIncreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdAzimuthIndicatorBrightnessDecrease_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AzimuthIndicatorBrightnessDecreaseKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("AzimuthIndicatorBrightnessDecreaseKey", Properties.Settings.Default), this);
         }
 
         private void cmdISISBrightButtonPressed_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("ISISBrightButtonKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("ISISBrightButtonKey", Properties.Settings.Default), this);
         }
 
         private void cmdISISStandardBrightnessButtonPressed_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("ISISStandardButtonKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("ISISStandardButtonKey", Properties.Settings.Default), this);
         }
 
         private void cmdAccelerometerResetButtonPressed_Click(object sender, EventArgs e)
         {
-            ShowKeySelectionDialog(_extractor.Mediator, new PropertyInvoker<string>("AccelerometerResetKey", Properties.Settings.Default), this);
+            ShowKeySelectionDialog(Extractor.GetInstance().Mediator, new PropertyInvoker<string>("AccelerometerResetKey", Properties.Settings.Default), this);
         }
         
         private static InputControlSelection DeserializeInputControlSelection(PropertyInvoker<string> settingsProperty)

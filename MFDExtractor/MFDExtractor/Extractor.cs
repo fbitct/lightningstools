@@ -1,27 +1,19 @@
 using System;
-using System.Windows.Forms;
-using log4net;
-using MFDExtractor.UI;
-using System.Diagnostics;
-using Common.UI;
-using System.Threading;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Net;
-using System.ComponentModel;
-using Common.InputSupport.UI;
-using Common.InputSupport.DirectInput;
-using Common.InputSupport;
-using F4SharedMem;
-using System.IO;
-using LightningGauges.Renderers;
-using MFDExtractor.Networking;
-using Microsoft.DirectX.DirectInput;
+using System.Diagnostics;
+using System.Drawing;
+using System.Threading;
+using System.Windows.Forms;
 using Common.Generic;
+using Common.InputSupport.DirectInput;
 using Common.Networking;
-using MFDExtractor.Runtime.Settings;
+using F4SharedMem;
+using LightningGauges.Renderers;
+using log4net;
 using MFDExtractor.Runtime;
+using MFDExtractor.Runtime.Settings;
 using MFDExtractor.Runtime.SimSupport.Falcon4;
+using MFDExtractor.UI;
 namespace MFDExtractor
 {
     public sealed class Extractor : IDisposable
@@ -53,56 +45,12 @@ namespace MFDExtractor
         /// </summary>
         private volatile bool _keepRunning = false;
 
+        private object _flightData = null;
         #endregion
 
         #endregion
 
 
-        #region Blank Images
-        /// <summary>
-        /// Reference to a bitmap to display when the MFD #4 image data is not available
-        /// </summary>
-        private Image _mfd4BlankImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.rightMFDBlankImage); //TODO: change to MFD4
-        /// <summary>
-        /// Reference to a bitmap to display when the MFD #3 image data is not available
-        /// </summary>
-        private Image _mfd3BlankImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.leftMFDBlankImage); //TODO: change to MFD3
-        /// <summary>
-        /// Reference to a bitmap to display when the Left MFD image data is not available
-        /// </summary>
-        private Image _leftMfdBlankImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.leftMFDBlankImage);
-        /// <summary>
-        /// Reference to a bitmap to display when the Right MFD image data is not available
-        /// </summary>
-        private Image _rightMfdBlankImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.rightMFDBlankImage);
-        /// <summary>
-        /// Reference to a bitmap to display when the HUD image data is not available
-        /// </summary>
-        private Image _hudBlankImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.hudBlankImage);
-        #endregion
-
-        #region Test/Alignment Images
-        /// <summary>
-        /// Reference to a bitmap to display when the MFD #4 is in test/alignment mode
-        /// </summary>
-        private Image _mfd4TestAlignmentImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.leftMFDTestAlignmentImage);//TODO: change to MFD4
-        /// <summary>
-        /// Reference to a bitmap to display when the MFD #3 is in test/alignment mode
-        /// </summary>
-        private Image _mfd3TestAlignmentImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.leftMFDTestAlignmentImage);//TODO: change to MFD3
-        /// <summary>
-        /// Reference to a bitmap to display when the Left MFD is in test/alignment mode
-        /// </summary>
-        private Image _leftMfdTestAlignmentImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.leftMFDTestAlignmentImage);
-        /// <summary>
-        /// Reference to a bitmap to display when the Right MFD is in test/alignment mode
-        /// </summary>
-        private Image _rightMfdTestAlignmentImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.rightMFDTestAlignmentImage);
-        /// <summary>
-        /// Reference to a bitmap to display when the HUD is in test/alignment mode
-        /// </summary>
-        private Image _hudTestAlignmentImage = Common.Imaging.Util.CloneBitmap(Properties.Resources.hudTestAlignmentImage);
-        #endregion
 
         #region Public Events
         /// <summary>
@@ -143,6 +91,9 @@ namespace MFDExtractor
         private MessageManager _messageManager= null;
         private SettingsManager _settingsManager= null;
         private NetworkManager _networkManager = null;
+        private Falcon4SimSupport _simSupport = null;
+        private InputSupport _inputSupport = null;
+        
         #endregion
 
         #region Constructors
@@ -156,10 +107,13 @@ namespace MFDExtractor
         {
             //load user settings when an instance of the Extractor engine is created by
             //one of the Factory methods
+            _settingsManager = new SettingsManager();
             LoadSettings();
             SetupInstrumentRenderers();
             _networkManager = new NetworkManager(_settingsManager);
-            _messageManager = new MessageManager(_renderers, _networkManager);
+            _simSupport = new Falcon4SimSupport(_settingsManager, _networkManager, this);
+            _messageManager = new MessageManager(_renderers, _networkManager, _settingsManager, _simSupport);
+            _inputSupport = new InputSupport(_settingsManager, _messageManager, this);
 
         }
         private void UpdateEHSIBrightnessLabelVisibility()
@@ -222,7 +176,7 @@ namespace MFDExtractor
                 Starting.Invoke(this, new EventArgs());
             }
 
-            if (_keySettingsLoaded == false) LoadKeySettings();
+            _settingsManager.KeySettings.Reload();
             
             SetInstrumentImage(null, "MFD4", _settingsManager.NetworkMode);
             SetInstrumentImage(null, "MFD3", _settingsManager.NetworkMode);
@@ -256,8 +210,6 @@ namespace MFDExtractor
             //clear global flag that worker threads use to determine if their work loops should continue
             _keepRunning = false;
             
-            _keySettingsLoaded = false;
-
             InstrumentFormController.DestroyAll();
 
             NetworkManager.TeardownServer();
@@ -303,14 +255,17 @@ namespace MFDExtractor
         /// </summary>
         public void LoadSettings()
         {
-            if (_settingsManager == null) _settingsManager = new SettingsManager();
             _settingsManager.LoadSettings();
 
         }
         #endregion
 
         #region Public Properties
-       
+
+        public Mediator Mediator
+        {
+            get { return _inputSupport.Mediator; }
+        }
         /// <summary>
         /// Indicates whether the Extractor is currently running
         /// </summary>
@@ -376,8 +331,9 @@ namespace MFDExtractor
             bool twoDeePrimaryView, 
             Image testAlignmentBitmap, 
             CaptureCoordinates coordinates,
-            Func<Image> readBitmapFromNetworkFunc,
-            Func<Rectangle, Image> readRTTBitmapFunc
+            NetworkManager networkManager, 
+            string instrumentName,
+            Falcon4SimSupport simSupport
             )
         {
             Image toReturn = null;
@@ -391,7 +347,7 @@ namespace MFDExtractor
                 {
                     if (threeDeeMode && (networkMode == NetworkMode.Server || networkMode== NetworkMode.Standalone))
                     {
-                        toReturn = readRTTBitmapFunc(coordinates.RTTSourceCoords);
+                        toReturn = simSupport.ReadRTTImage(coordinates.RTTSourceCoords);
                     }
                     else
                     {
@@ -401,16 +357,16 @@ namespace MFDExtractor
                         }
                         else if (networkMode== NetworkMode.Client)
                         {
-                            toReturn = readBitmapFromNetworkFunc();
+                            toReturn = networkManager.ReadInstrumentImageFromServer(instrumentName);
                         }
                     }
                 }
             }
             return toReturn;
         }
-        private static Image GetCurrentInstrumentImage(bool simRunning, bool testMode,NetworkMode networkMode,bool threeDeeMode,bool twoDeePrimaryView,Image testAlignmentBitmap,CaptureCoordinates coordinates,Func<Image> readBitmapFromNetworkFunc,F4TexSharedMem.Reader rttReader)
+        private static Image GetCurrentInstrumentImage(bool simRunning, bool testMode,NetworkMode networkMode,bool threeDeeMode,bool twoDeePrimaryView,Image testAlignmentBitmap,CaptureCoordinates coordinates,NetworkManager networkManager, Falcon4SimSupport simSupport, string instrumentName)
         {
-            return GetCurrentBitmap(simRunning, testMode, networkMode, threeDeeMode, twoDeePrimaryView, testAlignmentBitmap, coordinates, readBitmapFromNetworkFunc, (coords)=> ReadRTTImage(coords, rttReader));
+            return GetCurrentBitmap(simRunning, testMode, networkMode, threeDeeMode, twoDeePrimaryView, testAlignmentBitmap, coordinates, networkManager, instrumentName, simSupport);
         }
 
         /// <summary>
@@ -419,7 +375,7 @@ namespace MFDExtractor
         /// <returns>a Bitmap containing the current MFD #4 image</returns>
         private Image GetMfd4Bitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _mfd4TestAlignmentImage, coordinatesSet.MFD4, () => ReadInstrumentImageFromNetwork("MFD4"), _texSmReader);
+            return GetCurrentInstrumentImage(_simSupport.IsSimRunning, _settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, BlankAndTestImages.Mfd4TestAlignmentImage, coordinatesSet.MFD4, _networkManager, _simSupport, "MFD4");
         }
         /// <summary>
         /// Returns the current MFD #3 image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
@@ -427,7 +383,7 @@ namespace MFDExtractor
         /// <returns>a Bitmap containing the current MFD #3 image</returns>
         private Image GetMfd3Bitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _mfd3TestAlignmentImage, coordinatesSet.MFD3, () => ReadInstrumentImageFromNetwork("MFD3"), _texSmReader);
+            return GetCurrentInstrumentImage(_simSupport.IsSimRunning, _settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, BlankAndTestImages.Mfd3TestAlignmentImage, coordinatesSet.MFD3, _networkManager, _simSupport,"MFD3");
         }
         /// <summary>
         /// Returns the current Left MFD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
@@ -435,7 +391,7 @@ namespace MFDExtractor
         /// <returns>a Bitmap containing the current Left MFD image</returns>
         private Image GetLeftMfdBitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _leftMfdTestAlignmentImage, coordinatesSet.LMFD, () => ReadInstrumentImageFromNetwork("LMFD"), _texSmReader);
+            return GetCurrentInstrumentImage(_simSupport.IsSimRunning, _settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, BlankAndTestImages.LeftMfdTestAlignmentImage, coordinatesSet.LMFD, _networkManager, _simSupport,"LMFD");
         }
         /// <summary>
         /// Returns the current Right MFD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
@@ -443,7 +399,7 @@ namespace MFDExtractor
         /// <returns>a Bitmap containing the current Right MFD image</returns>
         private Image GetRightMfdBitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _rightMfdTestAlignmentImage, coordinatesSet.RMFD, () => ReadInstrumentImageFromNetwork("RMFD"), _texSmReader);
+            return GetCurrentInstrumentImage(_simSupport.IsSimRunning, _settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, BlankAndTestImages.RightMfdTestAlignmentImage, coordinatesSet.RMFD, _networkManager, _simSupport,"RMFD");
         }
         /// <summary>
         /// Returns the current HUD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
@@ -451,7 +407,7 @@ namespace MFDExtractor
         /// <returns>a Bitmap containing the current HUD image</returns>
         private Image GetHudBitmap(CaptureCoordinatesSet coordinatesSet)
         {
-            return GetCurrentInstrumentImage(_settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, _hudTestAlignmentImage, coordinatesSet.HUD, () => ReadInstrumentImageFromNetwork("HUD"), _texSmReader);
+            return GetCurrentInstrumentImage(_simSupport.IsSimRunning, _settingsManager.TestMode, _settingsManager.NetworkMode, _threeDeeMode, _twoDeePrimaryView, BlankAndTestImages.HudTestAlignmentImage, coordinatesSet.HUD, _networkManager, _simSupport,"HUD");
         }
         
         #endregion
@@ -495,7 +451,7 @@ namespace MFDExtractor
             lock (flightData)
             {
                 _flightData = flightData;
-                if (_networkMode == NetworkMode.Server)
+                if (_settingsManager.NetworkMode == NetworkMode.Server)
                 {
                     SendFlightData(flightData);
                 }
@@ -515,89 +471,6 @@ namespace MFDExtractor
         #endregion
         #endregion
 
-        #region Forms Management
-        #region Forms Setup
-        private void SetupOutputForms(Form mainForm)
-        {
-            DateTime startTime = DateTime.Now;
-            _log.DebugFormat("Started setting up output forms on the extractor at: {0}", startTime.ToString());
-            InstrumentFormController.Create("MFD4", "MFD #4", mainForm, _mfd4BlankImage, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.MFD4Renderer);
-            InstrumentFormController.Create("MFD3", "MFD #3", mainForm, _mfd3BlankImage, new EventHandler((s, e) => { MessageBox.Show("hi"); ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.MFD3Renderer);
-            InstrumentFormController.Create("LMFD", "Left MFD", mainForm, _leftMfdBlankImage, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.LMFDRenderer);
-            InstrumentFormController.Create("RMFD", "RMFD", mainForm, _rightMfdBlankImage, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.RMFDRenderer);
-            InstrumentFormController.Create("HUD", "HUD", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.HUDRenderer);
-            InstrumentFormController.Create("NWSIndexer", "NWS Indexer", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.NWSIndexerRenderer);
-            InstrumentFormController.Create("AOAIndexer", "AOA Indexer", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.AOAIndexerRenderer);
-            InstrumentFormController.Create("AOAIndicator", "AOA Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.AOAIndicatorRenderer);
-            InstrumentFormController.Create("VVI", "VVI", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.VVIRenderer);
-            InstrumentFormController.Create("ADI", "ADI", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.ADIRenderer);
-            InstrumentFormController.Create("StandbyADI", "StandbyADI", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.StandbyADIRenderer);
-            InstrumentFormController.Create("ASI", "ASI", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.ASIRenderer);
-            InstrumentFormController.Create("Altimeter", "Altimeter", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.AltimeterRenderer);
-            InstrumentFormController.Create("CautionPanel", "Caution Panel", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.CautionPanelRenderer);
-            InstrumentFormController.Create("CMDS", "CMDS", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.CMDSPanelRenderer);
-            InstrumentFormController.Create("Compass", "Compass", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.CompassRenderer);
-            InstrumentFormController.Create("DED", "DED", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.DEDRenderer);
-            InstrumentFormController.Create("PFL", "PFL", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.PFLRenderer);
-            InstrumentFormController.Create("EPUFuel", "EPU Fuel", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.EPUFuelRenderer);
-            InstrumentFormController.Create("Accelerometer", "Accelerometer", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.AccelerometerRenderer);
-            InstrumentFormController.Create("FTIT1", "Engine 1 FTIT", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.FTIT1Renderer);
-            InstrumentFormController.Create("FTIT2", "Engine 2 FTIT", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.FTIT2Renderer);
-            InstrumentFormController.Create("FuelFlow", "Fuel Flow", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.FuelFlowRenderer);
-            InstrumentFormController.Create("ISIS", "ISIS", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.ISISRenderer);
-            InstrumentFormController.Create("FuelQuantity", "Fuel Quantity", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.FuelQuantityRenderer);
-            InstrumentFormController.Create("HSI", "HSI", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.HSIRenderer);
-            InstrumentFormController.Create("EHSI", "EHSI", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.EHSIRenderer);
-            InstrumentFormController.Create("GearLights", "Gear Lights", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.LandingGearLightsRenderer);
-            InstrumentFormController.Create("NOZ1", "Engine 1 - Nozzle Position Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.NOZ1Renderer);
-            InstrumentFormController.Create("NOZ2", "Engine 2 - Nozzle Position Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.NOZ2Renderer);
-            InstrumentFormController.Create("OIL1", "Engine 1 - Oil Pressure Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.OIL1Renderer);
-            InstrumentFormController.Create("OIL2", "Engine 2 - Oil Pressure Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.OIL2Renderer);
-            InstrumentFormController.Create("RWR", "RWR", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.RWRRenderer);
-            InstrumentFormController.Create("Speedbrake", "Speedbrake", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.SpeedbrakeRenderer);
-            InstrumentFormController.Create("RPM1", "Engine 1 - Tachometer", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.RPM1Renderer);
-            InstrumentFormController.Create("RPM2", "Engine 2 - Tachometer", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.RPM2Renderer);
-            InstrumentFormController.Create("HYDA", "HYD A", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.HYDARenderer);
-            InstrumentFormController.Create("HYDB", "HYD B", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.HYDBRenderer);
-            InstrumentFormController.Create("CabinPress", "Cabin Pressure Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.CabinPressRenderer);
-            InstrumentFormController.Create("RollTrim", "Roll Trim Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.RollTrimRenderer);
-            InstrumentFormController.Create("PitchTrim", "Pitch Trim Indicator", mainForm, null, new EventHandler((s, e) => { ScheduleSettingsSaveAndReload(); }), Properties.Settings.Default, _renderers.PitchTrimRenderer);
-
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime.Subtract(startTime);
-            _log.DebugFormat("Finished setting up output forms on the extractor at: {0}", endTime.ToString());
-            _log.DebugFormat("Time taken to set up output forms on the extractor: {0}", elapsed.TotalMilliseconds);
-
-        }
-        private void ScheduleSettingsSaveAndReload()
-        {
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        #endregion
-        #region Form Teardown
-        private void CloseOutputWindowForm(Form form)
-        {
-            if (form != null)
-            {
-                try
-                {
-                    form.Close();
-                }
-                catch (InvalidOperationException e)
-                {
-                    _log.Error(e.Message.ToString(), e);
-                }
-            }
-        }
-
-        #endregion
-        #endregion
-
         #region Thread Management
         /// <summary>
         /// Sets up all worker threads and output forms and starts the worker threads running
@@ -607,7 +480,7 @@ namespace MFDExtractor
             if (!_running)
             {
                 _running = true;
-                SetupNetworking();
+                _networkManager.SetupNetworking();
                 _keepRunning = true;
 
                 SetupInstrumentRenderers();
@@ -655,9 +528,7 @@ namespace MFDExtractor
         {
             DateTime startTime = DateTime.Now;
             _log.DebugFormat("Starting setting up threads at: {0}", startTime.ToString());
-            SetupSimStatusMonitorThread();
             SetupCaptureOrchestrationThread();
-            SetupKeyboardWatcherThread();
 
             DateTime endTime = DateTime.Now;
             _log.DebugFormat("Finished setting up threads at: {0}", endTime.ToString());
@@ -716,38 +587,26 @@ namespace MFDExtractor
                     bool windowSizingOrMoving = InstrumentFormController.IsWindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
 
                     Application.DoEvents();
-                    if (_settingsSaveScheduled && !windowSizingOrMoving)
+                    if (!windowSizingOrMoving)
                     {
-                        SaveSettingsAsync();
-                    }
-                    if (_settingsLoadScheduled && !windowSizingOrMoving)
-                    {
-                        LoadSettingsAsync();
+                        _settingsManager.SaveSettingsAsync();
                     }
                     DateTime thisLoopStartTime = DateTime.Now;
                     bool setNullImages = true;
 
-                    if (NetworkMode == NetworkMode.Client)
-                    {
-                        ProcessPendingMessagesToClientFromServer();
-                    }
-                    else if (NetworkMode == NetworkMode.Server)
-                    {
-                        ProcessPendingMessagesToServerFromClient();
-                    }
+                    _messageManager.ProcessPendingMessages();
 
-
-                    if (simRunning || testMode||  NetworkMode == NetworkMode.Client)
+                    if (_simSupport.IsSimRunning || testMode || _settingsManager.NetworkMode == NetworkMode.Client)
                     {
                         FlightData current = GetFlightData();
                         SetFlightData(current);
 
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
                             _flightData,
-                            _settingsManager.NetworkMode, 
-                            simRunning, 
-                            _renderers, 
-                            _useBMSAdvancedSharedmemValues, 
+                            _settingsManager.NetworkMode,
+                            _simSupport.IsSimRunning,
+                            _renderers,
+                            _simSupport.UseBMSAdvancedSharedmemValues,
                             UpdateEHSIBrightnessLabelVisibility);
                     }
                     else
@@ -756,17 +615,17 @@ namespace MFDExtractor
                         toSet.hsiBits = Int32.MaxValue;
                         SetFlightData(toSet);
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
-                            _flightData, 
-                            _settingsManager.NetworkMode, 
-                            simRunning, 
-                            _renderers, 
-                            _useBMSAdvancedSharedmemValues, 
+                            _flightData,
+                            _settingsManager.NetworkMode,
+                            _simSupport.IsSimRunning,
+                            _renderers,
+                            _simSupport.UseBMSAdvancedSharedmemValues,
                             UpdateEHSIBrightnessLabelVisibility);
-                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(_mfd4BlankImage), "MFD4", _settingsManager.NetworkMode);
-                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(_mfd3BlankImage), "MFD3", _settingsManager.NetworkMode);
-                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(_leftMfdBlankImage), "LMFD", _settingsManager.NetworkMode);
-                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(_rightMfdBlankImage), "RMFD", _settingsManager.NetworkMode);
-                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(_hudBlankImage), "HUD", _settingsManager.NetworkMode);
+                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.Mfd4BlankImage), "MFD4", _settingsManager.NetworkMode);
+                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.Mfd3BlankImage), "MFD3", _settingsManager.NetworkMode);
+                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.LeftMfdBlankImage), "LMFD", _settingsManager.NetworkMode);
+                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.RightMfdBlankImage), "RMFD", _settingsManager.NetworkMode);
+                        SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.HudBlankImage), "HUD", _settingsManager.NetworkMode);
                         setNullImages = false;
                     }
 
@@ -801,7 +660,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!simRunning && !(_settingsManager.NetworkMode == NetworkMode.Client)) && !_settingsManager.TestMode)
+                    if ((!_simSupport.IsSimRunning && !(_settingsManager.NetworkMode == NetworkMode.Client)) && !_settingsManager.TestMode)
                     {
                         Application.DoEvents();
                         Thread.Sleep(5); //sleep an additional half-second or so here if we're not a client and there's no sim running and we're not in test mode
@@ -820,13 +679,7 @@ namespace MFDExtractor
             catch (ThreadInterruptedException)
             {
             }
-            finally
-            {
-                _windowSizingOrMoving = false;
-            }
         }
-
-
 
         public void RecoverInstrumentForm(string instrumentName, Screen screen)
         {
@@ -859,17 +712,6 @@ namespace MFDExtractor
                 {
                     Stop();
                     Common.Util.DisposeObject(_settingsManager);                    
-                    Common.Util.DisposeObject(_mfd4BlankImage);
-                    Common.Util.DisposeObject(_mfd3BlankImage);
-                    Common.Util.DisposeObject(_leftMfdBlankImage);
-                    Common.Util.DisposeObject(_rightMfdBlankImage);
-                    Common.Util.DisposeObject(_hudBlankImage);
-                    Common.Util.DisposeObject(_mfd4TestAlignmentImage);
-                    Common.Util.DisposeObject(_mfd3TestAlignmentImage);
-                    Common.Util.DisposeObject(_leftMfdTestAlignmentImage);
-                    Common.Util.DisposeObject(_rightMfdTestAlignmentImage);
-                    Common.Util.DisposeObject(_hudTestAlignmentImage);
-
                 }
             }
             _disposed = true;

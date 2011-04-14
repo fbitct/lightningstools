@@ -42,7 +42,7 @@ namespace MFDExtractor.Runtime
         }
         #region Networking Support
         #region Basic Network Client/Server Setup Code
-        private void SetupNetworking()
+        public void SetupNetworking()
         {
             if (_settingsManager.NetworkMode == NetworkMode.Client)
             {

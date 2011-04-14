@@ -8,6 +8,7 @@ using Common.Networking;
 using MFDExtractor.Networking;
 using MFDExtractor.UI;
 using MFDExtractor.Runtime.Settings;
+using MFDExtractor.Runtime.SimSupport.Falcon4;
 
 namespace MFDExtractor.Runtime
 {
@@ -15,6 +16,7 @@ namespace MFDExtractor.Runtime
     {
         private NetworkManager _networkManager = null;
         private SettingsManager _settingsManager = null;
+        private Falcon4SimSupport _simSupport = null;
         private InstrumentRenderers _renderers = null;
         private DateTime? _ehsiRightKnobDepressedTime = null;
         private DateTime? _ehsiRightKnobReleasedTime = null;
@@ -24,14 +26,25 @@ namespace MFDExtractor.Runtime
             : base()
         {
         }
-        public MessageManager(InstrumentRenderers renderers, NetworkManager networkManager, SettingsManager settingsManager)
+        public MessageManager(InstrumentRenderers renderers, NetworkManager networkManager, SettingsManager settingsManager, Falcon4SimSupport simSupport )
         {
             _renderers = renderers;
             _networkManager = networkManager;
             _settingsManager = settingsManager;
+            _simSupport = simSupport;
         }
 
-
+        public void ProcessPendingMessages()
+        {
+            if (_settingsManager.NetworkMode == NetworkMode.Client)
+            {
+                ProcessPendingMessagesToClientFromServer();
+            }
+            else if (_settingsManager.NetworkMode == NetworkMode.Server)
+            {
+                ProcessPendingMessagesToServerFromClient();
+            }
+        }
         private void ProcessPendingMessagesToServerFromClient()
         {
             if (_settingsManager.NetworkMode != NetworkMode.Server) return;
@@ -124,10 +137,10 @@ namespace MFDExtractor.Runtime
                         NotifyAccelerometerIsReset(false);
                         break;
                     case MessageTypes.EnableBMSAdvancedSharedmemValues:
-                        _useBMSAdvancedSharedmemValues = true;
+                         _simSupport.UseBMSAdvancedSharedmemValues = true;
                         break;
                     case MessageTypes.DisableBMSAdvancedSharedmemValues:
-                        _useBMSAdvancedSharedmemValues = false;
+                        _simSupport.UseBMSAdvancedSharedmemValues = false;
                         break;
                     default:
                         break;
@@ -135,7 +148,6 @@ namespace MFDExtractor.Runtime
                 pendingMessage = _networkManager.GetNextPendingMessageToClientFromServer();
             }
         }
-
 
         public void NotifyAccelerometerIsReset(bool relayToListeners)
         {
@@ -150,7 +162,6 @@ namespace MFDExtractor.Runtime
                 SendMessage(MessageTypes.ToggleNightMode, null);
             }
         }
-
         public void NotifyAzimuthIndicatorBrightnessIncreased(bool relayToListeners)
         {
             int newBrightness = (int)Math.Floor(

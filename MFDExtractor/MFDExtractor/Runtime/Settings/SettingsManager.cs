@@ -84,7 +84,8 @@ namespace MFDExtractor.Runtime.Settings
         #endregion
 
         #region Settings Loaders and Savers
-        private void LoadSettingsAsync()
+        
+        public void LoadSettingsAsync()
         {
             if (_settingsLoaderAsyncWorker.IsBusy)
             {
@@ -95,7 +96,7 @@ namespace MFDExtractor.Runtime.Settings
                 _settingsLoaderAsyncWorker.RunWorkerAsync();
             }
         }
-        private void SaveSettingsAsync()
+        public void SaveSettingsAsync()
         {
             if (_settingsSaverAsyncWorker.IsBusy)
             {
