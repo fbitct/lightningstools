@@ -101,7 +101,7 @@ namespace F4TexSharedMem
         }
         public IntPtr  GetImagePointer(ref Rectangle rect) 
         {
-            CheckImage();
+            if (!CheckImage()) return IntPtr.Zero;
             int surfaceWidth = Math.Abs(_surfaceDesc.dwWidth);
             int surfaceHeight = Math.Abs(_surfaceDesc.dwHeight);
 
@@ -141,25 +141,26 @@ namespace F4TexSharedMem
 
             return toReturn;
         }
-        private void CheckImage()
+        private bool CheckImage()
         {
             if (!_dataAvailable)
             {
-                bool isDataAvailable = IsDataAvailable; //check again whether data is available
+                _dataAvailable = IsDataAvailable; //check again whether data is available
             }
             if (!_dataAvailable)
             {
-                throw new InvalidOperationException("Image data not available.");
+                return false;
             }
             if (!_formatDetected)
             {
                 DetectImageFormat();
             }
+            return true;
         }
 
         public Bitmap GetImage (Rectangle rect)
         {
-            CheckImage();
+            if (!CheckImage()) return null;
             IntPtr start = GetImagePointer(ref rect);
             Bitmap bmp = new Bitmap(rect.Width, rect.Height, _surfaceDesc.lPitch, _format, start);
             return bmp;
