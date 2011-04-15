@@ -68,12 +68,6 @@
     <Setting Name="LaunchWithWindows" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="EnableLeftMFDOutput" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
-    <Setting Name="EnableRightMFDOutput" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="ThreadPriority" Type="System.Threading.ThreadPriority" Scope="User">
       <Value Profile="(Default)">Normal</Value>
     </Setting>
@@ -1834,6 +1828,12 @@
     </Setting>
     <Setting Name="DisableDirectInputMediator" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="EnableLMFDOutput" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="EnableRMFDOutput" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>

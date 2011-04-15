@@ -61,6 +61,7 @@ namespace MFDExtractor.UI
         /// </summary>
         private WaitHandle _directInputEvent = new AutoResetEvent(false);
 
+        private object _keybLock = new object();
         /// <summary>
         /// Default constructor for the form
         /// </summary>
@@ -73,16 +74,27 @@ namespace MFDExtractor.UI
         /// </summary>
         private void InitializeKeyboard()
         {
-            try
+            lock (_keybLock)
             {
-                _keyb = new Microsoft.DirectX.DirectInput.Device(SystemGuid.Keyboard);
-                _keyb.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-                _keyb.SetEventNotification(_directInputEvent);
-                _keyb.Acquire();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message.ToString(), e);
+                try
+                {
+                    _keyb = new Microsoft.DirectX.DirectInput.Device(SystemGuid.Keyboard);
+                    _keyb.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+                    _keyb.SetEventNotification(_directInputEvent);
+                    try
+                    {
+                        _keyb.Acquire();
+                    }
+                    catch
+                    {
+                        Common.Util.DisposeObject(_keyb);
+                        _keyb = null;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e.Message.ToString(), e);
+                }
             }
         }
         /// <summary>
@@ -90,6 +102,7 @@ namespace MFDExtractor.UI
         /// </summary>
         private void ReadKeyboard()
         {
+            if (_keyb == null) InitializeKeyboard();
             KeyboardState keystate;
             
             try
@@ -307,7 +320,6 @@ namespace MFDExtractor.UI
             //setup the keyboard polling thread if running in server or standalone mode
             if ((NetworkMode)settings.NetworkingMode != NetworkMode.Client)
             {
-                InitializeKeyboard();
                 SetupHotkeys();
                 _keyboardWatcherThread = new Thread(KeyboardWatcherThreadWork);
                 _keyboardWatcherThread.SetApartmentState(ApartmentState.STA);

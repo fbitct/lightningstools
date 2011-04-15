@@ -34,7 +34,7 @@ namespace MFDExtractor
             lock (_serializationLock)
             {
                 LogLoadSettings();
-               // Properties.Settings.Default.Reload();
+                Properties.Settings.Default.Reload();
             }
         }
         public static void SaveAndReloadSettings()

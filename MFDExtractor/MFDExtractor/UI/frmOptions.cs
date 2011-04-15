@@ -322,8 +322,8 @@ namespace MFDExtractor.UI
 
             chkEnableMFD4.Checked = settings.EnableMfd4Output;
             chkEnableMFD3.Checked = settings.EnableMfd3Output;
-            chkEnableLeftMFD.Checked = settings.EnableLeftMFDOutput;
-            chkEnableRightMFD.Checked = settings.EnableRightMFDOutput;
+            chkEnableLeftMFD.Checked = settings.EnableLMFDOutput;
+            chkEnableRightMFD.Checked = settings.EnableRMFDOutput;
             chkEnableHud.Checked = settings.EnableHudOutput;
 
             cmdRecoverHud.Enabled = chkEnableHud.Checked;
@@ -1135,8 +1135,8 @@ namespace MFDExtractor.UI
             }
             settings.EnableMfd4Output = chkEnableMFD4.Checked;
             settings.EnableMfd3Output = chkEnableMFD3.Checked;
-            settings.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
-            settings.EnableRightMFDOutput = chkEnableRightMFD.Checked;
+            settings.EnableLMFDOutput = chkEnableLeftMFD.Checked;
+            settings.EnableRMFDOutput = chkEnableRightMFD.Checked;
             settings.EnableHudOutput = chkEnableHud.Checked;
 
             settings.EnableRWROutput = chkAzimuthIndicator.Checked;
@@ -1265,8 +1265,8 @@ namespace MFDExtractor.UI
 
             SaveGDIPlusSettings();
 
-            Properties.Settings.Default.HighlightOutputWindows = chkHighlightOutputWindowsWhenContainMouseCursor.Checked;
-            Properties.Settings.Default.RenderInstrumentsOnlyOnStatechanges= chkOnlyUpdateImagesWhenDataChanges.Checked;
+            settings.HighlightOutputWindows = chkHighlightOutputWindowsWhenContainMouseCursor.Checked;
+            settings.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
             if (persist)                 //persist the user settings to disk
             {
                 bool testMode = Extractor.GetInstance().TestMode; //store whether we're in test mode
@@ -1552,7 +1552,7 @@ namespace MFDExtractor.UI
         }
         private void chkEnableLeftMFD_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
+            Properties.Settings.Default.EnableLMFDOutput = chkEnableLeftMFD.Checked;
             cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
             
             this.BringToFront();
@@ -1560,7 +1560,7 @@ namespace MFDExtractor.UI
 
         private void chkEnableRightMFD_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableRightMFDOutput = chkEnableRightMFD.Checked;
+            Properties.Settings.Default.EnableRMFDOutput = chkEnableRightMFD.Checked;
             cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
             
             this.BringToFront();

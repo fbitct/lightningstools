@@ -496,19 +496,19 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             //** UPDATE PFL
             if (fromFalcon.PFLLines != null)
             {
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line1 = Encoding.Default.GetBytes(fromFalcon.PFLLines[0]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line2 = Encoding.Default.GetBytes(fromFalcon.PFLLines[1]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line3 = Encoding.Default.GetBytes(fromFalcon.PFLLines[2]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line4 = Encoding.Default.GetBytes(fromFalcon.PFLLines[3]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line5 = Encoding.Default.GetBytes(fromFalcon.PFLLines[4]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line1 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLLines[0]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line2 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLLines[1]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line3 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLLines[2]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line4 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLLines[3]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line5 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLLines[4]);
             }
             if (fromFalcon.PFLInvert != null)
             {
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line1Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[0]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line2Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[1]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line3Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[2]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line4Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[3]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line5Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[4]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line1Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLInvert[0]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line2Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLInvert[1]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line3Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLInvert[2]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line4Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLInvert[3]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.PFLRenderer).InstrumentState.Line5Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.PFLInvert[4]);
             }
             //*************************
         }
@@ -518,19 +518,19 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             //** UPDATE DED 
             if (fromFalcon.DEDLines != null)
             {
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line1 = Encoding.Default.GetBytes(fromFalcon.DEDLines[0]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line2 = Encoding.Default.GetBytes(fromFalcon.DEDLines[1]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line3 = Encoding.Default.GetBytes(fromFalcon.DEDLines[2]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line4 = Encoding.Default.GetBytes(fromFalcon.DEDLines[3]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line5 = Encoding.Default.GetBytes(fromFalcon.DEDLines[4]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line1 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.DEDLines[0]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line2 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.DEDLines[1]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line3 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.DEDLines[2]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line4 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.DEDLines[3]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line5 = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.DEDLines[4]);
             }
             if (fromFalcon.Invert != null)
             {
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line1Invert = Encoding.Default.GetBytes(fromFalcon.Invert[0]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line2Invert = Encoding.Default.GetBytes(fromFalcon.Invert[1]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line3Invert = Encoding.Default.GetBytes(fromFalcon.Invert[2]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line4Invert = Encoding.Default.GetBytes(fromFalcon.Invert[3]);
-                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line5Invert = Encoding.Default.GetBytes(fromFalcon.Invert[4]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line1Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.Invert[0]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line2Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.Invert[1]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line3Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.Invert[2]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line4Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.Invert[3]);
+                ((F16DataEntryDisplayPilotFaultList)renderers.DEDRenderer).InstrumentState.Line5Invert = Common.Strings.Util.GetBytesInDefaultEncoding(fromFalcon.Invert[4]);
             }
             //*************************
         }
