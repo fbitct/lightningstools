@@ -571,6 +571,13 @@ namespace MFDExtractor
                             _renderers,
                             _simSupport.UseBMSAdvancedSharedmemValues,
                             _messageManager.UpdateEHSIBrightnessLabelVisibility);
+
+                        SetInstrumentImage(GetMfd4Bitmap(_settingsManager.CaptureCoordinatesSet) , "MFD4", _settingsManager.NetworkMode);
+                        SetInstrumentImage(GetMfd3Bitmap(_settingsManager.CaptureCoordinatesSet), "MFD3", _settingsManager.NetworkMode);
+                        SetInstrumentImage(GetLeftMfdBitmap(_settingsManager.CaptureCoordinatesSet), "LMFD", _settingsManager.NetworkMode);
+                        SetInstrumentImage(GetRightMfdBitmap(_settingsManager.CaptureCoordinatesSet), "RMFD", _settingsManager.NetworkMode);
+                        SetInstrumentImage(GetHudBitmap(_settingsManager.CaptureCoordinatesSet), "HUD", _settingsManager.NetworkMode);
+
                     }
                     else
                     {

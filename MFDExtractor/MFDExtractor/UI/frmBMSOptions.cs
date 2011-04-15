@@ -60,6 +60,23 @@ namespace MFDExtractor.UI
                                 {
                                     valid = true;
                                 }
+                                else
+                                {
+                                    artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"..\..\Data\art\ckptart"));
+                                    if (artFolder.Exists)
+                                    {
+                                        valid = true;
+                                    }
+                                    else
+                                    {
+                                        artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"..\..\Data\art\ckptartn"));
+                                        if (artFolder.Exists)
+                                        {
+                                            valid = true;
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }
@@ -189,7 +206,11 @@ namespace MFDExtractor.UI
                 fileToRead = new FileInfo(Path.Combine(_bmsPath, @"art\ckptartn\3dckpit.dat"));
                 if (!fileToRead.Exists)
                 {
-                    return null;
+                    fileToRead = new FileInfo(Path.Combine(_bmsPath, @"..\..\Data\art\ckptartn\3dckpit.dat"));
+                    if (!fileToRead.Exists)
+                    {
+                        return null;
+                    }
                 }
             }
             int? toReturn = null;
