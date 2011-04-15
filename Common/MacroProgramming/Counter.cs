@@ -112,7 +112,7 @@ namespace Common.MacroProgramming
                 {
                     _currentValue += _increment;
                 }
-                catch (OverflowException ex)
+                catch (OverflowException)
                 {
                     if (_currentValue == long.MaxValue)
                     {

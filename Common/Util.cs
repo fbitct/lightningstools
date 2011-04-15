@@ -56,10 +56,7 @@ namespace Common
                     IDisposable disposable = obj as IDisposable;
                     if (disposable != null) disposable.Dispose();
                 }
-                catch (Exception e)
-                {
-                    //_log.Debug(e.Message, e);
-                }
+                catch { }
 
                 obj = null;
             }

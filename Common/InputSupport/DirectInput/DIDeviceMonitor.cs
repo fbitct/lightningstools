@@ -354,11 +354,11 @@ namespace Common.InputSupport.DirectInput
                         GetNewJoyState();
                     }
                 }
-                catch (ThreadAbortException e)
+                catch (ThreadAbortException)
                 {
                     //_log.Debug(e.Message, e);
                 }
-                catch (ThreadInterruptedException e2)
+                catch (ThreadInterruptedException)
                 {
                     //_log.Debug(e2.Message, e2);
                 }

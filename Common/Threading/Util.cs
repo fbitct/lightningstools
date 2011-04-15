@@ -15,9 +15,7 @@ namespace Common.Threading
             {
                 t.Abort();
             }
-            catch (Exception e)
-            {
-            }
+            catch { }
             Common.Util.DisposeObject(t);
             t = null;
         }
