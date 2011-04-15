@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using Common.SimSupport;
 using System.IO;
@@ -12,7 +10,7 @@ namespace LightningGauges.Renderers
     public class F16HorizontalSituationIndicator : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+        private static string IMAGES_FOLDER_NAME = new DirectoryInfo(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
         private const string HSI_BACKGROUND_IMAGE_FILENAME = "hsi.bmp";
         private const string HSI_BACKGROUND_MASK_FILENAME = "hsi_mask.bmp";
         private const string HSI_BEARING_TO_BEACON_NEEDLE_IMAGE_FILENAME = "hsibeac.bmp";
@@ -355,9 +353,7 @@ namespace LightningGauges.Renderers
                 {
                     g.DrawImage(_hsiCourseDeviationIndicator.MaskedImage, new Point(0, 0));
                 }
-                catch (OverflowException e)
-                {
-                }
+                catch (OverflowException) { }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw airplane symbol
@@ -390,7 +386,7 @@ namespace LightningGauges.Renderers
         public class F16HSIInstrumentState : InstrumentStateBase
         {
             private const float DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES = 5.0F;
-            private const float MAX_RANGE=999.9F;
+            private const float MAX_RANGE = 999.9F;
             private float _magneticHeadingDegrees = 0;
             private float _bearingToBeaconDegrees = 0;
             private float _courseDeviationDegrees = 0;
@@ -398,7 +394,8 @@ namespace LightningGauges.Renderers
             private int _desiredHeadingDegrees = 0;
             private int _desiredCourseDegrees = 0;
             private float _distanceToBeaconNauticalMiles = 0;
-            public F16HSIInstrumentState():base()
+            public F16HSIInstrumentState()
+                : base()
             {
                 this.MagneticHeadingDegrees = 0.0f;
                 this.BearingToBeaconDegrees = 0.0f;
@@ -444,7 +441,7 @@ namespace LightningGauges.Renderers
                     float distance = value;
                     if (distance < 0) distance = 0;
                     if (distance > MAX_RANGE) distance = MAX_RANGE;
-                    if (float.IsNaN(distance) || float.IsNegativeInfinity(distance))  
+                    if (float.IsNaN(distance) || float.IsNegativeInfinity(distance))
                     {
                         distance = 0;
                     }
@@ -469,7 +466,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     int desiredCourse = value;
-                    if (desiredCourse >360) desiredCourse %= 360;
+                    if (desiredCourse > 360) desiredCourse %= 360;
                     _desiredCourseDegrees = desiredCourse;
 
                 }
@@ -514,7 +511,7 @@ namespace LightningGauges.Renderers
                 {
                     float courseDeviationLimit = value;
                     courseDeviationLimit %= 360.0f;
-                    if (float.IsInfinity(courseDeviationLimit) || float.IsNaN(courseDeviationLimit) || courseDeviationLimit ==0)
+                    if (float.IsInfinity(courseDeviationLimit) || float.IsNaN(courseDeviationLimit) || courseDeviationLimit == 0)
                     {
                         courseDeviationLimit = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
                     }

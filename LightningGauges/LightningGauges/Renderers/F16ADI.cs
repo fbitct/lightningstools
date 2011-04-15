@@ -6,7 +6,6 @@ using Common.SimSupport;
 using System.IO;
 using System.Drawing.Drawing2D;
 using Common.Imaging;
-using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
