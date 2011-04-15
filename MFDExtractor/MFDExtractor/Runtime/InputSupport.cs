@@ -14,17 +14,18 @@ using MFDExtractor.Runtime.Settings;
 
 namespace MFDExtractor.Runtime
 {
-    internal class InputSupport
+    internal class InputSupport:IDisposable
     {
         private static ILog _log = LogManager.GetLogger(typeof(InputSupport));
 
+        private bool _disposed = false;
         private Thread _keyboardWatcherThread = null;
         private Mediator.PhysicalControlStateChangedEventHandler _mediatorEventHandler = null;
         private Mediator _mediator = null;
         private SettingsManager _settingsManager= null;
         private MessageManager _messageManager = null;
         private Extractor _extractor = null;
-        public Mediator Mediator { get { return _mediator; } }
+
         private InputSupport() : base() 
         {
             Initialize();
@@ -35,12 +36,14 @@ namespace MFDExtractor.Runtime
             _settingsManager = settingsManager;
             _messageManager = messageManager;
         }
+
+        public Mediator Mediator { get { return _mediator; } }
+
         private void Initialize()
         {
             CreateMediator();
             SetupKeyboardWatcherThread();
         }
-
         private void CreateMediator()
         {
             _mediatorEventHandler = new Mediator.PhysicalControlStateChangedEventHandler(Mediator_PhysicalControlStateChanged);
@@ -107,7 +110,7 @@ namespace MFDExtractor.Runtime
             else if (
                     !DirectInputHotkeyIsTriggering(_settingsManager.KeySettings.EHSICourseDepressedKey)
                         &&
-                    EHSIRightKnobIsCurrentlyDepressed()
+                    _messageManager.EHSIRightKnobIsCurrentlyDepressed
                 )
             {
                 _messageManager.NotifyEHSIRightKnobReleased(true);
@@ -257,7 +260,9 @@ namespace MFDExtractor.Runtime
             _keyboardWatcherThread.Priority = ThreadPriority.Highest;
             _keyboardWatcherThread.IsBackground = true;
             _keyboardWatcherThread.Name = "KeyboardWatcherThread";
+            _keyboardWatcherThread.Start();
         }
+        
         public void ProcessKeyUpEvent(KeyEventArgs e)
         {
             _settingsManager.KeySettings.Reload();
@@ -266,7 +271,7 @@ namespace MFDExtractor.Runtime
             Keys modifiersInHotkey = (_settingsManager.KeySettings.EHSICourseDepressedKey.Keys & Keys.Modifiers);
 
             if (
-                EHSIRightKnobIsCurrentlyDepressed()
+                _messageManager.EHSIRightKnobIsCurrentlyDepressed
                     &&
                 (_settingsManager.KeySettings.EHSICourseDepressedKey.ControlType == ControlType.Key)
                     &&
@@ -327,7 +332,7 @@ namespace MFDExtractor.Runtime
             {
                 _messageManager.NotifyEHSIRightKnobIncreasedByOne(true);
             }
-            else if (KeyIsHotkey(_settingsManager.KeySettings.EHSICourseDepressedKey, keys) && !EHSIRightKnobIsCurrentlyDepressed())
+            else if (KeyIsHotkey(_settingsManager.KeySettings.EHSICourseDepressedKey, keys) && !_messageManager.EHSIRightKnobIsCurrentlyDepressed)
             {
                 _messageManager.NotifyEHSIRightKnobDepressed(true);
             }
@@ -391,7 +396,7 @@ namespace MFDExtractor.Runtime
                 device.Acquire();
                 bool[] lastKeyboardState = new bool[Enum.GetValues(typeof(Key)).Length];
                 bool[] currentKeyboardState = new bool[Enum.GetValues(typeof(Key)).Length];
-                while (_keepRunning)
+                while (!_disposed)
                 {
                     resetEvent.WaitOne();
                     try
@@ -453,5 +458,33 @@ namespace MFDExtractor.Runtime
             }
         }
 
+
+        #region Object Disposal & Destructors
+        /// <summary>
+        /// Public implementation of the IDisposable pattern
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        /// <summary>
+        /// Private implementation of the IDisposable pattern
+        /// </summary>
+        /// <param name="disposing"></param>
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Common.Threading.Util.AbortThread(ref _keyboardWatcherThread);
+                    _keyboardWatcherThread = null;
+                }
+            }
+            _disposed = true;
+        }
+
+        #endregion
     }
 }

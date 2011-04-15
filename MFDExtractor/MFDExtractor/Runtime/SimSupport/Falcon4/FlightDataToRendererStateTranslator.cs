@@ -37,7 +37,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                 UpdateAOAIndicator(renderers, fromFalcon, hsibits);
                 UpdateAOAIndexer(renderers, fromFalcon);
                 UpdatePrimaryADI(renderers, hsibits);
-                UpdateStandbyADI(renderers, hsibits);
+                UpdateStandbyADI(renderers, fromFalcon, hsibits);
                 UpdateHSI(renderers, fromFalcon, hsibits);
 
                 
@@ -787,7 +787,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             //**********************
         }
 
-        private static void UpdateStandbyADI(InstrumentRenderers renderers, HsiBits hsibits)
+        private static void UpdateStandbyADI(InstrumentRenderers renderers, FlightData fromFalcon, HsiBits hsibits)
         {
 
             //***** UPDATE BACKUP ADI *****

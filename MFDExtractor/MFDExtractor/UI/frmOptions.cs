@@ -42,7 +42,6 @@ namespace MFDExtractor.UI
         ///the current Extractor engine instance
         /// </summary>
         private bool _formLoading = true;
-        private volatile bool _restartScheduled = false;
         /// <summary>
         /// Default constructor for the Options Form
         /// </summary>
@@ -1040,9 +1039,7 @@ namespace MFDExtractor.UI
             {
                 this.Close(); //TODO: handle this kind of stuff centrally
             }
-            catch (Exception e)
-            {
-            }
+            catch {}
         }
         private bool ValidateAndApplySettings()
         {
@@ -1903,9 +1900,7 @@ namespace MFDExtractor.UI
                                     selectForm.EnableSelectHudSecondary = true;
                                 }
                             }
-                            catch (Exception f)
-                            {
-                            }
+                            catch {}
                         } //end if (tokens.Count == 2)
                     } //end while (!sr.EndOfStream)
                 } //end using (StreamReader sr = File.OpenText(file.FileName))
@@ -2133,9 +2128,7 @@ namespace MFDExtractor.UI
                                         }
                                     }
                                 }
-                                catch (Exception f)
-                                {
-                                }
+                                catch {}
                             } //end if (tokens.Count == 2)
                         } //end while (!sr.EndOfStream)
                     } //end using (StreamReader sr = File.OpenText(file.FileName))
@@ -2713,9 +2706,7 @@ namespace MFDExtractor.UI
             {
                 keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
             }
-            catch (Exception ex)
-            {
-            }
+            catch {}
             if (keyFromSettings != null)
             {
                 toShow.SelectedControl = keyFromSettings;

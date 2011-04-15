@@ -240,7 +240,7 @@ namespace MFDExtractor
                 {
                     ((F16ISIS)ISISRenderer).Options.PressureAltitudeUnits = (F16ISIS.F16ISISOptions.PressureUnits)Enum.Parse(typeof(F16ISIS.F16ISISOptions.PressureUnits), pressureUnitsString);
                 }
-                catch (Exception e)
+                catch 
                 {
                     ((F16ISIS)ISISRenderer).Options.PressureAltitudeUnits = F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
                 }

@@ -17,7 +17,6 @@ namespace MFDExtractor.Runtime
         /// Reference to the application's main form (for supplying to DirectInput)
         /// </summary>
         private static Form _applicationForm = null;
-        private static volatile bool _windowSizingOrMoving = false;
 
         private readonly InstrumentRenderers _renderers;
         private readonly SettingsManager _settingsManager;
@@ -46,8 +45,9 @@ namespace MFDExtractor.Runtime
             }
         }
         #region Forms Setup
-        public void SetupOutputForms(Form mainForm)
+        public void SetupOutputForms()
         {
+            Form mainForm = _applicationForm;
             DateTime startTime = DateTime.Now;
             _log.DebugFormat("Started setting up output forms on the extractor at: {0}", startTime.ToString());
             InstrumentFormController.Create("MFD4", "MFD #4", mainForm, BlankAndTestImages.Mfd4BlankImage, new EventHandler((s, e) => { _settingsManager.SaveSettingsAsync(); }), Properties.Settings.Default, _renderers.MFD4Renderer);

@@ -16,8 +16,6 @@ namespace MFDExtractor.Runtime.Settings
         #region Instance variables
         private bool _disposed = false;
 
-        private volatile bool _settingsSaveScheduled = false;
-        private volatile bool _settingsLoadScheduled = false;
         private BackgroundWorker _settingsSaverAsyncWorker = new BackgroundWorker();
         private BackgroundWorker _settingsLoaderAsyncWorker = new BackgroundWorker();
 
@@ -41,7 +39,7 @@ namespace MFDExtractor.Runtime.Settings
         public CaptureCoordinatesSet CaptureCoordinatesSet { get { return _captureCoordinatesSet; } }
         public NetworkMode NetworkMode { get { return _networkMode; } set { _networkMode = value; } }
         public bool TestMode { get { return _testMode; } set { _testMode = value; } }
-        private GDIPlusOptions GDIPlusOptions { get { return _gdiPlusOptions; } set { _gdiPlusOptions = value; } }
+        public GDIPlusOptions GDIPlusOptions { get { return _gdiPlusOptions; } set { _gdiPlusOptions = value; } }
         public string CompressionType { get { return _compressionType; } set { _compressionType = value; } }
         public string ImageFormat { get { return _imageFormat; } set { _imageFormat = value; } }
         public IPEndPoint ServerEndpont { get { return _serverEndpoint; } set { _serverEndpoint = value; } }
@@ -72,14 +70,12 @@ namespace MFDExtractor.Runtime.Settings
         private void _settingsLoaderAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             LoadSettings();
-            _settingsLoadScheduled = false;
         }
 
         private void _settingsSaverAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Properties.Settings.Default.Save();
             Properties.Settings.Default.Reload();
-            _settingsSaveScheduled = false;
         }
         #endregion
 
@@ -87,22 +83,11 @@ namespace MFDExtractor.Runtime.Settings
         
         public void LoadSettingsAsync()
         {
-            if (_settingsLoaderAsyncWorker.IsBusy)
-            {
-                _settingsLoadScheduled = true;
-            }
-            else
-            {
-                _settingsLoaderAsyncWorker.RunWorkerAsync();
-            }
+            _settingsLoaderAsyncWorker.RunWorkerAsync();
         }
         public void SaveSettingsAsync()
         {
-            if (_settingsSaverAsyncWorker.IsBusy)
-            {
-                _settingsSaveScheduled = true;
-            }
-            else
+            if (!_settingsSaverAsyncWorker.IsBusy)
             {
                 _settingsSaverAsyncWorker.RunWorkerAsync();
             }

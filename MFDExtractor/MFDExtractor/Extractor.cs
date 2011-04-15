@@ -93,7 +93,7 @@ namespace MFDExtractor
         private NetworkManager _networkManager = null;
         private Falcon4SimSupport _simSupport = null;
         private InputSupport _inputSupport = null;
-        
+        private FormManager _formManager = null;
         #endregion
 
         #region Constructors
@@ -105,6 +105,11 @@ namespace MFDExtractor
         private Extractor()
             : base()
         {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             //load user settings when an instance of the Extractor engine is created by
             //one of the Factory methods
             _settingsManager = new SettingsManager();
@@ -114,43 +119,9 @@ namespace MFDExtractor
             _simSupport = new Falcon4SimSupport(_settingsManager, _networkManager, this);
             _messageManager = new MessageManager(_renderers, _networkManager, _settingsManager, _simSupport);
             _inputSupport = new InputSupport(_settingsManager, _messageManager, this);
-
+            _formManager = new FormManager(_settingsManager, _renderers);
         }
-        private void UpdateEHSIBrightnessLabelVisibility()
-        {
-            bool showBrightnessLabel = false;
-            if (EHSIRightKnobIsCurrentlyDepressed())
-            {
-                DateTime? whenPressed = _ehsiRightKnobDepressedTime;
-                if (whenPressed.HasValue)
-                {
-                    TimeSpan howLongPressed = DateTime.Now.Subtract(whenPressed.Value);
-                    if (howLongPressed.TotalMilliseconds > 2000)
-                    {
-                        showBrightnessLabel = true;
-                    }
-                }
-            }
-            else
-            {
-                DateTime? whenReleased = _ehsiRightKnobReleasedTime;
-                DateTime? lastActivity = _ehsiRightKnobLastActivityTime;
-                if (whenReleased.HasValue && lastActivity.HasValue)
-                {
-                    TimeSpan howLongAgoReleased = DateTime.Now.Subtract(whenReleased.Value);
-                    TimeSpan howLongAgoLastActivity = DateTime.Now.Subtract(lastActivity.Value);
-                    if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
-                    {
-                        showBrightnessLabel = ((F16EHSI)_renderers.EHSIRenderer).InstrumentState.ShowBrightnessLabel;
-                    }
-                }
-            }
-            ((F16EHSI)_renderers.EHSIRenderer).InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
-        }
-        private bool EHSIRightKnobIsCurrentlyDepressed()
-        {
-            return _ehsiRightKnobDepressedTime.HasValue;
-        }
+        
         
 
 
@@ -212,9 +183,6 @@ namespace MFDExtractor
             
             InstrumentFormController.DestroyAll();
 
-            NetworkManager.TeardownServer();
-            CloseAndDisposeSharedmemReaders();
-
             //set the Running flag to false
             _running = false;
 
@@ -235,6 +203,7 @@ namespace MFDExtractor
             _log.DebugFormat("Total time taken to stop the extractor engine (in milliseconds): {0}", totalElapsed.TotalMilliseconds);
 
         }
+
         /// <summary>
         /// Calls Dispose() on the current Extractor instance
         /// </summary>
@@ -453,18 +422,21 @@ namespace MFDExtractor
                 _flightData = flightData;
                 if (_settingsManager.NetworkMode == NetworkMode.Server)
                 {
-                    SendFlightData(flightData);
+                    _networkManager.SendFlightDataToClients(flightData);
                 }
             }
         }
-        private static void SetInstrumentImage(Image image, string instrumentName, NetworkMode networkMode)
+        private void SetInstrumentImage(Image image, string instrumentName, NetworkMode networkMode)
         {
             if (image== null) return;
-            (InstrumentFormController.Instances[instrumentName].Renderer as CanvasRenderer).Image = image;
+            if (InstrumentFormController.Instances.ContainsKey(instrumentName))
+            {
+                (InstrumentFormController.Instances[instrumentName].Renderer as CanvasRenderer).Image = image;
+            }
             if (networkMode == NetworkMode.Server)
             {
 
-                SendInstrumentImageToClients(instrumentName, image, networkMode);
+                _networkManager.SendInstrumentImageToClients(instrumentName, image, networkMode);
             }
         }
         
@@ -484,7 +456,7 @@ namespace MFDExtractor
                 _keepRunning = true;
 
                 SetupInstrumentRenderers();
-                SetupOutputForms();
+                _formManager.SetupOutputForms();
                 SetupThreads();
                 StartThreads();
 
@@ -502,8 +474,6 @@ namespace MFDExtractor
         }
         private void StartThreads()
         {
-            _simStatusMonitorThread.Start();
-            _keyboardWatcherThread.Start();
             _captureOrchestrationThread.Start();
         }
 
@@ -515,7 +485,7 @@ namespace MFDExtractor
                 AltimeterStyleProperty = new PropertyInvoker<string>("Altimeter_Style", Properties.Settings.Default),
                 AzimuthIndicatorTypeProperty = new PropertyInvoker<string>("AzimuthIndicatorType", Properties.Settings.Default),
                 FuelQuantityIndicatorNeedleIsCModelProperty = new PropertyInvoker<bool>("FuelQuantityIndicator_NeedleCModel", Properties.Settings.Default),
-                GDIPlusOptions = _gdiPlusOptions,
+                GDIPlusOptions = _settingsManager.GDIPlusOptions,
                 ISISPressureUnitsProperty = new PropertyInvoker<string>("ISIS_PressureUnits", Properties.Settings.Default),
                 ShowAzimuthIndicatorBezelProperty = new PropertyInvoker<bool>("AzimuthIndicator_ShowBezel", Properties.Settings.Default),
                 VVIStyleProperty = new PropertyInvoker<string>("VVI_Style", Properties.Settings.Default)
@@ -540,7 +510,7 @@ namespace MFDExtractor
 
         private void SetupCaptureOrchestrationThread()
         {
-            AbortThread(ref _captureOrchestrationThread);
+            Common.Threading.Util.AbortThread(ref _captureOrchestrationThread);
             _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork);
             _captureOrchestrationThread.Priority = _settingsManager.ThreadPriority;
             _captureOrchestrationThread.IsBackground = true;
@@ -565,12 +535,6 @@ namespace MFDExtractor
             
         }
        
-        
-
-        
-
-
-       
         #endregion
        
 
@@ -592,22 +556,21 @@ namespace MFDExtractor
                         _settingsManager.SaveSettingsAsync();
                     }
                     DateTime thisLoopStartTime = DateTime.Now;
-                    bool setNullImages = true;
 
                     _messageManager.ProcessPendingMessages();
 
-                    if (_simSupport.IsSimRunning || testMode || _settingsManager.NetworkMode == NetworkMode.Client)
+                    if (_simSupport.IsSimRunning || _settingsManager.TestMode || _settingsManager.NetworkMode == NetworkMode.Client)
                     {
-                        FlightData current = GetFlightData();
+                        FlightData current = _simSupport.GetFlightData();
                         SetFlightData(current);
 
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
-                            _flightData,
+                            (FlightData)_flightData,
                             _settingsManager.NetworkMode,
                             _simSupport.IsSimRunning,
                             _renderers,
                             _simSupport.UseBMSAdvancedSharedmemValues,
-                            UpdateEHSIBrightnessLabelVisibility);
+                            _messageManager.UpdateEHSIBrightnessLabelVisibility);
                     }
                     else
                     {
@@ -615,18 +578,17 @@ namespace MFDExtractor
                         toSet.hsiBits = Int32.MaxValue;
                         SetFlightData(toSet);
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
-                            _flightData,
+                            (FlightData)_flightData,
                             _settingsManager.NetworkMode,
                             _simSupport.IsSimRunning,
                             _renderers,
                             _simSupport.UseBMSAdvancedSharedmemValues,
-                            UpdateEHSIBrightnessLabelVisibility);
+                            _messageManager.UpdateEHSIBrightnessLabelVisibility);
                         SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.Mfd4BlankImage), "MFD4", _settingsManager.NetworkMode);
                         SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.Mfd3BlankImage), "MFD3", _settingsManager.NetworkMode);
                         SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.LeftMfdBlankImage), "LMFD", _settingsManager.NetworkMode);
                         SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.RightMfdBlankImage), "RMFD", _settingsManager.NetworkMode);
                         SetInstrumentImage(Common.Imaging.Util.CloneBitmap(BlankAndTestImages.HudBlankImage), "HUD", _settingsManager.NetworkMode);
-                        setNullImages = false;
                     }
 
                     try
@@ -634,7 +596,7 @@ namespace MFDExtractor
                         toWait = new List<WaitHandle>();
                         InstrumentFormController.RenderAll();
                         //performance group 0
-                        WaitAllAndClearList(toWait, 1000);
+                        Common.Threading.Util.WaitAllHandlesInListAndClearList(toWait, 1000);
                     }
                     catch (ThreadInterruptedException)
                     {
@@ -711,6 +673,18 @@ namespace MFDExtractor
                 if (disposing)
                 {
                     Stop();
+
+                    Common.Util.DisposeObject(_simSupport);
+                    _simSupport = null;
+
+                    Common.Util.DisposeObject(_inputSupport);
+                    _simSupport = null;
+
+                    Common.Util.DisposeObject(_networkManager);
+                    _simSupport = null;
+
+                    Common.Threading.Util.AbortThread(ref _captureOrchestrationThread);
+                    _captureOrchestrationThread = null;
                     Common.Util.DisposeObject(_settingsManager);                    
                 }
             }

@@ -18,7 +18,6 @@ namespace MFDExtractor.Runtime
     {
         #region Class variables
         private static ILog _log = LogManager.GetLogger(typeof(NetworkManager));
-        private static NetworkManager _instance = null;
         #endregion
 
         #region Instance variables
@@ -32,13 +31,12 @@ namespace MFDExtractor.Runtime
         private SettingsManager _settingsManager;
         #endregion
 
-        private NetworkManager():base()
-        {
-            SetupNetworking();
-        }
+        private NetworkManager() { }
 
-        public NetworkManager(SettingsManager settingsManager)
+        public NetworkManager(SettingsManager settingsManager):this()
         {
+            _settingsManager = settingsManager;
+            SetupNetworking();
         }
         #region Networking Support
         #region Basic Network Client/Server Setup Code
@@ -185,7 +183,11 @@ namespace MFDExtractor.Runtime
             {
                 if (disposing)
                 {
-                    TearDownImageServer();
+                    Common.Util.DisposeObject(_server);
+                    _server = null;
+
+                    Common.Util.DisposeObject(_client);
+                    _client = null;
                 }
             }
             _disposed = true;

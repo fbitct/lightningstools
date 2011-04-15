@@ -41,7 +41,6 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         /// memory area.  This is used to detect whether Falcon is running and to provide flight data to rendered instruments
         /// </summary>
         private F4SharedMem.Reader _falconSmReader = null;
-        private F4SharedMem.FlightData _flightData = null;
         private bool _useBMSAdvancedSharedmemValues = false;
         /// <summary>
         /// Flag to indicate whether the sim is running
@@ -100,8 +99,9 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             _simStatusMonitorThread.Priority = _settingsManager.ThreadPriority;
             _simStatusMonitorThread.IsBackground = true;
             _simStatusMonitorThread.Name = "SimStatusMonitorThread";
+            _simStatusMonitorThread.Start();
         }
-        private FlightData GetFlightData()
+        public FlightData GetFlightData()
         {
             FlightData toReturn = null;
             if (!_settingsManager.TestMode)
@@ -416,7 +416,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             {
                 int count = 0;
 
-                while (_keepRunning)
+                while (!_disposed)
                 {
                     count++;
                     if (_settingsManager.NetworkMode == NetworkMode.Server || _settingsManager.NetworkMode == NetworkMode.Standalone)
@@ -488,12 +488,15 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
 
                                 if (_settingsManager.NetworkMode == NetworkMode.Server)
                                 {
-                                    TearDownImageServer();
+                                    Common.Util.DisposeObject(_networkManager);
+                                    _networkManager = null;
                                 }
                             }
                             if (_settingsManager.NetworkMode == NetworkMode.Server && (!simWasRunning && _simRunning))
                             {
-                                SetupNetworkingServer();
+                                Common.Util.DisposeObject(_networkManager);
+                                _networkManager = null;
+                                _networkManager = new NetworkManager(_settingsManager);
                             }
                         }
                     }
@@ -546,6 +549,8 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             {
                 if (disposing)
                 {
+                    Common.Threading.Util.AbortThread(ref _simStatusMonitorThread);
+                    _simStatusMonitorThread = null;
                     Common.Util.DisposeObject(_texSmReader);
                     Common.Util.DisposeObject(_texSmStatusReader);
                     Common.Util.DisposeObject(_falconSmReader);

@@ -10,7 +10,6 @@ namespace MFDExtractor.Runtime.Settings
 {
     internal class KeySettings
     {
-        private bool _keySettingsLoaded = false;
         #region Public Properties
         public InputControlSelection NVISKey {get;set;}
         public InputControlSelection AirspeedIndexIncreaseKey { get; set; }
@@ -66,9 +65,7 @@ namespace MFDExtractor.Runtime.Settings
                 {
                     toReturn = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
                 }
-                catch (Exception e)
-                {
-                }
+                catch {}
             }
 
             if (toReturn == null)

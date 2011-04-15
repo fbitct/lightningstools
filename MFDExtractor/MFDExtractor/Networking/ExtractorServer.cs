@@ -27,7 +27,6 @@ namespace MFDExtractor.Networking
         private int _portNumber;
         private bool _serviceEstablished = false;
         private string _compressionType = null;
-        private string _imageFormat = null;
         private ImageObjectStore _objectStore = null;
         private bool _disposed = false;
         #endregion
@@ -46,7 +45,6 @@ namespace MFDExtractor.Networking
             _serviceName = serviceName;
             _portNumber = port;
             _compressionType = compressionType;
-            _imageFormat = null;
             _objectStore = new ImageObjectStore(compressionType, imageFormat);
             CreateService(serviceName, port);
             _instance = this;

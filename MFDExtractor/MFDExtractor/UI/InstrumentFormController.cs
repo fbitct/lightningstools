@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Common.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -146,9 +145,7 @@ namespace MFDExtractor.UI
                                 string.Format("{0} Frames per Second", instance.FormTitle),
                                 PerformanceCounterType.RateOfCountsPerSecond32));
                         }
-                        catch (Exception e)
-                        {
-                        }
+                        catch { }
                     }
 
                     // Create a category that contains multiple counters
@@ -179,9 +176,7 @@ namespace MFDExtractor.UI
                             instance.PerfCounter = new PerformanceCounter(Application.ProductName, string.Format("{0} FPS", instance.InstrumentName));
                             instance.PerfCounter.ReadOnly = false;
                         }
-                        catch (Exception e)
-                        {
-                        }
+                        catch { }
                     }
 
                 }
@@ -234,27 +229,27 @@ namespace MFDExtractor.UI
 
         public bool RenderOnStateChangesOnly { get; set; }
         public string FormTitle { get; set; }
-        
+
         public Rectangle OutputRectangle
         {
             get
             {
                 return new Rectangle(
-                    this.PropertyInvokers.LocationULX.GetProperty(), 
-                    this.PropertyInvokers.LocationULY.GetProperty(), 
-                    this.PropertyInvokers.LocationLRX.GetProperty() - this.PropertyInvokers.LocationULX.GetProperty(), 
+                    this.PropertyInvokers.LocationULX.GetProperty(),
+                    this.PropertyInvokers.LocationULY.GetProperty(),
+                    this.PropertyInvokers.LocationLRX.GetProperty() - this.PropertyInvokers.LocationULX.GetProperty(),
                     this.PropertyInvokers.LocationLRY.GetProperty() - this.PropertyInvokers.LocationULY.GetProperty()
                 );
             }
         }
         public Screen OutputScreen { get { return Common.Screen.Util.FindScreen(this.PropertyInvokers.OutputDisplayName.GetProperty()); } }
         public Image InitialImage { get; set; }
-        public PerformanceCounter PerfCounter { get; private set;}
+        public PerformanceCounter PerfCounter { get; private set; }
         public IInstrumentRenderer Renderer { get; private set; }
         public int PollingDelay { get; private set; }
         private bool RenderImmediately { get; set; }
         private DateTime LastRenderedOn { get; set; }
-        public  static void RenderAll()
+        public static void RenderAll()
         {
             lock (_instances)
             {
@@ -299,21 +294,15 @@ namespace MFDExtractor.UI
                                 this.RenderImmediately = true;
                             }
                         }
-                        catch (ThreadAbortException)
-                        {
-                        }
-                        catch (ThreadInterruptedException)
-                        {
-                        }
+                        catch (ThreadAbortException) { }
+                        catch (ThreadInterruptedException) { }
                         catch (Exception e)
                         {
                             try
                             {
                                 _log.Error("An error occurred while rendering " + this.Renderer.GetType().ToString(), e);
                             }
-                            catch (NullReferenceException ex)
-                            {
-                            }
+                            catch (NullReferenceException) { }
                         }
                     }
                     if (this.InstrumentForm.Rotation != RotateFlipType.RotateNoneFlipNone)
@@ -371,12 +360,12 @@ namespace MFDExtractor.UI
 
 
             if (
-                InstrumentFormController.TestMode 
-                    || 
-                (!this.RenderOnStateChangesOnly) 
-                    || 
-                (this.RenderOnStateChangesOnly && IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(this.Renderer)) 
-                    || 
+                InstrumentFormController.TestMode
+                    ||
+                (!this.RenderOnStateChangesOnly)
+                    ||
+                (this.RenderOnStateChangesOnly && IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(this.Renderer))
+                    ||
                 (this.RenderImmediately)
             )
             {
@@ -385,8 +374,8 @@ namespace MFDExtractor.UI
                 int renderOnN = this.PropertyInvokers.RenderOnN.GetProperty(); //specifically, on the Nth time (for example, on the 4th time through)
 
                 if (
-                        (_renderCycleNum % renderEveryN == (renderOnN - 1)) 
-                            || 
+                        (_renderCycleNum % renderEveryN == (renderOnN - 1))
+                            ||
                         this.RenderImmediately
                 )
                 {
@@ -421,7 +410,7 @@ namespace MFDExtractor.UI
                     {
                         InstrumentForm iForm = instance.InstrumentForm;
                         if (
-                            iForm !=null && 
+                            iForm != null &&
                             iForm.Visible && iForm.SizingOrMovingCursorsAreDisplayed
                                 &&
                             (
@@ -435,12 +424,12 @@ namespace MFDExtractor.UI
                             break;
                         }
                     }
-                    catch (Exception e) { }
+                    catch { }
                 }
                 return retVal;
             }
         }
-        
+
         private struct InstrumentStateSnapshot
         {
             public int HashCode;
@@ -576,9 +565,9 @@ namespace MFDExtractor.UI
             public PropertyInvoker<string> OutputDisplayName { get; set; }
             public PropertyInvoker<bool> StretchToFit { get; set; }
             public PropertyInvoker<RotateFlipType> RotateFlipType { get; set; }
-            public PropertyInvoker<int> RenderEveryN{ get; set; }
+            public PropertyInvoker<int> RenderEveryN { get; set; }
             public PropertyInvoker<int> RenderOnN { get; set; }
         }
     }
-    
+
 }

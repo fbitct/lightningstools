@@ -14,7 +14,7 @@ namespace MFDExtractor.Networking
         private Dictionary<string, object> _rawObjects = new Dictionary<string, object>(); //raw objects that can be transported across the network
         private Dictionary<string, object> _objectLocks = new Dictionary<string, object>(); //lock per object prevents modifying object while being serialized
         private Dictionary<string, int> _preSerializationHashcodes = new Dictionary<string, int>(); //stores pre-serialization hashcodes for serialized objects so that we can tell if a new version exists
-        private Dictionary<string, byte[]> _serializedObjects; //caches serialized objects so we don't have to perform serialization over and over again
+        private Dictionary<string, byte[]> _serializedObjects=new Dictionary<string,byte[]>(); //caches serialized objects so we don't have to perform serialization over and over again
         public ObjectStore():base()
         {
         }

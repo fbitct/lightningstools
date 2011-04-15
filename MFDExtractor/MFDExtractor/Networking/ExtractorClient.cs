@@ -203,9 +203,7 @@ namespace MFDExtractor.Networking
                 {
                     _wasConnected = _server.TestConnection();
                 }
-                catch (Exception ex)
-                {
-                }
+                catch {}
             }
         }
 

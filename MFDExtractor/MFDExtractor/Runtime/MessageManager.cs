@@ -148,7 +148,44 @@ namespace MFDExtractor.Runtime
                 pendingMessage = _networkManager.GetNextPendingMessageToClientFromServer();
             }
         }
-
+        public bool EHSIRightKnobIsCurrentlyDepressed
+        {
+            get
+            {
+                return _ehsiRightKnobDepressedTime.HasValue;
+            }
+        }
+        public void UpdateEHSIBrightnessLabelVisibility()
+        {
+            bool showBrightnessLabel = false;
+            if (EHSIRightKnobIsCurrentlyDepressed)
+            {
+                DateTime? whenPressed = _ehsiRightKnobDepressedTime;
+                if (whenPressed.HasValue)
+                {
+                    TimeSpan howLongPressed = DateTime.Now.Subtract(whenPressed.Value);
+                    if (howLongPressed.TotalMilliseconds > 2000)
+                    {
+                        showBrightnessLabel = true;
+                    }
+                }
+            }
+            else
+            {
+                DateTime? whenReleased = _ehsiRightKnobReleasedTime;
+                DateTime? lastActivity = _ehsiRightKnobLastActivityTime;
+                if (whenReleased.HasValue && lastActivity.HasValue)
+                {
+                    TimeSpan howLongAgoReleased = DateTime.Now.Subtract(whenReleased.Value);
+                    TimeSpan howLongAgoLastActivity = DateTime.Now.Subtract(lastActivity.Value);
+                    if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
+                    {
+                        showBrightnessLabel = ((F16EHSI)_renderers.EHSIRenderer).InstrumentState.ShowBrightnessLabel;
+                    }
+                }
+            }
+            ((F16EHSI)_renderers.EHSIRenderer).InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
+        }
         public void NotifyAccelerometerIsReset(bool relayToListeners)
         {
             ((F16Accelerometer)_renderers.AccelerometerRenderer).InstrumentState.ResetMinAndMaxGs();
