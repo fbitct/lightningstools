@@ -1,101 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using System.Text;
-using System.Net;
 using System.Collections;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting;
-using System.Globalization;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Net;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Windows.Forms;
 using log4net;
 
 namespace F16CPD.Networking
 {
     public class F16CPDClient : IF16CPDClient
     {
-        private static ILog _log = LogManager.GetLogger(typeof(F16CPDClient));
-        private IF16CPDServer _server = null;
-        private IPEndPoint _serverEndpoint = null;
-        private string _serviceName = null;
+        private static readonly ILog _log = LogManager.GetLogger(typeof (F16CPDClient));
+        private readonly IPEndPoint _serverEndpoint;
+        private readonly string _serviceName;
+        private BackgroundWorker _connectionTestingBackgroundWorker;
         private DateTime _lastConnectionCheckTime = DateTime.MinValue;
-        private bool _wasConnected = false;
-        private BackgroundWorker _connectionTestingBackgroundWorker = null;
+        private IF16CPDServer _server;
+        private bool _wasConnected;
+
         public F16CPDClient(IPEndPoint serverEndpoint, string serviceName)
         {
             _serverEndpoint = serverEndpoint;
             _serviceName = serviceName;
             EnsureConnected();
         }
-        [DebuggerHidden]
-        private void EnsureConnected()
-        {
-            if (_serverEndpoint == null || _serviceName == null) return;
-            if (!IsConnected)
-            {
-                IDictionary prop = new Hashtable();
-                prop["port"] = _serverEndpoint.Port;
-                prop["machineName"] = _serverEndpoint.Address.ToString();
-                prop["priority"] = 100;
-                prop["timeout"] = (uint)1;
-                prop["retryCount"] = 0;
-                prop["useIpAddress"] = 1;
-                TcpClientChannel chan = null;
-                try
-                {
-                    chan = new TcpClientChannel();
-                }
-                catch (Exception e)
-                {
-                    _log.Debug(e.Message, e);
-                }
-                try
-                {
-                    if (chan != null)
-                    {
-                        ChannelServices.RegisterChannel(chan, false);
-                    }
-                }
-                catch (Exception e)
-                {
-                    _log.Debug(e.Message, e);
-                }
-                try
-                {
-                    RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
-                }
-                catch (Exception e)
-                {
-                    _log.Debug(e.Message, e);
-                }
-                try
-                {
-                    // Create an instance of the remote object
-                    _server = (F16CPDServer)Activator.GetObject(
-                        typeof(F16CPDServer),
-                        "tcp://"
-                            + _serverEndpoint.Address.ToString()
-                            + ":"
-                            + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
-                            + "/"
-                            + _serviceName);
-                }
-                catch (Exception e)
-                {
-                    _log.Debug(e.Message, e);
-                }
-            }
-        }
+
+        #region IF16CPDClient Members
+
         [DebuggerHidden]
         public bool IsConnected
         {
             get
             {
                 bool toReturn = false;
-                int secondsSinceLastCheck = (int)DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
+                var secondsSinceLastCheck = (int) DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
                 if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
                 {
                     return _wasConnected;
@@ -109,7 +51,7 @@ namespace F16CPD.Networking
                         if (_connectionTestingBackgroundWorker == null)
                         {
                             _connectionTestingBackgroundWorker = new BackgroundWorker();
-                            _connectionTestingBackgroundWorker.DoWork += new DoWorkEventHandler(_connectionTestingBackgroundWorker_DoWork);
+                            _connectionTestingBackgroundWorker.DoWork += _connectionTestingBackgroundWorker_DoWork;
                         }
                         if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
                         {
@@ -126,22 +68,6 @@ namespace F16CPD.Networking
             }
         }
 
-        [DebuggerHidden]
-        void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (_server != null)
-            {
-                try
-                {
-                    _wasConnected = _server.TestConnection();
-                }
-                catch (Exception ex)
-                {
-                    _log.Debug(ex.Message, ex);
-                }
-            }
-        }
-        
 
         public object GetSimProperty(string propertyName)
         {
@@ -176,6 +102,7 @@ namespace F16CPD.Networking
                 }
             }
         }
+
         public void ClearPendingClientMessages()
         {
             EnsureConnected();
@@ -191,6 +118,7 @@ namespace F16CPD.Networking
                 }
             }
         }
+
         public Message GetNextPendingClientMessage()
         {
             EnsureConnected();
@@ -201,12 +129,90 @@ namespace F16CPD.Networking
                 {
                     toReturn = _server.GetNextPendingClientMessage();
                 }
-                catch (Exception e )
+                catch (Exception e)
                 {
                     _log.Debug(e.Message, e);
                 }
             }
             return toReturn;
+        }
+
+        #endregion
+
+        [DebuggerHidden]
+        private void EnsureConnected()
+        {
+            if (_serverEndpoint == null || _serviceName == null) return;
+            if (!IsConnected)
+            {
+                IDictionary prop = new Hashtable();
+                prop["port"] = _serverEndpoint.Port;
+                prop["machineName"] = _serverEndpoint.Address.ToString();
+                prop["priority"] = 100;
+                prop["timeout"] = (uint) 1;
+                prop["retryCount"] = 0;
+                prop["useIpAddress"] = 1;
+                TcpClientChannel chan = null;
+                try
+                {
+                    chan = new TcpClientChannel();
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(e.Message, e);
+                }
+                try
+                {
+                    if (chan != null)
+                    {
+                        ChannelServices.RegisterChannel(chan, false);
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(e.Message, e);
+                }
+                try
+                {
+                    RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(e.Message, e);
+                }
+                try
+                {
+                    // Create an instance of the remote object
+                    _server = (F16CPDServer) Activator.GetObject(
+                        typeof (F16CPDServer),
+                        "tcp://"
+                        + _serverEndpoint.Address
+                        + ":"
+                        + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
+                        + "/"
+                        + _serviceName);
+                }
+                catch (Exception e)
+                {
+                    _log.Debug(e.Message, e);
+                }
+            }
+        }
+
+        [DebuggerHidden]
+        private void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (_server != null)
+            {
+                try
+                {
+                    _wasConnected = _server.TestConnection();
+                }
+                catch (Exception ex)
+                {
+                    _log.Debug(ex.Message, ex);
+                }
+            }
         }
     }
 }

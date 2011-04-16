@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SimLinkup.Signals
 {
@@ -8,24 +7,21 @@ namespace SimLinkup.Signals
     public class MappingProfile
     {
         private List<SignalMapping> _signalMappings = new List<SignalMapping>();
+
         public List<SignalMapping> SignalMappings
         {
-            get
-            {
-                return _signalMappings;
-            }
-            set
-            {
-                _signalMappings = value;
-            }
+            get { return _signalMappings; }
+            set { _signalMappings = value; }
         }
+
         public static MappingProfile Load(string filePath)
         {
             return Common.Serialization.Util.DeserializeFromXmlFile<MappingProfile>(filePath);
         }
+
         public void Save(string filePath)
         {
-            Common.Serialization.Util.SerializeToXmlFile<MappingProfile>(this, filePath);
+            Common.Serialization.Util.SerializeToXmlFile(this, filePath);
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace F4Utils.Speech
+﻿namespace F4Utils.Speech
 {
     public class Util
     {
@@ -16,6 +12,5 @@ namespace F4Utils.Speech
             waveFormat.wBitsPerSample = 16;
             waveFormat.cbSize = 0;
         }
-
     }
 }

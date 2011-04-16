@@ -1,15 +1,13 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows.Forms;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
+using System.Windows.Forms;
 using Common.Win32;
-
 
 namespace Common.InputSupport
 {
-
     /// <summary>
     /// This component monitors all mouse activities globally (also outside of the application) 
     /// and provides appropriate events.
@@ -21,13 +19,9 @@ namespace Common.InputSupport
         /// </summary>
         protected override bool CanRaiseEvents
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
-        //################################################################
         #region Mouse events
 
         private event MouseEventHandler m_MouseMove;
@@ -56,7 +50,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseMove(object sender, MouseEventArgs e)
+        private void HookManager_MouseMove(object sender, MouseEventArgs e)
         {
             if (m_MouseMove != null)
             {
@@ -65,6 +59,7 @@ namespace Common.InputSupport
         }
 
         private event MouseEventHandler m_MouseClick;
+
         /// <summary>
         /// Occurs when a click was performed by the mouse. 
         /// </summary>
@@ -89,7 +84,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseClick(object sender, MouseEventArgs e)
+        private void HookManager_MouseClick(object sender, MouseEventArgs e)
         {
             if (m_MouseClick != null)
             {
@@ -123,7 +118,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseDown(object sender, MouseEventArgs e)
+        private void HookManager_MouseDown(object sender, MouseEventArgs e)
         {
             if (m_MouseDown != null)
             {
@@ -158,7 +153,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseUp(object sender, MouseEventArgs e)
+        private void HookManager_MouseUp(object sender, MouseEventArgs e)
         {
             if (m_MouseUp != null)
             {
@@ -192,7 +187,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void HookManager_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (m_MouseDoubleClick != null)
             {
@@ -231,7 +226,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseMoveExt(object sender, MouseEventExtArgs e)
+        private void HookManager_MouseMoveExt(object sender, MouseEventExtArgs e)
         {
             if (m_MouseMoveExt != null)
             {
@@ -269,7 +264,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_MouseClickExt(object sender, MouseEventExtArgs e)
+        private void HookManager_MouseClickExt(object sender, MouseEventExtArgs e)
         {
             if (m_MouseClickExt != null)
             {
@@ -277,10 +272,8 @@ namespace Common.InputSupport
             }
         }
 
-
         #endregion
 
-        //################################################################
         #region Keyboard events
 
         private event KeyPressEventHandler m_KeyPress;
@@ -320,7 +313,7 @@ namespace Common.InputSupport
             }
         }
 
-        void HookManager_KeyPress(object sender, KeyPressEventArgs e)
+        private void HookManager_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (m_KeyPress != null)
             {
@@ -396,13 +389,16 @@ namespace Common.InputSupport
 
         #endregion
 
+        //################################################################
 
+        //################################################################
     }
-
 
 
     public static partial class HookManager
     {
+        #region Nested type: HookProc
+
         /// <summary>
         /// The CallWndProc hook procedure is an application-defined or library-defined callback 
         /// function used with the SetWindowsHookEx function. The HOOKPROC type defines a pointer 
@@ -435,7 +431,8 @@ namespace Common.InputSupport
         /// </remarks>
         private delegate int HookProc(int nCode, int wParam, IntPtr lParam);
 
-        //##############################################################################
+        #endregion
+
         #region Mouse hook processing
 
         /// <summary>
@@ -483,7 +480,7 @@ namespace Common.InputSupport
             if (nCode >= 0)
             {
                 //Marshall the data from callback.
-                MouseLLHookStruct mouseHookStruct = (MouseLLHookStruct)Marshal.PtrToStructure(lParam, typeof(MouseLLHookStruct));
+                var mouseHookStruct = (MouseLLHookStruct) Marshal.PtrToStructure(lParam, typeof (MouseLLHookStruct));
 
                 //detect button clicked
                 MouseButtons button = MouseButtons.None;
@@ -504,7 +501,7 @@ namespace Common.InputSupport
                         button = MouseButtons.Left;
                         clickCount = 1;
                         break;
-                    case WM_LBUTTONDBLCLK: 
+                    case WM_LBUTTONDBLCLK:
                         button = MouseButtons.Left;
                         clickCount = 2;
                         break;
@@ -518,7 +515,7 @@ namespace Common.InputSupport
                         button = MouseButtons.Right;
                         clickCount = 1;
                         break;
-                    case WM_RBUTTONDBLCLK: 
+                    case WM_RBUTTONDBLCLK:
                         button = MouseButtons.Right;
                         clickCount = 2;
                         break;
@@ -526,21 +523,21 @@ namespace Common.InputSupport
                         //If the message is WM_MOUSEWHEEL, the high-order word of MouseData member is the wheel delta. 
                         //One wheel click is defined as WHEEL_DELTA, which is 120. 
                         //(value >> 16) & 0xffff; retrieves the high-order word from the given 32-bit value
-                        mouseDelta = (short)((mouseHookStruct.MouseData >> 16) & 0xffff);
-                       
+                        mouseDelta = (short) ((mouseHookStruct.MouseData >> 16) & 0xffff);
+
                         break;
                 }
 
                 //generate event 
-                MouseEventExtArgs e = new MouseEventExtArgs(
-                                                   button,
-                                                   clickCount,
-                                                   mouseHookStruct.Point.X,
-                                                   mouseHookStruct.Point.Y,
-                                                   mouseDelta);
+                var e = new MouseEventExtArgs(
+                    button,
+                    clickCount,
+                    mouseHookStruct.Point.X,
+                    mouseHookStruct.Point.Y,
+                    mouseDelta);
 
                 //Mouse up
-                if (s_MouseUp!=null && mouseUp)
+                if (s_MouseUp != null && mouseUp)
                 {
                     s_MouseUp.Invoke(null, e);
                 }
@@ -552,7 +549,7 @@ namespace Common.InputSupport
                 }
 
                 //If someone listens to click and a click is heppened
-                if (s_MouseClick != null && clickCount>0)
+                if (s_MouseClick != null && clickCount > 0)
                 {
                     s_MouseClick.Invoke(null, e);
                 }
@@ -570,13 +567,14 @@ namespace Common.InputSupport
                 }
 
                 //Wheel was moved
-                if (s_MouseWheel!=null && mouseDelta!=0)
+                if (s_MouseWheel != null && mouseDelta != 0)
                 {
                     s_MouseWheel.Invoke(null, e);
                 }
 
                 //If someone listens to move and there was a change in coordinates raise move event
-                if ((s_MouseMove!=null || s_MouseMoveExt!=null) && (m_OldX != mouseHookStruct.Point.X || m_OldY != mouseHookStruct.Point.Y))
+                if ((s_MouseMove != null || s_MouseMoveExt != null) &&
+                    (m_OldX != mouseHookStruct.Point.X || m_OldY != mouseHookStruct.Point.Y))
                 {
                     m_OldX = mouseHookStruct.Point.X;
                     m_OldY = mouseHookStruct.Point.Y;
@@ -663,14 +661,15 @@ namespace Common.InputSupport
                 }
             }
         }
-        
+
         #endregion
 
-        //##############################################################################
         #region Keyboard hook processing
-        private static bool _shiftDown = false;
-        private static bool _ctrlDown = false;
-        private static bool _altDown = false;
+
+        private static bool _shiftDown;
+        private static bool _ctrlDown;
+        private static bool _altDown;
+
         /// <summary>
         /// This field is not objectively needed but we need to keep a reference on a delegate which will be 
         /// passed to unmanaged code. To avoid GC to clean it up.
@@ -716,12 +715,13 @@ namespace Common.InputSupport
             if (nCode >= 0)
             {
                 //read structure KeyboardHookStruct at lParam
-                KeyboardHookStruct MyKeyboardHookStruct = (KeyboardHookStruct)Marshal.PtrToStructure(lParam, typeof(KeyboardHookStruct));
+                var MyKeyboardHookStruct =
+                    (KeyboardHookStruct) Marshal.PtrToStructure(lParam, typeof (KeyboardHookStruct));
 
                 //raise KeyDown
                 if (s_KeyDown != null && (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
                 {
-                    Keys keyData = (Keys)MyKeyboardHookStruct.VirtualKeyCode;
+                    var keyData = (Keys) MyKeyboardHookStruct.VirtualKeyCode;
 
                     if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
                     {
@@ -753,7 +753,9 @@ namespace Common.InputSupport
                     {
                         _altDown = false;
                     }
-                    KeyEventArgsExt e = new KeyEventArgsExt(keyData, MyKeyboardHookStruct.ScanCode, ((MyKeyboardHookStruct.Flags & NativeMethods.LLKHF_EXTENDED) == NativeMethods.LLKHF_EXTENDED));
+                    var e = new KeyEventArgsExt(keyData, MyKeyboardHookStruct.ScanCode,
+                                                ((MyKeyboardHookStruct.Flags & NativeMethods.LLKHF_EXTENDED) ==
+                                                 NativeMethods.LLKHF_EXTENDED));
                     if (s_KeyDown != null)
                     {
                         s_KeyDown.Invoke(null, e);
@@ -767,18 +769,18 @@ namespace Common.InputSupport
                     bool isDownShift = ((GetKeyState(VK_SHIFT) & 0x80) == 0x80 ? true : false);
                     bool isDownCapslock = (GetKeyState(VK_CAPITAL) != 0 ? true : false);
 
-                    byte[] keyState = new byte[256];
+                    var keyState = new byte[256];
                     GetKeyboardState(keyState);
-                    byte[] inBuffer = new byte[2];
+                    var inBuffer = new byte[2];
                     if (ToAscii(MyKeyboardHookStruct.VirtualKeyCode,
-                              MyKeyboardHookStruct.ScanCode,
-                              keyState,
-                              inBuffer,
-                              MyKeyboardHookStruct.Flags) == 1)
+                                MyKeyboardHookStruct.ScanCode,
+                                keyState,
+                                inBuffer,
+                                MyKeyboardHookStruct.Flags) == 1)
                     {
-                        char key = (char)inBuffer[0];
+                        var key = (char) inBuffer[0];
                         if ((isDownCapslock ^ isDownShift) && Char.IsLetter(key)) key = Char.ToUpper(key);
-                        KeyPressEventArgs e = new KeyPressEventArgs(key);
+                        var e = new KeyPressEventArgs(key);
                         if (s_KeyPress != null)
                         {
                             s_KeyPress.Invoke(null, e);
@@ -790,7 +792,7 @@ namespace Common.InputSupport
                 // raise KeyUp
                 if (s_KeyUp != null && (wParam == WM_KEYUP || wParam == WM_SYSKEYUP))
                 {
-                    Keys keyData = (Keys)MyKeyboardHookStruct.VirtualKeyCode;
+                    var keyData = (Keys) MyKeyboardHookStruct.VirtualKeyCode;
                     if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) == 0 && _shiftDown)
                     {
                         _shiftDown = false;
@@ -810,14 +812,15 @@ namespace Common.InputSupport
                         //ALT has been released
                     }
 
-                    KeyEventArgsExt e = new KeyEventArgsExt(keyData, MyKeyboardHookStruct.ScanCode, ((MyKeyboardHookStruct.Flags & NativeMethods.LLKHF_EXTENDED) == NativeMethods.LLKHF_EXTENDED));
+                    var e = new KeyEventArgsExt(keyData, MyKeyboardHookStruct.ScanCode,
+                                                ((MyKeyboardHookStruct.Flags & NativeMethods.LLKHF_EXTENDED) ==
+                                                 NativeMethods.LLKHF_EXTENDED));
                     if (s_KeyUp != null)
                     {
                         s_KeyUp.Invoke(null, e);
                     }
                     handled = handled || e.Handled;
                 }
-
             }
 
             //if event handled in application do not handoff to other listeners
@@ -907,6 +910,9 @@ namespace Common.InputSupport
 
         #endregion
 
+        //##############################################################################
+
+        //##############################################################################
     }
 
     /// <summary>
@@ -915,9 +921,11 @@ namespace Common.InputSupport
     /// </summary>
     public static partial class HookManager
     {
-        //################################################################
         #region Mouse events
 
+        private static MouseButtons s_PrevClickedButton;
+        //The timer to monitor time interval between two clicks.
+        private static Timer s_DoubleClickTimer;
         private static event MouseEventHandler s_MouseMove;
 
         /// <summary>
@@ -957,7 +965,6 @@ namespace Common.InputSupport
 
             remove
             {
-
                 s_MouseMoveExt -= value;
                 TryUnsubscribeFromGlobalMouseEvents();
             }
@@ -1082,12 +1089,12 @@ namespace Common.InputSupport
                 {
                     //We create a timer to monitor interval between two clicks
                     s_DoubleClickTimer = new Timer
-                    {
-                        //This interval will be set to the value we retrive from windows. This is a windows setting from contro planel.
-                        Interval = GetDoubleClickTime(),
-                        //We do not start timer yet. It will be start when the click occures.
-                        Enabled = false
-                    };
+                                             {
+                                                 //This interval will be set to the value we retrive from windows. This is a windows setting from contro planel.
+                                                 Interval = GetDoubleClickTime(),
+                                                 //We do not start timer yet. It will be start when the click occures.
+                                                 Enabled = false
+                                             };
                     //We define the callback function for the timer
                     s_DoubleClickTimer.Tick += DoubleClickTimeElapsed;
                     //We start to monitor mouse up event.
@@ -1114,9 +1121,6 @@ namespace Common.InputSupport
         }
 
         //This field remembers mouse button pressed because in addition to the short interval it must be also the same button.
-        private static MouseButtons s_PrevClickedButton;
-        //The timer to monitor time interval between two clicks.
-        private static Timer s_DoubleClickTimer;
 
         private static void DoubleClickTimeElapsed(object sender, EventArgs e)
         {
@@ -1134,7 +1138,10 @@ namespace Common.InputSupport
         private static void OnMouseUp(object sender, MouseEventArgs e)
         {
             //This should not heppen
-            if (e.Clicks < 1) { return; }
+            if (e.Clicks < 1)
+            {
+                return;
+            }
             //If the secon click heppened on the same button
             if (e.Button.Equals(s_PrevClickedButton))
             {
@@ -1154,9 +1161,9 @@ namespace Common.InputSupport
                 s_PrevClickedButton = e.Button;
             }
         }
+
         #endregion
 
-        //################################################################
         #region Keyboard events
 
         private static event KeyPressEventHandler s_KeyPress;
@@ -1228,73 +1235,16 @@ namespace Common.InputSupport
             }
         }
 
-
         #endregion
+
+        //################################################################
+
+        //################################################################
     }
 
     public static partial class HookManager
     {
-        /// <summary>
-        /// The Point structure defines the X- and Y- coordinates of a point. 
-        /// </summary>
-        /// <remarks>
-        /// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/rectangl_0tiq.asp
-        /// </remarks>
-        [StructLayout(LayoutKind.Sequential)]
-        private struct Point
-        {
-            /// <summary>
-            /// Specifies the X-coordinate of the point. 
-            /// </summary>
-            public int X;
-            /// <summary>
-            /// Specifies the Y-coordinate of the point. 
-            /// </summary>
-            public int Y;
-        }
-
-        /// <summary>
-        /// The MSLLHOOKSTRUCT structure contains information about a low-level keyboard input event. 
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MouseLLHookStruct
-        {
-            /// <summary>
-            /// Specifies a Point structure that contains the X- and Y-coordinates of the cursor, in screen coordinates. 
-            /// </summary>
-            public Point Point;
-            /// <summary>
-            /// If the message is WM_MOUSEWHEEL, the high-order word of this member is the wheel delta. 
-            /// The low-order word is reserved. A positive value indicates that the wheel was rotated forward, 
-            /// away from the user; a negative value indicates that the wheel was rotated backward, toward the user. 
-            /// One wheel click is defined as WHEEL_DELTA, which is 120. 
-            ///If the message is WM_XBUTTONDOWN, WM_XBUTTONUP, WM_XBUTTONDBLCLK, WM_NCXBUTTONDOWN, WM_NCXBUTTONUP,
-            /// or WM_NCXBUTTONDBLCLK, the high-order word specifies which X button was pressed or released, 
-            /// and the low-order word is reserved. This value can be one or more of the following values. Otherwise, MouseData is not used. 
-            ///XBUTTON1
-            ///The first X button was pressed or released.
-            ///XBUTTON2
-            ///The second X button was pressed or released.
-            /// </summary>
-            public int MouseData;
-            /// <summary>
-            /// Specifies the event-injected flag. An application can use the following value to test the mouse Flags. Value Purpose 
-            ///LLMHF_INJECTED Test the event-injected flag.  
-            ///0
-            ///Specifies whether the event was injected. The value is 1 if the event was injected; otherwise, it is 0.
-            ///1-15
-            ///Reserved.
-            /// </summary>
-            public int Flags;
-            /// <summary>
-            /// Specifies the Time stamp for this message.
-            /// </summary>
-            public int Time;
-            /// <summary>
-            /// Specifies extra information associated with the message. 
-            /// </summary>
-            public int ExtraInfo;
-        }
+        #region Nested type: KeyboardHookStruct
 
         /// <summary>
         /// The KBDLLHOOKSTRUCT structure contains information about a low-level keyboard input event. 
@@ -1308,25 +1258,107 @@ namespace Common.InputSupport
             /// <summary>
             /// Specifies a virtual-key code. The code must be a value in the range 1 to 254. 
             /// </summary>
-            public int VirtualKeyCode;
+            public readonly int VirtualKeyCode;
+
             /// <summary>
             /// Specifies a hardware scan code for the key. 
             /// </summary>
-            public int ScanCode;
+            public readonly int ScanCode;
+
             /// <summary>
             /// Specifies the extended-key flag, event-injected flag, context code, and transition-state flag.
             /// </summary>
-            public int Flags;
+            public readonly int Flags;
+
             /// <summary>
             /// Specifies the Time stamp for this message.
             /// </summary>
-            public int Time;
+            public readonly int Time;
+
             /// <summary>
             /// Specifies extra information associated with the message. 
             /// </summary>
-            public int ExtraInfo;
+            public readonly int ExtraInfo;
         }
+
+        #endregion
+
+        #region Nested type: MouseLLHookStruct
+
+        /// <summary>
+        /// The MSLLHOOKSTRUCT structure contains information about a low-level keyboard input event. 
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MouseLLHookStruct
+        {
+            /// <summary>
+            /// Specifies a Point structure that contains the X- and Y-coordinates of the cursor, in screen coordinates. 
+            /// </summary>
+            public Point Point;
+
+            /// <summary>
+            /// If the message is WM_MOUSEWHEEL, the high-order word of this member is the wheel delta. 
+            /// The low-order word is reserved. A positive value indicates that the wheel was rotated forward, 
+            /// away from the user; a negative value indicates that the wheel was rotated backward, toward the user. 
+            /// One wheel click is defined as WHEEL_DELTA, which is 120. 
+            ///If the message is WM_XBUTTONDOWN, WM_XBUTTONUP, WM_XBUTTONDBLCLK, WM_NCXBUTTONDOWN, WM_NCXBUTTONUP,
+            /// or WM_NCXBUTTONDBLCLK, the high-order word specifies which X button was pressed or released, 
+            /// and the low-order word is reserved. This value can be one or more of the following values. Otherwise, MouseData is not used. 
+            ///XBUTTON1
+            ///The first X button was pressed or released.
+            ///XBUTTON2
+            ///The second X button was pressed or released.
+            /// </summary>
+            public readonly int MouseData;
+
+            /// <summary>
+            /// Specifies the event-injected flag. An application can use the following value to test the mouse Flags. Value Purpose 
+            ///LLMHF_INJECTED Test the event-injected flag.  
+            ///0
+            ///Specifies whether the event was injected. The value is 1 if the event was injected; otherwise, it is 0.
+            ///1-15
+            ///Reserved.
+            /// </summary>
+            public readonly int Flags;
+
+            /// <summary>
+            /// Specifies the Time stamp for this message.
+            /// </summary>
+            public readonly int Time;
+
+            /// <summary>
+            /// Specifies extra information associated with the message. 
+            /// </summary>
+            public readonly int ExtraInfo;
+        }
+
+        #endregion
+
+        #region Nested type: Point
+
+        /// <summary>
+        /// The Point structure defines the X- and Y- coordinates of a point. 
+        /// </summary>
+        /// <remarks>
+        /// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/rectangl_0tiq.asp
+        /// </remarks>
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Point
+        {
+            /// <summary>
+            /// Specifies the X-coordinate of the point. 
+            /// </summary>
+            public readonly int X;
+
+            /// <summary>
+            /// Specifies the Y-coordinate of the point. 
+            /// </summary>
+            public readonly int Y;
+        }
+
+        #endregion
     }
+
     public static partial class HookManager
     {
         #region Windows constants
@@ -1632,39 +1664,19 @@ namespace Common.InputSupport
         #endregion
     }
 
-    public class KeyEventArgsExt:KeyEventArgs
+    public class KeyEventArgsExt : KeyEventArgs
     {
-        int _scanCode = 0;
-        bool _extendedKeyFlag = false;
+        public KeyEventArgsExt(Keys keyData, int scanCode, bool extendedKeyFlag) : base(keyData)
+        {
+            ScanCode = scanCode;
+            ExtendedKeyFlag = extendedKeyFlag;
+        }
 
-        public KeyEventArgsExt(Keys keyData, int scanCode, bool extendedKeyFlag):base(keyData)
-        {
-            _scanCode = scanCode;
-            _extendedKeyFlag = extendedKeyFlag;
-        }
-        public bool ExtendedKeyFlag
-        {
-            get
-            {
-                return _extendedKeyFlag;
-            }
-            set
-            {
-                _extendedKeyFlag = value;
-            }
-        }
-        public int ScanCode
-        {
-            get
-            {
-                return _scanCode;
-            }
-            set
-            {
-                _scanCode = value;
-            }
-        }
+        public bool ExtendedKeyFlag { get; set; }
+
+        public int ScanCode { get; set; }
     }
+
     /// <summary>
     /// Provides data for the MouseClickExt and MouseMoveExt events. It also provides a property Handled.
     /// Set this property to <b>true</b> to prevent further processing of the event in other applications.
@@ -1681,7 +1693,8 @@ namespace Common.InputSupport
         /// <param name="delta">A signed count of the number of detents the wheel has rotated.</param>
         public MouseEventExtArgs(MouseButtons buttons, int clicks, int x, int y, int delta)
             : base(buttons, clicks, x, y, delta)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the MouseEventArgs class. 
@@ -1689,18 +1702,12 @@ namespace Common.InputSupport
         /// <param name="e">An ordinary <see cref="MouseEventArgs"/> argument to be extended.</param>
         internal MouseEventExtArgs(MouseEventArgs e)
             : base(e.Button, e.Clicks, e.X, e.Y, e.Delta)
-        { }
-
-        private bool m_Handled;
+        {
+        }
 
         /// <summary>
         /// Set this property to <b>true</b> inside your event handler to prevent further processing of the event in other applications.
         /// </summary>
-        public bool Handled
-        {
-            get { return m_Handled; }
-            set { m_Handled = value; }
-        }
+        public bool Handled { get; set; }
     }
-
 }

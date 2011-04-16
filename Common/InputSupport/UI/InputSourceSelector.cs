@@ -1,38 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using Common.Win32;
-using Microsoft.DirectX.DirectInput;
-using System.Threading;
 using log4net;
-using System.Runtime.InteropServices;
 
 namespace Common.InputSupport.UI
 {
     public sealed partial class InputSourceSelector : Form
     {
-        private Mediator.PhysicalControlStateChangedEventHandler _mediatorHandler = null;
-        private Mediator _mediator = null;
-        private static ILog _log = LogManager.GetLogger(typeof(InputSourceSelector));
+        private static ILog _log = LogManager.GetLogger(typeof (InputSourceSelector));
+        private readonly Mediator.PhysicalControlStateChangedEventHandler _mediatorHandler;
+        private Mediator _mediator;
+
+        public InputSourceSelector()
+        {
+            InitializeComponent();
+            _mediatorHandler =
+                new Mediator.PhysicalControlStateChangedEventHandler(_mediator_PhysicalControlStateChanged);
+            PreviewKeyDown += PreviewKeyDownHandler;
+            KeyDown += Form_KeyDown;
+            SelectedControl = new InputControlSelection();
+        }
 
         public string PromptText { get; set; }
-        public InputControlSelection SelectedControl
-        {
-            get;
-            set;
-        }
+        public InputControlSelection SelectedControl { get; set; }
+
         public Mediator Mediator
         {
-            get
-            {
-                return _mediator;
-            }
+            get { return _mediator; }
             set
             {
                 _mediator = value;
@@ -40,18 +36,8 @@ namespace Common.InputSupport.UI
                 {
                     _mediator.PhysicalControlStateChanged += _mediatorHandler;
                     _mediator.RaiseEvents = true;
-
                 }
             }
-        }
-
-        public InputSourceSelector()
-        {
-            InitializeComponent();
-            _mediatorHandler = new Mediator.PhysicalControlStateChangedEventHandler(_mediator_PhysicalControlStateChanged);
-            this.PreviewKeyDown += new PreviewKeyDownEventHandler(PreviewKeyDownHandler);
-            this.KeyDown += new KeyEventHandler(Form_KeyDown);
-            this.SelectedControl = new InputControlSelection();
         }
 
         private void _mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
@@ -59,13 +45,13 @@ namespace Common.InputSupport.UI
             if (e.Control.ControlType == ControlType.Button || e.Control.ControlType == ControlType.Pov)
             {
                 rdoJoystick.Checked = true;
-                DIPhysicalControlInfo control = (DIPhysicalControlInfo)e.Control;
-                DIPhysicalDeviceInfo device = (DIPhysicalDeviceInfo)control.Parent;
+                var control = (DIPhysicalControlInfo) e.Control;
+                var device = (DIPhysicalDeviceInfo) control.Parent;
                 cbJoysticks.SelectedItem = device;
                 cboJoystickControl.SelectedItem = control;
                 if (control.ControlType == ControlType.Pov)
                 {
-                    float currentDegrees = e.CurrentState / 100;
+                    float currentDegrees = e.CurrentState/100;
                     if (e.CurrentState == -1) currentDegrees = -1;
                     /*  POV directions in degrees
                               0
@@ -79,7 +65,8 @@ namespace Common.InputSupport.UI
                             180
                      */
                     PovDirections? direction = null;
-                    if ((currentDegrees > 337.5 && currentDegrees <= 360) || (currentDegrees >= 0 && currentDegrees <= 22.5))
+                    if ((currentDegrees > 337.5 && currentDegrees <= 360) ||
+                        (currentDegrees >= 0 && currentDegrees <= 22.5))
                     {
                         direction = PovDirections.Up;
                         rdoPovUp.Checked = true;
@@ -122,20 +109,21 @@ namespace Common.InputSupport.UI
                 }
             }
         }
+
         private void Form_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!this.ContainsFocus) return;
+            if (!ContainsFocus) return;
             if (
                 (((e.KeyCode & Keys.KeyCode) & Keys.Tab) == Keys.Tab)
-                 ||
+                ||
                 (((e.KeyCode & Keys.KeyCode) & Keys.Up) == Keys.Up)
-                 ||
+                ||
                 (((e.KeyCode & Keys.KeyCode) & Keys.Down) == Keys.Down)
-              )
+                )
             {
                 if (rdoKeystroke.Checked)
                 {
-                    e.Handled  = true;
+                    e.Handled = true;
                 }
             }
             else
@@ -144,17 +132,16 @@ namespace Common.InputSupport.UI
                 txtKeystroke.Select();
             }
             UpdateKeyAssignmentData(e.KeyCode);
-
         }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (
                 ((keyData & Keys.KeyCode) & Keys.Tab) == Keys.Tab
-                 ||
+                ||
                 ((keyData & Keys.KeyCode) & Keys.Up) == Keys.Up
-                 ||
+                ||
                 ((keyData & Keys.KeyCode) & Keys.Down) == Keys.Down
-                
                 )
             {
                 rdoKeystroke.Checked = true;
@@ -164,15 +151,16 @@ namespace Common.InputSupport.UI
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
         private void PreviewKeyDownHandler(object sender, PreviewKeyDownEventArgs e)
         {
             if (
                 (((e.KeyCode & Keys.KeyCode) & Keys.Tab) == Keys.Tab)
-                 ||
+                ||
                 (((e.KeyCode & Keys.KeyCode) & Keys.Up) == Keys.Up)
-                 ||
+                ||
                 (((e.KeyCode & Keys.KeyCode) & Keys.Down) == Keys.Down)
-              )
+                )
             {
                 if (rdoKeystroke.Checked)
                 {
@@ -180,10 +168,12 @@ namespace Common.InputSupport.UI
                 }
             }
         }
+
         private static string GetKeyName(Keys key)
         {
             return key.ToString();
         }
+
         private void UpdateKeyAssignmentData(Keys key)
         {
             if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
@@ -204,18 +194,21 @@ namespace Common.InputSupport.UI
 
             txtKeystroke.Text = GetKeyName(key);
         }
+
         private void Form_Load(object sender, EventArgs e)
         {
-            txtHelpText.Lines = new string[]{
-                "Press and release the desired " + 
-                "keystroke/combination, or press and release " + 
-                "the desired joystick input, to assign it to this control."
-            };
+            txtHelpText.Lines = new[]
+                                    {
+                                        "Press and release the desired " +
+                                        "keystroke/combination, or press and release " +
+                                        "the desired joystick input, to assign it to this control."
+                                    };
             PopulateJoysticksComboBox();
             PopulateJoystickControlsComboBox();
             LoadSelectedControlInfo();
             EnableDisableControls();
         }
+
         private void EnableDisableControls()
         {
             if (cbJoysticks.Items.Count == 0)
@@ -229,8 +222,8 @@ namespace Common.InputSupport.UI
 
             if (rdoKeystroke.Checked)
             {
-                this.gbPovDirections.Enabled = false;
-                this.txtKeystroke.Enabled = true;
+                gbPovDirections.Enabled = false;
+                txtKeystroke.Enabled = true;
                 lblDeviceName.Enabled = false;
                 cbJoysticks.Enabled = false;
                 lblJoystickControl.Enabled = false;
@@ -242,25 +235,25 @@ namespace Common.InputSupport.UI
                 cbJoysticks.Enabled = true;
                 lblJoystickControl.Enabled = true;
                 cboJoystickControl.Enabled = true;
-                this.txtKeystroke.Enabled = false;
+                txtKeystroke.Enabled = false;
 
                 SelectCurrentJoystick();
                 SelectCurrentJoystickControl();
 
-                DIPhysicalDeviceInfo device = (DIPhysicalDeviceInfo)cbJoysticks.SelectedItem;
-                DIPhysicalControlInfo control = (DIPhysicalControlInfo)cboJoystickControl.SelectedItem;
+                var device = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
+                var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
                 if (control != null)
                 {
                     switch (control.ControlType)
                     {
                         case ControlType.Axis:
-                            this.gbPovDirections.Enabled = false;
+                            gbPovDirections.Enabled = false;
                             break;
                         case ControlType.Button:
-                            this.gbPovDirections.Enabled = false;
+                            gbPovDirections.Enabled = false;
                             break;
                         case ControlType.Pov:
-                            this.gbPovDirections.Enabled = true;
+                            gbPovDirections.Enabled = true;
                             break;
                         default:
                             break;
@@ -273,51 +266,58 @@ namespace Common.InputSupport.UI
             }
             else if (rdoNotAssigned.Checked)
             {
-                this.gbPovDirections.Enabled = false;
-                this.txtKeystroke.Enabled = false;
+                gbPovDirections.Enabled = false;
+                txtKeystroke.Enabled = false;
                 lblDeviceName.Enabled = false;
                 cbJoysticks.Enabled = false;
                 lblJoystickControl.Enabled = false;
                 cboJoystickControl.Enabled = false;
             }
         }
+
         private List<DIPhysicalDeviceInfo> GetKnownDirectInputDevices()
         {
-            List<DIPhysicalDeviceInfo> knownDevices = new List<DIPhysicalDeviceInfo>();
-            if (this.Mediator != null)
+            var knownDevices = new List<DIPhysicalDeviceInfo>();
+            if (Mediator != null)
             {
-                foreach (var key in this.Mediator.DeviceMonitors.Keys)
+                foreach (Guid key in Mediator.DeviceMonitors.Keys)
                 {
-                    DIDeviceMonitor monitor = this.Mediator.DeviceMonitors[key];
+                    DIDeviceMonitor monitor = Mediator.DeviceMonitors[key];
                     knownDevices.Add(monitor.DeviceInfo);
                 }
             }
             return knownDevices;
         }
+
         private void cmdOk_Click(object sender, EventArgs e)
         {
             bool valid = ValidateSelections();
             if (valid)
             {
                 StoreSelectedControlInfo();
-                this.Close();
+                Close();
             }
         }
+
         private bool ValidateSelections()
         {
             bool valid = true;
             if (rdoJoystick.Checked)
             {
-                DIPhysicalControlInfo control = (DIPhysicalControlInfo)cboJoystickControl.SelectedItem;
+                var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
                 if (control.ControlType == ControlType.Pov)
                 {
-                    if (!rdoPovDown.Checked && !rdoPovDownLeft.Checked && !rdoPovDownRight.Checked && !rdoPovLeft.Checked && !rdoPovRight.Checked && !rdoPovUp.Checked && !rdoPovUpLeft.Checked && !rdoPovUpRight.Checked)
+                    if (!rdoPovDown.Checked && !rdoPovDownLeft.Checked && !rdoPovDownRight.Checked &&
+                        !rdoPovLeft.Checked && !rdoPovRight.Checked && !rdoPovUp.Checked && !rdoPovUpLeft.Checked &&
+                        !rdoPovUpRight.Checked)
                     {
-                        MessageBox.Show(this, "A point-of-view (POV) hat control is selected, but no position on the hat has been selected.\nPlease choose a hat position or change the assigned input control.", System.Windows.Forms.Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(this,
+                                        "A point-of-view (POV) hat control is selected, but no position on the hat has been selected.\nPlease choose a hat position or change the assigned input control.",
+                                        System.Windows.Forms.Application.ProductName, MessageBoxButtons.OK,
+                                        MessageBoxIcon.Exclamation);
                         valid = false;
                     }
                 }
-
             }
             else if (rdoKeystroke.Checked)
             {
@@ -326,20 +326,22 @@ namespace Common.InputSupport.UI
                     rdoNotAssigned.Checked = true;
                 }
             }
-            this.SelectedControl= BuildInputControlSelection();
+            SelectedControl = BuildInputControlSelection();
             return valid;
         }
+
         private void StoreSelectedControlInfo()
         {
-            this.SelectedControl = BuildInputControlSelection();
+            SelectedControl = BuildInputControlSelection();
         }
+
         private InputControlSelection BuildInputControlSelection()
         {
-            InputControlSelection toReturn = new InputControlSelection();
+            var toReturn = new InputControlSelection();
             if (rdoJoystick.Checked)
             {
-                DIPhysicalDeviceInfo device = (DIPhysicalDeviceInfo)cbJoysticks.SelectedItem;
-                DIPhysicalControlInfo control = (DIPhysicalControlInfo)cboJoystickControl.SelectedItem;
+                var device = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
+                var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
                 switch (control.ControlType)
                 {
                     case ControlType.Axis:
@@ -388,19 +390,19 @@ namespace Common.InputSupport.UI
                 }
                 toReturn.DirectInputDevice = device;
                 toReturn.DirectInputControl = control;
-
             }
             else if (rdoKeystroke.Checked)
             {
                 toReturn.ControlType = ControlType.Key;
-                toReturn.Keys = (Keys)Enum.Parse(typeof(Keys), txtKeystroke.Text);
+                toReturn.Keys = (Keys) Enum.Parse(typeof (Keys), txtKeystroke.Text);
             }
             return toReturn;
         }
+
         private void LoadSelectedControlInfo()
         {
-            InputControlSelection thisControlSelection = this.SelectedControl;
-            this.lblPromptText.Text = this.PromptText;
+            InputControlSelection thisControlSelection = SelectedControl;
+            lblPromptText.Text = PromptText;
             switch (thisControlSelection.ControlType)
             {
                 case ControlType.Key:
@@ -460,6 +462,7 @@ namespace Common.InputSupport.UI
             }
             EnableDisableControls();
         }
+
         private void ClearAllPovRadioButtons()
         {
             rdoPovUp.Checked = false;
@@ -471,23 +474,25 @@ namespace Common.InputSupport.UI
             rdoPovDown.Checked = false;
             rdoPovLeft.Checked = false;
         }
+
         private void PopulateJoysticksComboBox()
         {
             cbJoysticks.Items.Clear();
-            if (this.Mediator != null)
+            if (Mediator != null)
             {
-                foreach (KeyValuePair<Guid, DIDeviceMonitor> pair in this.Mediator.DeviceMonitors)
+                foreach (var pair in Mediator.DeviceMonitors)
                 {
                     cbJoysticks.Items.Add(pair.Value.DeviceInfo);
                 }
             }
             cbJoysticks.DisplayMember = "Alias";
         }
+
         private void PopulateJoystickControlsComboBox()
         {
-            DIPhysicalDeviceInfo thisDevice = this.SelectedControl.DirectInputDevice;
+            DIPhysicalDeviceInfo thisDevice = SelectedControl.DirectInputDevice;
             cboJoystickControl.Items.Clear();
-            if (thisDevice != null && thisDevice.Controls !=null)
+            if (thisDevice != null && thisDevice.Controls != null)
             {
                 foreach (DIPhysicalControlInfo control in thisDevice.Controls)
                 {
@@ -499,9 +504,10 @@ namespace Common.InputSupport.UI
             }
             cboJoystickControl.DisplayMember = "Alias";
         }
+
         private void SelectCurrentJoystickControl()
         {
-            DIPhysicalControlInfo curControl = this.SelectedControl.DirectInputControl;
+            DIPhysicalControlInfo curControl = SelectedControl.DirectInputControl;
             if (curControl != null)
             {
                 cboJoystickControl.SelectedItem = curControl;
@@ -512,9 +518,10 @@ namespace Common.InputSupport.UI
                 cboJoystickControl.SelectedIndex = 0;
             }
         }
+
         private void SelectCurrentJoystick()
         {
-            DIPhysicalDeviceInfo thisDevice = this.SelectedControl.DirectInputDevice;
+            DIPhysicalDeviceInfo thisDevice = SelectedControl.DirectInputDevice;
             if (thisDevice != null)
             {
                 cbJoysticks.SelectedItem = thisDevice;
@@ -525,30 +532,36 @@ namespace Common.InputSupport.UI
                 cbJoysticks.SelectedIndex = 0;
             }
         }
+
         private void rdoKeystroke_CheckedChanged(object sender, EventArgs e)
         {
             EnableDisableControls();
         }
+
         private void rdoJoystick_CheckedChanged(object sender, EventArgs e)
         {
             EnableDisableControls();
         }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.SelectedControl = null;
-            this.Close();
+            SelectedControl = null;
+            Close();
         }
+
         private void cbJoysticks_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.SelectedControl.DirectInputDevice = (DIPhysicalDeviceInfo)cbJoysticks.SelectedItem;
+            SelectedControl.DirectInputDevice = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
             PopulateJoystickControlsComboBox();
             SelectCurrentJoystickControl();
         }
+
         private void cboJoystickControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.SelectedControl.DirectInputControl = (DIPhysicalControlInfo)cboJoystickControl.SelectedItem;
+            SelectedControl.DirectInputControl = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
             EnableDisableControls();
         }
+
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_mediator != null)

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+
 namespace F4KeyFile
 {
     [ComVisible(true)]
     [Serializable]
-    public enum ScanCodes : int
+    public enum ScanCodes
     {
         NotAssigned = -1,
         Escape = 0x01,

@@ -1,26 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
-using Common.Imaging;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using Common.SimSupport;
 using Common.UI;
+using Util = Common.Imaging.Util;
+
 namespace LightningGauges.Renderers
 {
     public class F16AzimuthIndicator : InstrumentRendererBase, IDisposable
     {
-        private enum EmitterCategory
-        {
-            AirborneThreat,
-            GroundThreat,
-            Search,
-            Missile,
-            Naval,
-            Unknown
-        }
+        #region EWMSMode enum
+
         public enum EWMSMode
         {
             Off,
@@ -30,61 +24,182 @@ namespace LightningGauges.Renderers
             Automatic,
             Bypass
         }
+
+        #endregion
+
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string RWR_BACKGROUND_IP1310ALR_IMAGE_FILENAME = "rwr.bmp";
         private const string RWR_BACKGROUND_HAF_IMAGE_FILENAME = "rwr2.bmp";
 
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
+
         #region Other Constants
+
         private const int RWR_MAX_EMITTER_SYMBOLS = 1099;
         private const int RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS = 32;
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
-        private static bool _imagesLoaded = false;
+
+        private static readonly object _imagesLock = new object();
+        private static bool _imagesLoaded;
         private static Bitmap _backgroundIP1310ALR;
         private static Bitmap _backgroundHAF;
-        private bool _disposed = false;
-        private static Font _osbLegendFont = new Font("Lucida Console", 15, FontStyle.Bold, GraphicsUnit.Point);
-        private static Font _chaffFlareCountLegendFont = new Font("Lucida Console", 15, FontStyle.Regular, GraphicsUnit.Point);
-        private static Font _otherLegendFont = new Font("Lucida Console", 18, FontStyle.Regular, GraphicsUnit.Point);
-        private static Font _pageLegendFont = new Font("Lucida Console", 15, FontStyle.Regular, GraphicsUnit.Point);
-        private static Font _missileWarningFont = new Font("Lucida Console", 12, FontStyle.Regular, GraphicsUnit.Point);
-        private static Font _symbolTextFontSmall = new Font("Lucida Console", 12, FontStyle.Regular, GraphicsUnit.Point);
-        private static Font _symbolTextFontLarge = new Font("Lucida Console", 15, FontStyle.Bold, GraphicsUnit.Point);
-        private static Color _scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
-        private static Pen _scopeGreenPen = new Pen(_scopeGreenColor);
+        private static readonly Font _osbLegendFont = new Font("Lucida Console", 15, FontStyle.Bold, GraphicsUnit.Point);
+
+        private static readonly Font _chaffFlareCountLegendFont = new Font("Lucida Console", 15, FontStyle.Regular,
+                                                                           GraphicsUnit.Point);
+
+        private static readonly Font _otherLegendFont = new Font("Lucida Console", 18, FontStyle.Regular,
+                                                                 GraphicsUnit.Point);
+
+        private static readonly Font _pageLegendFont = new Font("Lucida Console", 15, FontStyle.Regular,
+                                                                GraphicsUnit.Point);
+
+        private static readonly Font _missileWarningFont = new Font("Lucida Console", 12, FontStyle.Regular,
+                                                                    GraphicsUnit.Point);
+
+        private static readonly Font _symbolTextFontSmall = new Font("Lucida Console", 12, FontStyle.Regular,
+                                                                     GraphicsUnit.Point);
+
+        private static readonly Font _symbolTextFontLarge = new Font("Lucida Console", 15, FontStyle.Bold,
+                                                                     GraphicsUnit.Point);
+
+        private static readonly Color _scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
+        private static readonly Pen _scopeGreenPen = new Pen(_scopeGreenColor);
         private static Brush _scopeGreenBrush = new SolidBrush(_scopeGreenColor);
-        private static Color _osbLegendColor = Color.White;
-        private static Brush _osbLegendBrush = new SolidBrush(_osbLegendColor);
-        private static GraphicsPath fontPath = new GraphicsPath();
+        private static readonly Color _osbLegendColor = Color.White;
+        private static readonly Brush _osbLegendBrush = new SolidBrush(_osbLegendColor);
+        private static readonly GraphicsPath fontPath = new GraphicsPath();
+        private bool _disposed;
+
+        #endregion
+
+        #region ThreatSymbols enum
+
+        public enum ThreatSymbols
+        {
+            RWRSYM_NONE = 0, // nothing
+            RWRSYM_UNKNOWN = 1, // U
+            RWRSYM_ADVANCED_INTERCEPTOR = 2, //not used
+            RWRSYM_BASIC_INTERCEPTOR = 3, //not used
+            RWRSYM_ACTIVE_MISSILE = 4, //M
+            RWRSYM_HAWK = 5, //H
+            RWRSYM_PATRIOT = 6, //P
+            RWRSYM_SA2 = 7, //2
+            RWRSYM_SA3 = 8, //3
+            RWRSYM_SA4 = 9, //4
+            RWRSYM_SA5 = 10, //5
+            RWRSYM_SA6 = 11, //6
+            RWRSYM_SA8 = 12, //8
+            RWRSYM_SA9 = 13, //9
+            RWRSYM_SA10 = 14, //10
+            RWRSYM_SA13 = 15, //13
+            RWRSYM_AAA = 16, //A or S alternating
+            RWRSYM_SEARCH = 17, //S
+            RWRSYM_NAVAL = 18, //boat symbol
+            RWRSYM_CHAPARAL = 19, //C
+            RWRSYM_SA15 = 20, //15 or M alternating
+            RWRSYM_NIKE = 21, //N
+            RWRSYM_A1 = 22, //A with a single dot under it
+            RWRSYM_A2 = 23, //A with two dots under it
+            RWRSYM_A3 = 24, //A with three dots under it
+            RWRSYM_PDOT = 25, //P with a dot under it
+            RWRSYM_PSLASH = 26, //P with a vertical bar after it
+            RWRSYM_UNK1 = 27, //U with one dot under it
+            RWRSYM_UNK2 = 28, //U with two dots under it
+            RWRSYM_UNK3 = 29, //U with three dots under it
+            RWRSYM_KSAM = 30, //C
+            RWRSYM_V1 = 31, //1
+            RWRSYM_V4 = 32, //4
+            RWRSYM_V5 = 33, //5
+            RWRSYM_V6 = 34, //6
+            RWRSYM_V14 = 35, //14
+            RWRSYM_V15 = 36, //15
+            RWRSYM_V16 = 37, //16
+            RWRSYM_V18 = 38, //18
+            RWRSYM_V19 = 39, //19
+            RWRSYM_V20 = 40, //20
+            RWRSYM_V21 = 41, //21
+            RWRSYM_V22 = 42, //22
+            RWRSYM_V23 = 43, //23
+            RWRSYM_V25 = 44, //25
+            RWRSYM_V27 = 45, //27
+            RWRSYM_V29 = 46, //29
+            RWRSYM_V30 = 47, //30
+            RWRSYM_V31 = 48, //31
+            RWRSYM_VP = 49, //P
+            RWRSYM_VPD = 50, //PD
+            RWRSYM_VA = 51, //A
+            RWRSYM_VB = 52, //B
+            RWRSYM_VS = 53, //S
+            RWRSYM_Aa = 54, //A with a vertical bar after it
+            RWRSYM_Ab = 55, //A with vertical bars before and after it
+            RWRSYM_Ac = 56, //A with vertical bars before and after it and one through the middle
+            RWRSYM_MIB_F_S = 57, //F or S alternating
+            RWRSYM_MIB_F_A = 58, //F or A alternating
+            RWRSYM_MIB_F_M = 59, //F or M alternating
+            RWRSYM_MIB_F_U = 60, //F or U alternating
+            RWRSYM_MIB_F_BW = 61, //F or basic interceptor shape
+            RWRSYM_MIB_BW_S = 62, //S or basic interceptor shape
+            RWRSYM_MIB_BW_A = 63, //A or basic interceptor shape
+            RWRSYM_MIB_BW_M = 64, //M or basic interceptor shape
+        }
+
         #endregion
 
         public F16AzimuthIndicator()
-            : base()
         {
-            this.Options = new F16AzimuthIndicatorOptions();
-            this.InstrumentState = new F16AzimuthIndicatorInstrumentState();
+            Options = new F16AzimuthIndicatorOptions();
+            InstrumentState = new F16AzimuthIndicatorInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_imagesLoaded) return;
-            _backgroundIP1310ALR = (Bitmap)Common.Imaging.Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + RWR_BACKGROUND_IP1310ALR_IMAGE_FILENAME);
-            _backgroundHAF = (Bitmap)Common.Imaging.Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + RWR_BACKGROUND_HAF_IMAGE_FILENAME);
+            _backgroundIP1310ALR =
+                (Bitmap)
+                Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar +
+                                        RWR_BACKGROUND_IP1310ALR_IMAGE_FILENAME);
+            _backgroundHAF =
+                (Bitmap)
+                Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar +
+                                        RWR_BACKGROUND_HAF_IMAGE_FILENAME);
 
             _imagesLoaded = true;
         }
+
         #endregion
 
-        private void DrawString(Graphics g, string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
+        public F16AzimuthIndicatorInstrumentState InstrumentState { get; set; }
+        public F16AzimuthIndicatorOptions Options { get; set; }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+        private void DrawString(Graphics g, string s, Font font, Brush brush, RectangleF layoutRectangle,
+                                StringFormat format)
         {
             fontPath.Reset();
-            fontPath.AddString(s, font.FontFamily, (int)font.Style, font.SizeInPoints, layoutRectangle, format);
+            fontPath.AddString(s, font.FontFamily, (int) font.Style, font.SizeInPoints, layoutRectangle, format);
             g.FillPath(brush, fontPath);
         }
+
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -93,32 +208,33 @@ namespace LightningGauges.Renderers
             }
             Graphics gfx = g;
             Bitmap fullBright = null;
-            if (this.InstrumentState.Brightness != this.InstrumentState.MaxBrightness)
+            if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
-                fullBright = new Bitmap(bounds.Size.Width, bounds.Size.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+                fullBright = new Bitmap(bounds.Size.Width, bounds.Size.Height, PixelFormat.Format32bppPArgb);
                 gfx = Graphics.FromImage(fullBright);
             }
             lock (_imagesLock)
             {
                 Matrix initialTransform = gfx.Transform;
-                gfx.InterpolationMode = this.Options.GDIPlusOptions.InterpolationMode;
-                gfx.PixelOffsetMode = this.Options.GDIPlusOptions.PixelOffsetMode;
-                gfx.SmoothingMode = this.Options.GDIPlusOptions.SmoothingMode;
-                gfx.TextRenderingHint = this.Options.GDIPlusOptions.TextRenderingHint;
+                gfx.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
+                gfx.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
+                gfx.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
+                gfx.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
                 //store the canvas's transform and clip settings so we can restore them later
                 GraphicsState initialState = gfx.Save();
 
                 //set up the canvas scale and clipping region
                 gfx.ResetTransform(); //clear any existing transforms
-                gfx.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
+                gfx.SetClip(bounds);
+                    //set the clipping region on the graphics object to our render rectangle's boundaries
                 gfx.FillRectangle(Brushes.Black, bounds);
 
 
-                Color okColor = _scopeGreenColor;//Color.FromArgb(255, 94, 184, 96);
+                Color okColor = _scopeGreenColor; //Color.FromArgb(255, 94, 184, 96);
                 Color warnColor = Color.FromArgb(255, 230, 238, 152);
                 //Color severeColor = Color.FromArgb(255, 196, 34, 58);
                 Color severeColor = Color.FromArgb(196, 43, 48);
-                
+
                 Color missileColor = severeColor;
                 //Color navalThreatColor = Color.LightSeaGreen;
                 //Color airborneThreatColor = Color.Yellow;
@@ -138,20 +254,21 @@ namespace LightningGauges.Renderers
                 int height = 0;
                 int backgroundWidth = 0;
                 int backgroundHeight = 0;
-                if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR || this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
+                if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR ||
+                    Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
                 {
-                    if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR)
+                    if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR)
                     {
                         background = _backgroundIP1310ALR;
                     }
-                    else if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
+                    else if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
                     {
                         background = _backgroundHAF;
                     }
                     width = background.Width - 28;
                     height = background.Height - 28;
                 }
-                else if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                else if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                 {
                     width = 256;
                     height = 256;
@@ -166,11 +283,12 @@ namespace LightningGauges.Renderers
                     backgroundWidth = 256;
                     backgroundHeight = 256;
                 }
-                float scaleX = (float)bounds.Width / (float)width;
-                float scaleY = (float)bounds.Height / (float)height;
+                float scaleX = bounds.Width/(float) width;
+                float scaleY = bounds.Height/(float) height;
                 gfx.ScaleTransform(scaleX, scaleY); //set the initial scale transformation 
 
-                if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR || this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
+                if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR ||
+                    Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
                 {
                     gfx.TranslateTransform(-14, -14);
                 }
@@ -181,31 +299,31 @@ namespace LightningGauges.Renderers
                 float atdRingScale = 0;
                 if (bounds.Width < bounds.Height)
                 {
-                    atdRingScale = (float)bounds.Width / (float)width;
+                    atdRingScale = bounds.Width/(float) width;
                 }
                 else if (bounds.Width > bounds.Height)
                 {
-                    atdRingScale = (float)bounds.Height / (float)height;
+                    atdRingScale = bounds.Height/(float) height;
                 }
                 else
                 {
-                    atdRingScale = (float)bounds.Width / (float)width;
+                    atdRingScale = bounds.Width/(float) width;
                 }
 
 
-                StringFormat chaffFlareCountStringFormat = new StringFormat();
+                var chaffFlareCountStringFormat = new StringFormat();
                 chaffFlareCountStringFormat.Alignment = StringAlignment.Far;
                 chaffFlareCountStringFormat.LineAlignment = StringAlignment.Near;
                 chaffFlareCountStringFormat.Trimming = StringTrimming.None;
                 chaffFlareCountStringFormat.FormatFlags = StringFormatFlags.NoWrap;
 
-                StringFormat miscTextStringFormat = new StringFormat();
+                var miscTextStringFormat = new StringFormat();
                 miscTextStringFormat.Alignment = StringAlignment.Center;
                 miscTextStringFormat.LineAlignment = StringAlignment.Far;
                 miscTextStringFormat.Trimming = StringTrimming.None;
                 miscTextStringFormat.FormatFlags = StringFormatFlags.NoWrap;
 
-                StringFormat rwrOffTextStringFormat = new StringFormat();
+                var rwrOffTextStringFormat = new StringFormat();
                 rwrOffTextStringFormat.Alignment = StringAlignment.Center;
                 rwrOffTextStringFormat.LineAlignment = StringAlignment.Center;
                 rwrOffTextStringFormat.Trimming = StringTrimming.None;
@@ -214,167 +332,203 @@ namespace LightningGauges.Renderers
                 int countLabelHeight = 15;
                 int countLabelSpacing = 22;
                 float countLabelCharWidth = 7;
-                RectangleF chaffCountRectangle = new RectangleF(45, 5, countLabelCharWidth * 4, countLabelHeight * 2.5F);
-                RectangleF flareCountRectangle = new RectangleF(chaffCountRectangle.Right + countLabelSpacing, chaffCountRectangle.Y, countLabelCharWidth * 4, countLabelHeight * 2.5F);
-                RectangleF other1CountRectangle = new RectangleF(flareCountRectangle.Right + countLabelSpacing, chaffCountRectangle.Y, countLabelCharWidth * 4, countLabelHeight * 2.5F);
-                RectangleF other2CountRectangle = new RectangleF(other1CountRectangle.Right + countLabelSpacing, chaffCountRectangle.Y, countLabelCharWidth * 4, countLabelHeight * 2.5F);
-                RectangleF goNogoRect = new RectangleF(184, 220, 60, countLabelHeight);
-                RectangleF rdyRectangle = new RectangleF(goNogoRect.Left, goNogoRect.Bottom, goNogoRect.Width, goNogoRect.Height);
-                RectangleF pflRectangle = new RectangleF(30, chaffCountRectangle.Bottom, 25, countLabelHeight);
-                RectangleF ewmsModeRectangle = new RectangleF(other2CountRectangle.Right - pflRectangle.Width-3, pflRectangle.Top, pflRectangle.Width, pflRectangle.Height);
+                var chaffCountRectangle = new RectangleF(45, 5, countLabelCharWidth*4, countLabelHeight*2.5F);
+                var flareCountRectangle = new RectangleF(chaffCountRectangle.Right + countLabelSpacing,
+                                                         chaffCountRectangle.Y, countLabelCharWidth*4,
+                                                         countLabelHeight*2.5F);
+                var other1CountRectangle = new RectangleF(flareCountRectangle.Right + countLabelSpacing,
+                                                          chaffCountRectangle.Y, countLabelCharWidth*4,
+                                                          countLabelHeight*2.5F);
+                var other2CountRectangle = new RectangleF(other1CountRectangle.Right + countLabelSpacing,
+                                                          chaffCountRectangle.Y, countLabelCharWidth*4,
+                                                          countLabelHeight*2.5F);
+                var goNogoRect = new RectangleF(184, 220, 60, countLabelHeight);
+                var rdyRectangle = new RectangleF(goNogoRect.Left, goNogoRect.Bottom, goNogoRect.Width,
+                                                  goNogoRect.Height);
+                var pflRectangle = new RectangleF(30, chaffCountRectangle.Bottom, 25, countLabelHeight);
+                var ewmsModeRectangle = new RectangleF(other2CountRectangle.Right - pflRectangle.Width - 3,
+                                                       pflRectangle.Top, pflRectangle.Width, pflRectangle.Height);
 
 
                 float atdOuterRingDiameter = 200.0f;
-                float outerRingLeft = (((float)width - atdOuterRingDiameter) / 2.0f);
-                float outerRingTop = (((float)height - atdOuterRingDiameter) / 2.0f);
-                float atdRingOffsetTranslateX = (((float)bounds.Width - (atdOuterRingDiameter * atdRingScale)) / 2.0f) - (outerRingLeft * atdRingScale);
-                float atdRingOffsetTranslateY = (((float)bounds.Height - (atdOuterRingDiameter * atdRingScale)) / 2.0f)-(outerRingTop*atdRingScale) + (chaffCountRectangle.Y * atdRingScale);
+                float outerRingLeft = ((width - atdOuterRingDiameter)/2.0f);
+                float outerRingTop = ((height - atdOuterRingDiameter)/2.0f);
+                float atdRingOffsetTranslateX = ((bounds.Width - (atdOuterRingDiameter*atdRingScale))/2.0f) -
+                                                (outerRingLeft*atdRingScale);
+                float atdRingOffsetTranslateY = ((bounds.Height - (atdOuterRingDiameter*atdRingScale))/2.0f) -
+                                                (outerRingTop*atdRingScale) + (chaffCountRectangle.Y*atdRingScale);
 
-                float atdMiddleRingDiameter = atdOuterRingDiameter / 2.0f;
-                float middleRingLeft = (((float)width - atdMiddleRingDiameter) / 2.0f);
-                float middleRingTop = (((float)height - atdMiddleRingDiameter) / 2.0f);
+                float atdMiddleRingDiameter = atdOuterRingDiameter/2.0f;
+                float middleRingLeft = ((width - atdMiddleRingDiameter)/2.0f);
+                float middleRingTop = ((height - atdMiddleRingDiameter)/2.0f);
 
                 float atdInnerRingDiameter = RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS;
-                float innerRingLeft = (((float)width - atdInnerRingDiameter) / 2.0f);
-                float innerRingTop = (((float)height - atdInnerRingDiameter) / 2.0f);
+                float innerRingLeft = ((width - atdInnerRingDiameter)/2.0f);
+                float innerRingTop = ((height - atdInnerRingDiameter)/2.0f);
 
                 //draw the background image
                 if (
+                    (
                         (
-                            (
-                                this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR
-                                    ||
-                                this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF
-                            )
-                                   &&
-                             !this.Options.HideBezel
-                       )
+                            Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR
+                            ||
+                            Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF
+                        )
+                        &&
+                        !Options.HideBezel
+                    )
                     )
                 {
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                    gfx.DrawImage(background, new Rectangle(0, 0, backgroundWidth, backgroundHeight), new Rectangle(0, 0, backgroundWidth, backgroundHeight), GraphicsUnit.Pixel);
+                    gfx.DrawImage(background, new Rectangle(0, 0, backgroundWidth, backgroundHeight),
+                                  new Rectangle(0, 0, backgroundWidth, backgroundHeight), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
-                if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                 {
                     //DRAW OSB LEGENDS
-                    StringFormat verticalOsbLegendLHSFormat = new StringFormat();
+                    var verticalOsbLegendLHSFormat = new StringFormat();
                     verticalOsbLegendLHSFormat.Alignment = StringAlignment.Far;
                     verticalOsbLegendLHSFormat.LineAlignment = StringAlignment.Center;
 
-                    StringFormat verticalOsbLegendRHSFormat = new StringFormat();
+                    var verticalOsbLegendRHSFormat = new StringFormat();
                     verticalOsbLegendRHSFormat.Alignment = StringAlignment.Near;
                     verticalOsbLegendRHSFormat.LineAlignment = StringAlignment.Center;
 
                     int verticalOsbLegendWidth = 15;
                     int verticalOsbLegendHeight = 50;
 
-                    Rectangle leftLegend1Rectangle = new Rectangle(0, 7, verticalOsbLegendWidth, verticalOsbLegendHeight);
-                    Rectangle leftLegend2Rectangle = new Rectangle(0, 68, verticalOsbLegendWidth, verticalOsbLegendHeight + 10);
-                    Rectangle leftLegend3Rectangle = new Rectangle(0, 135, verticalOsbLegendWidth, verticalOsbLegendHeight);
-                    Rectangle leftLegend4Rectangle = new Rectangle(0, 200, verticalOsbLegendWidth, verticalOsbLegendHeight);
-                    Rectangle rightLegend1Rectangle = new Rectangle(width - verticalOsbLegendWidth, leftLegend1Rectangle.Top, leftLegend1Rectangle.Width, verticalOsbLegendHeight);
-                    Rectangle rightLegend2Rectangle = new Rectangle(rightLegend1Rectangle.Left, leftLegend2Rectangle.Top, leftLegend2Rectangle.Width, verticalOsbLegendHeight + 10);
-                    Rectangle rightLegend3Rectangle = new Rectangle(rightLegend2Rectangle.Left, leftLegend3Rectangle.Top, rightLegend2Rectangle.Width, verticalOsbLegendHeight);
-                    Rectangle rightLegend4Rectangle = new Rectangle(rightLegend3Rectangle.Left, leftLegend4Rectangle.Top, rightLegend3Rectangle.Width, verticalOsbLegendHeight);
+                    var leftLegend1Rectangle = new Rectangle(0, 7, verticalOsbLegendWidth, verticalOsbLegendHeight);
+                    var leftLegend2Rectangle = new Rectangle(0, 68, verticalOsbLegendWidth, verticalOsbLegendHeight + 10);
+                    var leftLegend3Rectangle = new Rectangle(0, 135, verticalOsbLegendWidth, verticalOsbLegendHeight);
+                    var leftLegend4Rectangle = new Rectangle(0, 200, verticalOsbLegendWidth, verticalOsbLegendHeight);
+                    var rightLegend1Rectangle = new Rectangle(width - verticalOsbLegendWidth, leftLegend1Rectangle.Top,
+                                                              leftLegend1Rectangle.Width, verticalOsbLegendHeight);
+                    var rightLegend2Rectangle = new Rectangle(rightLegend1Rectangle.Left, leftLegend2Rectangle.Top,
+                                                              leftLegend2Rectangle.Width, verticalOsbLegendHeight + 10);
+                    var rightLegend3Rectangle = new Rectangle(rightLegend2Rectangle.Left, leftLegend3Rectangle.Top,
+                                                              rightLegend2Rectangle.Width, verticalOsbLegendHeight);
+                    var rightLegend4Rectangle = new Rectangle(rightLegend3Rectangle.Left, leftLegend4Rectangle.Top,
+                                                              rightLegend3Rectangle.Width, verticalOsbLegendHeight);
 
                     //draw TTD-specific extra items
                     if (
-                        this.InstrumentState.RWRPowerOn && 
+                        InstrumentState.RWRPowerOn &&
+                        (
+                            InstrumentState.UnknownThreatScanMode
+                            ||
                             (
-                                this.InstrumentState.UnknownThreatScanMode 
-                                    || 
-                                (
-                                    AreNonVisibleUnknownThreatsDetected() 
-                                        && DateTime.Now.Millisecond % 500 < 250
-                                )
+                                AreNonVisibleUnknownThreatsDetected()
+                                && DateTime.Now.Millisecond%500 < 250
                             )
-                       ) //draw highlighted UNK legend 
+                        )
+                        ) //draw highlighted UNK legend 
                     {
                         gfx.FillRectangle(_osbLegendBrush, leftLegend1Rectangle);
-                        DrawString(gfx,"UNK", _osbLegendFont, Brushes.Black, leftLegend1Rectangle, verticalOsbLegendLHSFormat);
-
+                        DrawString(gfx, "UNK", _osbLegendFont, Brushes.Black, leftLegend1Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
                     else //draw non-highlighted UNK legend
                     {
-                        DrawString(gfx,"UNK", _osbLegendFont, _osbLegendBrush, leftLegend1Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "UNK", _osbLegendFont, _osbLegendBrush, leftLegend1Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
-                    if (this.InstrumentState.RWRPowerOn && this.InstrumentState.Handoff) //draw highlighted HOFF legend 
+                    if (InstrumentState.RWRPowerOn && InstrumentState.Handoff) //draw highlighted HOFF legend 
                     {
                         gfx.FillRectangle(_osbLegendBrush, leftLegend2Rectangle);
-                        DrawString(gfx,"HOFF", _osbLegendFont, Brushes.Black, leftLegend2Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "HOFF", _osbLegendFont, Brushes.Black, leftLegend2Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
                     else //draw non-highlighted UNK legend
                     {
-                        DrawString(gfx,"HOFF", _osbLegendFont, _osbLegendBrush, leftLegend2Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "HOFF", _osbLegendFont, _osbLegendBrush, leftLegend2Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
 
-                    if (this.InstrumentState.RWRPowerOn && this.InstrumentState.SeparateMode) //draw highlighted SEP legend 
+                    if (InstrumentState.RWRPowerOn && InstrumentState.SeparateMode) //draw highlighted SEP legend 
                     {
                         gfx.FillRectangle(_osbLegendBrush, leftLegend3Rectangle);
-                        DrawString(gfx,"SEP", _osbLegendFont, Brushes.Black, leftLegend3Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "SEP", _osbLegendFont, Brushes.Black, leftLegend3Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
                     else //draw non-highlighted SEP legend
                     {
-                        DrawString(gfx,"SEP", _osbLegendFont, _osbLegendBrush, leftLegend3Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "SEP", _osbLegendFont, _osbLegendBrush, leftLegend3Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
 
-                    if (this.InstrumentState.RWRPowerOn && ((this.InstrumentState.PriorityMode && !AreNonVisiblePriorityThreatsDetected()) || (this.InstrumentState.PriorityMode && AreNonVisiblePriorityThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)))
+                    if (InstrumentState.RWRPowerOn &&
+                        ((InstrumentState.PriorityMode && !AreNonVisiblePriorityThreatsDetected()) ||
+                         (InstrumentState.PriorityMode && AreNonVisiblePriorityThreatsDetected() &&
+                          DateTime.Now.Millisecond%500 < 250)))
                     {
                         gfx.FillRectangle(_osbLegendBrush, leftLegend4Rectangle);
-                        DrawString(gfx,"PRI", _osbLegendFont, Brushes.Black, leftLegend4Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "PRI", _osbLegendFont, Brushes.Black, leftLegend4Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
                     else //draw non-highlighted PRI legend
                     {
-                        DrawString(gfx,"PRI", _osbLegendFont, _osbLegendBrush, leftLegend4Rectangle, verticalOsbLegendLHSFormat);
+                        DrawString(gfx, "PRI", _osbLegendFont, _osbLegendBrush, leftLegend4Rectangle,
+                                   verticalOsbLegendLHSFormat);
                     }
 
 
-                    if (this.InstrumentState.RWRPowerOn && (this.InstrumentState.NavalMode || (AreNonVisibleNavalThreatsDetected() && DateTime.Now.Millisecond % 500 < 250))) //draw highlighted NVL legend 
+                    if (InstrumentState.RWRPowerOn &&
+                        (InstrumentState.NavalMode ||
+                         (AreNonVisibleNavalThreatsDetected() && DateTime.Now.Millisecond%500 < 250)))
+                        //draw highlighted NVL legend 
                     {
                         gfx.FillRectangle(_osbLegendBrush, rightLegend1Rectangle);
-                        DrawString(gfx,"NVL", _osbLegendFont, Brushes.Black, rightLegend1Rectangle, verticalOsbLegendRHSFormat);
+                        DrawString(gfx, "NVL", _osbLegendFont, Brushes.Black, rightLegend1Rectangle,
+                                   verticalOsbLegendRHSFormat);
                     }
                     else //draw non-highlighted NVL legend
                     {
-                        DrawString(gfx,"NVL", _osbLegendFont, _osbLegendBrush, rightLegend1Rectangle, verticalOsbLegendRHSFormat);
+                        DrawString(gfx, "NVL", _osbLegendFont, _osbLegendBrush, rightLegend1Rectangle,
+                                   verticalOsbLegendRHSFormat);
                     }
 
 
-                    if (this.InstrumentState.RWRPowerOn && (this.InstrumentState.SearchMode || (AreNonVisibleSearchThreatsDetected() && DateTime.Now.Millisecond % 500 < 250 ))) //draw highlighted SRCH legend 
+                    if (InstrumentState.RWRPowerOn &&
+                        (InstrumentState.SearchMode ||
+                         (AreNonVisibleSearchThreatsDetected() && DateTime.Now.Millisecond%500 < 250)))
+                        //draw highlighted SRCH legend 
                     {
                         gfx.FillRectangle(_osbLegendBrush, rightLegend2Rectangle);
-                        DrawString(gfx,"SRCH", _osbLegendFont, Brushes.Black, rightLegend2Rectangle, verticalOsbLegendRHSFormat);
+                        DrawString(gfx, "SRCH", _osbLegendFont, Brushes.Black, rightLegend2Rectangle,
+                                   verticalOsbLegendRHSFormat);
                     }
                     else //draw non-highlighted SRCH legend
                     {
-                        DrawString(gfx,"SRCH", _osbLegendFont, _osbLegendBrush, rightLegend2Rectangle, verticalOsbLegendRHSFormat);
+                        DrawString(gfx, "SRCH", _osbLegendFont, _osbLegendBrush, rightLegend2Rectangle,
+                                   verticalOsbLegendRHSFormat);
                     }
 
-                    if (this.InstrumentState.RWRPowerOn
+                    if (InstrumentState.RWRPowerOn
                         && (
-                            this.InstrumentState.LowAltitudeMode
-                        //|| (AreNonVisibleGroundThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)
-                            )) //draw highlighted ALT legend 
+                               InstrumentState.LowAltitudeMode
+                           //|| (AreNonVisibleGroundThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)
+                           )) //draw highlighted ALT legend 
                     {
                         gfx.FillRectangle(_osbLegendBrush, rightLegend3Rectangle);
-                        DrawString(gfx,"ALT", _osbLegendFont, Brushes.Black, rightLegend3Rectangle, verticalOsbLegendRHSFormat);
+                        DrawString(gfx, "ALT", _osbLegendFont, Brushes.Black, rightLegend3Rectangle,
+                                   verticalOsbLegendRHSFormat);
                     }
                     else //draw non-highlighted ALT legend
                     {
-                        DrawString(gfx,"ALT", _osbLegendFont, _osbLegendBrush, rightLegend3Rectangle, verticalOsbLegendRHSFormat);
+                        DrawString(gfx, "ALT", _osbLegendFont, _osbLegendBrush, rightLegend3Rectangle,
+                                   verticalOsbLegendRHSFormat);
                     }
 
                     //draw chaff count
 
 
-
                     Color chaffCountColor;
-                    if (this.InstrumentState.ChaffCount == 0)
+                    if (InstrumentState.ChaffCount == 0)
                     {
                         chaffCountColor = severeColor;
                     }
-                    else if (this.InstrumentState.ChaffLow)
+                    else if (InstrumentState.ChaffLow)
                     {
                         chaffCountColor = warnColor;
                     }
@@ -383,16 +537,18 @@ namespace LightningGauges.Renderers
                         chaffCountColor = okColor;
                     }
                     Brush chaffCountBrush = new SolidBrush(chaffCountColor);
-                    DrawString(gfx,"CHAF", _chaffFlareCountLegendFont, chaffCountBrush, chaffCountRectangle, chaffFlareCountStringFormat);
-                    chaffCountRectangle.Offset (0,12);
-                    DrawString(gfx, string.Format("{0:00}", this.InstrumentState.ChaffCount), _chaffFlareCountLegendFont, chaffCountBrush, chaffCountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, "CHAF", _chaffFlareCountLegendFont, chaffCountBrush, chaffCountRectangle,
+                               chaffFlareCountStringFormat);
+                    chaffCountRectangle.Offset(0, 12);
+                    DrawString(gfx, string.Format("{0:00}", InstrumentState.ChaffCount), _chaffFlareCountLegendFont,
+                               chaffCountBrush, chaffCountRectangle, chaffFlareCountStringFormat);
 
                     Color flareCountColor;
-                    if (this.InstrumentState.FlareCount == 0)
+                    if (InstrumentState.FlareCount == 0)
                     {
                         flareCountColor = severeColor;
                     }
-                    else if (this.InstrumentState.FlareLow)
+                    else if (InstrumentState.FlareLow)
                     {
                         flareCountColor = warnColor;
                     }
@@ -401,17 +557,19 @@ namespace LightningGauges.Renderers
                         flareCountColor = okColor;
                     }
                     Brush flareCountBrush = new SolidBrush(flareCountColor);
-                    DrawString(gfx,"FLAR",_chaffFlareCountLegendFont, flareCountBrush, flareCountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, "FLAR", _chaffFlareCountLegendFont, flareCountBrush, flareCountRectangle,
+                               chaffFlareCountStringFormat);
                     flareCountRectangle.Offset(0, 12);
-                    DrawString(gfx, string.Format("{0:00}", this.InstrumentState.FlareCount), _chaffFlareCountLegendFont, flareCountBrush, flareCountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, string.Format("{0:00}", InstrumentState.FlareCount), _chaffFlareCountLegendFont,
+                               flareCountBrush, flareCountRectangle, chaffFlareCountStringFormat);
 
 
                     Color other1CountColor;
-                    if (this.InstrumentState.Other1Count == 0)
+                    if (InstrumentState.Other1Count == 0)
                     {
                         other1CountColor = severeColor;
                     }
-                    else if (this.InstrumentState.Other1Low)
+                    else if (InstrumentState.Other1Low)
                     {
                         other1CountColor = warnColor;
                     }
@@ -420,17 +578,19 @@ namespace LightningGauges.Renderers
                         other1CountColor = okColor;
                     }
                     Brush other1CountBrush = new SolidBrush(other1CountColor);
-                    DrawString(gfx,"OTR1", _chaffFlareCountLegendFont, other1CountBrush, other1CountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, "OTR1", _chaffFlareCountLegendFont, other1CountBrush, other1CountRectangle,
+                               chaffFlareCountStringFormat);
                     other1CountRectangle.Offset(0, 12);
-                    DrawString(gfx, string.Format("{0:00}", this.InstrumentState.Other1Count), _chaffFlareCountLegendFont, other1CountBrush, other1CountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, string.Format("{0:00}", InstrumentState.Other1Count), _chaffFlareCountLegendFont,
+                               other1CountBrush, other1CountRectangle, chaffFlareCountStringFormat);
 
 
                     Color other2CountColor;
-                    if (this.InstrumentState.Other2Count == 0)
+                    if (InstrumentState.Other2Count == 0)
                     {
                         other2CountColor = severeColor;
                     }
-                    else if (this.InstrumentState.Other2Low)
+                    else if (InstrumentState.Other2Low)
                     {
                         other2CountColor = warnColor;
                     }
@@ -439,23 +599,25 @@ namespace LightningGauges.Renderers
                         other2CountColor = okColor;
                     }
                     Brush other2CountBrush = new SolidBrush(other2CountColor);
-                    DrawString(gfx,"OTR2", _chaffFlareCountLegendFont, other2CountBrush, other2CountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, "OTR2", _chaffFlareCountLegendFont, other2CountBrush, other2CountRectangle,
+                               chaffFlareCountStringFormat);
                     other2CountRectangle.Offset(0, 12);
-                    DrawString(gfx, String.Format("{0:00}", this.InstrumentState.Other2Count), _chaffFlareCountLegendFont, other2CountBrush, other2CountRectangle, chaffFlareCountStringFormat);
+                    DrawString(gfx, String.Format("{0:00}", InstrumentState.Other2Count), _chaffFlareCountLegendFont,
+                               other2CountBrush, other2CountRectangle, chaffFlareCountStringFormat);
 
-                    if (this.InstrumentState.EWSGo )
+                    if (InstrumentState.EWSGo)
                     {
                         Color legendColor = _scopeGreenColor;
                         Brush legendBrush = new SolidBrush(legendColor);
-                        DrawString(gfx,"GO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
+                        DrawString(gfx, "GO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
                     }
-                    else if (this.InstrumentState.EWSNoGo )
+                    else if (InstrumentState.EWSNoGo)
                     {
                         Color legendColor = warnColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "NOGO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
                     }
-                    else if (this.InstrumentState.EWSDispenseReady)
+                    else if (InstrumentState.EWSDispenseReady)
                     {
                         Color legendColor = _scopeGreenColor;
                         Brush legendBrush = new SolidBrush(legendColor);
@@ -463,62 +625,68 @@ namespace LightningGauges.Renderers
                     }
 
 
-                    if (this.InstrumentState.EWSDispenseReady )
+                    if (InstrumentState.EWSDispenseReady)
                     {
                         Color legendColor = okColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "RDY", _otherLegendFont, legendBrush, rdyRectangle, miscTextStringFormat);
                     }
 
-                    if (this.InstrumentState.EWSDegraded ) //draw PFL legend 
+                    if (InstrumentState.EWSDegraded) //draw PFL legend 
                     {
                         Color legendColor = warnColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "PFL", _otherLegendFont, legendBrush, pflRectangle, miscTextStringFormat);
                     }
 
-                    switch (this.InstrumentState.EWMSMode)
+                    switch (InstrumentState.EWMSMode)
                     {
                         case EWMSMode.Off:
                             {
                                 Color legendColor = severeColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "OFF", _otherLegendFont, legendBrush, ewmsModeRectangle, miscTextStringFormat);
+                                DrawString(gfx, "OFF", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                           miscTextStringFormat);
                             }
                             break;
                         case EWMSMode.Standby:
                             {
                                 Color legendColor = warnColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "SBY", _otherLegendFont, legendBrush, ewmsModeRectangle, miscTextStringFormat);
+                                DrawString(gfx, "SBY", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                           miscTextStringFormat);
                             }
                             break;
                         case EWMSMode.Manual:
                             {
                                 Color legendColor = okColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "MAN", _otherLegendFont, legendBrush, ewmsModeRectangle, miscTextStringFormat);
+                                DrawString(gfx, "MAN", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                           miscTextStringFormat);
                             }
                             break;
                         case EWMSMode.Semiautomatic:
                             {
                                 Color legendColor = okColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "SEM", _otherLegendFont, legendBrush, ewmsModeRectangle, miscTextStringFormat);
+                                DrawString(gfx, "SEM", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                           miscTextStringFormat);
                             }
                             break;
                         case EWMSMode.Automatic:
                             {
                                 Color legendColor = okColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "AUT", _otherLegendFont, legendBrush, ewmsModeRectangle, miscTextStringFormat);
+                                DrawString(gfx, "AUT", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                           miscTextStringFormat);
                             }
                             break;
                         case EWMSMode.Bypass:
                             {
                                 Color legendColor = severeColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "BYP", _otherLegendFont, legendBrush, ewmsModeRectangle, miscTextStringFormat);
+                                DrawString(gfx, "BYP", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                           miscTextStringFormat);
                             }
                             break;
                         default:
@@ -526,7 +694,7 @@ namespace LightningGauges.Renderers
                     }
 
                     //Draw the page legends
-                    StringFormat pageLegendStringFormat = new StringFormat();
+                    var pageLegendStringFormat = new StringFormat();
                     pageLegendStringFormat.Alignment = StringAlignment.Center;
                     pageLegendStringFormat.LineAlignment = StringAlignment.Near;
                     pageLegendStringFormat.Trimming = StringTrimming.None;
@@ -535,44 +703,53 @@ namespace LightningGauges.Renderers
                     int pageLegendHeight = 15;
                     int pageLegendWidth = 35;
                     int pageLegendSeparation = 15;
-                    Rectangle tacLegendRectangle = new Rectangle(57, backgroundHeight - pageLegendHeight-5, pageLegendWidth, pageLegendHeight);
-                    Rectangle sysLegendRectangle = new Rectangle(tacLegendRectangle.Right + pageLegendSeparation, tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
-                    Rectangle tstLegendRectangle = new Rectangle(sysLegendRectangle.Right + pageLegendSeparation, tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
+                    var tacLegendRectangle = new Rectangle(57, backgroundHeight - pageLegendHeight - 5, pageLegendWidth,
+                                                           pageLegendHeight);
+                    var sysLegendRectangle = new Rectangle(tacLegendRectangle.Right + pageLegendSeparation,
+                                                           tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
+                    var tstLegendRectangle = new Rectangle(sysLegendRectangle.Right + pageLegendSeparation,
+                                                           tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
 
                     if (true)
                     {
                         //draw highlighted TAC legend
                         gfx.FillRectangle(Brushes.White, tacLegendRectangle);
-                        DrawString(gfx,"TAC", _pageLegendFont, Brushes.Black, tacLegendRectangle, pageLegendStringFormat);
+                        DrawString(gfx, "TAC", _pageLegendFont, Brushes.Black, tacLegendRectangle,
+                                   pageLegendStringFormat);
                     }
                     else
                     {
                         //draw non-highlighted TAC legend
-                        DrawString(gfx,"TAC", _pageLegendFont, Brushes.White, tacLegendRectangle, pageLegendStringFormat);
+                        DrawString(gfx, "TAC", _pageLegendFont, Brushes.White, tacLegendRectangle,
+                                   pageLegendStringFormat);
                     }
 
                     if (false)
                     {
                         //draw highlighted SYS legend
                         gfx.FillRectangle(Brushes.White, sysLegendRectangle);
-                        DrawString(gfx,"SYS", _pageLegendFont, Brushes.Black, sysLegendRectangle, pageLegendStringFormat);
+                        DrawString(gfx, "SYS", _pageLegendFont, Brushes.Black, sysLegendRectangle,
+                                   pageLegendStringFormat);
                     }
                     else
                     {
                         //draw non-highlighted SYS legend
-                        DrawString(gfx,"SYS", _pageLegendFont, Brushes.White, sysLegendRectangle, pageLegendStringFormat);
+                        DrawString(gfx, "SYS", _pageLegendFont, Brushes.White, sysLegendRectangle,
+                                   pageLegendStringFormat);
                     }
 
                     if (false)
                     {
                         //draw highlighted TST legend
                         gfx.FillRectangle(Brushes.White, tstLegendRectangle);
-                        DrawString(gfx,"TST", _pageLegendFont, Brushes.Black, tstLegendRectangle, pageLegendStringFormat);
+                        DrawString(gfx, "TST", _pageLegendFont, Brushes.Black, tstLegendRectangle,
+                                   pageLegendStringFormat);
                     }
                     else
                     {
                         //draw non-highlighted TST legend
-                        DrawString(gfx,"TST", _pageLegendFont, Brushes.White, tstLegendRectangle, pageLegendStringFormat);
+                        DrawString(gfx, "TST", _pageLegendFont, Brushes.White, tstLegendRectangle,
+                                   pageLegendStringFormat);
                     }
 
                     gfx.Transform = initialTransform;
@@ -589,18 +766,22 @@ namespace LightningGauges.Renderers
                         for (int i = 0; i <= 180; i += 30)
                         {
                             Matrix previousTransform = gfx.Transform;
-                            gfx.TranslateTransform((float)atdOuterRingDiameter / 2.0f, (float)atdOuterRingDiameter / 2.0f);
+                            gfx.TranslateTransform(atdOuterRingDiameter/2.0f, atdOuterRingDiameter/2.0f);
                             gfx.RotateTransform(i);
-                            gfx.TranslateTransform(-(float)atdOuterRingDiameter / 2.0f, -(float)atdOuterRingDiameter / 2.0f);
-                            if (i % 90 == 0)
+                            gfx.TranslateTransform(-atdOuterRingDiameter/2.0f, -atdOuterRingDiameter/2.0f);
+                            if (i%90 == 0)
                             {
-                                gfx.DrawLine(grayPen, (float)atdOuterRingDiameter / 2.0f, 0, (float)atdOuterRingDiameter / 2.0f, lineLength * 2);
-                                gfx.DrawLine(grayPen, (float)atdOuterRingDiameter / 2.0f, atdOuterRingDiameter, (float)atdOuterRingDiameter / 2.0f, atdOuterRingDiameter - (lineLength * 2));
+                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
+                                             lineLength*2);
+                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
+                                             atdOuterRingDiameter/2.0f, atdOuterRingDiameter - (lineLength*2));
                             }
                             else
                             {
-                                gfx.DrawLine(grayPen, (float)atdOuterRingDiameter / 2.0f, 0, (float)atdOuterRingDiameter / 2.0f, lineLength);
-                                gfx.DrawLine(grayPen, (float)atdOuterRingDiameter / 2.0f, atdOuterRingDiameter, (float)atdOuterRingDiameter / 2.0f, atdOuterRingDiameter - lineLength);
+                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
+                                             lineLength);
+                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
+                                             atdOuterRingDiameter/2.0f, atdOuterRingDiameter - lineLength);
                             }
                             gfx.Transform = previousTransform;
                         }
@@ -614,25 +795,29 @@ namespace LightningGauges.Renderers
                         gfx.DrawEllipse(grayPen, 0, 0, atdMiddleRingDiameter, atdMiddleRingDiameter);
 
                         Matrix previousTransform = gfx.Transform;
-                        gfx.TranslateTransform((float)atdMiddleRingDiameter / 2.0f, (float)atdMiddleRingDiameter / 2.0f);
-                        gfx.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
-                        gfx.TranslateTransform(-(float)atdMiddleRingDiameter / 2.0f, -(float)atdMiddleRingDiameter / 2.0f);
+                        gfx.TranslateTransform(atdMiddleRingDiameter/2.0f, atdMiddleRingDiameter/2.0f);
+                        gfx.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                        gfx.TranslateTransform(-atdMiddleRingDiameter/2.0f, -atdMiddleRingDiameter/2.0f);
 
                         //draw north line
-                        gfx.DrawLine(grayPen, (float)atdMiddleRingDiameter/ 2.0f, -(lineLength * 2), (float)atdMiddleRingDiameter/ 2.0f, 0);
+                        gfx.DrawLine(grayPen, atdMiddleRingDiameter/2.0f, -(lineLength*2), atdMiddleRingDiameter/2.0f, 0);
 
                         //draw west line
-                        gfx.DrawLine(grayPen, 0, ((float)atdMiddleRingDiameter/ 2.0f), lineLength, ((float)atdMiddleRingDiameter/ 2.0f));
+                        gfx.DrawLine(grayPen, 0, (atdMiddleRingDiameter/2.0f), lineLength, (atdMiddleRingDiameter/2.0f));
 
                         //draw east line
-                        gfx.DrawLine(grayPen, atdMiddleRingDiameter, ((float)atdMiddleRingDiameter / 2.0f), atdMiddleRingDiameter - lineLength, ((float)atdMiddleRingDiameter / 2.0f));
+                        gfx.DrawLine(grayPen, atdMiddleRingDiameter, (atdMiddleRingDiameter/2.0f),
+                                     atdMiddleRingDiameter - lineLength, (atdMiddleRingDiameter/2.0f));
 
                         //draw south line
-                        gfx.DrawLine(grayPen, ((float)atdMiddleRingDiameter / 2.0f), atdMiddleRingDiameter - lineLength, ((float)atdMiddleRingDiameter / 2.0f), atdMiddleRingDiameter+ lineLength);
+                        gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter - lineLength,
+                                     (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter + lineLength);
 
                         //draw north flag
-                        gfx.DrawLine(grayPen, ((float)atdMiddleRingDiameter / 2.0f), -(lineLength * 2), ((float)atdMiddleRingDiameter / 2.0f) + 7, -(lineLength * 0.75f));
-                        gfx.DrawLine(grayPen, ((float)atdMiddleRingDiameter / 2.0f), -(lineLength * 0.75f), ((float)atdMiddleRingDiameter / 2.0f) + 7, -(lineLength * 0.75f));
+                        gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*2),
+                                     (atdMiddleRingDiameter/2.0f) + 7, -(lineLength*0.75f));
+                        gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*0.75f),
+                                     (atdMiddleRingDiameter/2.0f) + 7, -(lineLength*0.75f));
 
                         //g.Transform = previousTransform;
                         gfx.Transform = toRestore;
@@ -641,35 +826,38 @@ namespace LightningGauges.Renderers
                     // draw the inner lethality ring
                     gfx.DrawEllipse(grayPen, innerRingLeft, innerRingTop, atdInnerRingDiameter, atdInnerRingDiameter);
 
-                    if (!this.InstrumentState.RWRPowerOn) //draw RWR POWER OFF flag
+                    if (!InstrumentState.RWRPowerOn) //draw RWR POWER OFF flag
                     {
                         float rwrOffTextHeight = atdInnerRingDiameter;
                         float rwrOffTextWidth = atdInnerRingDiameter;
-                        RectangleF rwrRectangle = new RectangleF(((float)backgroundWidth / 2.0f) - (rwrOffTextWidth / 2.0f), (((float)backgroundHeight / 2.0f) - ((float)rwrOffTextHeight / 2.0f)), rwrOffTextWidth, rwrOffTextHeight);
+                        var rwrRectangle = new RectangleF((backgroundWidth/2.0f) - (rwrOffTextWidth/2.0f),
+                                                          ((backgroundHeight/2.0f) - (rwrOffTextHeight/2.0f)),
+                                                          rwrOffTextWidth, rwrOffTextHeight);
                         rwrRectangle.Inflate(-5, -5);
                         Color legendColor = severeColor;
-                        Pen legendPen = new Pen(legendColor);
+                        var legendPen = new Pen(legendColor);
                         Brush legendBrush = new SolidBrush(legendColor);
                         //g.FillEllipse(legendBrush, rwrRectangle);
                         //DrawString(g, "RWR", _otherLegendFont, Brushes.Black, rwrRectangle, rwrOffTextStringFormat);
-                        gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top), new PointF(rwrRectangle.Right, rwrRectangle.Bottom));
-                        gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom), new PointF(rwrRectangle.Right, rwrRectangle.Top));
+                        gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top),
+                                     new PointF(rwrRectangle.Right, rwrRectangle.Bottom));
+                        gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom),
+                                     new PointF(rwrRectangle.Right, rwrRectangle.Top));
                     }
-
                 }
 
                 if (
-                        (
-                            this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF
-                                ||
-                            this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR
-                        )
-                            &&
-                        this.InstrumentState.RWRPowerOn
+                    (
+                        Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF
+                        ||
+                        Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR
+                    )
+                    &&
+                    InstrumentState.RWRPowerOn
                     )
                 {
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                    if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                    if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                     {
                         gfx.Transform = initialTransform;
                         gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
@@ -677,33 +865,33 @@ namespace LightningGauges.Renderers
                     }
                     //draw heartbeat cross
                     gfx.DrawLine(
-                            _scopeGreenPen,
-                            new PointF((backgroundWidth / 2.0f) - 20, (backgroundHeight / 2.0f)),
-                            new PointF((backgroundWidth / 2.0f) - 10, (backgroundHeight / 2.0f))
-                            );
+                        _scopeGreenPen,
+                        new PointF((backgroundWidth/2.0f) - 20, (backgroundHeight/2.0f)),
+                        new PointF((backgroundWidth/2.0f) - 10, (backgroundHeight/2.0f))
+                        );
                     gfx.DrawLine(
-                            _scopeGreenPen,
-                            new PointF((backgroundWidth / 2.0f) + 20, (backgroundHeight / 2.0f)),
-                            new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f))
-                            );
+                        _scopeGreenPen,
+                        new PointF((backgroundWidth/2.0f) + 20, (backgroundHeight/2.0f)),
+                        new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f))
+                        );
                     gfx.DrawLine(
-                            _scopeGreenPen,
-                            new PointF((backgroundWidth / 2.0f), (backgroundHeight / 2.0f) - 20),
-                            new PointF((backgroundWidth / 2.0f), (backgroundHeight / 2.0f) - 10)
-                            );
+                        _scopeGreenPen,
+                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) - 20),
+                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) - 10)
+                        );
                     gfx.DrawLine(
-                            _scopeGreenPen,
-                            new PointF((backgroundWidth / 2.0f), (backgroundHeight / 2.0f) + 20),
-                            new PointF((backgroundWidth / 2.0f), (backgroundHeight / 2.0f) + 10)
-                            );
+                        _scopeGreenPen,
+                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 20),
+                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 10)
+                        );
 
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
 
-                if (this.InstrumentState.RWRPowerOn)
+                if (InstrumentState.RWRPowerOn)
                 {
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                    if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                    if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                     {
                         gfx.Transform = initialTransform;
                         gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
@@ -712,32 +900,32 @@ namespace LightningGauges.Renderers
                     if (DateTime.Now.Millisecond < 500)
                     {
                         gfx.DrawLine(
-                                _scopeGreenPen,
-                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f)),
-                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f) + 5)
-                                );
+                            _scopeGreenPen,
+                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
+                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) + 5)
+                            );
                     }
                     else
                     {
                         gfx.DrawLine(
-                                _scopeGreenPen,
-                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f)),
-                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f) - 5)
-                                );
+                            _scopeGreenPen,
+                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
+                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) - 5)
+                            );
                     }
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
 
-                if (this.InstrumentState.Blips != null && this.InstrumentState.RWRPowerOn)
+                if (InstrumentState.Blips != null && InstrumentState.RWRPowerOn)
                 {
-                    foreach (F16AzimuthIndicatorInstrumentState.Blip blip in this.InstrumentState.Blips)
+                    foreach (F16AzimuthIndicatorInstrumentState.Blip blip in InstrumentState.Blips)
                     {
                         if (blip == null) continue;
                         if (!blip.Visible) continue;
 
                         GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
 
-                        if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                        if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                         {
                             gfx.Transform = initialTransform;
                             gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
@@ -748,41 +936,44 @@ namespace LightningGauges.Renderers
                         float translateY = 0.0f;
                         if (lethality > 1)
                         {
-                            translateY = -((2.0f - lethality) * 100.0f) * 0.95f; ;
+                            translateY = -((2.0f - lethality)*100.0f)*0.95f;
+                            ;
                         }
                         else
                         {
-                            translateY = -((1.0f - lethality) * 100.0f) * 0.95f; ;
+                            translateY = -((1.0f - lethality)*100.0f)*0.95f;
+                            ;
                         }
-                        if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                        if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                         {
                             translateY *= 0.92f;
                         }
                         //rotate and translate symbol into place
-                        float angle = -this.InstrumentState.MagneticHeadingDegrees + blip.BearingDegrees;
-                        if (this.InstrumentState.Inverted)
+                        float angle = -InstrumentState.MagneticHeadingDegrees + blip.BearingDegrees;
+                        if (InstrumentState.Inverted)
                         {
                             angle = -angle;
                         }
                         //rotate the background image so that this emitter's bearing line points toward the top
-                        gfx.TranslateTransform((float)backgroundWidth / 2.0f, (float)backgroundHeight / 2.0f);
+                        gfx.TranslateTransform(backgroundWidth/2.0f, backgroundHeight/2.0f);
                         gfx.RotateTransform(angle);
-                        gfx.TranslateTransform(-(float)backgroundWidth / 2.0f, -(float)backgroundHeight / 2.0f);
+                        gfx.TranslateTransform(-(float) backgroundWidth/2.0f, -(float) backgroundHeight/2.0f);
 
                         Brush missileWarningBrush = new SolidBrush(missileColor);
-                        StringFormat missileWarningFormat = new StringFormat();
+                        var missileWarningFormat = new StringFormat();
                         missileWarningFormat.Alignment = StringAlignment.Far;
                         missileWarningFormat.LineAlignment = StringAlignment.Center;
-                        Pen launchLinePen = new Pen(missileColor);
-                        PointF center = new PointF(
-                                (backgroundWidth / 2.0f),
-                                (backgroundHeight / 2.0f)
+                        var launchLinePen = new Pen(missileColor);
+                        var center = new PointF(
+                            (backgroundWidth/2.0f),
+                            (backgroundHeight/2.0f)
                             );
 
                         //draw missile launch line
-                        if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                        if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                         {
-                            PointF endPoint = new PointF(center.X, outerRingTop);// + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f));
+                            var endPoint = new PointF(center.X, outerRingTop);
+                                // + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f));
                             if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
                             {
                                 gfx.DrawLine(launchLinePen, center.X, innerRingTop, endPoint.X, endPoint.Y);
@@ -790,30 +981,30 @@ namespace LightningGauges.Renderers
 
                             if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
                             {
-                                float angleToDisplay = angle % 360;
+                                float angleToDisplay = angle%360;
                                 if (angleToDisplay < 0) angleToDisplay = 360 - Math.Abs(angleToDisplay);
                                 if (angleToDisplay == 0) angleToDisplay = 360;
                                 string angleString = string.Format("{0:000}", angleToDisplay);
 
                                 float textWidth = gfx.MeasureString(angleString, _missileWarningFont).Width;
-                                PointF missileWarningTextLocation = new PointF(
+                                var missileWarningTextLocation = new PointF(
                                     //endPoint.X - ((endPoint.X - center.X) / 2.0f),
-                                        endPoint.X,
+                                    endPoint.X,
                                     //endPoint.Y - ((endPoint.Y - center.Y) / 2.0f)
-                                        endPoint.Y - ((endPoint.Y - innerRingTop) / 2.0f) - (textWidth / 2.0f)
-                                        );
+                                    endPoint.Y - ((endPoint.Y - innerRingTop)/2.0f) - (textWidth/2.0f)
+                                    );
                                 Matrix oldTransform = gfx.Transform;
                                 gfx.TranslateTransform(missileWarningTextLocation.X, missileWarningTextLocation.Y);
                                 gfx.RotateTransform(-angle);
                                 gfx.TranslateTransform(-missileWarningTextLocation.X, -missileWarningTextLocation.Y);
 
                                 gfx.DrawString
-                                (
-                                    angleString,
-                                    _missileWarningFont,
-                                    missileWarningBrush,
-                                    missileWarningTextLocation
-                                );
+                                    (
+                                        angleString,
+                                        _missileWarningFont,
+                                        missileWarningBrush,
+                                        missileWarningTextLocation
+                                    );
                                 gfx.Transform = oldTransform;
                             }
                         }
@@ -821,16 +1012,16 @@ namespace LightningGauges.Renderers
                         gfx.TranslateTransform(0, translateY);
 
                         //rotate the emitter symbol graphic so that it appears upright when background is rotated back and displayed to user
-                        gfx.TranslateTransform(backgroundWidth / 2.0f, backgroundHeight / 2.0f);
+                        gfx.TranslateTransform(backgroundWidth/2.0f, backgroundHeight/2.0f);
                         gfx.RotateTransform(-angle);
-                        gfx.TranslateTransform(-backgroundWidth / 2.0f, -backgroundHeight / 2.0f);
+                        gfx.TranslateTransform(-backgroundWidth/2.0f, -backgroundHeight/2.0f);
 
                         //draw the emitter symbol
                         bool usePrimarySymbol = DateTime.Now.Millisecond < 500;
                         bool useLargeSymbol = DateTime.Now.Millisecond < 500 && blip.NewDetection > 0;
 
                         Color emitterColor = _scopeGreenColor;
-                        if (this.Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                        if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                         {
                             EmitterCategory category = GetEmitterCategory(blip.SymbolID);
                             switch (category)
@@ -857,35 +1048,57 @@ namespace LightningGauges.Renderers
                                     break;
                             }
                         }
-                        RectangleF emitterSymbolDestinationRectangle = new RectangleF((int)((backgroundWidth - RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS) / 2.0f), (int)((backgroundHeight - RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS) / 2.0f), RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
-                        DrawEmitterSymbol(blip.SymbolID, gfx, emitterSymbolDestinationRectangle, useLargeSymbol, usePrimarySymbol, emitterColor);
+                        var emitterSymbolDestinationRectangle =
+                            new RectangleF((int) ((backgroundWidth - RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS)/2.0f),
+                                           (int) ((backgroundHeight - RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS)/2.0f),
+                                           RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
+                        DrawEmitterSymbol(blip.SymbolID, gfx, emitterSymbolDestinationRectangle, useLargeSymbol,
+                                          usePrimarySymbol, emitterColor);
 
-                        Pen emitterPen = new Pen(emitterColor);
-                        gfx.TranslateTransform(-RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f, -RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f);
+                        var emitterPen = new Pen(emitterColor);
+                        gfx.TranslateTransform(-RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f,
+                                               -RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f);
                         if (blip.Selected > 0)
-                        {//draw "selected threat " diamond
-                            PointF[] points = new PointF[] {
-                                new PointF((backgroundWidth/2.0f) + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f), backgroundHeight/2.0f),
-                                new PointF((backgroundWidth/2.0f),(backgroundHeight/2.0f) + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f)),
-                                new PointF((backgroundWidth/2.0f)+(RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f), (backgroundHeight/2.0f)+RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS ),
-                                new PointF((backgroundWidth/2.0f)+RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS,(backgroundHeight/2.0f)+ RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS /2.0f)
-                            };
+                        {
+//draw "selected threat " diamond
+                            var points = new[]
+                                             {
+                                                 new PointF(
+                                                     (backgroundWidth/2.0f) + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f),
+                                                     backgroundHeight/2.0f),
+                                                 new PointF((backgroundWidth/2.0f),
+                                                            (backgroundHeight/2.0f) +
+                                                            (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f)),
+                                                 new PointF(
+                                                     (backgroundWidth/2.0f) + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f),
+                                                     (backgroundHeight/2.0f) + RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS),
+                                                 new PointF((backgroundWidth/2.0f) + RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS,
+                                                            (backgroundHeight/2.0f) +
+                                                            RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f)
+                                             };
                             gfx.DrawPolygon(emitterPen, points);
                         }
                         if ((blip.MissileActivity > 0 && blip.MissileLaunch == 0))
                         {
-                            if (DateTime.Now.Millisecond % 250 < 125) //flash the symbol by only drawing it some of the time
+                            if (DateTime.Now.Millisecond%250 < 125)
+                                //flash the symbol by only drawing it some of the time
                             {
                                 //draw missile activity symbol
                                 emitterPen.DashStyle = DashStyle.Dash;
-                                gfx.DrawEllipse(emitterPen, new RectangleF((backgroundWidth / 2.0f) + 4, (backgroundHeight / 2.0f) + 4, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS - 8, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS - 8));
+                                gfx.DrawEllipse(emitterPen,
+                                                new RectangleF((backgroundWidth/2.0f) + 4, (backgroundHeight/2.0f) + 4,
+                                                               RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS - 8,
+                                                               RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS - 8));
                                 emitterPen.DashStyle = DashStyle.Solid;
                             }
                         }
                         else if ((blip.MissileActivity > 0 && blip.MissileLaunch > 0))
                         {
                             //draw missile launch symbol 
-                            gfx.DrawEllipse(emitterPen, new RectangleF(backgroundWidth / 2.0f, backgroundHeight / 2.0f, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS));
+                            gfx.DrawEllipse(emitterPen,
+                                            new RectangleF(backgroundWidth/2.0f, backgroundHeight/2.0f,
+                                                           RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS,
+                                                           RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS));
                         }
 
                         GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
@@ -897,25 +1110,27 @@ namespace LightningGauges.Renderers
             }
             if (fullBright != null)
             {
-                ImageAttributes ia = new ImageAttributes();
-                ColorMatrix dimmingMatrix = Common.Imaging.Util.GetDimmingColorMatrix((float)this.InstrumentState.Brightness / (float)this.InstrumentState.MaxBrightness);
+                var ia = new ImageAttributes();
+                ColorMatrix dimmingMatrix =
+                    Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
                 g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }
         }
+
         private bool AreNonVisiblePriorityThreatsDetected()
         {
-            if (this.InstrumentState == null || this.InstrumentState.Blips == null) return false;
+            if (InstrumentState == null || InstrumentState.Blips == null) return false;
 
-            if (this.InstrumentState.PriorityMode)
+            if (InstrumentState.PriorityMode)
             {
                 int trackingOwnshipCount = 0;
                 int visibleCount = 0;
-                for (int i = 0; i < this.InstrumentState.Blips.Length; i++)
+                for (int i = 0; i < InstrumentState.Blips.Length; i++)
                 {
-                    F16AzimuthIndicatorInstrumentState.Blip thisBlip = this.InstrumentState.Blips[i];
+                    F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
                     if (thisBlip == null) continue;
                     if (thisBlip.Lethality == 0) continue;
                     trackingOwnshipCount++;
@@ -929,12 +1144,13 @@ namespace LightningGauges.Renderers
             }
             return false;
         }
+
         private bool AreNonVisibleNavalThreatsDetected()
         {
-            if (this.InstrumentState == null || this.InstrumentState.Blips == null) return false;
-            for (int i = 0; i < this.InstrumentState.Blips.Length; i++)
+            if (InstrumentState == null || InstrumentState.Blips == null) return false;
+            for (int i = 0; i < InstrumentState.Blips.Length; i++)
             {
-                F16AzimuthIndicatorInstrumentState.Blip thisBlip = this.InstrumentState.Blips[i];
+                F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
                 if (thisBlip == null) continue;
                 if (thisBlip.Lethality == 0) continue;
                 if (thisBlip.Visible) continue;
@@ -945,43 +1161,43 @@ namespace LightningGauges.Renderers
                 }
             }
             return false;
-
         }
+
         private bool AreNonVisibleSearchThreatsDetected()
         {
-            if (this.InstrumentState == null || this.InstrumentState.Blips == null) return false;
-            if (this.InstrumentState.SearchMode) return false;
-            for (int i = 0; i < this.InstrumentState.Blips.Length; i++)
+            if (InstrumentState == null || InstrumentState.Blips == null) return false;
+            if (InstrumentState.SearchMode) return false;
+            for (int i = 0; i < InstrumentState.Blips.Length; i++)
             {
-                F16AzimuthIndicatorInstrumentState.Blip thisBlip = this.InstrumentState.Blips[i];
+                F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
                 if (thisBlip == null) continue;
                 if (thisBlip.Lethality == 0) continue;
                 if (thisBlip.Visible) continue;
                 int symbolId = thisBlip.SymbolID;
                 if (
-                        (
-                            (symbolId >= 5 && symbolId <= 17)
-                                ||
-                            (symbolId >= 19 && symbolId <= 26)
-                                ||
-                            (symbolId == 30)
-                                ||
-                            (symbolId >= 54 && symbolId <= 56)
-                        )
+                    (
+                        (symbolId >= 5 && symbolId <= 17)
+                        ||
+                        (symbolId >= 19 && symbolId <= 26)
+                        ||
+                        (symbolId == 30)
+                        ||
+                        (symbolId >= 54 && symbolId <= 56)
+                    )
                     )
                 {
                     return true;
                 }
             }
             return false;
-
         }
+
         private bool AreNonVisibleUnknownThreatsDetected()
         {
-            if (this.InstrumentState == null || this.InstrumentState.Blips == null) return false;
-            for (int i = 0; i < this.InstrumentState.Blips.Length; i++)
+            if (InstrumentState == null || InstrumentState.Blips == null) return false;
+            for (int i = 0; i < InstrumentState.Blips.Length; i++)
             {
-                F16AzimuthIndicatorInstrumentState.Blip thisBlip = this.InstrumentState.Blips[i];
+                F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
                 if (thisBlip == null) continue;
                 if (thisBlip.Visible) continue;
                 if (thisBlip.Lethality == 0) continue;
@@ -993,16 +1209,21 @@ namespace LightningGauges.Renderers
             }
             return false;
         }
+
         private Bitmap GenerateEmitterSymbol(int symbolId, bool largeSize, bool primarySymbol, Color color)
         {
-            Bitmap symbol = new Bitmap(RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, PixelFormat.Format16bppRgb565);
+            var symbol = new Bitmap(RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS,
+                                    PixelFormat.Format16bppRgb565);
             using (Graphics g = Graphics.FromImage(symbol))
             {
-                DrawEmitterSymbol(symbolId, g, new Rectangle(0, 0, symbol.Width, symbol.Height), largeSize, primarySymbol, color);
+                DrawEmitterSymbol(symbolId, g, new Rectangle(0, 0, symbol.Width, symbol.Height), largeSize,
+                                  primarySymbol, color);
             }
             return symbol;
         }
-        private void DrawEmitterSymbol(int symbolId, Graphics g, RectangleF bounds, bool largeSize, bool primarySymbol, Color color)
+
+        private void DrawEmitterSymbol(int symbolId, Graphics g, RectangleF bounds, bool largeSize, bool primarySymbol,
+                                       Color color)
         {
             Matrix originalTransform = g.Transform;
             Font symbolFont = largeSize ? _symbolTextFontLarge : _symbolTextFontSmall;
@@ -1011,60 +1232,71 @@ namespace LightningGauges.Renderers
             float x = bounds.X;
             float y = bounds.Y;
 
-            PointF[] basicInterceptorPoints = new PointF[]
-                        {
-                            new PointF(x+8,y+2), //top center
-                            new PointF(x-1, y+8), //left bottom
-                            new PointF(x+1,y+8), //left of center on bottom
-                            new PointF(x+8,y+6), //center point on bottom
-                            new PointF(x+15,y+8), //right of center on bottom
-                            new PointF(x+17,y+8) //right bottom
-                        };
+            var basicInterceptorPoints = new[]
+                                             {
+                                                 new PointF(x + 8, y + 2), //top center
+                                                 new PointF(x - 1, y + 8), //left bottom
+                                                 new PointF(x + 1, y + 8), //left of center on bottom
+                                                 new PointF(x + 8, y + 6), //center point on bottom
+                                                 new PointF(x + 15, y + 8), //right of center on bottom
+                                                 new PointF(x + 17, y + 8) //right bottom
+                                             };
             for (int i = 0; i < basicInterceptorPoints.Length; i++)
             {
                 PointF p = basicInterceptorPoints[i];
-                PointF p2 = new PointF(p.X + ((float)bounds.Width / 4.0f), p.Y + ((float)bounds.Height / 4.0f));
+                var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 basicInterceptorPoints[i] = p2;
             }
-            PointF[] advancedInterceptorPoints = new PointF[]
-                        {
-                            new PointF(x+8,y+2), //top center
-                            new PointF(x-1, y+8), //left bottom
-                            new PointF(x+5,y+8), //left of center on bottom
-                            new PointF(x+8,y+12), //center point on bottom
-                            new PointF(x+11,y+8), //right of center on bottom
-                            new PointF(x+17,y+8) //right bottom
-                        };
+            var advancedInterceptorPoints = new[]
+                                                {
+                                                    new PointF(x + 8, y + 2), //top center
+                                                    new PointF(x - 1, y + 8), //left bottom
+                                                    new PointF(x + 5, y + 8), //left of center on bottom
+                                                    new PointF(x + 8, y + 12), //center point on bottom
+                                                    new PointF(x + 11, y + 8), //right of center on bottom
+                                                    new PointF(x + 17, y + 8) //right bottom
+                                                };
             for (int i = 0; i < advancedInterceptorPoints.Length; i++)
             {
                 PointF p = advancedInterceptorPoints[i];
-                PointF p2 = new PointF(p.X + ((float)bounds.Width / 4.0f), p.Y + ((float)bounds.Height / 4.0f));
+                var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 advancedInterceptorPoints[i] = p2;
             }
-            PointF[] airborneThreatSymbolPoints = new PointF[] { new PointF(x + 4, y), new PointF(x + 8, y - 4), new PointF(x + 12, y) };
+            var airborneThreatSymbolPoints = new[]
+                                                 {new PointF(x + 4, y), new PointF(x + 8, y - 4), new PointF(x + 12, y)};
             for (int i = 0; i < airborneThreatSymbolPoints.Length; i++)
             {
                 PointF p = airborneThreatSymbolPoints[i];
-                PointF p2 = new PointF(p.X + ((float)bounds.Width / 4.0f), p.Y + ((float)bounds.Height / 4.0f));
+                var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 airborneThreatSymbolPoints[i] = p2;
             }
             //PointF[] shipSymbolPoints = new PointF[]{new PointF(x+13,y), new PointF(x+13,y+3), new PointF(x,y+3), new PointF(x+7,y+9),new PointF(x+30,y+9), new PointF(x+30,y+3), new PointF (x+22,y+3), new PointF(x+22,y)};
-            PointF[] shipSymbolPoints = new PointF[] { new PointF(x + 6.5f, -3 + y + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x + 6.5f, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x + 3.5f, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x + 15, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x + 15, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x + 11, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)), new PointF(x + 11, -3 + y + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 4.0f)) };
+            var shipSymbolPoints = new[]
+                                       {
+                                           new PointF(x + 6.5f, -3 + y + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 6.5f, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 3.5f, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 15, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 15, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 11, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 11, -3 + y + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f))
+                                       };
             for (int i = 0; i < shipSymbolPoints.Length; i++)
             {
                 PointF p = shipSymbolPoints[i];
-                PointF p2 = new PointF(p.X + ((float)bounds.Width / 4.0f), p.Y + ((float)bounds.Height / 4.0f));
+                var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 shipSymbolPoints[i] = p2;
             }
 
 
             bounds.Offset(0, 2);
-            StringFormat sf = new StringFormat(StringFormatFlags.NoWrap);
+            var sf = new StringFormat(StringFormatFlags.NoWrap);
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
             int lineSpacing = 4;
             using (Brush brush = new SolidBrush(color))
-            using (Pen pen = new Pen(color))
+            using (var pen = new Pen(color))
             {
                 switch (symbolId)
                 {
@@ -1379,7 +1611,7 @@ namespace LightningGauges.Renderers
                         }
                         else if (symbolId >= 65)
                         {
-                            string symbolString = Encoding.ASCII.GetString(new byte[] { (byte)symbolId });
+                            string symbolString = Encoding.ASCII.GetString(new[] {(byte) symbolId});
                             DrawString(g, symbolString, symbolFont, brush, bounds, sf);
                         }
                         else if (symbolId < 0)
@@ -1388,281 +1620,202 @@ namespace LightningGauges.Renderers
                         }
                         break;
                 }
-
             }
             g.Transform = originalTransform;
+        }
 
-        }
-        public enum ThreatSymbols
-        {
-            RWRSYM_NONE = 0,// nothing
-            RWRSYM_UNKNOWN = 1,// U
-            RWRSYM_ADVANCED_INTERCEPTOR = 2, //not used
-            RWRSYM_BASIC_INTERCEPTOR = 3, //not used
-            RWRSYM_ACTIVE_MISSILE = 4, //M
-            RWRSYM_HAWK = 5, //H
-            RWRSYM_PATRIOT = 6, //P
-            RWRSYM_SA2 = 7, //2
-            RWRSYM_SA3 = 8, //3
-            RWRSYM_SA4 = 9, //4
-            RWRSYM_SA5 = 10, //5
-            RWRSYM_SA6 = 11, //6
-            RWRSYM_SA8 = 12, //8
-            RWRSYM_SA9 = 13, //9
-            RWRSYM_SA10 = 14, //10
-            RWRSYM_SA13 = 15, //13
-            RWRSYM_AAA = 16, //A or S alternating
-            RWRSYM_SEARCH = 17, //S
-            RWRSYM_NAVAL = 18, //boat symbol
-            RWRSYM_CHAPARAL = 19, //C
-            RWRSYM_SA15 = 20, //15 or M alternating
-            RWRSYM_NIKE = 21, //N
-            RWRSYM_A1 = 22, //A with a single dot under it
-            RWRSYM_A2 = 23, //A with two dots under it
-            RWRSYM_A3 = 24, //A with three dots under it
-            RWRSYM_PDOT = 25, //P with a dot under it
-            RWRSYM_PSLASH = 26, //P with a vertical bar after it
-            RWRSYM_UNK1 = 27, //U with one dot under it
-            RWRSYM_UNK2 = 28, //U with two dots under it
-            RWRSYM_UNK3 = 29, //U with three dots under it
-            RWRSYM_KSAM = 30, //C
-            RWRSYM_V1 = 31, //1
-            RWRSYM_V4 = 32, //4
-            RWRSYM_V5 = 33, //5
-            RWRSYM_V6 = 34, //6
-            RWRSYM_V14 = 35, //14
-            RWRSYM_V15 = 36, //15
-            RWRSYM_V16 = 37, //16
-            RWRSYM_V18 = 38, //18
-            RWRSYM_V19 = 39, //19
-            RWRSYM_V20 = 40, //20
-            RWRSYM_V21 = 41, //21
-            RWRSYM_V22 = 42, //22
-            RWRSYM_V23 = 43, //23
-            RWRSYM_V25 = 44, //25
-            RWRSYM_V27 = 45, //27
-            RWRSYM_V29 = 46, //29
-            RWRSYM_V30 = 47, //30
-            RWRSYM_V31 = 48, //31
-            RWRSYM_VP = 49, //P
-            RWRSYM_VPD = 50, //PD
-            RWRSYM_VA = 51, //A
-            RWRSYM_VB = 52, //B
-            RWRSYM_VS = 53, //S
-            RWRSYM_Aa = 54, //A with a vertical bar after it
-            RWRSYM_Ab = 55, //A with vertical bars before and after it
-            RWRSYM_Ac = 56, //A with vertical bars before and after it and one through the middle
-            RWRSYM_MIB_F_S = 57, //F or S alternating
-            RWRSYM_MIB_F_A = 58, //F or A alternating
-            RWRSYM_MIB_F_M = 59, //F or M alternating
-            RWRSYM_MIB_F_U = 60, //F or U alternating
-            RWRSYM_MIB_F_BW = 61, //F or basic interceptor shape
-            RWRSYM_MIB_BW_S = 62, //S or basic interceptor shape
-            RWRSYM_MIB_BW_A = 63, //A or basic interceptor shape
-            RWRSYM_MIB_BW_M = 64, //M or basic interceptor shape
-        }
-        public F16AzimuthIndicatorInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        public F16AzimuthIndicatorOptions Options
-        {
-            get;
-            set;
-        }
         private EmitterCategory GetEmitterCategory(int symbolId)
         {
             EmitterCategory category = EmitterCategory.Unknown;
             switch (symbolId)
             {
-                case (int)ThreatSymbols.RWRSYM_ADVANCED_INTERCEPTOR:
+                case (int) ThreatSymbols.RWRSYM_ADVANCED_INTERCEPTOR:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_BASIC_INTERCEPTOR:
+                case (int) ThreatSymbols.RWRSYM_BASIC_INTERCEPTOR:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_ACTIVE_MISSILE:
+                case (int) ThreatSymbols.RWRSYM_ACTIVE_MISSILE:
                     category = EmitterCategory.Missile;
                     break;
-                case (int)ThreatSymbols.RWRSYM_HAWK:
+                case (int) ThreatSymbols.RWRSYM_HAWK:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_PATRIOT:
+                case (int) ThreatSymbols.RWRSYM_PATRIOT:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA2:
+                case (int) ThreatSymbols.RWRSYM_SA2:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA3:
+                case (int) ThreatSymbols.RWRSYM_SA3:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA4:
+                case (int) ThreatSymbols.RWRSYM_SA4:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA5:
+                case (int) ThreatSymbols.RWRSYM_SA5:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA6:
+                case (int) ThreatSymbols.RWRSYM_SA6:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA8:
+                case (int) ThreatSymbols.RWRSYM_SA8:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA9:
+                case (int) ThreatSymbols.RWRSYM_SA9:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA10:
+                case (int) ThreatSymbols.RWRSYM_SA10:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA13:
+                case (int) ThreatSymbols.RWRSYM_SA13:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_AAA:
+                case (int) ThreatSymbols.RWRSYM_AAA:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SEARCH:
+                case (int) ThreatSymbols.RWRSYM_SEARCH:
                     category = EmitterCategory.Search;
                     break;
-                case (int)ThreatSymbols.RWRSYM_NAVAL:
+                case (int) ThreatSymbols.RWRSYM_NAVAL:
                     category = EmitterCategory.Naval;
                     break;
-                case (int)ThreatSymbols.RWRSYM_CHAPARAL:
+                case (int) ThreatSymbols.RWRSYM_CHAPARAL:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_SA15:
+                case (int) ThreatSymbols.RWRSYM_SA15:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_NIKE:
+                case (int) ThreatSymbols.RWRSYM_NIKE:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_A1:
+                case (int) ThreatSymbols.RWRSYM_A1:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_A2:
+                case (int) ThreatSymbols.RWRSYM_A2:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_A3:
+                case (int) ThreatSymbols.RWRSYM_A3:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_PDOT:
+                case (int) ThreatSymbols.RWRSYM_PDOT:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_PSLASH:
+                case (int) ThreatSymbols.RWRSYM_PSLASH:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_UNK1:
+                case (int) ThreatSymbols.RWRSYM_UNK1:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_UNK2:
+                case (int) ThreatSymbols.RWRSYM_UNK2:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_UNK3:
+                case (int) ThreatSymbols.RWRSYM_UNK3:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_KSAM:
+                case (int) ThreatSymbols.RWRSYM_KSAM:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V1:
+                case (int) ThreatSymbols.RWRSYM_V1:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V4:
+                case (int) ThreatSymbols.RWRSYM_V4:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V5:
+                case (int) ThreatSymbols.RWRSYM_V5:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V6:
+                case (int) ThreatSymbols.RWRSYM_V6:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V14:
+                case (int) ThreatSymbols.RWRSYM_V14:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V15:
+                case (int) ThreatSymbols.RWRSYM_V15:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V16:
+                case (int) ThreatSymbols.RWRSYM_V16:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V18:
+                case (int) ThreatSymbols.RWRSYM_V18:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V19:
+                case (int) ThreatSymbols.RWRSYM_V19:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V20:
+                case (int) ThreatSymbols.RWRSYM_V20:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V21:
+                case (int) ThreatSymbols.RWRSYM_V21:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V22:
+                case (int) ThreatSymbols.RWRSYM_V22:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V23:
+                case (int) ThreatSymbols.RWRSYM_V23:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V25:
+                case (int) ThreatSymbols.RWRSYM_V25:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V27:
+                case (int) ThreatSymbols.RWRSYM_V27:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V29:
+                case (int) ThreatSymbols.RWRSYM_V29:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V30:
+                case (int) ThreatSymbols.RWRSYM_V30:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_V31:
+                case (int) ThreatSymbols.RWRSYM_V31:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_VP:
+                case (int) ThreatSymbols.RWRSYM_VP:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_VPD:
+                case (int) ThreatSymbols.RWRSYM_VPD:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_VA:
+                case (int) ThreatSymbols.RWRSYM_VA:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_VB:
+                case (int) ThreatSymbols.RWRSYM_VB:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_VS:
+                case (int) ThreatSymbols.RWRSYM_VS:
                     category = EmitterCategory.AirborneThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_Aa:
+                case (int) ThreatSymbols.RWRSYM_Aa:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_Ab:
+                case (int) ThreatSymbols.RWRSYM_Ab:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_Ac:
+                case (int) ThreatSymbols.RWRSYM_Ac:
                     category = EmitterCategory.GroundThreat;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_F_S:
+                case (int) ThreatSymbols.RWRSYM_MIB_F_S:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_F_A:
+                case (int) ThreatSymbols.RWRSYM_MIB_F_A:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_F_M:
+                case (int) ThreatSymbols.RWRSYM_MIB_F_M:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_F_U:
+                case (int) ThreatSymbols.RWRSYM_MIB_F_U:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_F_BW:
+                case (int) ThreatSymbols.RWRSYM_MIB_F_BW:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_BW_S:
+                case (int) ThreatSymbols.RWRSYM_MIB_BW_S:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_BW_A:
+                case (int) ThreatSymbols.RWRSYM_MIB_BW_A:
                     category = EmitterCategory.Unknown;
                     break;
-                case (int)ThreatSymbols.RWRSYM_MIB_BW_M:
+                case (int) ThreatSymbols.RWRSYM_MIB_BW_M:
                     category = EmitterCategory.Unknown;
                     break;
                 default:
@@ -1671,353 +1824,12 @@ namespace LightningGauges.Renderers
             }
             return category;
         }
-        #region Instrument State
-        [Serializable]
-        public class F16AzimuthIndicatorInstrumentState : InstrumentStateBase
-        {
-            #region Blip Class Definition
-            [Serializable]
-            public class Blip
-            {
-                private float _bearingDegrees;
-                public int SymbolID
-                {
-                    get;
-                    set;
-                }
-                public float BearingDegrees
-                {
-                    get
-                    {
-                        return _bearingDegrees;
-                    }
-                    set
-                    {
-                        float bearing = value;
-                        bearing %= 360.0f;
-                        _bearingDegrees = bearing;
-                    }
-                }
-                public int MissileActivity
-                {
-                    get;
-                    set;
-                }
-                public int MissileLaunch
-                {
-                    get;
-                    set;
-                }
-                public int Selected
-                {
-                    get;
-                    set;
-                }
-                public float Lethality
-                {
-                    get;
-                    set;
-                }
-                public int NewDetection
-                {
-                    get;
-                    set;
-                }
-                public bool Visible { get; set; }
-
-            }
-            #endregion
-            private const int MAX_BRIGHTNESS = 255;
-            private const int MAX_CHAFF = 99;
-            private const int MAX_FLARE = 99;
-            private const int MAX_OTHER1 = 99;
-            private const int MAX_OTHER2 = 99;
-
-            private int _chaffCount = 0;
-            private int _flareCount = 0;
-            private int _other1Count = 0;
-            private int _other2Count = 0;
-            private float _magneticHeadingDegrees = 0;
-            private float _rollDegrees = 0;
-            private int _brightness = MAX_BRIGHTNESS;
-            public F16AzimuthIndicatorInstrumentState()
-                : base()
-            {
-                this.ChaffCount = 0;
-                this.FlareCount = 0;
-                this.Other1Count = 0;
-                this.Other2Count = 0;
-                this.ChaffLow = false;
-                this.FlareLow = false;
-                this.Other1Low = false;
-                this.Other2Low = false;
-                this.Blips = null;
-                this.RWRPowerOn = true;
-                this.SeparateMode = false;
-                this.Handoff = false;
-                this.Launch = false;
-                this.PriorityMode = false;
-                this.NavalMode = false;
-                this.UnknownThreatScanMode = false;
-                this.SearchMode = false;
-                this.Activity = false;
-                this.LowAltitudeMode = false;
-                this.MagneticHeadingDegrees = 0;
-                this.RollDegrees = 0;
-                this.Inverted = false;
-                this.EWMSMode = EWMSMode.Manual;
-            }
-            internal bool Inverted { get; set; }
-            public float RollDegrees
-            {
-                get
-                {
-                    return _rollDegrees;
-                }
-                set
-                {
-                    if (this.Inverted)
-                    {
-                        if (Math.Abs(value) < 90) this.Inverted = false;
-                    }
-                    else
-                    {
-                        if (Math.Abs(value) > 120) this.Inverted = true;
-                    }
-                    _rollDegrees = value;
-                }
-            }
-            public EWMSMode EWMSMode
-            {
-                get;
-                set;
-            }
-            public bool EWSGo
-            {
-                get;
-                set;
-            }
-            public bool EWSNoGo
-            {
-                get;
-                set;
-            }
-            public bool EWSDegraded
-            {
-                get;
-                set;
-            }
-            public bool EWSDispenseReady
-            {
-                get;
-                set;
-            }
-            public int ChaffCount
-            {
-                get
-                {
-                    return _chaffCount;
-                }
-                set
-                {
-                    int chaff = value;
-                    if (chaff < 0) chaff = 0;
-                    if (chaff > MAX_CHAFF) chaff = MAX_CHAFF;
-                    _chaffCount = chaff;
-                }
-            }
-            public int FlareCount
-            {
-                get
-                {
-                    return _flareCount;
-                }
-                set
-                {
-                    int flare = value;
-                    if (flare < 0) flare = 0;
-                    if (flare > MAX_FLARE) flare = MAX_FLARE;
-                    _flareCount = flare;
-                }
-            }
-            public int Other1Count
-            {
-                get
-                {
-                    return _other1Count;
-                }
-                set
-                {
-                    int other1 = value;
-                    if (other1 < 0) other1 = 0;
-                    if (other1 > MAX_OTHER1) other1 = MAX_OTHER1;
-                    _other1Count = other1;
-                }
-            }
-            public int Other2Count
-            {
-                get
-                {
-                    return _other2Count;
-                }
-                set
-                {
-                    int other2 = value;
-                    if (other2 < 0) other2 = 0;
-                    if (other2 > MAX_OTHER2) other2 = MAX_OTHER2;
-                    _other2Count = other2;
-                }
-            }
-            public bool ChaffLow
-            {
-                get;
-                set;
-            }
-            public bool FlareLow
-            {
-                get;
-                set;
-            }
-            public bool Other1Low
-            {
-                get;
-                set;
-            }
-            public bool Other2Low
-            {
-                get;
-                set;
-            }
-            public bool SearchMode
-            {
-                get;
-                set;
-            }
-            public bool Activity
-            {
-                get;
-                set;
-            }
-            public bool LowAltitudeMode
-            {
-                get;
-                set;
-            }
-            public bool Handoff
-            {
-                get;
-                set;
-            }
-            public bool Launch
-            {
-                get;
-                set;
-            }
-            public bool PriorityMode
-            {
-                get;
-                set;
-            }
-            public bool NavalMode
-            {
-                get;
-                set;
-            }
-            public bool UnknownThreatScanMode
-            {
-                get;
-                set;
-            }
-            public Blip[] Blips
-            {
-                get;
-                set;
-            }
-            public bool SeparateMode
-            {
-                get;
-                set;
-            }
-            public bool RWRPowerOn
-            {
-                get;
-                set;
-            }
-            public float MagneticHeadingDegrees
-            {
-                get
-                {
-                    return _magneticHeadingDegrees;
-                }
-                set
-                {
-                    float heading = value;
-                    heading %= 360.0f;
-                    _magneticHeadingDegrees = heading;
-                }
-            }
-            public int Brightness
-            {
-                get
-                {
-                    return _brightness;
-                }
-                set
-                {
-                    int brightness = value;
-                    if (brightness < 0) brightness = 0;
-                    if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
-                    _brightness = brightness;
-                }
-            }
-            public int MaxBrightness
-            {
-                get { return MAX_BRIGHTNESS; }
-            }
-        }
-        #endregion
-        #region Options Class
-        public class F16AzimuthIndicatorOptions
-        {
-            public enum InstrumentStyle
-            {
-                IP1310ALR,
-                HAF,
-                AdvancedThreatDisplay
-            }
-            public F16AzimuthIndicatorOptions()
-                : base()
-            {
-                //this.Style = InstrumentStyle.IP1310ALR;
-                this.Style = InstrumentStyle.AdvancedThreatDisplay;
-            }
-            public InstrumentStyle Style
-            {
-                get;
-                set;
-            }
-            public bool HideBezel
-            {
-                get;
-                set;
-            }
-            public GDIPlusOptions GDIPlusOptions
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
 
         ~F16AzimuthIndicator()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -2029,10 +1841,246 @@ namespace LightningGauges.Renderers
                     //Common.Util.DisposeObject(_backgroundTTD);
                     //Common.Util.DisposeObject(_heartbeatUp);
                     //Common.Util.DisposeObject(_heartbeatDown);
-
                 }
                 _disposed = true;
             }
         }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16AzimuthIndicatorInstrumentState : InstrumentStateBase
+        {
+            #region Blip Class Definition
+
+            [Serializable]
+            public class Blip
+            {
+                private float _bearingDegrees;
+                public int SymbolID { get; set; }
+
+                public float BearingDegrees
+                {
+                    get { return _bearingDegrees; }
+                    set
+                    {
+                        float bearing = value;
+                        bearing %= 360.0f;
+                        _bearingDegrees = bearing;
+                    }
+                }
+
+                public int MissileActivity { get; set; }
+                public int MissileLaunch { get; set; }
+                public int Selected { get; set; }
+                public float Lethality { get; set; }
+                public int NewDetection { get; set; }
+                public bool Visible { get; set; }
+            }
+
+            #endregion
+
+            private const int MAX_BRIGHTNESS = 255;
+            private const int MAX_CHAFF = 99;
+            private const int MAX_FLARE = 99;
+            private const int MAX_OTHER1 = 99;
+            private const int MAX_OTHER2 = 99;
+            private int _brightness = MAX_BRIGHTNESS;
+
+            private int _chaffCount;
+            private int _flareCount;
+            private float _magneticHeadingDegrees;
+            private int _other1Count;
+            private int _other2Count;
+            private float _rollDegrees;
+
+            public F16AzimuthIndicatorInstrumentState()
+            {
+                ChaffCount = 0;
+                FlareCount = 0;
+                Other1Count = 0;
+                Other2Count = 0;
+                ChaffLow = false;
+                FlareLow = false;
+                Other1Low = false;
+                Other2Low = false;
+                Blips = null;
+                RWRPowerOn = true;
+                SeparateMode = false;
+                Handoff = false;
+                Launch = false;
+                PriorityMode = false;
+                NavalMode = false;
+                UnknownThreatScanMode = false;
+                SearchMode = false;
+                Activity = false;
+                LowAltitudeMode = false;
+                MagneticHeadingDegrees = 0;
+                RollDegrees = 0;
+                Inverted = false;
+                EWMSMode = EWMSMode.Manual;
+            }
+
+            internal bool Inverted { get; set; }
+
+            public float RollDegrees
+            {
+                get { return _rollDegrees; }
+                set
+                {
+                    if (Inverted)
+                    {
+                        if (Math.Abs(value) < 90) Inverted = false;
+                    }
+                    else
+                    {
+                        if (Math.Abs(value) > 120) Inverted = true;
+                    }
+                    _rollDegrees = value;
+                }
+            }
+
+            public EWMSMode EWMSMode { get; set; }
+            public bool EWSGo { get; set; }
+            public bool EWSNoGo { get; set; }
+            public bool EWSDegraded { get; set; }
+            public bool EWSDispenseReady { get; set; }
+
+            public int ChaffCount
+            {
+                get { return _chaffCount; }
+                set
+                {
+                    int chaff = value;
+                    if (chaff < 0) chaff = 0;
+                    if (chaff > MAX_CHAFF) chaff = MAX_CHAFF;
+                    _chaffCount = chaff;
+                }
+            }
+
+            public int FlareCount
+            {
+                get { return _flareCount; }
+                set
+                {
+                    int flare = value;
+                    if (flare < 0) flare = 0;
+                    if (flare > MAX_FLARE) flare = MAX_FLARE;
+                    _flareCount = flare;
+                }
+            }
+
+            public int Other1Count
+            {
+                get { return _other1Count; }
+                set
+                {
+                    int other1 = value;
+                    if (other1 < 0) other1 = 0;
+                    if (other1 > MAX_OTHER1) other1 = MAX_OTHER1;
+                    _other1Count = other1;
+                }
+            }
+
+            public int Other2Count
+            {
+                get { return _other2Count; }
+                set
+                {
+                    int other2 = value;
+                    if (other2 < 0) other2 = 0;
+                    if (other2 > MAX_OTHER2) other2 = MAX_OTHER2;
+                    _other2Count = other2;
+                }
+            }
+
+            public bool ChaffLow { get; set; }
+            public bool FlareLow { get; set; }
+            public bool Other1Low { get; set; }
+            public bool Other2Low { get; set; }
+            public bool SearchMode { get; set; }
+            public bool Activity { get; set; }
+            public bool LowAltitudeMode { get; set; }
+            public bool Handoff { get; set; }
+            public bool Launch { get; set; }
+            public bool PriorityMode { get; set; }
+            public bool NavalMode { get; set; }
+            public bool UnknownThreatScanMode { get; set; }
+            public Blip[] Blips { get; set; }
+            public bool SeparateMode { get; set; }
+            public bool RWRPowerOn { get; set; }
+
+            public float MagneticHeadingDegrees
+            {
+                get { return _magneticHeadingDegrees; }
+                set
+                {
+                    float heading = value;
+                    heading %= 360.0f;
+                    _magneticHeadingDegrees = heading;
+                }
+            }
+
+            public int Brightness
+            {
+                get { return _brightness; }
+                set
+                {
+                    int brightness = value;
+                    if (brightness < 0) brightness = 0;
+                    if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
+                    _brightness = brightness;
+                }
+            }
+
+            public int MaxBrightness
+            {
+                get { return MAX_BRIGHTNESS; }
+            }
+        }
+
+        #endregion
+
+        #region Options Class
+
+        public class F16AzimuthIndicatorOptions
+        {
+            #region InstrumentStyle enum
+
+            public enum InstrumentStyle
+            {
+                IP1310ALR,
+                HAF,
+                AdvancedThreatDisplay
+            }
+
+            #endregion
+
+            public F16AzimuthIndicatorOptions()
+            {
+                //this.Style = InstrumentStyle.IP1310ALR;
+                Style = InstrumentStyle.AdvancedThreatDisplay;
+            }
+
+            public InstrumentStyle Style { get; set; }
+            public bool HideBezel { get; set; }
+            public GDIPlusOptions GDIPlusOptions { get; set; }
+        }
+
+        #endregion
+
+        #region Nested type: EmitterCategory
+
+        private enum EmitterCategory
+        {
+            AirborneThreat,
+            GroundThreat,
+            Search,
+            Missile,
+            Naval,
+            Unknown
+        }
+
+        #endregion
     }
 }

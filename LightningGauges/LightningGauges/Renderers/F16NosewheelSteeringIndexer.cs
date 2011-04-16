@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 using Common.Imaging;
+using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16NosewheelSteeringIndexer: InstrumentRendererBase, IDisposable
+    public class F16NosewheelSteeringIndexer : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string NWSI_BACKGROUND_IMAGE_FILENAME = "index2.bmp";
         private const string NWSI_BACKGROUND_MASK_FILENAME = "index2_mask.bmp";
         private const string NWSI_DISC_IMAGE_FILENAME = "ind2disc.bmp";
@@ -22,24 +21,31 @@ namespace LightningGauges.Renderers
         private const string NWSI_RDY_IMAGE_FILENAME = "ind2ready.bmp";
         private const string NWSI_RDY_MASK_FILENAME = "ind2ready_mask.bmp";
 
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
+
+        private static readonly object _imagesLock = new object();
         private static ImageMaskPair _background;
         private static ImageMaskPair _disc;
         private static ImageMaskPair _nws;
         private static ImageMaskPair _rdy;
-        private static bool _imagesLoaded = false;
-        private bool _disposed = false;
+        private static bool _imagesLoaded;
+        private bool _disposed;
+
         #endregion
 
         public F16NosewheelSteeringIndexer()
-            : base()
         {
-            this.InstrumentState = new F16NosewheelSteeringIndexerInstrumentState();
+            InstrumentState = new F16NosewheelSteeringIndexerInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_background == null)
@@ -73,6 +79,31 @@ namespace LightningGauges.Renderers
             }
             _imagesLoaded = true;
         }
+
+        #endregion
+
+        public F16NosewheelSteeringIndexerInstrumentState InstrumentState { get; set; }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16NosewheelSteeringIndexerInstrumentState : InstrumentStateBase
+        {
+            public bool AR_NWS { get; set; }
+            public bool RDY { get; set; }
+            public bool DISC { get; set; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
@@ -94,7 +125,8 @@ namespace LightningGauges.Renderers
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform((float)bounds.Width / (float)width, (float)bounds.Height / (float)height); //set the initial scale transformation 
+                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                    //set the initial scale transformation 
 
                 g.TranslateTransform(-46, -46);
                 g.TranslateTransform(-50, -2);
@@ -107,19 +139,19 @@ namespace LightningGauges.Renderers
                 g.DrawImage(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
-                if (this.InstrumentState.DISC)
+                if (InstrumentState.DISC)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_disc.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 }
-                if (this.InstrumentState.RDY)
+                if (InstrumentState.RDY)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_rdy.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 }
-                if (this.InstrumentState.AR_NWS)
+                if (InstrumentState.AR_NWS)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_nws.MaskedImage, new Point(0, 0));
@@ -130,44 +162,12 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-        public F16NosewheelSteeringIndexerInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        #region Instrument State
-        [Serializable]
-        public class F16NosewheelSteeringIndexerInstrumentState : InstrumentStateBase
-        {
-            public F16NosewheelSteeringIndexerInstrumentState():base()
-            {
-            }
-            public bool AR_NWS
-            {
-                get;
-                set;
-            }
-            public bool RDY
-            {
-                get;
-                set;
-            }
-            public bool DISC
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
+
         ~F16NosewheelSteeringIndexer()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -181,7 +181,6 @@ namespace LightningGauges.Renderers
                 }
                 _disposed = true;
             }
-
         }
     }
 }

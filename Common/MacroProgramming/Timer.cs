@@ -1,26 +1,69 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using System.ComponentModel;
-using System.Runtime.Remoting.Contexts;
-using Common.MacroProgramming;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class Timer:Chainable
+    public sealed class Timer : Chainable
     {
-        private TimeSpan _runningTime= TimeSpan.Zero;
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
-        private Macro _macro=new Macro();
-        [NonSerialized]
-        private Thread _workerThread= null;
-        public Timer():base()
+        private DigitalSignal _in;
+        private Macro _macro = new Macro();
+        private DigitalSignal _out;
+        private TimeSpan _runningTime = TimeSpan.Zero;
+        [NonSerialized] private Thread _workerThread;
+
+        public Timer()
         {
             _in = new DigitalSignal();
             _out = new DigitalSignal();
         }
+
+        public TimeSpan RunningTime
+        {
+            get { return _runningTime; }
+            set { _runningTime = value; }
+        }
+
+        public DigitalSignal Out
+        {
+            get { return _out; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _out = value;
+            }
+        }
+
+        public Macro Macro
+        {
+            get { return _macro; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new Macro();
+                }
+                _macro = value;
+            }
+        }
+
+        public DigitalSignal In
+        {
+            get { return _in; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _in_SignalChanged;
+                _in = value;
+            }
+        }
+
         private void Work()
         {
             if (_out != null)
@@ -33,6 +76,7 @@ namespace Common.MacroProgramming
             }
             Thread.Sleep(System.Threading.Timeout.Infinite); //sleep till aborted
         }
+
         private void Start()
         {
             if (_workerThread != null && _workerThread.IsAlive)
@@ -54,6 +98,7 @@ namespace Common.MacroProgramming
                 _out.State = true;
             }
         }
+
         private void Stop()
         {
             if (_workerThread != null && _workerThread.IsAlive)
@@ -70,6 +115,7 @@ namespace Common.MacroProgramming
                 _out.State = false;
             }
         }
+
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -81,67 +127,5 @@ namespace Common.MacroProgramming
                 Stop();
             }
         }
-
-        public TimeSpan RunningTime
-        {
-            get
-            {
-                return _runningTime;
-            }
-            set
-            {
-                _runningTime = value;
-            }
-        }
-        public DigitalSignal Out
-        {
-            get
-            {
-                return _out;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _out = value;
-            }
-        }
-        public Macro Macro
-        {
-            get
-            {
-                return _macro;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new Macro();
-                }
-                _macro = value;
-            }
-        }
-        public DigitalSignal In
-        {
-            get
-            {
-                return _in;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _in_SignalChanged;
-                _in = value;
-            }
-        }
-
-
-        
-
     }
 }

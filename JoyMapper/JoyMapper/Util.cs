@@ -1,18 +1,11 @@
-
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using Microsoft.DirectX.DirectInput;
-using System.Threading;
-using System.Drawing;
-using PPJoy;
-using Microsoft.DirectX;
-using System.Windows.Forms;
-using log4net;
 using Common.InputSupport.DirectInput;
+using log4net;
+using Microsoft.DirectX;
+using Microsoft.DirectX.DirectInput;
+using PPJoy;
+using Device = PPJoy.Device;
+
 namespace JoyMapper
 {
     /// <summary>
@@ -21,28 +14,29 @@ namespace JoyMapper
     /// </summary>
     internal sealed class Util
     {
-        private static ILog _log = LogManager.GetLogger(typeof(JoyMapper.Util));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
 
-       
-        public static byte[] ConvertSbyteArrayToByteArray(sbyte[] toConvert) 
+
+        public static byte[] ConvertSbyteArrayToByteArray(sbyte[] toConvert)
         {
-            byte[] toReturn = new byte[toConvert.Length];
+            var toReturn = new byte[toConvert.Length];
             for (int i = 0; i < toConvert.Length; i++)
             {
                 toReturn[i] = Convert.ToByte(toConvert[i]);
             }
             return toReturn;
         }
+
         /// <summary>
         /// Counts the number of defined PPJoy virtual joystick devices on the system
         /// </summary>
         /// <returns>an int specifying the number of defined PPJoy virtual joystick devices on the system</returns>
         public static int CountPPJoyVirtualDevices()
         {
-            DeviceManager devMgr = new PPJoy.DeviceManager();
-            PPJoy.Device[] devs = devMgr.GetAllDevices();
+            var devMgr = new DeviceManager();
+            Device[] devs = devMgr.GetAllDevices();
             int numSticksDefined = 0;
-            foreach (PPJoy.Device dev in devs)
+            foreach (Device dev in devs)
             {
                 if (dev.DeviceType == JoystickTypes.Virtual_Joystick)
                 {
@@ -50,7 +44,7 @@ namespace JoyMapper
                 }
             }
             return numSticksDefined;
-        }        
+        }
 
         /// <summary>
         /// Gets the maximum number of PPJoy virtual devices that can exist on the system, taking into account the 
@@ -60,7 +54,8 @@ namespace JoyMapper
         /// <returns>an int specifying the maximum number of virtual devices that can exist on the system.</returns>
         public static int GetMaxPPJoyVirtualDevicesAllowed()
         {
-            int maxDevices = VirtualJoystick.MaxVirtualDevices;  //start with the assumption we can actually create the maximum
+            int maxDevices = VirtualJoystick.MaxVirtualDevices;
+                //start with the assumption we can actually create the maximum
             //number of virtual joysticks that PPJoy itself can support,
             //regardless of Windows limitations
 
@@ -74,15 +69,16 @@ namespace JoyMapper
                 DIDeviceMonitor dev = null;
                 try
                 {
-                    DIPhysicalDeviceInfo deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
-                    dev = DIDeviceMonitor.GetInstance(deviceInfo, null, PPJoy.VirtualJoystick.MinAnalogDataSourceVal, PPJoy.VirtualJoystick.MaxAnalogDataSourceVal);
+                    var deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
+                    dev = DIDeviceMonitor.GetInstance(deviceInfo, null, VirtualJoystick.MinAnalogDataSourceVal,
+                                                      VirtualJoystick.MaxAnalogDataSourceVal);
                     int? productId = dev.VendorIdentityProductId;
                     if (productId.HasValue)
                     {
                         bool isVirtual = false;
                         try
                         {
-                            isVirtual = new PPJoy.DeviceManager().IsVirtualDevice(productId.Value);
+                            isVirtual = new DeviceManager().IsVirtualDevice(productId.Value);
                         }
                         catch (DeviceNotFoundException e)
                         {
@@ -90,7 +86,7 @@ namespace JoyMapper
                         }
                         if (!isVirtual)
                         {
-                            maxDevices--;  //a non-virtual device occupies a potential slot 
+                            maxDevices--; //a non-virtual device occupies a potential slot 
                         }
                         else
                         {
@@ -109,6 +105,5 @@ namespace JoyMapper
             }
             return maxDevices;
         }
-
     }
 }

@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices;
-using System.Threading;
-using Microsoft.Win32;
+using System.Security;
+
 namespace PPJoy
 {
     /// <summary>
@@ -13,31 +10,40 @@ namespace PPJoy
     /// </summary>
     [Serializable]
     [ClassInterface(ClassInterfaceType.AutoDual)]
-    [System.Security.SuppressUnmanagedCodeSecurityAttribute()] //don't do security stack walks every time we call unmanaged (native) code
+    [SuppressUnmanagedCodeSecurity] //don't do security stack walks every time we call unmanaged (native) code
     public sealed class Device
     {
         #region Private variables
+
         /// <seealso cref="JoystickTypes"/>
-        private JoystickTypes _joyType;
+        private readonly JoystickTypes _joyType;
+
+        /// <seealso cref="LptNum"/>
+        private readonly int _lptNum;
+
+        /// <seealso cref="ProductId"/>
+        private readonly int _productId;
+
+        /// <seealso cref="VendorId"/>
+        private readonly int _vendorId;
+
         /// <seealso cref="JoystickSubTypes"/>
         private JoystickSubTypes _subType = JoystickSubTypes.NotApplicable;
-        /// <seealso cref="ProductId"/>
-        private int _productId;
-        /// <seealso cref="VendorId"/>
-        private int _vendorId;
+
         /// <seealso cref="UnitNum"/>
         private int _unitNum;
-        /// <seealso cref="LptNum"/>
-        private int _lptNum;
 
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// Private default constructor and internal non-default constructor(s) makes creating new device objects impossible without using <see cref="DeviceManager">DeviceManager</see>'s factory methods
         /// </summary>
         private Device()
         {
         }
+
         /// <summary>
         /// Creates a new instance of a <see cref="Device"/> object that can manage a single PPJoy virtual device.
         /// </summary>
@@ -48,7 +54,8 @@ namespace PPJoy
         /// <param name="productId">Product ID associated with the device.</param>
         /// <param name="vendorId">Vendor ID associated with the device.</param>
         /// <param name="unitNum">Unit number of the device.</param>
-        internal Device(int lptNum, JoystickTypes type, JoystickSubTypes subType, int productId, int vendorId, int unitNum)
+        internal Device(int lptNum, JoystickTypes type, JoystickSubTypes subType, int productId, int vendorId,
+                        int unitNum)
         {
             if (_lptNum < 0)
             {
@@ -61,7 +68,9 @@ namespace PPJoy
             _vendorId = vendorId;
             SetUnitNumber(unitNum);
         }
+
         #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -74,7 +83,7 @@ namespace PPJoy
         /// <seealso cref="MappingCollection"/>
         public MappingCollection GetMappings()
         {
-            return new DeviceManager().GetDeviceMappings(this.LptNum, this.DeviceType, this.UnitNum, JoystickMapScope.Device);
+            return new DeviceManager().GetDeviceMappings(LptNum, DeviceType, UnitNum, JoystickMapScope.Device);
         }
 
         /// <summary>
@@ -99,7 +108,7 @@ namespace PPJoy
         /// <seealso cref="JoystickMapScope"/>
         public MappingCollection GetMappings(JoystickMapScope scope)
         {
-            return new DeviceManager().GetDeviceMappings(this.LptNum, this.DeviceType, this.UnitNum, scope);
+            return new DeviceManager().GetDeviceMappings(LptNum, DeviceType, UnitNum, scope);
         }
 
         /// <summary>
@@ -112,6 +121,7 @@ namespace PPJoy
         {
             RemoveMappings(JoystickMapScope.Device);
         }
+
         /// <summary>
         /// Removes the custom-defined <see cref="Mapping"/>s from this <see cref="Device"/> 
         /// OR from its interface.
@@ -122,8 +132,9 @@ namespace PPJoy
         /// <seealso cref="JoystickMapScope"/>
         public void RemoveMappings(JoystickMapScope scope)
         {
-            new DeviceManager().RemoveDeviceMappings(this.LptNum,this.DeviceType, this.UnitNum, scope);
+            new DeviceManager().RemoveDeviceMappings(LptNum, DeviceType, UnitNum, scope);
         }
+
         /// <summary>
         /// Associates a set of <see cref="Mapping"/>s (a <see cref="MappingCollection"/>) with a specific PPJoy <see cref="Device"/>.
         /// </summary>
@@ -137,6 +148,7 @@ namespace PPJoy
         {
             SetMappings(JoystickMapScope.Device, newMappings);
         }
+
         /// <summary>
         /// Associates a set of <see cref="Mapping"/>s (a <see cref="MappingCollection"/>) with a specific PPJoy <see cref="Device"/> in a specific <see cref="JoystickMapScope"/>.
         /// </summary>
@@ -150,7 +162,7 @@ namespace PPJoy
         /// <seealso cref="JoystickMapScope"/>
         public void SetMappings(JoystickMapScope scope, MappingCollection newMappings)
         {
-            new DeviceManager().SetDeviceMappings(this.LptNum,this.DeviceType, this.UnitNum, scope, newMappings);
+            new DeviceManager().SetDeviceMappings(LptNum, DeviceType, UnitNum, scope, newMappings);
         }
 
         /// <summary>
@@ -167,38 +179,35 @@ namespace PPJoy
         {
             new DeviceManager().DeleteDevice(this, removeDirectInput, removeDriver);
         }
+
         #endregion
+
         #region Public Properties
+
         /// <summary>
         /// Gets the <see cref="JoystickSubTypes">JoystickSubType</see> of this <see cref="Device"/>.
         /// </summary>
         public JoystickSubTypes SubType
         {
-            get
-            {
-                return _subType;
-            }
+            get { return _subType; }
         }
+
         /// <summary>
         /// Gets the <see cref="JoystickTypes">JoystickType</see> of this <see cref="Device"/>.
         /// </summary>
         public JoystickTypes DeviceType
         {
-            get
-            {
-                return _joyType;
-            }
+            get { return _joyType; }
         }
+
         /// <summary>
         /// Gets the unit number of this <see cref="Device"/>.
         /// </summary>
         public int UnitNum
         {
-            get
-            {
-                return _unitNum;
-            }
+            get { return _unitNum; }
         }
+
         /// <summary>
         /// Gets the LPT number of this <see cref="Device"/>.  
         /// </summary>
@@ -208,20 +217,15 @@ namespace PPJoy
         ///</remarks>
         public int LptNum
         {
-            get
-            {
-                return _lptNum;
-            }
+            get { return _lptNum; }
         }
+
         /// <summary>
         /// Gets the Product ID associated with this <see cref="Device"/>.
         /// </summary>
         public int ProductId
         {
-            get
-            {
-                return _productId;
-            }
+            get { return _productId; }
         }
 
         /// <summary>
@@ -229,12 +233,11 @@ namespace PPJoy
         /// </summary>
         public int VendorId
         {
-            get
-            {
-                return _vendorId;
-            }
+            get { return _vendorId; }
         }
+
         #endregion
+
         #region Private Methods
 
         /// <summary>
@@ -243,7 +246,7 @@ namespace PPJoy
         /// <param name="subType">a value from the JoystickSubTypes enumeration, indicating the desired subtype that this device should have</param>
         private void SetSubtype(JoystickSubTypes subType)
         {
-            JoystickTypes deviceType = this.DeviceType;
+            JoystickTypes deviceType = DeviceType;
 
             //validate the supplied subtype value, with respect to the known JoystickType value of this device
             if (DeviceManager.IsSubTypeValidGivenJoystickType(deviceType, subType))
@@ -253,9 +256,12 @@ namespace PPJoy
             else
             {
                 //the supplied subtype value is not valid, given the current type (JoystickType) of this device
-                throw new ArgumentException("Invalid subtype: " + Enum.GetName(typeof(JoystickSubTypes), subType) + ", given known joystick type:" + Enum.GetName(typeof(JoystickTypes), deviceType));
+                throw new ArgumentException("Invalid subtype: " + Enum.GetName(typeof (JoystickSubTypes), subType) +
+                                            ", given known joystick type:" +
+                                            Enum.GetName(typeof (JoystickTypes), deviceType));
             }
         }
+
         /// <summary>
         /// Sets the Unit Number of this device.  The first device 
         /// on a given LPT port should have Unit number = 0; the next
@@ -266,9 +272,9 @@ namespace PPJoy
         {
             //validate the supplied unit number (must be >=0 and 
             //<= the maximum possible unit number for this device's device type
-            if (value < 0 || value > new DeviceManager().MaxValidUnitNumber(this.DeviceType))
+            if (value < 0 || value > new DeviceManager().MaxValidUnitNumber(DeviceType))
             {
-                throw new ArgumentOutOfRangeException("value","Invalid unit number:" + value);
+                throw new ArgumentOutOfRangeException("value", "Invalid unit number:" + value);
             }
             _unitNum = value;
         }

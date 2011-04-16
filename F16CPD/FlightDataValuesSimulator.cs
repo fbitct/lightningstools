@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.Text;
-
-namespace F16CPD
+﻿namespace F16CPD
 {
     internal sealed class FlightDataValuesSimulator
     {
-        private int _timesCalled = 0;
+        private int _timesCalled;
         private bool _valuesIncreasing = true;
-        public FlightDataValuesSimulator()
-            : base()
-        {
-        }
+
         public FlightData GetNextFlightData()
         {
             return GetNextFlightData(null);
         }
+
         public FlightData GetInitialFlightData()
         {
-
-            FlightData flightData = new FlightData();
+            var flightData = new FlightData();
             flightData.AltimeterMode = AltimeterMode.Electronic;
             flightData.AutomaticLowAltitudeWarningInFeet = 300;
             flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
@@ -41,8 +33,8 @@ namespace F16CPD
             flightData.AdiEnableCommandBars = false;
             flightData.TacanChannel = "106X";
             return flightData;
-
         }
+
         /// <summary>
         /// Takes a <see cref="FlightData"/> object containing inital data values to use,
         /// and returns a new <see cref="FlightData"/> object containing new values overwriting the
@@ -53,10 +45,13 @@ namespace F16CPD
         /// incremented values for most or all variables</returns>
         public FlightData GetNextFlightData(FlightData toUpdate)
         {
-            unchecked { _timesCalled++; }
+            unchecked
+            {
+                _timesCalled++;
+            }
             if (_timesCalled < 0) _timesCalled = 0;
 
-            if ((_timesCalled % 1000) == 0)
+            if ((_timesCalled%1000) == 0)
             {
                 _valuesIncreasing = !_valuesIncreasing;
             }
@@ -73,8 +68,8 @@ namespace F16CPD
             if (_valuesIncreasing)
             {
                 //position and heading
-                toReturn.LatitudeInDecimalDegrees += 1.00f / 60.00f;
-                toReturn.LongitudeInDecimalDegrees += 1.00f / 60.00f;
+                toReturn.LatitudeInDecimalDegrees += 1.00f/60.00f;
+                toReturn.LongitudeInDecimalDegrees += 1.00f/60.00f;
                 toReturn.MagneticHeadingInDecimalDegrees += 0.1f;
                 toReturn.MapCoordinateFeetNorth += 5000;
                 toReturn.MapCoordinateFeetEast += 5000;
@@ -124,8 +119,8 @@ namespace F16CPD
             else
             {
                 //position and heading
-                toReturn.LatitudeInDecimalDegrees -=  1.00f / 60.00f;
-                toReturn.LongitudeInDecimalDegrees -= 1.00f / 60.00f;
+                toReturn.LatitudeInDecimalDegrees -= 1.00f/60.00f;
+                toReturn.LongitudeInDecimalDegrees -= 1.00f/60.00f;
                 toReturn.MapCoordinateFeetNorth += 5000;
                 toReturn.MapCoordinateFeetEast += 5000;
                 toReturn.MagneticHeadingInDecimalDegrees -= 0.1f;
@@ -170,7 +165,7 @@ namespace F16CPD
                 //toReturn.AltitudeIndexInFeet -= 100;
             }
 
-            if (_timesCalled % 50 == 0)
+            if (_timesCalled%50 == 0)
             {
                 //dual-valued enumerations
                 if (toReturn.AltimeterMode == AltimeterMode.Electronic)
@@ -201,6 +196,5 @@ namespace F16CPD
 
             return toReturn;
         }
-
     }
 }

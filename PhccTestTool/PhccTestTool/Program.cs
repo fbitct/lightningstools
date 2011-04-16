@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
+using System.Globalization;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace PhccTestTool
 {
@@ -11,28 +12,36 @@ namespace PhccTestTool
     public static class Program
     {
         #region Class variable declarations
+
         // private members
         private static Form mainForm;
+
         #endregion
+
         #region Static methods
-        private static void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Debug.Write(e.ExceptionObject);
         }
-        private static void App_UnhandledException(object sender, Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs e)
+
+        private static void App_UnhandledException(object sender,
+                                                   Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs
+                                                       e)
         {
             e.ExitApplication = false;
         }
+
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
         {
             Debug.WriteLine(t.Exception);
         }
 
         private static Process PriorProcess()
-        // Returns a System.Diagnostics.Process pointing to
-        // a pre-existing process with the same name as the
-        // current one, if any; or null if the current process
-        // is unique.
+            // Returns a System.Diagnostics.Process pointing to
+            // a pre-existing process with the same name as the
+            // current one, if any; or null if the current process
+            // is unique.
         {
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);
@@ -44,6 +53,7 @@ namespace PhccTestTool
             }
             return null;
         }
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -56,7 +66,7 @@ namespace PhccTestTool
             }
 
             // Add the event handler for handling UI thread exceptions to the event.
-            Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
+            Application.ThreadException += UIThreadException;
 
             // Set the unhandled exception mode to force all Windows Forms errors to go through
             // our handler.
@@ -64,9 +74,9 @@ namespace PhccTestTool
 
             // Add the event handler for handling non-UI thread exceptions to the event. 
             AppDomain.CurrentDomain.UnhandledException +=
-                new System.UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
-            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-us");
-            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-us");
+                CurrentDomain_UnhandledException;
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
             mainForm = new frmMain();
             Thread.CurrentThread.Name = "MainThread";
             Application.EnableVisualStyles();

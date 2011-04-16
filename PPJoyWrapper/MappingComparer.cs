@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace PPJoy
@@ -8,16 +6,9 @@ namespace PPJoy
     /// <summary>
     /// Compares two <see cref="Mapping"/>s for the purpose of sorting.
     /// </summary>
-    [System.Runtime.InteropServices.ComVisible(false)]
+    [ComVisible(false)]
     internal sealed class MappingComparer : Comparer<Mapping>
     {
-        /// <summary>
-        /// Creates a new <see cref="MappingComparer"/> object.
-        /// </summary>
-        public MappingComparer()
-            : base()
-        {
-        }
         ///<summary>
         /// Performs a comparison of two <see cref="Mapping"/>s
         /// and returns a value indicating whether one <see cref="Mapping"/> is "less
@@ -32,7 +23,7 @@ namespace PPJoy
         /// Greater than zero -- x is greater than y.</returns>
         public override int Compare(Mapping x, Mapping y)
         {
-            if (x == null &&  y == null)
+            if (x == null && y == null)
             {
                 return 0;
             }

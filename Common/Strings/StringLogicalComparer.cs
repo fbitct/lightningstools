@@ -1,13 +1,16 @@
 ﻿#region Using statements
+
 using System;
+
 #endregion
+
 namespace Common.Strings
 {
-
     // emulates StrCmpLogicalW, but not fully
     public sealed class StringLogicalComparer
     {
         #region Public methods
+
         public static int Compare(string s1, string s2)
         {
             //get rid of special cases
@@ -79,8 +82,11 @@ namespace Common.Strings
                 }
             }
         }
+
         #endregion
+
         #region Private methods
+
         private static int CompareNum(string s1, ref int i1, string s2, ref int i2)
         {
             int nzStart1 = i1, nzStart2 = i2; // nz = non zero
@@ -88,8 +94,10 @@ namespace Common.Strings
 
             ScanNumEnd(s1, i1, ref end1, ref nzStart1);
             ScanNumEnd(s2, i2, ref end2, ref nzStart2);
-            int start1 = i1; i1 = end1 - 1;
-            int start2 = i2; i2 = end2 - 1;
+            int start1 = i1;
+            i1 = end1 - 1;
+            int start2 = i2;
+            i2 = end2 - 1;
 
             int nzLength1 = end1 - nzStart1;
             int nzLength2 = end2 - nzStart2;
@@ -127,6 +135,9 @@ namespace Common.Strings
                 if (end >= s.Length) break;
             }
         }
+
         #endregion
-    }//EOC
+    }
+
+//EOC
 }

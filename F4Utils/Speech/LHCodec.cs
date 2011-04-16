@@ -1,81 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+
 namespace F4Utils.Speech
 {
-    public class LHCodec : IDisposable, F4Utils.Speech.IAudioCodec
+    public class LHCodec : IDisposable, IAudioCodec
     {
+        private short CODESIZE;
+        private short PMSIZE;
+        private bool _disposed;
         private IntPtr _hCoder = IntPtr.Zero;
         private IntPtr _hDecoder = IntPtr.Zero;
-        private bool _disposed = false;
-        private short PMSIZE = 0;
-        private short CODESIZE = 0;
 
         public LHCodec()
         {
             Initialize();
         }
 
-        private void Initialize()
-        {
-            StreamTalk80.CODECINFO CodecInfoStruct = new StreamTalk80.CODECINFO();
-            StreamTalk80.CODECINFOEX CodecInfoExStruct = new StreamTalk80.CODECINFOEX();
-            StreamTalk80.GetCodecInfo(ref CodecInfoStruct);
-            StreamTalk80.GetCodecInfoEx(ref CodecInfoExStruct, Marshal.SizeOf(typeof(StreamTalk80.CODECINFOEX)));
+        #region IAudioCodec Members
 
-            PMSIZE = CodecInfoExStruct.wInputBufferSize;
-            CODESIZE = CodecInfoExStruct.wCodedBufferSize;
-            if (PMSIZE == 0)
-                PMSIZE = 4096;
-            if (CODESIZE == 0)
-                CODESIZE = 4096;
-            if ((_hDecoder = StreamTalk80.OpenDecoder(StreamTalk80.OPENCODERFLAGS.LINEAR_PCM_16_BIT)) == IntPtr.Zero)
-                throw new StreamTalk80Exception("Could not open decoder");
-            if ((_hCoder = StreamTalk80.OpenCoder(StreamTalk80.OPENCODERFLAGS.LINEAR_PCM_16_BIT)) == IntPtr.Zero)
-                throw new StreamTalk80Exception("Could not open encoder");
-        }
-        private void VerifyST80WDll()
-        {
-            string appDirectory=new FileInfo(Process.GetCurrentProcess().MainModule.FileName).DirectoryName;
-            string[] filesFound = Directory.GetFiles(appDirectory, "ST80W.dll", SearchOption.TopDirectoryOnly);
-            if (filesFound ==null || filesFound.Length ==0) 
-            {
-                throw new Exception(
-                    string.Format(
-                        "Could not locate ST80W.DLL, please verify that it exists " + 
-                        "in the application directory ({0}) or copy it there from " + 
-                        "your F4 installation folder manually.", appDirectory));
-            }
-        }
-        ~LHCodec()
-        {
-            Dispose(false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!this._disposed)
-            {
-                if (disposing)
-                {
-                    //dispose of managed resources here
-                }
-                //dispose of unmanaged resources here
-                CloseCodecStreams();
-                _disposed = true;
-            }
-        }
-
-        public int Decode(byte[] inputBuffer, int inputBufferOffset, int dataLength, ref byte[] outputBuffer, int outputBufferOffset)
+        public int Decode(byte[] inputBuffer, int inputBufferOffset, int dataLength, ref byte[] outputBuffer,
+                          int outputBufferOffset)
         {
             StreamTalk80.LH_ERRCODE errorCode;
             short outputCodedSize;
@@ -92,7 +38,7 @@ namespace F4Utils.Speech
 
             while (loopCount > 0)
             {
-                decodeSize = (short)loopCount;
+                decodeSize = (short) loopCount;
                 if (decodeSize > CODESIZE)
                     decodeSize = CODESIZE;
 
@@ -125,7 +71,9 @@ namespace F4Utils.Speech
             pinnedOutputBufferHandle.Free();
             return compDecodeSize;
         }
-        public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer, int outputBufferOffset)
+
+        public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer,
+                          int outputBufferOffset)
         {
             StreamTalk80.LH_ERRCODE errorCode;
             short outputCodedSize;
@@ -142,7 +90,7 @@ namespace F4Utils.Speech
 
             while (loopCount > 0)
             {
-                decodeSize = (short)loopCount;
+                decodeSize = (short) loopCount;
                 if (decodeSize > PMSIZE)
                     decodeSize = PMSIZE;
                 else if (decodeSize < PMSIZE)
@@ -179,12 +127,13 @@ namespace F4Utils.Speech
             pinnedOutputBufferHandle.Free();
             return compDecodeSize;
         }
+
         public int Encode(Stream inputStream, int dataLength, Stream outputStream)
         {
-            byte[] inputBytes = new byte[dataLength];
-            int bytesRead=inputStream.Read(inputBytes, 0, dataLength);
+            var inputBytes = new byte[dataLength];
+            int bytesRead = inputStream.Read(inputBytes, 0, dataLength);
             if (bytesRead < dataLength) throw new IOException("Unexpected end of stream encountered.");
-            byte[] outputBytes = new byte[dataLength * 2];
+            var outputBytes = new byte[dataLength*2];
             int encodedLength = Encode(inputBytes, 0, dataLength, outputBytes, 0);
             outputStream.Write(outputBytes, 0, encodedLength);
             outputStream.Flush();
@@ -193,10 +142,10 @@ namespace F4Utils.Speech
 
         public int Decode(Stream inputStream, int dataLength, int uncompressedLength, Stream outputStream)
         {
-            byte[] inputBytes = new byte[dataLength];
-            int bytesRead=inputStream.Read(inputBytes, 0, dataLength);
+            var inputBytes = new byte[dataLength];
+            int bytesRead = inputStream.Read(inputBytes, 0, dataLength);
             if (bytesRead < dataLength) throw new IOException("Unexpected end of stream encountered.");
-            byte[] outputBytes = new byte[uncompressedLength*2];
+            var outputBytes = new byte[uncompressedLength*2];
             int decodedLength = Decode(inputBytes, 0, dataLength, ref outputBytes, 0);
             outputStream.Write(outputBytes, 0, decodedLength);
             if (decodedLength < uncompressedLength)
@@ -209,6 +158,71 @@ namespace F4Utils.Speech
             outputStream.Flush();
             return decodedLength;
         }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+        private void Initialize()
+        {
+            var CodecInfoStruct = new StreamTalk80.CODECINFO();
+            var CodecInfoExStruct = new StreamTalk80.CODECINFOEX();
+            StreamTalk80.GetCodecInfo(ref CodecInfoStruct);
+            StreamTalk80.GetCodecInfoEx(ref CodecInfoExStruct, Marshal.SizeOf(typeof (StreamTalk80.CODECINFOEX)));
+
+            PMSIZE = CodecInfoExStruct.wInputBufferSize;
+            CODESIZE = CodecInfoExStruct.wCodedBufferSize;
+            if (PMSIZE == 0)
+                PMSIZE = 4096;
+            if (CODESIZE == 0)
+                CODESIZE = 4096;
+            if ((_hDecoder = StreamTalk80.OpenDecoder(StreamTalk80.OPENCODERFLAGS.LINEAR_PCM_16_BIT)) == IntPtr.Zero)
+                throw new StreamTalk80Exception("Could not open decoder");
+            if ((_hCoder = StreamTalk80.OpenCoder(StreamTalk80.OPENCODERFLAGS.LINEAR_PCM_16_BIT)) == IntPtr.Zero)
+                throw new StreamTalk80Exception("Could not open encoder");
+        }
+
+        private void VerifyST80WDll()
+        {
+            string appDirectory = new FileInfo(Process.GetCurrentProcess().MainModule.FileName).DirectoryName;
+            string[] filesFound = Directory.GetFiles(appDirectory, "ST80W.dll", SearchOption.TopDirectoryOnly);
+            if (filesFound == null || filesFound.Length == 0)
+            {
+                throw new Exception(
+                    string.Format(
+                        "Could not locate ST80W.DLL, please verify that it exists " +
+                        "in the application directory ({0}) or copy it there from " +
+                        "your F4 installation folder manually.", appDirectory));
+            }
+        }
+
+        ~LHCodec()
+        {
+            Dispose(false);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    //dispose of managed resources here
+                }
+                //dispose of unmanaged resources here
+                CloseCodecStreams();
+                _disposed = true;
+            }
+        }
+
         private void CloseCodecStreams()
         {
             StreamTalk80.CloseCoder(_hCoder);

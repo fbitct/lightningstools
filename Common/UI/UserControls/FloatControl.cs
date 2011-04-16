@@ -1,20 +1,18 @@
 ﻿using System;
-
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
 
-
 // Requires unmanaged code
-[assembly: SecurityPermissionAttribute(SecurityAction.RequestMinimum, UnmanagedCode = true)]
+
+[assembly: SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode = true)]
 // Requires ability to create any window type
+
 [assembly: UIPermissionAttribute(SecurityAction.RequestMinimum, Window = UIPermissionWindow.AllWindows)]
 
 namespace Common.UI.UserControls
 {
-
-
     /// <summary>
     /// An version of a <see cref="System.Windows.Forms.Control"/> 
     /// which can be shown floating, like a tooltip.  If you
@@ -29,20 +27,6 @@ namespace Common.UI.UserControls
     /// </summary>
     public class FloatControl : Control
     {
-
-        [DllImport("user32")]
-        private static extern int SetParent(
-            IntPtr hWndChild,
-            IntPtr hWndNewParent);
-        [DllImport("user32")]
-        private static extern IntPtr GetParent(
-            IntPtr hWndChild);
-
-        [DllImport("user32")]
-        private static extern int ShowWindow(
-            IntPtr hWnd,
-            int nCmdShow);
-
         private const int WS_EX_TOOLWINDOW = 0x00000080;
         private const int WS_EX_NOACTIVATE = 0x08000000;
         private const int WS_EX_TOPMOST = 0x00000008;
@@ -50,22 +34,6 @@ namespace Common.UI.UserControls
         private const int WM_NCHITTEST = 0x0084;
         private const int HTTRANSPARENT = (-1);
 
-
-        /// <summary>
-        /// Shows the control as a floating Window child 
-        /// of the desktop.  To hide the control again,
-        /// use the <see cref="Visible"/> property.
-        /// </summary>
-        public void ShowFloating()
-        {
-            if (this.Handle == IntPtr.Zero)
-            {
-                base.CreateControl();
-            }
-            Console.WriteLine("{0}", GetParent(base.Handle));
-            SetParent(base.Handle, IntPtr.Zero);
-            ShowWindow(base.Handle, 1);
-        }
 
         /// <summary>
         /// Get the <see cref="System.Windows.Forms.CreateParams"/>
@@ -85,6 +53,36 @@ namespace Common.UI.UserControls
             }
         }
 
+        [DllImport("user32")]
+        private static extern int SetParent(
+            IntPtr hWndChild,
+            IntPtr hWndNewParent);
+
+        [DllImport("user32")]
+        private static extern IntPtr GetParent(
+            IntPtr hWndChild);
+
+        [DllImport("user32")]
+        private static extern int ShowWindow(
+            IntPtr hWnd,
+            int nCmdShow);
+
+        /// <summary>
+        /// Shows the control as a floating Window child 
+        /// of the desktop.  To hide the control again,
+        /// use the <see cref="Visible"/> property.
+        /// </summary>
+        public void ShowFloating()
+        {
+            if (Handle == IntPtr.Zero)
+            {
+                base.CreateControl();
+            }
+            Console.WriteLine("{0}", GetParent(base.Handle));
+            SetParent(base.Handle, IntPtr.Zero);
+            ShowWindow(base.Handle, 1);
+        }
+
 
         /// <summary>
         /// Overrides the standard Window Procedure to ensure the
@@ -95,7 +93,7 @@ namespace Common.UI.UserControls
         {
             if (m.Msg == WM_NCHITTEST)
             {
-                m.Result = (IntPtr)HTTRANSPARENT;
+                m.Result = (IntPtr) HTTRANSPARENT;
             }
             else
             {
@@ -113,21 +111,12 @@ namespace Common.UI.UserControls
         {
             if (base.Text.Length > 0)
             {
-                Brush br = new SolidBrush(this.ForeColor);
-                e.Graphics.DrawString(base.Text, this.Font, br, new PointF(1F, 1F));
+                Brush br = new SolidBrush(ForeColor);
+                e.Graphics.DrawString(base.Text, Font, br, new PointF(1F, 1F));
                 br.Dispose();
             }
             e.Graphics.DrawRectangle(SystemPens.ControlDarkDark,
-                0, 0, this.ClientRectangle.Width - 1, this.ClientRectangle.Height - 1);
-        }
-
-        /// <summary>
-        /// Constructs a new instance of this control.
-        /// </summary>
-        public FloatControl()
-        {
-            // intentionally blank
+                                     0, 0, ClientRectangle.Width - 1, ClientRectangle.Height - 1);
         }
     }
-
 }

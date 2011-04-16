@@ -1,22 +1,26 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class PstFile
     {
         #region Public Fields
+
         public int numPersistantObjects;
         public PersistantObject[] persistantObjects;
+
         #endregion
 
         protected PstFile()
-            : base()
         {
         }
+
         public PstFile(byte[] bytes, int version)
             : this()
         {
             Decode(bytes, version);
         }
+
         protected void Decode(byte[] bytes, int version)
         {
             int offset = 0;
@@ -31,7 +35,7 @@ namespace F4Utils.Campaign
             persistantObjects = new PersistantObject[numPersistantObjects];
             for (int i = 0; i < numPersistantObjects; i++)
             {
-                PersistantObject thisObject = new PersistantObject();
+                var thisObject = new PersistantObject();
                 thisObject.x = BitConverter.ToSingle(bytes, offset);
                 offset += 4;
                 thisObject.y = BitConverter.ToSingle(bytes, offset);

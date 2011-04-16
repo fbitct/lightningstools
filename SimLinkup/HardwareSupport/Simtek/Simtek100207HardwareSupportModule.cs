@@ -1,53 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.MacroProgramming;
-using Common.HardwareSupport;
 using System.IO;
-using log4net;
 using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
+using Common.HardwareSupport;
+using Common.MacroProgramming;
+using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
     //Simtek 10-0207 F-16 RPM Indicator
-    public class Simtek100207HardwareSupportModule:HardwareSupportModuleBase, IDisposable
+    public class Simtek100207HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(Simtek100207HardwareSupportModule));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek100207HardwareSupportModule));
+
         #endregion
 
         #region Instance variables
-        private bool _isDisposed=false;
-        private AnalogSignal _rpmInputSignal= null;
-        private AnalogSignal.AnalogSignalChangedEventHandler _rpmInputSignalChangedEventHandler = null;
-        private AnalogSignal _rpmOutputSignal = null;
+
+        private bool _isDisposed;
+        private AnalogSignal _rpmInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _rpmInputSignalChangedEventHandler;
+        private AnalogSignal _rpmOutputSignal;
+
         #endregion
 
         #region Constructors
-        private Simtek100207HardwareSupportModule():base()
+
+        private Simtek100207HardwareSupportModule()
         {
             CreateInputSignals();
             CreateOutputSignals();
             CreateInputEventHandlers();
             RegisterForInputEvents();
-
         }
 
         public override string FriendlyName
         {
-            get
-            {
-                return "Simtek P/N 10-0207 - Indicator, Simulated Tachometer";
-            }
+            get { return "Simtek P/N 10-0207 - Indicator, Simulated Tachometer"; }
         }
+
         public static IHardwareSupportModule[] GetInstances()
         {
-            List<IHardwareSupportModule> toReturn = new List<IHardwareSupportModule>();
+            var toReturn = new List<IHardwareSupportModule>();
             toReturn.Add(new Simtek100207HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "Simtek100207HardwareSupportModule.config");
-                Simtek100207HardwareSupportModuleConfig hsmConfig = Simtek100207HardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                        "Simtek100207HardwareSupportModule.config");
+                Simtek100207HardwareSupportModuleConfig hsmConfig =
+                    Simtek100207HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
             {
@@ -55,49 +58,47 @@ namespace SimLinkup.HardwareSupport.Simtek
             }
             return toReturn.ToArray();
         }
+
         #endregion
-        
+
         #region Virtual Method Implementations
+
         public override AnalogSignal[] AnalogInputs
         {
-            get 
-            {
-                return new AnalogSignal[] { _rpmInputSignal };
-            }
+            get { return new[] {_rpmInputSignal}; }
         }
+
         public override DigitalSignal[] DigitalInputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         public override AnalogSignal[] AnalogOutputs
         {
-            get
-            {
-                return new AnalogSignal[] { _rpmOutputSignal };
-            }
+            get { return new[] {_rpmOutputSignal}; }
         }
+
         public override DigitalSignal[] DigitalOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         #endregion
 
         #region Signals Handling
+
         #region Signals Event Handling
+
         private void CreateInputEventHandlers()
         {
             _rpmInputSignalChangedEventHandler = new AnalogSignal.AnalogSignalChangedEventHandler(rpm_InputSignalChanged);
         }
+
         private void AbandonInputEventHandlers()
         {
             _rpmInputSignalChangedEventHandler = null;
         }
+
         private void RegisterForInputEvents()
         {
             if (_rpmInputSignal != null)
@@ -105,9 +106,10 @@ namespace SimLinkup.HardwareSupport.Simtek
                 _rpmInputSignal.SignalChanged += _rpmInputSignalChangedEventHandler;
             }
         }
+
         private void UnregisterForInputEvents()
         {
-            if (_rpmInputSignalChangedEventHandler != null && _rpmInputSignal !=null)
+            if (_rpmInputSignalChangedEventHandler != null && _rpmInputSignal != null)
             {
                 try
                 {
@@ -118,39 +120,45 @@ namespace SimLinkup.HardwareSupport.Simtek
                 }
             }
         }
+
         #endregion
+
         #region Signal Creation
+
         private void CreateInputSignals()
         {
-            _rpmInputSignal= CreateRPMInputSignal();
+            _rpmInputSignal = CreateRPMInputSignal();
         }
+
         private void CreateOutputSignals()
         {
-            _rpmOutputSignal= CreateRPMOutputSignal();
+            _rpmOutputSignal = CreateRPMOutputSignal();
         }
+
         private AnalogSignal CreateRPMOutputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "RPM Signal To Instrument";
             thisSignal.Id = "100207_RPM_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00) / 20.00; ;
+            thisSignal.State = (-10.00 + 10.00)/20.00;
+            ;
             return thisSignal;
         }
 
         private AnalogSignal CreateRPMInputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "RPM Value from Simulation";
             thisSignal.Id = "100207_RPM_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             return thisSignal;
@@ -160,6 +168,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             UpdateOutputValues();
         }
+
         private void UpdateOutputValues()
         {
             if (_rpmInputSignal != null)
@@ -170,63 +179,63 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     if (rpmInput < 10)
                     {
-                        rpmOutputValue = Math.Max(-10, -10.0 + ((rpmInput/10.0 ) * 1.25));
+                        rpmOutputValue = Math.Max(-10, -10.0 + ((rpmInput/10.0)*1.25));
                     }
                     else if (rpmInput >= 10 && rpmInput < 20)
                     {
-                        rpmOutputValue = -8.75 + (((rpmInput -10) / 10.0) * 1.25);
+                        rpmOutputValue = -8.75 + (((rpmInput - 10)/10.0)*1.25);
                     }
                     else if (rpmInput >= 20 && rpmInput < 30)
                     {
-                        rpmOutputValue = -7.50 + (((rpmInput-20) / 10.0) * 1.25);
+                        rpmOutputValue = -7.50 + (((rpmInput - 20)/10.0)*1.25);
                     }
                     else if (rpmInput >= 30 && rpmInput < 40)
                     {
-                        rpmOutputValue = -6.25 + (((rpmInput-30) / 10.0) * 1.25);
+                        rpmOutputValue = -6.25 + (((rpmInput - 30)/10.0)*1.25);
                     }
                     else if (rpmInput >= 40 && rpmInput < 50)
                     {
-                        rpmOutputValue = -5.00 + (((rpmInput-40) / 10.0) * 1.25);
+                        rpmOutputValue = -5.00 + (((rpmInput - 40)/10.0)*1.25);
                     }
                     else if (rpmInput >= 50 && rpmInput < 60)
                     {
-                        rpmOutputValue = -3.75 + (((rpmInput -50) / 10.0) * 1.25);
+                        rpmOutputValue = -3.75 + (((rpmInput - 50)/10.0)*1.25);
                     }
                     else if (rpmInput >= 60 && rpmInput < 65)
                     {
-                        rpmOutputValue = -2.50 + (((rpmInput -60) / 5.0) * 1.562);
+                        rpmOutputValue = -2.50 + (((rpmInput - 60)/5.0)*1.562);
                     }
                     else if (rpmInput >= 65 && rpmInput < 68)
                     {
-                        rpmOutputValue = -0.938 + (((rpmInput-65) / 3.0) * 0.938);
+                        rpmOutputValue = -0.938 + (((rpmInput - 65)/3.0)*0.938);
                     }
                     else if (rpmInput >= 68 && rpmInput < 70)
                     {
-                        rpmOutputValue = 0.00 + (((rpmInput - 68) / 2.0) * 0.625);
+                        rpmOutputValue = 0.00 + (((rpmInput - 68)/2.0)*0.625);
                     }
                     else if (rpmInput >= 70 && rpmInput < 75)
                     {
-                        rpmOutputValue = 0.625 + (((rpmInput - 70) / 5.0) * 1.563);
+                        rpmOutputValue = 0.625 + (((rpmInput - 70)/5.0)*1.563);
                     }
                     else if (rpmInput >= 75 && rpmInput < 80)
                     {
-                        rpmOutputValue = 2.188 + (((rpmInput - 75) / 5.0) * 1.562);
+                        rpmOutputValue = 2.188 + (((rpmInput - 75)/5.0)*1.562);
                     }
                     else if (rpmInput >= 80 && rpmInput < 85)
                     {
-                        rpmOutputValue = 3.750 + (((rpmInput - 80) / 5.0) * 1.563);
+                        rpmOutputValue = 3.750 + (((rpmInput - 80)/5.0)*1.563);
                     }
                     else if (rpmInput >= 85 && rpmInput < 90)
                     {
-                        rpmOutputValue = 5.313 + (((rpmInput - 85) / 5.0) * 1.562);
+                        rpmOutputValue = 5.313 + (((rpmInput - 85)/5.0)*1.562);
                     }
                     else if (rpmInput >= 90 && rpmInput < 95)
                     {
-                        rpmOutputValue = 6.875 + (((rpmInput - 90) / 5.0) * 1.563);
+                        rpmOutputValue = 6.875 + (((rpmInput - 90)/5.0)*1.563);
                     }
-                    else if (rpmInput >= 95 )
+                    else if (rpmInput >= 95)
                     {
-                        rpmOutputValue = Math.Min(10, 8.438 + (Math.Min(1,((rpmInput - 95) / 5.0)) * 1.562));
+                        rpmOutputValue = Math.Min(10, 8.438 + (Math.Min(1, ((rpmInput - 95)/5.0))*1.562));
                     }
 
                     if (rpmOutputValue < -10)
@@ -238,17 +247,28 @@ namespace SimLinkup.HardwareSupport.Simtek
                         rpmOutputValue = 10;
                     }
 
-                    _rpmOutputSignal.State = ((rpmOutputValue +10.0000)/20.0000);
-                    
+                    _rpmOutputSignal.State = ((rpmOutputValue + 10.0000)/20.0000);
                 }
             }
         }
-        
+
         #endregion
 
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -258,6 +278,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -272,22 +293,11 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     UnregisterForInputEvents();
                     AbandonInputEventHandlers();
-
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

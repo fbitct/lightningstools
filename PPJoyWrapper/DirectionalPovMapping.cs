@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace PPJoy
@@ -28,28 +26,30 @@ namespace PPJoy
     public sealed class DirectionalPovMapping : PovMapping
     {
         /// <summary>
+        /// The data source that will cause the EAST direction to be reported
+        /// </summary>
+        private DirectionalPovDataSources _eastDataSource = DirectionalPovDataSources.None;
+
+        /// <summary>
         /// The data source that will cause the NORTH direction to be reported
         /// </summary>
         private DirectionalPovDataSources _northDataSource = DirectionalPovDataSources.None;
+
         /// <summary>
         /// The data source that will cause the SOUTH direction to be reported
         /// </summary>
         private DirectionalPovDataSources _southDataSource = DirectionalPovDataSources.None;
+
         /// <summary>
         /// The data source that will cause the WEST direction to be reported
         /// </summary>
         private DirectionalPovDataSources _westDataSource = DirectionalPovDataSources.None;
-        /// <summary>
-        /// The data source that will cause the EAST direction to be reported
-        /// </summary>
-        private DirectionalPovDataSources _eastDataSource = DirectionalPovDataSources.None;
 
         /// <summary>
         /// Creates a new <see cref="DirectionalPovMapping"/> object.
         /// </summary>
         /// <seealso cref="PovMapping"/>
         public DirectionalPovMapping()
-            : base()
         {
         }
 
@@ -69,6 +69,7 @@ namespace PPJoy
             : base(controlNumber)
         {
         }
+
         /// <summary>
         /// Gets/sets the <see cref="DirectionalPovDataSources">DirectionalPovDataSource</see> 
         /// that this <see cref="DirectionalPovMapping"/> will use to determine
@@ -142,6 +143,7 @@ namespace PPJoy
             get { return _southDataSource; }
             set { _southDataSource = value; }
         }
+
         /// <summary>
         /// Gets/sets the <see cref="DirectionalPovDataSources">DirectionalPovDataSource</see> 
         /// that this <see cref="DirectionalPovMapping"/> will use to determine
@@ -178,6 +180,7 @@ namespace PPJoy
             get { return _westDataSource; }
             set { _westDataSource = value; }
         }
+
         /// <summary>
         /// Gets/sets the <see cref="DirectionalPovDataSources">DirectionalPovDataSource</see> 
         /// that this <see cref="DirectionalPovMapping"/> will use to determine
@@ -214,6 +217,5 @@ namespace PPJoy
             get { return _eastDataSource; }
             set { _eastDataSource = value; }
         }
-
     }
 }

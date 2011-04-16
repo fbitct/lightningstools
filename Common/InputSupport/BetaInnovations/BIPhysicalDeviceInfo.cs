@@ -9,15 +9,18 @@ namespace Common.InputSupport.BetaInnovations
     public sealed class BIPhysicalDeviceInfo : PhysicalDeviceInfo
     {
         #region Instance variable declarations
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// 
         /// </summary>
         public BIPhysicalDeviceInfo()
-            : base()
         {
         }
+
         /// <summary>
         /// Constructs a BIPhysicalDeviceInfo, given a Device Path 
         /// and an (optional) alias ("Friendly name") 
@@ -31,8 +34,11 @@ namespace Common.InputSupport.BetaInnovations
             : base(devicePath, alias)
         {
         }
+
         #endregion
+
         #region Private methods
+
         /// <summary>
         /// Discovers the physical controls that appear on this device,
         /// as reported by the BetaInnovations SDK, and stores them as an array 
@@ -53,10 +59,10 @@ namespace Common.InputSupport.BetaInnovations
             {
                 return;
             }
-            _controls = manager.GetControlsOnDevice(this,false);
+            _controls = manager.GetControlsOnDevice(this, false);
             _controlsLoaded = true;
         }
-        #endregion
 
+        #endregion
     }
 }

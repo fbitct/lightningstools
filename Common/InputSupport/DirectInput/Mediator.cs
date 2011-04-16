@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using Microsoft.DirectX.DirectInput;
 using log4net;
+using Microsoft.DirectX.DirectInput;
 
 namespace Common.InputSupport.DirectInput
 {
@@ -14,34 +13,24 @@ namespace Common.InputSupport.DirectInput
     /// </summary>
     public sealed class Mediator : IDisposable
     {
-        /// <summary>
-        /// Raised whenever one of the physical controls on a DirectInput device has changed
-        /// </summary>
-        public event PhysicalControlStateChangedEventHandler PhysicalControlStateChanged;
+        #region Delegates
+
         /// <summary>
         /// Event handler delegate for the PhysicalControlStateChanged event
         /// </summary>
         /// <param name="sender">the Mediator object raising the event</param>
         /// <param name="e">a PhysicalControlStateChangedEventArgs object representing the physical control whose state change is being signalled and its current/previous states.</param>
-        public delegate void PhysicalControlStateChangedEventHandler(object sender, PhysicalControlStateChangedEventArgs e);
+        public delegate void PhysicalControlStateChangedEventHandler(
+            object sender, PhysicalControlStateChangedEventArgs e);
+
+        #endregion
 
         #region Instance Variable Declarations
-        private static ILog _log = LogManager.GetLogger(typeof(Mediator));
-        /// <summary>
-        /// Signal flag to indicate if this object is currently disposed.  
-        /// Used by the IDisposable.Dispose() implementation to avoid double-disposing.
-        /// </summary>
-        private bool _isDisposed;
-        /// <summary>
-        /// <summary>
-        /// Signal flag used internally to determine if initialization tasks have been performed.
-        /// </summary>
-        private bool _isInitialized = false;
-        /// <summary>
-        /// Signal flag that determines whether events will be raised when physical control values change.
-        /// </summary>
-        private bool _raiseEvents = true;
-        private DIDeviceMonitor.DIStateChangedEventHandler _diDeviceMonitorStateChanged = null;
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Mediator));
+
+        private readonly DIDeviceMonitor.DIStateChangedEventHandler _diDeviceMonitorStateChanged;
+
         /// <summary>
         /// A Dictionary of DIDeviceMonitor objects, where the Dictionary's key 
         /// is the DirectInput Device Instance GUID being monitored by the 
@@ -49,28 +38,49 @@ namespace Common.InputSupport.DirectInput
         /// Allows retrieving a running DIDeviceMonitor object from 
         /// the collection by knowing its Device Instance GUID.
         /// </summary>
-        private Dictionary<Guid, DIDeviceMonitor> _diDeviceMonitors = new Dictionary<Guid, DIDeviceMonitor>();
+        private readonly Dictionary<Guid, DIDeviceMonitor> _diDeviceMonitors = new Dictionary<Guid, DIDeviceMonitor>();
 
         /// <summary>
         /// A reference to the main Windows Form hosting the application consuming this Mediator.  
         /// </summary>
-        private Control _parentForm;
+        private readonly Control _parentForm;
+
+        /// <summary>
+        /// Signal flag to indicate if this object is currently disposed.  
+        /// Used by the IDisposable.Dispose() implementation to avoid double-disposing.
+        /// </summary>
+        private bool _isDisposed;
+
+        /// <summary>
+        /// <summary>
+        /// Signal flag used internally to determine if initialization tasks have been performed.
+        /// </summary>
+        private bool _isInitialized;
+
+        /// <summary>
+        /// Signal flag that determines whether events will be raised when physical control values change.
+        /// </summary>
+        private bool _raiseEvents = true;
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// Creates a Mediator instance.
         /// </summary>
         /// <param name="parentForm">A reference to the main Windows Form hosting the application creating this Mediator.</param>
         public Mediator(Control parentForm)
-            : base()
         {
             _parentForm = parentForm;
             _diDeviceMonitorStateChanged = new DIDeviceMonitor.DIStateChangedEventHandler(diMonitor_StateChanged);
             Initialize();
         }
+
         #endregion
-        
+
         #region Private Methods
+
         /// <summary>
         /// Initializes this Mediator instance by creating a DeviceMonitor input 
         /// monitoring object for each
@@ -88,11 +98,11 @@ namespace Common.InputSupport.DirectInput
             foreach (DIDeviceMonitor monitor in _diDeviceMonitors.Values)
             {
                 DIPhysicalDeviceInfo physicalDevice = monitor.DeviceInfo;
-                Guid monitorGuid = new Guid(physicalDevice.Key.ToString());
+                var monitorGuid = new Guid(physicalDevice.Key.ToString());
                 if (!_diDeviceMonitors.ContainsKey(monitorGuid))
                 {
-                    DIDeviceMonitor diMonitor = DIDeviceMonitor.GetInstance((DIPhysicalDeviceInfo)physicalDevice, _parentForm, 0, 1024);
-                    diMonitor.StateChanged += new DIDeviceMonitor.DIStateChangedEventHandler(diMonitor_StateChanged);
+                    DIDeviceMonitor diMonitor = DIDeviceMonitor.GetInstance(physicalDevice, _parentForm, 0, 1024);
+                    diMonitor.StateChanged += diMonitor_StateChanged;
                     _diDeviceMonitors.Add(monitorGuid, diMonitor);
                 }
             }
@@ -110,15 +120,16 @@ namespace Common.InputSupport.DirectInput
             _raiseEvents = oldSendEventsVal;
             _isInitialized = true;
         }
+
         private void DetectAttachedDIDevices()
         {
             _diDeviceMonitors.Clear();
             //get a list of joysticks that DirectInput can currently detect
-            DeviceList detectedJoysticks = Microsoft.DirectX.DirectInput.Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AllDevices);
+            DeviceList detectedJoysticks = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AllDevices);
             int curDevice = 0;
             foreach (DeviceInstance instance in detectedJoysticks)
             {
-                DIPhysicalDeviceInfo deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
+                var deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
                 deviceInfo.DeviceNum = curDevice;
                 //Get the DIDeviceMonitor object from the monitor pool that represents the input
                 //device being evaluated.   If no monitor exists in the pool yet for that device,
@@ -134,7 +145,7 @@ namespace Common.InputSupport.DirectInput
 
         private void diMonitor_StateChanged(object sender, DIStateChangedEventArgs e)
         {
-            DIDeviceMonitor source = (DIDeviceMonitor)sender;
+            var source = (DIDeviceMonitor) sender;
             DIPhysicalDeviceInfo device = source.DeviceInfo;
             Guid deviceId = device.Guid;
             foreach (PhysicalControlInfo physicalControl in device.Controls)
@@ -147,17 +158,19 @@ namespace Common.InputSupport.DirectInput
         {
             //get the previous and current state of this input control
             int? prevValue = GetPhysicalControlValue(physicalControl, StateType.Previous);
-            int? newValue = GetPhysicalControlValue(physicalControl, StateType.Current); ;
+            int? newValue = GetPhysicalControlValue(physicalControl, StateType.Current);
+            ;
 
             //if the current state of this control is different than the previous state, and if raising of change-notification events is enabled,
             //then raise the appropriate event
             if (_raiseEvents && newValue != prevValue && PhysicalControlStateChanged != null)
             {
-                PhysicalControlStateChangedEventArgs args = new PhysicalControlStateChangedEventArgs(physicalControl, newValue.HasValue ? newValue.Value : 0, prevValue.HasValue ? prevValue.Value : 0);
+                var args = new PhysicalControlStateChangedEventArgs(physicalControl,
+                                                                    newValue.HasValue ? newValue.Value : 0,
+                                                                    prevValue.HasValue ? prevValue.Value : 0);
                 PhysicalControlStateChanged(this, args);
             }
         }
-
 
 
         /// <summary>
@@ -202,7 +215,9 @@ namespace Common.InputSupport.DirectInput
                 DIDeviceMonitor currentJoystick = _diDeviceMonitors[new Guid(devInfo.Key.ToString())];
                 if (currentJoystick == null)
                 {
-                    throw new ArgumentException("No physical joystick was found matching the Guid supplied in the 'control' parameter's .Parent.Key property.", "control");
+                    throw new ArgumentException(
+                        "No physical joystick was found matching the Guid supplied in the 'control' parameter's .Parent.Key property.",
+                        "control");
                 }
 
                 //retrieve the requested JoystickState structure (current or previous)
@@ -240,8 +255,8 @@ namespace Common.InputSupport.DirectInput
                         return 0; //return a 0 if the button is in the released state
                     }
                 }
-                //else if the supplied input control object refers to an Axis, then read
-                //the state in terms of that axis
+                    //else if the supplied input control object refers to an Axis, then read
+                    //the state in terms of that axis
                 else if (control.ControlType == ControlType.Axis)
                 {
                     int? toReturn = null;
@@ -304,25 +319,36 @@ namespace Common.InputSupport.DirectInput
                 throw new ArgumentException("Unsupported control type", "control");
             }
         }
+
         #endregion
+
         #region Public Properties
+
         public Dictionary<Guid, DIDeviceMonitor> DeviceMonitors
         {
-            get
-            {
-                return _diDeviceMonitors;
-            }
+            get { return _diDeviceMonitors; }
         }
+
         public bool RaiseEvents
         {
             get { return _raiseEvents; }
             set { _raiseEvents = value; }
         }
 
-
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up managed and unmanaged objects
+        /// and suppresses finalization by the garbage collector.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer.  Normally only called by the garbage collector.
         /// </summary>
@@ -330,6 +356,7 @@ namespace Common.InputSupport.DirectInput
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -354,7 +381,7 @@ namespace Common.InputSupport.DirectInput
                         {
                             pstick.Dispose();
                         }
-                        catch (Exception e) 
+                        catch (Exception e)
                         {
                             _log.Debug(e.Message, e);
                         }
@@ -363,17 +390,13 @@ namespace Common.InputSupport.DirectInput
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed and unmanaged objects
-        /// and suppresses finalization by the garbage collector.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
+
+        /// <summary>
+        /// Raised whenever one of the physical controls on a DirectInput device has changed
+        /// </summary>
+        public event PhysicalControlStateChangedEventHandler PhysicalControlStateChanged;
     }
 }

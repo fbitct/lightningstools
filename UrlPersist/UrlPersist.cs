@@ -1,5 +1,7 @@
 ﻿using System.IO;
-
+using ADODB;
+using CDO;
+using Stream = System.IO.Stream;
 
 namespace UrlPersist
 {
@@ -10,7 +12,7 @@ namespace UrlPersist
         public static bool SaveToFile(string url, string fileName)
         {
             bool toReturn = false;
-            using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 toReturn = SaveToStream(url, fs);
                 fs.Flush();
@@ -18,17 +20,18 @@ namespace UrlPersist
             }
             return toReturn;
         }
+
         public static bool SaveToStream(string url, Stream outputStream)
         {
             bool result = false;
-            CDO.Message msg = new CDO.MessageClass();
+            Message msg = new MessageClass();
             ADODB.Stream stm = null;
             try
             {
                 msg.MimeFormatted = true;
-                msg.CreateMHTMLBody(url, CDO.CdoMHTMLFlags.cdoSuppressNone, "", "");
+                msg.CreateMHTMLBody(url, CdoMHTMLFlags.cdoSuppressNone, "", "");
                 stm = msg.GetStream();
-                StreamWriter sw = new StreamWriter(outputStream);
+                var sw = new StreamWriter(outputStream);
                 sw.AutoFlush = true;
                 while (!stm.EOS)
                 {
@@ -50,8 +53,7 @@ namespace UrlPersist
 
         private static bool IsStreamOpen(ADODB.Stream stm)
         {
-            return ((stm.State & ADODB.ObjectStateEnum.adStateOpen) == ADODB.ObjectStateEnum.adStateOpen);
+            return ((stm.State & ObjectStateEnum.adStateOpen) == ObjectStateEnum.adStateOpen);
         }
-
     }
 }

@@ -1,73 +1,75 @@
 ﻿using System;
 using System.Text;
+using Lzss;
+
 namespace F4Utils.Campaign
 {
-
     public class CmpFile
     {
         #region Public Fields
 
-        public uint CurrentTime;
-        public uint TE_StartTime;
-        public uint TE_TimeLimit;
-        public int TE_VictoryPoints;
-        public int TE_Type;
-        public int TE_number_teams;
-        public int[] TE_number_aircraft = new int[8];
-        public int[] TE_number_f16s = new int[8];
-        public int TE_team;
-        public int[] TE_team_pts = new int[8];
-        public int TE_flags;
-        public TeamBasicInfo[] TeamBasicInfo = new TeamBasicInfo[8];
-        public uint lastMajorEvent;
-        public uint lastResupply;
-        public uint lastRepair;
-        public uint lastReinforcement;
-        public short TimeStamp;
-        public short Group;
-        public short GroundRatio;
-        public short AirRatio;
-        public short AirDefenseRatio;
-        public short NavalRatio;
-        public short Brief;
-        public short TheaterSizeX;
-        public short TheaterSizeY;
-        public byte CurrentDay;
         public byte ActiveTeams;
-        public byte DayZero;
-        public byte EndgameResult;
-        public byte Situation;
-        public byte EnemyAirExp;
-        public byte EnemyADExp;
+        public short AirDefenseRatio;
+        public short AirRatio;
+        public short Brief;
         public byte BullseyeName;
         public short BullseyeX;
         public short BullseyeY;
-        public string TheaterName;
-        public string Scenario;
-        public string SaveFile;
-        public string UIName;
-        public VU_ID PlayerSquadronID;
-        public int NumRecentEventEntries;
-        public EventNode[] RecentEventEntries;
-        public int NumPriorityEventEntries;
-        public EventNode[] PriorityEventEntries;
-        public short CampMapSize;
         public byte[] CampMap;
-        public short LastIndexNum;
-        public short NumAvailableSquadrons;
-        public SquadInfo[] SquadInfo;
-        public byte Tempo;
-        public int CreatorIP;
-        public int CreationTime;
+        public short CampMapSize;
         public int CreationRand;
+        public int CreationTime;
+        public int CreatorIP;
+        public byte CurrentDay;
+        public uint CurrentTime;
+        public byte DayZero;
+        public byte EndgameResult;
+        public byte EnemyADExp;
+        public byte EnemyAirExp;
+        public short GroundRatio;
+        public short Group;
+        public short LastIndexNum;
+        public short NavalRatio;
+        public short NumAvailableSquadrons;
+        public int NumPriorityEventEntries;
+        public int NumRecentEventEntries;
+        public VU_ID PlayerSquadronID;
+        public EventNode[] PriorityEventEntries;
+        public EventNode[] RecentEventEntries;
+        public string SaveFile;
+        public string Scenario;
+        public byte Situation;
+        public SquadInfo[] SquadInfo;
+        public uint TE_StartTime;
+        public uint TE_TimeLimit;
+        public int TE_Type;
+        public int TE_VictoryPoints;
+        public int TE_flags;
+        public int[] TE_number_aircraft = new int[8];
+        public int[] TE_number_f16s = new int[8];
+        public int TE_number_teams;
+        public int TE_team;
+        public int[] TE_team_pts = new int[8];
+        public TeamBasicInfo[] TeamBasicInfo = new TeamBasicInfo[8];
+        public byte Tempo;
+        public string TheaterName;
+        public short TheaterSizeX;
+        public short TheaterSizeY;
+        public short TimeStamp;
+        public string UIName;
+        public uint lastMajorEvent;
+        public uint lastReinforcement;
+        public uint lastRepair;
+        public uint lastResupply;
 
         #endregion
 
-        protected int _version = 0;
+        protected int _version;
+
         protected CmpFile()
-            : base()
         {
         }
+
         public CmpFile(byte[] compressed, int version)
             : this()
         {
@@ -75,6 +77,7 @@ namespace F4Utils.Campaign
             byte[] expanded = Expand(compressed);
             if (expanded != null) Decode(expanded);
         }
+
         protected void Decode(byte[] bytes)
         {
             int curByte = 0;
@@ -103,7 +106,7 @@ namespace F4Utils.Campaign
             else
             {
                 TE_StartTime = CurrentTime;
-                TE_TimeLimit = CurrentTime + (60 * 60 * 5 * 1000);
+                TE_TimeLimit = CurrentTime + (60*60*5*1000);
                 TE_VictoryPoints = 0;
             }
             if (_version >= 52)
@@ -141,7 +144,7 @@ namespace F4Utils.Campaign
                 nullLoc = 0;
                 for (int i = 0; i < 8; i++)
                 {
-                    TeamBasicInfo info = new TeamBasicInfo();
+                    var info = new TeamBasicInfo();
                     info.teamFlag = bytes[curByte];
                     curByte++;
                     info.teamColor = bytes[curByte];
@@ -154,7 +157,7 @@ namespace F4Utils.Campaign
                     curByte += 200;
                     nullLoc = info.teamMotto.IndexOf('\0');
                     if (nullLoc > -1) info.teamMotto = info.teamMotto.Substring(0, nullLoc);
-                    this.TeamBasicInfo[i] = info;
+                    TeamBasicInfo[i] = info;
                 }
             }
             else
@@ -181,7 +184,7 @@ namespace F4Utils.Campaign
             lastReinforcement = BitConverter.ToUInt32(bytes, curByte);
             curByte += 4;
 
-            this.TimeStamp = BitConverter.ToInt16(bytes, curByte);
+            TimeStamp = BitConverter.ToInt16(bytes, curByte);
             curByte += 2;
 
             Group = BitConverter.ToInt16(bytes, curByte);
@@ -258,7 +261,7 @@ namespace F4Utils.Campaign
             nullLoc = UIName.IndexOf('\0');
             if (nullLoc > -1) UIName = UIName.Substring(0, nullLoc);
 
-            VU_ID squadronId = new VU_ID();
+            var squadronId = new VU_ID();
             squadronId.num_ = BitConverter.ToUInt32(bytes, curByte);
             curByte += 4;
             squadronId.creator_ = BitConverter.ToUInt32(bytes, curByte);
@@ -272,7 +275,7 @@ namespace F4Utils.Campaign
                 RecentEventEntries = new EventNode[NumRecentEventEntries];
                 for (int i = 0; i < NumRecentEventEntries; i++)
                 {
-                    EventNode thisNode = new EventNode();
+                    var thisNode = new EventNode();
                     thisNode.x = BitConverter.ToInt16(bytes, curByte);
                     curByte += 2;
                     thisNode.y = BitConverter.ToInt16(bytes, curByte);
@@ -311,7 +314,7 @@ namespace F4Utils.Campaign
                 PriorityEventEntries = new EventNode[NumPriorityEventEntries];
                 for (int i = 0; i < NumPriorityEventEntries; i++)
                 {
-                    EventNode thisNode = new EventNode();
+                    var thisNode = new EventNode();
                     thisNode.x = BitConverter.ToInt16(bytes, curByte);
                     curByte += 2;
                     thisNode.y = BitConverter.ToInt16(bytes, curByte);
@@ -360,13 +363,13 @@ namespace F4Utils.Campaign
                 SquadInfo = new SquadInfo[NumAvailableSquadrons];
                 for (int i = 0; i < NumAvailableSquadrons; i++)
                 {
-                    SquadInfo thisSquadInfo = new SquadInfo();
+                    var thisSquadInfo = new SquadInfo();
                     thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
                     curByte += 4;
                     thisSquadInfo.y = BitConverter.ToSingle(bytes, curByte);
                     curByte += 4;
 
-                    VU_ID thisSquadId = new VU_ID();
+                    var thisSquadId = new VU_ID();
                     thisSquadId.num_ = BitConverter.ToUInt32(bytes, curByte);
                     curByte += 4;
                     thisSquadId.creator_ = BitConverter.ToUInt32(bytes, curByte);
@@ -401,7 +404,8 @@ namespace F4Utils.Campaign
 
                     if (_version < 42)
                     {
-                        curByte += 40; //skip additional string length for squad name in older versions that had 80 bytes
+                        curByte += 40;
+                            //skip additional string length for squad name in older versions that had 80 bytes
                     }
 
                     curByte++; //align on int32 boundary
@@ -425,18 +429,17 @@ namespace F4Utils.Campaign
                 curByte += 4;
             }
         }
+
         protected static byte[] Expand(byte[] compressed)
         {
             int compressedSize = BitConverter.ToInt32(compressed, 0);
             int uncompressedSize = BitConverter.ToInt32(compressed, 4);
             if (uncompressedSize == 0) return null;
-            byte[] actualCompressed = new byte[compressed.Length - 8];
+            var actualCompressed = new byte[compressed.Length - 8];
             Array.Copy(compressed, 8, actualCompressed, 0, actualCompressed.Length);
             byte[] uncompressed = null;
-            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
+            uncompressed = Codec.Decompress(actualCompressed, uncompressedSize);
             return uncompressed;
         }
-
-
     }
 }

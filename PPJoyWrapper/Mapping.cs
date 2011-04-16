@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace PPJoy
@@ -20,8 +18,8 @@ namespace PPJoy
     public class Mapping
     {
         internal int m_controlNumber; //index of this control within a 
-                                        //collection of all other controls 
-                                        //of the same type on the same device
+        //collection of all other controls 
+        //of the same type on the same device
         /// <summary>
         /// Creates a new Mapping object.
         /// </summary>
@@ -47,7 +45,5 @@ namespace PPJoy
             get { return m_controlNumber; }
             set { m_controlNumber = value; }
         }
-
     }
-
 }

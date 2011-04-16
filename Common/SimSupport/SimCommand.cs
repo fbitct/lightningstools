@@ -1,34 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Common.MacroProgramming;
+
 namespace Common.SimSupport
 {
     [Serializable]
-    public abstract class SimCommand:Chainable
+    public abstract class SimCommand : Chainable
     {
         private DigitalSignal _in = new DigitalSignal();
         private DigitalSignal _out = new DigitalSignal();
-        public abstract void Execute();
 
         public DigitalSignal In
         {
-            get
-            {
-                return _in;
-            }
+            get { return _in; }
             set
             {
                 if (value == null)
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += new DigitalSignal.SignalChangedEventHandler(value_SignalChanged); ;
+                value.SignalChanged += value_SignalChanged;
+                ;
                 _in = value;
             }
         }
 
-        void value_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        public DigitalSignal Out
+        {
+            get { return _out; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _out = value;
+            }
+        }
+
+        public abstract void Execute();
+
+        private void value_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -50,22 +61,5 @@ namespace Common.SimSupport
                 }
             }
         }
-        public DigitalSignal Out
-        {
-            get
-            {
-                return _out;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _out = value;
-            }
-        }
-
-        
     }
 }

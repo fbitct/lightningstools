@@ -131,7 +131,7 @@
     <Compile Include="InstrumentRenderers.cs" />
     <Compile Include="CaptureCoordinates.cs" />
     <Compile Include="Runtime\InputSupport.cs" />
-    <Compile Include="Runtime\Settings\GDIPlusSettings.cs" />
+    <Compile Include="Runtime\Settings\GdiPlusSettings.cs" />
     <Compile Include="Runtime\Settings\KeySettings.cs" />
     <Compile Include="Runtime\MessageManager.cs" />
     <Compile Include="Runtime\SimSupport\Falcon4\Falcon4SimSupport.cs" />

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.MacroProgramming;
+﻿using Common.MacroProgramming;
 
 namespace Common.HardwareSupport
 {
@@ -11,7 +8,7 @@ namespace Common.HardwareSupport
         AnalogSignal[] AnalogInputs { get; }
         AnalogSignal[] AnalogOutputs { get; }
         DigitalSignal[] DigitalOutputs { get; }
-        string FriendlyName{ get; }
+        string FriendlyName { get; }
         void Synchronize();
     }
 }

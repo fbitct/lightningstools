@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace F4Utils.SimSupport
 {
     //CREDIT: Carolus "Falcas" Burgers
@@ -16,7 +17,7 @@ namespace F4Utils.SimSupport
             }
             else if (RPM >= 58 && RPM < 62)
             {
-                NewNoz = (RPM - 58) * 25;
+                NewNoz = (RPM - 58)*25;
             }
             else if (RPM >= 62 && RPM < 68)
             {
@@ -25,11 +26,11 @@ namespace F4Utils.SimSupport
             else if (RPM >= 68 && RPM <= 70)
             {
                 //Reduce the NOZ to around 92%
-                NewNoz = (100 - (RPM - 68) * 4);
+                NewNoz = (100 - (RPM - 68)*4);
             }
             else if (RPM > 70 && RPM < 83)
             {
-                NewNoz = 92 - (RPM - 70) * 7.1F;
+                NewNoz = 92 - (RPM - 70)*7.1F;
             }
             else if (RPM >= 83)
             {
@@ -50,7 +51,7 @@ namespace F4Utils.SimSupport
                     }
                     else
                     {
-                        NewNoz = ((FF - Mil) / Spread) * 100;
+                        NewNoz = ((FF - Mil)/Spread)*100;
                     }
                 }
             }
@@ -96,15 +97,12 @@ namespace F4Utils.SimSupport
             }
             else if (Alt >= 40000 && Alt < 45000)
             {
-
             }
             else if (Alt >= 45000 && Alt < 50000)
             {
-
             }
             else if (Alt >= 50000 && Alt < 55000)
             {
-
             }
 
             return MilFF;
@@ -148,15 +146,12 @@ namespace F4Utils.SimSupport
             }
             else if (Alt >= 40000 && Alt < 45000)
             {
-
             }
             else if (Alt >= 45000 && Alt < 50000)
             {
-
             }
             else if (Alt >= 50000 && Alt < 55000)
             {
-
             }
 
             return AbFF;
@@ -169,19 +164,19 @@ namespace F4Utils.SimSupport
 
             if (RPM > 25 && RPM <= 65)
             {
-                NewFtit = (RPM - 5) * 10;
+                NewFtit = (RPM - 5)*10;
             }
             else if (RPM > 60 && RPM < 65)
             {
-                NewFtit = RPM * 10;
+                NewFtit = RPM*10;
             }
             else if (RPM > 65 && RPM <= 70)
             {
-                NewFtit = (RPM - (RPM - 65) * 5) * 10;
+                NewFtit = (RPM - (RPM - 65)*5)*10;
             }
             else if (RPM > 70)
             {
-                NewFtit = (RPM - 20) * 10;
+                NewFtit = (RPM - 20)*10;
             }
             else
             {
@@ -205,6 +200,7 @@ namespace F4Utils.SimSupport
 
             return NewFtit;
         }
+
         public static long CabinAlt(float OrigCabinAlt, float z, bool Pressurization)
         {
             //Create a value for the cabin alt, depending on the aircraft alt and
@@ -252,7 +248,7 @@ namespace F4Utils.SimSupport
                     //Cabin press is not maintained,
                     //Cabin alt is the same as aircraft alt.
 
-                    Temp = Math.Sqrt(AircraftAlt - 23000) * 68 + 8000;
+                    Temp = Math.Sqrt(AircraftAlt - 23000)*68 + 8000;
 
                     //Dampen the movement.
                     if (OrigCabinAlt - Temp < -1000)
@@ -274,11 +270,11 @@ namespace F4Utils.SimSupport
         }
 
         public static int HydA(float RPM,
-                        bool MainGen,
-                        bool StbyGen,
-                        bool EpuGen,
-                        bool EPU_On,
-                        float EPU_Fuel)
+                               bool MainGen,
+                               bool StbyGen,
+                               bool EpuGen,
+                               bool EPU_On,
+                               float EPU_Fuel)
         {
             //HydA is linked to the Engine and
             //the indicator powered by the Emergency AC bus nr 2.
@@ -340,7 +336,7 @@ namespace F4Utils.SimSupport
                 if (RPM > 55 && RPM < 65)
                 {
                     RPM_Hyd = RPM - 55;
-                    HydA = (HydA_High / 10) * RPM_Hyd;
+                    HydA = (HydA_High/10)*RPM_Hyd;
                 }
                 else
                 {
@@ -357,11 +353,11 @@ namespace F4Utils.SimSupport
         }
 
         public static int HydB(float RPM,
-                        bool MainGen,
-                        bool StbyGen,
-                        bool EpuGen,
-                        bool EPU_On,
-                        float EPU_Fuel)
+                               bool MainGen,
+                               bool StbyGen,
+                               bool EpuGen,
+                               bool EPU_On,
+                               float EPU_Fuel)
         {
             //HydA is linked to the Engine and
             //the indicator powered by the Emergency AC bus nr 2.
@@ -424,7 +420,7 @@ namespace F4Utils.SimSupport
                 if (RPM > 55 && RPM < 65)
                 {
                     RPM_Hyd = RPM - 55;
-                    HydB = (HydB_High / 10) * RPM_Hyd;
+                    HydB = (HydB_High/10)*RPM_Hyd;
                 }
                 else if (RPM > 65)
                 {

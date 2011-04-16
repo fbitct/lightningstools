@@ -5,19 +5,21 @@ namespace F4Utils.Campaign
     public class TeaFile
     {
         #region Public Fields
-        public short numTeams;
-        public Team[] teams;
+
         public AirTaskingManager[] airTaskingManagers;
         public GroundTaskingManager[] groundTaskingManagers;
         public NavalTaskingManager[] navalTaskingManagers;
+        public short numTeams;
+        public Team[] teams;
 
         #endregion
 
-        protected int _version = 0;
+        protected int _version;
+
         protected TeaFile()
-            : base()
         {
         }
+
         public TeaFile(byte[] bytes, int version)
             : this()
         {
@@ -36,13 +38,12 @@ namespace F4Utils.Campaign
 
             for (int i = 0; i < numTeams; i++)
             {
-                Team thisTeam = new Team(bytes, ref offset, version);
+                var thisTeam = new Team(bytes, ref offset, version);
                 teams[i] = thisTeam;
-                airTaskingManagers[i]= new AirTaskingManager(bytes, ref offset, version);
+                airTaskingManagers[i] = new AirTaskingManager(bytes, ref offset, version);
                 groundTaskingManagers[i] = new GroundTaskingManager(bytes, ref offset, version);
                 navalTaskingManagers[i] = new NavalTaskingManager(bytes, ref offset, version);
             }
         }
-
     }
 }

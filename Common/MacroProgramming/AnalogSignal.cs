@@ -1,72 +1,63 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.Remoting.Contexts;
 using System.Xml.Serialization;
 using Common.SimSupport;
 using log4net;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
     public sealed class AnalogSignalChangedEventArgs : EventArgs
     {
-        private double _currentState = 0;
-        private double _previousState = 0;
+        private readonly double _currentState;
+        private readonly double _previousState;
+
         public AnalogSignalChangedEventArgs(double currentState, double previousState)
-            : base()
         {
             _currentState = currentState;
             _previousState = previousState;
         }
+
         public double CurrentState
         {
-            get
-            {
-                return _currentState;
-            }
+            get { return _currentState; }
         }
+
         public double PreviousState
         {
-            get
-            {
-                return _previousState;
-            }
+            get { return _previousState; }
         }
     }
+
     [Serializable]
-    [XmlInclude(typeof(AnalogSimOutput))]
+    [XmlInclude(typeof (AnalogSimOutput))]
     public class AnalogSignal : Signal
     {
-        [field: NonSerializedAttribute()]
-        private static ILog _log = LogManager.GetLogger(typeof(AnalogSignal));
+        #region Delegates
 
         public delegate void AnalogSignalChangedEventHandler(object sender, AnalogSignalChangedEventArgs args);
-        [field: NonSerializedAttribute()]
-        public event AnalogSignalChangedEventHandler SignalChanged;
-        private double _state = 0.00000;
-        private double _previousState = 0.00000;
+
+        #endregion
+
+        [field: NonSerializedAttribute] private static ILog _log = LogManager.GetLogger(typeof (AnalogSignal));
+
         private int _precision = 5; //# decimal places to compare to determine if change is present 
-        public AnalogSignal()
-            : base()
-        {
-        }
+        private double _previousState;
+        private double _state;
+
         public int Precision
         {
             get { return _precision; }
             set { _precision = value; }
         }
+
         [XmlIgnore]
         public double State
         {
-            get
-            {
-                return _state;
-            }
+            get { return _state; }
             set
             {
                 //if magnitude of change is at least in the minimum order of magnitude, forward it on
-                if (System.Math.Abs(_state - value) > (System.Math.Pow(10, -_precision))) 
+                if (System.Math.Abs(_state - value) > (System.Math.Pow(10, -_precision)))
                 {
                     _previousState = _state;
                     _state = value;
@@ -74,19 +65,20 @@ namespace Common.MacroProgramming
                 }
             }
         }
-       
+
+        public override string SignalType
+        {
+            get { return "Analog / Numeric"; }
+        }
+
+        [field: NonSerializedAttribute]
+        public event AnalogSignalChangedEventHandler SignalChanged;
+
         public void UpdateEventListeners()
         {
             if (SignalChanged != null)
             {
                 SignalChanged(this, new AnalogSignalChangedEventArgs(_state, _previousState));
-            }
-        }
-        public override string SignalType
-        {
-            get
-            {
-                return "Analog / Numeric";
             }
         }
     }

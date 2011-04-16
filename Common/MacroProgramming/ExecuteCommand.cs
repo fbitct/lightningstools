@@ -1,62 +1,37 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
+using System.Diagnostics;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class ExecuteCommand:Chainable
+    public sealed class ExecuteCommand : Chainable
     {
-        private string _command=null;
-        private string _args=null;
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
+        private string _args;
+        private string _command;
+        private DigitalSignal _in;
+        private DigitalSignal _out;
 
         public ExecuteCommand()
-            :base ()
         {
-            this.In = new DigitalSignal();
-            this.Out= new DigitalSignal();
+            In = new DigitalSignal();
+            Out = new DigitalSignal();
         }
 
-        private void Execute()
-        {
-            try
-            {
-                System.Diagnostics.Process.Start(_command, _args);
-            }
-            catch (Exception)
-            {
-            }
-        }
         public string Command
         {
-            get
-            {
-                return _command;
-            }
-            set
-            {
-                _command = value;
-            }
+            get { return _command; }
+            set { _command = value; }
         }
+
         public string Args
         {
-            get
-            {
-                return _args;
-            }
-            set
-            {
-                _args = value;
-            }
+            get { return _args; }
+            set { _args = value; }
         }
+
         public DigitalSignal In
         {
-            get
-            {
-                return _in;
-            }
+            get { return _in; }
             set
             {
                 if (value == null)
@@ -67,12 +42,10 @@ namespace Common.MacroProgramming
                 _in = value;
             }
         }
+
         public DigitalSignal Out
         {
-            get
-            {
-                return _out;
-            }
+            get { return _out; }
             set
             {
                 if (value == null)
@@ -82,6 +55,18 @@ namespace Common.MacroProgramming
                 _out = value;
             }
         }
+
+        private void Execute()
+        {
+            try
+            {
+                Process.Start(_command, _args);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -104,6 +89,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        
     }
 }

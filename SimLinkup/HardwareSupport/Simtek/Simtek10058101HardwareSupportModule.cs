@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.MacroProgramming;
-using Common.HardwareSupport;
 using System.IO;
-using log4net;
 using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
+using Common.HardwareSupport;
+using Common.MacroProgramming;
+using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -13,46 +12,48 @@ namespace SimLinkup.HardwareSupport.Simtek
     public class Simtek10058101HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(Simtek10058101HardwareSupportModule));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek10058101HardwareSupportModule));
+
         #endregion
 
         #region Instance variables
-        private bool _isDisposed = false;
-        private AnalogSignal _aoaInputSignal = null;
-        private AnalogSignal.AnalogSignalChangedEventHandler _aoaInputSignalChangedEventHandler = null;
 
-        private DigitalSignal _aoaPowerOffInputSignal = null;
-        private DigitalSignal.SignalChangedEventHandler _aoaPowerInputSignalChangedEventHandler = null;
+        private AnalogSignal _aoaInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _aoaInputSignalChangedEventHandler;
 
-        private AnalogSignal _aoaOutputSignal = null;
+        private AnalogSignal _aoaOutputSignal;
+        private DigitalSignal.SignalChangedEventHandler _aoaPowerInputSignalChangedEventHandler;
+        private DigitalSignal _aoaPowerOffInputSignal;
+        private bool _isDisposed;
+
         #endregion
 
         #region Constructors
+
         private Simtek10058101HardwareSupportModule()
-            : base()
         {
             CreateInputSignals();
             CreateOutputSignals();
             CreateInputEventHandlers();
             RegisterForInputEvents();
-
         }
 
         public override string FriendlyName
         {
-            get
-            {
-                return "Simtek P/N 10-0581-01 - Indicator - Simulated Angle Of Attack Indicator";
-            }
+            get { return "Simtek P/N 10-0581-01 - Indicator - Simulated Angle Of Attack Indicator"; }
         }
+
         public static IHardwareSupportModule[] GetInstances()
         {
-            List<IHardwareSupportModule> toReturn = new List<IHardwareSupportModule>();
+            var toReturn = new List<IHardwareSupportModule>();
             toReturn.Add(new Simtek10058101HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "Simtek10058101HardwareSupportModule.config");
-                Simtek10058101HardwareSupportModuleConfig hsmConfig = Simtek10058101HardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                        "Simtek10058101HardwareSupportModule.config");
+                Simtek10058101HardwareSupportModuleConfig hsmConfig =
+                    Simtek10058101HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
             {
@@ -60,51 +61,50 @@ namespace SimLinkup.HardwareSupport.Simtek
             }
             return toReturn.ToArray();
         }
+
         #endregion
 
         #region Virtual Method Implementations
+
         public override AnalogSignal[] AnalogInputs
         {
-            get
-            {
-                return new AnalogSignal[] { _aoaInputSignal };
-            }
+            get { return new[] {_aoaInputSignal}; }
         }
+
         public override DigitalSignal[] DigitalInputs
         {
-            get
-            {
-                return new DigitalSignal[] { _aoaPowerOffInputSignal };
-            }
+            get { return new[] {_aoaPowerOffInputSignal}; }
         }
+
         public override AnalogSignal[] AnalogOutputs
         {
-            get
-            {
-                return new AnalogSignal[] { _aoaOutputSignal };
-            }
+            get { return new[] {_aoaOutputSignal}; }
         }
+
         public override DigitalSignal[] DigitalOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         #endregion
 
         #region Signals Handling
+
         #region Signals Event Handling
+
         private void CreateInputEventHandlers()
         {
             _aoaInputSignalChangedEventHandler = new AnalogSignal.AnalogSignalChangedEventHandler(AOA_InputSignalChanged);
-            _aoaPowerInputSignalChangedEventHandler = new DigitalSignal.SignalChangedEventHandler(AOAPower_InputSignalChanged);
+            _aoaPowerInputSignalChangedEventHandler =
+                new DigitalSignal.SignalChangedEventHandler(AOAPower_InputSignalChanged);
         }
+
         private void AbandonInputEventHandlers()
         {
             _aoaInputSignalChangedEventHandler = null;
             _aoaPowerInputSignalChangedEventHandler = null;
         }
+
         private void RegisterForInputEvents()
         {
             if (_aoaInputSignal != null)
@@ -116,6 +116,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 _aoaPowerOffInputSignal.SignalChanged += _aoaPowerInputSignalChangedEventHandler;
             }
         }
+
         private void UnregisterForInputEvents()
         {
             if (_aoaInputSignalChangedEventHandler != null && _aoaInputSignal != null)
@@ -139,40 +140,45 @@ namespace SimLinkup.HardwareSupport.Simtek
                 }
             }
         }
+
         #endregion
+
         #region Signal Creation
+
         private void CreateInputSignals()
         {
             _aoaInputSignal = CreateAOAInputSignal();
             _aoaPowerOffInputSignal = CreateAOAPowerInputSignal();
         }
+
         private void CreateOutputSignals()
         {
             _aoaOutputSignal = CreateAOAOutputSignal();
         }
+
         private AnalogSignal CreateAOAOutputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "AOA Signal To Instrument";
             thisSignal.Id = "10058101_AOA_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00) / 20.00;
+            thisSignal.State = (-10.00 + 10.00)/20.00;
             return thisSignal;
         }
 
         private AnalogSignal CreateAOAInputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "AOA Value from Simulation";
             thisSignal.Id = "10058101_AOA_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             return thisSignal;
@@ -180,25 +186,28 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private DigitalSignal CreateAOAPowerInputSignal()
         {
-            DigitalSignal thisSignal = new DigitalSignal();
+            var thisSignal = new DigitalSignal();
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "AOA Power Off Flag Value from Simulation";
             thisSignal.Id = "10058101_AOA_Power_Off_Flag_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = true;
             return thisSignal;
         }
+
         private void AOA_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateOutputValues();
         }
+
         private void AOAPower_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateOutputValues();
         }
+
         private void UpdateOutputValues()
         {
             bool aoaPowerOff = false;
@@ -224,9 +233,9 @@ namespace SimLinkup.HardwareSupport.Simtek
                         {
                             aoaOutputValue = -6.37;
                         }
-                        else if (aoaInput >= -5 && aoaInput <=40)
+                        else if (aoaInput >= -5 && aoaInput <= 40)
                         {
-                            aoaOutputValue = -6.37 + (((aoaInput + 5) / 45) * 16.37);
+                            aoaOutputValue = -6.37 + (((aoaInput + 5)/45)*16.37);
                         }
                     }
 
@@ -239,8 +248,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         aoaOutputValue = 10;
                     }
 
-                    _aoaOutputSignal.State = ((aoaOutputValue + 10.0000) / 20.0000);
-
+                    _aoaOutputSignal.State = ((aoaOutputValue + 10.0000)/20.0000);
                 }
             }
         }
@@ -250,6 +258,18 @@ namespace SimLinkup.HardwareSupport.Simtek
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -259,6 +279,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -273,22 +294,11 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     UnregisterForInputEvents();
                     AbandonInputEventHandlers();
-
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

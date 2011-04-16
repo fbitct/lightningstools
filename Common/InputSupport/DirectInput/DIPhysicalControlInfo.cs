@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.DirectX.DirectInput;
 
 namespace Common.InputSupport.DirectInput
@@ -11,17 +9,18 @@ namespace Common.InputSupport.DirectInput
         /// <summary>
         /// The DirectInput Object ID of this physical control
         /// </summary>
-        private int _doiObjectId;
+        private readonly int _doiObjectId;
+
         /// <summary>
         /// The DirectInput Object Type GUID of this physical control -- indicates its type
         /// from a DirectInput standpoint
         /// </summary>
-        private Guid _doiObjectTypeGuid;
-        public DIPhysicalControlInfo()
-            : base()
-        {
+        private readonly Guid _doiObjectTypeGuid;
 
+        public DIPhysicalControlInfo()
+        {
         }
+
         /// <summary>
         /// Creates a new DIPhysicalControlInfo object.
         /// </summary>
@@ -33,12 +32,14 @@ namespace Common.InputSupport.DirectInput
         /// "offset" of this control in the collection of similar controls on the
         /// same device.  Button 1 would be controlNum=0; the first slider would 
         /// similarily be controlNum=0; as would the first Pov control, etc.</param>
-        public DIPhysicalControlInfo(DIPhysicalDeviceInfo parent, DeviceObjectInstance deviceObjectInstance, int controlNum)
-            : base((PhysicalDeviceInfo)parent, controlNum, ControlType.Unknown, AxisType.Unknown)
+        public DIPhysicalControlInfo(DIPhysicalDeviceInfo parent, DeviceObjectInstance deviceObjectInstance,
+                                     int controlNum)
+            : base(parent, controlNum, ControlType.Unknown, AxisType.Unknown)
         {
             _doiObjectId = deviceObjectInstance.ObjectId;
             _doiObjectTypeGuid = deviceObjectInstance.ObjectType;
         }
+
         /// <summary>
         /// Creates a new DIPhysicalControlInfo object.
         /// </summary>
@@ -52,8 +53,9 @@ namespace Common.InputSupport.DirectInput
         /// similarily be controlNum=0; as would the first Pov control, etc.</param>
         /// <param name="alias">A string containing a "friendly name" (alias) to 
         /// associate with this control.</param>
-        public DIPhysicalControlInfo(DIPhysicalDeviceInfo parent, DeviceObjectInstance deviceObjectInstance, int controlNum, string alias)
-            : base((PhysicalDeviceInfo)parent, controlNum, ControlType.Unknown, AxisType.Unknown, alias)
+        public DIPhysicalControlInfo(DIPhysicalDeviceInfo parent, DeviceObjectInstance deviceObjectInstance,
+                                     int controlNum, string alias)
+            : base(parent, controlNum, ControlType.Unknown, AxisType.Unknown, alias)
         {
             _doiObjectId = deviceObjectInstance.ObjectId;
             _doiObjectTypeGuid = deviceObjectInstance.ObjectType;
@@ -69,7 +71,7 @@ namespace Common.InputSupport.DirectInput
             {
                 if (_axisType == AxisType.Unknown)
                 {
-                    if (this.ControlType == ControlType.Axis)
+                    if (ControlType == ControlType.Axis)
                     {
                         if (_doiObjectTypeGuid == ObjectTypeGuid.XAxis)
                         {
@@ -104,18 +106,16 @@ namespace Common.InputSupport.DirectInput
                             _axisType = AxisType.Unknown;
                         }
                     }
-                    else if (this.ControlType == ControlType.Pov)
+                    else if (ControlType == ControlType.Pov)
                     {
                         _axisType = AxisType.Pov;
                     }
                 }
                 return _axisType;
             }
-            set
-            {
-                _axisType = value;
-            }
+            set { _axisType = value; }
         }
+
         /// <summary>
         /// Gets the type of this control (button, axis, Pov)
         /// </summary>
@@ -133,7 +133,7 @@ namespace Common.InputSupport.DirectInput
                     {
                         _controlType = ControlType.Pov;
                     }
-                    else if ((_doiObjectId & (int)DeviceObjectTypeFlags.Axis) != 0)
+                    else if ((_doiObjectId & (int) DeviceObjectTypeFlags.Axis) != 0)
                     {
                         _controlType = ControlType.Axis;
                     }
@@ -148,11 +148,7 @@ namespace Common.InputSupport.DirectInput
                     return _controlType;
                 }
             }
-            set
-            {
-                _controlType = value;
-            }
+            set { _controlType = value; }
         }
-
     }
 }

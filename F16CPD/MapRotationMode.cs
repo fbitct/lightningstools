@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.Text;
-
-namespace F16CPD
+﻿namespace F16CPD
 {
     public enum MapRotationMode
     {

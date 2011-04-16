@@ -1,9 +1,9 @@
 #region Using statements
+
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+
 #endregion
 
 namespace PPJoy
@@ -16,13 +16,14 @@ namespace PPJoy
     public class PPJoyException : ApplicationException
     {
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PPJoyException"/> class.
         /// </summary>
         public PPJoyException()
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PPJoyException"/> class.
         /// </summary>
@@ -31,6 +32,7 @@ namespace PPJoy
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PPJoyException"/> class.
         /// </summary>
@@ -40,6 +42,7 @@ namespace PPJoy
             : base(message, inner)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PPJoyException"/> class.
         /// </summary>
@@ -49,6 +52,7 @@ namespace PPJoy
             : base(info, context)
         {
         }
+
         #endregion
     }
 }

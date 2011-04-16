@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.InputSupport
 {
@@ -8,7 +6,7 @@ namespace Common.InputSupport
     /// Enumeration of the various types of possible axes that can be defined on a device
     /// </summary>
     [Serializable]
-    public enum AxisType : int
+    public enum AxisType
     {
         Unknown = 0,
         X = 1,

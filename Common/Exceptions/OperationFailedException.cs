@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 
 namespace Common.Exeptions
 {
@@ -13,13 +10,14 @@ namespace Common.Exeptions
     public class OperationFailedException : ApplicationException
     {
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OperationFailedException"/> class.
         /// </summary>
         public OperationFailedException()
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OperationFailedException"/> class.
         /// </summary>
@@ -28,6 +26,7 @@ namespace Common.Exeptions
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OperationFailedException"/> class.
         /// </summary>
@@ -37,6 +36,7 @@ namespace Common.Exeptions
             : base(message, inner)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="OperationFailedException"/> class.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Common.Exeptions
             : base(info, context)
         {
         }
-        #endregion
 
+        #endregion
     }
 }

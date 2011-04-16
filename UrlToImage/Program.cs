@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Threading;
-using System.Diagnostics;
-using NDesk.Options;
 using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using NDesk.Options;
 
 namespace UrlToImage
 {
-    class Program
+    internal class Program
     {
         public const int ERR_LEVEL__ERROR_OCCURRED = 255;
-        public const int ERR_LEVEL__SUCCESS= 0;
+        public const int ERR_LEVEL__SUCCESS = 0;
+
         [STAThread]
         public static int Main(string[] args)
         {
@@ -34,7 +32,10 @@ namespace UrlToImage
             List<String> extraOptions = null;
 
             //preparse command line options using NDesk.Options
-            bool successfullyParsed = ParseCommandLineOptions(out options, args, out url, out timeout, out postData, out additionalHeaders, out fileName, out showHelp, out hide, out delayAfterLoad, out browserWidth, out browserHeight, out extraOptions, out errorMessage); 
+            bool successfullyParsed = ParseCommandLineOptions(out options, args, out url, out timeout, out postData,
+                                                              out additionalHeaders, out fileName, out showHelp,
+                                                              out hide, out delayAfterLoad, out browserWidth,
+                                                              out browserHeight, out extraOptions, out errorMessage);
 
             if (successfullyParsed)
             {
@@ -46,7 +47,8 @@ namespace UrlToImage
                     }
                     try
                     {
-                        UrlRenderer.Render(url, fileName, timeout, postData, additionalHeaders, delayAfterLoad,browserWidth, browserHeight);
+                        UrlRenderer.Render(url, fileName, timeout, postData, additionalHeaders, delayAfterLoad,
+                                           browserWidth, browserHeight);
                     }
                     catch (Exception e)
                     {
@@ -62,6 +64,7 @@ namespace UrlToImage
                 return ERR_LEVEL__ERROR_OCCURRED;
             }
         }
+
         private static void HideConsoleWindow()
         {
             IntPtr hWnd = NativeMethods.FindWindow(null, Console.Title);
@@ -70,20 +73,24 @@ namespace UrlToImage
             {
                 NativeMethods.ShowWindow(hWnd, 0);
             }
-        }        
-        private static bool ParseCommandLineOptions(out OptionSet options, string[] args, out Uri url, out int timeout, out byte[] postData, out string additionalHeaders, out string fileName, out bool showHelp, out bool hide, out int delayAfterLoad, out int browserWidth, out int browserHeight, out List<String> extraOptions, out string errorMessage)
-        {
+        }
 
+        private static bool ParseCommandLineOptions(out OptionSet options, string[] args, out Uri url, out int timeout,
+                                                    out byte[] postData, out string additionalHeaders,
+                                                    out string fileName, out bool showHelp, out bool hide,
+                                                    out int delayAfterLoad, out int browserWidth, out int browserHeight,
+                                                    out List<String> extraOptions, out string errorMessage)
+        {
             //set default values for output parms
             {
-                options=null;
-                url=null;
-                timeout=Timeout.Infinite;
-                postData=null;
-                additionalHeaders=null;
+                options = null;
+                url = null;
+                timeout = Timeout.Infinite;
+                postData = null;
+                additionalHeaders = null;
                 fileName = null;
-                showHelp=false;
-                extraOptions=null;
+                showHelp = false;
+                extraOptions = null;
                 errorMessage = null;
                 hide = false;
                 delayAfterLoad = 0;
@@ -104,19 +111,19 @@ namespace UrlToImage
             string browserHeightInternal = null;
             //create an OptionSet to describe and parse the command line syntax 
             //(consult the Options.cs file for OptionSet syntax)
-            options = new OptionSet() 
-            {
-                {"url=", arg=> urlString=arg},
-                {"file=", arg=> fileNameInternal=arg},
-                {"timeout=", arg=>timeoutString=arg},
-                {"postData=", arg=>postData__Base64=arg},
-                {"additionalHeaders=", arg=>additionalHeadersInternal=arg},
-                {"hide", arg=>hideInternal=arg !=null},
-                {"delay=", arg=>delayAfterLoadInternal=arg},
-                {"browserWidth=", arg=>browserWidthInternal=arg},
-                {"browserHeight=", arg=>browserHeightInternal=arg},
-                {"?|help", arg=>showHelpInternal= arg !=null}
-            };
+            options = new OptionSet
+                          {
+                              {"url=", arg => urlString = arg},
+                              {"file=", arg => fileNameInternal = arg},
+                              {"timeout=", arg => timeoutString = arg},
+                              {"postData=", arg => postData__Base64 = arg},
+                              {"additionalHeaders=", arg => additionalHeadersInternal = arg},
+                              {"hide", arg => hideInternal = arg != null},
+                              {"delay=", arg => delayAfterLoadInternal = arg},
+                              {"browserWidth=", arg => browserWidthInternal = arg},
+                              {"browserHeight=", arg => browserHeightInternal = arg},
+                              {"?|help", arg => showHelpInternal = arg != null}
+                          };
             try
             {
                 //pre-parse the command line options
@@ -126,7 +133,6 @@ namespace UrlToImage
             {
                 errorMessage = ex.Message;
                 return false;
-
             }
             //copy the variables which were populated by the parser lambdas 
             //into their corresponding output params
@@ -154,7 +160,6 @@ namespace UrlToImage
                 return false;
             }
 
-            
 
             //verify that the URL parameter actually parses to a legitimately formatted URI
             bool urlParsedSuccessfully = Uri.TryCreate(urlString, UriKind.Absolute, out url);
@@ -171,9 +176,9 @@ namespace UrlToImage
                 bool timeoutParsedSuccessfully = Int32.TryParse(timeoutString, out timeout);
                 if (
                     !timeoutParsedSuccessfully
-                        ||
+                    ||
                     (timeout < 0 && timeout != Timeout.Infinite)
-                 )
+                    )
                 {
                     errorMessage = string.Format("Invalid timeout: {0}", timeoutString);
                     return false;
@@ -184,7 +189,7 @@ namespace UrlToImage
             if (!string.IsNullOrEmpty(browserWidthInternal))
             {
                 bool browserWidthParsedSuccessfully = Int32.TryParse(browserWidthInternal, out browserWidth);
-                if (!browserWidthParsedSuccessfully || browserWidth < 0) 
+                if (!browserWidthParsedSuccessfully || browserWidth < 0)
                 {
                     errorMessage = string.Format("Invalid browser width: {0}", browserWidth);
                     return false;
@@ -201,7 +206,7 @@ namespace UrlToImage
                 }
             }
 
-            
+
             //verify that we can parse the PostData as base64 (if supplied)
             if (!string.IsNullOrEmpty(postData__Base64))
             {
@@ -219,6 +224,7 @@ namespace UrlToImage
 
             return true;
         }
+
         private static void WriteErrorAndShowUsage(string errorMessage, OptionSet options)
         {
             TextWriter errWriter = Console.Out;
@@ -226,9 +232,10 @@ namespace UrlToImage
             errWriter.WriteLine();
             ShowUsage(options, errWriter);
         }
-        private static void ShowUsage(OptionSet options, TextWriter o )
+
+        private static void ShowUsage(OptionSet options, TextWriter o)
         {
-            string appName=new FileInfo(Application.ExecutablePath).Name;
+            string appName = new FileInfo(Application.ExecutablePath).Name;
             Console.WriteLine("Usage:");
             Console.WriteLine();
             Console.WriteLine(appName);

@@ -1,38 +1,30 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class FlipFlop:Chainable
+    public sealed class FlipFlop : Chainable
     {
-        private DigitalSignal _in = null;
-        private DigitalSignal _reset = null;
-        private DigitalSignal _out = null;
-        private bool _currentValue = false;
+        private bool _currentValue;
+        private DigitalSignal _in;
+        private DigitalSignal _out;
+        private DigitalSignal _reset;
 
         public FlipFlop()
-            :base()
         {
-            this.In = new DigitalSignal();
-            this.Reset = new DigitalSignal();
-            this.Out = new DigitalSignal();
+            In = new DigitalSignal();
+            Reset = new DigitalSignal();
+            Out = new DigitalSignal();
         }
 
         public bool CurrentValue
         {
-            get
-            {
-                return _currentValue;
-            }
+            get { return _currentValue; }
         }
+
         public DigitalSignal In
         {
-            get
-            {
-                return _in;
-            }
+            get { return _in; }
             set
             {
                 if (value == null)
@@ -43,12 +35,10 @@ namespace Common.MacroProgramming
                 _in = value;
             }
         }
+
         public DigitalSignal Out
         {
-            get
-            {
-                return _out;
-            }
+            get { return _out; }
             set
             {
                 if (value == null)
@@ -58,12 +48,10 @@ namespace Common.MacroProgramming
                 _out = value;
             }
         }
+
         public DigitalSignal Reset
         {
-            get
-            {
-                return _reset;
-            }
+            get { return _reset; }
             set
             {
                 if (value == null)
@@ -74,6 +62,7 @@ namespace Common.MacroProgramming
                 _reset = value;
             }
         }
+
         private void _reset_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -81,6 +70,7 @@ namespace Common.MacroProgramming
                 _currentValue = false;
             }
         }
+
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -92,7 +82,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        
-
     }
 }

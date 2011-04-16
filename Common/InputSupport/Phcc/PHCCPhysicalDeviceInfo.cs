@@ -1,8 +1,7 @@
 ﻿#region Using statements
+
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.DirectX.DirectInput;
+
 #endregion
 
 namespace Common.InputSupport.Phcc
@@ -14,15 +13,18 @@ namespace Common.InputSupport.Phcc
     public sealed class PHCCPhysicalDeviceInfo : PhysicalDeviceInfo
     {
         #region Instance variable declarations
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// 
         /// </summary>
         public PHCCPhysicalDeviceInfo()
-            : base()
         {
         }
+
         /// <summary>
         /// Constructs a PHCCPhysicalDeviceInfo, given a COM Port name
         /// and an (optional) alias ("Friendly name") 
@@ -36,8 +38,11 @@ namespace Common.InputSupport.Phcc
             : base(portName, alias)
         {
         }
+
         #endregion
+
         #region Private methods
+
         /// <summary>
         /// Discovers the physical controls that appear on this device,
         /// as reported by the PHCC Interface Library, and stores them as an array 
@@ -61,7 +66,7 @@ namespace Common.InputSupport.Phcc
             _controls = manager.GetControlsOnDevice(this, false);
             _controlsLoaded = true;
         }
-        #endregion
 
+        #endregion
     }
 }

@@ -1,32 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace F16CPD.Mfd.Controls
 {
-    public class ToggleSwitchPositionMfdInputControl:MfdInputControl
+    public class ToggleSwitchPositionMfdInputControl : MfdInputControl
     {
-        public ToggleSwitchPositionMfdInputControl():base()
+        public ToggleSwitchPositionMfdInputControl()
         {
         }
+
         public ToggleSwitchPositionMfdInputControl(string positionName, ToggleSwitchMfdInputControl parent)
         {
-            this.PositionName = positionName;
-            this.Parent = parent;
+            PositionName = positionName;
+            Parent = parent;
         }
-        public String PositionName
-        {
-            get;
-            set;
-        }
-        public ToggleSwitchMfdInputControl Parent
-        {
-            get;
-            set;
-        }
+
+        public String PositionName { get; set; }
+        public ToggleSwitchMfdInputControl Parent { get; set; }
+
         public void Activate()
         {
-            ToggleSwitchMfdInputControl parent = this.Parent;
+            ToggleSwitchMfdInputControl parent = Parent;
             if (parent != null)
             {
                 parent.CurrentPosition = this;

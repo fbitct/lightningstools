@@ -1,31 +1,50 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class MouseDoubleClick:Chainable
+    public sealed class MouseDoubleClick : Chainable
     {
+        private DigitalSignal _in;
+        private DigitalSignal _out;
         private MouseButton _toClick = MouseButton.Left;
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
 
-        public MouseDoubleClick():base()
+        public MouseDoubleClick()
         {
-            this.In = new DigitalSignal();
-            this.Out= new DigitalSignal();
+            In = new DigitalSignal();
+            Out = new DigitalSignal();
         }
+
         public MouseButton ToClick
         {
-            get
-            {
-                return _toClick;
-            }
+            get { return _toClick; }
+            set { _toClick = value; }
+        }
+
+        public DigitalSignal Out
+        {
+            get { return _out; }
             set
             {
-                _toClick = value;
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _out = value;
+            }
+        }
+
+        public DigitalSignal In
+        {
+            get { return _in; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _in_SignalChanged;
+                _in = value;
             }
         }
 
@@ -64,38 +83,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        public DigitalSignal Out
-        {
-            get
-            {
-                return _out;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _out = value;
-            }
-        }
-        public DigitalSignal In
-        {
-            get
-            {
-                return _in;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _in_SignalChanged;
-                _in = value;
-            }
-        }
-
-        
     }
 }

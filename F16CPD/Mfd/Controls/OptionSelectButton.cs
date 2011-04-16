@@ -1,10 +1,8 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using F16CPD.Mfd.Menus;
+
 namespace F16CPD.Mfd.Controls
 {
     public enum HAlignment
@@ -13,132 +11,124 @@ namespace F16CPD.Mfd.Controls
         Left,
         Right,
     }
+
     public enum VAlignment
     {
         Center,
         Top,
         Bottom
     }
-    public class OptionSelectButton:MomentaryButtonMfdInputControl
+
+    public class OptionSelectButton : MomentaryButtonMfdInputControl
     {
-        protected MfdMenuPage _page = null;
-        protected OptionSelectButton():base()
+        protected MfdMenuPage _page;
+
+        protected OptionSelectButton()
         {
         }
+
         public OptionSelectButton(MfdMenuPage page)
             : this()
         {
             _page = page;
-            this.ForeColor = Color.FromArgb(0, 255, 0);
-            this.BackColor= Color.Transparent;
-            this.TextFont = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold, GraphicsUnit.Point);
-            this.TextHAlignment = HAlignment.Center;
-            this.TextVAlignment = VAlignment.Center;
-            this.TriangleLegLength = 15;
-            this.Visible = true;
+            ForeColor = Color.FromArgb(0, 255, 0);
+            BackColor = Color.Transparent;
+            TextFont = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold, GraphicsUnit.Point);
+            TextHAlignment = HAlignment.Center;
+            TextVAlignment = VAlignment.Center;
+            TriangleLegLength = 15;
+            Visible = true;
         }
-        public int TriangleLegLength
+
+        public int TriangleLegLength { get; set; }
+        public string LabelText { get; set; }
+        public bool InvertLabelText { get; set; }
+        public Size LabelSize { get; set; }
+        public Point LabelLocation { get; set; }
+        public HAlignment TextHAlignment { get; set; }
+        public VAlignment TextVAlignment { get; set; }
+
+        public Color ForeColor { get; set; }
+        public Color BackColor { get; set; }
+        public Font TextFont { get; set; }
+        public float PositionNumber { get; set; }
+
+        public MfdMenuPage Page
         {
-            get;
-            set;
+            get { return _page; }
         }
-        public string LabelText
-        {
-            get;
-            set;
-        }
-        public bool InvertLabelText
-        {
-            get;
-            set;
-        }
-        public Size LabelSize
-        {
-            get;
-            set;
-        }
-        public Point LabelLocation
-        {
-            get;
-            set;
-        }
-        public HAlignment TextHAlignment
-        {
-            get;
-            set;
-        }
-        public VAlignment TextVAlignment
-        {
-            get;
-            set;
-        }
-        public void DrawLabel (Graphics g) 
+
+        public string FunctionName { get; set; }
+        public bool Visible { get; set; }
+
+        public void DrawLabel(Graphics g)
         {
             Matrix origTransform = g.Transform;
-            g.TranslateTransform(this.LabelLocation.X, this.LabelLocation.Y);
-            string text = this.LabelText;
-            Size labelSize = this.LabelSize;
-            Font font = this.TextFont;
+            g.TranslateTransform(LabelLocation.X, LabelLocation.Y);
+            string text = LabelText;
+            Size labelSize = LabelSize;
+            Font font = TextFont;
 
-            Color foreColor = this.InvertLabelText ? this.BackColor : this.ForeColor;
-            Color backColor = this.InvertLabelText ? this.ForeColor : this.BackColor;
+            Color foreColor = InvertLabelText ? BackColor : ForeColor;
+            Color backColor = InvertLabelText ? ForeColor : BackColor;
 
             if (foreColor == Color.Transparent) foreColor = Color.Black;
-            SolidBrush forecolorBrush = new SolidBrush(foreColor);
-            SolidBrush backcolorBrush = new SolidBrush(backColor);
+            var forecolorBrush = new SolidBrush(foreColor);
+            var backcolorBrush = new SolidBrush(backColor);
 
-            Rectangle backgroundRectangle = new Rectangle(new Point(0, 0), labelSize);
+            var backgroundRectangle = new Rectangle(new Point(0, 0), labelSize);
 
             int maxTextAreaWidth = backgroundRectangle.Width;
             int numLinesOfText = 1;
-            foreach (char thisChar in text.ToCharArray())
+            foreach (char thisChar in text)
             {
                 if (thisChar == '\n')
                 {
                     numLinesOfText++;
                 }
             }
-            Size textSize = new Size(maxTextAreaWidth, (font.Height * numLinesOfText));
+            var textSize = new Size(maxTextAreaWidth, (font.Height*numLinesOfText));
 
-            StringFormat textFormat = new StringFormat();
+            var textFormat = new StringFormat();
             textFormat.Trimming = StringTrimming.EllipsisCharacter;
             textFormat.LineAlignment = StringAlignment.Center;
             textFormat.Alignment = StringAlignment.Center;
 
             int textX = 0;
             int textY = 0;
-            if (this.TextVAlignment == VAlignment.Top)
+            if (TextVAlignment == VAlignment.Top)
             {
                 textFormat.LineAlignment = StringAlignment.Near;
                 textY = backgroundRectangle.Top;
             }
-            else if (this.TextVAlignment == VAlignment.Bottom)
+            else if (TextVAlignment == VAlignment.Bottom)
             {
                 textFormat.LineAlignment = StringAlignment.Far;
                 textY = backgroundRectangle.Bottom - textSize.Height;
             }
-            else if (this.TextVAlignment == VAlignment.Center)
+            else if (TextVAlignment == VAlignment.Center)
             {
                 textFormat.LineAlignment = StringAlignment.Center;
-                textY = backgroundRectangle.Top + (((backgroundRectangle.Bottom - backgroundRectangle.Top)-textSize.Height)/2) ;
+                textY = backgroundRectangle.Top +
+                        (((backgroundRectangle.Bottom - backgroundRectangle.Top) - textSize.Height)/2);
             }
 
-            if (this.TextHAlignment == HAlignment.Left)
+            if (TextHAlignment == HAlignment.Left)
             {
                 textFormat.Alignment = StringAlignment.Near;
                 textX = backgroundRectangle.Left;
             }
-            else if (this.TextHAlignment == HAlignment.Right)
+            else if (TextHAlignment == HAlignment.Right)
             {
                 textFormat.Alignment = StringAlignment.Far;
                 textX = backgroundRectangle.Right - textSize.Width;
             }
-            else if (this.TextHAlignment == HAlignment.Center)
+            else if (TextHAlignment == HAlignment.Center)
             {
                 textFormat.Alignment = StringAlignment.Center;
-                textX = backgroundRectangle.Left + ((backgroundRectangle.Width - textSize.Width) / 2);
+                textX = backgroundRectangle.Left + ((backgroundRectangle.Width - textSize.Width)/2);
             }
-            Rectangle textBoundingRectangle = new Rectangle(new Point(textX, textY), textSize);
+            var textBoundingRectangle = new Rectangle(new Point(textX, textY), textSize);
             if (!String.IsNullOrEmpty(text.Trim()))
             {
                 g.FillRectangle(backcolorBrush, textBoundingRectangle);
@@ -146,51 +136,63 @@ namespace F16CPD.Mfd.Controls
                 {
                     int xCoordinate = 0;
                     int yCoordinate = 0;
-                    
-                    if (this.TextHAlignment == HAlignment.Left)
+
+                    if (TextHAlignment == HAlignment.Left)
                     {
                         xCoordinate = 0;
                     }
-                    else if (this.TextHAlignment == HAlignment.Right)
+                    else if (TextHAlignment == HAlignment.Right)
                     {
-                        xCoordinate = backgroundRectangle.Width - this.TriangleLegLength;
+                        xCoordinate = backgroundRectangle.Width - TriangleLegLength;
                     }
-                    else if (this.TextHAlignment == HAlignment.Center)
+                    else if (TextHAlignment == HAlignment.Center)
                     {
-                        xCoordinate = ((backgroundRectangle.Width - this.TriangleLegLength) / 2);
+                        xCoordinate = ((backgroundRectangle.Width - TriangleLegLength)/2);
                     }
 
-                    if (this.TextVAlignment == VAlignment.Top)
+                    if (TextVAlignment == VAlignment.Top)
                     {
                         yCoordinate = 0;
                     }
-                    else if (this.TextVAlignment == VAlignment.Center)
+                    else if (TextVAlignment == VAlignment.Center)
                     {
-                        yCoordinate = ((backgroundRectangle.Height - this.TriangleLegLength) / 2);
+                        yCoordinate = ((backgroundRectangle.Height - TriangleLegLength)/2);
                     }
-                    else if (this.TextVAlignment == VAlignment.Bottom)
+                    else if (TextVAlignment == VAlignment.Bottom)
                     {
-                        yCoordinate = backgroundRectangle.Height - this.TriangleLegLength;
+                        yCoordinate = backgroundRectangle.Height - TriangleLegLength;
                     }
 
-                    Point[] points = new Point[3];
-                    Rectangle boundingRectangle = new Rectangle(new Point(0, 0), new Size(this.TriangleLegLength, this.TriangleLegLength));
+                    var points = new Point[3];
+                    var boundingRectangle = new Rectangle(new Point(0, 0),
+                                                          new Size(TriangleLegLength, TriangleLegLength));
                     if (text.Trim() == "^")
                     {
-                        points[0] = new Point(boundingRectangle.Left + boundingRectangle.Width / 2, ((boundingRectangle.Height - this.TriangleLegLength) / 2)); //top point of triangle
-                        points[1] = new Point(((boundingRectangle.Width - this.TriangleLegLength) / 2), ((boundingRectangle.Height - this.TriangleLegLength) / 2) + this.TriangleLegLength); //lower left point of triangle
-                        points[2] = new Point(((boundingRectangle.Width - this.TriangleLegLength) / 2) + this.TriangleLegLength, ((boundingRectangle.Height - this.TriangleLegLength) / 2) + this.TriangleLegLength); //lower right point of triangle
+                        points[0] = new Point(boundingRectangle.Left + boundingRectangle.Width/2,
+                                              ((boundingRectangle.Height - TriangleLegLength)/2));
+                            //top point of triangle
+                        points[1] = new Point(((boundingRectangle.Width - TriangleLegLength)/2),
+                                              ((boundingRectangle.Height - TriangleLegLength)/2) + TriangleLegLength);
+                            //lower left point of triangle
+                        points[2] = new Point(((boundingRectangle.Width - TriangleLegLength)/2) + TriangleLegLength,
+                                              ((boundingRectangle.Height - TriangleLegLength)/2) + TriangleLegLength);
+                            //lower right point of triangle
                     }
                     if (text.Trim() == @"\/")
                     {
-                        points[0] = new Point(boundingRectangle.Left + boundingRectangle.Width / 2, ((boundingRectangle.Height - this.TriangleLegLength) / 2) + this.TriangleLegLength); //bottom point of triangle
-                        points[1] = new Point(((boundingRectangle.Width - this.TriangleLegLength) / 2), ((boundingRectangle.Height - this.TriangleLegLength) / 2) ); //upper left point of triangle
-                        points[2] = new Point(((boundingRectangle.Width - this.TriangleLegLength) / 2) + this.TriangleLegLength, ((boundingRectangle.Height - this.TriangleLegLength) / 2) ); //upper right point of triangle
+                        points[0] = new Point(boundingRectangle.Left + boundingRectangle.Width/2,
+                                              ((boundingRectangle.Height - TriangleLegLength)/2) + TriangleLegLength);
+                            //bottom point of triangle
+                        points[1] = new Point(((boundingRectangle.Width - TriangleLegLength)/2),
+                                              ((boundingRectangle.Height - TriangleLegLength)/2));
+                            //upper left point of triangle
+                        points[2] = new Point(((boundingRectangle.Width - TriangleLegLength)/2) + TriangleLegLength,
+                                              ((boundingRectangle.Height - TriangleLegLength)/2));
+                            //upper right point of triangle
                     }
                     g.TranslateTransform(xCoordinate, yCoordinate);
                     g.FillPolygon(forecolorBrush, points);
                     g.TranslateTransform(-xCoordinate, -yCoordinate);
-
                 }
                 else
                 {
@@ -204,43 +206,6 @@ namespace F16CPD.Mfd.Controls
                 */
                 g.Transform = origTransform;
             }
-        }
-        public Color ForeColor
-        {
-            get;
-            set;
-        }
-        public Color BackColor
-        {
-            get;
-            set;
-        }
-        public Font TextFont
-        {
-            get;
-            set;
-        }
-        public float PositionNumber
-        {
-            get;
-            set;
-        }
-        public MfdMenuPage Page
-        {
-            get
-            {
-                return _page;
-            }
-        }
-        public string FunctionName
-        {
-            get;
-            set;
-        }
-        public bool Visible
-        {
-            get;
-            set;
         }
     }
 }

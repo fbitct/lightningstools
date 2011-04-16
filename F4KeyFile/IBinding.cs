@@ -1,19 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
+
 namespace F4KeyFile
 {
-    [ComVisible (true)]
+    [ComVisible(true)]
     public interface IBinding
     {
-        String Callback
-        {
-            get;
-            set;
-        }
-        int LineNum
-        {
-            get;
-            set;
-        }
+        String Callback { get; set; }
+        int LineNum { get; set; }
     }
 }

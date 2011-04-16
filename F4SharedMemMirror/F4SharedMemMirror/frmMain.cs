@@ -1,12 +1,18 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Net;
+using System.Threading;
+using System.Windows.Forms;
+using F4SharedMemMirror.Properties;
 using Microsoft.VisualBasic.Devices;
+using Microsoft.Win32;
+
 namespace F4SharedMemMirror
 {
     public partial class frmMain : Form
     {
-        private Mirror _mirror = null;
+        private Mirror _mirror;
+
         public frmMain()
         {
             InitializeComponent();
@@ -16,18 +22,22 @@ namespace F4SharedMemMirror
         {
             UpdateWindowsStartupRegKey();
         }
+
         private void UpdateWindowsStartupRegKey()
         {
             if (chkLaunchAtSystemStartup.Checked)
             {
                 //update the Windows Registry's Run-at-startup applications list according
                 //to the new user settings
-                Computer c = new Computer();
+                var c = new Computer();
                 try
                 {
-                    using (Microsoft.Win32.RegistryKey startupKey = c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                    using (
+                        RegistryKey startupKey =
+                            c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
-                        startupKey.SetValue(Application.ProductName, Application.ExecutablePath, Microsoft.Win32.RegistryValueKind.String);
+                        startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
+                                            RegistryValueKind.String);
                     }
                 }
                 catch (Exception ex)
@@ -37,10 +47,12 @@ namespace F4SharedMemMirror
             }
             else
             {
-                Computer c = new Computer();
+                var c = new Computer();
                 try
                 {
-                    using (Microsoft.Win32.RegistryKey startupKey = c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                    using (
+                        RegistryKey startupKey =
+                            c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.DeleteValue(Application.ProductName, false);
                     }
@@ -50,27 +62,27 @@ namespace F4SharedMemMirror
                     Debug.WriteLine(ex);
                 }
             }
-            Properties.Settings.Default.LaunchAtWindowsStartup = chkLaunchAtSystemStartup.Checked;
-            Properties.Settings.Default.Save();
+            Settings.Default.LaunchAtWindowsStartup = chkLaunchAtSystemStartup.Checked;
+            Settings.Default.Save();
         }
+
         private void chkStartMirroringWhenLaunched_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.StartMirroringWhenLaunched = chkStartMirroringWhenLaunched.Checked;
-            Properties.Settings.Default.Save();
+            Settings.Default.StartMirroringWhenLaunched = chkStartMirroringWhenLaunched.Checked;
+            Settings.Default.Save();
         }
 
         private void chkMinimizeToSystemTray_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.MinimizeToSystemTray = chkMinimizeToSystemTray.Checked;
-            Properties.Settings.Default.Save();
-
+            Settings.Default.MinimizeToSystemTray = chkMinimizeToSystemTray.Checked;
+            Settings.Default.Save();
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
             lblVersion.Text = "Version: " + Application.ProductVersion;
-            nfyTrayIcon.Icon = this.Icon;
-            foreach (string priority in Enum.GetNames(typeof (System.Threading.ThreadPriority)))
+            nfyTrayIcon.Icon = Icon;
+            foreach (string priority in Enum.GetNames(typeof (ThreadPriority)))
             {
                 if (priority.ToLowerInvariant() != "highest")
                 {
@@ -78,37 +90,38 @@ namespace F4SharedMemMirror
                 }
             }
             LoadSettings();
-            if (chkStartMirroringWhenLaunched.Checked) 
+            if (chkStartMirroringWhenLaunched.Checked)
             {
                 StartMirroring();
             }
         }
+
         private void LoadSettings()
         {
-            Properties.Settings.Default.Reload();
-            chkMinimizeToSystemTray.Checked = Properties.Settings.Default.MinimizeToSystemTray;
-            chkStartMirroringWhenLaunched.Checked = Properties.Settings.Default.StartMirroringWhenLaunched;
-            chkLaunchAtSystemStartup.Checked = Properties.Settings.Default.LaunchAtWindowsStartup;
-            chkRunMinimized.Checked = Properties.Settings.Default.RunMinimized;
-            rdoClientMode.Checked = Properties.Settings.Default.RunAsClient;
-            rdoServerMode.Checked = Properties.Settings.Default.RunAsServer;
-            txtServerIPAddress.Text = Properties.Settings.Default.ServerIPAddress;
-            txtServerPortNum.Text = Properties.Settings.Default.ServerPortNum;
-            nudPollFrequency.Value = Properties.Settings.Default.PollingFrequencyMillis;
-            cbPriority.SelectedItem= Enum.GetName(typeof (System.Threading.ThreadPriority), Properties.Settings.Default.Priority);
-          
-            UpdateWindowsStartupRegKey();
+            Settings.Default.Reload();
+            chkMinimizeToSystemTray.Checked = Settings.Default.MinimizeToSystemTray;
+            chkStartMirroringWhenLaunched.Checked = Settings.Default.StartMirroringWhenLaunched;
+            chkLaunchAtSystemStartup.Checked = Settings.Default.LaunchAtWindowsStartup;
+            chkRunMinimized.Checked = Settings.Default.RunMinimized;
+            rdoClientMode.Checked = Settings.Default.RunAsClient;
+            rdoServerMode.Checked = Settings.Default.RunAsServer;
+            txtServerIPAddress.Text = Settings.Default.ServerIPAddress;
+            txtServerPortNum.Text = Settings.Default.ServerPortNum;
+            nudPollFrequency.Value = Settings.Default.PollingFrequencyMillis;
+            cbPriority.SelectedItem = Enum.GetName(typeof (ThreadPriority), Settings.Default.Priority);
 
+            UpdateWindowsStartupRegKey();
         }
+
         private void rdoClientMode_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoClientMode.Checked)
             {
                 txtServerIPAddress.Enabled = true;
                 txtServerPortNum.Enabled = true;
-                Properties.Settings.Default.RunAsClient = rdoClientMode.Checked;
-                Properties.Settings.Default.RunAsServer= !rdoClientMode.Checked;
-                Properties.Settings.Default.Save();
+                Settings.Default.RunAsClient = rdoClientMode.Checked;
+                Settings.Default.RunAsServer = !rdoClientMode.Checked;
+                Settings.Default.Save();
             }
         }
 
@@ -117,31 +130,34 @@ namespace F4SharedMemMirror
             if (rdoServerMode.Checked)
             {
                 txtServerIPAddress.Enabled = false;
-                Properties.Settings.Default.RunAsServer = rdoServerMode.Checked;
-                Properties.Settings.Default.RunAsClient= !rdoServerMode.Checked;
-                Properties.Settings.Default.Save();
+                Settings.Default.RunAsServer = rdoServerMode.Checked;
+                Settings.Default.RunAsClient = !rdoServerMode.Checked;
+                Settings.Default.Save();
             }
         }
 
         private void MinimizeToSystemTray()
         {
-            this.WindowState = FormWindowState.Minimized;
-            this.ShowInTaskbar = false;
-            this.nfyTrayIcon.Visible = true;
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
+            nfyTrayIcon.Visible = true;
         }
+
         private void RestoreFromSystemTray()
         {
-            this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
-            this.nfyTrayIcon.Visible = false;
+            WindowState = FormWindowState.Normal;
+            ShowInTaskbar = true;
+            nfyTrayIcon.Visible = false;
         }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             StartMirroring();
         }
+
         private void StopMirroring()
         {
-            System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
+            Thread.CurrentThread.Priority = ThreadPriority.Normal;
             btnStop.Enabled = false;
             mnuNfyStopMirroring.Enabled = false;
             if (_mirror != null)
@@ -162,24 +178,27 @@ namespace F4SharedMemMirror
             btnStart.Enabled = true;
             mnuNfyStartMirroring.Enabled = true;
         }
+
         private void StartMirroring()
         {
-            System.Threading.Thread.CurrentThread.Priority = Properties.Settings.Default.Priority;
-            System.Net.IPAddress address = null;
+            Thread.CurrentThread.Priority = Settings.Default.Priority;
+            IPAddress address = null;
             if (rdoClientMode.Checked)
             {
                 bool validIpAddress = false;
-                validIpAddress = System.Net.IPAddress.TryParse(txtServerIPAddress.Text, out address);
+                validIpAddress = IPAddress.TryParse(txtServerIPAddress.Text, out address);
                 if (String.IsNullOrEmpty(txtServerIPAddress.Text.Trim()) || !validIpAddress)
                 {
-                    MessageBox.Show("Please enter a valid IP address for the " + Application.ProductName + " server.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter a valid IP address for the " + Application.ProductName + " server.",
+                                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     RestoreFromSystemTray();
                     txtServerIPAddress.Focus();
                     return;
                 }
                 if (String.IsNullOrEmpty(txtServerPortNum.Text.Trim()))
                 {
-                    MessageBox.Show("Please enter the port number of the " + Application.ProductName + " server.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter the port number of the " + Application.ProductName + " server.",
+                                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     RestoreFromSystemTray();
                     txtServerPortNum.Focus();
                     return;
@@ -189,14 +208,16 @@ namespace F4SharedMemMirror
             {
                 if (String.IsNullOrEmpty(txtServerPortNum.Text.Trim()))
                 {
-                    MessageBox.Show("Please enter the port number to publish the " + Application.ProductName + " service on.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(
+                        "Please enter the port number to publish the " + Application.ProductName + " service on.",
+                        Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     RestoreFromSystemTray();
                     txtServerPortNum.Focus();
                     return;
                 }
             }
             int portNum = 21142;
-            Int32.TryParse(Properties.Settings.Default.ServerPortNum, out portNum);
+            Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
             btnStart.Enabled = false;
             mnuNfyStartMirroring.Enabled = false;
             if (_mirror != null)
@@ -211,11 +232,11 @@ namespace F4SharedMemMirror
                 _mirror.NetworkingMode = NetworkingMode.Client;
                 _mirror.ClientIPAddress = address;
             }
-            else if (rdoServerMode.Checked) 
+            else if (rdoServerMode.Checked)
             {
                 _mirror.NetworkingMode = NetworkingMode.Server;
             }
-            _mirror.PortNumber = (ushort)portNum;
+            _mirror.PortNumber = (ushort) portNum;
 
             gbPerformanceOptions.Enabled = false;
             gbNetworkingOptions.Enabled = false;
@@ -228,7 +249,7 @@ namespace F4SharedMemMirror
                 }
                 else
                 {
-                    this.WindowState = FormWindowState.Minimized;
+                    WindowState = FormWindowState.Minimized;
                 }
             }
             btnStop.Enabled = true;
@@ -238,14 +259,14 @@ namespace F4SharedMemMirror
 
         private void frmMain_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                if (chkMinimizeToSystemTray.Checked) 
+                if (chkMinimizeToSystemTray.Checked)
                 {
                     MinimizeToSystemTray();
                 }
             }
-            else if (this.WindowState != FormWindowState.Minimized)
+            else if (WindowState != FormWindowState.Minimized)
             {
                 RestoreFromSystemTray();
             }
@@ -270,9 +291,10 @@ namespace F4SharedMemMirror
         {
             Quit();
         }
+
         private void Quit()
         {
-            this.nfyTrayIcon.Visible = false;
+            nfyTrayIcon.Visible = false;
             Application.Exit();
         }
 
@@ -288,21 +310,22 @@ namespace F4SharedMemMirror
 
         private void txtServerIPAddress_Leave(object sender, EventArgs e)
         {
-            Properties.Settings.Default.ServerIPAddress = txtServerIPAddress.Text;
-            Properties.Settings.Default.Save();
+            Settings.Default.ServerIPAddress = txtServerIPAddress.Text;
+            Settings.Default.Save();
         }
 
         private void cbPriority_SelectedIndexChanged(object sender, EventArgs e)
         {
-            System.Threading.ThreadPriority selectedPriority = (System.Threading.ThreadPriority) Enum.Parse(typeof(System.Threading.ThreadPriority), (string)cbPriority.SelectedItem);
-            Properties.Settings.Default.Priority = selectedPriority;
-            Properties.Settings.Default.Save();
+            var selectedPriority =
+                (ThreadPriority) Enum.Parse(typeof (ThreadPriority), (string) cbPriority.SelectedItem);
+            Settings.Default.Priority = selectedPriority;
+            Settings.Default.Save();
         }
 
         private void nudPollFrequency_ValueChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.PollingFrequencyMillis = (int)nudPollFrequency.Value;
-            Properties.Settings.Default.Save();
+            Settings.Default.PollingFrequencyMillis = (int) nudPollFrequency.Value;
+            Settings.Default.Save();
         }
 
         private void txtServerPortNum_Leave(object sender, EventArgs e)
@@ -311,14 +334,15 @@ namespace F4SharedMemMirror
             bool parsed = Int32.TryParse(txtServerPortNum.Text, out serverPortNum);
             if (!parsed || serverPortNum < 0 || serverPortNum > 65535)
             {
-                MessageBox.Show("Invalid port number.  Port number must be between 0 and 65535", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtServerPortNum.Text = Properties.Settings.Default.ServerPortNum;
+                MessageBox.Show("Invalid port number.  Port number must be between 0 and 65535", Application.ProductName,
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtServerPortNum.Text = Settings.Default.ServerPortNum;
                 txtServerPortNum.Focus();
             }
             else
             {
-                Properties.Settings.Default.ServerPortNum = txtServerPortNum.Text;
-                Properties.Settings.Default.Save();
+                Settings.Default.ServerPortNum = txtServerPortNum.Text;
+                Settings.Default.Save();
             }
         }
 
@@ -334,9 +358,8 @@ namespace F4SharedMemMirror
 
         private void chkRunMinimized_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.RunMinimized = chkRunMinimized.Checked;
-            Properties.Settings.Default.Save();
+            Settings.Default.RunMinimized = chkRunMinimized.Checked;
+            Settings.Default.Save();
         }
-
     }
 }

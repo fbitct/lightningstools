@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace MFDExtractor
@@ -16,5 +11,4 @@ namespace MFDExtractor
         public Rectangle OutputWindowCoords { get; set; }
         public Screen OutputScreen { get; set; }
     }
-
 }

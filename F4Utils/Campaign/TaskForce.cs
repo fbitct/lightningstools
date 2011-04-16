@@ -1,17 +1,18 @@
-﻿using System;
-namespace F4Utils.Campaign
+﻿namespace F4Utils.Campaign
 {
     public class TaskForce : Unit
     {
         #region Public Fields
+
         public byte orders;
         public byte supply;
+
         #endregion
 
         protected TaskForce()
-            : base()
         {
         }
+
         public TaskForce(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {

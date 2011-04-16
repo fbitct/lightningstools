@@ -1,16 +1,20 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class ATMAirbase
     {
         #region Public Fields
+
         public VU_ID id;
         public byte[] schedule;
+
         #endregion
+
         protected ATMAirbase()
-            : base()
         {
         }
+
         public ATMAirbase(byte[] bytes, ref int offset, int version)
             : this()
         {

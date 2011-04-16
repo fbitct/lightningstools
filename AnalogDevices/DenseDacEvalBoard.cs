@@ -1,61 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using System.Collections;
-using System.IO;
 using System.ComponentModel;
-using System.Reflection;
-using System.Diagnostics;
+using System.Threading;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
 using log4net;
 
 namespace AnalogDevices
 {
-    public class DenseDacEvalBoard 
+    public class DenseDacEvalBoard
     {
         #region Public stuff
+
         #region Class Constructors
-        private static ILog _log = LogManager.GetLogger(typeof(DenseDacEvalBoard));
+
+        private static ILog _log = LogManager.GetLogger(typeof (DenseDacEvalBoard));
 
         public DenseDacEvalBoard(UsbDevice device)
-            : base()
         {
             //lock (_instanceStateLock)
             //{
-                _usbDevice = device;
+            _usbDevice = device;
             //}
             UploadFirmware(new IhxFile("AD5371SPI.hex"));
         }
+
         #endregion
+
         #region Public Properties
+
         public UsbDevice UsbDevice
         {
-            get
-            {
-                return _usbDevice;
-            }
+            get { return _usbDevice; }
         }
+
         public string SymbolicName
         {
-            get 
-            {
-                return _usbDevice.UsbRegistryInfo.SymbolicName;
-            }
+            get { return _usbDevice.UsbRegistryInfo.SymbolicName; }
         }
 
         public bool GeneralPurposeIOPinState
         {
-            get
-            {
-                return (ReadbackGPIORegister() & 0x01) == 0x01;
-            }
+            get { return (ReadbackGPIORegister() & 0x01) == 0x01; }
             set
             {
-                if (this.GeneralPurposeIOPinDirection != IODirection.Output)
+                if (GeneralPurposeIOPinDirection != IODirection.Output)
                 {
-                    throw new InvalidOperationException("GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
+                    throw new InvalidOperationException(
+                        "GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
                 }
                 if (value)
                 {
@@ -67,11 +59,12 @@ namespace AnalogDevices
                 }
             }
         }
+
         public IODirection GeneralPurposeIOPinDirection
         {
             get
             {
-                byte gpioRegisterVal = this.ReadbackGPIORegister();
+                byte gpioRegisterVal = ReadbackGPIORegister();
                 bool gpioIsOutput = ((gpioRegisterVal & 0x02) == 0x02);
                 if (gpioIsOutput)
                 {
@@ -98,36 +91,20 @@ namespace AnalogDevices
 
         public ushort Group0Offset
         {
-            get
-            {
-                return ReadbackOSF0Register();
-            }
-            set
-            {
-                WriteOSF0Register(value);
-            }
+            get { return ReadbackOSF0Register(); }
+            set { WriteOSF0Register(value); }
         }
+
         public ushort Group1Offset
         {
-            get
-            {
-                return ReadbackOSF1Register();
-            }
-            set
-            {
-                WriteOSF1Register(value);
-            }
+            get { return ReadbackOSF1Register(); }
+            set { WriteOSF1Register(value); }
         }
+
         public ushort Groups2Thru4Offset
         {
-            get
-            {
-                return ReadbackOSF2Register();
-            }
-            set
-            {
-                WriteOSF2Register(value);
-            }
+            get { return ReadbackOSF2Register(); }
+            set { WriteOSF2Register(value); }
         }
 
         public ChannelMonitorOptions ChannelMonitorOptions
@@ -138,39 +115,36 @@ namespace AnalogDevices
                 byte channelNumberOrInputPinNumber = 0;
                 //lock (_instanceStateLock)
                 //{
-                    if ((_monitorFlags & 0x20) == 0x20)
+                if ((_monitorFlags & 0x20) == 0x20)
+                {
+                    if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
                     {
-                        if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
+                        source = ChannelMonitorSource.InputPin;
+                        if ((_monitorFlags & 0x01) == 0x01) //if input pin 1 is being monitored
                         {
-                            source = ChannelMonitorSource.InputPin;
-                            if ((_monitorFlags & 0x01) == 0x01) //if input pin 1 is being monitored
-                            {
-                                channelNumberOrInputPinNumber = 1;
-                            }
-                            else
-                            {
-                                channelNumberOrInputPinNumber = 0; //else input pin 0 is being monitored
-                            }
+                            channelNumberOrInputPinNumber = 1;
                         }
-                        else //Dac monitoring is on
+                        else
                         {
-                            source = ChannelMonitorSource.DacChannel;
-                            channelNumberOrInputPinNumber = (byte)(_monitorFlags & 0x0F);
+                            channelNumberOrInputPinNumber = 0; //else input pin 0 is being monitored
                         }
                     }
-                    else
+                    else //Dac monitoring is on
                     {
-                        //source already == ChannelMonitorSources.None
+                        source = ChannelMonitorSource.DacChannel;
+                        channelNumberOrInputPinNumber = (byte) (_monitorFlags & 0x0F);
                     }
+                }
+                else
+                {
+                    //source already == ChannelMonitorSources.None
+                }
                 //}
-                ChannelMonitorOptions toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
-                toReturn.PropertyChanged += new PropertyChangedEventHandler(MonitorOptionsPropertyChangedHandler);
+                var toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
+                toReturn.PropertyChanged += MonitorOptionsPropertyChangedHandler;
                 return toReturn;
             }
-            set
-            {
-                SendNewChannelMonitorOptionsToDevice(value);
-            }
+            set { SendNewChannelMonitorOptionsToDevice(value); }
         }
 
         public bool IsTemperatureShutdownEnabled
@@ -190,7 +164,6 @@ namespace AnalogDevices
                 else
                 {
                     controlRegisterVal &= 0xFB;
-
                 }
                 WriteControlRegister(controlRegisterVal);
             }
@@ -202,17 +175,18 @@ namespace AnalogDevices
             {
                 //lock (_instanceStateLock)
                 //{
-                    return _thisDevicePrecision;
+                return _thisDevicePrecision;
                 //}
             }
             set
             {
                 //lock (_instanceStateLock)
                 //{
-                    _thisDevicePrecision = value;
+                _thisDevicePrecision = value;
                 //}
             }
         }
+
         public bool PECErrorOccurred
         {
             get
@@ -221,6 +195,7 @@ namespace AnalogDevices
                 return (controlRegisterVal & 0x08) == 0x08;
             }
         }
+
         public bool IsOverTemperature
         {
             get
@@ -229,11 +204,14 @@ namespace AnalogDevices
                 return (controlRegisterVal & 0x10) == 0x10;
             }
         }
+
         #endregion
+
         #region Dac Channel Data Source Selection
+
         public void SetDacChannelDataSource(ChannelAddress channel, DacChannelDataSource value)
         {
-            if ((int)channel < 8 || (int)channel > 47)
+            if ((int) channel < 8 || (int) channel > 47)
             {
                 if (channel == ChannelAddress.AllGroupsAllChannels)
                 {
@@ -406,7 +384,7 @@ namespace AnalogDevices
                     throw new ArgumentOutOfRangeException("channel");
                 }
             }
-            byte channelNum = (byte)((byte)channel - (byte)8);
+            var channelNum = (byte) ((byte) channel - 8);
             byte currentSourceSelections = 0x00;
             SpecialFunctionCode code = SpecialFunctionCode.NOP;
             if (channelNum >= 0 && channelNum < 8)
@@ -436,11 +414,11 @@ namespace AnalogDevices
             }
             byte toSend = currentSourceSelections;
 
-            byte channelOffset = (byte)(channelNum % 8);
-            byte channelMask = (byte)(1 << channelOffset);
-            if (value == AnalogDevices.DacChannelDataSource.DataValueA)
+            var channelOffset = (byte) (channelNum%8);
+            var channelMask = (byte) (1 << channelOffset);
+            if (value == DacChannelDataSource.DataValueA)
             {
-                toSend &= (byte)(~channelMask);
+                toSend &= (byte) (~channelMask);
             }
             else
             {
@@ -449,13 +427,14 @@ namespace AnalogDevices
             toSend &= 0xFF;
             SendSpecialFunction(code, toSend);
         }
+
         public DacChannelDataSource GetDacChannelDataSource(ChannelAddress channel)
         {
-            if ((int)channel < 8 || (int)channel > 47)
+            if ((int) channel < 8 || (int) channel > 47)
             {
                 throw new ArgumentOutOfRangeException("channel");
             }
-            byte channelNum = (byte)((byte)channel - (byte)8);
+            var channelNum = (byte) ((byte) channel - 8);
             byte currentSourceSelections = 0x00;
             if (channelNum >= 0 && channelNum < 8)
             {
@@ -477,19 +456,24 @@ namespace AnalogDevices
             {
                 currentSourceSelections = ReadbackABSelect4Register();
             }
-            byte channelOffset = (byte)(channelNum % 8);
-            byte channelMask = (byte)(1 << channelOffset);
+            var channelOffset = (byte) (channelNum%8);
+            var channelMask = (byte) (1 << channelOffset);
             bool sourceIsB = ((currentSourceSelections & channelMask) == channelMask);
             if (sourceIsB)
             {
-                return AnalogDevices.DacChannelDataSource.DataValueB;
+                return DacChannelDataSource.DataValueB;
             }
             else
             {
-                return AnalogDevices.DacChannelDataSource.DataValueA;
+                return DacChannelDataSource.DataValueA;
             }
         }
-        public void SetDacChannelDataSource(ChannelGroup group, DacChannelDataSource channel0, DacChannelDataSource channel1, DacChannelDataSource channel2, DacChannelDataSource channel3, DacChannelDataSource channel4, DacChannelDataSource channel5, DacChannelDataSource channel6, DacChannelDataSource channel7)
+
+        public void SetDacChannelDataSource(ChannelGroup group, DacChannelDataSource channel0,
+                                            DacChannelDataSource channel1, DacChannelDataSource channel2,
+                                            DacChannelDataSource channel3, DacChannelDataSource channel4,
+                                            DacChannelDataSource channel5, DacChannelDataSource channel6,
+                                            DacChannelDataSource channel7)
         {
             byte toSend = 0x00;
             if (channel0 == DacChannelDataSource.DataValueB) toSend |= 0x01;
@@ -525,58 +509,69 @@ namespace AnalogDevices
             toSend &= 0xFF;
             SendSpecialFunction(code, toSend);
         }
+
         public void SetDacChannelDataSourceAllChannels(DacChannelDataSource source)
         {
             switch (source)
             {
-                case AnalogDevices.DacChannelDataSource.DataValueA:
+                case DacChannelDataSource.DataValueA:
                     SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, 0x00);
                     break;
-                case AnalogDevices.DacChannelDataSource.DataValueB:
+                case DacChannelDataSource.DataValueB:
                     SendSpecialFunction(SpecialFunctionCode.BlockWriteABSelectRegisters, 0xFF);
                     break;
                 default:
                     throw new ArgumentException("source");
             }
         }
+
         #endregion
+
         #region Device Control Functions
+
         public void PerformSoftPowerDown()
         {
             ushort controlRegisterVal = ReadbackControlRegister();
             controlRegisterVal |= 0x01;
             WriteControlRegister(controlRegisterVal);
         }
+
         public void PerformSoftPowerUp()
         {
             ushort controlRegisterVal = ReadbackControlRegister();
             controlRegisterVal &= 0xFE;
             WriteControlRegister(controlRegisterVal);
         }
+
         public void Reset()
         {
             SetRESETPinHigh();
             Thread.Sleep(50);
             SetRESETPinLow();
         }
+
         public void SuspendAllDacOutputs()
         {
             SetCLRPinLow();
         }
+
         public void ResumeAllDacOutputs()
         {
             SetCLRPinHigh();
         }
+
         public void UpdateAllDacOutputs()
         {
             PulseLDacPin();
         }
+
         #endregion
+
         #region Dac Functions
 
         public ushort GetDacChannelDataValueA(ChannelAddress channel)
         {
-            if ((int)channel >= 8 && (int)channel <= 47)
+            if ((int) channel >= 8 && (int) channel <= 47)
             {
                 return ReadbackX1ARegister(channel);
             }
@@ -584,11 +579,11 @@ namespace AnalogDevices
             {
                 throw new ArgumentOutOfRangeException("channel");
             }
-
         }
+
         public ushort GetDacChannelDataValueB(ChannelAddress channel)
         {
-            if ((int)channel >= 8 && (int)channel <= 47)
+            if ((int) channel >= 8 && (int) channel <= 47)
             {
                 return ReadbackX1BRegister(channel);
             }
@@ -597,39 +592,40 @@ namespace AnalogDevices
                 throw new ArgumentOutOfRangeException("channel");
             }
         }
+
         public void SetDacChannelDataValueA(ChannelAddress channels, ushort newVal)
         {
             ushort controlRegisterVal = ReadbackControlRegister();
             controlRegisterVal &= 0xFFFB;
             WriteControlRegister(controlRegisterVal);
-            if (this.DacPrecision == DacPrecision.SixteenBit)
+            if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((uint)0xC00000 | (uint)(((byte)channels & 0x3F) << 16) | newVal);
+                SendSPI(0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | newVal);
             }
             else
             {
-                SendSPI((uint)((uint)0xC00000 | (uint)(((byte)channels & 0x3F) << 16) | (uint)((newVal & 0x3FFF) << 2)));
+                SendSPI((0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
             }
-
         }
+
         public void SetDacChannelDataValueB(ChannelAddress channels, ushort newVal)
         {
             ushort controlRegisterVal = ReadbackControlRegister();
             controlRegisterVal |= 4;
             WriteControlRegister(controlRegisterVal);
-            if (this.DacPrecision == DacPrecision.SixteenBit)
+            if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((uint)(0xC00000 | (uint)(((byte)channels & 0x3F) << 16) | newVal));
+                SendSPI((0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | newVal));
             }
             else
             {
-                SendSPI((uint)(0xC00000 | (uint)(((byte)channels & 0x3F) << 16) | (uint)((newVal & 0x3FFF) << 2)));
+                SendSPI((0xC00000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
             }
-
         }
+
         public ushort GetDacChannelOffset(ChannelAddress channel)
         {
-            if ((int)channel >= 8 && (int)channel <= 47)
+            if ((int) channel >= 8 && (int) channel <= 47)
             {
                 return ReadbackCRegister(channel);
             }
@@ -637,22 +633,23 @@ namespace AnalogDevices
             {
                 throw new ArgumentOutOfRangeException("channel");
             }
-
         }
+
         public void SetDacChannelOffset(ChannelAddress channels, ushort newVal)
         {
-            if (this.DacPrecision == DacPrecision.SixteenBit)
+            if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((uint)(0x800000 | (uint)(((byte)channels & 0x3F) << 16) | newVal));
+                SendSPI((0x800000 | (uint) (((byte) channels & 0x3F) << 16) | newVal));
             }
             else
             {
-                SendSPI((uint)(0x800000 | (uint)(((byte)channels & 0x3F) << 16) | (uint)((newVal & 0x3FFF) << 2)));
+                SendSPI((0x800000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
             }
         }
+
         public ushort GetDacChannelGain(ChannelAddress channel)
         {
-            if ((int)channel >= 8 && (int)channel <= 47)
+            if ((int) channel >= 8 && (int) channel <= 47)
             {
                 return ReadbackMRegister(channel);
             }
@@ -661,38 +658,41 @@ namespace AnalogDevices
                 throw new ArgumentOutOfRangeException("channel");
             }
         }
+
         public void SetDacChannelGain(ChannelAddress channels, ushort newVal)
         {
-            if (this.DacPrecision == DacPrecision.SixteenBit)
+            if (DacPrecision == DacPrecision.SixteenBit)
             {
-                SendSPI((uint)(0x400000 | (uint)(((byte)channels & 0x3F) << 16) | newVal));
+                SendSPI((0x400000 | (uint) (((byte) channels & 0x3F) << 16) | newVal));
             }
             else
             {
-                SendSPI((uint)(0x400000 | (uint)(((byte)channels & 0x3F) << 16) | (uint)((newVal & 0x3FFF) << 2)));
+                SendSPI((0x400000 | (uint) (((byte) channels & 0x3F) << 16) | (uint) ((newVal & 0x3FFF) << 2)));
             }
-
         }
+
         #endregion
+
         #region Device Enumeration
+
         public static DenseDacEvalBoard[] Enumerate()
         {
-            List<string> discoveredDevices = new List<string>();
-            List<DenseDacEvalBoard> toReturn = new List<DenseDacEvalBoard>();
-            UsbRegDeviceList devs = LibUsbDotNet.UsbDevice.AllDevices;
+            var discoveredDevices = new List<string>();
+            var toReturn = new List<DenseDacEvalBoard>();
+            UsbRegDeviceList devs = UsbDevice.AllDevices;
             for (int i = 0; i < devs.Count; i++)
             {
                 UsbDevice device = devs[i].Device;
                 if (device != null)
                 {
                     if (
-                            device.UsbRegistryInfo.Vid == 0x0456
-                             &&
-                            (
-                                (ushort)device.UsbRegistryInfo.Pid == (ushort)0xB20F
-                                    ||
-                                (ushort)device.UsbRegistryInfo.Pid == (ushort)0xB20E
-                            )
+                        device.UsbRegistryInfo.Vid == 0x0456
+                        &&
+                        (
+                            (ushort) device.UsbRegistryInfo.Pid == 0xB20F
+                            ||
+                            (ushort) device.UsbRegistryInfo.Pid == 0xB20E
+                        )
                         )
                     {
                         if (!discoveredDevices.Contains(device.UsbRegistryInfo.SymbolicName))
@@ -702,7 +702,6 @@ namespace AnalogDevices
                         discoveredDevices.Add(device.UsbRegistryInfo.SymbolicName);
                     }
                 }
-
             }
             return toReturn.ToArray();
         }
@@ -712,7 +711,11 @@ namespace AnalogDevices
         #endregion
 
         #region Private stuff
+
         #region Private Enums
+
+        #region Nested type: DeviceCommand
+
         private enum DeviceCommand : byte
         {
             /// <summary>
@@ -756,6 +759,11 @@ namespace AnalogDevices
             /// </summary>
             SetLDacPinLow = 0xE3,
         }
+
+        #endregion
+
+        #region Nested type: SpecialFunctionCode
+
         private enum SpecialFunctionCode
         {
             /// <summary>
@@ -775,229 +783,272 @@ namespace AnalogDevices
             BlockWriteABSelectRegisters = 11,
             ConfigureMonitoring = 12,
             GPIOConfigureAndWrite = 13
-
         }
+
         #endregion
+
+        #endregion
+
         #region Instance Variables
-        private object _instanceStateLock = new object();
-        private UsbDevice _usbDevice = null;
-        private bool _spiInitialized;
+
         private readonly byte[] _emptyBuf = new byte[0];
+        private readonly UsbDevice _usbDevice;
+        private object _instanceStateLock = new object();
         private byte _monitorFlags;
+        private bool _spiInitialized;
         private DacPrecision _thisDevicePrecision = DacPrecision.SixteenBit;
 
         #endregion
+
         #region Channel Monitoring Options Change Handling
+
         private void SendNewChannelMonitorOptionsToDevice(ChannelMonitorOptions value)
         {
             if (value == null) throw new ArgumentNullException("value");
 
             //lock (_instanceStateLock)
             //{
-                if (value.ChannelMonitorSource == ChannelMonitorSource.None)
+            if (value.ChannelMonitorSource == ChannelMonitorSource.None)
+            {
+                _monitorFlags &= 0xDF;
+            }
+            else
+            {
+                _monitorFlags |= 0x20;
+                if (value.ChannelMonitorSource == ChannelMonitorSource.InputPin)
                 {
-                    _monitorFlags &= 0xDF;
-                }
-                else
-                {
-                    _monitorFlags |= 0x20;
-                    if (value.ChannelMonitorSource == ChannelMonitorSource.InputPin)
+                    if (value.ChannelNumberOrInputPinNumber == 0)
                     {
-                        if (value.ChannelNumberOrInputPinNumber == 0)
-                        {
-                            _monitorFlags |= 0x18;
-                            _monitorFlags &= 0xF0;
-                        }
-                        else if (value.ChannelNumberOrInputPinNumber == 1)
-                        {
-                            _monitorFlags |= 0x18;
-                            _monitorFlags &= 0xF0;
-                            _monitorFlags |= (1);
-                        }
-                        else
-                        {
-                            throw new ArgumentOutOfRangeException("value", "value.ChannelNumberOrInputPinNumber is out of range with respect to ChannelMonitorSource.");
-                        }
+                        _monitorFlags |= 0x18;
+                        _monitorFlags &= 0xF0;
                     }
-                    else if (value.ChannelMonitorSource == ChannelMonitorSource.DacChannel)
+                    else if (value.ChannelNumberOrInputPinNumber == 1)
                     {
-                        _monitorFlags |= 0x20;
-                        _monitorFlags &= 0xE0;
-                        _monitorFlags |= (byte)(value.ChannelNumberOrInputPinNumber & 0x0F);
+                        _monitorFlags |= 0x18;
+                        _monitorFlags &= 0xF0;
+                        _monitorFlags |= (1);
                     }
                     else
                     {
-                        throw new ArgumentOutOfRangeException("value", "value.ChannelMonitorSource is not valid.");
+                        throw new ArgumentOutOfRangeException("value",
+                                                              "value.ChannelNumberOrInputPinNumber is out of range with respect to ChannelMonitorSource.");
                     }
                 }
-                SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
+                else if (value.ChannelMonitorSource == ChannelMonitorSource.DacChannel)
+                {
+                    _monitorFlags |= 0x20;
+                    _monitorFlags &= 0xE0;
+                    _monitorFlags |= (byte) (value.ChannelNumberOrInputPinNumber & 0x0F);
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("value", "value.ChannelMonitorSource is not valid.");
+                }
+            }
+            SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
             //}
         }
+
         private void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
         {
-            SendNewChannelMonitorOptionsToDevice((ChannelMonitorOptions)sender);
+            SendNewChannelMonitorOptionsToDevice((ChannelMonitorOptions) sender);
         }
+
         #endregion
+
         #region Register Readback Functions
+
         private ushort ReadbackX1ARegister(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)((((byte)channelNum ) & 0x3F) << 7));
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) ((((byte) channelNum) & 0x3F) << 7));
             ushort val = ReadSPI();
-            if (this.DacPrecision == DacPrecision.FourteenBit)
+            if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= 0x3FFF;
             }
             return val;
         }
+
         private ushort ReadbackX1BRegister(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)(0x2000 | (ushort)((((byte)channelNum ) & 0x3F) << 7)));
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) (0x2000 | (ushort) ((((byte) channelNum) & 0x3F) << 7)));
             ushort val = ReadSPI();
-            if (this.DacPrecision == DacPrecision.FourteenBit)
+            if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= 0x3FFF;
             }
             return val;
         }
+
         private ushort ReadbackCRegister(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)(0x4000 | (ushort)((((byte)channelNum ) & 0x3F) << 7)));
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) (0x4000 | (ushort) ((((byte) channelNum) & 0x3F) << 7)));
             ushort val = ReadSPI();
-            if (this.DacPrecision == DacPrecision.FourteenBit)
+            if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= 0x3FFF;
             }
             return val;
         }
+
         private ushort ReadbackMRegister(ChannelAddress channelNum)
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)(0x6000 | (ushort)((((byte)channelNum ) & 0x3F) << 7)));
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback,
+                                (ushort) (0x6000 | (ushort) ((((byte) channelNum) & 0x3F) << 7)));
             ushort val = ReadSPI();
-            if (this.DacPrecision == DacPrecision.FourteenBit)
+            if (DacPrecision == DacPrecision.FourteenBit)
             {
                 val &= 0x3FFF;
             }
             return val;
         }
+
         private byte ReadbackControlRegister()
         {
-            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (ushort)(0x8080));
-            return (byte)(ReadSPI() & 0x1F);
+            SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, (0x8080));
+            return (byte) (ReadSPI() & 0x1F);
         }
+
         private ushort ReadbackOSF0Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8100);
-            return (ushort)(ReadSPI() & 0x3FFF);
+            return (ushort) (ReadSPI() & 0x3FFF);
         }
+
         private ushort ReadbackOSF1Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8180);
-            return (ushort)(ReadSPI() & 0x3FFF);
+            return (ushort) (ReadSPI() & 0x3FFF);
         }
+
         private ushort ReadbackOSF2Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8200);
-            return (ushort)(ReadSPI() & 0x3FFF);
+            return (ushort) (ReadSPI() & 0x3FFF);
         }
+
         private byte ReadbackABSelect0Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8300);
-            return (byte)(ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & 0xFF);
         }
+
         private byte ReadbackABSelect1Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8380);
-            return (byte)(ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & 0xFF);
         }
+
         private byte ReadbackABSelect2Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8400);
-            return (byte)(ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & 0xFF);
         }
+
         private byte ReadbackABSelect3Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8480);
-            return (byte)(ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & 0xFF);
         }
+
         private byte ReadbackABSelect4Register()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8500);
-            return (byte)(ReadSPI() & 0xFF);
+            return (byte) (ReadSPI() & 0xFF);
         }
+
         private byte ReadbackGPIORegister()
         {
             SendSpecialFunction(SpecialFunctionCode.SelectRegisterForReadback, 0x8580);
-            return (byte)((ReadSPI() & 0x03));
+            return (byte) ((ReadSPI() & 0x03));
         }
+
         #endregion
+
         #region Register Writing Functions
+
         private void WriteControlRegister(ushort newVal)
         {
             newVal &= 0x07;
             SendSpecialFunction(SpecialFunctionCode.WriteControlRegister, newVal);
         }
+
         private void WriteOSF0Register(ushort newVal)
         {
             newVal &= 0x3FFF;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF0Register, newVal);
         }
+
         private void WriteOSF1Register(ushort newVal)
         {
             newVal &= 0x3FFF;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF1Register, newVal);
         }
+
         private void WriteOSF2Register(ushort newVal)
         {
             newVal &= 0x3FFF;
             SendSpecialFunction(SpecialFunctionCode.WriteOSF2Register, newVal);
-
         }
+
         #endregion
+
         #region Pin Manipulation Functions
 
         private void SetRESETPinHigh()
         {
             SendDeviceCommand(DeviceCommand.SetRESETPinHigh, 0);
         }
+
         private void SetRESETPinLow()
         {
             SendDeviceCommand(DeviceCommand.SetRESETPinLow, 0);
         }
+
         private void SetCLRPinHigh()
         {
             SendDeviceCommand(DeviceCommand.SetCLRPinHigh, 0);
         }
+
         private void SetCLRPinLow()
         {
             SendDeviceCommand(DeviceCommand.SetCLRPinLow, 0);
         }
+
         private void PulseLDacPin()
         {
             SendDeviceCommand(DeviceCommand.PulseLDacPin, 0);
         }
+
         private void SetLDacPinLow()
         {
             SendDeviceCommand(DeviceCommand.SetLDacPinLow, 0);
         }
+
         private void SetLDacPinHigh()
         {
             SendDeviceCommand(DeviceCommand.SetLDacPinHigh, 0);
         }
+
         private void InitializeSPIPins()
         {
             //lock (_instanceStateLock)
             //{
-                SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
-                _spiInitialized = true;
+            SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
+            _spiInitialized = true;
             //}
         }
+
         #endregion
 
         #region Device Communications
 
         private void SendSpecialFunction(SpecialFunctionCode specialFunction, ushort data)
         {
-            SendSPI((uint)((((byte)specialFunction & 0x3F) << 16) | data));
+            SendSPI((uint) ((((byte) specialFunction & 0x3F) << 16) | data));
         }
 
         private int SendSPI(UInt32 data)
@@ -1009,79 +1060,86 @@ namespace AnalogDevices
         {
             //lock (_instanceStateLock)
             //{
-                if (!_spiInitialized)
-                {
-                    InitializeSPIPins();
-                }
+            if (!_spiInitialized)
+            {
+                InitializeSPIPins();
+            }
             //}
-            byte bRequest = (byte)DeviceCommand.SendSPI;
+            var bRequest = (byte) DeviceCommand.SendSPI;
 
             ushort len = 3;
-            byte[] buf = new byte[len];
-            UsbSetupPacket setupPacket = new UsbSetupPacket();
-            setupPacket.Request = (DeviceRequestType)bRequest;
+            var buf = new byte[len];
+            var setupPacket = new UsbSetupPacket();
+            setupPacket.Request = (DeviceRequestType) bRequest;
             setupPacket.Index = 0;
             setupPacket.RequestType = UsbRequestType.TypeVendor | UsbRequestType.EndpointIn;
-            setupPacket.Length = (short)len;
+            setupPacket.Length = (short) len;
             setupPacket.Value = 0;
             int lengthTransferred = 0;
             UsbControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
-            return (ushort)((ushort)buf[0] + (ushort)(buf[1] * 256));
+            return (ushort) (buf[0] + (ushort) (buf[1]*256));
         }
-        private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength, out int lengthTransferred)
+
+        private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength,
+                                        out int lengthTransferred)
         {
             //lock (_usbDevice)
             //{
-                _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
+            _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
             //}
         }
+
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData)
         {
             return SendDeviceCommand(command, setupData, _emptyBuf);
         }
+
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData, byte[] data)
         {
             //lock (_instanceStateLock)
             //{
-                if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
+            if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
             //}
-            byte bRequest = (byte)command;
-            UsbSetupPacket setupPacket = new UsbSetupPacket();
-            setupPacket.Request = (DeviceRequestType)bRequest;
-            setupPacket.Value = (short)(setupData & 0xFFFF);
-            setupPacket.Index = (short)((setupData & 0xFF0000) / 0x10000);
+            var bRequest = (byte) command;
+            var setupPacket = new UsbSetupPacket();
+            setupPacket.Request = (DeviceRequestType) bRequest;
+            setupPacket.Value = (short) (setupData & 0xFFFF);
+            setupPacket.Index = (short) ((setupData & 0xFF0000)/0x10000);
             setupPacket.RequestType = UsbRequestType.TypeVendor;
             setupPacket.Length = 0;
             int lengthTransferred = 0;
             UsbControlTransfer(ref setupPacket, data, data.Length, out lengthTransferred);
             return lengthTransferred;
         }
+
         #endregion
+
         #endregion
+
         #region EZ-USB firmware update
 
         private void ResetDevice(bool r)
         {
-            byte[] buffer = { (byte)(r ? 1 : 0) };
-            UsbSetupPacket setupPacket = new UsbSetupPacket();
+            byte[] buffer = {(byte) (r ? 1 : 0)};
+            var setupPacket = new UsbSetupPacket();
             setupPacket.RequestType = UsbRequestType.TypeVendor;
-            setupPacket.Request = (DeviceRequestType)0xA0;
+            setupPacket.Request = (DeviceRequestType) 0xA0;
             unchecked
             {
-                setupPacket.Value = (short)0xE600;
+                setupPacket.Value = (short) 0xE600;
             }
             setupPacket.Index = 0;
             int lengthTransferred = 0;
             UsbControlTransfer(ref setupPacket, buffer, buffer.Length, out lengthTransferred);
-            Thread.Sleep(r ? 50 : 400);	// give the firmware some time for initialization
+            Thread.Sleep(r ? 50 : 400); // give the firmware some time for initialization
         }
 
         public long UploadFirmware(IhxFile ihxFile)
         {
             const int transactionBytes = 256;
-            byte[] buffer = new byte[transactionBytes];
+            var buffer = new byte[transactionBytes];
 
-            ResetDevice(true);  // reset = 1
+            ResetDevice(true); // reset = 1
 
             DateTime t0 = DateTime.Now;
             int j = 0;
@@ -1091,10 +1149,10 @@ namespace AnalogDevices
                 {
                     if (j > 0)
                     {
-                        UsbSetupPacket setupPacket = new UsbSetupPacket();
+                        var setupPacket = new UsbSetupPacket();
                         setupPacket.RequestType = UsbRequestType.TypeVendor;
-                        setupPacket.Request = (DeviceRequestType)0xA0;
-                        setupPacket.Value = (short)(i - j);
+                        setupPacket.Request = (DeviceRequestType) 0xA0;
+                        setupPacket.Value = (short) (i - j);
                         setupPacket.Index = 0;
                         int k = 0;
                         UsbControlTransfer(ref setupPacket, buffer, j, out k);
@@ -1102,25 +1160,23 @@ namespace AnalogDevices
                         {
                             throw new ApplicationException();
                         }
-                        Thread.Sleep(1);	// to avoid package loss
+                        Thread.Sleep(1); // to avoid package loss
                     }
                     j = 0;
                 }
 
                 if (i < ihxFile.IhxData.Length && ihxFile.IhxData[i] >= 0 && ihxFile.IhxData[i] <= 255)
                 {
-                    buffer[j] = (byte)ihxFile.IhxData[i];
+                    buffer[j] = (byte) ihxFile.IhxData[i];
                     j += 1;
                 }
             }
             DateTime t1 = DateTime.Now;
 
-            ResetDevice(false);//error (may caused re-numeration) can be ignored
-            return (long)t1.Subtract(t0).TotalMilliseconds;
+            ResetDevice(false); //error (may caused re-numeration) can be ignored
+            return (long) t1.Subtract(t0).TotalMilliseconds;
         }
 
         #endregion
-
-
     }
 }

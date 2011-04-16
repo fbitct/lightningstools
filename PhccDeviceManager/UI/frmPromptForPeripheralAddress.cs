@@ -1,39 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Phcc.DeviceManager.UI
 {
     public partial class frmPromptForPeripheralAddress : Form
     {
-        public byte BaseAddress
-        {
-            get;
-            set;
-        }
-        public List<byte> ProhibitedBaseAddresses
-        {
-            get;
-            set;
-        }
         public frmPromptForPeripheralAddress()
         {
             InitializeComponent();
         }
+
+        public byte BaseAddress { get; set; }
+        public List<byte> ProhibitedBaseAddresses { get; set; }
 
         private void cmdOK_Click(object sender, EventArgs e)
         {
             bool wasValid = ValidateBaseAddress();
             if (wasValid)
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
         }
+
         private bool ValidateBaseAddress()
         {
             errorProvider1.Clear();
@@ -42,34 +33,37 @@ namespace Phcc.DeviceManager.UI
             bool valid = TryParseBaseAddress(baseAddressAsEntered, out val);
             if (!valid)
             {
-                errorProvider1.SetError(txtBaseAddress, "Invalid hexadecimal or decimal byte value.\nHex values should be preceded by the\ncharacters '0x' (zero, x) and\nshould be in the range 0x00-0xFF.\nDecimal values should be in the range 0-255.");
+                errorProvider1.SetError(txtBaseAddress,
+                                        "Invalid hexadecimal or decimal byte value.\nHex values should be preceded by the\ncharacters '0x' (zero, x) and\nshould be in the range 0x00-0xFF.\nDecimal values should be in the range 0-255.");
             }
             else
             {
-                if (this.ProhibitedBaseAddresses != null)
+                if (ProhibitedBaseAddresses != null)
                 {
-                    foreach (byte prohibitedAddress in this.ProhibitedBaseAddresses)
+                    foreach (byte prohibitedAddress in ProhibitedBaseAddresses)
                     {
                         if (prohibitedAddress == val)
                         {
                             valid = false;
-                            errorProvider1.SetError(txtBaseAddress, "That peripheral address is already being used by another peripheral.");
+                            errorProvider1.SetError(txtBaseAddress,
+                                                    "That peripheral address is already being used by another peripheral.");
                             break;
                         }
                     }
                 }
                 if (valid)
                 {
-                    this.BaseAddress = val;
+                    BaseAddress = val;
                 }
             }
             return valid;
         }
+
         private bool TryParseBaseAddress(string baseAddress, out byte val)
         {
             bool valid = true;
             val = 0;
-            if (!String.IsNullOrEmpty(baseAddress)) 
+            if (!String.IsNullOrEmpty(baseAddress))
             {
                 baseAddress = baseAddress.Trim();
             }
@@ -77,16 +71,16 @@ namespace Phcc.DeviceManager.UI
             {
                 valid = false;
             }
-            else 
+            else
             {
                 if (baseAddress.StartsWith("0x") || baseAddress.StartsWith("0X"))
                 {
                     baseAddress = baseAddress.Substring(2, baseAddress.Length - 2);
-                    valid = Byte.TryParse(baseAddress, System.Globalization.NumberStyles.HexNumber, null, out val);
+                    valid = Byte.TryParse(baseAddress, NumberStyles.HexNumber, null, out val);
                 }
                 else
                 {
-                    valid= Byte.TryParse(baseAddress, out val);
+                    valid = Byte.TryParse(baseAddress, out val);
                 }
             }
             return valid;
@@ -94,8 +88,8 @@ namespace Phcc.DeviceManager.UI
 
         private void cmdCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void txtBaseAddress_TextChanged(object sender, EventArgs e)

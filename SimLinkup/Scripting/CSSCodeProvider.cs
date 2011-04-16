@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.CodeDom.Compiler;
-using Microsoft.JScript;
+using System.IO;
 
 public class CSSCodeProvider
 {
@@ -16,8 +15,8 @@ public class CSSCodeProvider
         }
         else
         {
-            throw new InvalidOperationException(string.Format("No compiler defined for code files with extension {0}", sourceFileExtension));
+            throw new InvalidOperationException(string.Format("No compiler defined for code files with extension {0}",
+                                                              sourceFileExtension));
         }
     }
 }
-

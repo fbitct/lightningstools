@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 using Common.Imaging;
+using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
     public class F16AngleOfAttackIndexer : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string AOAI_BACKGROUND_IMAGE_FILENAME = "index.bmp";
         private const string AOAI_BACKGROUND_MASK_FILENAME = "index_mask.bmp";
         private const string AOAI_AOA_LOW_IMAGE_FILENAME = "aoadn.bmp";
@@ -22,24 +21,31 @@ namespace LightningGauges.Renderers
         private const string AOAI_AOA_HIGH_IMAGE_FILENAME = "aoaup.bmp";
         private const string AOAI_AOA_HIGH_MASK_FILENAME = "aoaup_mask.bmp";
 
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
+
+        private static readonly object _imagesLock = new object();
         private static ImageMaskPair _background;
         private static ImageMaskPair _aoaLow;
         private static ImageMaskPair _aoaOn;
         private static ImageMaskPair _aoaHigh;
-        private static bool _imagesLoaded = false;
-        private bool _disposed = false;
+        private static bool _imagesLoaded;
+        private bool _disposed;
+
         #endregion
 
         public F16AngleOfAttackIndexer()
-            : base()
         {
-            this.InstrumentState = new F16AngleOfAttackIndexerInstrumentState();
+            InstrumentState = new F16AngleOfAttackIndexerInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_background == null)
@@ -72,6 +78,31 @@ namespace LightningGauges.Renderers
             }
             _imagesLoaded = true;
         }
+
+        #endregion
+
+        public F16AngleOfAttackIndexerInstrumentState InstrumentState { get; set; }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16AngleOfAttackIndexerInstrumentState : InstrumentStateBase
+        {
+            public bool AoaAbove { get; set; }
+            public bool AoaOn { get; set; }
+            public bool AoaBelow { get; set; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
@@ -92,7 +123,8 @@ namespace LightningGauges.Renderers
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform((float)bounds.Width / (float)width, (float)bounds.Height / (float)height); //set the initial scale transformation 
+                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                    //set the initial scale transformation 
 
                 g.TranslateTransform(-46, -50);
                 g.TranslateTransform(-55, 0);
@@ -104,19 +136,19 @@ namespace LightningGauges.Renderers
                 g.DrawImage(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
-                if (this.InstrumentState.AoaAbove)
+                if (InstrumentState.AoaAbove)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_aoaHigh.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 }
-                if (this.InstrumentState.AoaBelow)
+                if (InstrumentState.AoaBelow)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_aoaLow.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 }
-                if (this.InstrumentState.AoaOn)
+                if (InstrumentState.AoaOn)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_aoaOn.MaskedImage, new Point(0, 0));
@@ -127,44 +159,12 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-        public F16AngleOfAttackIndexerInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        #region Instrument State
-        [Serializable]
-        public class F16AngleOfAttackIndexerInstrumentState : InstrumentStateBase
-        {
-            public F16AngleOfAttackIndexerInstrumentState():base()
-            {
-            }
-            public bool AoaAbove 
-            {
-                get;
-                set;
-            }
-            public bool AoaOn 
-            {
-                get;
-                set;
-            }
-            public bool AoaBelow 
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
+
         ~F16AngleOfAttackIndexer()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -175,10 +175,9 @@ namespace LightningGauges.Renderers
                     //Common.Util.DisposeObject(_aoaLow);
                     //Common.Util.DisposeObject(_aoaOn);
                     //Common.Util.DisposeObject(_aoaHigh);
-               }
+                }
                 _disposed = true;
             }
-
         }
     }
 }

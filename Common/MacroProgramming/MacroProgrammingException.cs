@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 
 namespace Common.MacroProgramming
 {
@@ -13,13 +10,14 @@ namespace Common.MacroProgramming
     public class MacroProgrammingException : ApplicationException
     {
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MacroProgrammingException"/> class.
         /// </summary>
         public MacroProgrammingException()
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MacroProgrammingException"/> class.
         /// </summary>
@@ -28,6 +26,7 @@ namespace Common.MacroProgramming
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MacroProgrammingException"/> class.
         /// </summary>
@@ -37,6 +36,7 @@ namespace Common.MacroProgramming
             : base(message, inner)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MacroProgrammingException"/> class.
         /// </summary>
@@ -46,7 +46,7 @@ namespace Common.MacroProgramming
             : base(info, context)
         {
         }
-        #endregion
 
+        #endregion
     }
 }

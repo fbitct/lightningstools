@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Drawing;
+using System.IO;
+using System.Text;
+
 namespace F4Utils.Resources
 {
-
     public enum F4ResourceType : uint
     {
         Unknown = 0,
@@ -13,87 +13,52 @@ namespace F4Utils.Resources
         SoundResource = 101,
         FlatResource = 102,
     }
+
     public class F4ResourceBundleReader
     {
+        private F4ResourceBundleIndex _resourceIndex;
 
-        [Flags]
-        protected internal enum F4ResourceFlags : uint
+        public int NumResources
         {
-            EightBit = 0x00000001,
-            SixteenBit = 0x00000002,
-            UseColorKey = 0x40000000,
+            get
+            {
+                if (_resourceIndex == null)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return (int) _resourceIndex.NumResources;
+                }
+            }
         }
-        protected internal class F4ResourceRawDataPackage
-        {
-            public uint Version;
-            public uint Size;
-            public byte[] Data;
-        }
-        protected internal class F4ResourceHeader
-        {
-            public uint Type;
-            public string ID = null;
-        }
-        protected internal class F4FlatResourceHeader : F4ResourceHeader
-        {
-            public uint Offset;
-            public uint Size;
-        }
-        protected internal class F4ImageResourceHeader : F4ResourceHeader
-        {
-            public uint Flags;
-            public ushort CenterX;
-            public ushort CenterY;
-            public ushort Width;
-            public ushort Height;
-            public uint ImageOffset;
-            public uint PaletteSize;
-            public uint PaletteOffset;
-        }
-        protected internal class F4SoundResourceHeader : F4ResourceHeader
-        {
-            public uint Flags;
-            public ushort Channels;
-            public ushort SoundType;
-            public uint Offset;
-            public uint HeaderSize;
-        }
-        protected internal class F4ResourceBundleIndex
-        {
-            public uint Size;
-            public uint NumResources;
-            public uint ResourceIndexVersion;
-            public F4ResourceHeader[] ResourceHeaders;
-            public F4ResourceRawDataPackage ResourceData;
-        }
-        
-        private F4ResourceBundleIndex _resourceIndex = null;
+
         public virtual void Load(string resourceBundleIndexPath)
         {
-            FileInfo resourceIndexFileInfo = new FileInfo(resourceBundleIndexPath);
+            var resourceIndexFileInfo = new FileInfo(resourceBundleIndexPath);
             if (resourceIndexFileInfo.Exists)
             {
-                byte[] bytes = new byte[resourceIndexFileInfo.Length];
-                using (FileStream fs = new FileStream(resourceBundleIndexPath, FileMode.Open))
+                var bytes = new byte[resourceIndexFileInfo.Length];
+                using (var fs = new FileStream(resourceBundleIndexPath, FileMode.Open))
                 {
                     fs.Seek(0, SeekOrigin.Begin);
-                    fs.Read(bytes, 0, (int)resourceIndexFileInfo.Length);
+                    fs.Read(bytes, 0, (int) resourceIndexFileInfo.Length);
                 }
                 _resourceIndex = new F4ResourceBundleIndex();
                 int curByte = 0;
-                _resourceIndex.Size= BitConverter.ToUInt32(bytes, curByte);
+                _resourceIndex.Size = BitConverter.ToUInt32(bytes, curByte);
                 curByte += 4;
                 _resourceIndex.ResourceIndexVersion = BitConverter.ToUInt32(bytes, curByte);
                 curByte += 4;
                 uint size = _resourceIndex.Size;
-                List<F4ResourceHeader> headers = new List<F4ResourceHeader>();
+                var headers = new List<F4ResourceHeader>();
 
-                while (size >0)
+                while (size > 0)
                 {
                     _resourceIndex.NumResources++;
                     uint resourceType = BitConverter.ToUInt32(bytes, curByte);
                     curByte += 4;
-                    byte[] resourceId = new byte[32];
+                    var resourceId = new byte[32];
                     for (int j = 0; j < 32; j++)
                     {
                         resourceId[j] = bytes[curByte];
@@ -109,9 +74,9 @@ namespace F4Utils.Resources
                     {
                         resourceName = null;
                     }
-                    if (resourceType == (uint)(F4ResourceType.ImageResource))
+                    if (resourceType == (uint) (F4ResourceType.ImageResource))
                     {
-                        F4ImageResourceHeader thisResourceHeader = new F4ImageResourceHeader();
+                        var thisResourceHeader = new F4ImageResourceHeader();
                         thisResourceHeader.Type = resourceType;
                         thisResourceHeader.ID = resourceName;
                         thisResourceHeader.Flags = BitConverter.ToUInt32(bytes, curByte);
@@ -133,9 +98,9 @@ namespace F4Utils.Resources
                         headers.Add(thisResourceHeader);
                         size -= 60;
                     }
-                    else if (resourceType == (uint)(F4ResourceType.SoundResource))
+                    else if (resourceType == (uint) (F4ResourceType.SoundResource))
                     {
-                        F4SoundResourceHeader thisResourceHeader = new F4SoundResourceHeader();
+                        var thisResourceHeader = new F4SoundResourceHeader();
                         thisResourceHeader.Type = resourceType;
                         thisResourceHeader.ID = resourceName;
                         thisResourceHeader.Flags = BitConverter.ToUInt32(bytes, curByte);
@@ -151,14 +116,14 @@ namespace F4Utils.Resources
                         headers.Add(thisResourceHeader);
                         size -= 52;
                     }
-                    else if (resourceType == (uint)(F4ResourceType.FlatResource))
+                    else if (resourceType == (uint) (F4ResourceType.FlatResource))
                     {
-                        F4FlatResourceHeader thisResourceHeader = new F4FlatResourceHeader();
+                        var thisResourceHeader = new F4FlatResourceHeader();
                         thisResourceHeader.Type = resourceType;
                         thisResourceHeader.ID = resourceName;
-                        thisResourceHeader.Offset= BitConverter.ToUInt32(bytes, curByte);
+                        thisResourceHeader.Offset = BitConverter.ToUInt32(bytes, curByte);
                         curByte += 4;
-                        thisResourceHeader.Size= BitConverter.ToUInt32(bytes, curByte);
+                        thisResourceHeader.Size = BitConverter.ToUInt32(bytes, curByte);
                         curByte += 4;
                         headers.Add(thisResourceHeader);
                         size -= 44;
@@ -166,26 +131,26 @@ namespace F4Utils.Resources
                 }
                 _resourceIndex.ResourceHeaders = headers.ToArray();
 
-                FileInfo resourceDataFileInfo = new FileInfo(
-                    Path.GetDirectoryName(resourceIndexFileInfo.FullName) + Path.DirectorySeparatorChar + 
+                var resourceDataFileInfo = new FileInfo(
+                    Path.GetDirectoryName(resourceIndexFileInfo.FullName) + Path.DirectorySeparatorChar +
                     Path.GetFileNameWithoutExtension(resourceIndexFileInfo.FullName) + ".rsc");
                 if (resourceDataFileInfo.Exists)
                 {
                     bytes = new byte[resourceDataFileInfo.Length];
 
-                    using (FileStream fs = new FileStream(resourceDataFileInfo.FullName, FileMode.Open))
+                    using (var fs = new FileStream(resourceDataFileInfo.FullName, FileMode.Open))
                     {
                         fs.Seek(0, SeekOrigin.Begin);
-                        fs.Read(bytes, 0, (int)resourceDataFileInfo.Length);
+                        fs.Read(bytes, 0, (int) resourceDataFileInfo.Length);
                     }
-                    F4ResourceRawDataPackage rawDataPackage = new F4ResourceRawDataPackage();
+                    var rawDataPackage = new F4ResourceRawDataPackage();
                     curByte = 0;
                     rawDataPackage.Size = BitConverter.ToUInt32(bytes, curByte);
                     curByte += 4;
                     rawDataPackage.Version = BitConverter.ToUInt32(bytes, curByte);
                     curByte += 4;
                     rawDataPackage.Data = new byte[rawDataPackage.Size];
-                    int numBytesToCopy = (int)Math.Min(rawDataPackage.Data.Length, bytes.Length - curByte);
+                    int numBytesToCopy = Math.Min(rawDataPackage.Data.Length, bytes.Length - curByte);
                     Array.Copy(bytes, curByte, rawDataPackage.Data, 0, numBytesToCopy);
                     curByte += numBytesToCopy;
                     _resourceIndex.ResourceData = rawDataPackage;
@@ -194,27 +159,13 @@ namespace F4Utils.Resources
                 {
                     throw new FileNotFoundException(resourceDataFileInfo.FullName);
                 }
-
             }
             else
             {
                 throw new FileNotFoundException(resourceBundleIndexPath);
             }
         }
-        public int NumResources
-        {
-            get
-            {
-                if (_resourceIndex == null)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return (int)_resourceIndex.NumResources;
-                }
-            }
-        }
+
         public virtual F4ResourceType GetResourceType(int resourceNum)
         {
             if (_resourceIndex == null)
@@ -223,10 +174,11 @@ namespace F4Utils.Resources
             }
             else
             {
-                return (F4ResourceType)_resourceIndex.ResourceHeaders[resourceNum].Type;
+                return (F4ResourceType) _resourceIndex.ResourceHeaders[resourceNum].Type;
             }
         }
-        public virtual string  GetResourceID(int resourceNum)
+
+        public virtual string GetResourceID(int resourceNum)
         {
             if (_resourceIndex == null)
             {
@@ -237,80 +189,92 @@ namespace F4Utils.Resources
                 return _resourceIndex.ResourceHeaders[resourceNum].ID;
             }
         }
-        
+
         public virtual byte[] GetSoundResource(string resourceId)
         {
-            F4SoundResourceHeader resourceHeader = GetResourceHeader(resourceId) as F4SoundResourceHeader;
+            var resourceHeader = GetResourceHeader(resourceId) as F4SoundResourceHeader;
             return GetSoundResource(resourceHeader);
         }
+
         public virtual byte[] GetSoundResource(int resourceNum)
         {
-            if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null || resourceNum >= _resourceIndex.ResourceHeaders.Length)
+            if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null ||
+                resourceNum >= _resourceIndex.ResourceHeaders.Length)
             {
                 return null;
             }
-            F4SoundResourceHeader resourceHeader = _resourceIndex.ResourceHeaders[resourceNum] as F4SoundResourceHeader;
+            var resourceHeader = _resourceIndex.ResourceHeaders[resourceNum] as F4SoundResourceHeader;
             return GetSoundResource(resourceHeader);
         }
+
         protected virtual byte[] GetSoundResource(F4SoundResourceHeader resourceHeader)
         {
             if (resourceHeader == null) return null;
-            int curByte = (int)resourceHeader.Offset;
+            var curByte = (int) resourceHeader.Offset;
             curByte += 4;
             uint dataSize = BitConverter.ToUInt32(_resourceIndex.ResourceData.Data, curByte);
             curByte += 4;
-            byte[] toReturn = new byte[dataSize+8];
-            Array.Copy(_resourceIndex.ResourceData.Data, curByte-8, toReturn, 0, dataSize+8);
+            var toReturn = new byte[dataSize + 8];
+            Array.Copy(_resourceIndex.ResourceData.Data, curByte - 8, toReturn, 0, dataSize + 8);
             return toReturn;
         }
+
         public virtual byte[] GetFlatResource(int resourceNum)
         {
-            if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null || resourceNum >= _resourceIndex.ResourceHeaders.Length)
+            if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null ||
+                resourceNum >= _resourceIndex.ResourceHeaders.Length)
             {
                 return null;
             }
-            F4FlatResourceHeader resourceHeader = _resourceIndex.ResourceHeaders[resourceNum] as F4FlatResourceHeader;
+            var resourceHeader = _resourceIndex.ResourceHeaders[resourceNum] as F4FlatResourceHeader;
             return GetFlatResource(resourceHeader);
         }
+
         public virtual byte[] GetFlatResource(string resourceId)
         {
-            F4FlatResourceHeader resourceHeader = GetResourceHeader(resourceId) as F4FlatResourceHeader;
+            var resourceHeader = GetResourceHeader(resourceId) as F4FlatResourceHeader;
             return GetFlatResource(resourceHeader);
         }
+
         protected virtual byte[] GetFlatResource(F4FlatResourceHeader resourceHeader)
         {
             if (resourceHeader == null) return null;
-            byte[] bytes = new byte[resourceHeader.Size];
+            var bytes = new byte[resourceHeader.Size];
             for (int i = 0; i < resourceHeader.Size; i++)
             {
                 bytes[i] = _resourceIndex.ResourceData.Data[resourceHeader.Offset + i];
             }
             return bytes;
         }
+
         public virtual Bitmap GetImageResource(string resourceId)
         {
-            F4ImageResourceHeader imageHeader = GetResourceHeader(resourceId) as F4ImageResourceHeader;
+            var imageHeader = GetResourceHeader(resourceId) as F4ImageResourceHeader;
             return GetImageResource(imageHeader);
         }
+
         public virtual Bitmap GetImageResource(int resourceNum)
         {
-            if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null || resourceNum >= _resourceIndex.ResourceHeaders.Length)
+            if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null ||
+                resourceNum >= _resourceIndex.ResourceHeaders.Length)
             {
                 return null;
             }
-            F4ImageResourceHeader imageHeader = _resourceIndex.ResourceHeaders[resourceNum] as F4ImageResourceHeader;
+            var imageHeader = _resourceIndex.ResourceHeaders[resourceNum] as F4ImageResourceHeader;
             return GetImageResource(imageHeader);
         }
+
         protected virtual Bitmap GetImageResource(F4ImageResourceHeader imageHeader)
         {
             if (imageHeader == null) return null;
-            Bitmap toReturn = new Bitmap(imageHeader.Width, imageHeader.Height);
-            ushort[] palette = new ushort[imageHeader.PaletteSize];
-            if ((imageHeader.Flags & (uint)F4ResourceFlags.EightBit) == (uint)F4ResourceFlags.EightBit)
+            var toReturn = new Bitmap(imageHeader.Width, imageHeader.Height);
+            var palette = new ushort[imageHeader.PaletteSize];
+            if ((imageHeader.Flags & (uint) F4ResourceFlags.EightBit) == (uint) F4ResourceFlags.EightBit)
             {
                 for (int i = 0; i < palette.Length; i++)
                 {
-                    palette[i] = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data, (int)imageHeader.PaletteOffset + (i * 2));
+                    palette[i] = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
+                                                       (int) imageHeader.PaletteOffset + (i*2));
                 }
             }
             int curByte = 0;
@@ -322,7 +286,7 @@ namespace F4Utils.Resources
                     int R = 0;
                     int G = 0;
                     int B = 0;
-                    if ((imageHeader.Flags & (uint)F4ResourceFlags.EightBit)==(uint)F4ResourceFlags.EightBit)
+                    if ((imageHeader.Flags & (uint) F4ResourceFlags.EightBit) == (uint) F4ResourceFlags.EightBit)
                     {
                         byte thisPixelPaletteIndex = _resourceIndex.ResourceData.Data[imageHeader.ImageOffset + curByte];
                         ushort thisPixelPaletteEntry = palette[thisPixelPaletteIndex];
@@ -332,21 +296,24 @@ namespace F4Utils.Resources
                         B = (thisPixelPaletteEntry & 0x1F) << 3;
                         curByte++;
                     }
-                    else if ((imageHeader.Flags & (uint)F4ResourceFlags.SixteenBit) == (uint)F4ResourceFlags.SixteenBit)
+                    else if ((imageHeader.Flags & (uint) F4ResourceFlags.SixteenBit) == (uint) F4ResourceFlags.SixteenBit)
                     {
-                        ushort thisPixelPaletteEntry = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data, (int)(imageHeader.ImageOffset + curByte));
+                        ushort thisPixelPaletteEntry = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
+                                                                             (int)
+                                                                             (imageHeader.ImageOffset + curByte));
                         A = 255;
                         R = ((thisPixelPaletteEntry & 0x7C00) >> 10) << 3;
                         G = ((thisPixelPaletteEntry & 0x3E0) >> 5) << 3;
                         B = (thisPixelPaletteEntry & 0x1F) << 3;
-                        curByte+=2;
+                        curByte += 2;
                     }
                     toReturn.SetPixel(x, y, Color.FromArgb(A, R, G, B));
                 }
             }
             return toReturn;
         }
-        protected virtual F4ResourceHeader GetResourceHeader(string resourceId) 
+
+        protected virtual F4ResourceHeader GetResourceHeader(string resourceId)
         {
             if (_resourceIndex == null || _resourceIndex.ResourceHeaders == null || resourceId == null)
             {
@@ -363,5 +330,90 @@ namespace F4Utils.Resources
             }
             return null;
         }
+
+        #region Nested type: F4FlatResourceHeader
+
+        protected internal class F4FlatResourceHeader : F4ResourceHeader
+        {
+            public uint Offset;
+            public uint Size;
+        }
+
+        #endregion
+
+        #region Nested type: F4ImageResourceHeader
+
+        protected internal class F4ImageResourceHeader : F4ResourceHeader
+        {
+            public ushort CenterX;
+            public ushort CenterY;
+            public uint Flags;
+            public ushort Height;
+            public uint ImageOffset;
+            public uint PaletteOffset;
+            public uint PaletteSize;
+            public ushort Width;
+        }
+
+        #endregion
+
+        #region Nested type: F4ResourceBundleIndex
+
+        protected internal class F4ResourceBundleIndex
+        {
+            public uint NumResources;
+            public F4ResourceRawDataPackage ResourceData;
+            public F4ResourceHeader[] ResourceHeaders;
+            public uint ResourceIndexVersion;
+            public uint Size;
+        }
+
+        #endregion
+
+        #region Nested type: F4ResourceFlags
+
+        [Flags]
+        protected internal enum F4ResourceFlags : uint
+        {
+            EightBit = 0x00000001,
+            SixteenBit = 0x00000002,
+            UseColorKey = 0x40000000,
+        }
+
+        #endregion
+
+        #region Nested type: F4ResourceHeader
+
+        protected internal class F4ResourceHeader
+        {
+            public string ID;
+            public uint Type;
+        }
+
+        #endregion
+
+        #region Nested type: F4ResourceRawDataPackage
+
+        protected internal class F4ResourceRawDataPackage
+        {
+            public byte[] Data;
+            public uint Size;
+            public uint Version;
+        }
+
+        #endregion
+
+        #region Nested type: F4SoundResourceHeader
+
+        protected internal class F4SoundResourceHeader : F4ResourceHeader
+        {
+            public ushort Channels;
+            public uint Flags;
+            public uint HeaderSize;
+            public uint Offset;
+            public ushort SoundType;
+        }
+
+        #endregion
     }
 }

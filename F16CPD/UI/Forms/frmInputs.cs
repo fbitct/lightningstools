@@ -1,29 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using Common.Collections;
 using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using F16CPD.Mfd.Controls;
-using Common.Collections;
+using F16CPD.Properties;
 
 namespace F16CPD.UI.Forms
 {
     //TODO: provide print capability for input assignment
     public partial class frmInputs : Form
     {
-        protected SerializableDictionary<CpdInputControls, ControlBinding> _controlBindings = new SerializableDictionary<CpdInputControls, ControlBinding>();
+        protected SerializableDictionary<CpdInputControls, ControlBinding> _controlBindings =
+            new SerializableDictionary<CpdInputControls, ControlBinding>();
+
         public frmInputs()
         {
             InitializeComponent();
             InitializeControlBindings();
-            this.Mediator = new Mediator(this);
-            this.Mediator.RaiseEvents = true;
+            Mediator = new Mediator(this);
+            Mediator.RaiseEvents = true;
             LoadControlBindings();
         }
+
+        public Mediator Mediator { get; set; }
+
+        public SerializableDictionary<CpdInputControls, ControlBinding> ControlBindings
+        {
+            get { return _controlBindings; }
+        }
+
         private void InitializeControlBindings()
         {
             if (_controlBindings == null)
@@ -31,34 +39,24 @@ namespace F16CPD.UI.Forms
                 _controlBindings = new SerializableDictionary<CpdInputControls, ControlBinding>();
             }
             _controlBindings.Clear();
-            foreach (CpdInputControls val in Enum.GetValues(typeof(CpdInputControls)))
+            foreach (CpdInputControls val in Enum.GetValues(typeof (CpdInputControls)))
             {
                 _controlBindings.Add(val, new ControlBinding());
             }
         }
-        public Mediator Mediator
-        {
-            get;
-            set;
-        }
-        public SerializableDictionary<CpdInputControls, ControlBinding> ControlBindings
-        {
-            get
-            {
-                return _controlBindings;
-            }
-        }
+
         private void pbCpdBezel_Click(object sender, EventArgs e)
         {
-            MouseEventArgs args = (MouseEventArgs)e;
+            var args = (MouseEventArgs) e;
             if (args.Button != MouseButtons.Left) return;
-            Point location = ((MouseEventArgs)e).Location;
+            Point location = ((MouseEventArgs) e).Location;
             CpdInputControls control = DetectClickedControl(location);
             if (control != CpdInputControls.Unknown)
             {
-                if (control == CpdInputControls.HsiModeControl || control == CpdInputControls.ExtFuelTransSwitch || control == CpdInputControls.FuelSelectControl || control == CpdInputControls.ParameterAdjustKnob)
+                if (control == CpdInputControls.HsiModeControl || control == CpdInputControls.ExtFuelTransSwitch ||
+                    control == CpdInputControls.FuelSelectControl || control == CpdInputControls.ParameterAdjustKnob)
                 {
-                    List<string> radioButtonItems = new List<string>();
+                    var radioButtonItems = new List<string>();
                     switch (control)
                     {
                         case CpdInputControls.HsiModeControl:
@@ -84,11 +82,11 @@ namespace F16CPD.UI.Forms
                             radioButtonItems.Add(GetControlName(CpdInputControls.ParameterAdjustKnobDecrease));
                             break;
                     }
-                    using (frmInputDrilldown drillDown = new frmInputDrilldown())
+                    using (var drillDown = new frmInputDrilldown())
                     {
                         Point formLocation = drillDown.Location;
-                        formLocation.X = this.Location.X;
-                        formLocation.Y = this.Location.Y + (int)(this.Height / 4.0f);
+                        formLocation.X = Location.X;
+                        formLocation.Y = Location.Y + (int) (Height/4.0f);
 
                         drillDown.Location = formLocation;
                         drillDown.RadioButtonItems = radioButtonItems;
@@ -114,26 +112,28 @@ namespace F16CPD.UI.Forms
 
                 if (control != CpdInputControls.Unknown)
                 {
-                    using (frmInputSourceSelect sourceSelectForm = new frmInputSourceSelect())
+                    using (var sourceSelectForm = new frmInputSourceSelect())
                     {
-                        ControlBinding thisControlBinding = this.ControlBindings[control];
+                        ControlBinding thisControlBinding = ControlBindings[control];
                         thisControlBinding.CpdInputControl = control;
                         thisControlBinding.ControlName = GetControlName(thisControlBinding.CpdInputControl);
-                        sourceSelectForm.Mediator = this.Mediator;
-                        sourceSelectForm.ControlBindings = (Dictionary<CpdInputControls, ControlBinding>) ((ICloneable)this.ControlBindings).Clone();
+                        sourceSelectForm.Mediator = Mediator;
+                        sourceSelectForm.ControlBindings =
+                            (Dictionary<CpdInputControls, ControlBinding>) ((ICloneable) ControlBindings).Clone();
                         sourceSelectForm.CpdInputControl = control;
                         sourceSelectForm.ShowDialog(this);
-                        this.ControlBindings[control] = sourceSelectForm.ControlBindings[control];
+                        ControlBindings[control] = sourceSelectForm.ControlBindings[control];
                     }
                 }
             }
         }
+
         private static CpdInputControls GetControlByControlName(string controlName)
         {
             CpdInputControls toReturn = CpdInputControls.Unknown;
             if (!String.IsNullOrEmpty(controlName))
             {
-                foreach (CpdInputControls val in Enum.GetValues(typeof(CpdInputControls)))
+                foreach (CpdInputControls val in Enum.GetValues(typeof (CpdInputControls)))
                 {
                     if (GetControlName(val) == controlName)
                     {
@@ -143,9 +143,9 @@ namespace F16CPD.UI.Forms
                 }
             }
             return toReturn;
-
         }
-        private static string GetControlName (CpdInputControls control) 
+
+        private static string GetControlName(CpdInputControls control)
         {
             string toReturn = null;
             switch (control)
@@ -290,50 +290,51 @@ namespace F16CPD.UI.Forms
             }
             return toReturn;
         }
+
         private CpdInputControls DetectClickedControl(Point clickedPoint)
         {
-            float scaleX = (float)((float)pbCpdBezel.Width / 345.0f);
-            float scaleY = (float)((float)pbCpdBezel.Height / 557.0f);
-            clickedPoint = new Point((int)((float)clickedPoint.X / scaleX), (int)((float)clickedPoint.Y / scaleY));
+            float scaleX = (pbCpdBezel.Width/345.0f);
+            float scaleY = (pbCpdBezel.Height/557.0f);
+            clickedPoint = new Point((int) (clickedPoint.X/scaleX), (int) (clickedPoint.Y/scaleY));
 
             //TOP ROW BUTTONS
-            Rectangle osbButton1Rect = new Rectangle(55, 0, 97 - 55, 45);
-            Rectangle osbButton2Rect = new Rectangle(104, 0, 146 - 104, 45);
-            Rectangle osbButton3Rect = new Rectangle(153, 0, 193 - 153, 45);
-            Rectangle osbButton4Rect = new Rectangle(200, 0, 245 - 200, 45);
-            Rectangle osbButton5Rect = new Rectangle(252, 0, 292 - 52, 45);
+            var osbButton1Rect = new Rectangle(55, 0, 97 - 55, 45);
+            var osbButton2Rect = new Rectangle(104, 0, 146 - 104, 45);
+            var osbButton3Rect = new Rectangle(153, 0, 193 - 153, 45);
+            var osbButton4Rect = new Rectangle(200, 0, 245 - 200, 45);
+            var osbButton5Rect = new Rectangle(252, 0, 292 - 52, 45);
 
             //RHS BUTTONS
-            Rectangle osbButton6Rect = new Rectangle(302, 41, 345 - 302, 81 - 41);
-            Rectangle osbButton7Rect = new Rectangle(302, 88, 345 - 302, 129 - 88);
-            Rectangle osbButton8Rect = new Rectangle(302, 135, 345 - 302, 176 - 135);
-            Rectangle osbButton9Rect = new Rectangle(302, 181, 345 - 302, 221 - 181);
-            Rectangle osbButton10Rect = new Rectangle(302, 228, 345 - 302, 267 - 228);
-            Rectangle osbButton11Rect = new Rectangle(302, 276, 345 - 302, 314 - 276);
-            Rectangle osbButton12Rect = new Rectangle(302, 322, 345 - 302, 362 - 322);
-            Rectangle osbButton13Rect = new Rectangle(302, 370, 345 - 302, 409 - 370);
+            var osbButton6Rect = new Rectangle(302, 41, 345 - 302, 81 - 41);
+            var osbButton7Rect = new Rectangle(302, 88, 345 - 302, 129 - 88);
+            var osbButton8Rect = new Rectangle(302, 135, 345 - 302, 176 - 135);
+            var osbButton9Rect = new Rectangle(302, 181, 345 - 302, 221 - 181);
+            var osbButton10Rect = new Rectangle(302, 228, 345 - 302, 267 - 228);
+            var osbButton11Rect = new Rectangle(302, 276, 345 - 302, 314 - 276);
+            var osbButton12Rect = new Rectangle(302, 322, 345 - 302, 362 - 322);
+            var osbButton13Rect = new Rectangle(302, 370, 345 - 302, 409 - 370);
 
             //BOTTOM ROW BUTTONS
-            Rectangle osbButton14Rect = new Rectangle(252, 401, 292 - 52, 444 - 401);
-            Rectangle osbButton15Rect = new Rectangle(200, 401, 245 - 200, 444 - 401);
-            Rectangle osbButton16Rect = new Rectangle(153, 401, 193 - 153, 444 - 401);
-            Rectangle osbButton17Rect = new Rectangle(104, 401, 146 - 104, 444 - 401);
-            Rectangle osbButton18Rect = new Rectangle(55, 401, 97 - 55, 444 - 401);
+            var osbButton14Rect = new Rectangle(252, 401, 292 - 52, 444 - 401);
+            var osbButton15Rect = new Rectangle(200, 401, 245 - 200, 444 - 401);
+            var osbButton16Rect = new Rectangle(153, 401, 193 - 153, 444 - 401);
+            var osbButton17Rect = new Rectangle(104, 401, 146 - 104, 444 - 401);
+            var osbButton18Rect = new Rectangle(55, 401, 97 - 55, 444 - 401);
 
             //LHS BUTTONS
-            Rectangle osbButton19Rect = new Rectangle(0, 370, 42, 409 - 370);
-            Rectangle osbButton20Rect = new Rectangle(0, 322, 42, 362 - 322);
-            Rectangle osbButton21Rect = new Rectangle(0, 276, 42, 314 - 276);
-            Rectangle osbButton22Rect = new Rectangle(0, 228, 42, 267 - 228);
-            Rectangle osbButton23Rect = new Rectangle(0, 181, 42, 221 - 181);
-            Rectangle osbButton24Rect = new Rectangle(0, 135, 42, 176 - 135);
-            Rectangle osbButton25Rect = new Rectangle(0, 88, 42, 129 - 88);
-            Rectangle osbButton26Rect = new Rectangle(0, 41, 42, 81 - 41);
+            var osbButton19Rect = new Rectangle(0, 370, 42, 409 - 370);
+            var osbButton20Rect = new Rectangle(0, 322, 42, 362 - 322);
+            var osbButton21Rect = new Rectangle(0, 276, 42, 314 - 276);
+            var osbButton22Rect = new Rectangle(0, 228, 42, 267 - 228);
+            var osbButton23Rect = new Rectangle(0, 181, 42, 221 - 181);
+            var osbButton24Rect = new Rectangle(0, 135, 42, 176 - 135);
+            var osbButton25Rect = new Rectangle(0, 88, 42, 129 - 88);
+            var osbButton26Rect = new Rectangle(0, 41, 42, 81 - 41);
 
-            Rectangle hsiModeToggleRect = new Rectangle(0, 452, 75, 500 - 452);
-            Rectangle headingKnobRect = new Rectangle(82, 445, 118 - 82, 496 - 445);
-            Rectangle fuelSelectToggleRect = new Rectangle(176, 449, 243 - 176, 496 - 449);
-            Rectangle extFuelTransSwitchRect = new Rectangle(259, 447, 327 - 259, 498 - 447);
+            var hsiModeToggleRect = new Rectangle(0, 452, 75, 500 - 452);
+            var headingKnobRect = new Rectangle(82, 445, 118 - 82, 496 - 445);
+            var fuelSelectToggleRect = new Rectangle(176, 449, 243 - 176, 496 - 449);
+            var extFuelTransSwitchRect = new Rectangle(259, 447, 327 - 259, 498 - 447);
 
 
             if (RectangleContainsPoint(osbButton1Rect, clickedPoint))
@@ -461,6 +462,7 @@ namespace F16CPD.UI.Forms
                 return CpdInputControls.Unknown;
             }
         }
+
         private bool RectangleContainsPoint(Rectangle rect, Point p)
         {
             return (rect.X <= p.X && rect.Y <= p.Y && rect.X + rect.Width >= p.X && rect.Y + rect.Height >= p.Y);
@@ -469,23 +471,26 @@ namespace F16CPD.UI.Forms
         private void cmdOk_Click(object sender, EventArgs e)
         {
             SaveControlBindings();
-            this.Close();
+            Close();
         }
+
         private void LoadControlBindings()
         {
-            string bindings = Properties.Settings.Default.ControlBindings;
+            string bindings = Settings.Default.ControlBindings;
             if (!String.IsNullOrEmpty(bindings))
             {
-                object deserialized= Common.Serialization.Util.DeserializeFromXml(bindings, this.ControlBindings.GetType());
+                object deserialized = Common.Serialization.Util.DeserializeFromXml(bindings, ControlBindings.GetType());
                 if (deserialized != null)
                 {
-                    SerializableDictionary<CpdInputControls, ControlBinding> asBindings = (SerializableDictionary<CpdInputControls, ControlBinding>) deserialized;
+                    var asBindings = (SerializableDictionary<CpdInputControls, ControlBinding>) deserialized;
                     foreach (var entry in asBindings)
                     {
                         ControlBinding thisEntry = entry.Value;
-                        if (thisEntry.BindingType == BindingType.DirectInputAxisBinding || thisEntry.BindingType == BindingType.DirectInputButtonBinding || thisEntry.BindingType == BindingType.DirectInputPovBinding)
+                        if (thisEntry.BindingType == BindingType.DirectInputAxisBinding ||
+                            thisEntry.BindingType == BindingType.DirectInputButtonBinding ||
+                            thisEntry.BindingType == BindingType.DirectInputPovBinding)
                         {
-                            if (this.Mediator.DeviceMonitors.ContainsKey(thisEntry.DirectInputDevice.Guid))
+                            if (Mediator.DeviceMonitors.ContainsKey(thisEntry.DirectInputDevice.Guid))
                             {
                                 ControlBinding thisBinding = _controlBindings[entry.Key];
                                 thisBinding.BindingType = thisEntry.BindingType;
@@ -493,12 +498,14 @@ namespace F16CPD.UI.Forms
                                 thisBinding.CpdInputControl = thisEntry.CpdInputControl;
                                 thisBinding.Keys = thisEntry.Keys;
                                 thisBinding.PovDirection = thisEntry.PovDirection;
-                                thisBinding.DirectInputDevice = this.Mediator.DeviceMonitors[thisEntry.DirectInputDevice.Guid].DeviceInfo;
+                                thisBinding.DirectInputDevice =
+                                    Mediator.DeviceMonitors[thisEntry.DirectInputDevice.Guid].DeviceInfo;
                                 foreach (PhysicalControlInfo control in thisBinding.DirectInputDevice.Controls)
                                 {
-                                    if (control.ControlNum == thisEntry.DirectInputControl.ControlNum && control.ControlType == thisEntry.DirectInputControl.ControlType)
+                                    if (control.ControlNum == thisEntry.DirectInputControl.ControlNum &&
+                                        control.ControlType == thisEntry.DirectInputControl.ControlType)
                                     {
-                                        thisBinding.DirectInputControl = (DIPhysicalControlInfo)control;
+                                        thisBinding.DirectInputControl = (DIPhysicalControlInfo) control;
                                         break;
                                     }
                                 }
@@ -516,30 +523,31 @@ namespace F16CPD.UI.Forms
                 }
             }
         }
+
         private void SaveControlBindings()
         {
-            string bindings = Common.Serialization.Util.SerializeToXml(this.ControlBindings, this.ControlBindings.GetType());
-            Properties.Settings.Default.ControlBindings = bindings;
+            string bindings = Common.Serialization.Util.SerializeToXml(ControlBindings, ControlBindings.GetType());
+            Settings.Default.ControlBindings = bindings;
             F16CPD.Util.SaveCurrentProperties();
         }
 
         private void frmInputs_Load(object sender, EventArgs e)
         {
-            txtConfigureInputsInstructions.AppendText("Click on a switch, button, or knob in the image on the right to assign a hardware input ");
+            txtConfigureInputsInstructions.AppendText(
+                "Click on a switch, button, or knob in the image on the right to assign a hardware input ");
             txtConfigureInputsInstructions.AppendText("to that control in the " + Application.ProductName + " software.");
         }
 
         private void btnClearAllInputAssignments_Click(object sender, EventArgs e)
         {
-            DialogResult result= MessageBox.Show(this, "WARNING: This will clear all input assignments.  Do you want to proceed?", Application.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show(this,
+                                                  "WARNING: This will clear all input assignments.  Do you want to proceed?",
+                                                  Application.ProductName, MessageBoxButtons.OKCancel,
+                                                  MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.OK)
             {
                 InitializeControlBindings();
             }
         }
     }
-    
-
-
-   
 }

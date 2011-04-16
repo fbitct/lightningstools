@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
-using System.Timers;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
-using System.ComponentModel;
 
 namespace F16CPD
 {
@@ -13,98 +9,92 @@ namespace F16CPD
     {
         public static void Test()
         {
-            MorseCode blink = new MorseCode();
+            var blink = new MorseCode();
             blink.PlainText = "Paris";
-            blink.UnitTimeTick += new EventHandler<UnitTimeTickEventArgs>(blink_UnitTimeTick);
+            blink.UnitTimeTick += blink_UnitTimeTick;
             blink.StartSending();
-            System.Threading.Thread.Sleep(5000);
+            Thread.Sleep(5000);
         }
 
-        static void blink_UnitTimeTick(object sender, UnitTimeTickEventArgs e)
+        private static void blink_UnitTimeTick(object sender, UnitTimeTickEventArgs e)
         {
             Debug.Write(e.CurrentSignalLineState ? "1" : "0");
         }
     }
+
     public class UnitTimeTickEventArgs : EventArgs
     {
-        private bool _currentSignalLineState = false;
         public UnitTimeTickEventArgs()
-            : base()
         {
         }
+
         public UnitTimeTickEventArgs(bool CurrentSignalLineState)
         {
-            _currentSignalLineState = CurrentSignalLineState;
+            this.CurrentSignalLineState = CurrentSignalLineState;
         }
-        public bool CurrentSignalLineState
-        {
-            get
-            {
-                return _currentSignalLineState;
-            }
-            set
-            {
-                _currentSignalLineState = value;
-            }
-        }
+
+        public bool CurrentSignalLineState { get; set; }
     }
-    public class MorseCode:IDisposable
+
+    public class MorseCode : IDisposable
     {
+        private int _charactersPerMinute; //CPM
+        private bool _isDisposed;
+        private bool _keepSending;
+        private bool _sending;
+        private int _unitTimeMillis; //standard Morse time unit, in milliseconds
+        private BackgroundWorker _worker;
+
         public MorseCode()
-            : base()
         {
             CharactersPerMinute = 120;
         }
-        public event EventHandler<UnitTimeTickEventArgs> UnitTimeTick;
 
-        private int _charactersPerMinute; //CPM
-        private int _unitTimeMillis; //standard Morse time unit, in milliseconds
-        private bool _keepSending = false;
-        private bool _isDisposed = false;
-        private BackgroundWorker _worker = null;
-        private bool _sending = false;
         public int CharactersPerMinute
         {
-            get
-            {
-                return _charactersPerMinute;
-            }
+            get { return _charactersPerMinute; }
             set
             {
                 _charactersPerMinute = value;
-                _unitTimeMillis = 6000 / value;
+                _unitTimeMillis = 6000/value;
             }
         }
-        public string PlainText
+
+        public string PlainText { get; set; }
+
+        public bool KeepSending
         {
-            get;
-            set;
+            get { return _keepSending; }
+            set { _keepSending = value; }
         }
+
+        public bool Sending
+        {
+            get { return _sending; }
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                Dispose(true);
+            }
+        }
+
+        #endregion
+
+        public event EventHandler<UnitTimeTickEventArgs> UnitTimeTick;
+
         public void StartSending()
         {
             if (_sending) throw new InvalidOperationException("Already sending");
             _worker = new BackgroundWorker();
-            _worker.DoWork += new DoWorkEventHandler(_worker_DoWork);
+            _worker.DoWork += _worker_DoWork;
             _worker.RunWorkerAsync();
         }
-        public bool KeepSending
-        {
-            get
-            {
-                return _keepSending;
-            }
-            set
-            {
-                _keepSending = value;
-            }
-        }
-        public bool Sending
-        {
-            get
-            {
-                return _sending;
-            }
-        }
+
         private void _worker_DoWork(object sender, DoWorkEventArgs e)
         {
             _sending = true;
@@ -118,6 +108,7 @@ namespace F16CPD
             } while (_keepSending);
             _sending = false;
         }
+
         public void StopSending()
         {
             _keepSending = false;
@@ -126,16 +117,18 @@ namespace F16CPD
                 Thread.Sleep(20);
             }
         }
+
         public void Send()
         {
-            string[] words = PlainText.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            string[] words = PlainText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
             for (int a = 0; a < words.Length; a++)
             {
                 string thisWord = words[a];
                 for (int i = 0; i < thisWord.Length; i++)
                 {
                     char somePlainChar = thisWord[i];
-                    string morsePatternCurrentPlainChar = GetMorsePatternStringForPlainChar(somePlainChar); //get the Morse code pattern for the current character
+                    string morsePatternCurrentPlainChar = GetMorsePatternStringForPlainChar(somePlainChar);
+                        //get the Morse code pattern for the current character
                     for (int j = 0; j < morsePatternCurrentPlainChar.Length; j++)
                     {
                         char someMorseChar = morsePatternCurrentPlainChar[j];
@@ -148,7 +141,8 @@ namespace F16CPD
                     }
                     if (i < thisWord.Length - 1)
                     {
-                        SendUnits(GetQuinaryStringForMorsePatternChar('_')); //send short gap (between characters in a plaintext word
+                        SendUnits(GetQuinaryStringForMorsePatternChar('_'));
+                            //send short gap (between characters in a plaintext word
                     }
                 }
                 if (a < words.Length - 1)
@@ -157,6 +151,7 @@ namespace F16CPD
                 }
             }
         }
+
         private string GetQuinaryStringForMorsePatternChar(char patternChar)
         {
             string toReturn = "";
@@ -182,9 +177,8 @@ namespace F16CPD
                     break;
             }
             return toReturn;
-
         }
-       
+
         private string GetMorsePatternStringForPlainChar(char someChar)
         {
             string toReturn = "";
@@ -360,16 +354,18 @@ namespace F16CPD
             foreach (char aChar in quinary)
             {
                 OnUnitTimeTick(this, new UnitTimeTickEventArgs(aChar == '1'));
-                System.Threading.Thread.Sleep(_unitTimeMillis);
+                Thread.Sleep(_unitTimeMillis);
             }
         }
-        public virtual void OnUnitTimeTick(object sender, UnitTimeTickEventArgs e) 
+
+        public virtual void OnUnitTimeTick(object sender, UnitTimeTickEventArgs e)
         {
-            if (UnitTimeTick !=null) 
+            if (UnitTimeTick != null)
             {
-                UnitTimeTick(sender,e);
+                UnitTimeTick(sender, e);
             }
         }
+
         private void Dispose(bool disposing)
         {
             if (disposing)
@@ -378,13 +374,7 @@ namespace F16CPD
             }
             _isDisposed = true;
         }
-        public void Dispose()
-        {
-            if (!_isDisposed)
-            {
-                Dispose(true);
-            }
-        }
+
         ~MorseCode()
         {
             Dispose();

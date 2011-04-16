@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -18,6 +17,49 @@ namespace F4SharedMemMirror
         private uint m_crc;
 
         /// <summary>
+        /// Initialize the cache
+        /// </summary>
+        static CRC32()
+        {
+            cachedCRC32Tables = Hashtable.Synchronized(new Hashtable());
+            autoCache = true;
+        }
+
+
+        /// <summary>
+        /// Creates a CRC32 object using the DefaultPolynomial
+        /// </summary>
+        public CRC32()
+            : this(DefaultPolynomial)
+        {
+        }
+
+        /// <summary>
+        /// Creates a CRC32 object using the specified Creates a CRC32 object 
+        /// </summary>
+        public CRC32(uint aPolynomial)
+            : this(aPolynomial, AutoCache)
+        {
+        }
+
+        /// <summary>
+        /// Construct the 
+        /// </summary>
+        public CRC32(uint aPolynomial, bool cacheTable)
+        {
+            HashSizeValue = 32;
+
+            crc32Table = (uint[]) cachedCRC32Tables[aPolynomial];
+            if (crc32Table == null)
+            {
+                crc32Table = BuildCRC32Table(aPolynomial);
+                if (cacheTable)
+                    cachedCRC32Tables.Add(aPolynomial, crc32Table);
+            }
+            Initialize();
+        }
+
+        /// <summary>
         /// Returns the default polynomial (used in WinZip, Ethernet, etc)
         /// </summary>
         public static uint DefaultPolynomial
@@ -34,15 +76,6 @@ namespace F4SharedMemMirror
             set { autoCache = value; }
         }
 
-        /// <summary>
-        /// Initialize the cache
-        /// </summary>
-        static CRC32()
-        {
-            cachedCRC32Tables = Hashtable.Synchronized(new Hashtable());
-            autoCache = true;
-        }
-
         public static void ClearCache()
         {
             cachedCRC32Tables.Clear();
@@ -57,12 +90,12 @@ namespace F4SharedMemMirror
         protected static uint[] BuildCRC32Table(uint ulPolynomial)
         {
             uint dwCrc;
-            uint[] table = new uint[256];
+            var table = new uint[256];
 
             // 256 values representing ASCII character codes. 
             for (int i = 0; i < 256; i++)
             {
-                dwCrc = (uint)i;
+                dwCrc = (uint) i;
                 for (int j = 8; j > 0; j--)
                 {
                     if ((dwCrc & 1) == 1)
@@ -74,40 +107,6 @@ namespace F4SharedMemMirror
             }
 
             return table;
-        }
-
-
-        /// <summary>
-        /// Creates a CRC32 object using the DefaultPolynomial
-        /// </summary>
-        public CRC32()
-            : this(DefaultPolynomial)
-        {
-        }
-
-        /// <summary>
-        /// Creates a CRC32 object using the specified Creates a CRC32 object 
-        /// </summary>
-        public CRC32(uint aPolynomial)
-            : this(aPolynomial, CRC32.AutoCache)
-        {
-        }
-
-        /// <summary>
-        /// Construct the 
-        /// </summary>
-        public CRC32(uint aPolynomial, bool cacheTable)
-        {
-            this.HashSizeValue = 32;
-
-            crc32Table = (uint[])cachedCRC32Tables[aPolynomial];
-            if (crc32Table == null)
-            {
-                crc32Table = CRC32.BuildCRC32Table(aPolynomial);
-                if (cacheTable)
-                    cachedCRC32Tables.Add(aPolynomial, crc32Table);
-            }
-            Initialize();
         }
 
         /// <summary>
@@ -141,13 +140,13 @@ namespace F4SharedMemMirror
         /// <returns></returns>
         protected override byte[] HashFinal()
         {
-            byte[] finalHash = new byte[4];
+            var finalHash = new byte[4];
             ulong finalCRC = m_crc ^ AllOnes;
 
-            finalHash[0] = (byte)((finalCRC >> 24) & 0xFF);
-            finalHash[1] = (byte)((finalCRC >> 16) & 0xFF);
-            finalHash[2] = (byte)((finalCRC >> 8) & 0xFF);
-            finalHash[3] = (byte)((finalCRC >> 0) & 0xFF);
+            finalHash[0] = (byte) ((finalCRC >> 24) & 0xFF);
+            finalHash[1] = (byte) ((finalCRC >> 16) & 0xFF);
+            finalHash[2] = (byte) ((finalCRC >> 8) & 0xFF);
+            finalHash[3] = (byte) ((finalCRC >> 0) & 0xFF);
 
             return finalHash;
         }
@@ -155,9 +154,9 @@ namespace F4SharedMemMirror
         /// <summary>
         /// Computes the hash value for the specified Stream.
         /// </summary>
-        new public byte[] ComputeHash(Stream inputStream)
+        public new byte[] ComputeHash(Stream inputStream)
         {
-            byte[] buffer = new byte[4096];
+            var buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = inputStream.Read(buffer, 0, 4096)) > 0)
             {
@@ -170,7 +169,7 @@ namespace F4SharedMemMirror
         /// <summary>
         /// Overloaded. Computes the hash value for the input data.
         /// </summary>
-        new public byte[] ComputeHash(byte[] buffer)
+        public new byte[] ComputeHash(byte[] buffer)
         {
             return ComputeHash(buffer, 0, buffer.Length);
         }
@@ -182,11 +181,10 @@ namespace F4SharedMemMirror
         /// <param name="offset"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        new public byte[] ComputeHash(byte[] buffer, int offset, int count)
+        public new byte[] ComputeHash(byte[] buffer, int offset, int count)
         {
             HashCore(buffer, offset, count);
             return HashFinal();
         }
     }
-
 }

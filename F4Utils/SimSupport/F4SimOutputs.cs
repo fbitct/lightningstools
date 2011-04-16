@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace F4Utils.SimSupport
+﻿namespace F4Utils.SimSupport
 {
     public enum F4SimOutputs
     {

@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+
 namespace Phcc
 {
     /// <summary>
@@ -14,16 +13,13 @@ namespace Phcc
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class AnalogInputChangedEventArgs : EventArgs
     {
-        private byte _index;
-        private short _newValue;
-
         /// <summary>
         /// Creates an instance of the <see cref="AnalogInputChangedEventArgs"/> class.
         /// </summary>
         public AnalogInputChangedEventArgs()
-            : base()
         {
         }
+
         /// <summary>
         /// Creates an instance of the <see cref="AnalogInputChangedEventArgs"/> class.
         /// </summary>
@@ -37,9 +33,10 @@ namespace Phcc
         /// indicated analog input.</param>
         public AnalogInputChangedEventArgs(byte index, short newValue)
         {
-            _index = index;
-            _newValue = newValue;
+            Index = index;
+            NewValue = newValue;
         }
+
         /// <summary>
         /// Gets/sets the index of the analog input whose 
         /// value has changed.  
@@ -48,31 +45,11 @@ namespace Phcc
         /// 32 analog input indexes represent the standard analog
         /// non-prioritized inputs (AN1-AN32).
         /// </summary>
-        public byte Index
-        {
-            get
-            {
-                return _index;
-            }
-            set
-            {
-                _index = value;
-            }
-        }
+        public byte Index { get; set; }
+
         /// <summary>
         /// Gets/sets the new value of the indicated analog input.
         /// </summary>
-        public short NewValue
-        {
-            get
-            {
-                return _newValue;
-            }
-            set
-            {
-                _newValue = value;
-            }
-        }
-
+        public short NewValue { get; set; }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Phcc.DeviceManager.UI
@@ -14,28 +9,19 @@ namespace Phcc.DeviceManager.UI
         {
             InitializeComponent();
         }
-        public ushort Gain 
+
+        public ushort Gain
         {
-            get 
-            {
-                return (ushort)nudCalibrateServoGain.Value;
-            }
-            set
-            {
-                nudCalibrateServoGain.Value = value;
-            }
+            get { return (ushort) nudCalibrateServoGain.Value; }
+            set { nudCalibrateServoGain.Value = value; }
         }
+
         public ushort CalibrationOffset
         {
-            get
-            {
-                return (ushort)nudCalibrateServoOffset.Value;
-            }
-            set
-            {
-                nudCalibrateServoOffset.Value = value;
-            }
+            get { return (ushort) nudCalibrateServoOffset.Value; }
+            set { nudCalibrateServoOffset.Value = value; }
         }
+
         private void trkCalibrateServoGain_Scroll(object sender, EventArgs e)
         {
             nudCalibrateServoGain.Value = trkCalibrateServoGain.Value;
@@ -53,8 +39,7 @@ namespace Phcc.DeviceManager.UI
 
         private void nudCalibrateServoOffset_ValueChanged(object sender, EventArgs e)
         {
-            trkCalibrateServoOffset.Value = (int)nudCalibrateServoOffset.Value;
+            trkCalibrateServoOffset.Value = (int) nudCalibrateServoOffset.Value;
         }
-
     }
 }

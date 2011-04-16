@@ -1,89 +1,38 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Security;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
-using Microsoft.Win32;
 
 namespace PPJoy
 {
-
-
-
     /// <summary>
     /// This class stores all "native" (Win32 API) methods that are called by
     /// PPJoy, as well as relevant enums and structs required by those methods.
     /// </summary>
     [
-    System.Runtime.InteropServices.ComVisible(false),
-    System.Security.SuppressUnmanagedCodeSecurityAttribute()
+        ComVisible(false),
+        SuppressUnmanagedCodeSecurity
     ]
     internal static class NativeMethods
     {
         #region Enum Declarations
+
+        #region Nested type: ECTL_CODEFileAccess
+
         [Flags]
-        internal enum EMethod : uint
+        internal enum ECTL_CODEFileAccess : uint
         {
-            Buffered = 0,
-            InDirect = 1,
-            OutDirect = 2,
-            Neither = 3
-        }    
-        [Flags]
-        internal enum ECTL_CODEFileAccess : uint {
             FileAnyAccess = 0,
             FileReadAccess = 0x0001,
-            FileWriteAccess= 0x0002,
+            FileWriteAccess = 0x0002,
         }
 
-        [Flags]
-        internal enum EFileAccess : uint
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            GenericRead = 0x80000000,
-            /// <summary>
-            /// 
-            /// </summary>
-            GenericWrite = 0x40000000,
-            /// <summary>
-            /// 
-            /// </summary>
-            GenericExecute = 0x20000000,
-            /// <summary>
-            /// 
-            /// </summary>
-            GenericAll = 0x10000000
-        }
+        #endregion
 
-        [Flags]
-        internal enum EFileShare : uint
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            None = 0x00000000,
-            /// <summary>
-            /// Enables subsequent open operations on an object to request read access. 
-            /// Otherwise, other processes cannot open the object if they request read access. 
-            /// If this flag is not specified, but the object has been opened for read access, the function fails.
-            /// </summary>
-            Read = 0x00000001,
-            /// <summary>
-            /// Enables subsequent open operations on an object to request write access. 
-            /// Otherwise, other processes cannot open the object if they request write access. 
-            /// If this flag is not specified, but the object has been opened for write access, the function fails.
-            /// </summary>
-            Write = 0x00000002,
-            /// <summary>
-            /// Enables subsequent open operations on an object to request delete access. 
-            /// Otherwise, other processes cannot open the object if they request delete access.
-            /// If this flag is not specified, but the object has been opened for delete access, the function fails.
-            /// </summary>
-            Delete = 0x00000004
-        }
+        #region Nested type: ECreationDisposition
 
         internal enum ECreationDisposition : uint
         {
@@ -112,7 +61,36 @@ namespace PPJoy
             /// </summary>
             TruncateExisting = 5
         }
-        
+
+        #endregion
+
+        #region Nested type: EFileAccess
+
+        [Flags]
+        internal enum EFileAccess : uint
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            GenericRead = 0x80000000,
+            /// <summary>
+            /// 
+            /// </summary>
+            GenericWrite = 0x40000000,
+            /// <summary>
+            /// 
+            /// </summary>
+            GenericExecute = 0x20000000,
+            /// <summary>
+            /// 
+            /// </summary>
+            GenericAll = 0x10000000
+        }
+
+        #endregion
+
+        #region Nested type: EFileAttributes
+
         [Flags]
         internal enum EFileAttributes : uint
         {
@@ -142,6 +120,10 @@ namespace PPJoy
             OpenNoRecall = 0x00100000,
             FirstPipeInstance = 0x00080000
         }
+
+        #endregion
+
+        #region Nested type: EFileDevice
 
         [Flags]
         internal enum EFileDevice : uint
@@ -205,6 +187,41 @@ namespace PPJoy
             Ksec = 0x00000039
         }
 
+        #endregion
+
+        #region Nested type: EFileShare
+
+        [Flags]
+        internal enum EFileShare : uint
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            None = 0x00000000,
+            /// <summary>
+            /// Enables subsequent open operations on an object to request read access. 
+            /// Otherwise, other processes cannot open the object if they request read access. 
+            /// If this flag is not specified, but the object has been opened for read access, the function fails.
+            /// </summary>
+            Read = 0x00000001,
+            /// <summary>
+            /// Enables subsequent open operations on an object to request write access. 
+            /// Otherwise, other processes cannot open the object if they request write access. 
+            /// If this flag is not specified, but the object has been opened for write access, the function fails.
+            /// </summary>
+            Write = 0x00000002,
+            /// <summary>
+            /// Enables subsequent open operations on an object to request delete access. 
+            /// Otherwise, other processes cannot open the object if they request delete access.
+            /// If this flag is not specified, but the object has been opened for delete access, the function fails.
+            /// </summary>
+            Delete = 0x00000004
+        }
+
+        #endregion
+
+        #region Nested type: EIOControlCode
+
         [Flags]
         internal enum EIOControlCode : uint
         {
@@ -227,22 +244,29 @@ namespace PPJoy
             StorageResetDevice = (StorageBase << 16) | (0x0401 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             StorageGetDeviceNumber = (StorageBase << 16) | (0x0420 << 2) | EMethod.Buffered | (0 << 14),
             StoragePredictFailure = (StorageBase << 16) | (0x0440 << 2) | EMethod.Buffered | (0 << 14),
-            StorageObsoleteResetBus = (StorageBase << 16) | (0x0400 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            StorageObsoleteResetDevice = (StorageBase << 16) | (0x0401 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            StorageObsoleteResetBus =
+                (StorageBase << 16) | (0x0400 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            StorageObsoleteResetDevice =
+                (StorageBase << 16) | (0x0401 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             // DISK
             DiskBase = EFileDevice.Disk,
             DiskGetDriveGeometry = (DiskBase << 16) | (0x0000 << 2) | EMethod.Buffered | (0 << 14),
             DiskGetPartitionInfo = (DiskBase << 16) | (0x0001 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            DiskSetPartitionInfo = (DiskBase << 16) | (0x0002 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskSetPartitionInfo =
+                (DiskBase << 16) | (0x0002 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             DiskGetDriveLayout = (DiskBase << 16) | (0x0003 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            DiskSetDriveLayout = (DiskBase << 16) | (0x0004 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskSetDriveLayout =
+                (DiskBase << 16) | (0x0004 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             DiskVerify = (DiskBase << 16) | (0x0005 << 2) | EMethod.Buffered | (0 << 14),
-            DiskFormatTracks = (DiskBase << 16) | (0x0006 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            DiskReassignBlocks = (DiskBase << 16) | (0x0007 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskFormatTracks =
+                (DiskBase << 16) | (0x0006 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskReassignBlocks =
+                (DiskBase << 16) | (0x0007 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             DiskPerformance = (DiskBase << 16) | (0x0008 << 2) | EMethod.Buffered | (0 << 14),
             DiskIsWritable = (DiskBase << 16) | (0x0009 << 2) | EMethod.Buffered | (0 << 14),
             DiskLogging = (DiskBase << 16) | (0x000a << 2) | EMethod.Buffered | (0 << 14),
-            DiskFormatTracksEx = (DiskBase << 16) | (0x000b << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskFormatTracksEx =
+                (DiskBase << 16) | (0x000b << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             DiskHistogramStructure = (DiskBase << 16) | (0x000c << 2) | EMethod.Buffered | (0 << 14),
             DiskHistogramData = (DiskBase << 16) | (0x000d << 2) | EMethod.Buffered | (0 << 14),
             DiskHistogramReset = (DiskBase << 16) | (0x000e << 2) | EMethod.Buffered | (0 << 14),
@@ -250,14 +274,21 @@ namespace PPJoy
             DiskRequestData = (DiskBase << 16) | (0x0010 << 2) | EMethod.Buffered | (0 << 14),
             DiskControllerNumber = (DiskBase << 16) | (0x0011 << 2) | EMethod.Buffered | (0 << 14),
             DiskSmartGetVersion = (DiskBase << 16) | (0x0020 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            DiskSmartSendDriveCommand = (DiskBase << 16) | (0x0021 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            DiskSmartRcvDriveData = (DiskBase << 16) | (0x0022 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            DiskUpdateDriveSize = (DiskBase << 16) | (0x0032 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            DiskGrowPartition = (DiskBase << 16) | (0x0034 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskSmartSendDriveCommand =
+                (DiskBase << 16) | (0x0021 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskSmartRcvDriveData =
+                (DiskBase << 16) | (0x0022 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskUpdateDriveSize =
+                (DiskBase << 16) | (0x0032 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskGrowPartition =
+                (DiskBase << 16) | (0x0034 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             DiskGetCacheInformation = (DiskBase << 16) | (0x0035 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            DiskSetCacheInformation = (DiskBase << 16) | (0x0036 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            DiskDeleteDriveLayout = (DiskBase << 16) | (0x0040 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            DiskFormatDrive = (DiskBase << 16) | (0x00f3 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskSetCacheInformation =
+                (DiskBase << 16) | (0x0036 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskDeleteDriveLayout =
+                (DiskBase << 16) | (0x0040 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            DiskFormatDrive =
+                (DiskBase << 16) | (0x00f3 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             DiskSenseDevice = (DiskBase << 16) | (0x00f8 << 2) | EMethod.Buffered | (0 << 14),
             DiskCheckVerify = (DiskBase << 16) | (0x0200 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             DiskMediaRemoval = (DiskBase << 16) | (0x0201 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
@@ -272,14 +303,19 @@ namespace PPJoy
             ChangerGetParameters = (ChangerBase << 16) | (0x0000 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             ChangerGetStatus = (ChangerBase << 16) | (0x0001 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             ChangerGetProductData = (ChangerBase << 16) | (0x0002 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            ChangerSetAccess = (ChangerBase << 16) | (0x0004 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            ChangerGetElementStatus = (ChangerBase << 16) | (0x0005 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            ChangerInitializeElementStatus = (ChangerBase << 16) | (0x0006 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
+            ChangerSetAccess =
+                (ChangerBase << 16) | (0x0004 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            ChangerGetElementStatus =
+                (ChangerBase << 16) | (0x0005 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            ChangerInitializeElementStatus =
+                (ChangerBase << 16) | (0x0006 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             ChangerSetPosition = (ChangerBase << 16) | (0x0007 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             ChangerExchangeMedium = (ChangerBase << 16) | (0x0008 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             ChangerMoveMedium = (ChangerBase << 16) | (0x0009 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            ChangerReinitializeTarget = (ChangerBase << 16) | (0x000A << 2) | EMethod.Buffered | (FileAccess.Read << 14),
-            ChangerQueryVolumeTags = (ChangerBase << 16) | (0x000B << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            ChangerReinitializeTarget = (ChangerBase << 16) | (0x000A << 2) | EMethod.Buffered | (FileAccess.Read << 14)
+            ,
+            ChangerQueryVolumeTags =
+                (ChangerBase << 16) | (0x000B << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
             // FILESYSTEM
             FsctlRequestOplockLevel1 = (EFileDevice.FileSystem << 16) | (0 << 2) | EMethod.Buffered | (0 << 14),
             FsctlRequestOplockLevel2 = (EFileDevice.FileSystem << 16) | (1 << 2) | EMethod.Buffered | (0 << 14),
@@ -295,7 +331,9 @@ namespace PPJoy
             FsctlMarkVolumeDirty = (EFileDevice.FileSystem << 16) | (12 << 2) | EMethod.Buffered | (0 << 14),
             FsctlQueryRetrievalPointers = (EFileDevice.FileSystem << 16) | (14 << 2) | EMethod.Neither | (0 << 14),
             FsctlGetCompression = (EFileDevice.FileSystem << 16) | (15 << 2) | EMethod.Buffered | (0 << 14),
-            FsctlSetCompression = (EFileDevice.FileSystem << 16) | (16 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            FsctlSetCompression =
+                (EFileDevice.FileSystem << 16) | (16 << 2) | EMethod.Buffered |
+                ((FileAccess.Read | FileAccess.Write) << 14),
             FsctlMarkAsSystemHive = (EFileDevice.FileSystem << 16) | (19 << 2) | EMethod.Neither | (0 << 14),
             FsctlOplockBreakAckNo2 = (EFileDevice.FileSystem << 16) | (20 << 2) | EMethod.Buffered | (0 << 14),
             FsctlInvalidateVolumes = (EFileDevice.FileSystem << 16) | (21 << 2) | EMethod.Buffered | (0 << 14),
@@ -321,14 +359,17 @@ namespace PPJoy
             FsctlGetReparsePoint = (EFileDevice.FileSystem << 16) | (42 << 2) | EMethod.Buffered | (0 << 14),
             FsctlDeleteReparsePoint = (EFileDevice.FileSystem << 16) | (43 << 2) | EMethod.Buffered | (0 << 14),
             FsctlEnumUsnData = (EFileDevice.FileSystem << 16) | (44 << 2) | EMethod.Neither | (0 << 14),
-            FsctlSecurityIdCheck = (EFileDevice.FileSystem << 16) | (45 << 2) | EMethod.Neither | (FileAccess.Read << 14),
+            FsctlSecurityIdCheck =
+                (EFileDevice.FileSystem << 16) | (45 << 2) | EMethod.Neither | (FileAccess.Read << 14),
             FsctlReadUsnJournal = (EFileDevice.FileSystem << 16) | (46 << 2) | EMethod.Neither | (0 << 14),
             FsctlSetObjectIdExtended = (EFileDevice.FileSystem << 16) | (47 << 2) | EMethod.Buffered | (0 << 14),
             FsctlCreateOrGetObjectId = (EFileDevice.FileSystem << 16) | (48 << 2) | EMethod.Buffered | (0 << 14),
             FsctlSetSparse = (EFileDevice.FileSystem << 16) | (49 << 2) | EMethod.Buffered | (0 << 14),
             FsctlSetZeroData = (EFileDevice.FileSystem << 16) | (50 << 2) | EMethod.Buffered | (FileAccess.Write << 14),
-            FsctlQueryAllocatedRanges = (EFileDevice.FileSystem << 16) | (51 << 2) | EMethod.Neither | (FileAccess.Read << 14),
-            FsctlEnableUpgrade = (EFileDevice.FileSystem << 16) | (52 << 2) | EMethod.Buffered | (FileAccess.Write << 14),
+            FsctlQueryAllocatedRanges =
+                (EFileDevice.FileSystem << 16) | (51 << 2) | EMethod.Neither | (FileAccess.Read << 14),
+            FsctlEnableUpgrade =
+                (EFileDevice.FileSystem << 16) | (52 << 2) | EMethod.Buffered | (FileAccess.Write << 14),
             FsctlSetEncryption = (EFileDevice.FileSystem << 16) | (53 << 2) | EMethod.Neither | (0 << 14),
             FsctlEncryptionFsctlIo = (EFileDevice.FileSystem << 16) | (54 << 2) | EMethod.Neither | (0 << 14),
             FsctlWriteRawEncrypted = (EFileDevice.FileSystem << 16) | (55 << 2) | EMethod.Neither | (0 << 14),
@@ -341,10 +382,16 @@ namespace PPJoy
             FsctlDeleteUsnJournal = (EFileDevice.FileSystem << 16) | (62 << 2) | EMethod.Buffered | (0 << 14),
             FsctlMarkHandle = (EFileDevice.FileSystem << 16) | (63 << 2) | EMethod.Buffered | (0 << 14),
             FsctlSisCopyFile = (EFileDevice.FileSystem << 16) | (64 << 2) | EMethod.Buffered | (0 << 14),
-            FsctlSisLinkFiles = (EFileDevice.FileSystem << 16) | (65 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
-            FsctlHsmMsg = (EFileDevice.FileSystem << 16) | (66 << 2) | EMethod.Buffered | ((FileAccess.Read | FileAccess.Write) << 14),
+            FsctlSisLinkFiles =
+                (EFileDevice.FileSystem << 16) | (65 << 2) | EMethod.Buffered |
+                ((FileAccess.Read | FileAccess.Write) << 14),
+            FsctlHsmMsg =
+                (EFileDevice.FileSystem << 16) | (66 << 2) | EMethod.Buffered |
+                ((FileAccess.Read | FileAccess.Write) << 14),
             FsctlNssControl = (EFileDevice.FileSystem << 16) | (67 << 2) | EMethod.Buffered | (FileAccess.Write << 14),
-            FsctlHsmData = (EFileDevice.FileSystem << 16) | (68 << 2) | EMethod.Neither | ((FileAccess.Read | FileAccess.Write) << 14),
+            FsctlHsmData =
+                (EFileDevice.FileSystem << 16) | (68 << 2) | EMethod.Neither |
+                ((FileAccess.Read | FileAccess.Write) << 14),
             FsctlRecallFile = (EFileDevice.FileSystem << 16) | (69 << 2) | EMethod.Neither | (0 << 14),
             FsctlNssRcontrol = (EFileDevice.FileSystem << 16) | (70 << 2) | EMethod.Buffered | (FileAccess.Read << 14),
             // VIDEO
@@ -352,26 +399,47 @@ namespace PPJoy
             VideoQueryDisplayBrightness = (EFileDevice.Video << 16) | (0x0126 << 2) | EMethod.Buffered | (0 << 14),
             VideoSetDisplayBrightness = (EFileDevice.Video << 16) | (0x0127 << 2) | EMethod.Buffered | (0 << 14)
         }
-        #endregion
-        
-        private const int ERROR_IO_PENDING=997;
-        #region Win32API externs
-        [DllImport("Kernel32.dll", EntryPoint = "CloseHandle", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern uint CloseHandle(SafeFileHandle handle);
 
-        [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true, CharSet = CharSet.Auto)]
-        internal static extern SafeFileHandle CreateFile(
-           string fileName,
-           [MarshalAs(UnmanagedType.U4)] EFileAccess fileAccess,
-           [MarshalAs(UnmanagedType.U4)] EFileShare shareMode,
-           IntPtr securityAttributes,
-           [MarshalAs(UnmanagedType.U4)] ECreationDisposition creationDisposition,
-           EFileAttributes flagsAndAttributes,
-           SafeFileHandle templateFile);
-        
+        #endregion
+
+        #region Nested type: EMethod
+
+        [Flags]
+        internal enum EMethod : uint
+        {
+            Buffered = 0,
+            InDirect = 1,
+            OutDirect = 2,
+            Neither = 3
+        }
+
+        #endregion
+
+        #endregion
+
+        private const int ERROR_IO_PENDING = 997;
+
+        #region Win32API externs
+
         internal static EventWaitHandle _deviceIoControlCompletionEvent = new ManualResetEvent(false);
         internal static object _deviceSynchronizationObject = new object();
-        internal unsafe static bool DeviceIoControlSynchronous(
+
+        [DllImport("Kernel32.dll", EntryPoint = "CloseHandle", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
+        internal static extern uint CloseHandle(SafeFileHandle handle);
+
+        [DllImport("Kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true,
+            CharSet = CharSet.Auto)]
+        internal static extern SafeFileHandle CreateFile(
+            string fileName,
+            [MarshalAs(UnmanagedType.U4)] EFileAccess fileAccess,
+            [MarshalAs(UnmanagedType.U4)] EFileShare shareMode,
+            IntPtr securityAttributes,
+            [MarshalAs(UnmanagedType.U4)] ECreationDisposition creationDisposition,
+            EFileAttributes flagsAndAttributes,
+            SafeFileHandle templateFile);
+
+        internal static unsafe bool DeviceIoControlSynchronous(
             SafeFileHandle hDevice,
             uint IoControlCode,
             [In] IntPtr InBuffer,
@@ -383,9 +451,10 @@ namespace PPJoy
         {
             lock (_deviceSynchronizationObject)
             {
-                Overlapped overlapped = new Overlapped();
+                var overlapped = new Overlapped();
                 NativeOverlapped* nativeOverlapped = overlapped.Pack(DeviceIOControlCompletionCallback, null);
-                bool rc = DeviceIoControlNative(hDevice, IoControlCode, InBuffer, nInBufferSize, OutBuffer, nOutBufferSize, out pBytesReturned, nativeOverlapped);
+                bool rc = DeviceIoControlNative(hDevice, IoControlCode, InBuffer, nInBufferSize, OutBuffer,
+                                                nOutBufferSize, out pBytesReturned, nativeOverlapped);
                 if (rc)
                 {
                     //the operation completed synchronously
@@ -400,7 +469,7 @@ namespace PPJoy
                         UnpackAndFreeNativeOverlapped(nativeOverlapped);
 
                         //a Win32 API error occured, so throw it as a wrapped exception
-                        Exception e = new System.ComponentModel.Win32Exception(lastErr);
+                        Exception e = new Win32Exception(lastErr);
                         throw new OperationFailedException(e.Message, e);
                     }
                     else
@@ -412,22 +481,27 @@ namespace PPJoy
                 return rc;
             }
         }
-        private static unsafe void DeviceIOControlCompletionCallback( uint errorCode, uint numBytes, NativeOverlapped* nativeOverlapped )  
+
+        private static unsafe void DeviceIOControlCompletionCallback(uint errorCode, uint numBytes,
+                                                                     NativeOverlapped* nativeOverlapped)
         {
             UnpackAndFreeNativeOverlapped(nativeOverlapped);
             _deviceIoControlCompletionEvent.Set();
         }
-        private unsafe static void UnpackAndFreeNativeOverlapped(NativeOverlapped* nativeOverlapped)
+
+        private static unsafe void UnpackAndFreeNativeOverlapped(NativeOverlapped* nativeOverlapped)
         {
-            if (nativeOverlapped !=null)
+            if (nativeOverlapped != null)
             {
-                System.Threading.Overlapped.Unpack(nativeOverlapped);
-                System.Threading.Overlapped.Free(nativeOverlapped);
+                Overlapped.Unpack(nativeOverlapped);
+                Overlapped.Free(nativeOverlapped);
             }
         }
-        [DllImport("Kernel32.dll", EntryPoint = "DeviceIoControl", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+
+        [DllImport("Kernel32.dll", EntryPoint = "DeviceIoControl", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        unsafe internal static extern bool DeviceIoControlNative(
+        internal static extern unsafe bool DeviceIoControlNative(
             SafeFileHandle hDevice,
             uint IoControlCode,
             [In] IntPtr InBuffer,
@@ -436,21 +510,17 @@ namespace PPJoy
             uint nOutBufferSize,
             [Out] out uint pBytesReturned,
             [In] NativeOverlapped* Overlapped
-        );
+            );
+
         #endregion
 
         #region .h Header functions
-        internal static uint GetIoCtlCode(uint deviceType, uint function, EMethod method,ECTL_CODEFileAccess access )
-        {
-            return (((deviceType) << 16) | (((uint)access) << 14) | (((uint)function) << 2) | ((uint)method));
-        }
-        #endregion
 
+        internal static uint GetIoCtlCode(uint deviceType, uint function, EMethod method, ECTL_CODEFileAccess access)
+        {
+            return (((deviceType) << 16) | (((uint) access) << 14) | ((function) << 2) | ((uint) method));
+        }
+
+        #endregion
     }
 }
-
-
-
-
-
-

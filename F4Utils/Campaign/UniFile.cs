@@ -1,19 +1,23 @@
 ﻿using System;
+using System.Diagnostics;
+using Lzss;
 
 namespace F4Utils.Campaign
 {
     public class UniFile
     {
         #region Public Fields
+
         public Unit[] units;
+
         #endregion
 
-        protected int _version = 0;
+        protected int _version;
 
         protected UniFile()
-            : base()
         {
         }
+
         public UniFile(byte[] compressed, int version, Falcon4EntityClassType[] classTable)
             : this()
         {
@@ -22,12 +26,13 @@ namespace F4Utils.Campaign
             byte[] expanded = Expand(compressed, out numUnits);
             if (expanded != null) Decode(expanded, version, numUnits, classTable);
         }
+
         protected void Decode(byte[] bytes, int version, short numUnits, Falcon4EntityClassType[] classTable)
         {
             int curByte = 0;
             units = new Unit[numUnits];
             int i = 0;
-            while( i < numUnits)
+            while (i < numUnits)
             {
                 Unit thisUnit = null;
                 short thisUnitType = BitConverter.ToInt16(bytes, curByte);
@@ -35,17 +40,21 @@ namespace F4Utils.Campaign
                 if (thisUnitType > 0)
                 {
                     Falcon4EntityClassType classTableEntry = classTable[thisUnitType - 100];
-                    if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_DOMAIN] == (byte)Classtable_Domains.DOMAIN_AIR)
+                    if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_DOMAIN] ==
+                        (byte) Classtable_Domains.DOMAIN_AIR)
                     {
-                        if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_FLIGHT)
+                        if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_TYPE] ==
+                            (byte) Classtable_Types.TYPE_FLIGHT)
                         {
                             thisUnit = new Flight(bytes, ref curByte, version);
                         }
-                        else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_SQUADRON)
+                        else if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_TYPE] ==
+                                 (byte) Classtable_Types.TYPE_SQUADRON)
                         {
                             thisUnit = new Squadron(bytes, ref curByte, version);
                         }
-                        else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_PACKAGE)
+                        else if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_TYPE] ==
+                                 (byte) Classtable_Types.TYPE_PACKAGE)
                         {
                             thisUnit = new Package(bytes, ref curByte, version);
                         }
@@ -54,13 +63,16 @@ namespace F4Utils.Campaign
                             thisUnit = null;
                         }
                     }
-                    else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_DOMAIN] == (byte)Classtable_Domains.DOMAIN_LAND)
+                    else if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_DOMAIN] ==
+                             (byte) Classtable_Domains.DOMAIN_LAND)
                     {
-                        if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_BRIGADE)
+                        if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_TYPE] ==
+                            (byte) Classtable_Types.TYPE_BRIGADE)
                         {
                             thisUnit = new Brigade(bytes, ref curByte, version);
                         }
-                        else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_BATTALION)
+                        else if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_TYPE] ==
+                                 (byte) Classtable_Types.TYPE_BATTALION)
                         {
                             thisUnit = new Battalion(bytes, ref curByte, version);
                         }
@@ -68,11 +80,12 @@ namespace F4Utils.Campaign
                         {
                             thisUnit = null;
                         }
-
                     }
-                    else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_DOMAIN] == (byte)Classtable_Domains.DOMAIN_SEA)
+                    else if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_DOMAIN] ==
+                             (byte) Classtable_Domains.DOMAIN_SEA)
                     {
-                        if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_TASKFORCE)
+                        if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_TYPE] ==
+                            (byte) Classtable_Types.TYPE_TASKFORCE)
                         {
                             thisUnit = new TaskForce(bytes, ref curByte, version);
                         }
@@ -93,7 +106,7 @@ namespace F4Utils.Campaign
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine(string.Format("unexpected unit type:{0} at location: {1}", thisUnitType, curByte));
+                    Debug.WriteLine(string.Format("unexpected unit type:{0} at location: {1}", thisUnitType, curByte));
                 }
             }
 
@@ -101,8 +114,8 @@ namespace F4Utils.Campaign
             {
                 throw new InvalidOperationException();
             }
-
         }
+
         protected static byte[] Expand(byte[] compressed, out short numUnits)
         {
             int curByte = 0;
@@ -113,10 +126,10 @@ namespace F4Utils.Campaign
             int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             if (uncompressedSize == 0) return null;
-            byte[] actualCompressed = new byte[compressed.Length - 10];
+            var actualCompressed = new byte[compressed.Length - 10];
             Array.Copy(compressed, 10, actualCompressed, 0, actualCompressed.Length);
             byte[] uncompressed = null;
-            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
+            uncompressed = Codec.Decompress(actualCompressed, uncompressedSize);
             return uncompressed;
         }
     }

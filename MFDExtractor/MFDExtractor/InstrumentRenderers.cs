@@ -1,23 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Common.SimSupport;
-using MFDExtractor.UI;
-using LightningGauges.Renderers;
 using Common.Generic;
+using Common.SimSupport;
 using Common.UI;
+using LightningGauges.Renderers;
+using MFDExtractor.UI;
 
 namespace MFDExtractor
 {
     public class InstrumentRenderers
     {
-        private InstrumentRenderers() { }
-        public InstrumentRenderers(InitializationParams parms):this()
+        private InstrumentRenderers()
+        {
+        }
+
+        public InstrumentRenderers(InitializationParams parms) : this()
         {
             Initialize(parms);
         }
-        public IInstrumentRenderer ADIRenderer  { get; set; }
+
+        public IInstrumentRenderer ADIRenderer { get; set; }
         public IInstrumentRenderer StandbyADIRenderer { get; set; }
         public IInstrumentRenderer ASIRenderer { get; set; }
         public IInstrumentRenderer AltimeterRenderer { get; set; }
@@ -53,30 +54,20 @@ namespace MFDExtractor
         public IInstrumentRenderer CabinPressRenderer { get; set; }
         public IInstrumentRenderer RollTrimRenderer { get; set; }
         public IInstrumentRenderer PitchTrimRenderer { get; set; }
-        public IInstrumentRenderer LMFDRenderer{ get; set; }
+        public IInstrumentRenderer LMFDRenderer { get; set; }
         public IInstrumentRenderer RMFDRenderer { get; set; }
         public IInstrumentRenderer MFD3Renderer { get; set; }
         public IInstrumentRenderer MFD4Renderer { get; set; }
         public IInstrumentRenderer HUDRenderer { get; set; }
-        public class InitializationParams
-        {
-            public PropertyInvoker<string> VVIStyleProperty { get; set; }
-            public PropertyInvoker<string> AzimuthIndicatorTypeProperty { get; set; }
-            public PropertyInvoker<bool> ShowAzimuthIndicatorBezelProperty { get; set; }
-            public PropertyInvoker<bool> FuelQuantityIndicatorNeedleIsCModelProperty { get; set; }
-            public PropertyInvoker<string> ISISPressureUnitsProperty { get; set; }
-            public PropertyInvoker<string> AltimeterStyleProperty { get; set; }
-            public PropertyInvoker<string> AltimeterPressureUnitsProperty { get; set; }
-            public GDIPlusOptions GDIPlusOptions { get; set; }
-            
-        }
+
         private void Initialize(InitializationParams parms)
         {
             SetupVVIRenderer(parms.VVIStyleProperty);
             SetupRPM2Renderer();
             SetupRPM1Renderer();
             SetupSpeedbrakeRenderer();
-            SetupRWRRenderer(parms.AzimuthIndicatorTypeProperty, parms.ShowAzimuthIndicatorBezelProperty, parms.GDIPlusOptions);
+            SetupRWRRenderer(parms.AzimuthIndicatorTypeProperty, parms.ShowAzimuthIndicatorBezelProperty,
+                             parms.GDIPlusOptions);
             SetupOil1Renderer();
             SetupOil2Renderer();
             SetupNOZ1Renderer();
@@ -114,22 +105,27 @@ namespace MFDExtractor
             SetupMFD4Renderer();
             SetupHUDRenderer();
         }
+
         private void SetupLMFDRenderer()
         {
             LMFDRenderer = new CanvasRenderer();
         }
+
         private void SetupRMFDRenderer()
         {
             RMFDRenderer = new CanvasRenderer();
         }
+
         private void SetupMFD3Renderer()
         {
             MFD3Renderer = new CanvasRenderer();
         }
+
         private void SetupMFD4Renderer()
         {
             MFD4Renderer = new CanvasRenderer();
         }
+
         private void SetupHUDRenderer()
         {
             HUDRenderer = new CanvasRenderer();
@@ -138,7 +134,7 @@ namespace MFDExtractor
         private void SetupVVIRenderer(PropertyInvoker<string> vviStyleProperty)
         {
             string vviStyleString = vviStyleProperty.GetProperty();
-            VVIStyles vviStyle = (VVIStyles)Enum.Parse(typeof(VVIStyles), vviStyleString);
+            var vviStyle = (VVIStyles) Enum.Parse(typeof (VVIStyles), vviStyleString);
             switch (vviStyle)
             {
                 case VVIStyles.Tape:
@@ -150,86 +146,104 @@ namespace MFDExtractor
                 default:
                     break;
             }
-
         }
+
         private void SetupRPM2Renderer()
         {
             RPM2Renderer = new F16Tachometer();
-            ((F16Tachometer)RPM2Renderer).Options.IsSecondary = true;
+            ((F16Tachometer) RPM2Renderer).Options.IsSecondary = true;
         }
+
         private void SetupRPM1Renderer()
         {
             RPM1Renderer = new F16Tachometer();
-            ((F16Tachometer)RPM1Renderer).Options.IsSecondary = false;
+            ((F16Tachometer) RPM1Renderer).Options.IsSecondary = false;
         }
+
         private void SetupSpeedbrakeRenderer()
         {
             SpeedbrakeRenderer = new F16SpeedbrakeIndicator();
         }
-        private void SetupRWRRenderer(PropertyInvoker<string> azimuthIndicatorTypeProperty, PropertyInvoker<bool> ShowAzimuthIndicatorBezelProperty, GDIPlusOptions gdiPlusOptions)
+
+        private void SetupRWRRenderer(PropertyInvoker<string> azimuthIndicatorTypeProperty,
+                                      PropertyInvoker<bool> ShowAzimuthIndicatorBezelProperty,
+                                      GDIPlusOptions gdiPlusOptions)
         {
             RWRRenderer = new F16AzimuthIndicator();
             string styleString = azimuthIndicatorTypeProperty.GetProperty();
-            F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle style = (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle)Enum.Parse(typeof(F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), styleString);
-            ((F16AzimuthIndicator)RWRRenderer).Options.Style = style;
-            ((F16AzimuthIndicator)RWRRenderer).Options.HideBezel = !ShowAzimuthIndicatorBezelProperty.GetProperty();
-            ((F16AzimuthIndicator)RWRRenderer).Options.GDIPlusOptions = gdiPlusOptions;
-
+            var style =
+                (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle)
+                Enum.Parse(typeof (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), styleString);
+            ((F16AzimuthIndicator) RWRRenderer).Options.Style = style;
+            ((F16AzimuthIndicator) RWRRenderer).Options.HideBezel = !ShowAzimuthIndicatorBezelProperty.GetProperty();
+            ((F16AzimuthIndicator) RWRRenderer).Options.GDIPlusOptions = gdiPlusOptions;
         }
+
         private void SetupOil2Renderer()
         {
             OIL2Renderer = new F16OilPressureGauge();
-            ((F16OilPressureGauge)OIL2Renderer).Options.IsSecondary = true;
+            ((F16OilPressureGauge) OIL2Renderer).Options.IsSecondary = true;
         }
+
         private void SetupOil1Renderer()
         {
             OIL1Renderer = new F16OilPressureGauge();
-            ((F16OilPressureGauge)OIL1Renderer).Options.IsSecondary = false;
+            ((F16OilPressureGauge) OIL1Renderer).Options.IsSecondary = false;
         }
+
         private void SetupNOZ2Renderer()
         {
             NOZ2Renderer = new F16NozzlePositionIndicator();
-            ((F16NozzlePositionIndicator)NOZ2Renderer).Options.IsSecondary = true;
+            ((F16NozzlePositionIndicator) NOZ2Renderer).Options.IsSecondary = true;
         }
+
         private void SetupNOZ1Renderer()
         {
             NOZ1Renderer = new F16NozzlePositionIndicator();
-            ((F16NozzlePositionIndicator)NOZ1Renderer).Options.IsSecondary = false;
+            ((F16NozzlePositionIndicator) NOZ1Renderer).Options.IsSecondary = false;
         }
+
         private void SetupNWSIndexerRenderer()
         {
             NWSIndexerRenderer = new F16NosewheelSteeringIndexer();
         }
+
         private void SetupLandingGearLightsRenderer()
         {
             LandingGearLightsRenderer = new F16LandingGearWheelsLights();
         }
+
         private void SetupHSIRenderer()
         {
             HSIRenderer = new F16HorizontalSituationIndicator();
         }
-        private void SetupEHSIRenderer(GDIPlusOptions gdiPlusOptions )
+
+        private void SetupEHSIRenderer(GDIPlusOptions gdiPlusOptions)
         {
             EHSIRenderer = new F16EHSI();
-            ((F16EHSI)EHSIRenderer).Options.GDIPlusOptions = gdiPlusOptions;
+            ((F16EHSI) EHSIRenderer).Options.GDIPlusOptions = gdiPlusOptions;
         }
+
         private void SetupFuelQuantityRenderer(PropertyInvoker<bool> fuelQuantityIndicatorNeedleIsCModelProperty)
         {
             FuelQuantityRenderer = new F16FuelQuantityIndicator();
             if (fuelQuantityIndicatorNeedleIsCModelProperty.GetProperty())
             {
-                ((F16FuelQuantityIndicator)FuelQuantityRenderer).Options.NeedleType = F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel;
+                ((F16FuelQuantityIndicator) FuelQuantityRenderer).Options.NeedleType =
+                    F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel;
             }
             else
             {
-                ((F16FuelQuantityIndicator)FuelQuantityRenderer).Options.NeedleType = F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel;
+                ((F16FuelQuantityIndicator) FuelQuantityRenderer).Options.NeedleType =
+                    F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel;
             }
-
         }
+
         private void SetupFuelFlowRenderer()
         {
             FuelFlowRenderer = new F16FuelFlow();
         }
+
         private void SetupISISRenderer(PropertyInvoker<string> ISISPressureUnitsProperty, GDIPlusOptions gdiPlusOptions)
         {
             ISISRenderer = new F16ISIS();
@@ -238,105 +252,148 @@ namespace MFDExtractor
             {
                 try
                 {
-                    ((F16ISIS)ISISRenderer).Options.PressureAltitudeUnits = (F16ISIS.F16ISISOptions.PressureUnits)Enum.Parse(typeof(F16ISIS.F16ISISOptions.PressureUnits), pressureUnitsString);
+                    ((F16ISIS) ISISRenderer).Options.PressureAltitudeUnits =
+                        (F16ISIS.F16ISISOptions.PressureUnits)
+                        Enum.Parse(typeof (F16ISIS.F16ISISOptions.PressureUnits), pressureUnitsString);
                 }
-                catch 
+                catch
                 {
-                    ((F16ISIS)ISISRenderer).Options.PressureAltitudeUnits = F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
+                    ((F16ISIS) ISISRenderer).Options.PressureAltitudeUnits =
+                        F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
                 }
             }
-            ((F16ISIS)ISISRenderer).Options.GDIPlusOptions = gdiPlusOptions;
-
+            ((F16ISIS) ISISRenderer).Options.GDIPlusOptions = gdiPlusOptions;
         }
+
         private void SetupAccelerometerRenderer()
         {
             AccelerometerRenderer = new F16Accelerometer();
         }
+
         private void SetupFTIT2Renderer()
         {
             FTIT2Renderer = new F16FanTurbineInletTemperature();
-            ((F16FanTurbineInletTemperature)FTIT2Renderer).Options.IsSecondary = true;
+            ((F16FanTurbineInletTemperature) FTIT2Renderer).Options.IsSecondary = true;
         }
+
         private void SetupFTIT1Renderer()
         {
             FTIT1Renderer = new F16FanTurbineInletTemperature();
-            ((F16FanTurbineInletTemperature)FTIT1Renderer).Options.IsSecondary = false;
+            ((F16FanTurbineInletTemperature) FTIT1Renderer).Options.IsSecondary = false;
         }
+
         private void SetupEPUFuelRenderer()
         {
             EPUFuelRenderer = new F16EPUFuelGauge();
         }
+
         private void SetupPFLRenderer()
         {
             PFLRenderer = new F16DataEntryDisplayPilotFaultList();
         }
+
         private void SetupDEDRenderer()
         {
             DEDRenderer = new F16DataEntryDisplayPilotFaultList();
         }
+
         private void SetupCompassRenderer()
         {
             CompassRenderer = new F16Compass();
         }
+
         private void SetupCMDSPanelRenderer()
         {
             CMDSPanelRenderer = new F16CMDSPanel();
         }
+
         private void SetupCautionPanelRenderer()
         {
             CautionPanelRenderer = new F16CautionPanel();
         }
+
         private void SetupAOAIndicatorRenderer()
         {
             AOAIndicatorRenderer = new F16AngleOfAttackIndicator();
         }
+
         private void SetupAOAIndexerRenderer()
         {
             AOAIndexerRenderer = new F16AngleOfAttackIndexer();
         }
-        private void SetupAltimeterRenderer(PropertyInvoker<string> altimeterStyleProperty, PropertyInvoker<string> altimeterPressureUnitsProperty)
+
+        private void SetupAltimeterRenderer(PropertyInvoker<string> altimeterStyleProperty,
+                                            PropertyInvoker<string> altimeterPressureUnitsProperty)
         {
             AltimeterRenderer = new F16Altimeter();
 
             string altimeterSyleString = altimeterStyleProperty.GetProperty();
-            F16Altimeter.F16AltimeterOptions.F16AltimeterStyle altimeterStyle = (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)Enum.Parse(typeof(F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterSyleString);
-            ((F16Altimeter)AltimeterRenderer).Options.Style = altimeterStyle;
+            var altimeterStyle =
+                (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)
+                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterSyleString);
+            ((F16Altimeter) AltimeterRenderer).Options.Style = altimeterStyle;
 
             string pressureUnitsString = altimeterPressureUnitsProperty.GetProperty();
-            F16Altimeter.F16AltimeterOptions.PressureUnits pressureUnits = (F16Altimeter.F16AltimeterOptions.PressureUnits)Enum.Parse(typeof(F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
-            ((F16Altimeter)AltimeterRenderer).Options.PressureAltitudeUnits = pressureUnits;
+            var pressureUnits =
+                (F16Altimeter.F16AltimeterOptions.PressureUnits)
+                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
+            ((F16Altimeter) AltimeterRenderer).Options.PressureAltitudeUnits = pressureUnits;
         }
+
         private void SetupASIRenderer()
         {
             ASIRenderer = new F16AirspeedIndicator();
         }
+
         private void SetupADIRenderer()
         {
             ADIRenderer = new F16ADI();
         }
+
         private void SetupStandbyADIRenderer()
         {
             StandbyADIRenderer = new F16StandbyADI();
         }
+
         private void SetupHydARenderer()
         {
             HYDARenderer = new F16HydraulicPressureGauge();
         }
+
         private void SetupHydBRenderer()
         {
             HYDBRenderer = new F16HydraulicPressureGauge();
         }
+
         private void SetupCabinPressRenderer()
         {
             CabinPressRenderer = new F16CabinPressureAltitudeIndicator();
         }
+
         private void SetupRollTrimRenderer()
         {
             RollTrimRenderer = new F16RollTrimIndicator();
         }
+
         private void SetupPitchTrimRenderer()
         {
             PitchTrimRenderer = new F16PitchTrimIndicator();
         }
+
+        #region Nested type: InitializationParams
+
+        public class InitializationParams
+        {
+            public PropertyInvoker<string> VVIStyleProperty { get; set; }
+            public PropertyInvoker<string> AzimuthIndicatorTypeProperty { get; set; }
+            public PropertyInvoker<bool> ShowAzimuthIndicatorBezelProperty { get; set; }
+            public PropertyInvoker<bool> FuelQuantityIndicatorNeedleIsCModelProperty { get; set; }
+            public PropertyInvoker<string> ISISPressureUnitsProperty { get; set; }
+            public PropertyInvoker<string> AltimeterStyleProperty { get; set; }
+            public PropertyInvoker<string> AltimeterPressureUnitsProperty { get; set; }
+            public GDIPlusOptions GDIPlusOptions { get; set; }
+        }
+
+        #endregion
     }
 }

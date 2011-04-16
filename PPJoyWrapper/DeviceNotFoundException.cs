@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace PPJoy
 {
@@ -11,15 +9,17 @@ namespace PPJoy
     /// </summary>
     [Serializable]
     [ClassInterface(ClassInterfaceType.AutoDual)]
-    public class DeviceNotFoundException:PPJoyException
+    public class DeviceNotFoundException : PPJoyException
     {
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceNotFoundException"/> class.
         /// </summary>
         public DeviceNotFoundException()
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceNotFoundException"/> class.
         /// </summary>
@@ -28,6 +28,7 @@ namespace PPJoy
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceNotFoundException"/> class.
         /// </summary>
@@ -37,6 +38,7 @@ namespace PPJoy
             : base(message, inner)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceNotFoundException"/> class.
         /// </summary>
@@ -46,7 +48,7 @@ namespace PPJoy
             : base(info, context)
         {
         }
-        #endregion
 
+        #endregion
     }
 }

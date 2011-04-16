@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace PPJoy
@@ -20,7 +18,6 @@ namespace PPJoy
         /// </summary>
         /// <seealso cref="Mapping"/>
         public PovMapping()
-            : base()
         {
         }
 

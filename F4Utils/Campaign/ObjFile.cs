@@ -1,4 +1,5 @@
 ﻿using System;
+using Lzss;
 
 namespace F4Utils.Campaign
 {
@@ -10,11 +11,12 @@ namespace F4Utils.Campaign
 
         #endregion
 
-        protected int _version = 0;
+        protected int _version;
+
         protected ObjFile()
-            : base()
         {
         }
+
         public ObjFile(byte[] compressed, int version)
             : this()
         {
@@ -23,9 +25,10 @@ namespace F4Utils.Campaign
             byte[] expanded = Expand(compressed, out numObjectives);
             if (expanded != null) Decode(expanded, version, numObjectives);
         }
+
         protected void Decode(byte[] bytes, int version, short numObjectives)
         {
-            this.objectives = new Objective[numObjectives];
+            objectives = new Objective[numObjectives];
 
             int curByte = 0;
             curByte = 0;
@@ -33,10 +36,11 @@ namespace F4Utils.Campaign
             {
                 short thisObjectiveType = BitConverter.ToInt16(bytes, curByte);
                 curByte += 2;
-                Objective thisObjective = new Objective(bytes, ref curByte, version);
-                this.objectives[i] = thisObjective;
+                var thisObjective = new Objective(bytes, ref curByte, version);
+                objectives[i] = thisObjective;
             }
         }
+
         protected static byte[] Expand(byte[] compressed, out short numObjectives)
         {
             int curByte = 0;
@@ -48,10 +52,10 @@ namespace F4Utils.Campaign
             curByte += 4;
             if (uncompressedSize == 0) return null;
 
-            byte[] actualCompressed = new byte[compressed.Length - 10];
+            var actualCompressed = new byte[compressed.Length - 10];
             Array.Copy(compressed, 10, actualCompressed, 0, actualCompressed.Length);
             byte[] uncompressed = null;
-            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
+            uncompressed = Codec.Decompress(actualCompressed, uncompressedSize);
             return uncompressed;
         }
     }

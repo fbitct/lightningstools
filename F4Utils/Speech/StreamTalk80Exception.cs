@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 
 namespace F4Utils.Speech
 {
@@ -13,13 +10,14 @@ namespace F4Utils.Speech
     public class StreamTalk80Exception : ApplicationException
     {
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StreamTalk80Exception"/> class.
         /// </summary>
         public StreamTalk80Exception()
         {
-
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StreamTalk80Exception"/> class.
         /// </summary>
@@ -28,6 +26,7 @@ namespace F4Utils.Speech
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StreamTalk80Exception"/> class.
         /// </summary>
@@ -37,6 +36,7 @@ namespace F4Utils.Speech
             : base(message, inner)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StreamTalk80Exception"/> class.
         /// </summary>
@@ -46,7 +46,7 @@ namespace F4Utils.Speech
             : base(info, context)
         {
         }
-        #endregion
 
+        #endregion
     }
 }

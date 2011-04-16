@@ -1,13 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+
 namespace F4KeyFile
 {
     [Flags]
     [Serializable]
     [ComVisible(true)]
-    public enum KeyModifiers:int
+    public enum KeyModifiers
     {
         None = 0,
         Shift = 1,

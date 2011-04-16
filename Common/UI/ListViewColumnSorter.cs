@@ -4,7 +4,6 @@ using Common.Strings;
 
 namespace Common.UI
 {
-
     /// <summary>
     /// This class is an implementation of the 'IComparer' interface.
     /// </summary>
@@ -14,14 +13,16 @@ namespace Common.UI
         /// Specifies the column to be sorted
         /// </summary>
         private int ColumnToSort;
-        /// <summary>
-        /// Specifies the order in which to sort (i.e. 'Ascending').
-        /// </summary>
-        private SortOrder OrderOfSort;
+
         /// <summary>
         /// Case insensitive comparer object
         /// </summary>
         private StringLogicalComparer ObjectCompare;
+
+        /// <summary>
+        /// Specifies the order in which to sort (i.e. 'Ascending').
+        /// </summary>
+        private SortOrder OrderOfSort;
 
         /// <summary>
         /// Class constructor.  Initializes various elements
@@ -39,6 +40,26 @@ namespace Common.UI
         }
 
         /// <summary>
+        /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
+        /// </summary>
+        public int SortColumn
+        {
+            set { ColumnToSort = value; }
+            get { return ColumnToSort; }
+        }
+
+        /// <summary>
+        /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
+        /// </summary>
+        public SortOrder Order
+        {
+            set { OrderOfSort = value; }
+            get { return OrderOfSort; }
+        }
+
+        #region IComparer Members
+
+        /// <summary>
         /// This method is inherited from the IComparer interface.  It compares the two objects passed using a case insensitive comparison.
         /// </summary>
         /// <param name="x">First object to be compared</param>
@@ -50,11 +71,12 @@ namespace Common.UI
             ListViewItem listviewX, listviewY;
 
             // Cast the objects to be compared to ListViewItem objects
-            listviewX = (ListViewItem)x;
-            listviewY = (ListViewItem)y;
+            listviewX = (ListViewItem) x;
+            listviewY = (ListViewItem) y;
 
             // Compare the two items
-            compareResult = StringLogicalComparer.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
+            compareResult = StringLogicalComparer.Compare(listviewX.SubItems[ColumnToSort].Text,
+                                                          listviewY.SubItems[ColumnToSort].Text);
 
             // Calculate correct return value based on object comparison
             if (OrderOfSort == SortOrder.Ascending)
@@ -74,35 +96,6 @@ namespace Common.UI
             }
         }
 
-        /// <summary>
-        /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
-        /// </summary>
-        public int SortColumn
-        {
-            set
-            {
-                ColumnToSort = value;
-            }
-            get
-            {
-                return ColumnToSort;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
-        /// </summary>
-        public SortOrder Order
-        {
-            set
-            {
-                OrderOfSort = value;
-            }
-            get
-            {
-                return OrderOfSort;
-            }
-        }
-
+        #endregion
     }
 }

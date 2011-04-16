@@ -1,34 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Phcc.DeviceManager.Config;
-using System.IO;
 using log4net;
+using Phcc.DeviceManager.Config;
 
 namespace Phcc.DeviceManager.UI
 {
     public partial class frmPhccDeviceManager : Form
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(frmPhccDeviceManager));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (frmPhccDeviceManager));
 
         #endregion
 
         #region Instance variables
+
+        private bool _configIsModified;
         private ConfigurationManager _configMgr = new ConfigurationManager();
-        private string _currentConfigurationFilePath = null;
-        private bool _configIsModified = false;
+        private string _currentConfigurationFilePath;
+
         #endregion
 
         #region Constructors
+
         public frmPhccDeviceManager()
         {
             InitializeComponent();
         }
+
         #endregion
 
         private Motherboard GetSelectedMotherboard()
@@ -40,7 +42,7 @@ namespace Phcc.DeviceManager.UI
                 object currentNodeData = currentNode.Tag;
                 if (currentNodeData is Motherboard)
                 {
-                    return (Motherboard)currentNodeData;
+                    return (Motherboard) currentNodeData;
                 }
                 else
                 {
@@ -49,12 +51,13 @@ namespace Phcc.DeviceManager.UI
             }
             return null;
         }
+
         private void RemoveSelectedNode()
         {
             object currentNodeData = tvDevicesAndPeripherals.SelectedNode.Tag;
             if (currentNodeData is Motherboard)
             {
-                _configMgr.Motherboards.Remove((Motherboard)currentNodeData);
+                _configMgr.Motherboards.Remove((Motherboard) currentNodeData);
                 _configIsModified = true;
             }
             if (currentNodeData is Peripheral)
@@ -62,58 +65,19 @@ namespace Phcc.DeviceManager.UI
                 Motherboard selectedMotherboard = GetSelectedMotherboard();
                 if (selectedMotherboard != null)
                 {
-                    selectedMotherboard.Peripherals.Remove((Peripheral)currentNodeData);
+                    selectedMotherboard.Peripherals.Remove((Peripheral) currentNodeData);
                     _configIsModified = true;
                 }
             }
             RenderCurrentConfiguration();
         }
+
         private void frmConfigureDevicesAndPeripherals_Load(object sender, EventArgs e)
         {
-            this.Text = Application.ProductName + " v" + Application.ProductVersion;
+            Text = Application.ProductName + " v" + Application.ProductVersion;
             RenderCurrentConfiguration();
         }
 
-        #region Load/Save Config Files
-        private void LoadConfiguration(string configurationFilePath)
-        {
-            FileInfo fi = new FileInfo(configurationFilePath);
-            if (fi.Exists)
-            {
-                _configMgr = ConfigurationManager.Load(fi.FullName);
-                _configIsModified = false;
-            }
-            else
-            {
-                throw new FileNotFoundException(configurationFilePath);
-            }
-
-            RenderCurrentConfiguration();
-        }
-        private void SaveConfiguration(string configurationFilePath)
-        {
-            bool success = false;
-            bool keepTrying = true;
-            while (!success && keepTrying)
-            {
-                try
-                {
-                    _currentConfigurationFilePath = configurationFilePath;
-                    _configMgr.Save(configurationFilePath);
-                    _configIsModified = false;
-                    RenderCurrentConfiguration();
-                    success = true;
-                }
-                catch (Exception ex)
-                {
-                    string errorMessage = string.Format("The selected file could not be saved.\n\n  Reason: {0}", ex.Message);
-                    _log.Error(errorMessage, ex);
-                    DialogResult result = MessageBox.Show(errorMessage, Application.ProductName, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
-                    if (result == DialogResult.Cancel) keepTrying = false;
-                }
-            }
-        }
-        #endregion
         private TreeNode FindNodeForConfigElement(PhccConfigElement e)
         {
             if (e == null) return null;
@@ -127,13 +91,15 @@ namespace Phcc.DeviceManager.UI
             }
             return null;
         }
-        private static string GetHexRepresentation(byte someByte) 
+
+        private static string GetHexRepresentation(byte someByte)
         {
             string basicHexRep = someByte.ToString("X2").ToUpper();
             if (basicHexRep.Length < 2) basicHexRep = "0" + basicHexRep;
             basicHexRep = "0x" + basicHexRep;
             return basicHexRep;
         }
+
         private void RenderCurrentConfiguration()
         {
             SetTitleText();
@@ -147,7 +113,7 @@ namespace Phcc.DeviceManager.UI
                     {
                         comPort = motherboard.ComPort;
                     }
-                    TreeNode tn = new TreeNode();
+                    var tn = new TreeNode();
                     tn.Tag = motherboard;
                     tn.Text = "PHCC Motherboard (" + comPort + ")";
                     tvDevicesAndPeripherals.Nodes.Add(tn);
@@ -195,9 +161,10 @@ namespace Phcc.DeviceManager.UI
             tvDevicesAndPeripherals.ExpandAll();
             EnableDisableUIElements();
         }
+
         private void SetTitleText()
         {
-            StringBuilder titleText = new StringBuilder();
+            var titleText = new StringBuilder();
             if (_currentConfigurationFilePath != null)
             {
                 titleText.Append(new FileInfo(_currentConfigurationFilePath).Name);
@@ -209,8 +176,9 @@ namespace Phcc.DeviceManager.UI
             if (_configIsModified) titleText.Append("*");
             titleText.Append(" - ");
             titleText.Append(Application.ProductName);
-            this.Text = titleText.ToString();
+            Text = titleText.ToString();
         }
+
         private void AddPeripheralToTree(Peripheral p)
         {
             Motherboard selectedMotherboard = GetSelectedMotherboard();
@@ -221,6 +189,7 @@ namespace Phcc.DeviceManager.UI
                 SelectNodeInTreeForConfigElement(p);
             }
         }
+
         private void SelectNodeInTreeForConfigElement(PhccConfigElement e)
         {
             if (e == null) return;
@@ -231,11 +200,12 @@ namespace Phcc.DeviceManager.UI
             }
             tvDevicesAndPeripherals.Select();
         }
+
         private void AddNewPeripheral<T>() where T : Peripheral, new()
         {
-            frmPromptForPeripheralAddress prompt = new frmPromptForPeripheralAddress();
+            var prompt = new frmPromptForPeripheralAddress();
             Motherboard m = GetSelectedMotherboard();
-            if (m !=null && m.Peripherals != null)
+            if (m != null && m.Peripherals != null)
             {
                 foreach (Peripheral p in m.Peripherals)
                 {
@@ -246,16 +216,17 @@ namespace Phcc.DeviceManager.UI
             DialogResult result = prompt.ShowDialog(this);
             if (result == DialogResult.Cancel) return;
             byte baseAddress = prompt.BaseAddress;
-            T newDevice = new T() { Address = baseAddress };
+            var newDevice = new T {Address = baseAddress};
             AddPeripheralToTree(newDevice);
             _configIsModified = true;
         }
+
         private void CalibrateDoa8Servo()
         {
-            Doa8Servo servoNode = tvDevicesAndPeripherals.SelectedNode.Tag as Doa8Servo;
+            var servoNode = tvDevicesAndPeripherals.SelectedNode.Tag as Doa8Servo;
             if (servoNode != null)
             {
-                frmSelectServo selectServoDialog = new frmSelectServo();
+                var selectServoDialog = new frmSelectServo();
                 DialogResult result = selectServoDialog.ShowDialog(this);
                 if (result == DialogResult.Cancel) return;
                 int selectedServo = selectServoDialog.SelectedServo;
@@ -265,9 +236,10 @@ namespace Phcc.DeviceManager.UI
                     servoNode.ServoCalibrations = CreateDefaultServoCalibrations();
                 }
 
-                frmCalibrateServo calibrateServoDialog = new frmCalibrateServo();
-                calibrateServoDialog.Gain = (ushort)servoNode.ServoCalibrations[selectedServo - 1].Gain;
-                calibrateServoDialog.CalibrationOffset = (ushort)servoNode.ServoCalibrations[selectedServo - 1].CalibrationOffset;
+                var calibrateServoDialog = new frmCalibrateServo();
+                calibrateServoDialog.Gain = servoNode.ServoCalibrations[selectedServo - 1].Gain;
+                calibrateServoDialog.CalibrationOffset =
+                    (ushort) servoNode.ServoCalibrations[selectedServo - 1].CalibrationOffset;
 
                 result = calibrateServoDialog.ShowDialog(this);
 
@@ -277,39 +249,41 @@ namespace Phcc.DeviceManager.UI
                     if (thisServoCalibration == null)
                     {
                         thisServoCalibration = new ServoCalibration();
-                        thisServoCalibration.ServoNum = (short)selectedServo;
+                        thisServoCalibration.ServoNum = (short) selectedServo;
                     }
-                    thisServoCalibration.Gain = (byte)calibrateServoDialog.Gain;
-                    thisServoCalibration.CalibrationOffset = (short)calibrateServoDialog.CalibrationOffset;
+                    thisServoCalibration.Gain = (byte) calibrateServoDialog.Gain;
+                    thisServoCalibration.CalibrationOffset = (short) calibrateServoDialog.CalibrationOffset;
                     _configIsModified = true;
                     RenderCurrentConfiguration();
                 }
             }
         }
+
         private static List<ServoCalibration> CreateDefaultServoCalibrations()
         {
-            List<ServoCalibration> toReturn = new List<ServoCalibration>(8);
+            var toReturn = new List<ServoCalibration>(8);
             for (int i = 0; i < 8; i++)
             {
                 unchecked
                 {
-                    short defaultVal = (short)(ushort)0xE8F0;
+                    var defaultVal = (short) 0xE8F0;
                     toReturn.Add
-                    (
-                        new ServoCalibration()
-                        {
-                            ServoNum = (short)i,
-                            Gain = 200,
-                            CalibrationOffset = defaultVal
-                        }
-                    );
+                        (
+                            new ServoCalibration
+                                {
+                                    ServoNum = (short) i,
+                                    Gain = 200,
+                                    CalibrationOffset = defaultVal
+                                }
+                        );
                 }
             }
-            return toReturn;            
+            return toReturn;
         }
+
         private void tvDevicesAndPeripherals_Click(object sender, EventArgs e)
         {
-            MouseEventArgs args = (MouseEventArgs)e;
+            var args = (MouseEventArgs) e;
             if (args.Button == MouseButtons.Right)
             {
                 if (tvDevicesAndPeripherals.SelectedNode != null)
@@ -318,6 +292,7 @@ namespace Phcc.DeviceManager.UI
                 }
             }
         }
+
         private void EnableDisableUIElements()
         {
             mnuContextCalibrate.Enabled = false;
@@ -351,9 +326,10 @@ namespace Phcc.DeviceManager.UI
                 }
             }
         }
+
         private void SaveConfigurationViaDialog()
         {
-            SaveFileDialog dialog = new SaveFileDialog();
+            var dialog = new SaveFileDialog();
             dialog.AddExtension = true;
             dialog.AutoUpgradeEnabled = true;
             dialog.CheckFileExists = false;
@@ -377,9 +353,10 @@ namespace Phcc.DeviceManager.UI
                 SaveConfiguration(dialog.FileName);
             }
         }
+
         private void LoadConfigurationViaDialog()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
+            var dialog = new OpenFileDialog();
             dialog.AddExtension = true;
             dialog.AutoUpgradeEnabled = true;
             dialog.CheckFileExists = true;
@@ -403,11 +380,15 @@ namespace Phcc.DeviceManager.UI
                 LoadConfiguration(_currentConfigurationFilePath);
             }
         }
+
         private void FileNew()
         {
             if (_configIsModified)
             {
-                DialogResult result = MessageBox.Show("There are unsaved changes.  Would you like to save changes before continuing?", Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+                DialogResult result =
+                    MessageBox.Show("There are unsaved changes.  Would you like to save changes before continuing?",
+                                    Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    MessageBoxDefaultButton.Button3);
                 switch (result)
                 {
                     case DialogResult.Cancel:
@@ -426,6 +407,7 @@ namespace Phcc.DeviceManager.UI
             _configMgr = new ConfigurationManager();
             RenderCurrentConfiguration();
         }
+
         private void FileSave()
         {
             if (_currentConfigurationFilePath == null)
@@ -437,6 +419,7 @@ namespace Phcc.DeviceManager.UI
                 SaveConfiguration(_currentConfigurationFilePath);
             }
         }
+
         private DialogResult SetComPort()
         {
             Motherboard selectedMotherboard = GetSelectedMotherboard();
@@ -449,10 +432,11 @@ namespace Phcc.DeviceManager.UI
             }
             return result;
         }
+
         private DialogResult SetComPort(Motherboard motherboard)
         {
             if (motherboard == null) throw new ArgumentNullException("motherboard");
-            frmSelectCOMPort dialog = new frmSelectCOMPort();
+            var dialog = new frmSelectCOMPort();
             foreach (Motherboard m in _configMgr.Motherboards)
             {
                 if (m == motherboard) continue;
@@ -473,25 +457,26 @@ namespace Phcc.DeviceManager.UI
             }
             return result;
         }
+
         private void AddMotherboard()
         {
-            Motherboard newMotherBoard = new Motherboard();
-            DialogResult result=  SetComPort(newMotherBoard);
+            var newMotherBoard = new Motherboard();
+            DialogResult result = SetComPort(newMotherBoard);
             if (result == DialogResult.OK)
             {
                 _configMgr.Motherboards.Add(newMotherBoard);
                 _configIsModified = true;
                 RenderCurrentConfiguration();
             }
-
         }
+
         private void Calibrate()
         {
             TreeNode selectedNode = tvDevicesAndPeripherals.SelectedNode;
             if (selectedNode != null)
             {
-                object selectedNodeData=selectedNode.Tag;
-                if (selectedNodeData!=null) 
+                object selectedNodeData = selectedNode.Tag;
+                if (selectedNodeData != null)
                 {
                     if (selectedNodeData is Doa8Servo)
                     {
@@ -500,12 +485,21 @@ namespace Phcc.DeviceManager.UI
                 }
             }
         }
+
+        private void mnuContextAddMotherboard_Click(object sender, EventArgs e)
+        {
+            AddMotherboard();
+        }
+
         #region Menu click event handlers
+
         #region File Menu
+
         private void mnuFileSave_Click(object sender, EventArgs e)
         {
             FileSave();
         }
+
         private void mnuFileOpen_Click(object sender, EventArgs e)
         {
             bool success = false;
@@ -519,72 +513,94 @@ namespace Phcc.DeviceManager.UI
                 }
                 catch (Exception ex)
                 {
-                    string errorMessage = string.Format("The selected file could not be loaded.\n\n  Reason: {0}", ex.Message);
+                    string errorMessage = string.Format("The selected file could not be loaded.\n\n  Reason: {0}",
+                                                        ex.Message);
                     _log.Error(errorMessage, ex);
-                    DialogResult result = MessageBox.Show(errorMessage, Application.ProductName, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                    DialogResult result = MessageBox.Show(errorMessage, Application.ProductName,
+                                                          MessageBoxButtons.RetryCancel, MessageBoxIcon.Error,
+                                                          MessageBoxDefaultButton.Button2);
                     if (result == DialogResult.Cancel) keepTrying = false;
                 }
             }
         }
+
         private void mnuFileNew_Click(object sender, EventArgs e)
         {
             FileNew();
         }
+
         private void mnuFileExit_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
+
         #endregion
+
         #region Help Menu 
+
         private void mnuHelpAbout_Click(object sender, EventArgs e)
         {
             new frmHelpAbout().ShowDialog(this);
         }
+
         private void mnuFileSaveAs_Click(object sender, EventArgs e)
         {
             SaveConfigurationViaDialog();
         }
+
         #endregion
 
         #region Context Menu
+
         private void mnuContextSetComPort_Click(object sender, EventArgs e)
         {
             SetComPort();
         }
+
         private void mnuContextAddPeripheralDoa40Do_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<Doa40Do>();
         }
+
         private void mnuContextAddPeripheralDoaAircore_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<DoaAirCore>();
         }
+
         private void mnuContextAddPeripheralDoaStepper_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<DoaStepper>();
         }
+
         private void mnuContextAddPeripheralDoaAnOut1_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<DoaAnOut1>();
         }
+
         private void mnuContextAddPeripheralDoa7Seg_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<Doa7Seg>();
         }
+
         private void mnuContextAddPeripheralDoa8Servo_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<Doa8Servo>();
         }
+
         private void mnuContextRemove_Click(object sender, EventArgs e)
         {
             RemoveSelectedNode();
         }
+
         private void mnuContextCalibrate_Click(object sender, EventArgs e)
         {
             Calibrate();
         }
+
         #endregion
+
         #region Devices Menu
+
         private void mnuDevicesAddMotherboard_Click(object sender, EventArgs e)
         {
             AddMotherboard();
@@ -594,38 +610,47 @@ namespace Phcc.DeviceManager.UI
         {
             AddNewPeripheral<Doa40Do>();
         }
+
         private void mnuDevicesAddPeripheralDoa7Seg_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<Doa7Seg>();
         }
+
         private void mnuDevicesAddPeripheralDoa8Servo_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<Doa8Servo>();
         }
+
         private void mnuDevicesAddPeripheralDoaAircore_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<DoaAirCore>();
         }
+
         private void mnuDevicesAddPeripheralDoaAnOut1_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<DoaAnOut1>();
         }
+
         private void mnuDevicesAddPeripheralDoaStepper_Click(object sender, EventArgs e)
         {
             AddNewPeripheral<DoaStepper>();
         }
+
         private void mnuDevicesSetComPort_Click(object sender, EventArgs e)
         {
             SetComPort();
         }
+
         private void mnuDevicesCalibrate_Click(object sender, EventArgs e)
         {
             Calibrate();
         }
+
         private void mnuDevicesRemove_Click(object sender, EventArgs e)
         {
             RemoveSelectedNode();
         }
+
         #endregion
 
         private void tvDevicesAndPeripherals_AfterSelect(object sender, TreeViewEventArgs e)
@@ -635,11 +660,51 @@ namespace Phcc.DeviceManager.UI
 
         #endregion
 
-        private void mnuContextAddMotherboard_Click(object sender, EventArgs e)
+        #region Load/Save Config Files
+
+        private void LoadConfiguration(string configurationFilePath)
         {
-            AddMotherboard();
+            var fi = new FileInfo(configurationFilePath);
+            if (fi.Exists)
+            {
+                _configMgr = ConfigurationManager.Load(fi.FullName);
+                _configIsModified = false;
+            }
+            else
+            {
+                throw new FileNotFoundException(configurationFilePath);
+            }
+
+            RenderCurrentConfiguration();
         }
 
+        private void SaveConfiguration(string configurationFilePath)
+        {
+            bool success = false;
+            bool keepTrying = true;
+            while (!success && keepTrying)
+            {
+                try
+                {
+                    _currentConfigurationFilePath = configurationFilePath;
+                    _configMgr.Save(configurationFilePath);
+                    _configIsModified = false;
+                    RenderCurrentConfiguration();
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = string.Format("The selected file could not be saved.\n\n  Reason: {0}",
+                                                        ex.Message);
+                    _log.Error(errorMessage, ex);
+                    DialogResult result = MessageBox.Show(errorMessage, Application.ProductName,
+                                                          MessageBoxButtons.RetryCancel, MessageBoxIcon.Error,
+                                                          MessageBoxDefaultButton.Button2);
+                    if (result == DialogResult.Cancel) keepTrying = false;
+                }
+            }
+        }
 
+        #endregion
     }
 }

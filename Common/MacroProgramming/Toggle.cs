@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
-using Common.MacroProgramming;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
@@ -11,27 +9,114 @@ namespace Common.MacroProgramming
         Forward,
         Reverse
     }
-    [Serializable]
-    public sealed class Toggle:Chainable
-    {
-        private List<DigitalSignal> _outs= new List<DigitalSignal>();
-        private ToggleDirection _direction = ToggleDirection.Forward;
-        private int _toggleIndex = 0;
-        private DigitalSignal _in = null;
-        private DigitalSignal _reset = null;
-        private DigitalSignal _reverse = null;
 
-        public Toggle():base()
+    [Serializable]
+    public sealed class Toggle : Chainable
+    {
+        private ToggleDirection _direction = ToggleDirection.Forward;
+        private DigitalSignal _in;
+        private List<DigitalSignal> _outs = new List<DigitalSignal>();
+        private DigitalSignal _reset;
+        private DigitalSignal _reverse;
+        private int _toggleIndex;
+
+        public Toggle()
         {
             _in = new DigitalSignal();
             _reset = new DigitalSignal();
             _reverse = new DigitalSignal();
         }
 
+        public DigitalSignal In
+        {
+            get { return _in; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _in_SignalChanged;
+                _in = value;
+            }
+        }
+
+        public DigitalSignal Reverse
+        {
+            get { return _reverse; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _reverse_SignalChanged;
+                _reverse = value;
+            }
+        }
+
+        public DigitalSignal Reset
+        {
+            get { return _reset; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _reset_SignalChanged;
+                _reset = value;
+            }
+        }
+
+        public List<DigitalSignal> Outs
+        {
+            get { return _outs; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new List<DigitalSignal>();
+                }
+                _outs = value;
+            }
+        }
+
+        public ToggleDirection Direction
+        {
+            get { return _direction; }
+            set { _direction = value; }
+        }
+
+        public int ToggleIndex
+        {
+            get { return _toggleIndex; }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException("value");
+                }
+                if (_outs == null)
+                {
+                    throw new ArgumentOutOfRangeException("value");
+                }
+                if (value < _outs.Count)
+                {
+                    _toggleIndex = value;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("value");
+                }
+            }
+        }
+
         public void ResetToggleIndex()
         {
             _toggleIndex = 0;
         }
+
         public void ReverseToggleDirection()
         {
             if (_direction == ToggleDirection.Forward)
@@ -43,6 +128,7 @@ namespace Common.MacroProgramming
                 _direction = ToggleDirection.Forward;
             }
         }
+
         private void _reverse_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -50,6 +136,7 @@ namespace Common.MacroProgramming
                 ReverseToggleDirection();
             }
         }
+
         private void _reset_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -57,6 +144,7 @@ namespace Common.MacroProgramming
                 ResetToggleIndex();
             }
         }
+
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -94,7 +182,6 @@ namespace Common.MacroProgramming
                             currentOut.State = true;
                         }
                     }
-
                 }
             }
             else
@@ -111,108 +198,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        public DigitalSignal In
-        {
-            get
-            {
-                return _in;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _in_SignalChanged;
-                _in = value;
-            }
-        }
-        public DigitalSignal Reverse
-        {
-            get
-            {
-                return _reverse;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _reverse_SignalChanged;
-                _reverse = value;
-            }
-        }
-        public DigitalSignal Reset
-        {
-            get
-            {
-                return _reset;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _reset_SignalChanged;
-                _reset= value;
-            }
-        }
-
-        public List<DigitalSignal> Outs
-        {
-            get
-            {
-                return _outs;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new List<DigitalSignal>();
-                }
-                _outs = value;
-            }
-        }
-
-        public ToggleDirection Direction
-        {
-            get
-            {
-                return _direction;
-            }
-            set
-            {
-                _direction = value;
-            }
-        }
-        public int ToggleIndex
-        {
-            get
-            {
-                return _toggleIndex;
-            }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-                if (_outs == null)
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-                if (value < _outs.Count)
-                {
-                    _toggleIndex = value;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-            }
-        }
-        
     }
 }

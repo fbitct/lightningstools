@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 using Common.Imaging;
+using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
     public class F16LandingGearWheelsLights : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string GEAR_BACKGROUND_IMAGE_FILENAME = "gear.bmp";
         private const string GEAR_BACKGROUND_MASK_FILENAME = "gear_mask.bmp";
 
@@ -23,24 +22,31 @@ namespace LightningGauges.Renderers
         private const string GEAR_NOSE_GEAR_LIGHT_IMAGE_FILENAME = "nosegr.bmp";
         private const string GEAR_NOSE_GEAR_LIGHT_MASK_FILENAME = "nosegr_mask.bmp";
 
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
+
+        private static readonly object _imagesLock = new object();
         private static ImageMaskPair _background;
         private static ImageMaskPair _noseGearLight;
         private static ImageMaskPair _leftGearLight;
         private static ImageMaskPair _rightGearLight;
-        private static bool _imagesLoaded = false;
-        private bool _disposed = false;
+        private static bool _imagesLoaded;
+        private bool _disposed;
+
         #endregion
 
         public F16LandingGearWheelsLights()
-            : base()
         {
-            this.InstrumentState = new F16LandingGearWheelsLightsInstrumentState();
+            InstrumentState = new F16LandingGearWheelsLightsInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_background == null)
@@ -48,7 +54,7 @@ namespace LightningGauges.Renderers
                 _background = ImageMaskPair.CreateFromFiles(
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_BACKGROUND_IMAGE_FILENAME,
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_BACKGROUND_MASK_FILENAME
-                );
+                    );
                 _background.Use1BitAlpha = true;
             }
             if (_leftGearLight == null)
@@ -56,7 +62,7 @@ namespace LightningGauges.Renderers
                 _leftGearLight = ImageMaskPair.CreateFromFiles(
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_LEFT_GEAR_LIGHT_IMAGE_FILENAME,
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_LEFT_GEAR_LIGHT_MASK_FILENAME
-                );
+                    );
             }
 
             if (_rightGearLight == null)
@@ -64,7 +70,7 @@ namespace LightningGauges.Renderers
                 _rightGearLight = ImageMaskPair.CreateFromFiles(
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_RIGHT_GEAR_LIGHT_IMAGE_FILENAME,
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_RIGHT_GEAR_LIGHT_MASK_FILENAME
-                );
+                    );
             }
 
             if (_noseGearLight == null)
@@ -72,10 +78,35 @@ namespace LightningGauges.Renderers
                 _noseGearLight = ImageMaskPair.CreateFromFiles(
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_NOSE_GEAR_LIGHT_IMAGE_FILENAME,
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + GEAR_NOSE_GEAR_LIGHT_MASK_FILENAME
-                );
+                    );
             }
             _imagesLoaded = true;
         }
+
+        #endregion
+
+        public F16LandingGearWheelsLightsInstrumentState InstrumentState { get; set; }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16LandingGearWheelsLightsInstrumentState : InstrumentStateBase
+        {
+            public bool LeftGearDown { get; set; }
+            public bool RightGearDown { get; set; }
+            public bool NoseGearDown { get; set; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
@@ -95,7 +126,8 @@ namespace LightningGauges.Renderers
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform((float)bounds.Width / (float)width, (float)bounds.Height / (float)height); //set the initial scale transformation 
+                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                    //set the initial scale transformation 
                 g.TranslateTransform(-56, -29);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
                 GraphicsState basicState = g.Save();
@@ -106,7 +138,7 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the left gear light
-                if (this.InstrumentState.LeftGearDown)
+                if (InstrumentState.LeftGearDown)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_leftGearLight.MaskedImage, new Point(0, 0));
@@ -114,7 +146,7 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the right gear light
-                if (this.InstrumentState.RightGearDown)
+                if (InstrumentState.RightGearDown)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_rightGearLight.MaskedImage, new Point(0, 0));
@@ -122,7 +154,7 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the nose gear light
-                if (this.InstrumentState.NoseGearDown)
+                if (InstrumentState.NoseGearDown)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_noseGearLight.MaskedImage, new Point(0, 0));
@@ -133,44 +165,12 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-        public F16LandingGearWheelsLightsInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        #region Instrument State
-        [Serializable]
-        public class F16LandingGearWheelsLightsInstrumentState : InstrumentStateBase
-        {
-            public F16LandingGearWheelsLightsInstrumentState():base()
-            {
-            }
-            public bool LeftGearDown
-            {
-                get;
-                set;
-            }
-            public bool RightGearDown
-            {
-                get;
-                set;
-            }
-            public bool NoseGearDown
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
+
         ~F16LandingGearWheelsLights()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -184,7 +184,6 @@ namespace LightningGauges.Renderers
                 }
                 _disposed = true;
             }
-
         }
     }
 }

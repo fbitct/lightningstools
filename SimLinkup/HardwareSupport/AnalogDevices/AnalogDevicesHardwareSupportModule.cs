@@ -1,34 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.MacroProgramming;
-using Common.HardwareSupport;
-using System.IO;
-using log4net;
-using System.Runtime.Remoting;
-using a=global::AnalogDevices;
 using AnalogDevices;
-using System.Threading;
-using System.Windows.Forms;
+using Common.HardwareSupport;
+using Common.MacroProgramming;
+using log4net;
+using a = AnalogDevices;
+
 namespace SimLinkup.HardwareSupport.AnalogDevices
 {
-    public class AnalogDevicesHardwareSupportModule:HardwareSupportModuleBase, IDisposable
+    public class AnalogDevicesHardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(AnalogDevicesHardwareSupportModule));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (AnalogDevicesHardwareSupportModule));
+
         #endregion
 
         #region Instance variables
-        private a.DenseDacEvalBoard _device = null;
-        private bool _isDisposed=false;
-        private AnalogSignal[] _analogOutputSignals = null;
+
+        private readonly AnalogSignal[] _analogOutputSignals;
+        private DenseDacEvalBoard _device;
+        private bool _isDisposed;
+
         #endregion
 
         #region Constructors
+
         private AnalogDevicesHardwareSupportModule()
-            : base()
         {
         }
-        private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex):this()
+
+        private AnalogDevicesHardwareSupportModule(DenseDacEvalBoard device, int deviceIndex) : this()
         {
             //if (device == null) throw new ArgumentNullException("device");
             _device = device;
@@ -37,21 +39,19 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public override string FriendlyName
         {
-            get
-            {
-                return "Analog Devices AD536x/AD537x";
-            }
+            get { return "Analog Devices AD536x/AD537x"; }
         }
+
         public static IHardwareSupportModule[] GetInstances()
         {
-            List<IHardwareSupportModule> toReturn = new List<IHardwareSupportModule>();
+            var toReturn = new List<IHardwareSupportModule>();
             try
             {
                 int index = 0;
-                DenseDacEvalBoard[] boards=a.DenseDacEvalBoard.Enumerate();
+                DenseDacEvalBoard[] boards = DenseDacEvalBoard.Enumerate();
                 if (boards != null && boards.Length > 0)
                 {
-                    foreach (var device in boards)
+                    foreach (DenseDacEvalBoard device in boards)
                     {
                         if (device == null) continue;
                         device.Reset();
@@ -61,10 +61,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                         //device.Groups2Thru4Offset = 0x2000;
                         for (int j = 0; j < 40; j++)
                         {
-                            device.SetDacChannelOffset((ChannelAddress)j + 8, 0x8000);
-                            device.SetDacChannelGain((ChannelAddress)j + 8, 0xFFFF);
-                            device.SetDacChannelDataSource((ChannelAddress)j + 8, DacChannelDataSource.DataValueA);
-                            device.SetDacChannelDataValueA((ChannelAddress)j + 8, 0x7FFF);
+                            device.SetDacChannelOffset((ChannelAddress) j + 8, 0x8000);
+                            device.SetDacChannelGain((ChannelAddress) j + 8, 0xFFFF);
+                            device.SetDacChannelDataSource((ChannelAddress) j + 8, DacChannelDataSource.DataValueA);
+                            device.SetDacChannelDataValueA((ChannelAddress) j + 8, 0x7FFF);
                         }
                         device.UpdateAllDacOutputs();
                         //device.ResumeAllDacOutputs();
@@ -87,54 +87,49 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             }
             return toReturn.ToArray();
         }
+
         #endregion
-        
+
         #region Virtual Method Implementations
+
         public override AnalogSignal[] AnalogInputs
         {
-            get 
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         public override DigitalSignal[] DigitalInputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         public override AnalogSignal[] AnalogOutputs
         {
-            get
-            {
-                return _analogOutputSignals;
-            }
+            get { return _analogOutputSignals; }
         }
+
         public override DigitalSignal[] DigitalOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         #endregion
 
         #region Signals Handling
+
         #region Signal Creation
-       
-        private void CreateOutputSignals(a.DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
+
+        private void CreateOutputSignals(DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
         {
             //if (device == null) throw new ArgumentNullException("device");
-            List<AnalogSignal> analogSignalsToReturn= new List<AnalogSignal>();
+            var analogSignalsToReturn = new List<AnalogSignal>();
             for (int i = 0; i < 40; i++)
             {
-                AnalogSignal thisSignal = new AnalogSignal();
+                var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "DAC Outputs";
                 thisSignal.FriendlyName = string.Format("DAC Output #{0}", i);
                 thisSignal.Id = string.Format("AnalogDevices_AD536x/537x__DAC_OUTPUT[{0}][{1}]", deviceIndex, i);
                 thisSignal.Index = i;
-                thisSignal.PublisherObject = this; 
+                thisSignal.PublisherObject = this;
                 thisSignal.Source = device;
                 thisSignal.SourceFriendlyName = "Analog Devices AD536x/AD537x";
                 thisSignal.SourceAddress = device != null ? device.SymbolicName : null;
@@ -142,7 +137,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0.500;
-                thisSignal.SignalChanged += new AnalogSignal.AnalogSignalChangedEventHandler(DAC_OutputSignalChanged);
+                thisSignal.SignalChanged += DAC_OutputSignalChanged;
                 analogSignalsToReturn.Add(thisSignal);
             }
             analogSignals = analogSignalsToReturn.ToArray();
@@ -150,7 +145,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            UpdateOutputSignal((AnalogSignal)sender);
+            UpdateOutputSignal((AnalogSignal) sender);
         }
 
         private void UpdateOutputSignal(AnalogSignal outputSignal)
@@ -159,13 +154,15 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             {
                 if (_device != null)
                 {
-                    _device.SetDacChannelDataValueA((ChannelAddress)outputSignal.Index.Value + 8, (ushort)(outputSignal.State * (double)0xFFFF));
+                    _device.SetDacChannelDataValueA((ChannelAddress) outputSignal.Index.Value + 8,
+                                                    (ushort) (outputSignal.State*0xFFFF));
                 }
             }
         }
+
         public override void Synchronize()
         {
-            foreach (var signal in _analogOutputSignals)
+            foreach (AnalogSignal signal in _analogOutputSignals)
             {
                 UpdateOutputSignal(signal);
             }
@@ -174,10 +171,24 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 _device.UpdateAllDacOutputs();
             }
         }
+
         #endregion
+
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -187,6 +198,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -200,22 +212,12 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 if (disposing)
                 {
                     Common.Util.DisposeObject(_device); //disconnect 
-                    _device =null;
+                    _device = null;
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

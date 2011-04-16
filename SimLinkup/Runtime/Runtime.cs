@@ -1,88 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
 using System.Reflection;
-using Common.HardwareSupport;
-using Common.SimSupport;
-using SimLinkup.Scripting;
 using System.Threading;
-using log4net;
-using SimLinkup.Signals;
+using System.Windows.Forms;
+using Common.HardwareSupport;
 using Common.MacroProgramming;
-using System.Diagnostics;
+using Common.SimSupport;
+using CSScriptLibrary;
+using log4net;
+using SimLinkup.Scripting;
+using SimLinkup.Signals;
 
 namespace SimLinkup.Runtime
 {
     public class Runtime
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(Runtime));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Runtime));
+
         #endregion
+
         #region Instance variables
-        private bool _initialized = false;
-        private Script[] _setupScripts= null;
-        private Script[] _loopScripts = null;
-        private Script[] _teardownScripts = null;
-        private ScriptingContext _scriptingContext = null;
-        private bool _isRunning = false;
-        private bool _keepRunning = false;
-        private List<Chainable> _passthroughs = new List<Chainable>();
+
+        private readonly List<Chainable> _passthroughs = new List<Chainable>();
+        private bool _initialized;
+        private bool _isRunning;
+        private bool _keepRunning;
+        private Script[] _loopScripts;
+        private ScriptingContext _scriptingContext;
+        private Script[] _setupScripts;
+        private Script[] _teardownScripts;
+
         #endregion
 
         public Runtime()
-            : base()
         {
             Initialize();
         }
+
+        public bool IsRunning
+        {
+            get { return _isRunning; }
+        }
+
+        public ScriptingContext ScriptingContext
+        {
+            get { return _scriptingContext; }
+        }
+
         public void Start()
         {
             RunSetupScripts();
             MainLoop();
+        }
 
-        }
-        public bool IsRunning
-        {
-            get
-            {
-                return _isRunning;
-            }
-        }
-        public ScriptingContext ScriptingContext
-        {
-            get
-            {
-                return _scriptingContext;
-            }
-        }
         private void MainLoop()
         {
             const int MIN_LOOP_TIME = 1; //milliseconds
             _keepRunning = true;
             _isRunning = true;
-            Random rnd = new Random();
-                while (_keepRunning)
+            var rnd = new Random();
+            while (_keepRunning)
+            {
+                DateTime startTime = DateTime.Now;
+                UpdateSimSignals();
+                Application.DoEvents();
+                Synchronize();
+                Application.DoEvents();
+                if (_loopScripts != null && _loopScripts.Length > 0)
                 {
-                    DateTime startTime = DateTime.Now;
-                    UpdateSimSignals();
-                    Application.DoEvents();
-                    Synchronize();
-                    Application.DoEvents();
-                    if (_loopScripts != null && _loopScripts.Length > 0)
-                    {
-                        RunLoopScripts();
-                    }
-                    Application.DoEvents();
-                    DateTime endTime = DateTime.Now;
-                    TimeSpan timedelta = endTime.Subtract(startTime);
-                    if (timedelta.Milliseconds < MIN_LOOP_TIME)
-                    {
-                        Thread.Sleep(MIN_LOOP_TIME);
-                    }
+                    RunLoopScripts();
                 }
+                Application.DoEvents();
+                DateTime endTime = DateTime.Now;
+                TimeSpan timedelta = endTime.Subtract(startTime);
+                if (timedelta.Milliseconds < MIN_LOOP_TIME)
+                {
+                    Thread.Sleep(MIN_LOOP_TIME);
+                }
+            }
             _isRunning = false;
         }
+
         private void Synchronize()
         {
             if (_scriptingContext.HardwareSupportModules != null)
@@ -100,6 +101,7 @@ namespace SimLinkup.Runtime
                 }
             }
         }
+
         private void UpdateSimSignals()
         {
             if (_scriptingContext.SimSupportModules != null)
@@ -113,6 +115,7 @@ namespace SimLinkup.Runtime
                 }
             }
         }
+
         public void Stop()
         {
             _keepRunning = false;
@@ -130,6 +133,7 @@ namespace SimLinkup.Runtime
             RunTeardownScripts();
             _isRunning = false;
         }
+
         private void RunSetupScripts()
         {
             if (_setupScripts != null && _setupScripts.Length > 0)
@@ -138,6 +142,7 @@ namespace SimLinkup.Runtime
                 RunScripts(_setupScripts, false);
             }
         }
+
         private void RunLoopScripts()
         {
             if (_loopScripts != null && _loopScripts.Length > 0)
@@ -145,16 +150,18 @@ namespace SimLinkup.Runtime
                 RunScripts(_loopScripts, true);
             }
         }
+
         private void RunTeardownScripts()
         {
             if (_teardownScripts != null && _teardownScripts.Length > 0)
             {
-                RunScripts(_teardownScripts,false);
+                RunScripts(_teardownScripts, false);
             }
         }
+
         private void RunScripts(Script[] scripts, bool checkIsRunning)
         {
-            if (scripts == null || scripts.Length ==0) return;
+            if (scripts == null || scripts.Length == 0) return;
             foreach (Script script in scripts)
             {
                 if (script != null)
@@ -164,7 +171,7 @@ namespace SimLinkup.Runtime
                     {
                         try
                         {
-                            var invoker = scriptAssembly.GetStaticMethod();
+                            MethodDelegate invoker = scriptAssembly.GetStaticMethod();
                             if (!checkIsRunning || (checkIsRunning && _isRunning && _keepRunning))
                             {
                                 invoker.Invoke(_scriptingContext);
@@ -183,6 +190,7 @@ namespace SimLinkup.Runtime
                 Application.DoEvents();
             }
         }
+
         private void Initialize()
         {
             if (_initialized) return;
@@ -195,22 +203,23 @@ namespace SimLinkup.Runtime
 
             LoadScripts();
             InitializeMappings();
-            _initialized = true;            
+            _initialized = true;
         }
+
         private Signal ResolveSignal(Signal signalToResolve)
         {
             if (signalToResolve == null) return null;
-            foreach (var signal in this.ScriptingContext.AllSignals)
+            foreach (Signal signal in ScriptingContext.AllSignals)
             {
                 if (
-                    signal.Id !=null 
-                        && 
-                    signalToResolve.Id !=null 
-                        && 
-                        signal.Id.Trim().Equals
+                    signal.Id != null
+                    &&
+                    signalToResolve.Id != null
+                    &&
+                    signal.Id.Trim().Equals
                         (
-                                    signalToResolve.Id.Trim(), 
-                                    StringComparison.InvariantCultureIgnoreCase
+                            signalToResolve.Id.Trim(),
+                            StringComparison.InvariantCultureIgnoreCase
                         )
                     )
                 {
@@ -219,34 +228,38 @@ namespace SimLinkup.Runtime
             }
             return null;
         }
+
         private void InitializeMappings()
         {
             string appDirectory = Util.ApplicationDirectory;
-            FileInfo[] mappingFiles= new DirectoryInfo(
-                        Path.Combine(
-                            Path.Combine(appDirectory, "Content"), "Mapping")
-                    ).GetFiles("*.mapping");
-            foreach (var mappingFile in mappingFiles)
+            FileInfo[] mappingFiles = new DirectoryInfo(
+                Path.Combine(
+                    Path.Combine(appDirectory, "Content"), "Mapping")
+                ).GetFiles("*.mapping");
+            foreach (FileInfo mappingFile in mappingFiles)
             {
                 string profileToLoad = mappingFile.FullName;
                 if (!string.IsNullOrEmpty(profileToLoad) && !string.IsNullOrEmpty(profileToLoad.Trim()))
                 {
                     MappingProfile profile = MappingProfile.Load(profileToLoad);
-                    foreach (var mapping in profile.SignalMappings)
+                    foreach (SignalMapping mapping in profile.SignalMappings)
                     {
                         mapping.Source = ResolveSignal(mapping.Source);
                         mapping.Destination = ResolveSignal(mapping.Destination);
                         if (mapping.Source == null || mapping.Destination == null)
                         {
-                            _log.Warn(string.Format("A mapping defined in file {0} had an unresolvable source or destination signal.", profileToLoad));
+                            _log.Warn(
+                                string.Format(
+                                    "A mapping defined in file {0} had an unresolvable source or destination signal.",
+                                    profileToLoad));
                             continue;
                         }
                         if (mapping.Source is AnalogSignal)
                         {
-                            AnalogSignal mappingSource = mapping.Source as AnalogSignal;
-                            AnalogSignal mappingDestination = mapping.Destination as AnalogSignal;
+                            var mappingSource = mapping.Source as AnalogSignal;
+                            var mappingDestination = mapping.Destination as AnalogSignal;
 
-                            Common.MacroProgramming.AnalogPassthrough passthru = new AnalogPassthrough();
+                            var passthru = new AnalogPassthrough();
                             passthru.In = mappingSource;
                             passthru.Out = mappingDestination;
                             passthru.Refresh();
@@ -254,9 +267,9 @@ namespace SimLinkup.Runtime
                         }
                         else if (mapping.Source is DigitalSignal)
                         {
-                            DigitalSignal mappingSource = mapping.Source as DigitalSignal;
-                            DigitalSignal mappingDestination = (DigitalSignal)mapping.Destination;
-                            Common.MacroProgramming.DigitalPassthrough passthru = new DigitalPassthrough();
+                            var mappingSource = mapping.Source as DigitalSignal;
+                            var mappingDestination = (DigitalSignal) mapping.Destination;
+                            var passthru = new DigitalPassthrough();
                             passthru.In = mappingSource;
                             passthru.Out = mappingDestination;
                             passthru.Refresh();
@@ -264,9 +277,9 @@ namespace SimLinkup.Runtime
                         }
                         else if (mapping.Source is TextSignal)
                         {
-                            TextSignal mappingSource = mapping.Source as TextSignal;
-                            TextSignal mappingDestination = (TextSignal)mapping.Destination;
-                            Common.MacroProgramming.TextPassthrough passthru = new TextPassthrough();
+                            var mappingSource = mapping.Source as TextSignal;
+                            var mappingDestination = (TextSignal) mapping.Destination;
+                            var passthru = new TextPassthrough();
                             passthru.In = mappingSource;
                             passthru.Out = mappingDestination;
                             passthru.Refresh();
@@ -282,19 +295,20 @@ namespace SimLinkup.Runtime
             string appDirectory = Util.ApplicationDirectory;
 
             //get a list of sim support modules that are currently registered
-            SimSupportModuleRegistry ssmRegistry = SimSupportModuleRegistry.Load(Path.Combine(appDirectory, "SimSupportModule.registry"));
-            var modules = ssmRegistry.GetInstances();
+            SimSupportModuleRegistry ssmRegistry =
+                SimSupportModuleRegistry.Load(Path.Combine(appDirectory, "SimSupportModule.registry"));
+            List<SimSupportModule> modules = ssmRegistry.GetInstances();
             if (modules != null)
             {
-                #if TESTMODE
+#if TESTMODE
                 foreach (var module in modules)
                 {
                     ((Common.SimSupport.SimSupportModule)module).TestMode = true;
                 }
-                #else
-                #endif
+#else
+#endif
                 return modules.ToArray();
-        }
+            }
             else
             {
                 return null;
@@ -306,9 +320,10 @@ namespace SimLinkup.Runtime
             string appDirectory = Util.ApplicationDirectory;
 
             //get a list of hardware support modules that are currently registered
-            HardwareSupportModuleRegistry hsmRegistry = HardwareSupportModuleRegistry.Load(Path.Combine(appDirectory, "HardwareSupportModule.registry"));
+            HardwareSupportModuleRegistry hsmRegistry =
+                HardwareSupportModuleRegistry.Load(Path.Combine(appDirectory, "HardwareSupportModule.registry"));
 
-            var modules = hsmRegistry.GetInstances();
+            List<IHardwareSupportModule> modules = hsmRegistry.GetInstances();
             if (modules != null)
             {
                 return modules.ToArray();
@@ -328,7 +343,7 @@ namespace SimLinkup.Runtime
             ScriptRegistry scriptRegistry = ScriptRegistry.Load(scriptsRegistryFileName);
             if (scriptRegistry.SetupScripts != null)
             {
-                List<Script> setupScripts = new List<Script>();
+                var setupScripts = new List<Script>();
                 foreach (Script script in scriptRegistry.SetupScripts)
                 {
                     if (!string.IsNullOrEmpty(script.Src))
@@ -346,7 +361,7 @@ namespace SimLinkup.Runtime
 
             if (scriptRegistry.LoopScripts != null)
             {
-                List<Script> loopScripts = new List<Script>();
+                var loopScripts = new List<Script>();
                 foreach (Script script in scriptRegistry.LoopScripts)
                 {
                     if (!string.IsNullOrEmpty(script.Src))
@@ -364,7 +379,7 @@ namespace SimLinkup.Runtime
 
             if (scriptRegistry.TeardownScripts != null)
             {
-                List<Script> teardownScripts = new List<Script>();
+                var teardownScripts = new List<Script>();
                 foreach (Script script in scriptRegistry.TeardownScripts)
                 {
                     if (!string.IsNullOrEmpty(script.Src))

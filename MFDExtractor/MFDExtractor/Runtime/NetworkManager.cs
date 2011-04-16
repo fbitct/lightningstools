@@ -1,45 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using log4net;
-using F4SharedMem;
 using System.Drawing;
-using System.Net;
+using Common;
 using Common.Networking;
-using MFDExtractor.Runtime.Settings;
+using F4SharedMem;
+using log4net;
 using MFDExtractor.Networking;
+using MFDExtractor.Runtime.Settings;
 
 namespace MFDExtractor.Runtime
 {
-    internal partial class NetworkManager:IDisposable
+    internal class NetworkManager : IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(NetworkManager));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (NetworkManager));
+
         #endregion
 
         #region Instance variables
-        private bool _disposed = false;
+
+        private readonly SettingsManager _settingsManager;
+
         /// <summary>
         /// Reference to a Client object that can read data from a networked Extractor engine running
         /// in Server mode
         /// </summary>
-        private IExtractorClient _client = null;
-        private IExtractorServer _server = null;
-        private SettingsManager _settingsManager;
+        private IExtractorClient _client;
+
+        private bool _disposed;
+
+        private IExtractorServer _server;
+
         #endregion
 
-        private NetworkManager() { }
+        private NetworkManager()
+        {
+        }
 
-        public NetworkManager(SettingsManager settingsManager):this()
+        public NetworkManager(SettingsManager settingsManager) : this()
         {
             _settingsManager = settingsManager;
             SetupNetworking();
         }
+
         #region Networking Support
+
         #region Basic Network Client/Server Setup Code
+
         public void SetupNetworking()
         {
             if (_settingsManager.NetworkMode == NetworkMode.Client)
@@ -51,6 +58,7 @@ namespace MFDExtractor.Runtime
                 SetupServer();
             }
         }
+
         /// <summary>
         /// Establishes a .NET Remoting-based connection to a remote MFD Extractor server
         /// </summary>
@@ -58,13 +66,14 @@ namespace MFDExtractor.Runtime
         {
             try
             {
-                _client = new Networking.ExtractorClient(_settingsManager.ServerEndpont, _settingsManager.ServiceName);
+                _client = new ExtractorClient(_settingsManager.ServerEndpont, _settingsManager.ServiceName);
             }
             catch (Exception)
             {
                 //Debug.WriteLine(e);
             }
         }
+
         /// <summary>
         /// Opens a .NET Remoting-based network server channel that remote clients can connect to
         /// </summary>
@@ -72,18 +81,23 @@ namespace MFDExtractor.Runtime
         {
             try
             {
-                _server = new ExtractorServer(_settingsManager.ServiceName, _settingsManager.ServerEndpont.Port, _settingsManager.CompressionType, _settingsManager.ImageFormat);
+                _server = new ExtractorServer(_settingsManager.ServiceName, _settingsManager.ServerEndpont.Port,
+                                              _settingsManager.CompressionType, _settingsManager.ImageFormat);
             }
             catch (Exception)
             {
             }
         }
+
         #endregion
+
         #region MFD Network Image Transfer Code
+
         #region Outbound Transfer
+
         public void SendFlightDataToClients(FlightData flightData)
         {
-            if (_settingsManager.NetworkMode == NetworkMode.Server && _server !=null)
+            if (_settingsManager.NetworkMode == NetworkMode.Server && _server != null)
             {
                 _server.StoreFlightData(flightData);
             }
@@ -95,13 +109,16 @@ namespace MFDExtractor.Runtime
         /// <param name="image">a Bitmap representing the specified instrument</param>
         public void SendInstrumentImageToClients(string instrumentName, Image image, NetworkMode networkMode)
         {
-            if (networkMode == NetworkMode.Server && _server !=null)
+            if (networkMode == NetworkMode.Server && _server != null)
             {
                 _server.StoreInstrumentImage(instrumentName, image);
             }
         }
+
         #endregion
+
         #region Inbound Transfer
+
         public FlightData ReadFlightDataFromServer()
         {
             FlightData retrieved = null;
@@ -111,7 +128,7 @@ namespace MFDExtractor.Runtime
             }
             catch (Exception e)
             {
-                _log.Error(e.Message.ToString(), e);
+                _log.Error(e.Message, e);
             }
             return retrieved;
         }
@@ -125,18 +142,21 @@ namespace MFDExtractor.Runtime
             }
             catch (Exception e)
             {
-                _log.Error(e.Message.ToString(), e);
+                _log.Error(e.Message, e);
             }
             return retrieved;
         }
+
         public void SubmitMessageToServerFromClient(Message message)
         {
-            if (_client !=null) _client.SendMessageToServer(message);
+            if (_client != null) _client.SendMessageToServer(message);
         }
+
         public void SubmitMessageToClientFromServer(Message message)
         {
-            if (_server !=null) _server.SubmitMessageToClientFromServer(message);
+            if (_server != null) _server.SubmitMessageToClientFromServer(message);
         }
+
         public Message GetNextPendingMessageToServerFromClient()
         {
             if (_server != null)
@@ -148,6 +168,7 @@ namespace MFDExtractor.Runtime
                 return null;
             }
         }
+
         public Message GetNextPendingMessageToClientFromServer()
         {
             if (_server != null)
@@ -159,12 +180,15 @@ namespace MFDExtractor.Runtime
                 return null;
             }
         }
+
         #endregion
 
         #endregion
+
         #endregion
 
         #region Object Disposal & Destructors
+
         /// <summary>
         /// Public implementation of the IDisposable pattern
         /// </summary>
@@ -173,6 +197,7 @@ namespace MFDExtractor.Runtime
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Private implementation of the IDisposable pattern
         /// </summary>
@@ -183,16 +208,16 @@ namespace MFDExtractor.Runtime
             {
                 if (disposing)
                 {
-                    Common.Util.DisposeObject(_server);
+                    Util.DisposeObject(_server);
                     _server = null;
 
-                    Common.Util.DisposeObject(_client);
+                    Util.DisposeObject(_client);
                     _client = null;
                 }
             }
             _disposed = true;
         }
-        #endregion
 
+        #endregion
     }
 }

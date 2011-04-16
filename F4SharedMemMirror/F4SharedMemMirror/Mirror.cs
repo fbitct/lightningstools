@@ -1,49 +1,50 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
+using System.Runtime.Remoting;
 using System.Threading;
 using System.Windows.Forms;
-using System.Net;
+using F4SharedMem;
+using F4SharedMemMirror.Properties;
+using F4SharedMemMirror.Remoting;
+
 namespace F4SharedMemMirror
 {
-    public enum NetworkingMode 
+    public enum NetworkingMode
     {
         Client,
         Server
     }
-    public class Mirror:IDisposable
+
+    public class Mirror : IDisposable
     {
-        private F4SharedMem.Reader _smReader = null;
-        private volatile bool _running = false;
-        private volatile bool _disposed = false;
-        private Writer _writer = new Writer();
-        public Mirror():base()
-        {
-        }
-        public NetworkingMode NetworkingMode
-        {
-            get;
-            set;
-        }
-        public ushort PortNumber
-        {
-            get;
-            set;
-        }
-        public System.Net.IPAddress ClientIPAddress
-        {
-            get;
-            set;
-        }
+        private readonly Writer _writer = new Writer();
+        private volatile bool _disposed;
+        private volatile bool _running;
+        private Reader _smReader;
+
+        public NetworkingMode NetworkingMode { get; set; }
+        public ushort PortNumber { get; set; }
+        public IPAddress ClientIPAddress { get; set; }
+
         public bool IsRunning
         {
-            get
-            {
-                return _running;
-            }
+            get { return _running; }
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
         public void StartMirroring()
         {
-            switch (this.NetworkingMode)
+            switch (NetworkingMode)
             {
                 case NetworkingMode.Client:
                     RunClient();
@@ -55,26 +56,28 @@ namespace F4SharedMemMirror
                     break;
             }
         }
+
         public void StopMirroring()
         {
             _running = false;
         }
+
         private void RunClient()
         {
             if (_running) throw new InvalidOperationException();
             _running = true;
-            Remoting.SharedMemoryMirrorClient client = null;
+            SharedMemoryMirrorClient client = null;
             try
             {
-                string serverIPAddress = Properties.Settings.Default.ServerIPAddress;
-                string serverPortNum = Properties.Settings.Default.ServerPortNum;
+                string serverIPAddress = Settings.Default.ServerIPAddress;
+                string serverPortNum = Settings.Default.ServerPortNum;
                 int portNum = 21142;
-                Int32.TryParse((string)Properties.Settings.Default.ServerPortNum, out portNum);
+                Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
                 IPAddress serverAddress = IPAddress.Parse(serverIPAddress);
-                IPEndPoint endpoint = new IPEndPoint(serverAddress, portNum);
-                client = new F4SharedMemMirror.Remoting.SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
+                var endpoint = new IPEndPoint(serverAddress, portNum);
+                client = new SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
             }
-            catch (System.Runtime.Remoting.RemotingException e)
+            catch (RemotingException e)
             {
                 client = null;
             }
@@ -87,22 +90,22 @@ namespace F4SharedMemMirror
                     {
                         try
                         {
-                            string serverIPAddress = Properties.Settings.Default.ServerIPAddress;
-                            string serverPortNum = Properties.Settings.Default.ServerPortNum;
+                            string serverIPAddress = Settings.Default.ServerIPAddress;
+                            string serverPortNum = Settings.Default.ServerPortNum;
                             int portNum = 21142;
-                            Int32.TryParse((string)Properties.Settings.Default.ServerPortNum, out portNum);
+                            Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
                             IPAddress serverAddress = IPAddress.Parse(serverIPAddress);
-                            IPEndPoint endpoint = new IPEndPoint(serverAddress, portNum);
-                            client = new F4SharedMemMirror.Remoting.SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
+                            var endpoint = new IPEndPoint(serverAddress, portNum);
+                            client = new SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
                         }
-                        catch (System.Runtime.Remoting.RemotingException e)
+                        catch (RemotingException e)
                         {
                             client = null;
                         }
                     }
                     byte[] primaryFlightData = null;
-                    byte[] flightData2= null;
-                    byte[] osbData=null;
+                    byte[] flightData2 = null;
+                    byte[] osbData = null;
                     if (client != null)
                     {
                         try
@@ -111,7 +114,7 @@ namespace F4SharedMemMirror
                             flightData2 = client.GetFlightData2();
                             osbData = client.GetOSBData();
                         }
-                        catch (System.Runtime.Remoting.RemotingException e)
+                        catch (RemotingException e)
                         {
                             Debug.WriteLine(e);
                         }
@@ -125,7 +128,7 @@ namespace F4SharedMemMirror
                 {
                     Debug.WriteLine(e);
                 }
-                System.Threading.Thread.Sleep(Properties.Settings.Default.PollingFrequencyMillis);
+                Thread.Sleep(Settings.Default.PollingFrequencyMillis);
                 Application.DoEvents();
             }
         }
@@ -134,25 +137,25 @@ namespace F4SharedMemMirror
         {
             if (_running) throw new InvalidOperationException();
             _running = true;
-            _smReader = new F4SharedMem.Reader();
+            _smReader = new Reader();
 
-            string serverPortNum = Properties.Settings.Default.ServerPortNum;
+            string serverPortNum = Settings.Default.ServerPortNum;
             int portNum = 21142;
-            Int32.TryParse((string)Properties.Settings.Default.ServerPortNum, out portNum);
+            Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
 
             try
             {
-                F4SharedMemMirror.Remoting.SharedMemoryMirrorServer.TearDownService(portNum);
+                SharedMemoryMirrorServer.TearDownService(portNum);
             }
-            catch (System.Runtime.Remoting.RemotingException e)
+            catch (RemotingException e)
             {
             }
 
             try
             {
-                F4SharedMemMirror.Remoting.SharedMemoryMirrorServer.CreateService("F4SharedMemoryMirrorService", portNum);
+                SharedMemoryMirrorServer.CreateService("F4SharedMemoryMirrorService", portNum);
             }
-            catch (System.Runtime.Remoting.RemotingException e)
+            catch (RemotingException e)
             {
             }
 
@@ -163,23 +166,23 @@ namespace F4SharedMemMirror
                     byte[] primaryFlightData = _smReader.GetRawPrimaryFlightData();
                     byte[] flightData2 = _smReader.GetRawFlightData2();
                     byte[] osbData = _smReader.GetRawOSBData();
-                    Remoting.SharedMemoryMirrorServer.SetPrimaryFlightData(primaryFlightData);
-                    Remoting.SharedMemoryMirrorServer.SetFlightData2(flightData2);
-                    Remoting.SharedMemoryMirrorServer.SetOSBData(osbData);
-                    Thread.Sleep(Properties.Settings.Default.PollingFrequencyMillis);
+                    SharedMemoryMirrorServer.SetPrimaryFlightData(primaryFlightData);
+                    SharedMemoryMirrorServer.SetFlightData2(flightData2);
+                    SharedMemoryMirrorServer.SetOSBData(osbData);
+                    Thread.Sleep(Settings.Default.PollingFrequencyMillis);
                     Application.DoEvents();
                 }
-                catch (System.Runtime.Remoting.RemotingException e)
+                catch (RemotingException e)
                 {
                     Debug.WriteLine(e);
                 }
-            } 
+            }
 
             try
             {
-                F4SharedMemMirror.Remoting.SharedMemoryMirrorServer.TearDownService(21142);
+                SharedMemoryMirrorServer.TearDownService(21142);
             }
-            catch (System.Runtime.Remoting.RemotingException e)
+            catch (RemotingException e)
             {
             }
         }
@@ -200,7 +203,7 @@ namespace F4SharedMemMirror
                         {
                         }
                     }
-                    if (_writer != null) 
+                    if (_writer != null)
                     {
                         try
                         {
@@ -209,18 +212,11 @@ namespace F4SharedMemMirror
                         catch (Exception e)
                         {
                         }
- 
                     }
                 }
 
                 _disposed = true;
             }
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
     }
 }

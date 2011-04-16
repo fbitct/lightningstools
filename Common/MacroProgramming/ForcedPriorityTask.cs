@@ -1,20 +1,58 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class ForcedPriorityTask:Chainable
+    public sealed class ForcedPriorityTask : Chainable
     {
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
+        private DigitalSignal _in;
         private Macro _macro = new Macro();
+        private DigitalSignal _out;
 
-        public ForcedPriorityTask():base()
+        public ForcedPriorityTask()
         {
-            this.In = new DigitalSignal();
-            this.Out= new DigitalSignal();
+            In = new DigitalSignal();
+            Out = new DigitalSignal();
+        }
+
+        public Macro Macro
+        {
+            get { return _macro; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new Macro();
+                }
+                _macro = value;
+            }
+        }
+
+        public DigitalSignal Out
+        {
+            get { return _out; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _out = value;
+            }
+        }
+
+        public DigitalSignal In
+        {
+            get { return _in; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _in_SignalChanged;
+                _in = value;
+            }
         }
 
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
@@ -33,7 +71,6 @@ namespace Common.MacroProgramming
                 {
                     _out.State = true;
                 }
-
             }
             else
             {
@@ -47,54 +84,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-
-        public Macro Macro
-        {
-            get
-            {
-                return _macro;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new Macro();
-                }
-                _macro = value;
-            }
-        }
-        public DigitalSignal Out
-        {
-            get
-            {
-                return _out;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _out = value;
-            }
-        }
-        public DigitalSignal In
-        {
-            get
-            {
-                return _in;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _in_SignalChanged;
-                _in = value;
-            }
-        }
-
-        
     }
 }

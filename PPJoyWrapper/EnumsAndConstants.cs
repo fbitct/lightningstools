@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
-
 namespace PPJoy
 {
+
     #region Public Enums
+
     /// <summary>
     /// <see cref="JoystickTypes"/> defines an enumeration of all possible PPJoy joystick types.  
     /// A joystick type is a combination of controller type and interface type, as shown in the 
     /// PPJoy Control Panel.
     /// </summary>
     /// <seealso cref="Device"/>
-    public enum JoystickTypes : int
+    public enum JoystickTypes
     {
         Joystick_TheMaze = 1,
         Joystick_IanHerries = 2,
@@ -47,10 +44,11 @@ namespace PPJoy
         SNES_or_NESPad_PowerPad = 31,
         Genesis_Pad_DirectPad_Pro_V6 = 32
     }
+
     /// <summary>
     /// <see cref="JoystickSubTypes"/> defines an enumeration of all possible PPJoy joystick sub-types.
     /// </summary>
-    public enum JoystickSubTypes : int
+    public enum JoystickSubTypes
     {
         Genesis_Pad_A_B_C_Start = 10,
         Genesis_Pad_A_B_C_X_Y_Z_Start_Mode = 11,
@@ -58,13 +56,13 @@ namespace PPJoy
         NES = 111,
         NotApplicable = 0
     }
-    
+
     /// <summary>
     /// <see cref="ButtonDataSources"/> defines an enumeration of PPJoy data sources
     /// that can be used with <see cref="ButtonMapping"/> objects.  
     /// </summary>
     /// <seealso cref="ButtonMapping"/>
-    public enum ButtonDataSources : int
+    public enum ButtonDataSources
     {
         Digital0 = 0,
         Digital1 = 1,
@@ -323,13 +321,14 @@ namespace PPJoy
         Analog62Max = 254,
         None = 255
     }
+
     /// <summary>
     /// <see cref="DirectionalPovDataSources"/> defines an enumeration
     /// of PPJoy data sources that can be used with <see cref="DirectionalPovMapping"/> 
     /// objects.
     /// </summary>
     /// <seealso cref="DirectionalPovMapping"/> 
-    public enum DirectionalPovDataSources : int
+    public enum DirectionalPovDataSources
     {
         Digital0 = 0,
         Digital1 = 1,
@@ -588,13 +587,14 @@ namespace PPJoy
         Analog62Max = 254,
         None = 255
     }
+
     /// <summary>
     /// <see cref="ContinuousPovDataSources"/> defines an enumeration of 
     /// PPJoy data sources that can be used with <see cref="ContinuousPovMapping"/> 
     /// objects.
     /// </summary>
     /// <seealso cref="ContinuousPovMapping"/> 
-    public enum ContinuousPovDataSources : int
+    public enum ContinuousPovDataSources
     {
         Analog0 = 128,
         Analog1 = 129,
@@ -725,13 +725,14 @@ namespace PPJoy
         Reversed62 = 254,
         None = 255
     }
+
     /// <summary>
     /// <see cref="AxisDataSources"/> defines an enumeration of PPJoy 
     /// data sources that can be used with <see cref="AxisMapping"/>
     /// objects.
     /// </summary>
     /// <seealso cref="AxisMapping"/>
-    public enum AxisDataSources : int
+    public enum AxisDataSources
     {
         Digital0 = 0,
         Digital1 = 1,
@@ -990,6 +991,7 @@ namespace PPJoy
         Reversed62 = 254,
         None = 255
     }
+
     /// <summary>
     /// <see cref="AxisTypes"/> defines an enumeration of 
     /// Windows axis types that can be reported to 
@@ -1001,7 +1003,7 @@ namespace PPJoy
     /// <seealso cref="PovMapping"/>
     /// <seealso cref="ContinuousPovMapping"/>
     /// <seealso cref="DirectionalPovMapping"/>
-    public enum AxisTypes : int
+    public enum AxisTypes
     {
         Unknown = 0,
         X = 48,
@@ -1023,11 +1025,12 @@ namespace PPJoy
         Rudder = 186,
         Throttle = 187
     }
+
     /// <summary>
     /// <see cref="JoystickMapScope"/> defines an enumeration of scopes 
     /// to which a <see cref="MappingCollection"/> can be applied.
     /// </summary>
-    public enum JoystickMapScope : int
+    public enum JoystickMapScope
     {
         /// <summary>
         /// The <see cref="MappingCollection"/> applies to all 
@@ -1048,5 +1051,4 @@ namespace PPJoy
     }
 
     #endregion
-
 }

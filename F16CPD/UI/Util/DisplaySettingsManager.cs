@@ -4,12 +4,15 @@ using Common.Win32;
 
 namespace F16CPD
 {
-    class DisplaySettingsManager
+    internal class DisplaySettingsManager
     {
-        private int[] orientationValues = new int[4]{NativeMethods.DMDO_DEFAULT,
-														NativeMethods.DMDO_90,
-														NativeMethods.DMDO_180,
-														NativeMethods.DMDO_270};
+        private readonly int[] orientationValues = new int[4]
+                                                       {
+                                                           NativeMethods.DMDO_DEFAULT,
+                                                           NativeMethods.DMDO_90,
+                                                           NativeMethods.DMDO_180,
+                                                           NativeMethods.DMDO_270
+                                                       };
 
         private int GetSettings(ref NativeMethods.DEVMODE dm)
         {
@@ -22,10 +25,12 @@ namespace F16CPD
             // helper to wrap EnumDisplaySettings Win32 API
             return NativeMethods.EnumDisplaySettings(null, iModeNum, ref dm);
         }
+
         private void ChangeSettings(NativeMethods.DEVMODE dm)
         {
             // helper to wrap ChangeDisplaySettings Win32 API
-            if (DialogResult.Yes == MessageBox.Show("Are you sure you want to change your display setings?", "", MessageBoxButtons.YesNo))
+            if (DialogResult.Yes ==
+                MessageBox.Show("Are you sure you want to change your display setings?", "", MessageBoxButtons.YesNo))
             {
                 int iRet = NativeMethods.ChangeDisplaySettings(ref dm, 0);
                 switch (iRet)
@@ -45,7 +50,8 @@ namespace F16CPD
                         MessageBox.Show("An invalid set of flags was passed in.");
                         break;
                     case NativeMethods.DISP_CHANGE_BADPARAM:
-                        MessageBox.Show("An invalid parameter was passed in. This can include an invalid flag or combination of flags.");
+                        MessageBox.Show(
+                            "An invalid parameter was passed in. This can include an invalid flag or combination of flags.");
                         break;
                     case NativeMethods.DISP_CHANGE_NOTUPDATED:
                         MessageBox.Show("Unable to write settings to the registry.");
@@ -56,6 +62,7 @@ namespace F16CPD
                 }
             }
         }
+
         public void RotateScreenClockwise()
         {
             // obtain current settings
@@ -68,13 +75,14 @@ namespace F16CPD
             dm.dmPelsWidth = temp;
 
             // set the orientation value to what's next clockwise
-            int index = Array.IndexOf(orientationValues, (object)dm.dmDisplayOrientation);
+            int index = Array.IndexOf(orientationValues, (object) dm.dmDisplayOrientation);
             int newIndex = (index == 0) ? 3 : index - 1;
             dm.dmDisplayOrientation = orientationValues[newIndex];
 
             // switch to new settings
             ChangeSettings(dm);
         }
+
         public void RotateScreenCounterclockwise()
         {
             // obtain current settings
@@ -87,7 +95,7 @@ namespace F16CPD
             dm.dmPelsWidth = temp;
 
             // set the orientation value to what's next anti-clockwise
-            int index = Array.IndexOf(orientationValues, (object)dm.dmDisplayOrientation);
+            int index = Array.IndexOf(orientationValues, (object) dm.dmDisplayOrientation);
             int newIndex = (index == 3) ? 0 : index + 1;
             dm.dmDisplayOrientation = orientationValues[newIndex];
 

@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
     public sealed class TextPassthrough : Chainable
     {
-        private TextSignal _in = null;
-        private TextSignal _out = null;
+        private TextSignal _in;
+        private TextSignal _out;
 
         public TextPassthrough()
-            : base()
         {
-            this.In = new TextSignal();
-            this.Out = new TextSignal();
+            In = new TextSignal();
+            Out = new TextSignal();
         }
 
         public TextSignal In
         {
-            get
-            {
-                return _in;
-            }
+            get { return _in; }
             set
             {
                 if (value == null)
@@ -33,12 +27,10 @@ namespace Common.MacroProgramming
                 _in = value;
             }
         }
+
         public TextSignal Out
         {
-            get
-            {
-                return _out;
-            }
+            get { return _out; }
             set
             {
                 if (value == null)
@@ -48,10 +40,12 @@ namespace Common.MacroProgramming
                 _out = value;
             }
         }
+
         public void Refresh()
         {
             UpdateOutputValue(_in.State);
         }
+
         private void _in_SignalChanged(object sender, TextSignalChangedEventArgs e)
         {
             UpdateOutputValue(e.CurrentState);

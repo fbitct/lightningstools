@@ -1,28 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
     public sealed class AnalogPassthrough : Chainable
     {
-        private AnalogSignal _in = null;
-        private AnalogSignal _out = null;
+        private AnalogSignal _in;
+        private AnalogSignal _out;
 
         public AnalogPassthrough()
-            : base()
         {
-            this.In = new AnalogSignal();
-            this.Out= new AnalogSignal();
+            In = new AnalogSignal();
+            Out = new AnalogSignal();
         }
 
         public AnalogSignal In
         {
-            get
-            {
-                return _in;
-            }
+            get { return _in; }
             set
             {
                 if (value == null)
@@ -33,12 +27,10 @@ namespace Common.MacroProgramming
                 _in = value;
             }
         }
+
         public AnalogSignal Out
         {
-            get
-            {
-                return _out;
-            }
+            get { return _out; }
             set
             {
                 if (value == null)
@@ -48,10 +40,12 @@ namespace Common.MacroProgramming
                 _out = value;
             }
         }
+
         public void Refresh()
         {
             UpdateOutputValue(_in.State);
         }
+
         private void _in_SignalChanged(object sender, AnalogSignalChangedEventArgs e)
         {
             UpdateOutputValue(e.CurrentState);

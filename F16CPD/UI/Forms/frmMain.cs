@@ -1,42 +1,50 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Diagnostics;
-using Microsoft.VisualBasic.Devices;
 using System.Drawing;
+using System.Net;
+using System.Threading;
+using System.Windows.Forms;
+using F16CPD.Properties;
 using log4net;
+using Microsoft.VisualBasic.Devices;
+using Microsoft.Win32;
+
 namespace F16CPD.UI.Forms
 {
     public partial class frmMain : Form, IDisposable
     {
         //TODO: add option to config screen to allow setting the initial transition altitude
-        private F16CpdEngine _cpdEngine = null;
-        private static ILog _log = LogManager.GetLogger(typeof(frmMain));
-        protected bool _isDisposed = false;
+        private static readonly ILog _log = LogManager.GetLogger(typeof (frmMain));
+        private F16CpdEngine _cpdEngine;
+        protected bool _isDisposed;
+
         public frmMain()
         {
             InitializeComponent();
         }
-        public string[] CommandLineSwitches
-        {
-            get;
-            set;
-        }
+
+        public string[] CommandLineSwitches { get; set; }
+
         private void chkLaunchAtSystemStartup_CheckedChanged(object sender, EventArgs e)
         {
             UpdateWindowsStartupRegKey();
         }
+
         private void UpdateWindowsStartupRegKey()
         {
             if (chkLaunchAtSystemStartup.Checked)
             {
                 //update the Windows Registry's Run-at-startup applications list according
                 //to the new user settings
-                Computer c = new Computer();
+                var c = new Computer();
                 try
                 {
-                    using (Microsoft.Win32.RegistryKey startupKey = c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                    using (
+                        RegistryKey startupKey =
+                            c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
-                        startupKey.SetValue(Application.ProductName, Application.ExecutablePath, Microsoft.Win32.RegistryValueKind.String);
+                        startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
+                                            RegistryValueKind.String);
                     }
                 }
                 catch (Exception ex)
@@ -46,10 +54,12 @@ namespace F16CPD.UI.Forms
             }
             else
             {
-                Computer c = new Computer();
+                var c = new Computer();
                 try
                 {
-                    using (Microsoft.Win32.RegistryKey startupKey = c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                    using (
+                        RegistryKey startupKey =
+                            c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.DeleteValue(Application.ProductName, false);
                     }
@@ -59,22 +69,22 @@ namespace F16CPD.UI.Forms
                     _log.Error(ex.Message, ex);
                 }
             }
-            Properties.Settings.Default.LaunchAtWindowsStartup = chkLaunchAtSystemStartup.Checked;
+            Settings.Default.LaunchAtWindowsStartup = chkLaunchAtSystemStartup.Checked;
             F16CPD.Util.SaveCurrentProperties();
         }
+
         private void chkStartWhenLaunched_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.StartWhenLaunched = chkStartWhenLaunched.Checked;
+            Settings.Default.StartWhenLaunched = chkStartWhenLaunched.Checked;
             F16CPD.Util.SaveCurrentProperties();
-
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
             MinimizeToSystemTray();
             lblVersion.Text = "Version: " + Application.ProductVersion;
-            nfyTrayIcon.Icon = this.Icon;
-            foreach (string priority in Enum.GetNames(typeof(System.Threading.ThreadPriority)))
+            nfyTrayIcon.Icon = Icon;
+            foreach (string priority in Enum.GetNames(typeof (ThreadPriority)))
             {
                 if (priority.ToLowerInvariant() != "highest")
                 {
@@ -92,24 +102,25 @@ namespace F16CPD.UI.Forms
                 Start();
             }
         }
+
         private void LoadSettings()
         {
-            Properties.Settings.Default.Reload();
-            chkStartWhenLaunched.Checked = Properties.Settings.Default.StartWhenLaunched;
-            chkLaunchAtSystemStartup.Checked = Properties.Settings.Default.LaunchAtWindowsStartup;
-            if (!Properties.Settings.Default.RunAsClient && !Properties.Settings.Default.RunAsServer)
+            Settings.Default.Reload();
+            chkStartWhenLaunched.Checked = Settings.Default.StartWhenLaunched;
+            chkLaunchAtSystemStartup.Checked = Settings.Default.LaunchAtWindowsStartup;
+            if (!Settings.Default.RunAsClient && !Settings.Default.RunAsServer)
             {
                 rdoStandaloneMode.Checked = true;
             }
-            rdoClientMode.Checked = Properties.Settings.Default.RunAsClient;
-            rdoServerMode.Checked = Properties.Settings.Default.RunAsServer;
-            txtServerIPAddress.Text = Properties.Settings.Default.ServerIPAddress;
-            txtServerPortNum.Text = Properties.Settings.Default.ServerPortNum;
-            nudPollFrequency.Value = Properties.Settings.Default.PollingFrequencyMillis;
-            cbPriority.SelectedItem = Enum.GetName(typeof(System.Threading.ThreadPriority), Properties.Settings.Default.Priority);
-            rdoNorth360.Checked = Properties.Settings.Default.DisplayNorthAsThreeSixZero;
-            rdoNorth000.Checked = !Properties.Settings.Default.DisplayNorthAsThreeSixZero;
-            RotateFlipType rotation = Properties.Settings.Default.Rotation;
+            rdoClientMode.Checked = Settings.Default.RunAsClient;
+            rdoServerMode.Checked = Settings.Default.RunAsServer;
+            txtServerIPAddress.Text = Settings.Default.ServerIPAddress;
+            txtServerPortNum.Text = Settings.Default.ServerPortNum;
+            nudPollFrequency.Value = Settings.Default.PollingFrequencyMillis;
+            cbPriority.SelectedItem = Enum.GetName(typeof (ThreadPriority), Settings.Default.Priority);
+            rdoNorth360.Checked = Settings.Default.DisplayNorthAsThreeSixZero;
+            rdoNorth000.Checked = !Settings.Default.DisplayNorthAsThreeSixZero;
+            RotateFlipType rotation = Settings.Default.Rotation;
             if (rotation == RotateFlipType.RotateNoneFlipNone)
             {
                 cbOutputRotation.SelectedItem = "No rotation";
@@ -126,8 +137,8 @@ namespace F16CPD.UI.Forms
             {
                 cbOutputRotation.SelectedItem = "-90 degrees";
             }
-            nudCourseHeadingAdjustmentSpeed.Value = Math.Min((int)Properties.Settings.Default.FastCourseAndHeadingAdjustSpeed, 5);
-            if (Properties.Settings.Default.DisplayVerticalVelocityInDecimalThousands)
+            nudCourseHeadingAdjustmentSpeed.Value = Math.Min(Settings.Default.FastCourseAndHeadingAdjustSpeed, 5);
+            if (Settings.Default.DisplayVerticalVelocityInDecimalThousands)
             {
                 rdoVertVelocityInThousands.Checked = true;
                 rdoVertVelocityInUnitFeet.Checked = false;
@@ -138,8 +149,8 @@ namespace F16CPD.UI.Forms
                 rdoVertVelocityInUnitFeet.Checked = true;
             }
             UpdateWindowsStartupRegKey();
-
         }
+
         private void rdoClientMode_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoClientMode.Checked)
@@ -149,8 +160,8 @@ namespace F16CPD.UI.Forms
                 txtServerPortNum.Enabled = true;
                 lblPortNum.Enabled = true;
                 grpPFDOptions.Enabled = true;
-                Properties.Settings.Default.RunAsClient = true;
-                Properties.Settings.Default.RunAsServer = false;
+                Settings.Default.RunAsClient = true;
+                Settings.Default.RunAsServer = false;
                 F16CPD.Util.SaveCurrentProperties();
             }
         }
@@ -165,33 +176,36 @@ namespace F16CPD.UI.Forms
                 lblPortNum.Enabled = true;
                 grpPFDOptions.Enabled = false;
                 cmdRescueOutputWindow.Enabled = false;
-                Properties.Settings.Default.RunAsServer = true;
-                Properties.Settings.Default.RunAsClient = false;
+                Settings.Default.RunAsServer = true;
+                Settings.Default.RunAsClient = false;
                 F16CPD.Util.SaveCurrentProperties();
             }
         }
 
         private void MinimizeToSystemTray()
         {
-            this.WindowState = FormWindowState.Minimized;
-            this.ShowInTaskbar = false;
-            this.nfyTrayIcon.Visible = true;
-            this.Hide();
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
+            nfyTrayIcon.Visible = true;
+            Hide();
         }
+
         private void RestoreFromSystemTray()
         {
-            this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
-            this.nfyTrayIcon.Visible = false;
-            this.Show();
+            WindowState = FormWindowState.Normal;
+            ShowInTaskbar = true;
+            nfyTrayIcon.Visible = false;
+            Show();
         }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             Start();
         }
+
         private void Stop()
         {
-            System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
+            Thread.CurrentThread.Priority = ThreadPriority.Normal;
             btnStop.Enabled = false;
             cmdRescueOutputWindow.Enabled = false;
             mnuNfyStop.Enabled = false;
@@ -200,7 +214,7 @@ namespace F16CPD.UI.Forms
                 _cpdEngine.Stop();
                 Common.Util.DisposeObject(_cpdEngine);
             }
-            if (!Properties.Settings.Default.RunAsServer)
+            if (!Settings.Default.RunAsServer)
             {
                 grpPFDOptions.Enabled = true;
                 cbOutputRotation.Enabled = true;
@@ -214,26 +228,28 @@ namespace F16CPD.UI.Forms
             btnStart.Enabled = true;
             mnuNfyStart.Enabled = true;
             lblRotation.Enabled = true;
-
         }
+
         private void Start()
         {
-            System.Threading.Thread.CurrentThread.Priority = Properties.Settings.Default.Priority;
-            System.Net.IPAddress address = null;
+            Thread.CurrentThread.Priority = Settings.Default.Priority;
+            IPAddress address = null;
             if (rdoClientMode.Checked)
             {
                 bool validIpAddress = false;
-                validIpAddress = System.Net.IPAddress.TryParse(txtServerIPAddress.Text, out address);
+                validIpAddress = IPAddress.TryParse(txtServerIPAddress.Text, out address);
                 if (String.IsNullOrEmpty(txtServerIPAddress.Text.Trim()) || !validIpAddress)
                 {
-                    MessageBox.Show("Please enter a valid IP address for the " + Application.ProductName + " server.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter a valid IP address for the " + Application.ProductName + " server.",
+                                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     RestoreFromSystemTray();
                     txtServerIPAddress.Focus();
                     return;
                 }
                 if (String.IsNullOrEmpty(txtServerPortNum.Text.Trim()))
                 {
-                    MessageBox.Show("Please enter the port number of the " + Application.ProductName + " server.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter the port number of the " + Application.ProductName + " server.",
+                                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     RestoreFromSystemTray();
                     txtServerPortNum.Focus();
                     return;
@@ -243,7 +259,9 @@ namespace F16CPD.UI.Forms
             {
                 if (String.IsNullOrEmpty(txtServerPortNum.Text.Trim()))
                 {
-                    MessageBox.Show("Please enter the port number to publish the " + Application.ProductName + " service on.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(
+                        "Please enter the port number to publish the " + Application.ProductName + " service on.",
+                        Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     RestoreFromSystemTray();
                     txtServerPortNum.Focus();
                     return;
@@ -251,7 +269,7 @@ namespace F16CPD.UI.Forms
             }
 
             int portNum = 21153;
-            Int32.TryParse(Properties.Settings.Default.ServerPortNum, out portNum);
+            Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
             btnStart.Enabled = false;
             mnuNfyStart.Enabled = false;
             if (_cpdEngine != null)
@@ -281,7 +299,7 @@ namespace F16CPD.UI.Forms
             gbPerformanceOptions.Enabled = false;
             gbNetworkingOptions.Enabled = false;
             gbStartupOptions.Enabled = false;
-            if (!Properties.Settings.Default.RunAsServer)
+            if (!Settings.Default.RunAsServer)
             {
                 cmdRescueOutputWindow.Enabled = true;
             }
@@ -295,11 +313,11 @@ namespace F16CPD.UI.Forms
 
         private void frmMain_SizeChanged(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
                 MinimizeToSystemTray();
             }
-            else if (this.WindowState != FormWindowState.Minimized)
+            else if (WindowState != FormWindowState.Minimized)
             {
                 RestoreFromSystemTray();
             }
@@ -324,12 +342,13 @@ namespace F16CPD.UI.Forms
         {
             Quit();
         }
+
         private void Quit()
         {
             LogManager.Shutdown();
             try
             {
-                this.nfyTrayIcon.Visible = false;
+                nfyTrayIcon.Visible = false;
             }
             catch (Exception e)
             {
@@ -337,7 +356,7 @@ namespace F16CPD.UI.Forms
             }
             try
             {
-                this.Dispose();
+                Dispose();
             }
             catch (Exception e)
             {
@@ -373,21 +392,22 @@ namespace F16CPD.UI.Forms
 
         private void txtServerIPAddress_Leave(object sender, EventArgs e)
         {
-            Properties.Settings.Default.ServerIPAddress = txtServerIPAddress.Text;
+            Settings.Default.ServerIPAddress = txtServerIPAddress.Text;
             F16CPD.Util.SaveCurrentProperties();
         }
 
 
         private void cbPriority_SelectedIndexChanged(object sender, EventArgs e)
         {
-            System.Threading.ThreadPriority selectedPriority = (System.Threading.ThreadPriority)Enum.Parse(typeof(System.Threading.ThreadPriority), (string)cbPriority.SelectedItem);
-            Properties.Settings.Default.Priority = selectedPriority;
+            var selectedPriority =
+                (ThreadPriority) Enum.Parse(typeof (ThreadPriority), (string) cbPriority.SelectedItem);
+            Settings.Default.Priority = selectedPriority;
             F16CPD.Util.SaveCurrentProperties();
         }
 
         private void nudPollFrequency_ValueChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.PollingFrequencyMillis = (int)nudPollFrequency.Value;
+            Settings.Default.PollingFrequencyMillis = (int) nudPollFrequency.Value;
             F16CPD.Util.SaveCurrentProperties();
         }
 
@@ -397,13 +417,14 @@ namespace F16CPD.UI.Forms
             bool parsed = Int32.TryParse(txtServerPortNum.Text, out serverPortNum);
             if (!parsed || serverPortNum < 0 || serverPortNum > 65535)
             {
-                MessageBox.Show("Invalid port number.  Port number must be between 0 and 65535", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtServerPortNum.Text = Properties.Settings.Default.ServerPortNum;
+                MessageBox.Show("Invalid port number.  Port number must be between 0 and 65535", Application.ProductName,
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtServerPortNum.Text = Settings.Default.ServerPortNum;
                 txtServerPortNum.Focus();
             }
             else
             {
-                Properties.Settings.Default.ServerPortNum = txtServerPortNum.Text;
+                Settings.Default.ServerPortNum = txtServerPortNum.Text;
                 F16CPD.Util.SaveCurrentProperties();
             }
         }
@@ -427,57 +448,15 @@ namespace F16CPD.UI.Forms
                 txtServerPortNum.Enabled = false;
                 lblPortNum.Enabled = false;
                 grpPFDOptions.Enabled = true;
-                Properties.Settings.Default.RunAsClient = false;
-                Properties.Settings.Default.RunAsServer = false;
+                Settings.Default.RunAsClient = false;
+                Settings.Default.RunAsServer = false;
                 F16CPD.Util.SaveCurrentProperties();
             }
-
         }
-        #region Destructors
-        /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
-        /// </summary>
-        ~frmMain()
-        {
-            if (nfyTrayIcon != null)
-            {
-                nfyTrayIcon.Visible = false;
-            }
-            Dispose();
-        }
-        /// <summary>
-        /// Private implementation of Dispose()
-        /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
-        private void Dispose(bool disposing, bool myDispose) //bool myDispose is there to differentiate this method from another that it would otherwise hide
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    //dispose of managed resources here
-                    Common.Util.DisposeObject(_cpdEngine);
-                }
-            }
-            // Code to dispose the un-managed resources of the class
-            _isDisposed = true;
-
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
-        /// </summary>
-        public new void Dispose()
-        {
-            Dispose(true, true);
-            GC.SuppressFinalize(this);
-        }
-        #endregion
 
         private void cmdAssignInputs_Click(object sender, EventArgs e)
         {
-            frmInputs inputsForm = new frmInputs();
+            var inputsForm = new frmInputs();
             inputsForm.ShowDialog(this);
         }
 
@@ -488,28 +467,29 @@ namespace F16CPD.UI.Forms
                 e.Cancel = true;
                 MinimizeToSystemTray();
             }
-
         }
 
         private void rdoNorth360_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.DisplayNorthAsThreeSixZero = rdoNorth360.Checked;
+            Settings.Default.DisplayNorthAsThreeSixZero = rdoNorth360.Checked;
             F16CPD.Util.SaveCurrentProperties();
         }
 
         private void rdoNorth000_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.DisplayNorthAsThreeSixZero = !rdoNorth000.Checked;
+            Settings.Default.DisplayNorthAsThreeSixZero = !rdoNorth000.Checked;
             F16CPD.Util.SaveCurrentProperties();
         }
 
         private void cmdRescueOutputWindow_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(this, "This will move the output window to the upper left corner of the current monitor, and will reset the window size to the default size.  Would you like to continue?", Application.ProductName, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+            DialogResult result = MessageBox.Show(this,
+                                                  "This will move the output window to the upper left corner of the current monitor, and will reset the window size to the default size.  Would you like to continue?",
+                                                  Application.ProductName, MessageBoxButtons.OKCancel,
+                                                  MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.OK)
             {
-
-                RotateFlipType rotation = Properties.Settings.Default.Rotation;
+                RotateFlipType rotation = Settings.Default.Rotation;
                 Size newSize = Size.Empty;
                 if (rotation == RotateFlipType.RotateNoneFlipNone || rotation == RotateFlipType.Rotate180FlipNone)
                 {
@@ -519,7 +499,7 @@ namespace F16CPD.UI.Forms
                 {
                     newSize = new Size(600, 800);
                 }
-                Screen thisScreen = Screen.FromPoint(this.Location);
+                Screen thisScreen = Screen.FromPoint(Location);
                 _cpdEngine.Location = thisScreen.WorkingArea.Location;
                 _cpdEngine.Size = newSize;
 
@@ -529,28 +509,28 @@ namespace F16CPD.UI.Forms
 
         private void cbOutputRotation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RotateFlipType oldRotation = Properties.Settings.Default.Rotation;
+            RotateFlipType oldRotation = Settings.Default.Rotation;
             RotateFlipType newRotation = RotateFlipType.RotateNoneFlipNone;
-            if ((string)cbOutputRotation.SelectedItem == "No rotation")
+            if ((string) cbOutputRotation.SelectedItem == "No rotation")
             {
                 newRotation = RotateFlipType.RotateNoneFlipNone;
             }
-            else if ((string)cbOutputRotation.SelectedItem == "+90 degrees")
+            else if ((string) cbOutputRotation.SelectedItem == "+90 degrees")
             {
                 newRotation = RotateFlipType.Rotate90FlipNone;
             }
-            else if ((string)cbOutputRotation.SelectedItem == "+180 degrees")
+            else if ((string) cbOutputRotation.SelectedItem == "+180 degrees")
             {
                 newRotation = RotateFlipType.Rotate180FlipNone;
             }
-            else if ((string)cbOutputRotation.SelectedItem == "-90 degrees")
+            else if ((string) cbOutputRotation.SelectedItem == "-90 degrees")
             {
                 newRotation = RotateFlipType.Rotate270FlipNone;
             }
-            Properties.Settings.Default.Rotation = newRotation;
+            Settings.Default.Rotation = newRotation;
 
-            int oldWidth = Properties.Settings.Default.CpdWindowWidth;
-            int oldHeight = Properties.Settings.Default.CpdWindowHeight;
+            int oldWidth = Settings.Default.CpdWindowWidth;
+            int oldHeight = Settings.Default.CpdWindowHeight;
             int newWidth = oldWidth;
             int newHeight = oldHeight;
 
@@ -564,15 +544,15 @@ namespace F16CPD.UI.Forms
                 newWidth = Math.Max(oldHeight, oldWidth);
                 newHeight = Math.Min(oldHeight, oldWidth);
             }
-            Properties.Settings.Default.CpdWindowWidth = newWidth;
-            Properties.Settings.Default.CpdWindowHeight = newHeight;
+            Settings.Default.CpdWindowWidth = newWidth;
+            Settings.Default.CpdWindowHeight = newHeight;
 
             F16CPD.Util.SaveCurrentProperties();
         }
 
         private void nudCourseHeadingAdjustmentSpeed_ValueChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.FastCourseAndHeadingAdjustSpeed = (int)nudCourseHeadingAdjustmentSpeed.Value;
+            Settings.Default.FastCourseAndHeadingAdjustSpeed = (int) nudCourseHeadingAdjustmentSpeed.Value;
             F16CPD.Util.SaveCurrentProperties();
         }
 
@@ -580,11 +560,11 @@ namespace F16CPD.UI.Forms
         {
             if (rdoVertVelocityInThousands.Checked)
             {
-                Properties.Settings.Default.DisplayVerticalVelocityInDecimalThousands = true;
+                Settings.Default.DisplayVerticalVelocityInDecimalThousands = true;
             }
             else
             {
-                Properties.Settings.Default.DisplayVerticalVelocityInDecimalThousands = false;
+                Settings.Default.DisplayVerticalVelocityInDecimalThousands = false;
             }
             F16CPD.Util.SaveCurrentProperties();
         }
@@ -593,16 +573,59 @@ namespace F16CPD.UI.Forms
         {
             if (rdoVertVelocityInThousands.Checked)
             {
-                Properties.Settings.Default.DisplayVerticalVelocityInDecimalThousands = true;
+                Settings.Default.DisplayVerticalVelocityInDecimalThousands = true;
             }
             else
             {
-                Properties.Settings.Default.DisplayVerticalVelocityInDecimalThousands = false;
+                Settings.Default.DisplayVerticalVelocityInDecimalThousands = false;
             }
             F16CPD.Util.SaveCurrentProperties();
         }
 
+        #region Destructors
 
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up managed
+        /// and unmanaged resources used by this object before allowing garbage collection
+        /// </summary>
+        public new void Dispose()
+        {
+            Dispose(true, true);
+            GC.SuppressFinalize(this);
+        }
 
+        /// <summary>
+        /// Standard finalizer, which will call Dispose() if this object is not
+        /// manually disposed.  Ordinarily called only by the garbage collector.
+        /// </summary>
+        ~frmMain()
+        {
+            if (nfyTrayIcon != null)
+            {
+                nfyTrayIcon.Visible = false;
+            }
+            Dispose();
+        }
+
+        /// <summary>
+        /// Private implementation of Dispose()
+        /// </summary>
+        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        private void Dispose(bool disposing, bool myDispose)
+            //bool myDispose is there to differentiate this method from another that it would otherwise hide
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    //dispose of managed resources here
+                    Common.Util.DisposeObject(_cpdEngine);
+                }
+            }
+            // Code to dispose the un-managed resources of the class
+            _isDisposed = true;
+        }
+
+        #endregion
     }
 }

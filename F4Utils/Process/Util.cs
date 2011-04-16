@@ -1,35 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using System.Text;
-using Common.Win32;
-using System.IO;
-using Microsoft.Win32;
-using F4SharedMem;
-using F4KeyFile;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Threading;
+using Common.MacroProgramming;
+using Common.Win32;
+using F4KeyFile;
+using F4SharedMem;
 using log4net;
+using Microsoft.Win32;
 
 namespace F4Utils.Process
 {
     public static class Util
     {
-        private static ILog _log = LogManager.GetLogger(typeof(F4Utils.Process.Util));
-        private static KeyFile _keyFile = null;
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
+        private static KeyFile _keyFile;
         private static Dictionary<string, KeyBinding> _knownCallbacks = new Dictionary<string, KeyBinding>();
-        private static object _keySenderLock = new object();
+        private static readonly object _keySenderLock = new object();
+
         public static void ResetCurrentKeyFile()
         {
             _keyFile = null;
-            _knownCallbacks = new Dictionary<string, KeyBinding>(); 
+            _knownCallbacks = new Dictionary<string, KeyBinding>();
         }
+
         public static KeyBinding FindKeyBinding(string callback)
         {
             if (_keyFile == null) _keyFile = GetCurrentKeyFile();
             if (_keyFile == null) return null;
             if (!_knownCallbacks.ContainsKey(callback))
             {
-                KeyBinding binding = _keyFile.FindBindingForCallback(callback) as KeyBinding;
+                var binding = _keyFile.FindBindingForCallback(callback) as KeyBinding;
                 if (binding != null)
                 {
                     _knownCallbacks.Add(callback, binding);
@@ -43,22 +47,23 @@ namespace F4Utils.Process
             {
                 return null;
             }
-        }   
+        }
+
         public static void SendCallbackToFalcon(string callback)
         {
-            F4Utils.Process.Util.ActivateFalconWindow();
+            ActivateFalconWindow();
             KeyBinding binding = FindKeyBinding(callback);
             if (binding != null)
             {
-                if (F4Utils.Process.Util.IsFalconWindowForeground())
+                if (IsFalconWindowForeground())
                 {
-                    lock (_keySenderLock) 
+                    lock (_keySenderLock)
                     {
                         KeyWithModifiers primaryKeyWithModifiers = binding.Key;
                         KeyWithModifiers comboKeyWithModifiers = binding.ComboKey;
-                        
+
                         SendClearingKeystrokes();
-                        
+
                         SendUpKeystrokes(primaryKeyWithModifiers);
                         SendDownKeystrokes(primaryKeyWithModifiers);
                         SendUpKeystrokes(primaryKeyWithModifiers);
@@ -66,56 +71,59 @@ namespace F4Utils.Process
                         SendUpKeystrokes(comboKeyWithModifiers);
                         SendDownKeystrokes(comboKeyWithModifiers);
                         SendUpKeystrokes(comboKeyWithModifiers);
-                        
+
                         SendClearingKeystrokes();
                     }
                 }
             }
         }
+
         private static void SendClearingKeystrokes()
         {
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LShift, false, true);
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LMenu, false, true);
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LControl, false, true);
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.RShift, false, true);
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.RMenu, false, true);
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.RControl, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LShift, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LMenu, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LControl, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.RShift, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.RMenu, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.RControl, false, true);
         }
+
         private static void SendDownKeystrokes(KeyWithModifiers keyWithModifiers)
         {
             //send down keystrokes
             if ((keyWithModifiers.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift)
             {
-                Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LShift, true, false);
+                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LShift, true, false);
             }
             if ((keyWithModifiers.Modifiers & KeyModifiers.Alt) == KeyModifiers.Alt)
             {
-                Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LMenu, true, false);
+                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LMenu, true, false);
             }
             if ((keyWithModifiers.Modifiers & KeyModifiers.Ctrl) == KeyModifiers.Ctrl)
             {
-                Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LControl, true, false);
+                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LControl, true, false);
             }
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)keyWithModifiers.ScanCode, true, false);
+            KeyAndMouseFunctions.SendKey((ushort) keyWithModifiers.ScanCode, true, false);
         }
 
         private static void SendUpKeystrokes(KeyWithModifiers keyWithModifiers)
         {
             //send up keystrokes
-            Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)keyWithModifiers.ScanCode, false, true);
+            KeyAndMouseFunctions.SendKey((ushort) keyWithModifiers.ScanCode, false, true);
             if ((keyWithModifiers.Modifiers & KeyModifiers.Ctrl) == KeyModifiers.Ctrl)
             {
-                Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LControl, false, true);
+                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LControl, false, true);
             }
             if ((keyWithModifiers.Modifiers & KeyModifiers.Alt) == KeyModifiers.Alt)
             {
-                Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LMenu, false, true);
+                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LMenu, false, true);
             }
             if ((keyWithModifiers.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift)
             {
-                Common.MacroProgramming.KeyAndMouseFunctions.SendKey((ushort)ScanCodes.LShift, false, true);
+                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LShift, false, true);
             }
         }
+
         public static void ActivateFalconWindow()
         {
             if (!IsFalconWindowForeground())
@@ -124,7 +132,7 @@ namespace F4Utils.Process
                 if (windowHandle != IntPtr.Zero)
                 {
                     NativeMethods.SetForegroundWindow(windowHandle);
-                    System.Threading.Thread.SpinWait(20);
+                    Thread.SpinWait(20);
                 }
             }
         }
@@ -138,11 +146,11 @@ namespace F4Utils.Process
                 return foregroundWindowHandle == windowHandle;
             }
             return false;
-
         }
+
         public static string GetFalconWindowTitle()
         {
-            StringBuilder txt = new StringBuilder(NativeMethods.MAX_PATH);
+            var txt = new StringBuilder(NativeMethods.MAX_PATH);
             IntPtr windowHandle = GetFalconWindowHandle();
             string toReturn = null;
             if (windowHandle != IntPtr.Zero)
@@ -152,11 +160,13 @@ namespace F4Utils.Process
             }
             return toReturn;
         }
+
         public static bool IsFalconRunning()
         {
             IntPtr windowHandle = GetFalconWindowHandle();
             return (windowHandle != IntPtr.Zero);
         }
+
         public static string GetFalconExePath()
         {
             IntPtr windowHandle = GetFalconWindowHandle();
@@ -170,18 +180,20 @@ namespace F4Utils.Process
             }
             return toReturn;
         }
+
         public static IntPtr GetFalconWindowHandle()
         {
             IntPtr hWnd = NativeMethods.FindWindow("FalconDisplay", null);
             return hWnd;
         }
+
         public static string DetectCurrentCallsign()
         {
             string callsign = null;
             FalconDataFormats? falconDataFormat = DetectFalconFormat();
             string exePath = GetFalconExePath();
             FileVersionInfo verInfo = null;
-            if (exePath !=null) verInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(exePath);
+            if (exePath != null) verInfo = FileVersionInfo.GetVersionInfo(exePath);
 
             if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.AlliedForce)
             {
@@ -192,7 +204,9 @@ namespace F4Utils.Process
                     {
                         exePath = Path.GetDirectoryName(exePath);
                         configFolder = exePath + Path.DirectorySeparatorChar + "config";
-                        using (StreamReader reader = File.OpenText(configFolder + Path.DirectorySeparatorChar + "options.cfg"))
+                        using (
+                            StreamReader reader =
+                                File.OpenText(configFolder + Path.DirectorySeparatorChar + "options.cfg"))
                         {
                             while (!reader.EndOfStream)
                             {
@@ -209,7 +223,7 @@ namespace F4Utils.Process
                                             if (callsign != null) callsign = callsign.Trim();
                                             if (!String.IsNullOrEmpty(callsign))
                                             {
-                                                List<Byte> bytes = new List<byte>();
+                                                var bytes = new List<byte>();
                                                 List<string> byteStrings = Common.Strings.Util.Tokenize(callsign);
                                                 bool firstByte = true;
                                                 foreach (string byteString in byteStrings)
@@ -219,7 +233,7 @@ namespace F4Utils.Process
                                                         firstByte = false;
                                                         continue;
                                                     }
-                                                    byte thisByte = byte.Parse(byteString, System.Globalization.NumberStyles.HexNumber);
+                                                    byte thisByte = byte.Parse(byteString, NumberStyles.HexNumber);
                                                     bytes.Add(thisByte);
                                                 }
                                                 byte[] allBytes = bytes.ToArray();
@@ -227,7 +241,7 @@ namespace F4Utils.Process
                                                 if (!string.IsNullOrEmpty(decoded))
                                                 {
                                                     decoded = decoded.Trim();
-                                                 }
+                                                }
                                                 int nullLoc = decoded.IndexOf('\0');
                                                 if (nullLoc >= 0)
                                                 {
@@ -241,7 +255,6 @@ namespace F4Utils.Process
                                 }
                             }
                         }
-
                     }
                 }
                 catch (Exception ex)
@@ -250,24 +263,26 @@ namespace F4Utils.Process
                     callsign = "Viper";
                 }
             }
-            else if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4 && verInfo !=null && ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >=6826)|| (verInfo.ProductMajorPart > 4)))
+            else if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4 && verInfo != null &&
+                     ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) ||
+                      (verInfo.ProductMajorPart > 4)))
             {
                 try
                 {
                     RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Benchmark Sims");
-                    string[] subkeys =key.GetSubKeyNames();
+                    string[] subkeys = key.GetSubKeyNames();
                     if (subkeys != null && subkeys.Length > 0)
                     {
-                        bool callsignFound = false; 
+                        bool callsignFound = false;
                         foreach (string subkey in subkeys)
                         {
                             RegistryKey toRead = key.OpenSubKey(subkey, false);
-                            string baseDir = (string)toRead.GetValue("baseDir", null);
-                            FileInfo exePathFI = new FileInfo(exePath);
+                            var baseDir = (string) toRead.GetValue("baseDir", null);
+                            var exePathFI = new FileInfo(exePath);
                             string exeDir = exePathFI.Directory.FullName;
                             if (baseDir != null && string.Compare(baseDir, exeDir, true) == 0)
                             {
-                                callsign = Encoding.ASCII.GetString((byte[])toRead.GetValue("PilotCallsign"));
+                                callsign = Encoding.ASCII.GetString((byte[]) toRead.GetValue("PilotCallsign"));
                                 int firstNull = callsign.IndexOf('\0');
                                 callsign = callsign.Substring(0, firstNull);
                                 callsignFound = true;
@@ -285,14 +300,13 @@ namespace F4Utils.Process
                     _log.Error(ex.Message, ex);
                     callsign = "Viper";
                 }
-
             }
             else
             {
                 try
                 {
                     RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\MicroProse\Falcon\4.0");
-                    callsign = Encoding.ASCII.GetString((byte[])key.GetValue("PilotCallsign"));
+                    callsign = Encoding.ASCII.GetString((byte[]) key.GetValue("PilotCallsign"));
                     int firstNull = callsign.IndexOf('\0');
                     callsign = callsign.Substring(0, firstNull);
                 }
@@ -304,6 +318,7 @@ namespace F4Utils.Process
             }
             return callsign;
         }
+
         public static FalconDataFormats? DetectFalconFormat()
         {
             FalconDataFormats? toReturn = null;
@@ -327,7 +342,7 @@ namespace F4Utils.Process
                     toReturn = FalconDataFormats.BMS3;
                     try
                     {
-                        FileVersionInfo verInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(exePath);
+                        FileVersionInfo verInfo = FileVersionInfo.GetVersionInfo(exePath);
 
                         if (verInfo.ProductMajorPart >= 4)
                         {
@@ -346,11 +361,12 @@ namespace F4Utils.Process
             }
             return toReturn;
         }
-        public static F4KeyFile.KeyFile GetCurrentKeyFile()
+
+        public static KeyFile GetCurrentKeyFile()
         {
-            F4KeyFile.KeyFile toReturn = null;
+            KeyFile toReturn = null;
             string exeFilePath = GetFalconExePath();
-            F4SharedMem.FalconDataFormats? currentDataFormat = DetectFalconFormat();
+            FalconDataFormats? currentDataFormat = DetectFalconFormat();
             if (exeFilePath != null)
             {
                 string callsign = DetectCurrentCallsign();
@@ -402,7 +418,8 @@ namespace F4Utils.Process
                             }
                             if (nullLoc >= 0)
                             {
-                                keyFileName = Encoding.ASCII.GetString(optionsFileContents, startLoc+1, nullLoc - (startLoc+1));
+                                keyFileName = Encoding.ASCII.GetString(optionsFileContents, startLoc + 1,
+                                                                       nullLoc - (startLoc + 1));
                             }
                         }
                         if (keyFileName != null) keyFileName += ".key";
@@ -415,7 +432,7 @@ namespace F4Utils.Process
                 if (keyFileName == null) keyFileName = "keystrokes.key";
 
                 string falconKeyFilePath = configFolder + Path.DirectorySeparatorChar + keyFileName;
-                FileInfo keyFileInfo = new System.IO.FileInfo(falconKeyFilePath);
+                var keyFileInfo = new FileInfo(falconKeyFilePath);
                 if (keyFileInfo.Exists)
                 {
                     toReturn = new KeyFile(keyFileInfo);

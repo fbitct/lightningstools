@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Win32.SafeHandles;
+using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Security;
 using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 
 namespace PPJoy
 {
@@ -12,29 +12,175 @@ namespace PPJoy
     /// Provides methods for creating, retrieving, deleting, and managing details of PPJoy <see cref="Device">Device</see> objects.
     /// </summary>
     [ClassInterface(ClassInterfaceType.AutoDual)]
-    [System.Security.SuppressUnmanagedCodeSecurityAttribute()] //don't do security stack walks every time we call unmanaged (native) code
+    [SuppressUnmanagedCodeSecurity] //don't do security stack walks every time we call unmanaged (native) code
     public class DeviceManager
     {
         #region Constant and static variable declarations
+
         //apparently, the guy who wrote PPJoy decided it would be cute
         //to use the words DEAD BEEF as the hexadecimal bases for the
         //PPJoy vendor ID and for the product ID sequence base, respectively.
         private const int PPJOY_VENDOR_ID = 0xDEAD;
         private const int PPJOY_BASE_PRODUCT_ID = 0xBEEF;
-        private static string PPJOY_VENDOR_ID_STRING = Convert.ToString(PPJOY_VENDOR_ID, 16);
         private const string PPJOY_IOCTL_BASE_DEVICE = @"\\?\root#media#0000#{64c3b4c4-cdcc-49aa-99a0-5b4ae4b5b1bb}";
         private const int MAP_BYTES_PER_AXIS = 4;
         private const int MAP_BYTES_PER_BUTTON = 3;
         private const int MAP_BYTES_PER_POV = 6;
+        private static readonly string PPJOY_VENDOR_ID_STRING = Convert.ToString(PPJOY_VENDOR_ID, 16);
+
         #endregion
 
         /// <summary>
-        /// Creates an instance of the <see cref="DeviceManager">DeviceManager</see> class which can manage 
-        /// PPJoy <see cref="Device">Device</see>s. 
+        /// Gets a custom <see cref="MappingCollection"/> that defines
+        /// the broadest possible set of controls that can 
+        /// be assigned to a PPJoy <see cref="Device"/>.  The controls are
+        /// pre-set to expose the maximum capabilities that a
+        /// virtual joystick <see cref="Device"/> can express.
         /// </summary>
-        public DeviceManager()
+        /// <remarks>
+        /// The <see cref="MappingCollection"/> that will be returned will 
+        /// define a control set that includes 8 axes, 32 buttons, and 2 POVs.
+        /// <para/>Each <see cref="ButtonMapping"/> will have 
+        /// its <see cref="ButtonMapping.DataSource"/> property pre-set to
+        /// a <see cref="ButtonDataSources">ButtonDataSource</see> that 
+        /// corresponds with the <see cref="ButtonMapping"/>'s 
+        /// <see cref="Mapping.ControlNumber">ControlNumber</see> property 
+        /// value, such that the #1 button in the collection will source 
+        /// its data from <see cref="ButtonDataSources.Digital0"/>; 
+        /// the #2 button will source its data 
+        /// from <see cref="ButtonDataSources.Digital1"/>; and
+        /// so on.
+        /// <para/>Each <see cref="PovMapping"/> will be 
+        /// a <see cref="ContinuousPovMapping"/>, and will
+        /// have its <see cref="ContinuousPovMapping.DataSource"/> property set 
+        /// to <see cref="ContinuousPovDataSources.Analog8"/> for 
+        /// Pov #1, and <see cref="ContinuousPovDataSources.Analog9"/> 
+        /// for Pov #2.
+        /// <para/>
+        /// Each <see cref="AxisMapping"/> will have its 
+        /// <see cref="AxisMapping.MinDataSource"/> property set to
+        /// an <see cref="AxisDataSources">AxisDataSource</see> that 
+        /// corresponds with the <see cref="AxisMapping"/>'s 
+        /// <see cref="Mapping.ControlNumber">ControlNumber</see> property value, 
+        /// such that the #1 axis will source its data from 
+        /// <see cref="AxisDataSources.Analog0"/>; 
+        /// the #2 button will source its data 
+        /// from <see cref="AxisDataSources.Analog1"/>; and
+        /// so on.  Additionally, each <see cref="AxisMapping"/> will have 
+        /// its <see cref="AxisMapping.AxisType"/> 
+        /// property set to an <see cref="AxisTypes">AxisType</see> in such a way 
+        /// as to ensure that the defined <see cref="AxisMapping"/>s 
+        /// will include a member of each of the 
+        /// following <see cref="AxisTypes"/>:
+        /// <list type="bullet">
+        /// <item><see cref="AxisTypes.X"/></item> 
+        /// <item><see cref="AxisTypes.Y"/></item> 
+        /// <item><see cref="AxisTypes.Z"/></item> 
+        /// <item><see cref="AxisTypes.XRotation"/></item> 
+        /// <item><see cref="AxisTypes.YRotation"/></item> 
+        /// <item><see cref="AxisTypes.ZRotation"/></item> 
+        /// <item><see cref="AxisTypes.Slider"/> - #1</item> 
+        /// <item><see cref="AxisTypes.Slider"/> - #2</item> 
+        /// </list>
+        /// </remarks>
+        /// <returns>A fully-loaded <see cref="MappingCollection"/> object 
+        /// that can be assigned to a <see cref="Device"/> using 
+        /// the <see cref="Device.SetMappings(PPJoy.MappingCollection)"/> 
+        /// method.</returns>
+        /// <seealso cref="Device"/>
+        /// <seealso cref="MappingCollection"/>
+        /// <seealso cref="Mapping"/>
+        /// <seealso cref="AxisTypes"/>
+        /// <seealso cref="AxisDataSources"/>
+        /// <seealso cref="AxisMapping"/>
+        /// <seealso cref="ButtonMapping"/>
+        /// <seealso cref="ButtonDataSources"/>
+        /// <seealso cref="PovMapping"/>
+        /// <seealso cref="ContinuousPovMapping"/>
+        /// <seealso cref="ContinuousPovDataSources"/>
+        public MappingCollection IdealMappings
         {
+            get
+            {
+                //create a new mapping collection to store the results
+                var mappings = new MappingCollection();
+
+                //create a set of 32 button mappings, with the data
+                //sources set to Digital0 for the first button, Digital1 for
+                //the next button, and so forth.
+                for (int i = 0; i < 32; i++)
+                {
+                    var b = new ButtonMapping(i + 1);
+                    b.DataSource = (ButtonDataSources) i;
+                    mappings.Add(b); //add the mapping to the collecion
+                }
+
+                //create a set of 8 axis mappings, with the data
+                //sources set to Analog0 through Analog7, and 
+                //where the axis types are set to the standard
+                //axis types for that axis number so that
+                //the axes reported to Windows by a device with 
+                //these mappings applied will have 8 axes defined
+                //in the correct order for maximum utility.
+                for (int i = 0; i < 8; i++)
+                {
+                    var a = new AxisMapping(i);
+                    switch (i)
+                    {
+                        case 0:
+                            a.AxisType = AxisTypes.X;
+                            a.MinDataSource = AxisDataSources.Analog0;
+                            break;
+                        case 1:
+                            a.AxisType = AxisTypes.Y;
+                            a.MinDataSource = AxisDataSources.Analog1;
+                            break;
+                        case 2:
+                            a.AxisType = AxisTypes.Z;
+                            a.MinDataSource = AxisDataSources.Analog2;
+                            break;
+                        case 3:
+                            a.AxisType = AxisTypes.XRotation;
+                            a.MinDataSource = AxisDataSources.Analog3;
+                            break;
+                        case 4:
+                            a.AxisType = AxisTypes.YRotation;
+                            a.MinDataSource = AxisDataSources.Analog4;
+                            break;
+                        case 5:
+                            a.AxisType = AxisTypes.ZRotation;
+                            a.MinDataSource = AxisDataSources.Analog5;
+                            break;
+                        case 6:
+                            a.AxisType = AxisTypes.Slider;
+                            a.MinDataSource = AxisDataSources.Analog6;
+                            break;
+                        case 7:
+                            a.AxisType = AxisTypes.Slider;
+                            a.MinDataSource = AxisDataSources.Analog7;
+                            break;
+                        default:
+                            break;
+                    }
+                    a.MaxDataSource = AxisDataSources.None; //these are pure analog-driven axes,
+                    //so we don't need to define a Max data source value
+                    mappings.Add(a); //add the mapping to the collection
+                }
+
+                //create two continuous POV mappings, deriving their 
+                //values from Analog8 and Analog9.
+                var p = new ContinuousPovMapping(0);
+                p.DataSource = ContinuousPovDataSources.Analog8;
+                mappings.Add(p); //add the mapping to the collection
+
+                p = new ContinuousPovMapping(1);
+                p.DataSource = ContinuousPovDataSources.Analog9;
+                mappings.Add(p); //add the mapping to the collection
+
+                return mappings; //return the collection of idealized mappings
+            }
         }
+
         /// <summary>Creates and registers a new joystick <see cref="Device"/> with PPJoy.</summary>
         /// <param name="lptNum">LPT number of the <see cref="Device"/> to create/register.</param>
         /// <param name="joystickType"><see cref="JoystickTypes">JoystickType</see> of the <see cref="Device"/> to create/register.</param>
@@ -42,7 +188,6 @@ namespace PPJoy
         /// <param name="unitNum">Unit number of the <see cref="Device"/> to create/register.</param>
         public void CreateDevice(int lptNum, JoystickTypes joystickType, JoystickSubTypes subType, int unitNum)
         {
-
             //determine if a device with the specified unit number already
             //exists on the specified parallel port
             Device dev = new DeviceManager().GetDevice(lptNum, unitNum);
@@ -51,21 +196,27 @@ namespace PPJoy
             //create another device "on top" of it, so throw an exception
             if (dev != null)
             {
-                throw new DeviceAlreadyExistsException("Could not create new device -- device already exists with LPTNum:" + lptNum + ", UnitNumber:" + unitNum);
+                throw new DeviceAlreadyExistsException(
+                    "Could not create new device -- device already exists with LPTNum:" + lptNum + ", UnitNumber:" +
+                    unitNum);
             }
 
             //if the provided subtype is not valid given the type of
             //device requested, then throw an exception
             if (!IsSubTypeValidGivenJoystickType(joystickType, subType))
             {
-                throw new ArgumentException("Could not create new device with DeviceType:" + joystickType.ToString() + " and SubType:" + subType.ToString() + " because that is not a valid combination.");
+                throw new ArgumentException("Could not create new device with DeviceType:" + joystickType +
+                                            " and SubType:" + subType + " because that is not a valid combination.");
             }
 
             //if the unit number is out of range, throw an exception
             int maxUnitNumber = MaxValidUnitNumber(joystickType);
             if (unitNum > maxUnitNumber)
             {
-                throw new ArgumentOutOfRangeException("Could not create new device with DeviceType:" + joystickType.ToString() + " and UnitNumber:" + unitNum + " because the maximum unit number for devices of that type is " + maxUnitNumber);
+                throw new ArgumentOutOfRangeException("Could not create new device with DeviceType:" + joystickType +
+                                                      " and UnitNumber:" + unitNum +
+                                                      " because the maximum unit number for devices of that type is " +
+                                                      maxUnitNumber);
             }
 
             //if the unit number is less than zero, it's invalid, so throw an exception
@@ -79,14 +230,18 @@ namespace PPJoy
             //on the same parallel port (i.e. the zeroth device on that port)
             if (unitNum > 0)
             {
-                dev = new DeviceManager().GetDevice(lptNum, 0);  //check for the existance of the root device on this port
+                dev = new DeviceManager().GetDevice(lptNum, 0);
+                    //check for the existance of the root device on this port
                 if (dev != null)
                 {
                     //a root device exists, so compare its type to the specified type
                     if (joystickType != dev.DeviceType)
                     {
                         //the types don't match, so throw an exception
-                        throw new ArgumentException("Could not create new device with unit number:" + unitNum + " and DeviceType:" + joystickType.ToString() + " because the first device on the same LPT number (" + lptNum + ") is of a different DeviceType.");
+                        throw new ArgumentException("Could not create new device with unit number:" + unitNum +
+                                                    " and DeviceType:" + joystickType +
+                                                    " because the first device on the same LPT number (" + lptNum +
+                                                    ") is of a different DeviceType.");
                     }
                     //we've already checked for the existance of the root device,
                     //so now we need to verify that all other lower-numbered
@@ -104,66 +259,73 @@ namespace PPJoy
                                 //not already exist,so this means the 
                                 //supplied unit number parameter is invalid.
                                 //Throw an exception.
-                                throw new ArgumentException("Could not create new device with unit number:" + unitNum + " and DeviceType:" + joystickType.ToString() + " because the next lower unit number on the same LPT number (" + lptNum + ") does not already exist.");
+                                throw new ArgumentException("Could not create new device with unit number:" + unitNum +
+                                                            " and DeviceType:" + joystickType +
+                                                            " because the next lower unit number on the same LPT number (" +
+                                                            lptNum + ") does not already exist.");
                             }
-                        }//end for
-                    }//end if
-                }//end if
+                        } //end for
+                    } //end if
+                } //end if
                 else
                 {
                     //the root device was missing, so there's no way to create
                     //a higher-numbered device on the specified port.
                     //Throw an exception.
-                    throw new ArgumentException("Could not create new device with unit number: " + unitNum + " when no device with unit number 0 exists.");
+                    throw new ArgumentException("Could not create new device with unit number: " + unitNum +
+                                                " when no device with unit number 0 exists.");
                 }
             }
 
             //create a message payload to send to PPJoy's IOCTL interface
             //for creating a new device.
-            DeviceInfo joyData = new DeviceInfo();
+            var joyData = new DeviceInfo();
             joyData.VendorID = PPJOY_VENDOR_ID;
-            joyData.JoyType = (byte)joystickType;
-            joyData.JoySubType = GetPassableSubtype(subType); //get the subtype value to pass to PPJoy (different than the values represented by the JoystickSubTypes enumeration)
-            joyData.LPTNumber = (byte)lptNum;
-            ushort productId = GetNextFreeProductId();  //find the next free product ID starting with the lowest-possible ProductID value
+            joyData.JoyType = (byte) joystickType;
+            joyData.JoySubType = GetPassableSubtype(subType);
+                //get the subtype value to pass to PPJoy (different than the values represented by the JoystickSubTypes enumeration)
+            joyData.LPTNumber = (byte) lptNum;
+            ushort productId = GetNextFreeProductId();
+                //find the next free product ID starting with the lowest-possible ProductID value
             if (productId == 0)
             {
                 //if we couldn't find a free Product Id for whatever reason,
                 //we can't create the new Device.  Throw an exception.
-                throw new OperationFailedException("Could not create new device -- no available ProductIDs were found because the maximum number of virtual devices has already been created.");
+                throw new OperationFailedException(
+                    "Could not create new device -- no available ProductIDs were found because the maximum number of virtual devices has already been created.");
             }
             joyData.ProductID = productId;
-            joyData.UnitNumber = (byte)unitNum;
-            joyData.PortAddress = 0;  //we don't need to set the Port Address at this time.
-            joyData.Size = (uint)Marshal.SizeOf(joyData);
+            joyData.UnitNumber = (byte) unitNum;
+            joyData.PortAddress = 0; //we don't need to set the Port Address at this time.
+            joyData.Size = (uint) Marshal.SizeOf(joyData);
 
             //create a new "Add Device" message  
             //to send to PPJoy's IOCTL interface
-            AddDeviceMessage message = new AddDeviceMessage();
+            var message = new AddDeviceMessage();
             message.Persistent = 1;
             message.JoyData = joyData; //add the payload to the message
 
             //now send the message to PPJoy via the IOCTL interface
             SafeFileHandle hFileHandle = GetFileHandle(PPJOY_IOCTL_BASE_DEVICE);
-            uint bytesReturned = new uint();
+            var bytesReturned = new uint();
             IntPtr pinnedMessage = Marshal.AllocHGlobal(Marshal.SizeOf(message));
             Marshal.StructureToPtr(message, pinnedMessage, true);
-            
+
             try
             {
                 NativeMethods.DeviceIoControlSynchronous(hFileHandle,
-                   Headers.IoCtlCreatePPJoyDevice,
-                   pinnedMessage,
-                   (uint)Marshal.SizeOf(message),
-                   IntPtr.Zero, (uint)0, out bytesReturned);
+                                                         Headers.IoCtlCreatePPJoyDevice,
+                                                         pinnedMessage,
+                                                         (uint) Marshal.SizeOf(message),
+                                                         IntPtr.Zero, 0, out bytesReturned);
             }
             finally
             {
                 Marshal.FreeHGlobal(pinnedMessage);
                 CloseFileHandle(hFileHandle);
             }
-
         }
+
         /// <summary>
         /// Gets the maximum valid unit number for a given joystick type.
         /// </summary>
@@ -276,6 +438,7 @@ namespace PPJoy
             }
             return retVal;
         }
+
         /// <summary>
         /// Retrieves a <see cref="Device"/> object that matches the 
         /// specified query parameters.  
@@ -297,157 +460,7 @@ namespace PPJoy
             }
             return toReturn;
         }
-        /// <summary>
-        /// Gets a custom <see cref="MappingCollection"/> that defines
-        /// the broadest possible set of controls that can 
-        /// be assigned to a PPJoy <see cref="Device"/>.  The controls are
-        /// pre-set to expose the maximum capabilities that a
-        /// virtual joystick <see cref="Device"/> can express.
-        /// </summary>
-        /// <remarks>
-        /// The <see cref="MappingCollection"/> that will be returned will 
-        /// define a control set that includes 8 axes, 32 buttons, and 2 POVs.
-        /// <para/>Each <see cref="ButtonMapping"/> will have 
-        /// its <see cref="ButtonMapping.DataSource"/> property pre-set to
-        /// a <see cref="ButtonDataSources">ButtonDataSource</see> that 
-        /// corresponds with the <see cref="ButtonMapping"/>'s 
-        /// <see cref="Mapping.ControlNumber">ControlNumber</see> property 
-        /// value, such that the #1 button in the collection will source 
-        /// its data from <see cref="ButtonDataSources.Digital0"/>; 
-        /// the #2 button will source its data 
-        /// from <see cref="ButtonDataSources.Digital1"/>; and
-        /// so on.
-        /// <para/>Each <see cref="PovMapping"/> will be 
-        /// a <see cref="ContinuousPovMapping"/>, and will
-        /// have its <see cref="ContinuousPovMapping.DataSource"/> property set 
-        /// to <see cref="ContinuousPovDataSources.Analog8"/> for 
-        /// Pov #1, and <see cref="ContinuousPovDataSources.Analog9"/> 
-        /// for Pov #2.
-        /// <para/>
-        /// Each <see cref="AxisMapping"/> will have its 
-        /// <see cref="AxisMapping.MinDataSource"/> property set to
-        /// an <see cref="AxisDataSources">AxisDataSource</see> that 
-        /// corresponds with the <see cref="AxisMapping"/>'s 
-        /// <see cref="Mapping.ControlNumber">ControlNumber</see> property value, 
-        /// such that the #1 axis will source its data from 
-        /// <see cref="AxisDataSources.Analog0"/>; 
-        /// the #2 button will source its data 
-        /// from <see cref="AxisDataSources.Analog1"/>; and
-        /// so on.  Additionally, each <see cref="AxisMapping"/> will have 
-        /// its <see cref="AxisMapping.AxisType"/> 
-        /// property set to an <see cref="AxisTypes">AxisType</see> in such a way 
-        /// as to ensure that the defined <see cref="AxisMapping"/>s 
-        /// will include a member of each of the 
-        /// following <see cref="AxisTypes"/>:
-        /// <list type="bullet">
-        /// <item><see cref="AxisTypes.X"/></item> 
-        /// <item><see cref="AxisTypes.Y"/></item> 
-        /// <item><see cref="AxisTypes.Z"/></item> 
-        /// <item><see cref="AxisTypes.XRotation"/></item> 
-        /// <item><see cref="AxisTypes.YRotation"/></item> 
-        /// <item><see cref="AxisTypes.ZRotation"/></item> 
-        /// <item><see cref="AxisTypes.Slider"/> - #1</item> 
-        /// <item><see cref="AxisTypes.Slider"/> - #2</item> 
-        /// </list>
-        /// </remarks>
-        /// <returns>A fully-loaded <see cref="MappingCollection"/> object 
-        /// that can be assigned to a <see cref="Device"/> using 
-        /// the <see cref="Device.SetMappings(PPJoy.MappingCollection)"/> 
-        /// method.</returns>
-        /// <seealso cref="Device"/>
-        /// <seealso cref="MappingCollection"/>
-        /// <seealso cref="Mapping"/>
-        /// <seealso cref="AxisTypes"/>
-        /// <seealso cref="AxisDataSources"/>
-        /// <seealso cref="AxisMapping"/>
-        /// <seealso cref="ButtonMapping"/>
-        /// <seealso cref="ButtonDataSources"/>
-        /// <seealso cref="PovMapping"/>
-        /// <seealso cref="ContinuousPovMapping"/>
-        /// <seealso cref="ContinuousPovDataSources"/>
-        public MappingCollection IdealMappings
-        {
-            get
-            {
-                //create a new mapping collection to store the results
-                MappingCollection mappings = new MappingCollection();
 
-                //create a set of 32 button mappings, with the data
-                //sources set to Digital0 for the first button, Digital1 for
-                //the next button, and so forth.
-                for (int i = 0; i < 32; i++)
-                {
-                    ButtonMapping b = new ButtonMapping(i + 1);
-                    b.DataSource = (ButtonDataSources)i;
-                    mappings.Add(b); //add the mapping to the collecion
-                }
-
-                //create a set of 8 axis mappings, with the data
-                //sources set to Analog0 through Analog7, and 
-                //where the axis types are set to the standard
-                //axis types for that axis number so that
-                //the axes reported to Windows by a device with 
-                //these mappings applied will have 8 axes defined
-                //in the correct order for maximum utility.
-                for (int i = 0; i < 8; i++)
-                {
-                    AxisMapping a = new AxisMapping(i);
-                    switch (i)
-                    {
-                        case 0:
-                            a.AxisType = AxisTypes.X;
-                            a.MinDataSource = AxisDataSources.Analog0;
-                            break;
-                        case 1:
-                            a.AxisType = AxisTypes.Y;
-                            a.MinDataSource = AxisDataSources.Analog1;
-                            break;
-                        case 2:
-                            a.AxisType = AxisTypes.Z;
-                            a.MinDataSource = AxisDataSources.Analog2;
-                            break;
-                        case 3:
-                            a.AxisType = AxisTypes.XRotation;
-                            a.MinDataSource = AxisDataSources.Analog3;
-                            break;
-                        case 4:
-                            a.AxisType = AxisTypes.YRotation;
-                            a.MinDataSource = AxisDataSources.Analog4;
-                            break;
-                        case 5:
-                            a.AxisType = AxisTypes.ZRotation;
-                            a.MinDataSource = AxisDataSources.Analog5;
-                            break;
-                        case 6:
-                            a.AxisType = AxisTypes.Slider;
-                            a.MinDataSource = AxisDataSources.Analog6;
-                            break;
-                        case 7:
-                            a.AxisType = AxisTypes.Slider;
-                            a.MinDataSource = AxisDataSources.Analog7;
-                            break;
-                        default:
-                            break;
-                    }
-                    a.MaxDataSource = AxisDataSources.None;  //these are pure analog-driven axes,
-                    //so we don't need to define a Max data source value
-                    mappings.Add(a); //add the mapping to the collection
-                }
-
-                //create two continuous POV mappings, deriving their 
-                //values from Analog8 and Analog9.
-                ContinuousPovMapping p = new ContinuousPovMapping(0);
-                p.DataSource = ContinuousPovDataSources.Analog8;
-                mappings.Add(p);  //add the mapping to the collection
-
-                p = new ContinuousPovMapping(1);
-                p.DataSource = ContinuousPovDataSources.Analog9;
-                mappings.Add(p); //add the mapping to the collection
-
-                return mappings;  //return the collection of idealized mappings
-            }
-        }
-        
         /// <summary>
         /// Deletes all registered PPJoy joystick <see cref="Device"/>s.
         /// </summary>
@@ -466,7 +479,7 @@ namespace PPJoy
                 dev.Delete(removeDirectInput, removeDriver);
             }
         }
-        
+
         /// <summary>
         /// Enumerates all defined PPJoy <see cref="Device"/>s.
         /// </summary>
@@ -476,15 +489,16 @@ namespace PPJoy
         {
             //send an "Enumerate Devices" message to PPJoy via the IOCTL interface
             SafeFileHandle hFileHandle = GetFileHandle(PPJOY_IOCTL_BASE_DEVICE);
-            byte[] outBuffer = new byte[512];
-            uint bytesReturned = new uint();
+            var outBuffer = new byte[512];
+            var bytesReturned = new uint();
             GCHandle outBufferHandle = GCHandle.Alloc(outBuffer, GCHandleType.Pinned);
             try
             {
                 NativeMethods.DeviceIoControlSynchronous(hFileHandle,
-                   Headers.IoCtlEnumeratePPJoyDevices,
-                   IntPtr.Zero, (uint)0,
-                   Marshal.UnsafeAddrOfPinnedArrayElement(outBuffer, 0), (uint)outBuffer.Length, out bytesReturned);
+                                                         Headers.IoCtlEnumeratePPJoyDevices,
+                                                         IntPtr.Zero, 0,
+                                                         Marshal.UnsafeAddrOfPinnedArrayElement(outBuffer, 0),
+                                                         (uint) outBuffer.Length, out bytesReturned);
             }
             finally
             {
@@ -492,10 +506,11 @@ namespace PPJoy
                 CloseFileHandle(hFileHandle);
             }
             //convert the data returned from the IOCTL call to an EnumerateDevicesMessage data object
-            EnumerateDevicesMessage joysticksData = (EnumerateDevicesMessage)Util.RawDataToObject(ref outBuffer, typeof(EnumerateDevicesMessage));
+            var joysticksData =
+                (EnumerateDevicesMessage) Util.RawDataToObject(ref outBuffer, typeof (EnumerateDevicesMessage));
 
             //create a List object to hold the list of devices that were returned
-            List<Device> devicesList = new List<Device>();
+            var devicesList = new List<Device>();
 
             //for each unique joystick discovered, create a new Device object
             //to represent that device, and add it to the list of devices
@@ -508,10 +523,9 @@ namespace PPJoy
             }
 
             //return the list of devices to the caller
-            return (Device[])devicesList.ToArray();
-
+            return devicesList.ToArray();
         }
-        
+
         /// <summary>
         /// Deletes a <see cref="Device"/> from PPJoy.
         /// </summary>
@@ -525,8 +539,9 @@ namespace PPJoy
         /// the <see cref="Device"/>'s drivers will not be unregistered from the system.</param>
         public void DeleteDevice(Device device, bool removeDirectInput, bool removeDriver)
         {
-            int currentRemoveDirectInputSetting; //stores the current value of the removeDirectInput registry setting used by PPJoy
-            int currentRemoveDriverSetting;  //holds the current value of the removeDriver registry setting used by PPJoy
+            int currentRemoveDirectInputSetting;
+                //stores the current value of the removeDirectInput registry setting used by PPJoy
+            int currentRemoveDriverSetting; //holds the current value of the removeDriver registry setting used by PPJoy
 
             //read from the registry to determine how PPJoy is currently
             //configured as far as defaults for deleting devices
@@ -543,9 +558,12 @@ namespace PPJoy
                 catch (Exception)
                 {
                 }
-                currentRemoveDirectInputSetting = (int)Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy").GetValue("RemoveDirectInput", removeDirectInput ? 1 : 0);
+                currentRemoveDirectInputSetting =
+                    (int)
+                    Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy").GetValue("RemoveDirectInput",
+                                                                                     removeDirectInput ? 1 : 0);
             }
-            catch (System.IO.IOException)
+            catch (IOException)
             {
                 //if there's no current value readable, we'll use a default assumption
                 currentRemoveDirectInputSetting = removeDirectInput ? 1 : 0;
@@ -566,9 +584,12 @@ namespace PPJoy
                 catch (Exception)
                 {
                 }
-                currentRemoveDriverSetting = (int)Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy").GetValue("RemoveDriver", removeDriver ? 1 : 0);
+                currentRemoveDriverSetting =
+                    (int)
+                    Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy").GetValue("RemoveDriver",
+                                                                                     removeDriver ? 1 : 0);
             }
-            catch (System.IO.IOException)
+            catch (IOException)
             {
                 //if there's no current value readable, we'll use a default assumption
                 currentRemoveDriverSetting = removeDriver ? 1 : 0;
@@ -583,11 +604,12 @@ namespace PPJoy
             catch (Exception)
             {
             }
-            Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDirectInput", removeDirectInput);
+            Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDirectInput",
+                                                                                   removeDirectInput);
             Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDriver", removeDriver);
 
             //create an IOCTL "Remove Device" message to send to PPJoy
-            RemoveDeviceMessage message = new RemoveDeviceMessage();
+            var message = new RemoveDeviceMessage();
             message.JoyData = GetDeviceInfoFromDevice(device);
             message.JoyData.JoySubType = 0; //doesn't need to be filled
             message.JoyData.PortAddress = 0; //doesn't need to be filled
@@ -596,17 +618,17 @@ namespace PPJoy
 
             //send the "Remove Device" message to PPJoy via cmb interface
             SafeFileHandle hFileHandle = GetFileHandle(PPJOY_IOCTL_BASE_DEVICE);
-            uint bytesReturned = new uint();
-            IntPtr pinnedMessage= Marshal.AllocHGlobal(Marshal.SizeOf(message));
+            var bytesReturned = new uint();
+            IntPtr pinnedMessage = Marshal.AllocHGlobal(Marshal.SizeOf(message));
             Marshal.StructureToPtr(message, pinnedMessage, true);
 
             try
             {
                 NativeMethods.DeviceIoControlSynchronous(hFileHandle,
-                   Headers.IoCtlDeletePPJoyDevice,
-                   pinnedMessage,
-                   (uint)Marshal.SizeOf(message),
-                   IntPtr.Zero, (uint)0, out bytesReturned);
+                                                         Headers.IoCtlDeletePPJoyDevice,
+                                                         pinnedMessage,
+                                                         (uint) Marshal.SizeOf(message),
+                                                         IntPtr.Zero, 0, out bytesReturned);
             }
             finally
             {
@@ -625,21 +647,23 @@ namespace PPJoy
 
             try
             {
-                Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDirectInput", currentRemoveDirectInputSetting);
+                Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDirectInput",
+                                                                                       currentRemoveDirectInputSetting);
             }
-            catch (System.IO.IOException)
+            catch (IOException)
             {
             }
 
             try
             {
-                Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDriver", currentRemoveDriverSetting);
+                Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDriver",
+                                                                                       currentRemoveDriverSetting);
             }
-            catch (System.IO.IOException)
+            catch (IOException)
             {
             }
         }
-         
+
         /// <summary>
         /// Checks whether a given integer containing a VendorID/ProductID
         /// combination (typically obtained from DirectInput) refers to a virtual 
@@ -684,7 +708,6 @@ namespace PPJoy
                 //and if so, then check if it's a virtual joystick or not
                 for (int i = 0; i < devices.Length; i++)
                 {
-
                     Device thisDevice = devices[i];
                     int thisProdId = thisDevice.ProductId;
                     string thisProdIdString = Convert.ToString(thisProdId, 16);
@@ -708,7 +731,8 @@ namespace PPJoy
                 //if we reach here, then we haven't found a matching Product ID
                 //in the set of registered PPJoy devices, so 
                 //we have to throw an exception
-                throw new DeviceNotFoundException("Could not find matching PPJoy joystick with Vendor ID:" + vendor + " and ProductID:" + prod);
+                throw new DeviceNotFoundException("Could not find matching PPJoy joystick with Vendor ID:" + vendor +
+                                                  " and ProductID:" + prod);
             }
             else
             {
@@ -718,6 +742,7 @@ namespace PPJoy
                 //is not set to the PPJoy Vendor ID
             }
         }
+
         /// <summary>
         /// Gets a <see cref="Device"/> object representing the PPJoy device 
         /// whose product ID matches the supplied Product ID.
@@ -738,6 +763,7 @@ namespace PPJoy
             }
             return toReturn;
         }
+
         /// <summary>
         /// Gets a new managed <see cref="SafeFileHandle"/> object, 
         /// wrapping a Win32 API file handle, using the standard access 
@@ -753,12 +779,12 @@ namespace PPJoy
                 devName,
                 (
                     NativeMethods.EFileAccess.GenericRead
-                        |
+                    |
                     NativeMethods.EFileAccess.GenericWrite
                 ),
                 (
                     NativeMethods.EFileShare.Read
-                        |
+                    |
                     NativeMethods.EFileShare.Write
                 ),
                 IntPtr.Zero,
@@ -766,10 +792,11 @@ namespace PPJoy
                 //NativeMethods.EFileAttributes.Overlapped,
                 0,
                 new SafeFileHandle(IntPtr.Zero, true)
-             );
+                );
             //ThreadPool.BindHandle(hFileHandle);
             return hFileHandle;
         }
+
         /// <summary>
         /// Closes a <see cref="SafeFileHandle"/> object.
         /// </summary>
@@ -788,6 +815,7 @@ namespace PPJoy
                 }
             }
         }
+
         /// <summary>
         /// Checks whether a given <see cref="JoystickSubTypes"/> value is valid 
         /// in combination with a given <see cref="JoystickTypes"/> value.
@@ -806,7 +834,6 @@ namespace PPJoy
             bool retVal = false;
             switch (subType)
             {
-
                 case JoystickSubTypes.NotApplicable:
                     retVal = true;
                     break;
@@ -902,6 +929,7 @@ namespace PPJoy
             }
             return retVal;
         }
+
         /// <summary>
         /// Gets a MappingCollection representing the controls mappings associated with a defined PPJoy device.
         /// </summary>
@@ -910,7 +938,8 @@ namespace PPJoy
         /// <param name="unitNum">Unit number of the device of the given type whose mappings will be returned.</param>
         /// <param name="scope">Scope to return mappings from.</param>
         /// <returns>a MappingCollection object, where each element in the collection represents a single control mapping.</returns>
-        public MappingCollection GetDeviceMappings(int lptNum, JoystickTypes joystickType, int unitNum, JoystickMapScope scope)
+        public MappingCollection GetDeviceMappings(int lptNum, JoystickTypes joystickType, int unitNum,
+                                                   JoystickMapScope scope)
         {
             if (unitNum > MaxValidUnitNumber(joystickType))
             {
@@ -922,6 +951,7 @@ namespace PPJoy
             //convert the raw mappings to a MappingsCollection and return the collection
             return ReadMapData(map);
         }
+
         /// <summary>
         /// Sets the mappings for a specific PPJoy device.
         /// </summary>
@@ -929,30 +959,30 @@ namespace PPJoy
         /// <param name="joystickType">The type of device whose mappings will be set to the newly-supplied mappings.</param>
         /// <param name="unitNum">The unit number of the device whose mappings will be set.</param>
         /// <param name="header">A JoystickMapHeader object containing the new mappings to associate with this device or interface.</param>
-        private static void SetDeviceMappings(int lptNum, JoystickTypes joystickType, int unitNum, JoystickMapHeader header)
+        private static void SetDeviceMappings(int lptNum, JoystickTypes joystickType, int unitNum,
+                                              JoystickMapHeader header)
         {
             //pass the JoystickMapHeader structure to PPJoy via its IOCTL interface
             SafeFileHandle hFileHandle = GetFileHandle(@"\\.\PPJoyCtl" + lptNum + ":" + (unitNum + 1));
-            uint bytesReturned = new uint();
+            var bytesReturned = new uint();
             IntPtr pinnedMessage = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.StructureToPtr(header, pinnedMessage, true);
 
             try
             {
                 NativeMethods.DeviceIoControlSynchronous(hFileHandle,
-                   Headers.IoCtlSetPPJoyDeviceMappings,
-                   pinnedMessage,
-                   (uint)Marshal.SizeOf(header),
-                   IntPtr.Zero, (uint)0, out bytesReturned);
+                                                         Headers.IoCtlSetPPJoyDeviceMappings,
+                                                         pinnedMessage,
+                                                         (uint) Marshal.SizeOf(header),
+                                                         IntPtr.Zero, 0, out bytesReturned);
             }
             finally
             {
                 Marshal.FreeHGlobal(pinnedMessage);
                 CloseFileHandle(hFileHandle);
             }
-
-
         }
+
         /// <summary>
         /// Sets the mappings for a specific PPJoy device.
         /// </summary>
@@ -961,7 +991,8 @@ namespace PPJoy
         /// <param name="unitNum">The unit number of the device whose mappings will be set.</param>
         /// <param name="scope">The scope in which to set the new mappings -- either for the device instance itself, or for the device's interface defaults for all devices of the same type that do not override those defaults.</param>
         /// <param name="newMappings">A MappingCollection object containing the new mappings to associate with this device or interface.</param>
-        public void SetDeviceMappings(int lptNum, JoystickTypes joystickType, int unitNum, JoystickMapScope scope, MappingCollection newMappings)
+        public void SetDeviceMappings(int lptNum, JoystickTypes joystickType, int unitNum, JoystickMapScope scope,
+                                      MappingCollection newMappings)
         {
             if (unitNum > MaxValidUnitNumber(joystickType))
             {
@@ -969,22 +1000,26 @@ namespace PPJoy
             }
             //create and populate a JoystickMapPayload structure to pass to PPJoy's
             //IOCTL interface
-            JoystickMapPayload toSet = new JoystickMapPayload();
+            var toSet = new JoystickMapPayload();
             byte[] rawPayload = BuildMapData(newMappings);
             toSet.Data = rawPayload;
             toSet.NumMaps = 1;
-            toSet.NumAxes = (byte)newMappings.AxisMappings.Count;
-            toSet.NumButtons = (byte)newMappings.ButtonMappings.Count;
-            toSet.NumHats = (byte)newMappings.PovMappings.Count;
+            toSet.NumAxes = (byte) newMappings.AxisMappings.Count;
+            toSet.NumButtons = (byte) newMappings.ButtonMappings.Count;
+            toSet.NumHats = (byte) newMappings.PovMappings.Count;
 
             //create and populate a JoystickMapHeader structure to pass to PPJoy's
             //IOCTL interface
-            JoystickMapHeader header = new JoystickMapHeader();
-            header.Version = (uint)MessageVersions.JoystickMapV1;
-            header.JoyType = (byte)joystickType;
-            header.MapScope = (byte)scope;
+            var header = new JoystickMapHeader();
+            header.Version = (uint) MessageVersions.JoystickMapV1;
+            header.JoyType = (byte) joystickType;
+            header.MapScope = (byte) scope;
             header.MapData = toSet;
-            header.MapSize = (uint)(4 + ((MAP_BYTES_PER_AXIS * toSet.NumAxes) + (MAP_BYTES_PER_BUTTON * toSet.NumButtons) + (MAP_BYTES_PER_POV * toSet.NumHats)));
+            header.MapSize =
+                (uint)
+                (4 +
+                 ((MAP_BYTES_PER_AXIS*toSet.NumAxes) + (MAP_BYTES_PER_BUTTON*toSet.NumButtons) +
+                  (MAP_BYTES_PER_POV*toSet.NumHats)));
             //remove old mappings
             try
             {
@@ -1019,7 +1054,6 @@ namespace PPJoy
                     }
                     catch (OperationFailedException)
                     {
-                        
                         //this device is missing its mappings so it is reliant on the interface mappings.  
                         //Since those have changed, we have to remove and recreate this device 
                         //so it will re-inherit its DirectInput config from the interface mappings.
@@ -1029,6 +1063,7 @@ namespace PPJoy
                 }
             }
         }
+
         /// <summary>
         /// Removes the mappings from a specific PPJoy device or the default mappings from its interface.
         /// </summary>
@@ -1045,33 +1080,32 @@ namespace PPJoy
 
             //create a new JoystickMapHeader structure to pass to PPJoy's IOCTL
             //interface
-            JoystickMapHeader header = new JoystickMapHeader();
-            header.Version = (uint)MessageVersions.JoystickMapV1;
-            header.MapScope = (byte)scope;
-            header.JoyType = (byte)joystickType;
+            var header = new JoystickMapHeader();
+            header.Version = (uint) MessageVersions.JoystickMapV1;
+            header.MapScope = (byte) scope;
+            header.JoyType = (byte) joystickType;
 
             //pass the JoystickMapHeader structure to PPJoy via its IOCTL interface
             SafeFileHandle hFileHandle = GetFileHandle(@"\\.\PPJoyCtl" + lptNum + ":" + (unitNum + 1));
-            uint bytesReturned = new uint();
+            var bytesReturned = new uint();
             IntPtr pinnedMessage = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.StructureToPtr(header, pinnedMessage, true);
 
             try
             {
                 NativeMethods.DeviceIoControlSynchronous(hFileHandle,
-                   Headers.IoCtlDeletePPJoyDeviceMappings,
-                   pinnedMessage,
-                   (uint)Marshal.SizeOf(header),
-                   IntPtr.Zero, (uint)0, out bytesReturned);
+                                                         Headers.IoCtlDeletePPJoyDeviceMappings,
+                                                         pinnedMessage,
+                                                         (uint) Marshal.SizeOf(header),
+                                                         IntPtr.Zero, 0, out bytesReturned);
             }
             finally
             {
                 Marshal.FreeHGlobal(pinnedMessage);
                 CloseFileHandle(hFileHandle);
             }
-
-
         }
+
         /// <summary>
         /// Reads the current mappings from a specific PPJoy device.
         /// </summary>
@@ -1084,19 +1118,20 @@ namespace PPJoy
         /// indicating the scope of the mappings to return.</param>
         /// <returns>a JoystickMapPayload structure, containing raw mapping
         /// data, as returned from a direct call to PPJoy's IOCTL interface.</returns>
-        private static JoystickMapPayload GetRawMappings(int lptNum, JoystickTypes joystickType, int unitNum, JoystickMapScope scope)
+        private static JoystickMapPayload GetRawMappings(int lptNum, JoystickTypes joystickType, int unitNum,
+                                                         JoystickMapScope scope)
         {
             //create and populate a JoystickMapHeader structure to pass to PPJoy's
             //IOCTL interface
-            JoystickMapHeader header = new JoystickMapHeader();
-            header.Version = (uint)MessageVersions.JoystickMapV1;
-            header.MapScope = (byte)scope;
-            header.JoyType = (byte)joystickType;
+            var header = new JoystickMapHeader();
+            header.Version = (uint) MessageVersions.JoystickMapV1;
+            header.MapScope = (byte) scope;
+            header.JoyType = (byte) joystickType;
 
             //get a handle to the PPJoy IOCTL interface to the requested device
             SafeFileHandle hFileHandle = GetFileHandle(@"\\.\PPJoyCtl" + lptNum + ":" + (unitNum + 1));
-            uint bytesReturned = new uint();
-            byte[] outBuffer = new byte[512];
+            var bytesReturned = new uint();
+            var outBuffer = new byte[512];
             GCHandle outBufferHandle = GCHandle.Alloc(outBuffer, GCHandleType.Pinned);
             IntPtr pinnedMessage = Marshal.AllocHGlobal(Marshal.SizeOf(header));
             Marshal.StructureToPtr(header, pinnedMessage, true);
@@ -1105,9 +1140,10 @@ namespace PPJoy
                 //send the JoystickMapHeader structure to PPJoy, requesting
                 //the desired mappings for the specified device
                 NativeMethods.DeviceIoControlSynchronous(hFileHandle,
-                   Headers.IoCtlGetPPJoyDeviceMappings, pinnedMessage,
-                   (uint)Marshal.SizeOf(header),
-                   Marshal.UnsafeAddrOfPinnedArrayElement(outBuffer, 0), (uint)outBuffer.Length, out bytesReturned);
+                                                         Headers.IoCtlGetPPJoyDeviceMappings, pinnedMessage,
+                                                         (uint) Marshal.SizeOf(header),
+                                                         Marshal.UnsafeAddrOfPinnedArrayElement(outBuffer, 0),
+                                                         (uint) outBuffer.Length, out bytesReturned);
             }
             finally
             {
@@ -1117,7 +1153,7 @@ namespace PPJoy
             }
 
             //convert the output buffer's contents to a JoystickMapHeader structure
-            JoystickMapHeader mapHeader = (JoystickMapHeader)Util.RawDataToObject(ref outBuffer, typeof(JoystickMapHeader));
+            var mapHeader = (JoystickMapHeader) Util.RawDataToObject(ref outBuffer, typeof (JoystickMapHeader));
 
             //read the raw map data from the returned JoystickMapHeader structure
             JoystickMapPayload map = mapHeader.MapData;
@@ -1125,6 +1161,7 @@ namespace PPJoy
             //return the raw map data as a JoystickMapPayload structure
             return map;
         }
+
         /// <summary>
         /// Gets the next available Product ID on the PPJoy bus,
         /// by examining the currently-used Product IDs, in order,
@@ -1144,12 +1181,13 @@ namespace PPJoy
                 Device device = GetDeviceByProductId(i);
                 if (device == null)
                 {
-                    toReturn = (ushort)i;
+                    toReturn = (ushort) i;
                     break;
                 }
             }
             return toReturn;
         }
+
         /// <summary>
         /// Converts a <see cref="MappingCollection"/> to an array of bytes 
         /// that can be passed into PPJoy's IOCTL interface in a 
@@ -1166,7 +1204,6 @@ namespace PPJoy
         /// <seealso cref="MappingCollection"/>
         private static byte[] BuildMapData(MappingCollection mappings)
         {
-
             //obtain individual sub-collections of mappings for POVs, Buttons, and Axes
             MappingCollection povMappings = mappings.PovMappings;
             MappingCollection buttonMappings = mappings.ButtonMappings;
@@ -1174,7 +1211,7 @@ namespace PPJoy
 
             //create a List to hold the bytes we'll be returning (we'll convert
             //this list to an array later)
-            List<Byte> toReturn = new List<byte>();
+            var toReturn = new List<byte>();
 
             //sort the mappings sub-collections by their control numbers, so that
             //low-numbered controls of that type appear first when we iterate
@@ -1189,50 +1226,50 @@ namespace PPJoy
                 if (mapping.AxisType != AxisTypes.Throttle && mapping.AxisType != AxisTypes.Wheel)
                 {
                     //write a byte that declares "an ordinary axis or POV axis"
-                    toReturn.Add((byte)DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV);
+                    toReturn.Add((byte) DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV);
                 }
                 else
                 {
                     //write a byte that declares a "wheel or throttle" axis
-                    toReturn.Add((byte)DeviceCapabilitiesPrefixes.WheelOrThrottleAxis);
+                    toReturn.Add((byte) DeviceCapabilitiesPrefixes.WheelOrThrottleAxis);
                 }
                 //write a byte that describes the exact type of axis 
                 //being declared (x,y,z,xr,yr,zr, etc. or POV)
-                toReturn.Add((byte)mapping.AxisType);
+                toReturn.Add((byte) mapping.AxisType);
             }
             //write out the declarations bytes for all button mappings 
             //in the button mappings collection
             foreach (ButtonMapping mapping in buttonMappings)
             {
                 //write a byte that declares a new button control 
-                toReturn.Add((byte)DeviceCapabilitiesPrefixes.Button);
+                toReturn.Add((byte) DeviceCapabilitiesPrefixes.Button);
                 //write a byte that indicates the button's control number (button 1, button 2, etc.)
-                toReturn.Add((byte)mapping.ControlNumber);
+                toReturn.Add((byte) mapping.ControlNumber);
             }
             //write out the declarations bytes for all POV mappings
             //in the POV mappings collection
             foreach (PovMapping mapping in povMappings)
             {
                 //write a byte that declares a new axis control
-                toReturn.Add((byte)DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV);
+                toReturn.Add((byte) DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV);
                 //write a byte that describes the axis control as being a POV axis
-                toReturn.Add((byte)AxisTypes.Pov);
+                toReturn.Add((byte) AxisTypes.Pov);
             }
             //write out the specific data sources for each axis in the axis mappings
             //collection
             foreach (AxisMapping mapping in axisMappings)
             {
                 //write out a byte specifying the MIN data source for this axis
-                toReturn.Add((byte)mapping.MinDataSource);
+                toReturn.Add((byte) mapping.MinDataSource);
                 //write out a byte specifying the MAX data source for this axis
-                toReturn.Add((byte)mapping.MaxDataSource);
+                toReturn.Add((byte) mapping.MaxDataSource);
             }
             //write out the specific data sources for each button in the button mappings
             //collection
             foreach (ButtonMapping mapping in buttonMappings)
             {
                 //write a byte that specifies the data source of this button
-                toReturn.Add((byte)mapping.DataSource);
+                toReturn.Add((byte) mapping.DataSource);
             }
             //write out the specific data sources for each POV in the POV mappings
             //collection
@@ -1247,35 +1284,35 @@ namespace PPJoy
                     //for Continuous POV mappings, we only need 
                     //to write out the NORTH data source specifically;
                     //all other data sources will be set to None.
-                    ContinuousPovMapping asContinuous = (ContinuousPovMapping)mapping;
-                    toReturn.Add((byte)asContinuous.DataSource);
-                    toReturn.Add((byte)ContinuousPovDataSources.None);
-                    toReturn.Add((byte)ContinuousPovDataSources.None);
-                    toReturn.Add((byte)ContinuousPovDataSources.None);
+                    var asContinuous = (ContinuousPovMapping) mapping;
+                    toReturn.Add((byte) asContinuous.DataSource);
+                    toReturn.Add((byte) ContinuousPovDataSources.None);
+                    toReturn.Add((byte) ContinuousPovDataSources.None);
+                    toReturn.Add((byte) ContinuousPovDataSources.None);
                 }
                 else if (mapping is DirectionalPovMapping)
                 {
                     //for Directional POV mappings, write out the bytes 
                     //describing all four data sources (NORTH, SOUTH, WEST, EAST)
-                    DirectionalPovMapping asDirectional = (DirectionalPovMapping)mapping;
-                    toReturn.Add((byte)asDirectional.NorthDataSource);
-                    toReturn.Add((byte)asDirectional.SouthDataSource);
-                    toReturn.Add((byte)asDirectional.WestDataSource);
-                    toReturn.Add((byte)asDirectional.EastDataSource);
+                    var asDirectional = (DirectionalPovMapping) mapping;
+                    toReturn.Add((byte) asDirectional.NorthDataSource);
+                    toReturn.Add((byte) asDirectional.SouthDataSource);
+                    toReturn.Add((byte) asDirectional.WestDataSource);
+                    toReturn.Add((byte) asDirectional.EastDataSource);
                 }
             } //end foreach POV mapping
 
             //create an empty array whose size is set
             //to the maximum valid size for a mapping byte array
-            byte[] vals = new byte[Headers.MaxMappingPayloadLength];
+            var vals = new byte[Headers.MaxMappingPayloadLength];
 
             //copy the values from the List of bytes to the new byte array
             toReturn.CopyTo(vals);
 
             //return the byte array
             return vals;
-
         }
+
         /// <summary>
         /// Parses the contents of a PPJoy IOCTL <see cref="JoystickMapPayload"/> 
         /// structure, converting them to a managed
@@ -1292,14 +1329,16 @@ namespace PPJoy
             //check the supplied JoystickMapPayload structure's data length 
             //to ensure that it is at least long enough to contain
             //a valid map as obtained from a PPJoy IOCTL call.
-            if (mapData.Data.Length < (MAP_BYTES_PER_AXIS * mapData.NumAxes) + (MAP_BYTES_PER_BUTTON * mapData.NumButtons) + (MAP_BYTES_PER_POV * mapData.NumHats))
+            if (mapData.Data.Length <
+                (MAP_BYTES_PER_AXIS*mapData.NumAxes) + (MAP_BYTES_PER_BUTTON*mapData.NumButtons) +
+                (MAP_BYTES_PER_POV*mapData.NumHats))
             {
                 throw new ArgumentException("Invalid map data.", "mapData");
             }
 
             //create a new MappingCollection collection to hold the results
             //of parsing
-            MappingCollection toReturn = new MappingCollection();
+            var toReturn = new MappingCollection();
 
             int curPos = 0; //current position in the JoystickMapData data array
             int lastAxis = 0; //the last axis number discovered
@@ -1312,7 +1351,7 @@ namespace PPJoy
             //that specific mapping
             for (int i = 0; i < mapData.NumAxes; i++)
             {
-                AxisMapping axis = new AxisMapping(lastAxis);
+                var axis = new AxisMapping(lastAxis);
                 byte capability = mapData.Data[curPos];
 
                 //the  byte at the current position in the map data 
@@ -1321,11 +1360,9 @@ namespace PPJoy
                 //declaration byte, then we know we're looking at bad data in the map, so 
                 //throw an exception.  Otherwise, we don't really need that byte...
                 //so we'll use it here for validation purposes only.
-                if (capability != (byte)DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV
-
+                if (capability != (byte) DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV
                     &&
-
-                    capability != (byte)DeviceCapabilitiesPrefixes.WheelOrThrottleAxis)
+                    capability != (byte) DeviceCapabilitiesPrefixes.WheelOrThrottleAxis)
                 {
                     throw new ArgumentException("Invalid map data.", "mapData");
                 }
@@ -1337,7 +1374,8 @@ namespace PPJoy
                 //axis mapping, which, conveniently, corresponds to a value from the
                 //AxisTypes enumeration, so we can just cast the byte to an AxisTypes value
 
-                axis.AxisType = (AxisTypes)mapData.Data[curPos];//set the axis type in our AxisMapping object to this value
+                axis.AxisType = (AxisTypes) mapData.Data[curPos];
+                    //set the axis type in our AxisMapping object to this value
 
                 //advance the position counter
                 curPos++;
@@ -1356,7 +1394,7 @@ namespace PPJoy
             for (int i = 0; i < mapData.NumButtons; i++)
             {
                 //create a new ButtonMapping object to hold the results
-                ButtonMapping button = new ButtonMapping(lastButton);
+                var button = new ButtonMapping(lastButton);
 
                 //examine the byte at the current position in the map.  This byte should
                 //be a value that specifies that a Button mapping descriptor byte will follow.
@@ -1364,13 +1402,13 @@ namespace PPJoy
                 //that a button mapping descriptor byte follows, we know
                 //we're looking at bad map data, so we'll throw an exception.
                 byte capability = mapData.Data[curPos];
-                if (capability != (byte)DeviceCapabilitiesPrefixes.Button)
+                if (capability != (byte) DeviceCapabilitiesPrefixes.Button)
                 {
                     throw new ArgumentException("Invalid map data.", "mapData");
                 }
 
 
-                curPos++;  //advance the position counter
+                curPos++; //advance the position counter
 
                 //now, the current byte should declare a button number
                 byte buttonNum = mapData.Data[curPos]; //get the current byte from the map data
@@ -1406,26 +1444,26 @@ namespace PPJoy
                 //However, a POV mapping is just a special kind of Axis mapping, so the 
                 //first byte actually declares an axis mapping
                 byte capability = mapData.Data[curPos];
-                if (capability != (byte)DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV
+                if (capability != (byte) DeviceCapabilitiesPrefixes.OrdinaryAxisOrPOV
                     &&
-                    capability != (byte)DeviceCapabilitiesPrefixes.WheelOrThrottleAxis)
+                    capability != (byte) DeviceCapabilitiesPrefixes.WheelOrThrottleAxis)
                 {
                     throw new ArgumentException("Invalid map data.", "mapData");
                 }
 
-                curPos++;  //advance the position counter
+                curPos++; //advance the position counter
 
                 //the second byte of the pair should declare that this kind of axis declaration
                 //is really a POV declaration.  NOTE: the first part of the map data
                 //only contains control declarations; actual control MAPPINGS come later
                 byte axisType = mapData.Data[curPos];
-                if (axisType != (byte)AxisTypes.Pov)
+                if (axisType != (byte) AxisTypes.Pov)
                 {
                     throw new ArgumentException("Invalid map data.", "mapData");
                 }
 
-                curPos++;//advance the position counter
-                lastPov++;//advance the POV counter
+                curPos++; //advance the position counter
+                lastPov++; //advance the POV counter
             }
 
 
@@ -1451,19 +1489,21 @@ namespace PPJoy
 
                 //now retrieve the descriptive name of the corresponding AxisDataSources enum member
                 //for both the MIN and MAX axis data sources that were declared
-                string minDataSourceName = Enum.GetName(typeof(AxisDataSources), minDataSource);
-                string maxDataSourceName = Enum.GetName(typeof(AxisDataSources), maxDataSource);
+                string minDataSourceName = Enum.GetName(typeof (AxisDataSources), minDataSource);
+                string maxDataSourceName = Enum.GetName(typeof (AxisDataSources), maxDataSource);
 
                 //if the MIN data source is a digital data source, then the MAX data source must be declared
                 //and it must also be Digital.  If those corrolary conditions are not true, throw
                 //an exception.
                 //On the other hand, if the MIN data source is an Analog (or Reversed) data source,
                 //then the MAX data source should not be defined at all.  If it is, throw an exception.
-                if (minDataSourceName.StartsWith("Digital") && !(maxDataSourceName.StartsWith("Digital") || maxDataSourceName.StartsWith("None")))
+                if (minDataSourceName.StartsWith("Digital") &&
+                    !(maxDataSourceName.StartsWith("Digital") || maxDataSourceName.StartsWith("None")))
                 {
                     throw new ArgumentException("Invalid map data.", "mapData");
                 }
-                else if ((minDataSourceName.StartsWith("Analog") || minDataSourceName.StartsWith("Reversed")) && maxDataSource != (byte)AxisDataSources.None)
+                else if ((minDataSourceName.StartsWith("Analog") || minDataSourceName.StartsWith("Reversed")) &&
+                         maxDataSource != (byte) AxisDataSources.None)
                 {
                     throw new ArgumentException("Invalid map data.", "mapData");
                 }
@@ -1471,8 +1511,8 @@ namespace PPJoy
                 //Go back into the MappingCollection and retrieve the appropriate AxisMapping object
                 //that we put in there earlier, and set its MinDataSource and MaxDataSource properties
                 //according to the data we just read from the map.
-                ((AxisMapping)toReturn.AxisMappings[lastAxis]).MinDataSource = (AxisDataSources)minDataSource;
-                ((AxisMapping)toReturn.AxisMappings[lastAxis]).MaxDataSource = (AxisDataSources)maxDataSource;
+                ((AxisMapping) toReturn.AxisMappings[lastAxis]).MinDataSource = (AxisDataSources) minDataSource;
+                ((AxisMapping) toReturn.AxisMappings[lastAxis]).MaxDataSource = (AxisDataSources) maxDataSource;
 
                 lastAxis++; //increase the axis counter
             }
@@ -1490,7 +1530,7 @@ namespace PPJoy
                 //Go back into the MappingCollection and retrieve the appropriate ButtonMapping object
                 //that we put in there earlier, and set its DataSource property
                 //according to the data we just read from the map.
-                ((ButtonMapping)toReturn.ButtonMappings[lastButton]).DataSource = (ButtonDataSources)dataSource;
+                ((ButtonMapping) toReturn.ButtonMappings[lastButton]).DataSource = (ButtonDataSources) dataSource;
 
                 lastButton++; //advance the button counter
             }
@@ -1513,27 +1553,26 @@ namespace PPJoy
                 byte eastDataSource = mapData.Data[curPos];
                 curPos++; //advance the position counter
 
-                string northDataSourceName = Enum.GetName(typeof(ContinuousPovDataSources), northDataSource);
+                string northDataSourceName = Enum.GetName(typeof (ContinuousPovDataSources), northDataSource);
                 bool isContinuousPOV = false;
                 if (
                     //if the North data source is *not* None, and the other
                     //data sources *are* None, and the North data source
                     //is Analog or Reversed, then this is a Continuous POV.
-                    northDataSource != (byte)ContinuousPovDataSources.None &&
-                        (
-                            southDataSource == (byte)ContinuousPovDataSources.None
-                                &&
-                            westDataSource == (byte)ContinuousPovDataSources.None
-                                &&
-                            eastDataSource == (byte)ContinuousPovDataSources.None
-                         )
-
-                         &&
-                        (
-                            northDataSourceName.StartsWith("Analog")
-                                ||
-                            northDataSourceName.StartsWith("Reversed")
-                         )
+                    northDataSource != (byte) ContinuousPovDataSources.None &&
+                    (
+                        southDataSource == (byte) ContinuousPovDataSources.None
+                        &&
+                        westDataSource == (byte) ContinuousPovDataSources.None
+                        &&
+                        eastDataSource == (byte) ContinuousPovDataSources.None
+                    )
+                    &&
+                    (
+                        northDataSourceName.StartsWith("Analog")
+                        ||
+                        northDataSourceName.StartsWith("Reversed")
+                    )
                     )
                 {
                     isContinuousPOV = true;
@@ -1545,15 +1584,15 @@ namespace PPJoy
                 if (isContinuousPOV)
                 {
                     pov = new ContinuousPovMapping(lastPov);
-                    ((ContinuousPovMapping)pov).DataSource = (ContinuousPovDataSources)northDataSource;
+                    ((ContinuousPovMapping) pov).DataSource = (ContinuousPovDataSources) northDataSource;
                 }
                 else
                 {
                     pov = new DirectionalPovMapping(lastPov);
-                    ((DirectionalPovMapping)pov).NorthDataSource = (DirectionalPovDataSources)northDataSource;
-                    ((DirectionalPovMapping)pov).SouthDataSource = (DirectionalPovDataSources)southDataSource;
-                    ((DirectionalPovMapping)pov).WestDataSource = (DirectionalPovDataSources)westDataSource;
-                    ((DirectionalPovMapping)pov).EastDataSource = (DirectionalPovDataSources)eastDataSource;
+                    ((DirectionalPovMapping) pov).NorthDataSource = (DirectionalPovDataSources) northDataSource;
+                    ((DirectionalPovMapping) pov).SouthDataSource = (DirectionalPovDataSources) southDataSource;
+                    ((DirectionalPovMapping) pov).WestDataSource = (DirectionalPovDataSources) westDataSource;
+                    ((DirectionalPovMapping) pov).EastDataSource = (DirectionalPovDataSources) eastDataSource;
                 }
 
                 //add the POV Mapping object to the MappingCollection that we'll return
@@ -1564,6 +1603,7 @@ namespace PPJoy
             //return the MappingCollection we built
             return toReturn;
         }
+
         /// <summary>
         /// Returns a value from the <see cref="JoystickSubTypes"/>  enumeration 
         /// that correpsonds to a given PPJoy IOCTL "subtype" byte,
@@ -1583,7 +1623,7 @@ namespace PPJoy
         {
             JoystickSubTypes retVal = JoystickSubTypes.NotApplicable; //assume we can't figure it out
 
-            string joystickTypeName = Enum.GetName(typeof(JoystickTypes), joystickType);
+            string joystickTypeName = Enum.GetName(typeof (JoystickTypes), joystickType);
             if (joystickTypeName.StartsWith("Genesis_Pad"))
             {
                 if (nativeSubType == 0)
@@ -1608,6 +1648,7 @@ namespace PPJoy
             }
             return retVal;
         }
+
         /// <summary>
         /// Converts a value from the <see cref="JoystickSubTypes"/> 
         /// enumeration to a similar value that is required 
@@ -1650,6 +1691,7 @@ namespace PPJoy
             }
             return retVal;
         }
+
         /// <summary>
         /// Gets a PPJoy IOCTL <see cref="DeviceInfo"/> structure from a <see cref="Device"/> object.
         /// </summary>
@@ -1657,16 +1699,17 @@ namespace PPJoy
         /// <returns>a PPJoy IOCTL <see cref="DeviceInfo"/> structure, populated from the supplied <see cref="Device"/> object.</returns>
         private static DeviceInfo GetDeviceInfoFromDevice(Device device)
         {
-            DeviceInfo toReturn = new DeviceInfo();
-            toReturn.JoyType = (byte)device.DeviceType;
+            var toReturn = new DeviceInfo();
+            toReturn.JoyType = (byte) device.DeviceType;
             toReturn.JoySubType = GetPassableSubtype(device.SubType);
-            toReturn.ProductID = (ushort)device.ProductId;
-            toReturn.VendorID = (ushort)device.VendorId;
-            toReturn.UnitNumber = (byte)device.UnitNum;
-            toReturn.LPTNumber = (byte)device.LptNum;
-            toReturn.Size = (uint)Marshal.SizeOf(toReturn);
+            toReturn.ProductID = (ushort) device.ProductId;
+            toReturn.VendorID = (ushort) device.VendorId;
+            toReturn.UnitNumber = (byte) device.UnitNum;
+            toReturn.LPTNumber = (byte) device.LptNum;
+            toReturn.Size = (uint) Marshal.SizeOf(toReturn);
             return toReturn;
         }
+
         /// <summary>
         /// Creates a <see cref="Device"/> object from a PPJoy IOCTL <see cref="DeviceInfo"/> structure.
         /// </summary>
@@ -1674,12 +1717,12 @@ namespace PPJoy
         /// <returns>a <see cref="Device"/> object, initialized with the values from the supplied <see cref="DeviceInfo"/> structure.</returns>
         private static Device GetDeviceFromDeviceInfo(DeviceInfo deviceInfo)
         {
-            JoystickTypes type = (JoystickTypes)deviceInfo.JoyType;
+            var type = (JoystickTypes) deviceInfo.JoyType;
             JoystickSubTypes subType = GetEnumSubtype(type, deviceInfo.JoySubType);
-            int productId = (int)deviceInfo.ProductID;
-            int unitNum = (int)deviceInfo.UnitNumber;
-            int vendorId = (int)deviceInfo.VendorID;
-            int lptNum = (int)deviceInfo.LPTNumber;
+            int productId = deviceInfo.ProductID;
+            int unitNum = deviceInfo.UnitNumber;
+            int vendorId = deviceInfo.VendorID;
+            int lptNum = deviceInfo.LPTNumber;
             return new Device(lptNum, type, subType, productId, vendorId, unitNum);
         }
     }

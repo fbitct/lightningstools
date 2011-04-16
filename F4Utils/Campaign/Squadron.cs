@@ -1,33 +1,36 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class Squadron : AirUnit
     {
         #region Public Fields
-        public int fuel;
-        public byte specialty;
-        public byte[] stores;
-        public Pilot[] pilots;
-        public int[] schedule;
-        public VU_ID airbase_id;
-        public VU_ID hot_spot;
-        public VU_ID junk;
-        public byte[] rating;
+
         public short aa_kills;
         public short ag_kills;
-        public short as_kills;
+        public VU_ID airbase_id;
         public short an_kills;
-        public short missions_flown;
+        public short as_kills;
+        public int fuel;
+        public VU_ID hot_spot;
+        public VU_ID junk;
         public short mission_score;
-        public byte total_losses;
+        public short missions_flown;
         public byte pilot_losses;
+        public Pilot[] pilots;
+        public byte[] rating;
+        public int[] schedule;
+        public byte specialty;
         public byte squadron_patch;
+        public byte[] stores;
+        public byte total_losses;
+
         #endregion
 
         protected Squadron()
-            : base()
         {
         }
+
         public Squadron(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -74,7 +77,7 @@ namespace F4Utils.Campaign
                     pilots = new Pilot[48];
                     for (int j = 0; j < pilots.Length; j++)
                     {
-                        Pilot thisPilot = new Pilot();
+                        var thisPilot = new Pilot();
                         thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
                         offset += 2;
                         thisPilot.pilot_skill_and_rating = bytes[offset];
@@ -101,7 +104,7 @@ namespace F4Utils.Campaign
                     pilots = new Pilot[36];
                     for (int j = 0; j < pilots.Length; j++)
                     {
-                        Pilot thisPilot = new Pilot();
+                        var thisPilot = new Pilot();
                         thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
                         offset += 2;
                         thisPilot.pilot_skill_and_rating = bytes[offset];
@@ -129,7 +132,7 @@ namespace F4Utils.Campaign
                 pilots = new Pilot[48];
                 for (int j = 0; j < pilots.Length; j++)
                 {
-                    Pilot thisPilot = new Pilot();
+                    var thisPilot = new Pilot();
                     thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
                     offset += 2;
                     thisPilot.pilot_skill_and_rating = bytes[offset];
@@ -211,7 +214,6 @@ namespace F4Utils.Campaign
                 squadron_patch = bytes[offset];
                 offset++;
             }
-
         }
     }
 }

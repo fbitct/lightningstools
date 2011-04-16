@@ -1,30 +1,30 @@
-
 using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
+using System.Security;
 using Microsoft.Win32.SafeHandles;
-using System.Threading;
 
 namespace PPJoy
 {
-
     /// <summary>
     /// A <see cref="VirtualJoystick"/> provides an easy-to-use interface for setting the PPJoy data source states for a single PPJoy Virtual Joystick <see cref="Device"/>.
     /// </summary>
     [
-    System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage"), System.Runtime.InteropServices.ComVisible(true), //allow this class to be visible in the COM-callable wrapper
-    System.Security.SuppressUnmanagedCodeSecurityAttribute() //don't do security stack walks every time we call unmanaged (native) code
+        SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage"), ComVisible(true),
+        //allow this class to be visible in the COM-callable wrapper
+        SuppressUnmanagedCodeSecurity //don't do security stack walks every time we call unmanaged (native) code
     ]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class VirtualJoystick : IDisposable
     {
-
         #region Instance Variables
+
+        private readonly int[] _analogDataSourceVals = new int[MaxAnalogDataSources]; //analog axis states
+        private readonly byte[] _digitalDataSourceVals = new byte[MaxDigitalDataSources]; //digital button states
         private SafeFileHandle _hFileHandle; //safe managed file handle wrapper for IOCTL interface
-        private int _virtualStickNumber;     //PPJoy Virtual Joystick # (1-16)
-        private bool _isDisposed;   //IDisposable state flag
-        private int[] _analogDataSourceVals = new int[MaxAnalogDataSources]; //analog axis states
-        private byte[] _digitalDataSourceVals = new byte[MaxDigitalDataSources]; //digital button states
+        private bool _isDisposed; //IDisposable state flag
+        private int _virtualStickNumber; //PPJoy Virtual Joystick # (1-16)
 
         #endregion
 
@@ -39,6 +39,7 @@ namespace PPJoy
         {
             _virtualStickNumber = virtualStickNumber;
         }
+
         /// <summary>
         /// Creates a new <see cref="VirtualJoystick"/> instance. 
         /// </summary>
@@ -54,24 +55,31 @@ namespace PPJoy
         {
             _virtualStickNumber = 1;
         }
+
         #endregion
+
         #region Constant Declarations
+
         /// <summary>
         /// The value that should be set on an analog data source when that data source is assigned to a <see cref="PovMapping"/> and when the <see cref="PovMapping"/> should be <b>centered</b>.
         /// </summary>
         public const int PovCentered = -1;
+
         /// <summary>
         ///The minimum value that can be applied to an analog data source (except <see cref="VirtualJoystick.PovCentered"/>).
         /// </summary>
         public const int MinAnalogDataSourceVal = 1;
+
         /// <summary>
         ///The maximum value that can be applied to an analog data source.
         /// </summary>
         public const int MaxAnalogDataSourceVal = 32767;
+
         /// <summary>
         ///The maximum number of analog data sources supported by PPJoy on a single <see cref="Device"/>.
         /// </summary>
         public const int MaxAnalogDataSources = 63;
+
         /// <summary>
         ///The maximum number of digital data sources supported by PPJoy on a single <see cref="Device"/>.
         /// </summary>            
@@ -96,19 +104,22 @@ namespace PPJoy
         ///The maximum number of POVs that can be created on a PPJoy virtual joystick <see cref="Device"/>.
         /// </summary>
         public const int MaxVisiblePovs = 2;
+
         #endregion
 
         #region Property Getters/Setters
+
         /// <summary>
         /// Gets/sets the PPJoy virtual <see cref="Device"/> number that this <see cref="VirtualJoystick"/> instance is managing. 
         /// </summary>
         public int VirtualStickNumber
         {
             get { return _virtualStickNumber; }
-            set {
+            set
+            {
                 CloseFileHandle();
                 _hFileHandle = null;
-                _virtualStickNumber = value; 
+                _virtualStickNumber = value;
             }
         }
 
@@ -130,15 +141,16 @@ namespace PPJoy
         /// a single pass.</remarks>
         public void SetAnalogDataSourceValue(int dataSourceNum, int newValue)
         {
-            if (dataSourceNum < 0 || dataSourceNum > MaxAnalogDataSources-1)
+            if (dataSourceNum < 0 || dataSourceNum > MaxAnalogDataSources - 1)
             {
                 throw new ArgumentOutOfRangeException("dataSourceNum");
             }
-            if (newValue < MinAnalogDataSourceVal && newValue != -1) 
+            if (newValue < MinAnalogDataSourceVal && newValue != -1)
             {
                 newValue = MinAnalogDataSourceVal;
             }
-            else if (newValue > MaxAnalogDataSourceVal) {
+            else if (newValue > MaxAnalogDataSourceVal)
+            {
                 newValue = MaxAnalogDataSourceVal;
             }
 
@@ -158,18 +170,19 @@ namespace PPJoy
         /// to the PPJoy driver in a single pass.</remarks>
         public void SetDigitalDataSourceState(int dataSourceNum, bool newValue)
         {
-            if (dataSourceNum < 0 || dataSourceNum > MaxDigitalDataSources-1)
+            if (dataSourceNum < 0 || dataSourceNum > MaxDigitalDataSources - 1)
             {
                 throw new ArgumentOutOfRangeException("dataSourceNum");
             }
             if (newValue)
             {
-                _digitalDataSourceVals[dataSourceNum] = (byte)1;
+                _digitalDataSourceVals[dataSourceNum] = 1;
             }
             else
             {
-                _digitalDataSourceVals[dataSourceNum] = (byte)0;
-            };
+                _digitalDataSourceVals[dataSourceNum] = 0;
+            }
+            ;
         }
 
         /// <summary>
@@ -177,19 +190,17 @@ namespace PPJoy
         /// </summary>
         public void SendUpdates()
         {
-            JoystickState JoyState = new JoystickState();
+            var JoyState = new JoystickState();
 
             /* Initialise the IOCTL data structure */
-            JoyState.Signature = (uint)MessageVersions.JoystickStateV1;
-            JoyState.NumAnalog = (byte)MaxAnalogDataSources;	/* Number of analog values */
-            JoyState.NumDigital = (byte)MaxDigitalDataSources;	/* Number of digital values */
-            JoyState.Analog = (int[])_analogDataSourceVals.Clone();
-            JoyState.Digital = (byte[])_digitalDataSourceVals.Clone();
+            JoyState.Signature = (uint) MessageVersions.JoystickStateV1;
+            JoyState.NumAnalog = MaxAnalogDataSources; /* Number of analog values */
+            JoyState.NumDigital = MaxDigitalDataSources; /* Number of digital values */
+            JoyState.Analog = (int[]) _analogDataSourceVals.Clone();
+            JoyState.Digital = (byte[]) _digitalDataSourceVals.Clone();
 
             SendUpdate(JoyState);
         }
-
-
 
         #endregion
 
@@ -203,8 +214,8 @@ namespace PPJoy
         {
             GetFileHandle();
 
-            uint bytesReturned = new uint();
-            byte[] outBuffer = new byte[0];
+            var bytesReturned = new uint();
+            var outBuffer = new byte[0];
 
             IntPtr pinnedMessage = Marshal.AllocHGlobal(Marshal.SizeOf(JoyState));
             Marshal.StructureToPtr(JoyState, pinnedMessage, true);
@@ -212,9 +223,9 @@ namespace PPJoy
             try
             {
                 NativeMethods.DeviceIoControlSynchronous(_hFileHandle,
-                   Headers.IoCtlSetPPJoyDeviceState,
-                   pinnedMessage, (uint)Marshal.SizeOf(JoyState),
-                   outBufferHandle.AddrOfPinnedObject(), 0, out bytesReturned);
+                                                         Headers.IoCtlSetPPJoyDeviceState,
+                                                         pinnedMessage, (uint) Marshal.SizeOf(JoyState),
+                                                         outBufferHandle.AddrOfPinnedObject(), 0, out bytesReturned);
             }
             finally
             {
@@ -242,15 +253,17 @@ namespace PPJoy
 
             String devName = @"\\.\PPJoyIOCTL" + _virtualStickNumber;
             //_hFileHandle = NativeMethods.CreateFile(devName,NativeMethods.EFileAccess.GenericWrite, NativeMethods.EFileShare.Write, IntPtr.Zero, NativeMethods.ECreationDisposition.OpenExisting, 0,new SafeFileHandle(IntPtr.Zero,true));
-            _hFileHandle = NativeMethods.CreateFile(devName, NativeMethods.EFileAccess.GenericAll, NativeMethods.EFileShare.Read | NativeMethods.EFileShare.Write, IntPtr.Zero, NativeMethods.ECreationDisposition.OpenAlways, 
-                NativeMethods.EFileAttributes.Overlapped, 
-                //0,
-                new SafeFileHandle(IntPtr.Zero, true));
+            _hFileHandle = NativeMethods.CreateFile(devName, NativeMethods.EFileAccess.GenericAll,
+                                                    NativeMethods.EFileShare.Read | NativeMethods.EFileShare.Write,
+                                                    IntPtr.Zero, NativeMethods.ECreationDisposition.OpenAlways,
+                                                    NativeMethods.EFileAttributes.Overlapped,
+                                                    //0,
+                                                    new SafeFileHandle(IntPtr.Zero, true));
             int lastError = Marshal.GetLastWin32Error();
 
             if (_hFileHandle.IsInvalid && lastError != 0)
             {
-                Exception e = new System.ComponentModel.Win32Exception(lastError);
+                Exception e = new Win32Exception(lastError);
                 throw new OperationFailedException(e.Message, e);
             }
             //ThreadPool.BindHandle(_hFileHandle);  
@@ -275,9 +288,20 @@ namespace PPJoy
             }
             _hFileHandle = null;
         }
+
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of the <see cref="IDisposable.Dispose"/> method.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard destructor
         /// </summary>
@@ -302,18 +326,12 @@ namespace PPJoy
             // Code to dispose the un-managed resources of the class
             CloseFileHandle();
             _isDisposed = true;
-
-        }
-
-        /// <summary>
-        /// Public implementation of the <see cref="IDisposable.Dispose"/> method.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion
-    }//class
-}//namespace
+    }
+
+//class
+}
+
+//namespace

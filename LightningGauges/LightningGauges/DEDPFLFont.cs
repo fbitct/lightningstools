@@ -1,21 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Text;
+using Common.Imaging;
 
 namespace LightningGauges
 {
-    class DEDPFLFont:IDisposable
+    internal class DEDPFLFont : IDisposable
     {
-        private Bitmap _font;
-        private Bitmap[] _charBitmaps = new Bitmap[256];
-        private Bitmap[] _invertCharBitmaps = new Bitmap[256];
-        private bool _disposed = false;
-        private DEDPFLFont() : base() { }
+        private readonly Bitmap[] _charBitmaps = new Bitmap[256];
+        private readonly Bitmap _font;
+        private readonly Bitmap[] _invertCharBitmaps = new Bitmap[256];
+        private bool _disposed;
+
+        private DEDPFLFont()
+        {
+        }
+
         public DEDPFLFont(string fileName)
         {
-            _font = (Bitmap)Common.Imaging.Util.LoadBitmapFromFile(fileName);
+            _font = (Bitmap) Util.LoadBitmapFromFile(fileName);
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
         public Bitmap GetCharImage(byte someByte, bool invert)
         {
             if (someByte >= 32) someByte -= 32;
@@ -25,13 +41,13 @@ namespace LightningGauges
 
             if (glyphCache[someByte] == null)
             {
-                int glyphWidth = _font.Width / 16;
-                int glyphHeight = _font.Height / 16;
-                Bitmap thisCharBitmap = new Bitmap(glyphWidth, glyphHeight, System.Drawing.Imaging.PixelFormat.Format16bppRgb555);
-                int leftX = (((int)someByte) % 16) * glyphWidth;
-                int topY = (int)(((int)someByte) / 16) * (int)((float)glyphHeight);
-                if (invert) topY += _font.Height / 2;
-                Rectangle toCut = new Rectangle(new Point(leftX, topY), new Size(glyphWidth, glyphHeight));
+                int glyphWidth = _font.Width/16;
+                int glyphHeight = _font.Height/16;
+                var thisCharBitmap = new Bitmap(glyphWidth, glyphHeight, PixelFormat.Format16bppRgb555);
+                int leftX = ((someByte)%16)*glyphWidth;
+                int topY = ((someByte)/16)*(glyphHeight);
+                if (invert) topY += _font.Height/2;
+                var toCut = new Rectangle(new Point(leftX, topY), new Size(glyphWidth, glyphHeight));
                 using (Graphics g = Graphics.FromImage(thisCharBitmap))
                 {
                     g.FillRectangle(Brushes.Black, new Rectangle(0, 0, glyphWidth, glyphHeight));
@@ -41,20 +57,18 @@ namespace LightningGauges
             }
             return glyphCache[someByte];
         }
+
         public Bitmap GetCharImage(char someChar, bool invert)
         {
-            byte thisCharByte = Encoding.ASCII.GetBytes(new char[] { someChar })[0];
+            byte thisCharByte = Encoding.ASCII.GetBytes(new[] {someChar})[0];
             return GetCharImage(thisCharByte, invert);
         }
+
         ~DEDPFLFont()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -79,7 +93,6 @@ namespace LightningGauges
                 }
                 _disposed = true;
             }
-
         }
     }
 }

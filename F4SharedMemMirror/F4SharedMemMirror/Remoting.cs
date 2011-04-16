@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
+using System.Globalization;
 using System.Net;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
-using System.Globalization;
+
 namespace F4SharedMemMirror.Remoting
 {
     public interface ISharedMemoryMirrorClient
@@ -17,15 +14,17 @@ namespace F4SharedMemMirror.Remoting
         byte[] GetFlightData2();
         byte[] GetOSBData();
     }
+
     public interface ISharedMemoryMirrorServer
     {
         byte[] GetPrimaryFlightData();
         byte[] GetFlightData2();
         byte[] GetOSBData();
     }
+
     public class SharedMemoryMirrorClient : ISharedMemoryMirrorClient
     {
-        private ISharedMemoryMirrorServer _server;
+        private readonly ISharedMemoryMirrorServer _server;
 
         public SharedMemoryMirrorClient(IPEndPoint serverEndpoint, string serviceName)
         {
@@ -61,44 +60,71 @@ namespace F4SharedMemMirror.Remoting
             try
             {
                 // Create an instance of the remote object
-                _server = (Remoting.SharedMemoryMirrorServer)Activator.GetObject(
-                    typeof(Remoting.SharedMemoryMirrorServer),
+                _server = (SharedMemoryMirrorServer) Activator.GetObject(
+                    typeof (SharedMemoryMirrorServer),
                     "tcp://"
-                        + serverEndpoint.Address.ToString()
-                        + ":"
-                        + serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
-                        + "/"
-                        + serviceName);
+                    + serverEndpoint.Address
+                    + ":"
+                    + serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
+                    + "/"
+                    + serviceName);
             }
             catch (Exception)
             {
             }
         }
+
+        #region ISharedMemoryMirrorClient Members
+
         public byte[] GetPrimaryFlightData()
         {
             return _server.GetPrimaryFlightData();
         }
+
         public byte[] GetFlightData2()
         {
             return _server.GetFlightData2();
         }
+
         public byte[] GetOSBData()
         {
             return _server.GetOSBData();
         }
 
+        #endregion
     }
+
     public class SharedMemoryMirrorServer : MarshalByRefObject, ISharedMemoryMirrorServer
     {
-        private SharedMemoryMirrorServer()
-        {
-        }
         private static byte[] _primaryFlightData;
         private static byte[] _flightData2;
         private static byte[] _osbData;
+
+        private SharedMemoryMirrorServer()
+        {
+        }
+
+        #region ISharedMemoryMirrorServer Members
+
+        public byte[] GetPrimaryFlightData()
+        {
+            return _primaryFlightData;
+        }
+
+        public byte[] GetFlightData2()
+        {
+            return _flightData2;
+        }
+
+        public byte[] GetOSBData()
+        {
+            return _osbData;
+        }
+
+        #endregion
+
         internal static void CreateService(string serviceName, int port)
         {
-
             IDictionary prop = new Hashtable();
             prop["port"] = port;
             prop["priority"] = 100;
@@ -131,14 +157,14 @@ namespace F4SharedMemMirror.Remoting
             {
                 // Register as an available service with the name HelloWorld     
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                    typeof(Remoting.SharedMemoryMirrorServer), serviceName,
+                    typeof (SharedMemoryMirrorServer), serviceName,
                     WellKnownObjectMode.Singleton);
             }
             catch (Exception)
             {
             }
-
         }
+
         internal static void TearDownService(int port)
         {
             IDictionary prop = new Hashtable();
@@ -160,30 +186,20 @@ namespace F4SharedMemMirror.Remoting
             {
             }
         }
+
         public static void SetPrimaryFlightData(byte[] primaryFlightData)
         {
             _primaryFlightData = primaryFlightData;
         }
+
         public static void SetFlightData2(byte[] flightData2)
         {
             _flightData2 = flightData2;
         }
+
         public static void SetOSBData(byte[] osbData)
         {
             _osbData = osbData;
         }
-        public byte[] GetPrimaryFlightData()
-        {
-            return _primaryFlightData;
-        }
-        public byte[] GetFlightData2()
-        {
-            return _flightData2;
-        }
-        public byte[] GetOSBData()
-        {
-            return _osbData;
-        }
-
     }
 }

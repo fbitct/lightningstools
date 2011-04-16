@@ -6,6 +6,7 @@ namespace BIUSBWrapper
     /******************************************************************************
      RWR symbol constants (presented as an enumeration) from rwr.h
     ******************************************************************************/
+
     public enum CRTRWRSymbols : byte
     {
         /// <summary>
@@ -289,10 +290,11 @@ namespace BIUSBWrapper
         /// </summary>
         RWRSYM_TEST = 0xFF,
     }
-    
+
     /******************************************************************************
      User-defined types for API calls
     ******************************************************************************/
+
     /// <summary>
     /// Structure to hold return values from the <see cref="RetrieveStatus">RetrieveStatus</see> method.
     /// </summary>
@@ -303,23 +305,23 @@ namespace BIUSBWrapper
         /// <summary>
         /// Inputs is active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_INPUTS)]
-        public byte[] InputActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_INPUTS)] public byte[] InputActive;
+
         /// <summary>
         /// Output is active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_OUTPUTS)]
-        public byte[] OutputActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_OUTPUTS)] public byte[] OutputActive;
+
         /// <summary>
         /// Port is active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)]
-        public byte[] PortActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)] public byte[] PortActive;
+
         /// <summary>
         /// Port is set to input mode if 1, output mode if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)]
-        public byte[] PortIOMode;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)] public byte[] PortIOMode;
+
         /// <summary>
         /// Currently only valid for ElectronFlux class devices. 
         /// <para/>Return values are: 
@@ -332,78 +334,77 @@ namespace BIUSBWrapper
         /// <para/><see cref="MODE_SPI">MODE_SPI</see> = 6
         /// <para/><see cref="MODE_DOTMATRIX">MODE_DOTMATRIX</see> = 7
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)]
-        public byte[] PortMode;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)] public byte[] PortMode;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)]
-        public byte[] OutputMode;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PORTS)] public byte[] OutputMode;
+
         /// <summary>
         /// Analog channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_ANALOG)]
-        public byte[] AnalogActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_ANALOG)] public byte[] AnalogActive;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_HATS)]
-        public byte[] HATActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_HATS)] public byte[] HATActive;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_ROTARY)]
-        public byte[] RotaryActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_ROTARY)] public byte[] RotaryActive;
+
         /// <summary>
         /// CRT RWR channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_RWR)]
-        public byte[] CRTRWRActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_RWR)] public byte[] CRTRWRActive;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PWM)]
-        public byte[] PWMActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_PWM)] public byte[] PWMActive;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_LCDS)]
-        public byte[] LCDActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_LCDS)] public byte[] LCDActive;
+
         /// <summary>
         /// Graphic LCD channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_GLCDS)]
-        public byte[] GLCDActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_GLCDS)] public byte[] GLCDActive;
+
         /// <summary>
         /// Multiplexed display channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_MUXDISPLAYS)]
-        public byte[] MuxDisplayActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_MUXDISPLAYS)] public byte[] MuxDisplayActive;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_ALPHANUMERICS)]
-        public byte[] AlphanumericActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_ALPHANUMERICS)] public byte[] AlphanumericActive;
+
         /// <summary>
         /// DAC channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_DACS)]
-        public byte[] DACActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_DACS)] public byte[] DACActive;
+
         /// <summary>
         /// SPI channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_SPI)]
-        public byte[] SPIActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_SPI)] public byte[] SPIActive;
+
         /// <summary>
         /// Latched channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_LATCHED)]
-        public byte[] LatchedActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_LATCHED)] public byte[] LatchedActive;
+
         /// <summary>
         /// DotMatrix channels active if 1, disabled if 0.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_DOTMATRIX)]
-        public byte[] DotMatrixActive;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_DOTMATRIX)] public byte[] DotMatrixActive;
     }
 
     /// <summary>
@@ -417,175 +418,174 @@ namespace BIUSBWrapper
         /// The read/write handle for the device. This is a unique value 
         /// and changes with each call to DetectHID.
         /// </summary>
-        [MarshalAs(UnmanagedType.SysInt)]
-        public IntPtr DeviceHandle;
+        [MarshalAs(UnmanagedType.SysInt)] public IntPtr DeviceHandle;
+
         /// <summary>
         /// The number of unpacked inputs that will be returned from this device.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberInputIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberInputIndices;
+
         /// <summary>
         /// The number of unpacked outputs that will be read by this device.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberOutputIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberOutputIndices;
+
         /// <summary>
         /// The number of separate IO ports on a device. These can also refer to JPs found on older devices.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberPortIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberPortIndices;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberAnalogIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberAnalogIndices;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberHATIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberHATIndices;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberRotaryIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberRotaryIndices;
+
         /// <summary>
         /// Number of RWR supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberCRTRWRIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberCRTRWRIndices;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberPWMIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberPWMIndices;
+
         /// <summary>
         /// Number of character-based LCDs supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberLCDIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberLCDIndices;
+
         /// <summary>
         /// Number of graphic based LCDs supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberGLCDIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberGLCDIndices;
+
         /// <summary>
         /// Number of multiplexed displays supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberMuxDisplayIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberMuxDisplayIndices;
+
         /// <summary>
         /// Not currently supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberAlphanumericIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberAlphanumericIndices;
+
         /// <summary>
         /// Number of DAC (Digital to Analog Converter) supported.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberDACIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberDACIndices;
+
         //Number of SPI interface devices supported.
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberSPIIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberSPIIndices;
         //Number of latched outputs supported.
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberLatchedIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberLatchedIndices;
         //Number of OSRAM type dot matrix displays supported.
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort NumberDotMatrixIndices;
+        [MarshalAs(UnmanagedType.U2)] public ushort NumberDotMatrixIndices;
+
         /// <summary>
         /// USB.org assigned unique vendor ID number.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort VendorID;
+        [MarshalAs(UnmanagedType.U2)] public ushort VendorID;
+
         /// <summary>
         /// Vendor assigned unique device ID number.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort ProductID;
+        [MarshalAs(UnmanagedType.U2)] public ushort ProductID;
+
         /// <summary>
         /// Vendor assigned product version number.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort VersionNumber;
+        [MarshalAs(UnmanagedType.U2)] public ushort VersionNumber;
+
         /// <summary>
         /// Current Firmware revision of device.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort FlashVersion;
+        [MarshalAs(UnmanagedType.U2)] public ushort FlashVersion;
+
         /// <summary>
         /// For internal use only.
         /// </summary>
         public byte ProgramFlag;
+
         /// <summary>
         /// Device path key string as found in the Windows registry.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_CHAR)]
-        public byte[] DevicePath;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_CHAR)] public byte[] DevicePath;
+
         /// <summary>
         /// Length in bytes of the <see cref="DevicePath">DevicePath</see> string.
         /// </summary>
-        [MarshalAs(UnmanagedType.U4)]
-        public uint PathLength;
+        [MarshalAs(UnmanagedType.U4)] public uint PathLength;
+
         /// <summary>
         /// Device name string.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_CHAR)]
-        public byte[] DeviceName;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_CHAR)] public byte[] DeviceName;
+
         /// <summary>
         /// Length in bytes of the <see cref="DeviceName">DeviceName</see> string.
         /// </summary>
-        [MarshalAs(UnmanagedType.U4)]
-        public uint DeviceNameLength;
+        [MarshalAs(UnmanagedType.U4)] public uint DeviceNameLength;
+
         /// <summary>
         /// Manufacturer name string.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_CHAR)]
-        public byte[] ManufName;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = BIUSB.MAX_CHAR)] public byte[] ManufName;
+
         /// <summary>
         /// Length in bytes of the <see cref="ManufName">ManufName</see> string.
         /// </summary>
-        [MarshalAs(UnmanagedType.U4)]
-        public uint ManufNameLength;
+        [MarshalAs(UnmanagedType.U4)] public uint ManufNameLength;
+
         /// <summary>
         /// User assigned device serial number string.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        public byte[] SerialNum;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] SerialNum;
+
         /// <summary>
         /// Length in bytes of the <see cref="SerialNum">SerialNum</see> string.
         /// </summary>
-        [MarshalAs(UnmanagedType.U4)]
-        public uint SerialNumLength;
+        [MarshalAs(UnmanagedType.U4)] public uint SerialNumLength;
+
         /// <summary>
         /// For internal use only.
         /// </summary>
         public byte ConfigFlag;
+
         /// <summary>
         /// The zero based device index associated with this device.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DevIndex;
+        [MarshalAs(UnmanagedType.U2)] public ushort DevIndex;
+
         /// <summary>
         /// The number of packed bytes that will be returned by the device on each <see cref="ReadInputData">ReadInputData</see> read request.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort InputReportByteLength;
+        [MarshalAs(UnmanagedType.U2)] public ushort InputReportByteLength;
+
         /// <summary>
         /// The number of packed bytes used by the device for output data.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort OutputReportByteLength;
+        [MarshalAs(UnmanagedType.U2)] public ushort OutputReportByteLength;
+
         /// <summary>
         /// For internal use only.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort Usage;
+        [MarshalAs(UnmanagedType.U2)] public ushort Usage;
+
         /// <summary>
         /// For internal use only.
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort UsagePage;
+        [MarshalAs(UnmanagedType.U2)] public ushort UsagePage;
     }
 
     /// <summary>
@@ -601,7 +601,7 @@ namespace BIUSBWrapper
         /// The low-order bit (bit 1) - set to 0 for OFF and to 1 for ON.
         /// The upper 7 bits specify the output level range from 0 to 10.  This value sets the pulse width of the multiplexed output controlling intensity.
         /// </summary>
-        public byte state; 
+        public byte state;
     }
 
     /// <summary>
@@ -615,16 +615,18 @@ namespace BIUSBWrapper
         /// <summary>
         /// Symbol ID to display (refer to RWR Symbol Class table entries found in rwr.h)
         /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        public CRTRWRSymbols symbol;
+        [MarshalAs(UnmanagedType.U1)] public CRTRWRSymbols symbol;
+
         /// <summary>
         /// X position on screen to display symbol.  Range 0 (left) to 255 (right).
         /// </summary>
         public byte xPos;
+
         /// <summary>
         /// Y position on screen to display symbol.  Range 0 (top) to 255 (bottom).
         /// </summary>
         public byte yPos;
+
         /// <summary>
         /// 1st (low-order) bit    : missileActivity	       -- if set to 1, display missile activity symbol.
         /// <para/>2nd bit                 : missileLaunch     -- if set to 1, display missile launch symbol
@@ -642,27 +644,18 @@ namespace BIUSBWrapper
     [ComVisible(false)]
     public struct DAC_OUTPUTS
     {
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_1;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_2;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_3;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_4;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_5;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_6;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_7;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_8;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_9;
-        [MarshalAs(UnmanagedType.U2)]
-        public ushort DAC_10;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_1;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_2;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_3;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_4;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_5;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_6;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_7;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_8;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_9;
+        [MarshalAs(UnmanagedType.U2)] public ushort DAC_10;
     }
+
     /// <summary>
     /// TODO: document
     /// </summary>
@@ -670,120 +663,135 @@ namespace BIUSBWrapper
     [ComVisible(false)]
     public struct FUSION_OUTPUT
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-	    public byte[] text_a;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)]
-        public byte[] text_b;
-	    public byte gear;
-	    public byte lbg8;
-	    public byte shiftlight;
-	    public byte level;
-    } 
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public byte[] text_a;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 7)] public byte[] text_b;
+        public byte gear;
+        public byte lbg8;
+        public byte shiftlight;
+        public byte level;
+    }
 
 
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComVisible(false)]
     public sealed class BIUSB
     {
-        private BIUSB()
-        {
-        }
-        public const ushort VENDOR_ID_1=0x6666;
+        public const ushort VENDOR_ID_1 = 0x6666;
         public const ushort VENDOR_ID_2 = 0x12DA;
         public const string MANUF_NAME = "Beta Innovations Inc.";
 
         /* ----------------------------------------
          * USB PRODUCT IDs : HID DEVICES (DT_HID)
          * ---------------------------------------*/
+
         /// <summary>
         /// 0X64B
         /// </summary>
         public const ushort PID_0X64B = 0x300;
+
         /// <summary>
         /// GammaRay-256
         /// </summary>
         public const ushort PID_GAMMARAY = 0x500;
+
         /// <summary>
         /// GammaRay-256 V2 Core
         /// </summary>
         public const ushort PID_GAMMARAY_V2 = 0x510;
+
         /// <summary>
         /// GammaRay-256 V3 Core
         /// </summary>
         public const ushort PID_GAMMARAY_V3 = 0x520;
+
         /// <summary>
         /// GammaRay-64
         /// </summary>
         public const ushort PID_GAMMARAY64 = 0x700;
+
         /// <summary>
         /// GammaTron Core
         /// </summary>
         public const ushort PID_GAMMATRON = 0x710;
+
         /// <summary>
         /// ElectronFlux Core
         /// </summary>
         public const ushort PID_ELECTRONFLUX = 0x800;
+
         /// <summary>
         /// Nitro-SLG Core
         /// </summary>
-        public const ushort PID_NITRO_SLG=0x1500; 
+        public const ushort PID_NITRO_SLG = 0x1500;
 
-        public const string PIDN_0X64B="0X64B USB MODULE";
-        public const string PIDN_GAMMARAY="GammaRay-256 USB MODULE";
-        public const string PIDN_GAMMARAY64="GammaRay-64 USB MODULE";
-        public const string PIDN_ELECTRONFLUX="ElectronFlux";
-        public const string PIDN_GAMMARAY_V2="GammaRay V2";
-        public const string PIDN_GAMMARAY_V3="GammaRay V3";
-        public const string PIDN_GAMMATRON="GammaTron";
-        public const string PIDN_NITRO_SLG="Nitro-SLG";
+        public const string PIDN_0X64B = "0X64B USB MODULE";
+        public const string PIDN_GAMMARAY = "GammaRay-256 USB MODULE";
+        public const string PIDN_GAMMARAY64 = "GammaRay-64 USB MODULE";
+        public const string PIDN_ELECTRONFLUX = "ElectronFlux";
+        public const string PIDN_GAMMARAY_V2 = "GammaRay V2";
+        public const string PIDN_GAMMARAY_V3 = "GammaRay V3";
+        public const string PIDN_GAMMATRON = "GammaTron";
+        public const string PIDN_NITRO_SLG = "Nitro-SLG";
 
         /* --------------------------------------------------------------------------------
          * USB PRODUCT IDs : STANDARD JOYSTICK DEVICES (DT_DEVICES)
          * -------------------------------------------------------------------------------*/
+
         /// <summary>
         /// 4X24BH
         /// </summary>
         public const ushort PID_4X24BH = 0x100;
+
         /// <summary>
         /// 6X16B
         /// </summary>
         public const ushort PID_6X16B = 0x200;
+
         /// <summary>
         /// 6X13B
         /// </summary>
         public const ushort PID_6X13B = 0x250;
+
         /// <summary>
         /// 5X18BH
         /// </summary>
         public const ushort PID_5X18BH = 0x400;
+
         /// <summary>
         /// Plasma single device
         /// </summary>
         public const ushort PID_PLASMA = 0x600;
+
         /// <summary>
         /// Plasma HOTAS single device
         /// </summary>
         public const ushort PID_PLASMA_HOTAS = 0x601;
+
         /// <summary>
         /// Plasma DUAL device
         /// </summary>
         public const ushort PID_PLASMA_DUAL = 0x602;
+
         /// <summary>
         /// Plasma HOTAS DUAL device
         /// </summary>
         public const ushort PID_PLASMA_HOTAS_DUAL = 0x603;
+
         /// <summary>
         /// PLASMA-LITE
         /// </summary>
         public const ushort PID_PLASMA_LITE = 0x900;
+
         /// <summary>
         /// PLASMA-LITE V2
         /// </summary>
         public const ushort PID_PLASMA_LITE_V2 = 0x910;
+
         /// <summary>
         /// PLASMA-MM2
         /// </summary>
         public const ushort PID_PLASMA_MM2 = 0x920;
+
         /// <summary>
         /// FUSION
         /// </summary>
@@ -791,99 +799,115 @@ namespace BIUSBWrapper
 
 
         public const string PIDN_4X24BH = "4X24BH";
-        public const string PIDN_6X16B="6X16B";
-        public const string PIDN_6X13B="6X13B";
-        public const string PIDN_5X18BH="5X18BH";
-        public const string PIDN_PLASMA="Plasma - USB Adapter";
-        public const string PIDN_PLASMA_HOTAS="Plasma HOTAS - USB Adapter";
-        public const string PIDN_PLASMA_DUAL="Plasma - Dual USB Adapter";
-        public const string PIDN_PLASMA_HOTAS_DUAL="Plasma HOTAS - Dual USB Adapter";
-        public const string PIDN_PLASMA_LITE="Plasma-Lite";
-        public const string PIDN_PLASMA_LITE_V2="Plasma-Lite";
-        public const string PIDN_PLASMA_MM2="Plasma-MM2";
-        public const string PIDN_FUSION="Fusion";
+        public const string PIDN_6X16B = "6X16B";
+        public const string PIDN_6X13B = "6X13B";
+        public const string PIDN_5X18BH = "5X18BH";
+        public const string PIDN_PLASMA = "Plasma - USB Adapter";
+        public const string PIDN_PLASMA_HOTAS = "Plasma HOTAS - USB Adapter";
+        public const string PIDN_PLASMA_DUAL = "Plasma - Dual USB Adapter";
+        public const string PIDN_PLASMA_HOTAS_DUAL = "Plasma HOTAS - Dual USB Adapter";
+        public const string PIDN_PLASMA_LITE = "Plasma-Lite";
+        public const string PIDN_PLASMA_LITE_V2 = "Plasma-Lite";
+        public const string PIDN_PLASMA_MM2 = "Plasma-MM2";
+        public const string PIDN_FUSION = "Fusion";
 
 
         /* --------------------------------------------------------------------------------
          * Configuration devices
          * --------------------------------------------------------------------------------*/
+
         /// <summary>
         /// PLASMA-LITE V2 CONFIG HID
         /// </summary>
-        public const ushort PIDC_PLASMA_LITE_V2=0x0910; 
+        public const ushort PIDC_PLASMA_LITE_V2 = 0x0910;
+
         /// <summary>
         /// GammaRay V2 CONFIG HID
         /// </summary>
-        public const ushort PIDC_GAMMARAY_V2=0x0510;
+        public const ushort PIDC_GAMMARAY_V2 = 0x0510;
+
         /// <summary>
         /// GammaRay V3 CONFIG HID
         /// </summary>
-        public const ushort PIDC_GAMMARAY_V3=0x0520;
+        public const ushort PIDC_GAMMARAY_V3 = 0x0520;
+
         /// <summary>
         /// ElectronFlux CONFIG HID
         /// </summary>
-        public const ushort PIDC_ELECTRONFLUX=0x0800;
+        public const ushort PIDC_ELECTRONFLUX = 0x0800;
+
         /// <summary>
         /// GammaTron CONFIG HID
         /// </summary>
-        public const ushort PIDC_GAMMATRON=0x0710; 
+        public const ushort PIDC_GAMMATRON = 0x0710;
+
         /// <summary>
         /// PLASMA-MM2 CONFIG HID
         /// </summary>
-        public const ushort PIDC_PLASMA_MM2=0x0920;
+        public const ushort PIDC_PLASMA_MM2 = 0x0920;
+
         /// <summary>
         /// NITRO-SLG CONFIG HID
         /// </summary>
-        public const ushort PIDC_NITRO_SLG=0x1500;
+        public const ushort PIDC_NITRO_SLG = 0x1500;
+
         /// <summary>
         /// FUSION CONFIG HID 
         /// </summary>
-        public const ushort PIDC_FUSION=0x1600;
+        public const ushort PIDC_FUSION = 0x1600;
 
-        public const string PIDNC_PLASMA_LITE_V2="Plasma-Lite CFG";
-        public const string PIDNC_GAMMARAY_V2="GammaRay V2 CFG";
-        public const string PIDNC_GAMMARAY_V3="GammaRay V3 CFG";
-        public const string PIDNC_ELECTRONFLUX="ElectronFlux CFG";
-        public const string PIDNC_GAMMATRON="GammaTron CFG";
-        public const string PIDNC_PLASMA_MM2="Plasma-MM2 CFG";
-        public const string PIDNC_NITRO_SLG="NITRO-SLG CFG";
-        public const string PIDNC_FUSION="FUSION CFG";
+        public const string PIDNC_PLASMA_LITE_V2 = "Plasma-Lite CFG";
+        public const string PIDNC_GAMMARAY_V2 = "GammaRay V2 CFG";
+        public const string PIDNC_GAMMARAY_V3 = "GammaRay V3 CFG";
+        public const string PIDNC_ELECTRONFLUX = "ElectronFlux CFG";
+        public const string PIDNC_GAMMATRON = "GammaTron CFG";
+        public const string PIDNC_PLASMA_MM2 = "Plasma-MM2 CFG";
+        public const string PIDNC_NITRO_SLG = "NITRO-SLG CFG";
+        public const string PIDNC_FUSION = "FUSION CFG";
 
         /* --------------------------------------------------------------------------------
          * Flash Loader devices
          * --------------------------------------------------------------------------------*/
+
         /// <summary>
         /// PLASMA-LITE V2 Flash Loader
         /// </summary>
-        public const ushort PIDF_PLASMA_LITE_V2		=0x1000; 
+        public const ushort PIDF_PLASMA_LITE_V2 = 0x1000;
+
         /// <summary>
         /// GammaRay V2 Flash Loader
         /// </summary>
-        public const ushort PIDF_GAMMARAY_V2		=0x1100; 
+        public const ushort PIDF_GAMMARAY_V2 = 0x1100;
+
         /// <summary>
         /// GammaRay V3 Flash Loader
         /// </summary>
-        public const ushort PIDF_GAMMARAY_V3		=0x1110; 
+        public const ushort PIDF_GAMMARAY_V3 = 0x1110;
+
         /// <summary>
         /// ElectronFlux Flash Loader
         /// </summary>
-        public const ushort PIDF_ELECTRONFLUX		=0x1200; 
+        public const ushort PIDF_ELECTRONFLUX = 0x1200;
+
         /// <summary>
         /// GammaTron Flash Loader
         /// </summary>
-        public const ushort PIDF_GAMMATRON			=0x1300; 
+        public const ushort PIDF_GAMMATRON = 0x1300;
+
         /// <summary>
         /// PLASMA-MM2 Flash Loader
         /// </summary>
-        public const ushort PIDF_PLASMA_MM2			=0x1010;
+        public const ushort PIDF_PLASMA_MM2 = 0x1010;
+
         /// <summary>
         /// NITRO-SLG Flash Loader
         /// </summary>
-        public const ushort PIDF_NITRO_SLG			=0x1400; 
+        public const ushort PIDF_NITRO_SLG = 0x1400;
+
         /// <summary>
         /// FUSION Flash Loader
         /// </summary>
-        public const ushort PIDF_FUSION				=0x1700; 
+        public const ushort PIDF_FUSION = 0x1700;
 
         public const string PIDNF_PLASMA_LITE_V2 = "Plasma-Lite";
         public const string PIDNF_GAMMARAY_V2 = "GammaRay V2";
@@ -901,27 +925,26 @@ namespace BIUSBWrapper
         public const ushort MAX_DEVICES = 128;
         public const ushort MAX_PORTS = 24;
         public const ushort MAX_INPUTS = 512;
-        public const ushort MAX_OUTPUTS = MAX_PORTS * 15;
+        public const ushort MAX_OUTPUTS = MAX_PORTS*15;
         public const ushort MAX_ANALOG = 8;
         public const ushort MAX_HATS = 4;
         public const ushort MAX_ROTARY = 200;
         public const ushort MAX_PWM = 512;
         public const ushort MAX_LCDS = 200;
         public const ushort MAX_GLCDS = MAX_PORTS;
-        public const ushort MAX_MUXDISPLAYS = MAX_PORTS * 56;
+        public const ushort MAX_MUXDISPLAYS = MAX_PORTS*56;
         public const ushort MAX_ALPHANUMERICS = 100;
         public const ushort MAX_RWR = MAX_PORTS;
         public const ushort MAX_RWR_CONTACTS = 40;
-        public const ushort MAX_DACS = MAX_PORTS * 10;
-        public const ushort MAX_SPI = MAX_PORTS * 10;
-        public const ushort MAX_LATCHED = MAX_PORTS * 64;
-        public const ushort MAX_DOTMATRIX= MAX_PORTS * 4;
+        public const ushort MAX_DACS = MAX_PORTS*10;
+        public const ushort MAX_SPI = MAX_PORTS*10;
+        public const ushort MAX_LATCHED = MAX_PORTS*64;
+        public const ushort MAX_DOTMATRIX = MAX_PORTS*4;
         public const ushort MAX_CHAR = 256;
-        public const ushort MAX_RETRY=6;
-        public const ushort MAX_INPUT_REPORT_BYTES=65;
-        public const ushort MAX_OUTPUT_REPORT_BYTES=65;
+        public const ushort MAX_RETRY = 6;
+        public const ushort MAX_INPUT_REPORT_BYTES = 65;
+        public const ushort MAX_OUTPUT_REPORT_BYTES = 65;
         public const ushort MAX_TIMEOUT_MSEC = 1000;
-
 
 
         // RETURN CONSTANTS
@@ -929,40 +952,48 @@ namespace BIUSBWrapper
         /// Failure reading from device.
         /// </summary>
         public const ushort DEV_FAILED = 0x1;
+
         /// <summary>
         /// New data available.
         /// </summary>
         public const ushort DEV_INPUT = 0x2;
+
         /// <summary>
         /// No new data available. Waiting for device response. 
         /// </summary>
         public const ushort DEV_WAIT = 0x3;
+
         /// <summary>
         /// Device did not respond within 1 second.
         /// </summary>
         public const ushort DEV_TIMEOUT = 0x4;
 
-        public const ushort DEV_NODE_FAILED=0x0005;
+        public const ushort DEV_NODE_FAILED = 0x0005;
         public const ushort DEV_OUTPUT = 0x0006;
 
         // API CONSTANTS
         public const ushort DT_STANDARD = 0x00;
+
         /// <summary>
         /// Reserved
         /// </summary>
         public const ushort DT_FLASH = 0x01;
+
         /// <summary>
         /// Detect HID class modules that accept input commands or data from host.  These are typically output class devices.
         /// </summary>
         public const ushort DT_DEVICES = 0x2;
+
         /// <summary>
         /// Reserved
         /// </summary>
         public const ushort DT_REPORT = 0x03;
+
         /// <summary>
         /// Detects HID class modules. Will ignore all joystick type devices such Plasma class modules.
         /// </summary>
         public const ushort DT_HID = 0x4;
+
         /// <summary>
         /// Detects all HID class modules including Joystick type devices such as Plasma class modules.
         /// </summary>
@@ -973,8 +1004,10 @@ namespace BIUSBWrapper
         /// Clear contents of LCD.
         /// </summary>
         public const ushort LCD_CLEAR = 0x0;
+
         public const ushort LCD_PAGE1 = 0x1;
         public const ushort LCD_PAGE2 = 0x2;
+
         /// <summary>
         /// Display test message.
         /// </summary>
@@ -985,11 +1018,14 @@ namespace BIUSBWrapper
         /// Clear contents of LCD.
         /// </summary>
         public const ushort GLCD_CLEAR = 0;
+
         /// <summary>
         /// Display test message.
         /// </summary>
         public const ushort GLCD_TEST = 1;
+
         public const ushort GLCD_DISPLAY = 2;
+
         /// <summary>
         /// Set background color.
         /// </summary>
@@ -1000,18 +1036,22 @@ namespace BIUSBWrapper
         /// Port is in Direct mode
         /// </summary>
         public const ushort MODE_DIRECT = 0;
+
         /// <summary>
         /// Port is in Multiplex (MUX) mode
         /// </summary>
         public const ushort MODE_MUX = 1;
+
         /// <summary>
         /// Port is in CRT RWR mode
         /// </summary>
         public const ushort MODE_RWR = 2;
+
         /// <summary>
         /// Port is in Graphical LCD mode
         /// </summary>
         public const ushort MODE_GLCD = 3;
+
         /// <summary>
         /// Port is in DAC mode
         /// </summary>
@@ -1032,10 +1072,15 @@ namespace BIUSBWrapper
         /// </summary>
         public const ushort MODE_DOTMATRIX = 7;
 
+        private BIUSB()
+        {
+        }
+
 
         /******************************************************************************
          API functions
         *****************************************************************************/
+
         /// <summary>
         /// Writes contents of <paramref name="iDataBuffer"/> to the 8-bit DACs 
         /// on the port specified by <paramref name="inPort"/>. 
@@ -1058,9 +1103,10 @@ namespace BIUSBWrapper
         /// <returns>
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.</returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteDAC", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteDAC", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteDAC([In]ref DeviceParam iDeviceList, [In] byte inPort, [In]byte[] iDataBuffer);
+        public static extern int WriteDAC([In] ref DeviceParam iDeviceList, [In] byte inPort, [In] byte[] iDataBuffer);
 
         /// <summary>
         /// A non-blocking call which returns input data. The first call to this function 
@@ -1104,9 +1150,11 @@ namespace BIUSBWrapper
         /// returned after 1 second has elapsed.
         /// <para/>
         /// </remarks>
-        [DllImport("biusb.dll", EntryPoint = "ReadInputData", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "ReadInputData", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int ReadInputData([In] ref DeviceParam iDeviceList, [Out] byte[] oDataBuffer, [In] uint iFlag);
+        public static extern int ReadInputData([In] ref DeviceParam iDeviceList, [Out] byte[] oDataBuffer,
+                                               [In] uint iFlag);
 
         /// <summary>
         /// Sends specified command <paramref name="iCmd"/> to a graphic 
@@ -1129,9 +1177,11 @@ namespace BIUSBWrapper
         /// <returns>
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.</returns>
-        [DllImport("biusb.dll", EntryPoint = "CmdGLCD", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "CmdGLCD", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int CmdGLCD([In]ref DeviceParam iDeviceList, [In] byte inPort, [In] byte iBGColor, [In] byte iCmd);
+        public static extern int CmdGLCD([In] ref DeviceParam iDeviceList, [In] byte inPort, [In] byte iBGColor,
+                                         [In] byte iCmd);
 
         /// <summary>
         /// Writes contents of <paramref name="iDataBuffer"/> to the 
@@ -1164,9 +1214,11 @@ namespace BIUSBWrapper
         /// <returns>
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.</returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteGLCD", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteGLCD", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteGLCD([In]ref DeviceParam iDeviceList, [In] byte inPort, [In] byte inLine, [In] byte iNumLines, [In] byte iBGColor, [In]byte[] iDataBuffer);
+        public static extern int WriteGLCD([In] ref DeviceParam iDeviceList, [In] byte inPort, [In] byte inLine,
+                                           [In] byte iNumLines, [In] byte iBGColor, [In] byte[] iDataBuffer);
 
 
         /// <summary>
@@ -1182,9 +1234,11 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteLatchedOutput", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteLatchedOutput", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteLatchedOutput([In]ref DeviceParam iDeviceList, [In] byte inPort, [In] byte[] iDataBuffer, [In] byte inLevel);
+        public static extern int WriteLatchedOutput([In] ref DeviceParam iDeviceList, [In] byte inPort,
+                                                    [In] byte[] iDataBuffer, [In] byte inLevel);
 
 
         /// <summary>
@@ -1201,11 +1255,11 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteDotMatrix", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteDotMatrix", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteDotMatrix([In]ref DeviceParam iDeviceList, [In] byte inPort, [In] byte[] iDataBuffer, [In] byte inLevel);
-
-
+        public static extern int WriteDotMatrix([In] ref DeviceParam iDeviceList, [In] byte inPort,
+                                                [In] byte[] iDataBuffer, [In] byte inLevel);
 
 
         /// <summary>
@@ -1218,9 +1272,10 @@ namespace BIUSBWrapper
         /// <returns>
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.</returns>
-        [DllImport("biusb.dll", EntryPoint = "ClearLCD", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "ClearLCD", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int ClearLCD([In]ref DeviceParam iDeviceList, [In] byte inLCD);
+        public static extern int ClearLCD([In] ref DeviceParam iDeviceList, [In] byte inLCD);
 
         /// <summary>
         /// Writes contents of <paramref name="iDataBuffer"/> to the 
@@ -1243,9 +1298,11 @@ namespace BIUSBWrapper
         /// <returns>
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.</returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteLCD", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteLCD", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteLCD([In]ref DeviceParam iDeviceList, [In] byte inLCD, [In] byte inLine, [In]byte[] iDataBuffer, [In]byte inLevel);
+        public static extern int WriteLCD([In] ref DeviceParam iDeviceList, [In] byte inLCD, [In] byte inLine,
+                                          [In] byte[] iDataBuffer, [In] byte inLevel);
 
 
         /// <summary>
@@ -1263,9 +1320,11 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteDirectOutput", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteDirectOutput", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteDirectOutput([In]ref DeviceParam iDeviceList, [In] byte inPort, [In]DIRECT_OUTPUT[] iDataBuffer);
+        public static extern int WriteDirectOutput([In] ref DeviceParam iDeviceList, [In] byte inPort,
+                                                   [In] DIRECT_OUTPUT[] iDataBuffer);
 
         /// <summary>
         /// Writes contents of <paramref name="iDataBuffer"/> to the multiplexed 
@@ -1282,9 +1341,11 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteMuxOutput", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteMuxOutput", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteMuxOutput([In]ref DeviceParam iDeviceList, [In] byte inPort, [In]DIRECT_OUTPUT[] iDataBuffer);
+        public static extern int WriteMuxOutput([In] ref DeviceParam iDeviceList, [In] byte inPort,
+                                                [In] DIRECT_OUTPUT[] iDataBuffer);
 
         /// <summary>
         /// Writes contents of <paramref name="iDataBuffer"/> to the 7-segment 
@@ -1306,9 +1367,11 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteDisplayOutput", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteDisplayOutput", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteDisplayOutput([In]ref DeviceParam iDeviceList, [In] byte inPort, [In] byte[] iDataBuffer, [In] byte inLevel);
+        public static extern int WriteDisplayOutput([In] ref DeviceParam iDeviceList, [In] byte inPort,
+                                                    [In] byte[] iDataBuffer, [In] byte inLevel);
 
         /// <summary>
         /// Writes contents of <paramref name="iData"/> to a single 7-segment display on the 
@@ -1351,9 +1414,10 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "Write7Segment", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "Write7Segment", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int Write7Segment([In]ref DeviceParam iDeviceList, [In] byte[] iData);
+        public static extern int Write7Segment([In] ref DeviceParam iDeviceList, [In] byte[] iData);
 
         /// <summary>
         /// Writes contents of <paramref name="iDataBuffer"/> to SPI compatible peripherals or DACs on the port specified by <paramref name="inPort"/>.  This function
@@ -1376,9 +1440,11 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt;0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteSPIDAC", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteSPIDAC", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteSPIDAC([In]ref DeviceParam iDeviceList, [In] byte inPort, [In] ref DAC_OUTPUTS iDataBuffer, [In] byte inLevel);
+        public static extern int WriteSPIDAC([In] ref DeviceParam iDeviceList, [In] byte inPort,
+                                             [In] ref DAC_OUTPUTS iDataBuffer, [In] byte inLevel);
 
         /// <summary>
         /// Writes contents of <paramref name="iRWRBuffer"/> to the port specified by <paramref name="inPort"/> configured for CRTRWR mode.
@@ -1395,15 +1461,18 @@ namespace BIUSBWrapper
         /// 0: If failure writing to device.
         /// <para/>&gt; 0: if success, returns number of bytes written to device.
         /// </returns>
-        [DllImport("biusb.dll", EntryPoint = "WriteCRTRWR", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "WriteCRTRWR", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.I4)]
-        public static extern int WriteCRTRWR([In] ref DeviceParam iDeviceList, [In] byte inPort, [In] byte inContacts, [In] byte inSymbolCnt, [In] byte inContactIndex, [In] CRTRWR_OUTPUT[] iRWRBuffer);
-
+        public static extern int WriteCRTRWR([In] ref DeviceParam iDeviceList, [In] byte inPort, [In] byte inContacts,
+                                             [In] byte inSymbolCnt, [In] byte inContactIndex,
+                                             [In] CRTRWR_OUTPUT[] iRWRBuffer);
 
 
         /******************************************************************************
          DLL functions
         ******************************************************************************/
+
         /// <summary>
         /// Detects all compatible vendor specific USB HID devices. Should be 
         /// the first function called prior to all other calls or 
@@ -1420,11 +1489,12 @@ namespace BIUSBWrapper
         /// <para/><see cref="DT_HID">DT_HID</see> (Detects vendor defined HID class modules. Will ignore all joystick type devices such Plasma class modules)
         /// <para/><see cref="DT_ALL">DT_ALL</see> (Detects all HID class modules including Joystick type devices such as Plasma class modules).</param>
         /// <returns><see langword="true"/> if success detecting devices, or <see langword="false"/> if failure detecting devices or no devices found.</returns>
-        [DllImport("biusb.dll", EntryPoint = "DetectHID", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "DetectHID", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DetectHID([Out] out uint oDev_Cnt, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)]  DeviceParam[] oDeviceList, [In]uint iFlag);
-
-
+        public static extern bool DetectHID([Out] out uint oDev_Cnt,
+                                            [Out] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] DeviceParam[]
+                                                oDeviceList, [In] uint iFlag);
 
 
         /// <summary>
@@ -1466,12 +1536,11 @@ namespace BIUSBWrapper
         /// <para/><see cref="DT_HID">DT_HID</see> (Detects HID input class modules. Will ignore all joystick type devices such Plasma class modules)
         /// <para/><see cref="DT_ALL">DT_ALL</see> (Detects all HID input class modules including Joystick type devices such as Plasma class modules).</param>
         /// <returns><see langword="true"/> if success detecting devices, or <see langword="false"/> if failure detecting devices or no devices found.</returns>
-        [DllImport("biusb.dll", EntryPoint = "DetectDevice", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "DetectDevice", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DetectDevice([Out] out uint oDev_Cnt, [Out][MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)]  DeviceParam[] oDeviceList, [In]uint iProductID, [In]uint iFlag);
-
-
-
+        public static extern bool DetectDevice([Out] out uint oDev_Cnt,
+                                               [Out] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] DeviceParam[] oDeviceList, [In] uint iProductID, [In] uint iFlag);
 
 
         /// <summary>
@@ -1479,7 +1548,8 @@ namespace BIUSBWrapper
         /// </summary>
         /// <param name="iDeviceList">A <see cref="DeviceParam">DeviceParam</see> structure. Must contain valid device information returned from call to <see cref="DetectHID">DetectHID</see>.</param>
         /// <param name="oDeviceStatus">Returns a <see cref="DeviceStatus">DeviceStatus</see> structure.  All returned data will be stored in this location.</param>
-        [DllImport("biusb.dll", EntryPoint = "RetrieveStatus", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "RetrieveStatus", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         public static extern void RetrieveStatus([In] ref DeviceParam iDeviceList, [Out] out DeviceStatus oDeviceStatus);
 
         /// <summary>
@@ -1488,8 +1558,9 @@ namespace BIUSBWrapper
         /// <param name="iDev_Cnt">Number of detected modules to close in the <paramref name="iDeviceList"/>. This value is returned by a call to <see cref="DetectHID">DetectHID</see>.</param>
         /// <param name="iDeviceList">A <see cref="DeviceParam">DeviceParam</see> structure. Must contain valid device information returned from call to <see cref="DetectHID">DetectHID</see>.</param>
         /// <returns><see langword="true"/> if success closing devices, or <see langword="false"/> if failure closing devices or releasing memory.</returns>
-        [DllImport("biusb.dll", EntryPoint = "CloseDevices", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("biusb.dll", EntryPoint = "CloseDevices", ExactSpelling = true, CharSet = CharSet.Auto,
+            SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CloseDevices([In]uint iDev_Cnt, [In] DeviceParam[] iDeviceList);
+        public static extern bool CloseDevices([In] uint iDev_Cnt, [In] DeviceParam[] iDeviceList);
     }
 }

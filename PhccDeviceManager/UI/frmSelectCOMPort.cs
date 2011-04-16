@@ -1,38 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections;
+using Common.Strings;
+using Microsoft.VisualBasic.Devices;
 
 namespace Phcc.DeviceManager.UI
 {
     public partial class frmSelectCOMPort : Form
     {
+        private string _comPort;
         private List<string> _comPorts = new List<string>();
-        private string _comPort = null;
+
         public frmSelectCOMPort()
         {
             InitializeComponent();
             _comPorts = EnumerateSerialPorts();
         }
+
         public string COMPort
         {
-            get
-            {
-                return _comPort;
-            }
-            set
-            {
-                _comPort = value;
-
-            }
+            get { return _comPort; }
+            set { _comPort = value; }
         }
+
+        public List<string> COMPorts
+        {
+            get { return _comPorts; }
+            set { _comPorts = value; }
+        }
+
         private void SelectSuppliedComPortInList()
         {
-            foreach (var item in cbComPort.Items)
+            foreach (object item in cbComPort.Items)
             {
                 if (item.ToString() == _comPort)
                 {
@@ -40,31 +39,22 @@ namespace Phcc.DeviceManager.UI
                 }
             }
         }
+
         private void UpdateComPort()
         {
-            _comPort=cbComPort.SelectedItem != null ? cbComPort.SelectedItem.ToString() : null;
+            _comPort = cbComPort.SelectedItem != null ? cbComPort.SelectedItem.ToString() : null;
         }
-        public List<string> COMPorts
-        {
-            get
-            {
-                return _comPorts;
-            }
-            set
-            {
-                _comPorts = value;
-            }
-        }
+
         private void frmSelectCOMPort_Load(object sender, EventArgs e)
         {
-            AddComPortsToList(); 
+            AddComPortsToList();
             EnableDisableOKButton();
         }
 
         private void AddComPortsToList()
         {
             if (_comPorts == null) return;
-            IComparer<string> comparer = new Common.Strings.NumericComparer();
+            IComparer<string> comparer = new NumericComparer();
             _comPorts.Sort(comparer);
             cbComPort.Items.Clear();
             foreach (string portName in _comPorts)
@@ -73,11 +63,12 @@ namespace Phcc.DeviceManager.UI
             }
             SelectSuppliedComPortInList();
         }
-        private List<string>EnumerateSerialPorts()
+
+        private List<string> EnumerateSerialPorts()
         {
-            Microsoft.VisualBasic.Devices.Ports ports = new Microsoft.VisualBasic.Devices.Ports();
-            List<string> toReturn = new List<string>();
-            foreach (var portName in ports.SerialPortNames)
+            var ports = new Ports();
+            var toReturn = new List<string>();
+            foreach (string portName in ports.SerialPortNames)
             {
                 toReturn.Add(portName);
             }
@@ -86,14 +77,14 @@ namespace Phcc.DeviceManager.UI
 
         private void cmdOk_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void cmdCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void cbComPort_SelectedIndexChanged(object sender, EventArgs e)
@@ -101,6 +92,7 @@ namespace Phcc.DeviceManager.UI
             EnableDisableOKButton();
             UpdateComPort();
         }
+
         private void EnableDisableOKButton()
         {
             string selectedText = cbComPort.SelectedItem != null ? cbComPort.SelectedItem.ToString() : null;

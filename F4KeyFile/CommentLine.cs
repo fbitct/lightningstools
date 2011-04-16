@@ -1,38 +1,27 @@
 using System;
 using System.Runtime.InteropServices;
+
 namespace F4KeyFile
 {
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Serializable]
-    public sealed class CommentLine:IBinding
+    public sealed class CommentLine : IBinding
     {
         private string _text;
+
         public CommentLine()
         {
         }
+
         public CommentLine(string text)
         {
-            this.Text = text;
+            Text = text;
         }
-        public string Callback
-        {
-            get
-            {
-                return null;
-            }
-            set
-            {
-                throw new InvalidOperationException();
-            }
-        }
-        public int LineNum { get; set; }
+
         public string Text
         {
-            get
-            {
-                return _text;
-            }
+            get { return _text; }
             set
             {
                 if (value != null)
@@ -49,28 +38,44 @@ namespace F4KeyFile
                 _text = value;
             }
         }
+
+        #region IBinding Members
+
+        public string Callback
+        {
+            get { return null; }
+            set { throw new InvalidOperationException(); }
+        }
+
+        public int LineNum { get; set; }
+
+        #endregion
+
         public override string ToString()
         {
             return _text;
         }
+
         public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
-            if (!obj.GetType().Equals(this.GetType()))
+            if (!obj.GetType().Equals(GetType()))
             {
                 return false;
             }
-            if (obj.ToString() != this.ToString())
+            if (obj.ToString() != ToString())
             {
                 return false;
             }
             return true;
         }
+
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
+
         public CommentLine Parse(string input)
         {
             return new CommentLine(input);

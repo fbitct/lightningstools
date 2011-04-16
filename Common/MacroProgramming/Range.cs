@@ -1,38 +1,26 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class Range:DataPoint
+    public sealed class Range : DataPoint
     {
-        private double _lowerInclusiveBound = 0;
-        private double _upperInclusiveBound = 0;
+        private double _lowerInclusiveBound;
+        private double _upperInclusiveBound;
 
-        public Range():base()
-        {
-        }
         public double Width
         {
-            get
-            {
-                return global::System.Math.Abs(_upperInclusiveBound) - global::System.Math.Abs(_lowerInclusiveBound);
-            }
+            get { return System.Math.Abs(_upperInclusiveBound) - System.Math.Abs(_lowerInclusiveBound); }
         }
+
         public double CenterPoint
         {
-            get
-            {
-                return (Width / 2) + _lowerInclusiveBound;
-            }
+            get { return (Width/2) + _lowerInclusiveBound; }
         }
+
         public double LowerInclusiveBound
         {
-            get
-            {
-                return _lowerInclusiveBound;
-            }
+            get { return _lowerInclusiveBound; }
             set
             {
                 if (_lowerInclusiveBound > _upperInclusiveBound)
@@ -47,12 +35,10 @@ namespace Common.MacroProgramming
                 }
             }
         }
+
         public double UpperInclusiveBound
         {
-            get
-            {
-                return _upperInclusiveBound;
-            }
+            get { return _upperInclusiveBound; }
             set
             {
                 if (UpperInclusiveBound < LowerInclusiveBound)
@@ -67,7 +53,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        
-
     }
 }

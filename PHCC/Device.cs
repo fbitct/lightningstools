@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
+using System.Text;
 using System.Threading;
-using System.Diagnostics;
+using System.Windows.Forms;
+
 namespace Phcc
 {
     //Source interface for events to be exposed.
@@ -15,7 +14,7 @@ namespace Phcc
     /// <summary>
     /// COM Event Source Interface
     /// </summary>
-    [GuidAttribute("8709CA5D-79FA-4a63-ACF4-C99475990BC3")]
+    [Guid("8709CA5D-79FA-4a63-ACF4-C99475990BC3")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
     [ComVisible(true)]
     public interface PhccEvents
@@ -96,6 +95,7 @@ namespace Phcc
         /// </summary>
         DobSend = 0x08
     }
+
     /// <summary>
     /// Enumeration of stepper motor directions.
     /// </summary>
@@ -108,9 +108,9 @@ namespace Phcc
         /// <summary>
         /// Specifies counterclockwise stepper motor movement.
         /// </summary>
-        Counterclockwise= 0x80
-
+        Counterclockwise = 0x80
     }
+
     /// <summary>
     /// Enumeration of possible stepper motor step types.
     /// </summary>
@@ -119,12 +119,13 @@ namespace Phcc
         /// <summary>
         /// Indicates that the step count refers to the number of full steps that the stepper motor should move.
         /// </summary>
-        FullStep= 0x00,
+        FullStep = 0x00,
         /// <summary>
         /// Indicates that the step count refers to the number of half steps that the stepper motor should move.
         /// </summary>
         HalfStep = 0x01
     }
+
     /// <summary>
     /// Enumeration of LCD data modes.
     /// </summary>
@@ -185,6 +186,7 @@ namespace Phcc
         /// </summary>
         PacketTypeMask = 0xE0,
     }
+
     /// <summary>
     /// Event handler delegate for the <see cref="Device.DigitalInputChanged"/> event.
     /// </summary>
@@ -192,6 +194,7 @@ namespace Phcc
     /// <param name="e">a <see cref="DigitalInputChangedEventArgs"/> object containing detailed information about the event.</param>
     [ComVisible(false)]
     public delegate void DigitalInputChangedEventHandler(object sender, DigitalInputChangedEventArgs e);
+
     /// <summary>
     /// Event handler delegate for the <see cref="Device.AnalogInputChanged"/> event.
     /// </summary>
@@ -199,6 +202,7 @@ namespace Phcc
     /// <param name="e">a <see cref="AnalogInputChangedEventArgs"/> object containing detailed information about the event.</param>
     [ComVisible(false)]
     public delegate void AnalogInputChangedEventHandler(object sender, AnalogInputChangedEventArgs e);
+
     /// <summary>
     /// Event handler delegate for the <see cref="Device.I2CDataReceived"/> event.
     /// </summary>
@@ -262,34 +266,11 @@ namespace Phcc
     /// The PHCC USB interface also appears to Windows as 
     /// a standard RS232 COM port.
     /// </summary>
-	[ClassInterface(ClassInterfaceType.AutoDual)]
-    [ComSourceInterfaces(typeof(PhccEvents))]
+    [ClassInterface(ClassInterfaceType.AutoDual)]
+    [ComSourceInterfaces(typeof (PhccEvents))]
     [Synchronization]
-    public sealed class Device : ContextBoundObject,IDisposable
+    public sealed class Device : ContextBoundObject, IDisposable
     {
-        /// <summary>
-        /// The <see cref="DigitalInputChanged"/> event is raised when 
-        /// the PHCC motherboard detects that one of the digital inputs
-        /// has changed (i.e. whenever a button that is wired 
-        /// into the digital input key matrix is pressed or released). 
-        /// </summary>
-        public event DigitalInputChangedEventHandler DigitalInputChanged;
-
-        /// <summary>
-        /// The <see cref="AnalogInputChanged"/> event is raised when
-        /// the PHCC motherboard detects that one of the analog inputs 
-        /// has changed values (i.e. whenever an analog input signal 
-        /// changes state). 
-        /// </summary>
-        public event AnalogInputChangedEventHandler AnalogInputChanged;
-
-        /// <summary>
-        /// The <see cref="I2CDataReceived"/> event is raised when
-        /// the PHCC motherboard receives data from one of the attached 
-        /// I2C peripherals (if any).
-        /// </summary>
-        public event I2CDataReceivedEventHandler I2CDataReceived;
-
         /// <summary>
         /// Bitmask for determining the index of the digital 
         /// input whose value has changed.  
@@ -297,6 +278,7 @@ namespace Phcc
         /// that are received when the PHCC is in "talking" mode.
         /// </summary>
         private const ushort DigitalInputUpdatedIndexMask = 0x07FE;
+
         /// <summary>
         /// Bitmask for determining the new value of the digital 
         /// input whose value has 
@@ -327,11 +309,40 @@ namespace Phcc
         /// </summary>
         private const ushort I2CDataReceivedAddressHighOrderBitsMask = 0x03;
 
+        private readonly object _rs232lock = new object();
+
         /// <summary>
-        /// A <see cref="System.IO.Ports.SerialPort"/> object that
-        /// hides the details of communicating via RS232 over a COM port.
+        /// A byte buffer to store the parsed values of the 
+        /// current analog input values list.
         /// </summary>
-        private volatile SerialPort _serialPort;
+        private volatile short[] _currentAnalogInputsParsed = new short[35];
+
+        /// <summary>
+        /// A byte buffer to store the un-parsed values of the 
+        /// current analog input values list.
+        /// </summary>
+        /* Commenting out this declaration, which matches the implementation in PHCC2HostProtocol, but which does not match the actual implementation in Firmware14 *?
+        //private volatile byte[] _currentAnalogInputsRaw = new byte[45];
+        */
+        private volatile byte[] _currentAnalogInputsRaw = new byte[70]; //this matches the implementation in Firmware18
+
+        /// <summary>
+        /// A byte buffer to store the current values of the 
+        /// digital inputs.
+        /// </summary>
+        private volatile byte[] _currentDigitalInputValues = new byte[128];
+
+        /// <summary>
+        /// Flag for preventing the read buffer from being read 
+        /// during certain operations
+        /// </summary>
+        private volatile bool _dontRead;
+
+        /// <summary>
+        /// Boolean flag indicating whether this object instance has 
+        /// been <see cref="IDisposable.Dispose()"/>d.
+        /// </summary>
+        private bool _isDisposed;
 
         /// <summary>
         /// The name of the COM port to communicate over 
@@ -345,15 +356,10 @@ namespace Phcc
         private volatile byte[] _readBuffer = new byte[20];
 
         /// <summary>
-        /// A byte buffer to use when writing data to the PHCC.
+        /// A <see cref="System.IO.Ports.SerialPort"/> object that
+        /// hides the details of communicating via RS232 over a COM port.
         /// </summary>
-        private volatile byte[] _writeBuffer = new byte[4];
-
-        /// <summary>
-        /// Flag for preventing the read buffer from being read 
-        /// during certain operations
-        /// </summary>
-        private volatile bool _dontRead;
+        private volatile SerialPort _serialPort;
 
         /// <summary>
         /// Flag to keep track of whether the PHCC motherboard is sending automatic change
@@ -362,34 +368,9 @@ namespace Phcc
         private volatile bool _talking;
 
         /// <summary>
-        /// A byte buffer to store the current values of the 
-        /// digital inputs.
+        /// A byte buffer to use when writing data to the PHCC.
         /// </summary>
-        private volatile byte[] _currentDigitalInputValues = new byte[128];
-
-        /// <summary>
-        /// A byte buffer to store the un-parsed values of the 
-        /// current analog input values list.
-        /// </summary>
-        /* Commenting out this declaration, which matches the implementation in PHCC2HostProtocol, but which does not match the actual implementation in Firmware14 *?
-        //private volatile byte[] _currentAnalogInputsRaw = new byte[45];
-        */
-        private volatile byte[] _currentAnalogInputsRaw = new byte[70]; //this matches the implementation in Firmware18
-        
-        
-        /// <summary>
-        /// A byte buffer to store the parsed values of the 
-        /// current analog input values list.
-        /// </summary>
-        private volatile short[] _currentAnalogInputsParsed = new short[35];
-
-        /// <summary>
-        /// Boolean flag indicating whether this object instance has 
-        /// been <see cref="IDisposable.Dispose()"/>d.
-        /// </summary>
-        private bool _isDisposed;
-
-        private object _rs232lock = new object();
+        private volatile byte[] _writeBuffer = new byte[4];
 
         /// <summary>
         /// Creates an instance of the <see cref="Device"/> class.
@@ -397,13 +378,14 @@ namespace Phcc
         public Device()
         {
         }
+
         /// <summary>
         /// Creates an instance of the <see cref="Device"/> class.
         /// </summary>
         /// <param name="portName">The name of the COM port to use for 
         /// communicating with the PHCC motherboard (i.e. "COM1", "COM2",
         /// etc.)</param>
-        public Device(string portName):this(portName,true)
+        public Device(string portName) : this(portName, true)
         {
         }
 
@@ -422,8 +404,8 @@ namespace Phcc
             {
                 EnsurePortIsReady();
             }
-
         }
+
         /// <summary>
         /// Gets the underlying <see cref="System.IO.Ports.SerialPort"/> object,
         /// which allows direct communication with the PHCC motherboard via
@@ -431,10 +413,7 @@ namespace Phcc
         /// </summary>
         public SerialPort SerialPort
         {
-            get
-            {
-                return _serialPort;
-            }
+            get { return _serialPort; }
         }
 
         /// <summary>
@@ -444,20 +423,125 @@ namespace Phcc
         /// </summary>
         public string PortName
         {
-            get
-            {
-                return _portName;
-            }
+            get { return _portName; }
             set
             {
                 if (value == null || value.Trim().Equals(string.Empty))
                 {
-                    throw new ArgumentException("must contain a string that identifies a valid serial port on the machine (i.e. COM1, COM2, etc.)", "value");
+                    throw new ArgumentException(
+                        "must contain a string that identifies a valid serial port on the machine (i.e. COM1, COM2, etc.)",
+                        "value");
                 }
                 ClosePort();
                 _portName = value;
             }
         }
+
+        /// <summary>
+        /// Gets a bool array containing the current values of 
+        /// all digital inputs.
+        /// </summary>
+        /// <returns>A bool array containing the current values of 
+        /// all digital inputs.  Each value in the array represents
+        /// a single discrete digital input, out of a total of 
+        /// 1024 inputs.</returns>
+        public bool[] DigitalInputs
+        {
+            get
+            {
+                var toReturn = new bool[1024];
+                PollDigitalInputs();
+                for (int i = 0; i < toReturn.Length; i++)
+                {
+                    byte relevantByte = _currentDigitalInputValues[((i)/8)];
+                    toReturn[i] = ((relevantByte & (byte) (Math.Pow(2, (i%8)))) != 0);
+                }
+                return toReturn;
+            }
+        }
+
+        /// <summary>
+        /// Gets an array of 16-bit signed integers containing the current values 
+        /// of all analog inputs.  Only the low 10 bits contain information; 
+        /// the high 6 bits are always zero because the precision of the 
+        /// analog inputs is currently limited to 10 bits.
+        /// </summary>
+        /// <returns>An array of 16-bit signed integers containing the current
+        /// values of all analog inputs.  Only the low 10 bits 
+        /// in each array element contain useful information; 
+        /// the high 6 bits are always zero because the 
+        /// precision of the PHCC analog inputs is currently 
+        /// limited to 10 bits.</returns>
+        public short[] AnalogInputs
+        {
+            get
+            {
+                PollAnalogInputs();
+                return _currentAnalogInputsParsed;
+            }
+        }
+
+        /// <summary>
+        /// Gets a string containing the PHCC motherboard's firmware 
+        /// version.
+        /// </summary>
+        /// <returns>A <see cref="string"/> containing the PHCC motherboard's
+        /// firmware version.</returns>
+        public string FirmwareVersion
+        {
+            get
+            {
+                string toReturn = null;
+                bool wasTalking = _talking;
+                bool oldDontRead = _dontRead;
+                try
+                {
+                    EnsurePortIsReady();
+                    _dontRead = true; //temporarily disable the buffer-reader event handler
+                    if (_talking)
+                    {
+                        StopTalking();
+                    }
+                    else
+                    {
+                        WaitForInputBufferQuiesce();
+                    }
+                    RS232Write(" ");
+                    _readBuffer.Initialize();
+                    Rs232Read(_readBuffer, 0, 10);
+                    toReturn = Encoding.ASCII.GetString(_readBuffer, 0, 10);
+                }
+                finally
+                {
+                    _dontRead = oldDontRead;
+                    if (wasTalking) StartTalking();
+                }
+                return toReturn;
+            }
+        }
+
+        /// <summary>
+        /// The <see cref="DigitalInputChanged"/> event is raised when 
+        /// the PHCC motherboard detects that one of the digital inputs
+        /// has changed (i.e. whenever a button that is wired 
+        /// into the digital input key matrix is pressed or released). 
+        /// </summary>
+        public event DigitalInputChangedEventHandler DigitalInputChanged;
+
+        /// <summary>
+        /// The <see cref="AnalogInputChanged"/> event is raised when
+        /// the PHCC motherboard detects that one of the analog inputs 
+        /// has changed values (i.e. whenever an analog input signal 
+        /// changes state). 
+        /// </summary>
+        public event AnalogInputChangedEventHandler AnalogInputChanged;
+
+        /// <summary>
+        /// The <see cref="I2CDataReceived"/> event is raised when
+        /// the PHCC motherboard receives data from one of the attached 
+        /// I2C peripherals (if any).
+        /// </summary>
+        public event I2CDataReceivedEventHandler I2CDataReceived;
 
         /// <summary>
         /// Closes the serial port connection.
@@ -485,6 +569,7 @@ namespace Phcc
             }
             Thread.Sleep(500);
         }
+
         /// <summary>
         /// Establishes a serial port connection to the PHCC motherboard.
         /// </summary>
@@ -503,35 +588,35 @@ namespace Phcc
                 _serialPort.Handshake = Handshake.RequestToSend;
                 _serialPort.ReceivedBytesThreshold = 1;
                 _serialPort.RtsEnable = true;
-                _serialPort.ReadTimeout = 500; 
-                _serialPort.WriteTimeout = 500; 
+                _serialPort.ReadTimeout = 500;
+                _serialPort.WriteTimeout = 500;
                 //_serialPort.ReadTimeout = -1; //infinite
                 //_serialPort.WriteTimeout = -1; //infinite
-                _serialPort.DataReceived += new SerialDataReceivedEventHandler(_serialPort_DataReceived);
-                _serialPort.ErrorReceived += new SerialErrorReceivedEventHandler(_serialPort_ErrorReceived);
+                _serialPort.DataReceived += _serialPort_DataReceived;
+                _serialPort.ErrorReceived += _serialPort_ErrorReceived;
                 _serialPort.Open();
                 GC.SuppressFinalize(_serialPort.BaseStream);
-
             }
-
         }
 
-        void _serialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
+        private void _serialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-          //do nothing   
+            //do nothing   
         }
+
         /// <summary>
         /// Instructs the PHCC motherboard to perform a software reset 
         /// on itself.
         /// </summary>
         public void Reset()
         {
-            EnsurePortIsReady(); 
-            _writeBuffer[0] = (byte)Host2PhccCommands.Reset;
-            _writeBuffer[1] = (byte)Host2PhccCommands.Reset;
-            _writeBuffer[2] = (byte)Host2PhccCommands.Reset;
+            EnsurePortIsReady();
+            _writeBuffer[0] = (byte) Host2PhccCommands.Reset;
+            _writeBuffer[1] = (byte) Host2PhccCommands.Reset;
+            _writeBuffer[2] = (byte) Host2PhccCommands.Reset;
             RS232Write(_writeBuffer, 0, 3);
         }
+
         /// <summary>
         /// Sends data to an individual HD44780-compatible character LCD 
         /// display wired to a PHCC DOA_char_lcd character LCD driver 
@@ -555,8 +640,9 @@ namespace Phcc
             {
                 throw new ArgumentOutOfRangeException("displayNum", "must be between 1 and 8");
             }
-            DoaSendRaw(deviceAddr, (byte)(displayNum & ((byte)mode)), data);
+            DoaSendRaw(deviceAddr, (byte) (displayNum & ((byte) mode)), data);
         }
+
         /// <summary>
         /// Sends data to a DOA_AnOut1 analog output daughtercard, to
         /// control the gain parameter which is in effect for all 
@@ -570,6 +656,7 @@ namespace Phcc
         {
             DoaSendRaw(deviceAddr, 0x10, gain);
         }
+
         /// <summary>
         /// Sends data to a DOA_AnOut1 analog output daughtercard, to 
         /// control the RMS voltage (using PWM) being supplied by 
@@ -585,12 +672,13 @@ namespace Phcc
         /// the control pins on the specified channel.</param>
         public void DoaSendAnOut1(byte deviceAddr, byte channelNum, byte value)
         {
-            if (channelNum == 0 || channelNum> 16)
+            if (channelNum == 0 || channelNum > 16)
             {
                 throw new ArgumentOutOfRangeException("channelNum", "must be between 1 and 16");
             }
-            DoaSendRaw(deviceAddr, (byte)((int)channelNum - 1), value);
+            DoaSendRaw(deviceAddr, (byte) (channelNum - 1), value);
         }
+
         /// <summary>
         /// Sends data to a DOA_servo daughtercard to control the gain 
         /// parameter of an individual servo wired to the card.
@@ -607,7 +695,7 @@ namespace Phcc
             {
                 throw new ArgumentOutOfRangeException("servoNum", "must be between 1 and 8");
             }
-            DoaSendRaw(deviceAddr, (byte)(((int)servoNum - 1) + 24), gain);
+            DoaSendRaw(deviceAddr, (byte) ((servoNum - 1) + 24), gain);
         }
 
         /// <summary>
@@ -632,9 +720,10 @@ namespace Phcc
             {
                 Array.Reverse(calibrationBytes);
             }
-            DoaSendRaw(deviceAddr, (byte)(((int)servoNum - 1) + 8), calibrationBytes[0]);
-            DoaSendRaw(deviceAddr, (byte)((int)(servoNum - 1) + 16), calibrationBytes[1]);
+            DoaSendRaw(deviceAddr, (byte) ((servoNum - 1) + 8), calibrationBytes[0]);
+            DoaSendRaw(deviceAddr, (byte) ((servoNum - 1) + 16), calibrationBytes[1]);
         }
+
         /// <summary>
         /// Sends data to a DOA_servo daughtercard to control the position 
         /// of an individual servo wired to the card.
@@ -653,8 +742,9 @@ namespace Phcc
                 throw new ArgumentOutOfRangeException("servoNum", "must be between 1 and 8");
             }
 
-            DoaSendRaw(deviceAddr, (byte)((int)servoNum - 1), position);
+            DoaSendRaw(deviceAddr, (byte) (servoNum - 1), position);
         }
+
         /// <summary>
         /// Sends data to a DOA_877_4067 daughtercard to control the 
         /// 7-segment LCDs (or individual LEDs) wired to the card.
@@ -676,7 +766,7 @@ namespace Phcc
             {
                 throw new ArgumentOutOfRangeException("displayNum", "must be between 1 and 48");
             }
-            DoaSendRaw(deviceAddr, (byte)((int)displayNum - 1), bits);
+            DoaSendRaw(deviceAddr, (byte) (displayNum - 1), bits);
         }
 
         /// <summary>
@@ -699,7 +789,7 @@ namespace Phcc
             {
                 throw new ArgumentOutOfRangeException("displayNum", "must be between 1 and 32");
             }
-            DoaSendRaw(deviceAddr, (byte)((int)displayNum-1), bits);
+            DoaSendRaw(deviceAddr, (byte) (displayNum - 1), bits);
         }
 
         /// <summary>
@@ -709,105 +799,373 @@ namespace Phcc
         /// <returns>a byte whose bits are set appropriately for sending to a seven-segment display</returns>
         public byte CharTo7Seg(char charToConvert)
         {
-            switch(charToConvert)
+            switch (charToConvert)
             {
-                case '0': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case '1': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC);
-                case '2': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentD);
-                case '3': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
-                case '4': return (byte) (SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC);
-                case '5': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD);
-                case '6': return (byte) (SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentG);
-                case '7': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC);
-                case '8': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case '9': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case '.': return (byte) (SevenSegmentBits.SegmentDP);
-                case '-': return (byte) (SevenSegmentBits.SegmentG);
-                case '+': return (byte) (SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentE);
-                case '!': return (byte)(SevenSegmentBits.SegmentB |  SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentDP);
-                case '@': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case '#': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case '$': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case '%': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
-                case '^': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentF);
-                case '&': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case '*': return (byte)(SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case '(': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case ')': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD);
-                case '_': return (byte)(SevenSegmentBits.SegmentD);
-                case '=': return (byte)(SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
-                case '[': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case ']': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD);
-                case '{': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case '}': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD);
-                case '|': return (byte)(SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case '\\': return (byte)(SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case ':': return (byte)(SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case ';': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD);
-                case '\'': return (byte)(SevenSegmentBits.SegmentB );
-                case '"': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentF);
-                case '<': return (byte)(SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case '>': return (byte)(SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
-                case ',': return (byte)(SevenSegmentBits.SegmentE);
-                case '/': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case '?': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentDP);
-                case '`': return (byte)(SevenSegmentBits.SegmentF);
-                case '~': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case '0':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case '1':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC);
+                case '2':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentG |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentD);
+                case '3':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
+                case '4':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentB |
+                         SevenSegmentBits.SegmentC);
+                case '5':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG |
+                         SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD);
+                case '6':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentG);
+                case '7':
+                    return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC);
+                case '8':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case '9':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case '.':
+                    return (byte) (SevenSegmentBits.SegmentDP);
+                case '-':
+                    return (byte) (SevenSegmentBits.SegmentG);
+                case '+':
+                    return (byte) (SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentE);
+                case '!':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentDP);
+                case '@':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case '#':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF);
+                case '$':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case '%':
+                    return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
+                case '^':
+                    return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentF);
+                case '&':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case '*':
+                    return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case '(':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF);
+                case ')':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD);
+                case '_':
+                    return (byte) (SevenSegmentBits.SegmentD);
+                case '=':
+                    return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
+                case '[':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF);
+                case ']':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD);
+                case '{':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF);
+                case '}':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD);
+                case '|':
+                    return (byte) (SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case '\\':
+                    return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case ':':
+                    return (byte) (SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case ';':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD);
+                case '\'':
+                    return (byte) (SevenSegmentBits.SegmentB);
+                case '"':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentF);
+                case '<':
+                    return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case '>':
+                    return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentG);
+                case ',':
+                    return (byte) (SevenSegmentBits.SegmentE);
+                case '/':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case '?':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentG | SevenSegmentBits.SegmentDP);
+                case '`':
+                    return (byte) (SevenSegmentBits.SegmentF);
+                case '~':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
 
-                case 'A': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'a': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'B': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'b': return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'C': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'c': return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'D': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'd': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'E': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'e': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'F': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'f': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'G': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'g': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'H': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'h': return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'I': return (byte) (SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF );
-                case 'i': return (byte) (SevenSegmentBits.SegmentC);
-                case 'J': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE);
-                case 'j': return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD );
-                case 'K': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'k': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'L': return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'l': return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE );
-                case 'M': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF);
-                case 'm': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF);
-                case 'N': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'n': return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'O': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'o': return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'P': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'p': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'Q': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'q': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'R': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'r': return (byte) (SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'S': return (byte)(SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 's': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'T': return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 't': return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'U': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
-                case 'u': return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE );
-                case 'V': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF); 
-                case 'v': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'W': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE);
-                case 'w': return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE);
-                case 'X': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'x': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'Y': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'y': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
-                case 'Z': return (byte)(SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
-                case 'z': return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'A':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'a':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'B':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case 'b':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'C':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF);
+                case 'c':
+                    return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'D':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'd':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'E':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'e':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'F':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case 'f':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case 'G':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'g':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'H':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'h':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case 'I':
+                    return (byte) (SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'i':
+                    return (byte) (SevenSegmentBits.SegmentC);
+                case 'J':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE);
+                case 'j':
+                    return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD);
+                case 'K':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'k':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'L':
+                    return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'l':
+                    return (byte) (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE);
+                case 'M':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF);
+                case 'm':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF);
+                case 'N':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'n':
+                    return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'O':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'o':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentG);
+                case 'P':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'p':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'Q':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'q':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'R':
+                    return (byte) (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'r':
+                    return (byte) (SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'S':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 's':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'T':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case 't':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF |
+                         SevenSegmentBits.SegmentG);
+                case 'U':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentF);
+                case 'u':
+                    return (byte) (SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentE);
+                case 'V':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentD | SevenSegmentBits.SegmentF);
+                case 'v':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'W':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE);
+                case 'w':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentA | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentE);
+                case 'X':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'x':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentE |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'Y':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'y':
+                    return
+                        (byte)
+                        (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentC | SevenSegmentBits.SegmentD |
+                         SevenSegmentBits.SegmentF | SevenSegmentBits.SegmentG);
+                case 'Z':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
+                case 'z':
+                    return (byte) (SevenSegmentBits.SegmentB | SevenSegmentBits.SegmentE | SevenSegmentBits.SegmentG);
                 default:
-                return 0x00;
+                    return 0x00;
             }
         }
 
@@ -824,11 +1182,11 @@ namespace Phcc
         /// pin on the specified connector.</param>
         public void DoaSend40DO(byte deviceAddr, byte connectorNum, byte bits)
         {
-            if (connectorNum <3 || connectorNum > 7)
+            if (connectorNum < 3 || connectorNum > 7)
             {
                 throw new ArgumentOutOfRangeException("connectorNum", "must be between 3 and 7");
             }
-            DoaSendRaw(deviceAddr, (byte)((int)connectorNum -3), bits);
+            DoaSendRaw(deviceAddr, (byte) (connectorNum - 3), bits);
         }
 
         /// <summary>
@@ -854,25 +1212,25 @@ namespace Phcc
             if (position >= 0 && position <= 255)
             {
                 quadrant = 1;
-                pos = (byte)(255 - position);
+                pos = (byte) (255 - position);
             }
             else if (position >= 256 && position <= 511)
             {
                 quadrant = 3;
-                pos = (byte)(position - 256);
+                pos = (byte) (position - 256);
             }
             else if (position >= 512 && position <= 767)
             {
                 quadrant = 4;
-                pos = (byte)(255 - (position - 512));
+                pos = (byte) (255 - (position - 512));
             }
             else if (position >= 768 && position <= 1023)
             {
                 quadrant = 2;
-                pos = (byte)(position - 768);
+                pos = (byte) (position - 768);
             }
-            byte motorNumMask = (byte)((motorNum-1) << 2);
-            byte subAddress = (byte)(((byte)(quadrant-1)) | motorNumMask);
+            var motorNumMask = (byte) ((motorNum - 1) << 2);
+            var subAddress = (byte) (((byte) (quadrant - 1)) | motorNumMask);
 
             DoaSendRaw(deviceAddr, subAddress, pos);
         }
@@ -886,9 +1244,10 @@ namespace Phcc
         /// <param name="direction">A value from the <see cref="MotorDirections"/> enumeration, indicating the direction (clockwise or counterclockwise) to move the motor (this ultimately depends on how the motor is wired to the card).</param>
         /// <param name="numSteps">A byte, whose value (0-127) represents the number of discrete steps to command the stepper motor to move, in the indicated direction.</param>
         /// <param name="stepType">A value from the <see cref="MotorStepTypes"/> enumeration, indicating whether to move the motor in full-steps or in half-steps.</param>
-        public void DoaSendStepperMotor(byte deviceAddr, byte motorNum, MotorDirections direction, byte numSteps, MotorStepTypes stepType)
+        public void DoaSendStepperMotor(byte deviceAddr, byte motorNum, MotorDirections direction, byte numSteps,
+                                        MotorStepTypes stepType)
         {
-            if (motorNum< 1 || motorNum > 4)
+            if (motorNum < 1 || motorNum > 4)
             {
                 throw new ArgumentOutOfRangeException("motorNum", "must be between 1 and 4");
             }
@@ -900,11 +1259,10 @@ namespace Phcc
             {
                 motorNum += 4;
             }
-            DoaSendRaw(deviceAddr, (byte)((int)motorNum-1), ((byte)((byte)direction | numSteps)));
+            DoaSendRaw(deviceAddr, (byte) (motorNum - 1), ((byte) ((byte) direction | numSteps)));
         }
 
-        
-        
+
         /// <summary>
         /// Sends data to a Digital Output Type A (DOA) peripheral attached to
         /// the PHCC motherboard.
@@ -919,12 +1277,13 @@ namespace Phcc
         public void DoaSendRaw(byte addr, byte subAddr, byte data)
         {
             EnsurePortIsReady();
-            _writeBuffer[0] = (byte)Host2PhccCommands.DoaSend;
+            _writeBuffer[0] = (byte) Host2PhccCommands.DoaSend;
             _writeBuffer[1] = addr;
             _writeBuffer[2] = subAddr;
             _writeBuffer[3] = data;
             RS232Write(_writeBuffer, 0, 4);
         }
+
         /// <summary>
         /// Sends data to a Digital Output Type B (DOB) peripheral attached 
         /// to the PHCC motherboard.
@@ -936,11 +1295,12 @@ namespace Phcc
         public void DobSendRaw(byte addr, byte data)
         {
             EnsurePortIsReady();
-            _writeBuffer[0] = (byte)Host2PhccCommands.DobSend;
+            _writeBuffer[0] = (byte) Host2PhccCommands.DobSend;
             _writeBuffer[1] = addr;
             _writeBuffer[2] = data;
             RS232Write(_writeBuffer, 0, 3);
         }
+
         /// <summary>
         /// Sends data to an I2C peripheral attached to the 
         /// PHCC motherboard.
@@ -954,12 +1314,13 @@ namespace Phcc
         public void I2CSend(byte addr, byte subAddr, byte data)
         {
             EnsurePortIsReady();
-            _writeBuffer[0] = (byte)Host2PhccCommands.I2CSend;
+            _writeBuffer[0] = (byte) Host2PhccCommands.I2CSend;
             _writeBuffer[1] = addr;
             _writeBuffer[2] = subAddr;
             _writeBuffer[3] = data;
             RS232Write(_writeBuffer, 0, 4);
         }
+
         /// <summary>
         /// Informs the PHCC motherboard to stop sending change notification events
         /// </summary>
@@ -976,7 +1337,7 @@ namespace Phcc
             try
             {
                 WaitForInputBufferQuiesce();
-                _writeBuffer[0] = (byte)Host2PhccCommands.StopTalking;
+                _writeBuffer[0] = (byte) Host2PhccCommands.StopTalking;
                 RS232Write(_writeBuffer, 0, 1);
                 WaitForInputBufferQuiesce();
                 _talking = false;
@@ -986,6 +1347,7 @@ namespace Phcc
                 _dontRead = oldDontRead;
             }
         }
+
         private void Rs232DiscardInBuffer()
         {
             lock (_rs232lock)
@@ -993,6 +1355,7 @@ namespace Phcc
                 _serialPort.DiscardInBuffer();
             }
         }
+
         private void WaitForInputBufferQuiesce()
         {
             EnsurePortIsReady();
@@ -1003,7 +1366,8 @@ namespace Phcc
                 while (!done)
                 {
                     Rs232DiscardInBuffer(); //now discard whatever's in the buffer
-                    if (Rs232BytesAvailable() == 0) //if there's nothing in the buffer then we have quiesced, otherwise wait some more
+                    if (Rs232BytesAvailable() == 0)
+                        //if there's nothing in the buffer then we have quiesced, otherwise wait some more
                     {
                         done = true;
                     }
@@ -1016,6 +1380,7 @@ namespace Phcc
                 _dontRead = oldDontRead;
             }
         }
+
         /// <summary>
         /// Reads a packet from the RS232 serial port containing a report on 
         /// a single byte of data received from an attached I2C peripheral
@@ -1024,25 +1389,26 @@ namespace Phcc
         {
             Rs232Read(_readBuffer, 1, 2);
             byte addressLowOrderBits = _readBuffer[1];
-            byte addressHighOrderBits = (byte)(_readBuffer[0] | I2CDataReceivedAddressHighOrderBitsMask);
+            var addressHighOrderBits = (byte) (_readBuffer[0] | I2CDataReceivedAddressHighOrderBitsMask);
 
-            ushort address= 0;
+            ushort address = 0;
             if (BitConverter.IsLittleEndian)
             {
-                address = BitConverter.ToUInt16(new byte[] { addressLowOrderBits, addressHighOrderBits }, 0);
+                address = BitConverter.ToUInt16(new[] {addressLowOrderBits, addressHighOrderBits}, 0);
             }
             else
             {
-                address = BitConverter.ToUInt16(new byte[] { addressHighOrderBits, addressLowOrderBits }, 0);
+                address = BitConverter.ToUInt16(new[] {addressHighOrderBits, addressLowOrderBits}, 0);
             }
 
             byte data = _readBuffer[2];
             if (I2CDataReceived != null)
             {
                 I2CDataReceived(this,
-                    new I2CDataReceivedEventArgs((short)address, data));
+                                new I2CDataReceivedEventArgs((short) address, data));
             }
         }
+
         /// <summary>
         /// Reads a packet from the RS232 serial port containing a report on 
         /// a single analog input value change event
@@ -1051,17 +1417,18 @@ namespace Phcc
         {
             Rs232Read(_readBuffer, 1, 2);
             //ushort bits = ConvertBytesToUShort(_readBuffer, 0);
-            ushort bits = (ushort)_readBuffer[1];
+            ushort bits = _readBuffer[1];
             //byte index = (byte)((bits & AnalogInputUpdatedIndexMask)>>10);
-            byte index = (byte)(bits >>2);
+            var index = (byte) (bits >> 2);
             bits = ConvertBytesToUShort(_readBuffer, 1);
-            ushort newValue = (ushort)(bits & AnalogInputNewValueMask);
+            var newValue = (ushort) (bits & AnalogInputNewValueMask);
             if (AnalogInputChanged != null)
             {
                 AnalogInputChanged(this,
-                    new AnalogInputChangedEventArgs(index, (short)newValue));
+                                   new AnalogInputChangedEventArgs(index, (short) newValue));
             }
         }
+
         /// <summary>
         /// Reads a packet from the RS232 serial port containing a report on 
         /// a single digital input value change event
@@ -1070,14 +1437,15 @@ namespace Phcc
         {
             Rs232Read(_readBuffer, 1, 1);
             ushort bits = ConvertBytesToUShort(_readBuffer, 0);
-            ushort index = (ushort)((bits & DigitalInputUpdatedIndexMask) >>1);
+            var index = (ushort) ((bits & DigitalInputUpdatedIndexMask) >> 1);
             bool newVal = ((bits & DigitalInputNewValueMask) != 0);
             if (DigitalInputChanged != null)
             {
                 DigitalInputChanged(this,
-                    new DigitalInputChangedEventArgs((short)index, newVal));
+                                    new DigitalInputChangedEventArgs((short) index, newVal));
             }
         }
+
         /// <summary>
         ///Reads a packet from the RS232 serial port containing a full update of
         /// all digital input values.
@@ -1095,6 +1463,7 @@ namespace Phcc
                 _dontRead = oldDontRead;
             }
         }
+
         /// <summary>
         /// Reads a packet from the RS232 serial port containing a full update of
         /// all analog input values.
@@ -1110,29 +1479,29 @@ namespace Phcc
                 Rs232Read(_currentAnalogInputsRaw, 0, 45);
                 */
                 Rs232Read(_currentAnalogInputsRaw, 0, 70);
-
             }
             finally
             {
                 _dontRead = oldDontRead;
             }
             ParseRawAnalogInputs(_currentAnalogInputsRaw, out _currentAnalogInputsParsed);
-
         }
+
         /// <summary>
         /// Informs the PHCC motherboard to start sending automatic change notification events.
         /// </summary>
         public void StartTalking()
         {
             EnsurePortIsReady();
-            _writeBuffer[0] = (byte)Host2PhccCommands.StartTalking;
+            _writeBuffer[0] = (byte) Host2PhccCommands.StartTalking;
             RS232Write(_writeBuffer, 0, 1);
             _talking = true;
         }
+
         /// <summary>
         /// Event handler responsible for reading data from the serial port when it arrives
         /// </summary>
-        void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             lock (_rs232lock)
             {
@@ -1145,15 +1514,16 @@ namespace Phcc
                 }
             }
         }
+
         /// <summary>
         /// Processes the contents of the UART buffer.
         /// </summary>
         private void ProcessBufferContents()
         {
             if (_dontRead) //if reading has been temporarily disabled here so 
-                            //that bytes don't disappear from the buffer 
-                            //when needed elsewhere, then yield before reading any
-                            //here
+                //that bytes don't disappear from the buffer 
+                //when needed elsewhere, then yield before reading any
+                //here
             {
                 return;
             }
@@ -1163,26 +1533,26 @@ namespace Phcc
                 while (_serialPort.BytesToRead > 0)
                 {
                     Rs232Read(_readBuffer, 0, 1);
-                    switch ((byte)(_readBuffer[0] & (byte)Phcc2HostPacketTypes.PacketTypeMask))
+                    switch ((byte) (_readBuffer[0] & (byte) Phcc2HostPacketTypes.PacketTypeMask))
                     {
-                        case (byte)Phcc2HostPacketTypes.I2CDataReceivedPacket:
+                        case (byte) Phcc2HostPacketTypes.I2CDataReceivedPacket:
                             ReadI2CDataReceivedPacket();
                             break;
-                        case (byte)Phcc2HostPacketTypes.AnalogInputUpdatePacket:
+                        case (byte) Phcc2HostPacketTypes.AnalogInputUpdatePacket:
                             ReadAnalogInputUpdatePacket();
                             break;
-                        case (byte)Phcc2HostPacketTypes.DigitalInputUpdatePacket:
+                        case (byte) Phcc2HostPacketTypes.DigitalInputUpdatePacket:
                             ReadDigitalInputUpdatePacket();
                             break;
-                        case (byte)Phcc2HostPacketTypes.DigitalInputsFullDumpPacket:
+                        case (byte) Phcc2HostPacketTypes.DigitalInputsFullDumpPacket:
                             ReadDigitalInputFullDumpPacket();
                             break;
-                        case (byte)Phcc2HostPacketTypes.AnalogInputsFullDumpPacket:
+                        case (byte) Phcc2HostPacketTypes.AnalogInputsFullDumpPacket:
                             ReadAnalogInputFullDumpPacket();
                             break;
-                        case (byte)Phcc2HostPacketTypes.AllBitsOne:
+                        case (byte) Phcc2HostPacketTypes.AllBitsOne:
                             break;
-                        case (byte)Phcc2HostPacketTypes.AllBitsZero:
+                        case (byte) Phcc2HostPacketTypes.AllBitsZero:
                             break;
                         default:
                             break;
@@ -1193,28 +1563,7 @@ namespace Phcc
             {
             }
         }
-        /// <summary>
-        /// Gets a bool array containing the current values of 
-        /// all digital inputs.
-        /// </summary>
-        /// <returns>A bool array containing the current values of 
-        /// all digital inputs.  Each value in the array represents
-        /// a single discrete digital input, out of a total of 
-        /// 1024 inputs.</returns>
-        public bool[] DigitalInputs
-        {
-            get
-            {
-                bool[] toReturn = new bool[1024];
-                PollDigitalInputs();
-                for (int i = 0; i < toReturn.Length; i++)
-                {
-                    byte relevantByte = _currentDigitalInputValues[(int)((i) / 8)];
-                    toReturn[i]=((relevantByte & (byte)(Math.Pow(2, (i % 8)))) != 0);
-                }
-                return toReturn;
-            }
-        }
+
         /// <summary>
         /// Commands the PHCC motherboard to send a full report of the current
         /// digital input values.
@@ -1227,33 +1576,15 @@ namespace Phcc
             {
                 StopTalking();
             }
-            _writeBuffer[0] = (byte)Host2PhccCommands.GetCurrentDigitalInputValues;
+            _writeBuffer[0] = (byte) Host2PhccCommands.GetCurrentDigitalInputValues;
             RS232Write(_writeBuffer, 0, 1);
             ProcessBufferContents();
-            if (wasTalking) {
+            if (wasTalking)
+            {
                 StartTalking();
             }
         }
-        /// <summary>
-        /// Gets an array of 16-bit signed integers containing the current values 
-        /// of all analog inputs.  Only the low 10 bits contain information; 
-        /// the high 6 bits are always zero because the precision of the 
-        /// analog inputs is currently limited to 10 bits.
-        /// </summary>
-        /// <returns>An array of 16-bit signed integers containing the current
-        /// values of all analog inputs.  Only the low 10 bits 
-        /// in each array element contain useful information; 
-        /// the high 6 bits are always zero because the 
-        /// precision of the PHCC analog inputs is currently 
-        /// limited to 10 bits.</returns>
-        public short[] AnalogInputs
-        {
-            get
-            {
-                PollAnalogInputs();
-                return _currentAnalogInputsParsed;
-            }
-        }
+
         /// <summary>
         /// Commands the PHCC motherboard to send a full report of the current
         /// analog input values
@@ -1266,7 +1597,7 @@ namespace Phcc
             {
                 StopTalking();
             }
-            _writeBuffer[0] = (byte)Host2PhccCommands.GetCurrentAnalogInputValues;
+            _writeBuffer[0] = (byte) Host2PhccCommands.GetCurrentAnalogInputValues;
             RS232Write(_writeBuffer, 0, 1);
             ProcessBufferContents();
             if (wasTalking)
@@ -1274,6 +1605,7 @@ namespace Phcc
                 StartTalking();
             }
         }
+
         private void RS232Write(string toWrite)
         {
             EnsurePortIsReady();
@@ -1282,6 +1614,7 @@ namespace Phcc
                 _serialPort.Write(toWrite);
             }
         }
+
         private void RS232Write(byte[] buffer, int index, int count)
         {
             EnsurePortIsReady();
@@ -1290,6 +1623,7 @@ namespace Phcc
                 _serialPort.Write(buffer, index, count);
             }
         }
+
         /// <summary>
         /// Parses the raw analog input values list that the P
         /// HCC motherboard provides, by combining the low and 
@@ -1346,10 +1680,10 @@ namespace Phcc
             processed = new short[35];
             for (int i = 0; i < raw.Length; i += 2)
             {
-                processed[i / 2] = (short)ConvertBytesToUShort(raw, i);
+                processed[i/2] = (short) ConvertBytesToUShort(raw, i);
             }
-
         }
+
         /// <summary>
         /// Establishes a connection to the PHCC motherboard via RS232.
         /// </summary>
@@ -1363,53 +1697,17 @@ namespace Phcc
                 }
             }
         }
+
         /// <summary>
         /// Instructs the PHCC motherboard to enter the IDLE state.
         /// </summary>
         public void SetIdle()
         {
-            EnsurePortIsReady(); 
-            _writeBuffer[0] = (byte)Host2PhccCommands.Idle;
+            EnsurePortIsReady();
+            _writeBuffer[0] = (byte) Host2PhccCommands.Idle;
             RS232Write(_writeBuffer, 0, 1);
         }
-        /// <summary>
-        /// Gets a string containing the PHCC motherboard's firmware 
-        /// version.
-        /// </summary>
-        /// <returns>A <see cref="string"/> containing the PHCC motherboard's
-        /// firmware version.</returns>
-        public string FirmwareVersion
-        {
-            get
-            {
-                string toReturn = null;
-                bool wasTalking = _talking;
-                bool oldDontRead = _dontRead;
-                try
-                {
-                    EnsurePortIsReady();
-                    _dontRead = true; //temporarily disable the buffer-reader event handler
-                    if (_talking)
-                    {
-                        StopTalking();
-                    }
-                    else
-                    {
-                        WaitForInputBufferQuiesce();
-                    }
-                    RS232Write(" ");
-                    _readBuffer.Initialize();
-                    Rs232Read(_readBuffer, 0, 10);
-                    toReturn = Encoding.ASCII.GetString(_readBuffer, 0, 10);
-                }
-                finally
-                {
-                    _dontRead = oldDontRead; 
-                    if (wasTalking) StartTalking();
-                }
-                return toReturn;
-            }
-        }
+
         private int Rs232BytesAvailable()
         {
             lock (_rs232lock)
@@ -1424,6 +1722,7 @@ namespace Phcc
                 }
             }
         }
+
         /// <summary>
         /// Reads the speficied number of bytes synchronously, from the 
         /// RS232 COM port interface, into the specified buffer, 
@@ -1460,7 +1759,7 @@ namespace Phcc
                         {
                             throw new TimeoutException();
                         }
-                        System.Windows.Forms.Application.DoEvents();
+                        Application.DoEvents();
                     }
                     _serialPort.Read(buffer, index, count);
                     if (Rs232BytesAvailable() > 0)
@@ -1473,6 +1772,7 @@ namespace Phcc
                 }
             }
         }
+
         /// <summary>
         /// Converts a pair of bytes to a 16-bit, unsigned integer
         /// </summary>
@@ -1485,7 +1785,7 @@ namespace Phcc
             ushort toReturn = 0;
             if (BitConverter.IsLittleEndian)
             {
-                byte[] toSwap = new byte[2];
+                var toSwap = new byte[2];
                 toSwap[0] = value[startIndex];
                 toSwap[1] = value[startIndex + 1];
                 Array.Reverse(toSwap);
@@ -1497,7 +1797,20 @@ namespace Phcc
             }
             return toReturn;
         }
+
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -1507,6 +1820,7 @@ namespace Phcc
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -1523,18 +1837,8 @@ namespace Phcc
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

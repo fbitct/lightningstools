@@ -1,8 +1,9 @@
 ﻿#region Using statements
-using System;
-using System.Collections; // required for NumericComparer : IComparer only
-using System.Windows.Forms;
+
+using System.Collections;
 using System.Collections.Generic;
+// required for NumericComparer : IComparer only
+
 #endregion
 
 namespace Common.Strings
@@ -16,28 +17,31 @@ namespace Common.Strings
     public sealed class NumericComparer : IComparer, IComparer<string>
     {
         #region Constructors
-        public NumericComparer()
-        { }
+
         #endregion
+
         #region Public methods
+
         public int Compare(object x, object y)
         {
             if ((x is string) && (y is string))
             {
-                return StringLogicalComparer.Compare((string)x, (string)y);
+                return StringLogicalComparer.Compare((string) x, (string) y);
             }
             return -1;
         }
-        
+
         #endregion
 
         #region IComparer<string> Members
 
         public int Compare(string x, string y)
         {
-            return Compare((object)x, (object)y);
+            return Compare(x, (object) y);
         }
 
         #endregion
-    }//EOC
+    }
+
+//EOC
 }

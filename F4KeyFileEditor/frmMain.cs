@@ -1,31 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+using Common.Serialization;
 using F4KeyFile;
 
 namespace F4KeyFileEditor
 {
     public partial class frmMain : Form
     {
-        [Serializable]
-        private class EditorState:ICloneable
-        {
-            public string KeyFilePath = null;
-            public bool ChangesMade = false;
-           
-            public F4KeyFile.KeyFile KeyFile = null;
-            public object Clone()
-            {
-                return Common.Serialization.Util.DeepClone<EditorState>(this);
-            }
+        private EditorState _editorState;
 
-        }
-        private EditorState _editorState = null;
         public frmMain()
         {
             InitializeComponent();
@@ -34,13 +18,14 @@ namespace F4KeyFileEditor
         private void frmMain_Load(object sender, EventArgs e)
         {
             _editorState = new EditorState();
-            this.Text = Application.ProductName + " v" + Application.ProductVersion;
+            Text = Application.ProductName + " v" + Application.ProductVersion;
         }
+
         private string GetKeyDescription(KeyWithModifiers keys)
         {
             if (keys == null) throw new ArgumentNullException("keys");
-            string keyScanCodeName = ((F4KeyFile.ScanCodes)keys.ScanCode).ToString();
-            switch ((F4KeyFile.ScanCodes)keys.ScanCode)
+            string keyScanCodeName = ((ScanCodes) keys.ScanCode).ToString();
+            switch ((ScanCodes) keys.ScanCode)
             {
                 case ScanCodes.NotAssigned:
                     keyScanCodeName = "";
@@ -331,6 +316,7 @@ namespace F4KeyFileEditor
             }
             return "";
         }
+
         private void ParseKeyFile()
         {
             if (_editorState.KeyFile == null) throw new InvalidOperationException();
@@ -339,45 +325,55 @@ namespace F4KeyFileEditor
 
             gridDirectInputBindings.SuspendLayout();
             gridDirectInputBindings.Rows.Clear();
-            
+
             if (_editorState.KeyFile.Bindings != null)
             {
                 foreach (IBinding binding in _editorState.KeyFile.Bindings)
                 {
                     if (binding is DirectInputBinding)
                     {
-                        DirectInputBinding diBinding = binding as DirectInputBinding;
-                        int newRowIndex=gridDirectInputBindings.Rows.Add();
+                        var diBinding = binding as DirectInputBinding;
+                        int newRowIndex = gridDirectInputBindings.Rows.Add();
                         DataGridViewRow row = gridDirectInputBindings.Rows[newRowIndex];
                         row.Cells["diCallback"].Value = diBinding.Callback;
-                        string diBindingType ="DirectInput";
-                        if (diBinding.BindingType == DirectInputBindingType.POVDirection) 
+                        string diBindingType = "DirectInput";
+                        if (diBinding.BindingType == DirectInputBindingType.POVDirection)
                         {
-                            diBindingType ="POV";
+                            diBindingType = "POV";
                         }
                         else if (diBinding.BindingType == DirectInputBindingType.Button)
                         {
-                            diBindingType ="Button";
+                            diBindingType = "Button";
                         }
                         row.Cells["diBindingType"].Value = diBindingType;
                         row.Cells["diButtonIndex"].Value = diBinding.ButtonIndex;
-                        row.Cells["diCockpitItemId"].Value = diBinding.CockpitItemId >= 0 ? diBinding.CockpitItemId.ToString() : "";
+                        row.Cells["diCockpitItemId"].Value = diBinding.CockpitItemId >= 0
+                                                                 ? diBinding.CockpitItemId.ToString()
+                                                                 : "";
                         row.Cells["diComboKey"].Value = GetKeyDescription(diBinding.ComboKey);
-                        row.Cells["diDeviceGuid"].Value = diBinding.DeviceGuid != Guid.Empty ? diBinding.DeviceGuid.ToString() : string.Empty;
-                        row.Cells["diPovDirection"].Value = diBinding.BindingType == DirectInputBindingType.POVDirection ? diBinding.PovDirection.ToString() : string.Empty;
+                        row.Cells["diDeviceGuid"].Value = diBinding.DeviceGuid != Guid.Empty
+                                                              ? diBinding.DeviceGuid.ToString()
+                                                              : string.Empty;
+                        row.Cells["diPovDirection"].Value = diBinding.BindingType == DirectInputBindingType.POVDirection
+                                                                ? diBinding.PovDirection.ToString()
+                                                                : string.Empty;
                         row.Cells["diLineNum"].Value = diBinding.LineNum;
                     }
                     else if (binding is KeyBinding)
                     {
-                        KeyBinding keyBinding = binding as KeyBinding;
+                        var keyBinding = binding as KeyBinding;
                         int newRowIndex = gridKeyBindings.Rows.Add();
                         DataGridViewRow row = gridKeyBindings.Rows[newRowIndex];
                         row.Cells["kbUIAccessibility"].Value = GetUIAccessibilityDescription(keyBinding.Accessibility);
                         row.Cells["kbCallback"].Value = keyBinding.Callback;
-                        row.Cells["kbCockpitItemId"].Value = keyBinding.CockpitItemId >= 0 ? keyBinding.CockpitItemId.ToString() : "";
+                        row.Cells["kbCockpitItemId"].Value = keyBinding.CockpitItemId >= 0
+                                                                 ? keyBinding.CockpitItemId.ToString()
+                                                                 : "";
                         row.Cells["kbKey"].Value = GetKeyDescription(keyBinding.Key);
                         row.Cells["kbComboKey"].Value = GetKeyDescription(keyBinding.ComboKey);
-                        row.Cells["kbDescription"].Value = !string.IsNullOrEmpty(keyBinding.Description) ? RemoveLeadingAndTrailingQuotes(keyBinding.Description) : string.Empty;
+                        row.Cells["kbDescription"].Value = !string.IsNullOrEmpty(keyBinding.Description)
+                                                               ? RemoveLeadingAndTrailingQuotes(keyBinding.Description)
+                                                               : string.Empty;
                         row.Cells["kbMouseClickableOnly"].Value = keyBinding.MouseClickableOnly;
                         row.Cells["kbLineNum"].Value = keyBinding.LineNum;
                     }
@@ -390,6 +386,7 @@ namespace F4KeyFileEditor
                 gridDirectInputBindings.ResumeLayout();
             }
         }
+
         private string GetUIAccessibilityDescription(UIAcccessibility accessibility)
         {
             switch (accessibility)
@@ -406,6 +403,7 @@ namespace F4KeyFileEditor
             }
             return "Unknown";
         }
+
         private string RemoveLeadingAndTrailingQuotes(string toRemove)
         {
             string toReturn = toRemove;
@@ -419,9 +417,10 @@ namespace F4KeyFileEditor
             }
             return toReturn;
         }
+
         private void LoadKeyFile()
         {
-            OpenFileDialog dlgOpen = new OpenFileDialog();
+            var dlgOpen = new OpenFileDialog();
             dlgOpen.AddExtension = true;
             dlgOpen.AutoUpgradeEnabled = true;
             dlgOpen.CheckFileExists = true;
@@ -440,7 +439,7 @@ namespace F4KeyFileEditor
             dlgOpen.Title = "Open Key File";
             dlgOpen.ValidateNames = true;
             DialogResult result = dlgOpen.ShowDialog(this);
-            if (result == DialogResult.Cancel) 
+            if (result == DialogResult.Cancel)
             {
                 return;
             }
@@ -448,33 +447,35 @@ namespace F4KeyFileEditor
             {
                 LoadKeyFile(dlgOpen.FileName);
             }
-
         }
+
         private void LoadKeyFile(string keyfilePath)
         {
-
             if (string.IsNullOrEmpty(keyfilePath)) throw new ArgumentNullException("keyfilePath");
-            FileInfo keyfileFI = new FileInfo(keyfilePath);
+            var keyfileFI = new FileInfo(keyfilePath);
             if (!keyfileFI.Exists) throw new FileNotFoundException(keyfilePath);
 
-            EditorState oldEditorState = (EditorState)_editorState.Clone();
+            var oldEditorState = (EditorState) _editorState.Clone();
             try
             {
                 _editorState.KeyFilePath = keyfilePath;
-                _editorState.KeyFile = new F4KeyFile.KeyFile(keyfileFI);
+                _editorState.KeyFile = new KeyFile(keyfileFI);
                 _editorState.KeyFile.Load();
                 ParseKeyFile();
                 _editorState.ChangesMade = false;
             }
             catch (Exception e)
             {
-                MessageBox.Show(string.Format("An error occurred while loading the file.\n\n {0}", e.Message), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show(string.Format("An error occurred while loading the file.\n\n {0}", e.Message),
+                                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
+                                MessageBoxDefaultButton.Button1);
                 _editorState = oldEditorState;
             }
         }
+
         private void SaveKeyFileAs(string keyfilePath)
         {
-            EditorState oldEditorState = (EditorState)_editorState.Clone();
+            var oldEditorState = (EditorState) _editorState.Clone();
             try
             {
                 _editorState.KeyFile.Save(new FileInfo(keyfilePath));
@@ -483,16 +484,18 @@ namespace F4KeyFileEditor
             }
             catch (Exception e)
             {
-                MessageBox.Show(string.Format("An error occurred while saving the file.\n\n {0}", e.Message), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show(string.Format("An error occurred while saving the file.\n\n {0}", e.Message),
+                                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
+                                MessageBoxDefaultButton.Button1);
                 _editorState = oldEditorState;
             }
         }
-       
+
         private void SaveKeyFile(bool overwritePrompt, string keyFilePath)
         {
             if (string.IsNullOrEmpty(keyFilePath))
             {
-                SaveFileDialog dlgSave = new SaveFileDialog();
+                var dlgSave = new SaveFileDialog();
                 dlgSave.AddExtension = true;
                 dlgSave.AutoUpgradeEnabled = true;
                 dlgSave.CheckFileExists = false;
@@ -521,8 +524,8 @@ namespace F4KeyFileEditor
                 }
             }
             SaveKeyFileAs(keyFilePath);
-            
         }
+
         private void Exit()
         {
             if (!CheckForUnsavedChangesAndSaveIfUserWantsTo())
@@ -530,11 +533,15 @@ namespace F4KeyFileEditor
                 Application.Exit();
             }
         }
+
         private bool CheckForUnsavedChangesAndSaveIfUserWantsTo()
         {
             if (_editorState.ChangesMade)
             {
-                DialogResult res = MessageBox.Show("There are unsaved changes. Would you like to save them before proceeding?", Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+                DialogResult res =
+                    MessageBox.Show("There are unsaved changes. Would you like to save them before proceeding?",
+                                    Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
+                                    MessageBoxDefaultButton.Button3);
                 if (res == DialogResult.Cancel)
                 {
                     return true;
@@ -546,11 +553,12 @@ namespace F4KeyFileEditor
             }
             return false;
         }
-        private void NewKeyFile() 
+
+        private void NewKeyFile()
         {
             if (CheckForUnsavedChangesAndSaveIfUserWantsTo())
             {
-                _editorState.KeyFile = new F4KeyFile.KeyFile();
+                _editorState.KeyFile = new KeyFile();
                 _editorState.KeyFilePath = null;
                 _editorState.ChangesMade = false;
             }
@@ -600,5 +608,27 @@ namespace F4KeyFileEditor
         {
             Exit();
         }
+
+        #region Nested type: EditorState
+
+        [Serializable]
+        private class EditorState : ICloneable
+        {
+            public bool ChangesMade;
+
+            public KeyFile KeyFile;
+            public string KeyFilePath;
+
+            #region ICloneable Members
+
+            public object Clone()
+            {
+                return Util.DeepClone(this);
+            }
+
+            #endregion
+        }
+
+        #endregion
     }
 }

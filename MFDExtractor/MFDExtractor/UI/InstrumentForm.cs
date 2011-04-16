@@ -1,28 +1,25 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using MFDExtractor.UI;
-using System.Reflection;
-using Common.Generic;
 
 namespace MFDExtractor.UI
 {
     public partial class InstrumentForm : DraggableForm
     {
-        private bool _stretchToFill = false;
-        private bool _adjustLocation = false;
-        private bool _instrumentEnabled = true;
-        private ResizeHelper _resizeHelper;
-        public event EventHandler DataChanged;
-        private RotateFlipType _rotation;
-        private bool _alwaysOnTop = false;
-        private bool _monochrome = false;
-        private Rectangle _lastBounds = Rectangle.Empty;
-        private Rectangle _boundsOnResizeBegin = Rectangle.Empty;
-        private Cursor _cursorOnResizeBegin = null;
-        private bool _stretchChanging = false;
         private const int MIN_WINDOW_WIDTH = 50;
         private const int MIN_WINDOW_HEIGHT = 50;
+        private bool _adjustLocation;
+        private bool _alwaysOnTop;
+        private Rectangle _boundsOnResizeBegin = Rectangle.Empty;
+        private Cursor _cursorOnResizeBegin;
+        private bool _instrumentEnabled = true;
+        private Rectangle _lastBounds = Rectangle.Empty;
+        private bool _monochrome;
+        private ResizeHelper _resizeHelper;
+        private RotateFlipType _rotation;
+        private bool _stretchChanging;
+        private bool _stretchToFill;
+
         public InstrumentForm()
         {
             InitializeComponent();
@@ -31,26 +28,22 @@ namespace MFDExtractor.UI
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.UserPaint, true);
-            
+
             if (!base.DesignMode)
             {
                 _resizeHelper = new ResizeHelper(this);
             }
         }
+
         public bool InstrumentEnabled
         {
             get { return _instrumentEnabled; }
-            set 
-            { 
-                _instrumentEnabled = value;
-            }
+            set { _instrumentEnabled = value; }
         }
+
         public bool StretchToFill
         {
-            get
-            {
-                return _stretchToFill;
-            }
+            get { return _stretchToFill; }
             set
             {
                 _stretchChanging = true;
@@ -62,19 +55,17 @@ namespace MFDExtractor.UI
                 }
                 else
                 {
-                    this.Size = _lastBounds.Size;
-                    this.Location = _lastBounds.Location;
+                    Size = _lastBounds.Size;
+                    Location = _lastBounds.Location;
                 }
                 OnDataChanged(new EventArgs());
                 _stretchChanging = false;
             }
         }
+
         public bool Monochrome
         {
-            get
-            {
-                return _monochrome;
-            }
+            get { return _monochrome; }
             set
             {
                 _monochrome = value;
@@ -82,26 +73,22 @@ namespace MFDExtractor.UI
                 OnDataChanged(new EventArgs());
             }
         }
+
         public bool AlwaysOnTop
         {
-            get
-            {
-                return _alwaysOnTop;
-            }
+            get { return _alwaysOnTop; }
             set
             {
                 _alwaysOnTop = value;
-                this.TopMost = _alwaysOnTop;
+                TopMost = _alwaysOnTop;
                 ctxAlwaysOnTop.Checked = _alwaysOnTop;
                 OnDataChanged(new EventArgs());
             }
         }
+
         public RotateFlipType Rotation
         {
-            get
-            {
-                return _rotation;
-            }
+            get { return _rotation; }
             set
             {
                 _rotation = value;
@@ -115,22 +102,25 @@ namespace MFDExtractor.UI
             get
             {
                 return (
-                            (
-                                Cursor == Cursors.SizeAll
-                                    ||
-                                Cursor == Cursors.SizeNESW
-                                    ||
-                                Cursor == Cursors.SizeNS
-                                    ||
-                                Cursor == Cursors.SizeNWSE
-                                    ||
-                                Cursor == Cursors.SizeWE
-                            )
-                                ||
-                            new Rectangle(Location, Size).Contains(Cursor.Position)
-                        );
+                           (
+                               Cursor == Cursors.SizeAll
+                               ||
+                               Cursor == Cursors.SizeNESW
+                               ||
+                               Cursor == Cursors.SizeNS
+                               ||
+                               Cursor == Cursors.SizeNWSE
+                               ||
+                               Cursor == Cursors.SizeWE
+                           )
+                           ||
+                           new Rectangle(Location, Size).Contains(Cursor.Position)
+                       );
             }
         }
+
+        public event EventHandler DataChanged;
+
         protected void ApplyRotationCheck()
         {
             ClearRotationChecks();
@@ -164,6 +154,7 @@ namespace MFDExtractor.UI
                     break;
             }
         }
+
         protected void ClearRotationChecks()
         {
             ctxFlipHorizontally.Checked = false;
@@ -175,6 +166,7 @@ namespace MFDExtractor.UI
             ctxRotatePlus90DegreesFlipVertically.Checked = false;
             ctxRotationNoRotationNoFlip.Checked = false;
         }
+
         protected void OnDataChanged(EventArgs e)
         {
             if (DataChanged != null)
@@ -182,52 +174,55 @@ namespace MFDExtractor.UI
                 DataChanged(this, e);
             }
         }
+
         protected override void OnResizeBegin(EventArgs e)
         {
-            _cursorOnResizeBegin = this.Cursor;
-            _boundsOnResizeBegin = this.Bounds;
+            _cursorOnResizeBegin = Cursor;
+            _boundsOnResizeBegin = Bounds;
             base.OnResizeBegin(e);
         }
+
         protected override void OnResizeEnd(EventArgs e)
         {
             _boundsOnResizeBegin = Rectangle.Empty;
             _cursorOnResizeBegin = null;
             base.OnResizeEnd(e); //TODO: verify this works (it's new)
         }
+
         protected override void OnSizeChanged(EventArgs e)
         {
             if (_stretchToFill)
             {
                 return;
             }
-            if (this.Width < MIN_WINDOW_WIDTH)
+            if (Width < MIN_WINDOW_WIDTH)
             {
-                this.Width = MIN_WINDOW_WIDTH;
+                Width = MIN_WINDOW_WIDTH;
             }
-            if (this.Height < MIN_WINDOW_HEIGHT)
+            if (Height < MIN_WINDOW_HEIGHT)
             {
-                this.Height = MIN_WINDOW_HEIGHT;
+                Height = MIN_WINDOW_HEIGHT;
             }
-            if (_cursorOnResizeBegin== Cursors.SizeNESW || _cursorOnResizeBegin== Cursors.SizeNWSE)
+            if (_cursorOnResizeBegin == Cursors.SizeNESW || _cursorOnResizeBegin == Cursors.SizeNWSE)
             {
                 if (_boundsOnResizeBegin == Rectangle.Empty)
                 {
-                    _boundsOnResizeBegin = this.Bounds;
+                    _boundsOnResizeBegin = Bounds;
                 }
-                float ratio = (float)((float)_boundsOnResizeBegin.Width / (float)_boundsOnResizeBegin.Height);
-                this.Width = (int)(ratio * this.Height);
+                float ratio = (_boundsOnResizeBegin.Width/(float) _boundsOnResizeBegin.Height);
+                Width = (int) (ratio*Height);
             }
             if (!_stretchToFill && !_stretchChanging)
             {
-                _lastBounds = this.Bounds;
+                _lastBounds = Bounds;
             }
-            Screen thisScreen = Screen.FromRectangle(this.DesktopBounds);
+            Screen thisScreen = Screen.FromRectangle(DesktopBounds);
             if (thisScreen == null)
             {
                 return;
             }
-            if (this.DesktopBounds.Size != thisScreen.Bounds.Size &&
-                this.DesktopBounds.Location != thisScreen.Bounds.Location)
+            if (DesktopBounds.Size != thisScreen.Bounds.Size &&
+                DesktopBounds.Location != thisScreen.Bounds.Location)
             {
                 _stretchToFill = false;
                 if (ctxStretchToFill != null)
@@ -238,6 +233,7 @@ namespace MFDExtractor.UI
             base.OnSizeChanged(e);
             OnDataChanged(e);
         }
+
         protected override void OnLocationChanged(EventArgs e)
         {
             if (_stretchToFill)
@@ -248,17 +244,19 @@ namespace MFDExtractor.UI
             {
                 if (!_stretchChanging)
                 {
-                    _lastBounds = this.Bounds;
+                    _lastBounds = Bounds;
                 }
             }
             base.OnLocationChanged(e);
             OnDataChanged(e);
         }
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            _boundsOnResizeBegin = this.Bounds;
+            _boundsOnResizeBegin = Bounds;
             base.OnMouseDown(e);
         }
+
         protected override void OnMouseUp(MouseEventArgs e)
         {
             bool raise = false;
@@ -274,12 +272,14 @@ namespace MFDExtractor.UI
                 OnDataChanged(e);
             }
         }
+
         private void SetFullScreen()
         {
-            Screen thisScreen = Screen.FromRectangle(this.DesktopBounds);
-            this.DesktopLocation = thisScreen.Bounds.Location;
-            this.Size = thisScreen.Bounds.Size;
+            Screen thisScreen = Screen.FromRectangle(DesktopBounds);
+            DesktopLocation = thisScreen.Bounds.Location;
+            Size = thisScreen.Bounds.Size;
         }
+
         private void stretchToFillToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StretchToFill = !StretchToFill;
@@ -287,7 +287,7 @@ namespace MFDExtractor.UI
 
         private void ctxHide_Click(object sender, EventArgs e)
         {
-            this.Visible = false;
+            Visible = false;
             OnDataChanged(e);
         }
 
@@ -335,34 +335,32 @@ namespace MFDExtractor.UI
         {
             AlwaysOnTop = !AlwaysOnTop;
         }
-        private void ctxMonochrome_Click(object sender, System.EventArgs e)
+
+        private void ctxMonochrome_Click(object sender, EventArgs e)
         {
             Monochrome = !Monochrome;
         }
-        private void ctxMakeSquare_Click(object sender, System.EventArgs e)
+
+        private void ctxMakeSquare_Click(object sender, EventArgs e)
         {
-            if (this.StretchToFill)
+            if (StretchToFill)
             {
-                int height = this.Height;
-                int width = this.Width;
-                Point location = this.Location;
-                this.StretchToFill = false;
-                this.Location = location;
-                this.Height = height;
-                this.Width = width;
+                int height = Height;
+                int width = Width;
+                Point location = Location;
+                StretchToFill = false;
+                Location = location;
+                Height = height;
+                Width = width;
             }
-            if (this.Height < this.Width)
+            if (Height < Width)
             {
-                this.Width = this.Height;
+                Width = Height;
             }
             else
             {
-                this.Height = this.Width;
+                Height = Width;
             }
         }
-
-
     }
-    
-    
 }

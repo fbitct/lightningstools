@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+
 namespace F4KeyFile
 {
     internal static class Util
     {
         internal static List<string> Tokenize(string input)
         {
-            Regex r = new Regex(@"[\s]+");
+            var r = new Regex(@"[\s]+");
             string[] tokens = r.Split(input);
-            List<string> tokenList = new List<string>();
+            var tokenList = new List<string>();
             foreach (string token in tokens)
             {
                 if (token.Trim().Length == 0)

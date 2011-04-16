@@ -1,65 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using Common.Win32;
 using System.Threading;
-using Microsoft.DirectX.DirectInput;
-using log4net;
-using Common.InputSupport.DirectInput;
+using System.Windows.Forms;
 using Common.InputSupport;
+using Common.InputSupport.DirectInput;
 using Common.InputSupport.UI;
+using Common.Win32;
+using log4net;
 using MFDExtractor.Runtime.Settings;
+using Microsoft.DirectX.DirectInput;
 
 namespace MFDExtractor.Runtime
 {
-    internal class InputSupport:IDisposable
+    internal class InputSupport : IDisposable
     {
-        private static ILog _log = LogManager.GetLogger(typeof(InputSupport));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (InputSupport));
+        private readonly MessageManager _messageManager;
+        private readonly SettingsManager _settingsManager;
 
-        private bool _disposed = false;
-        private Thread _keyboardWatcherThread = null;
-        private Mediator.PhysicalControlStateChangedEventHandler _mediatorEventHandler = null;
-        private Mediator _mediator = null;
-        private SettingsManager _settingsManager= null;
-        private MessageManager _messageManager = null;
-        private Extractor _extractor = null;
+        private bool _disposed;
+        private Extractor _extractor;
+        private Thread _keyboardWatcherThread;
+        private Mediator _mediator;
+        private Mediator.PhysicalControlStateChangedEventHandler _mediatorEventHandler;
 
-        private InputSupport() : base() 
+        private InputSupport()
         {
             Initialize();
         }
-        public InputSupport(SettingsManager settingsManager, MessageManager messageManager, Extractor extractor):this()
+
+        public InputSupport(SettingsManager settingsManager, MessageManager messageManager, Extractor extractor)
+            : this()
         {
             _extractor = extractor;
             _settingsManager = settingsManager;
             _messageManager = messageManager;
         }
 
-        public Mediator Mediator { get { return _mediator; } }
+        public Mediator Mediator
+        {
+            get { return _mediator; }
+        }
 
         private void Initialize()
         {
             CreateMediator();
             SetupKeyboardWatcherThread();
         }
+
         private void CreateMediator()
         {
-            _mediatorEventHandler = new Mediator.PhysicalControlStateChangedEventHandler(Mediator_PhysicalControlStateChanged);
+            _mediatorEventHandler =
+                new Mediator.PhysicalControlStateChangedEventHandler(Mediator_PhysicalControlStateChanged);
             if (!Properties.Settings.Default.DisableDirectInputMediator)
             {
                 _mediator = new Mediator(null);
             }
         }
+
         private void RegisterMediatorEventHandler()
         {
             if (_mediator != null)
             {
                 _mediator.PhysicalControlStateChanged += _mediatorEventHandler;
             }
-
         }
+
         private void UnregisterMediatorEventHandler()
         {
             if (_mediator != null)
@@ -67,7 +72,8 @@ namespace MFDExtractor.Runtime
                 _mediator.PhysicalControlStateChanged -= _mediatorEventHandler;
             }
         }
-        private void Mediator_PhysicalControlStateChanged(object sender, Common.InputSupport.PhysicalControlStateChangedEventArgs e)
+
+        private void Mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
         {
             _settingsManager.KeySettings.Reload();
 
@@ -108,9 +114,9 @@ namespace MFDExtractor.Runtime
                 _messageManager.NotifyEHSIMenuButtonDepressed(true);
             }
             else if (
-                    !DirectInputHotkeyIsTriggering(_settingsManager.KeySettings.EHSICourseDepressedKey)
-                        &&
-                    _messageManager.EHSIRightKnobIsCurrentlyDepressed
+                !DirectInputHotkeyIsTriggering(_settingsManager.KeySettings.EHSICourseDepressedKey)
+                &&
+                _messageManager.EHSIRightKnobIsCurrentlyDepressed
                 )
             {
                 _messageManager.NotifyEHSIRightKnobReleased(true);
@@ -135,8 +141,8 @@ namespace MFDExtractor.Runtime
             {
                 _messageManager.NotifyAccelerometerIsReset(true);
             }
-
         }
+
         private bool DirectInputHotkeyIsTriggering(InputControlSelection hotkey)
         {
             if (hotkey == null || hotkey.DirectInputControl == null) return false;
@@ -165,7 +171,7 @@ namespace MFDExtractor.Runtime
                 case ControlType.Pov:
                     if (currentVal.HasValue)
                     {
-                        return Common.InputSupport.Util.GetPovDirection(currentVal.Value) == hotkey.PovDirection;
+                        return Util.GetPovDirection(currentVal.Value) == hotkey.PovDirection;
                     }
                     else
                     {
@@ -177,8 +183,8 @@ namespace MFDExtractor.Runtime
                     break;
             }
             return false;
-
         }
+
         private bool DirectInputEventIsHotkey(PhysicalControlStateChangedEventArgs diEvent, InputControlSelection hotkey)
         {
             if (diEvent == null) return false;
@@ -186,9 +192,9 @@ namespace MFDExtractor.Runtime
             if (hotkey == null) return false;
             if (
                 hotkey.ControlType != ControlType.Axis
-                    &&
+                &&
                 hotkey.ControlType != ControlType.Button
-                    &&
+                &&
                 hotkey.ControlType != ControlType.Pov
                 )
             {
@@ -198,52 +204,54 @@ namespace MFDExtractor.Runtime
             if (hotkey.DirectInputDevice == null) return false;
 
             if (
-                    diEvent.Control.ControlType == hotkey.DirectInputControl.ControlType
-                        &&
-                    diEvent.Control.ControlNum == hotkey.DirectInputControl.ControlNum
-                        &&
+                diEvent.Control.ControlType == hotkey.DirectInputControl.ControlType
+                &&
+                diEvent.Control.ControlNum == hotkey.DirectInputControl.ControlNum
+                &&
+                (
+                    (diEvent.Control.ControlType == ControlType.Axis &&
+                     diEvent.Control.AxisType == hotkey.DirectInputControl.AxisType)
+                    ||
+                    (diEvent.Control.ControlType != ControlType.Axis)
+                )
+                &&
+                Equals(diEvent.Control.Parent.Key, hotkey.DirectInputDevice.Key)
+                &&
+                (
+                    diEvent.Control.ControlType != ControlType.Pov
+                    ||
                     (
-                        (diEvent.Control.ControlType == ControlType.Axis && diEvent.Control.AxisType == hotkey.DirectInputControl.AxisType)
-                            ||
-                        (diEvent.Control.ControlType != ControlType.Axis)
+                        hotkey.ControlType == ControlType.Pov
+                        &&
+                        hotkey.PovDirection == Util.GetPovDirection(diEvent.CurrentState)
                     )
-                        &&
-                    object.Equals(diEvent.Control.Parent.Key, hotkey.DirectInputDevice.Key)
-                        &&
+                )
+                &&
+                (
+                    diEvent.Control.ControlType != ControlType.Button
+                    ||
                     (
-                        diEvent.Control.ControlType != ControlType.Pov
-                           ||
-                       (
-                            hotkey.ControlType == ControlType.Pov
-                                &&
-                            hotkey.PovDirection == Common.InputSupport.Util.GetPovDirection(diEvent.CurrentState)
-                       )
-                    )
+                        diEvent.Control.ControlType == ControlType.Button
                         &&
-                    (
-                        diEvent.Control.ControlType != ControlType.Button
-                            ||
-                        (
-                            diEvent.Control.ControlType == ControlType.Button
-                                    &&
-                            diEvent.CurrentState == 1
-                        )
+                        diEvent.CurrentState == 1
                     )
+                )
                 )
             {
                 return true;
             }
             return false;
         }
+
         private bool KeyIsHotkey(InputControlSelection hotkey, Keys keyPressed)
         {
             if (hotkey == null) return false;
             if (hotkey.ControlType == ControlType.Key)
             {
                 if (
-                        (hotkey.Keys & Keys.KeyCode) == (keyPressed & Keys.KeyCode)
-                            &&
-                        (hotkey.Keys & Keys.Modifiers) == (keyPressed & Keys.Modifiers)
+                    (hotkey.Keys & Keys.KeyCode) == (keyPressed & Keys.KeyCode)
+                    &&
+                    (hotkey.Keys & Keys.Modifiers) == (keyPressed & Keys.Modifiers)
                     )
                 {
                     return true;
@@ -262,7 +270,7 @@ namespace MFDExtractor.Runtime
             _keyboardWatcherThread.Name = "KeyboardWatcherThread";
             _keyboardWatcherThread.Start();
         }
-        
+
         public void ProcessKeyUpEvent(KeyEventArgs e)
         {
             _settingsManager.KeySettings.Reload();
@@ -272,33 +280,38 @@ namespace MFDExtractor.Runtime
 
             if (
                 _messageManager.EHSIRightKnobIsCurrentlyDepressed
-                    &&
+                &&
                 (_settingsManager.KeySettings.EHSICourseDepressedKey.ControlType == ControlType.Key)
-                    &&
+                &&
+                (
+                    (e.KeyData & Keys.KeyCode) ==
+                    (_settingsManager.KeySettings.EHSICourseDepressedKey.Keys & Keys.KeyCode)
+                    ||
+                    ((e.KeyData & Keys.KeyCode) & ~Keys.LControlKey & ~Keys.RControlKey & ~Keys.LShiftKey & ~Keys.LMenu &
+                     ~Keys.RMenu) == Keys.None
+                )
+                &&
+                (
                     (
-                        (e.KeyData & Keys.KeyCode) == (_settingsManager.KeySettings.EHSICourseDepressedKey.Keys & Keys.KeyCode)
-                            ||
-                        ((e.KeyData & Keys.KeyCode) & ~Keys.LControlKey & ~Keys.RControlKey & ~Keys.LShiftKey & ~Keys.LMenu & ~Keys.RMenu) == Keys.None
+                        modifiersInHotkey == Keys.None
                     )
-                        &&
+                    ||
                     (
-                        (
-                            modifiersInHotkey == Keys.None
-                        )
-                            ||
-                        (
-                            ((modifiersInHotkey & Keys.Alt) == Keys.Alt && (modifiersPressedRightNow & Keys.Alt) != Keys.Alt)
-                                ||
-                            ((modifiersInHotkey & Keys.Control) == Keys.Control && (modifiersPressedRightNow & Keys.Control) != Keys.Control)
-                                ||
-                            ((modifiersInHotkey & Keys.Shift) == Keys.Shift && (modifiersPressedRightNow & Keys.Shift) != Keys.Shift)
-                        )
+                        ((modifiersInHotkey & Keys.Alt) == Keys.Alt && (modifiersPressedRightNow & Keys.Alt) != Keys.Alt)
+                        ||
+                        ((modifiersInHotkey & Keys.Control) == Keys.Control &&
+                         (modifiersPressedRightNow & Keys.Control) != Keys.Control)
+                        ||
+                        ((modifiersInHotkey & Keys.Shift) == Keys.Shift &&
+                         (modifiersPressedRightNow & Keys.Shift) != Keys.Shift)
                     )
+                )
                 )
             {
                 _messageManager.NotifyEHSIRightKnobReleased(true);
             }
         }
+
         public void ProcessKeyDownEvent(KeyEventArgs e)
         {
             _settingsManager.KeySettings.Reload();
@@ -332,7 +345,8 @@ namespace MFDExtractor.Runtime
             {
                 _messageManager.NotifyEHSIRightKnobIncreasedByOne(true);
             }
-            else if (KeyIsHotkey(_settingsManager.KeySettings.EHSICourseDepressedKey, keys) && !_messageManager.EHSIRightKnobIsCurrentlyDepressed)
+            else if (KeyIsHotkey(_settingsManager.KeySettings.EHSICourseDepressedKey, keys) &&
+                     !_messageManager.EHSIRightKnobIsCurrentlyDepressed)
             {
                 _messageManager.NotifyEHSIRightKnobDepressed(true);
             }
@@ -360,8 +374,8 @@ namespace MFDExtractor.Runtime
             {
                 _messageManager.NotifyAccelerometerIsReset(true);
             }
-
         }
+
         public static Keys UpdateKeyEventArgsWithExtendedKeyInfo(Keys keys)
         {
             if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
@@ -385,24 +399,24 @@ namespace MFDExtractor.Runtime
         private void KeyboardWatcherThreadWork()
         {
             AutoResetEvent resetEvent = null;
-            Microsoft.DirectX.DirectInput.Device device = null;
+            Device device = null;
             try
             {
                 resetEvent = new AutoResetEvent(false);
-                device = new Microsoft.DirectX.DirectInput.Device(Microsoft.DirectX.DirectInput.SystemGuid.Keyboard);
-                device.SetCooperativeLevel(null, Microsoft.DirectX.DirectInput.CooperativeLevelFlags.Background | Microsoft.DirectX.DirectInput.CooperativeLevelFlags.NonExclusive);
+                device = new Device(SystemGuid.Keyboard);
+                device.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
                 device.SetEventNotification(resetEvent);
                 device.Properties.BufferSize = 255;
                 device.Acquire();
-                bool[] lastKeyboardState = new bool[Enum.GetValues(typeof(Key)).Length];
-                bool[] currentKeyboardState = new bool[Enum.GetValues(typeof(Key)).Length];
+                var lastKeyboardState = new bool[Enum.GetValues(typeof (Key)).Length];
+                var currentKeyboardState = new bool[Enum.GetValues(typeof (Key)).Length];
                 while (!_disposed)
                 {
                     resetEvent.WaitOne();
                     try
                     {
                         KeyboardState curState = device.GetCurrentKeyboardState();
-                        Array possibleKeys = Enum.GetValues(typeof(Key));
+                        Array possibleKeys = Enum.GetValues(typeof (Key));
 
                         int i = 0;
                         foreach (Key thisKey in possibleKeys)
@@ -416,7 +430,8 @@ namespace MFDExtractor.Runtime
                         {
                             bool isPressedNow = currentKeyboardState[i];
                             bool wasPressedBefore = lastKeyboardState[i];
-                            Keys winFormsKey = (Keys)Common.Win32.NativeMethods.MapVirtualKey((uint)thisKey, Common.Win32.NativeMethods.MAPVK_VSC_TO_VK_EX);
+                            var winFormsKey =
+                                (Keys) NativeMethods.MapVirtualKey((uint) thisKey, NativeMethods.MAPVK_VSC_TO_VK_EX);
                             if (isPressedNow && !wasPressedBefore)
                             {
                                 ProcessKeyDownEvent(new KeyEventArgs(winFormsKey));
@@ -437,14 +452,13 @@ namespace MFDExtractor.Runtime
             }
             catch (ThreadInterruptedException)
             {
-
             }
             catch (ThreadAbortException)
             {
             }
             catch (Exception e)
             {
-                _log.Error(e.Message.ToString(), e);
+                _log.Error(e.Message, e);
             }
             finally
             {
@@ -454,12 +468,11 @@ namespace MFDExtractor.Runtime
                 }
                 Common.Util.DisposeObject(device);
                 device = null;
-
             }
         }
 
-
         #region Object Disposal & Destructors
+
         /// <summary>
         /// Public implementation of the IDisposable pattern
         /// </summary>
@@ -468,6 +481,7 @@ namespace MFDExtractor.Runtime
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Private implementation of the IDisposable pattern
         /// </summary>

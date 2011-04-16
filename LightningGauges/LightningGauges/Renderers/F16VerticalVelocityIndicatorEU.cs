@@ -1,45 +1,55 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 using Common.Imaging;
+using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
     public class F16VerticalVelocityIndicatorEU : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo (System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string VVI_BACKGROUND_IMAGE_FILENAME = "vvieuro.bmp";
         private const string VVI_OFF_FLAG_IMAGE_FILENAME = "vvieuroflag.bmp";
         private const string VVI_OFF_FLAG_MASK_FILENAME = "vvieuroflag_mask.bmp";
         private const string VVI_NEEDLE_IMAGE_FILENAME = "arrowrpm.bmp";
         private const string VVI_NEEDLE_MASK_FILENAME = "arrowrpmmask.bmp";
+
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
+
+        private static readonly object _imagesLock = new object();
         private static Bitmap _background;
         private static ImageMaskPair _offFlag;
         private static ImageMaskPair _needle;
-        private static bool _imagesLoaded = false;
-        private bool _disposed = false;
+        private static bool _imagesLoaded;
+        private bool _disposed;
+
         #endregion
 
         public F16VerticalVelocityIndicatorEU()
-            : base()
         {
-            this.InstrumentState = new F16VerticalVelocityIndicatorEUInstrumentState();
+            InstrumentState = new F16VerticalVelocityIndicatorEUInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_background == null)
             {
-                _background = (Bitmap)Common.Imaging.Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + VVI_BACKGROUND_IMAGE_FILENAME);
+                _background =
+                    (Bitmap)
+                    Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar +
+                                            VVI_BACKGROUND_IMAGE_FILENAME);
             }
             if (_offFlag == null)
             {
@@ -58,6 +68,51 @@ namespace LightningGauges.Renderers
             }
             _imagesLoaded = true;
         }
+
+        #endregion
+
+        public F16VerticalVelocityIndicatorEUInstrumentState InstrumentState { get; set; }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16VerticalVelocityIndicatorEUInstrumentState : InstrumentStateBase
+        {
+            private const float MAX_VELOCITY = 6000;
+            private const float MIN_VELOCITY = -6000;
+            private float _verticalVelocityFeet;
+
+            public F16VerticalVelocityIndicatorEUInstrumentState()
+            {
+                OffFlag = false;
+                VerticalVelocityFeet = 0.0f;
+            }
+
+            public float VerticalVelocityFeet
+            {
+                get { return _verticalVelocityFeet; }
+                set
+                {
+                    float vv = value;
+                    if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
+                    if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
+                    _verticalVelocityFeet = vv;
+                }
+            }
+
+            public bool OffFlag { get; set; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
@@ -73,12 +128,13 @@ namespace LightningGauges.Renderers
 
                 //set up the canvas scale and clipping region
                 int width = _background.Width;
-                int height = _background.Height-29;
+                int height = _background.Height - 29;
                 width -= 154;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform((float)bounds.Width / (float)width, (float)bounds.Height / (float)height); //set the initial scale transformation 
+                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                    //set the initial scale transformation 
 
                 g.TranslateTransform(-76, 0);
                 g.TranslateTransform(0, -15);
@@ -88,11 +144,12 @@ namespace LightningGauges.Renderers
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height), new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
+                g.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                            new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the OFF flag
-                if (this.InstrumentState.OffFlag)
+                if (InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
@@ -103,18 +160,18 @@ namespace LightningGauges.Renderers
                 //draw the needle
                 float centerX = 156.0f;
                 float centerY = 130.0f;
-                float vv = this.InstrumentState.VerticalVelocityFeet;
-                if (Math.Abs(vv) > 6000.0) vv = (float)Math.Sign(vv) * 6000.0f;
-                float vviInThousands = vv / 1000.0f;
+                float vv = InstrumentState.VerticalVelocityFeet;
+                if (Math.Abs(vv) > 6000.0) vv = Math.Sign(vv)*6000.0f;
+                float vviInThousands = vv/1000.0f;
                 float angle;
                 if (Math.Abs(vviInThousands) > 1.0f)
                 {
-                    angle = -45.0f + (Math.Sign(vviInThousands) * ((Math.Abs(vviInThousands) - 1.0f) * (45.0f / 5.0f)));
+                    angle = -45.0f + (Math.Sign(vviInThousands)*((Math.Abs(vviInThousands) - 1.0f)*(45.0f/5.0f)));
                     if (vviInThousands < 0) angle -= 90;
                 }
                 else
                 {
-                    angle = -90.0f + (vviInThousands * 45.0f);
+                    angle = -90.0f + (vviInThousands*45.0f);
                 }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
@@ -125,58 +182,16 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
 
-
                 //restore the canvas's transform and clip settings to what they were when we entered this method
                 g.Restore(initialState);
             }
         }
-        public F16VerticalVelocityIndicatorEUInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        #region Instrument State
-        [Serializable]
-        public class F16VerticalVelocityIndicatorEUInstrumentState : InstrumentStateBase
-        {
-            private const float MAX_VELOCITY = 6000;
-            private const float MIN_VELOCITY = -6000;
-            private float _verticalVelocityFeet=0;
-            public F16VerticalVelocityIndicatorEUInstrumentState()
-            {
-                this.OffFlag = false;
-                this.VerticalVelocityFeet = 0.0f;
-            }
-            public float VerticalVelocityFeet
-            {
-                get
-                {
-                    return _verticalVelocityFeet;
-                }
-                set
-                {
-                    float vv = value;
-                    if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
-                    if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
-                    _verticalVelocityFeet = vv;
-                }
-            }
-            public bool OffFlag
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
+
         ~F16VerticalVelocityIndicatorEU()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -189,7 +204,6 @@ namespace LightningGauges.Renderers
                 }
                 _disposed = true;
             }
-
         }
     }
 }

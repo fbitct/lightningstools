@@ -1,71 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using F4SharedMem;
 using System.Diagnostics;
-using Common.Networking;
-using MFDExtractor.Networking;
-using System.Threading;
-using log4net;
-using System.IO;
 using System.Drawing;
+using System.IO;
+using System.Threading;
+using Common.Networking;
+using F4SharedMem;
+using F4SharedMem.Headers;
+using F4Utils.Terrain;
+using log4net;
+using MFDExtractor.Networking;
 using MFDExtractor.Runtime.Settings;
+using Reader = F4TexSharedMem.Reader;
+using Util = Common.Threading.Util;
 
 namespace MFDExtractor.Runtime.SimSupport.Falcon4
 {
-    public class Falcon4SimSupport:IDisposable
+    public class Falcon4SimSupport : IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(Falcon4SimSupport));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Falcon4SimSupport));
+
         #endregion
 
         #region Instance variables
-        private bool _disposed = false;
+
+        private bool _disposed;
+
+        /// <summary>
+        /// Reference to the sim-is-running status monitor thread 
+        /// </summary>
+        private Thread _simStatusMonitorThread;
+
         #region Falcon 4 Sharedmem Readers & status flags
-        private F4Utils.Terrain.TerrainBrowser _terrainBrowser = new F4Utils.Terrain.TerrainBrowser(false);
+
+        private readonly Extractor _extractor;
+        private readonly SettingsManager _settingsManager;
+
+        /// <summary>
+        /// Reference to a Reader object that can read values from Falcon's basic (non-textures) shared
+        /// memory area.  This is used to detect whether Falcon is running and to provide flight data to rendered instruments
+        /// </summary>
+        private F4SharedMem.Reader _falconSmReader;
+
+        private NetworkManager _networkManager;
+
+        /// <summary>
+        /// Flag to indicate whether BMS's 3D textures shared memory area is available and has data
+        /// </summary>
+        private bool _sim3DDataAvailable;
+
+        /// <summary>
+        /// Flag to indicate whether the sim is running
+        /// </summary>
+        private bool _simRunning;
+
+        private TerrainBrowser _terrainBrowser = new TerrainBrowser(false);
+
         /// <summary>
         /// Reference to a Reader object that can read images from BMS's "textures shared memory" 
         /// area -- this reference is used to perform the actual 3D-mode image extraction
         /// </summary>
-        private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
+        private Reader _texSmReader = new Reader();
+
         /// <summary>
         /// Reference to a Reader object that can read images from BMS's "textures shared memory" area 
         /// -- this reference is used to detect whether the 3D-mode shared 
         /// memory images actually exist or not (can be recreated at certain 
         /// intervals without affecting code using the other reference)
         /// </summary>
-        private F4TexSharedMem.Reader _texSmStatusReader = new F4TexSharedMem.Reader();
-        /// <summary>
-        /// Reference to a Reader object that can read values from Falcon's basic (non-textures) shared
-        /// memory area.  This is used to detect whether Falcon is running and to provide flight data to rendered instruments
-        /// </summary>
-        private F4SharedMem.Reader _falconSmReader = null;
-        private bool _useBMSAdvancedSharedmemValues = false;
-        /// <summary>
-        /// Flag to indicate whether the sim is running
-        /// </summary>
-        private bool _simRunning = false;
-        /// <summary>
-        /// Flag to indicate whether BMS's 3D textures shared memory area is available and has data
-        /// </summary>
-        private bool _sim3DDataAvailable = false;
+        private Reader _texSmStatusReader = new Reader();
 
-        private SettingsManager _settingsManager = null;
-        private NetworkManager _networkManager = null;
-        private Extractor _extractor = null;
+        private bool _useBMSAdvancedSharedmemValues;
 
         #endregion
 
-        /// <summary>
-        /// Reference to the sim-is-running status monitor thread 
-        /// </summary>
-        private Thread _simStatusMonitorThread = null;
         #endregion
 
         #region Constructors
-        private Falcon4SimSupport() : base() { }
-        internal Falcon4SimSupport(SettingsManager settingsManager, NetworkManager networkManager, Extractor extractor )
+
+        private Falcon4SimSupport()
+        {
+        }
+
+        internal Falcon4SimSupport(SettingsManager settingsManager, NetworkManager networkManager, Extractor extractor)
             : this()
         {
             _settingsManager = settingsManager;
@@ -75,32 +94,41 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         }
 
         #endregion
+
         #region Public Properties
+
         public bool IsSimRunning
         {
             get { return _simRunning; }
         }
+
         public bool UseBMSAdvancedSharedmemValues
         {
             get { return _useBMSAdvancedSharedmemValues; }
             internal set { _useBMSAdvancedSharedmemValues = value; }
         }
+
         #endregion
+
         #region Public Methods
+
         public Image ReadRTTImage(Rectangle areaToCapture)
         {
             return ReadRTTImage(areaToCapture, _texSmReader);
         }
+
         #endregion
+
         private void SetupSimStatusMonitorThread()
         {
-            Common.Threading.Util.AbortThread(ref _simStatusMonitorThread);
+            Util.AbortThread(ref _simStatusMonitorThread);
             _simStatusMonitorThread = new Thread(SimStatusMonitorThreadWork);
             _simStatusMonitorThread.Priority = _settingsManager.ThreadPriority;
             _simStatusMonitorThread.IsBackground = true;
             _simStatusMonitorThread.Name = "SimStatusMonitorThread";
             _simStatusMonitorThread.Start();
         }
+
         public FlightData GetFlightData()
         {
             FlightData toReturn = null;
@@ -108,7 +136,8 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             {
                 if (_simRunning || _settingsManager.NetworkMode == NetworkMode.Client)
                 {
-                    if (_settingsManager.NetworkMode == NetworkMode.Server || _settingsManager.NetworkMode == NetworkMode.Standalone)
+                    if (_settingsManager.NetworkMode == NetworkMode.Server ||
+                        _settingsManager.NetworkMode == NetworkMode.Standalone)
                     {
                         FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
 #if (ALLIEDFORCE)
@@ -123,12 +152,12 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         {
                             if (format.HasValue)
                             {
-                                _falconSmReader = new Reader(format.Value);
+                                _falconSmReader = new F4SharedMem.Reader(format.Value);
                                 newReader = true;
                             }
                             else
                             {
-                                _falconSmReader = new Reader();
+                                _falconSmReader = new F4SharedMem.Reader();
                                 newReader = true;
                             }
                         }
@@ -138,7 +167,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             {
                                 if (format.Value != _falconSmReader.DataFormat)
                                 {
-                                    _falconSmReader = new Reader(format.Value);
+                                    _falconSmReader = new F4SharedMem.Reader(format.Value);
                                     newReader = true;
                                 }
                             }
@@ -155,8 +184,10 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         {
                             string exePath = F4Utils.Process.Util.GetFalconExePath();
                             FileVersionInfo verInfo = null;
-                            if (exePath != null) verInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(exePath);
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null && ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) || (verInfo.ProductMajorPart > 4)))
+                            if (exePath != null) verInfo = FileVersionInfo.GetVersionInfo(exePath);
+                            if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null &&
+                                ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) ||
+                                 (verInfo.ProductMajorPart > 4)))
                             {
                                 EnableBMSAdvancedSharedmemValues();
                             }
@@ -164,7 +195,6 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             {
                                 DisableBMSAdvancedSharedmemValues();
                             }
-
                         }
                         if (doMore)
                         {
@@ -179,24 +209,25 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             {
                                 if (_terrainBrowser == null)
                                 {
-                                    _terrainBrowser = new F4Utils.Terrain.TerrainBrowser(false);
+                                    _terrainBrowser = new TerrainBrowser(false);
                                     _terrainBrowser.LoadCurrentTheaterTerrainDatabase();
                                 }
                                 if (_terrainBrowser != null && toReturn != null)
                                 {
-                                    FlightDataExtension extensionData = new FlightDataExtension();
+                                    var extensionData = new FlightDataExtension();
                                     float terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
                                     float ralt = -toReturn.z - terrainHeight;
 
                                     //reset AGL altitude to zero if we're on the ground
                                     if (
-                                        ((toReturn.lightBits & (int)F4SharedMem.Headers.LightBits.WOW) == (int)F4SharedMem.Headers.LightBits.WOW)
-                                          ||
-                                          (
-                                            ((toReturn.lightBits3 & (int)F4SharedMem.Headers.Bms4LightBits3.OnGround) == (int)F4SharedMem.Headers.Bms4LightBits3.OnGround)
-                                                 &&
-                                             toReturn.DataFormat == FalconDataFormats.BMS4
-                                             )
+                                        ((toReturn.lightBits & (int) LightBits.WOW) == (int) LightBits.WOW)
+                                        ||
+                                        (
+                                            ((toReturn.lightBits3 & (int) Bms4LightBits3.OnGround) ==
+                                             (int) Bms4LightBits3.OnGround)
+                                            &&
+                                            toReturn.DataFormat == FalconDataFormats.BMS4
+                                        )
                                         )
                                     {
                                         ralt = 0;
@@ -225,25 +256,29 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             return toReturn;
         }
+
         private void DisableBMSAdvancedSharedmemValues()
         {
             _useBMSAdvancedSharedmemValues = false;
             if (_settingsManager.NetworkMode == NetworkMode.Server)
             {
-                Networking.Message msg = new MFDExtractor.Networking.Message(MessageTypes.DisableBMSAdvancedSharedmemValues.ToString(), null);
+                var msg = new Message(MessageTypes.DisableBMSAdvancedSharedmemValues.ToString(), null);
                 _networkManager.SubmitMessageToClientFromServer(msg);
             }
         }
+
         private void EnableBMSAdvancedSharedmemValues()
         {
             _useBMSAdvancedSharedmemValues = true;
             if (_settingsManager.NetworkMode == NetworkMode.Server)
             {
-                Networking.Message msg = new MFDExtractor.Networking.Message(MessageTypes.EnableBMSAdvancedSharedmemValues.ToString(), null);
+                var msg = new Message(MessageTypes.EnableBMSAdvancedSharedmemValues.ToString(), null);
                 _networkManager.SubmitMessageToClientFromServer(msg);
             }
         }
+
         #region RTT support functions
+
         private static void ReadRTTCoords(Dictionary<string, Rectangle> items)
         {
             FileInfo file = FindBms3DCockpitFile();
@@ -253,7 +288,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
 
             using (FileStream stream = file.OpenRead())
-            using (StreamReader reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream))
             {
                 while (!reader.EndOfStream)
                 {
@@ -262,7 +297,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                     {
                         if (currentLine.ToLowerInvariant().StartsWith(itemName.ToLowerInvariant()))
                         {
-                            Rectangle thisItemRect = new Rectangle();
+                            var thisItemRect = new Rectangle();
                             List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
                             if (tokens.Count > 12)
                             {
@@ -284,15 +319,17 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                 }
             }
         }
+
         private static void ReadRTTCoords(CaptureCoordinatesSet captureCoordinatesSet)
         {
-            Dictionary<string, CaptureCoordinates> items = new Dictionary<string, CaptureCoordinates>();
+            var items = new Dictionary<string, CaptureCoordinates>();
             items.Add("LMFD", captureCoordinatesSet.LMFD);
             items.Add("RMFD", captureCoordinatesSet.RMFD);
             items.Add("MFD3", captureCoordinatesSet.MFD3);
             items.Add("MFD4", captureCoordinatesSet.MFD4);
             items.Add("HUD", captureCoordinatesSet.HUD);
         }
+
         private static string RunningBmsInstanceBasePath()
         {
             string toReturn = null;
@@ -306,15 +343,15 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             return toReturn;
         }
+
         private static FileInfo FindBms3DCockpitFile()
         {
             string basePath = RunningBmsInstanceBasePath();
             string path = null;
             if (basePath != null)
             {
-
                 path = basePath + @"\art\ckptartn";
-                DirectoryInfo dir = new DirectoryInfo(path);
+                var dir = new DirectoryInfo(path);
                 if (dir.Exists)
                 {
                     DirectoryInfo[] subDirs = dir.GetDirectories();
@@ -326,12 +363,14 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         {
                             try
                             {
-                                using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                                using (
+                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
+                                                              FileShare.None))
                                 {
                                     fs.Close();
                                 }
                             }
-                            catch (System.IO.IOException)
+                            catch (IOException)
                             {
                                 return file;
                             }
@@ -343,17 +382,18 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                     {
                         try
                         {
-                            using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                            using (
+                                FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
+                                                          FileShare.None))
                             {
                                 fs.Close();
                             }
                         }
-                        catch (System.IO.IOException)
+                        catch (IOException)
                         {
                             return file;
                         }
                     }
-
                 }
 
                 path = basePath + @"\art\ckptart";
@@ -369,12 +409,14 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         {
                             try
                             {
-                                using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                                using (
+                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
+                                                              FileShare.None))
                                 {
                                     fs.Close();
                                 }
                             }
-                            catch (System.IO.IOException)
+                            catch (IOException)
                             {
                                 return file;
                             }
@@ -390,19 +432,20 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             return null;
         }
-        internal static Image ReadRTTImage(Rectangle areaToCapture, F4TexSharedMem.Reader texSharedmemReader)
+
+        internal static Image ReadRTTImage(Rectangle areaToCapture, Reader texSharedmemReader)
         {
             Image toReturn = null;
             try
             {
                 if (texSharedmemReader != null)
                 {
-                    toReturn = texSharedmemReader.GetImage(areaToCapture);//Common.Imaging.Util.CloneBitmap();
+                    toReturn = texSharedmemReader.GetImage(areaToCapture); //Common.Imaging.Util.CloneBitmap();
                 }
             }
             catch (Exception e)
             {
-                _log.Error(e.Message.ToString(), e);
+                _log.Error(e.Message, e);
             }
             return toReturn;
         }
@@ -419,30 +462,34 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                 while (!_disposed)
                 {
                     count++;
-                    if (_settingsManager.NetworkMode == NetworkMode.Server || _settingsManager.NetworkMode == NetworkMode.Standalone)
+                    if (_settingsManager.NetworkMode == NetworkMode.Server ||
+                        _settingsManager.NetworkMode == NetworkMode.Standalone)
                     {
                         bool simWasRunning = _simRunning;
 
                         //TODO:make this check optional via the user-config file
-                        if (count % 1 == 0)
+                        if (count%1 == 0)
                         {
                             count = 0;
                             Common.Util.DisposeObject(_texSmStatusReader);
-                            _texSmStatusReader = new F4TexSharedMem.Reader();
+                            _texSmStatusReader = new Reader();
 
 #if SIMRUNNING
                             _simRunning = true;
 #else
                             try
                             {
-                                _simRunning = _settingsManager.NetworkMode == NetworkMode.Client || F4Utils.Process.Util.IsFalconRunning();
+                                _simRunning = _settingsManager.NetworkMode == NetworkMode.Client ||
+                                              F4Utils.Process.Util.IsFalconRunning();
                             }
                             catch (Exception ex)
                             {
                                 _log.Error(ex.Message, ex);
                             }
 #endif
-                            _sim3DDataAvailable = _simRunning && (_settingsManager.NetworkMode == NetworkMode.Client || _texSmStatusReader.IsDataAvailable);
+                            _sim3DDataAvailable = _simRunning &&
+                                                  (_settingsManager.NetworkMode == NetworkMode.Client ||
+                                                   _texSmStatusReader.IsDataAvailable);
 
                             if (_sim3DDataAvailable)
                             {
@@ -450,20 +497,26 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                                 {
                                     if (_extractor.ThreeDeeMode)
                                     {
-                                        if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
-                                        if ((Properties.Settings.Default.EnableHudOutput || _settingsManager.NetworkMode == NetworkMode.Server))
+                                        if (_texSmReader == null) _texSmReader = new Reader();
+                                        if ((Properties.Settings.Default.EnableHudOutput ||
+                                             _settingsManager.NetworkMode == NetworkMode.Server))
                                         {
                                             if (
-                                                    (_settingsManager.CaptureCoordinatesSet.HUD.RTTSourceCoords == Rectangle.Empty)
-                                                        ||
-                                                    (_settingsManager.CaptureCoordinatesSet.LMFD.RTTSourceCoords == Rectangle.Empty)
-                                                        ||
-                                                    (_settingsManager.CaptureCoordinatesSet.RMFD.RTTSourceCoords == Rectangle.Empty)
-                                                        ||
-                                                    (_settingsManager.CaptureCoordinatesSet.MFD3.RTTSourceCoords == Rectangle.Empty)
-                                                        ||
-                                                    (_settingsManager.CaptureCoordinatesSet.MFD4.RTTSourceCoords == Rectangle.Empty)
-                                             )
+                                                (_settingsManager.CaptureCoordinatesSet.HUD.RTTSourceCoords ==
+                                                 Rectangle.Empty)
+                                                ||
+                                                (_settingsManager.CaptureCoordinatesSet.LMFD.RTTSourceCoords ==
+                                                 Rectangle.Empty)
+                                                ||
+                                                (_settingsManager.CaptureCoordinatesSet.RMFD.RTTSourceCoords ==
+                                                 Rectangle.Empty)
+                                                ||
+                                                (_settingsManager.CaptureCoordinatesSet.MFD3.RTTSourceCoords ==
+                                                 Rectangle.Empty)
+                                                ||
+                                                (_settingsManager.CaptureCoordinatesSet.MFD4.RTTSourceCoords ==
+                                                 Rectangle.Empty)
+                                                )
                                             {
                                                 ReadRTTCoords(_settingsManager.CaptureCoordinatesSet);
                                             }
@@ -531,6 +584,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         #endregion
 
         #region Object Disposal & Destructors
+
         /// <summary>
         /// Public implementation of the IDisposable pattern
         /// </summary>
@@ -539,6 +593,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Private implementation of the IDisposable pattern
         /// </summary>
@@ -549,7 +604,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             {
                 if (disposing)
                 {
-                    Common.Threading.Util.AbortThread(ref _simStatusMonitorThread);
+                    Util.AbortThread(ref _simStatusMonitorThread);
                     _simStatusMonitorThread = null;
                     Common.Util.DisposeObject(_texSmReader);
                     Common.Util.DisposeObject(_texSmStatusReader);
@@ -558,7 +613,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             _disposed = true;
         }
-        #endregion
 
+        #endregion
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.MacroProgramming;
-using Common.HardwareSupport;
 using System.IO;
-using log4net;
 using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
+using Common.HardwareSupport;
+using Common.MacroProgramming;
+using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -13,46 +12,48 @@ namespace SimLinkup.HardwareSupport.Simtek
     public class Simtek10058102HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(Simtek10058102HardwareSupportModule ));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek10058102HardwareSupportModule));
+
         #endregion
 
         #region Instance variables
-        private bool _isDisposed = false;
-        private AnalogSignal _vviInputSignal = null;
-        private AnalogSignal.AnalogSignalChangedEventHandler _vviInputSignalChangedEventHandler = null;
 
-        private DigitalSignal _vviPowerInputSignal = null;
-        private DigitalSignal.SignalChangedEventHandler _vviPowerInputSignalChangedEventHandler = null;
+        private bool _isDisposed;
+        private AnalogSignal _vviInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _vviInputSignalChangedEventHandler;
+        private AnalogSignal _vviOutputSignal;
 
-        private AnalogSignal _vviOutputSignal = null;
+        private DigitalSignal _vviPowerInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _vviPowerInputSignalChangedEventHandler;
+
         #endregion
 
         #region Constructors
-        private Simtek10058102HardwareSupportModule ()
-            : base()
+
+        private Simtek10058102HardwareSupportModule()
         {
             CreateInputSignals();
             CreateOutputSignals();
             CreateInputEventHandlers();
             RegisterForInputEvents();
-
         }
 
         public override string FriendlyName
         {
-            get
-            {
-                return "Simtek P/N 10-0581-02 - Indicator - Simulated Vertical Velocity";
-            }
+            get { return "Simtek P/N 10-0581-02 - Indicator - Simulated Vertical Velocity"; }
         }
+
         public static IHardwareSupportModule[] GetInstances()
         {
-            List<IHardwareSupportModule> toReturn = new List<IHardwareSupportModule>();
-            toReturn.Add(new Simtek10058102HardwareSupportModule ());
+            var toReturn = new List<IHardwareSupportModule>();
+            toReturn.Add(new Simtek10058102HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "Simtek10058102HardwareSupportModule.config");
-                Simtek10058102HardwareSupportModuleConfig hsmConfig = Simtek10058102HardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                        "Simtek10058102HardwareSupportModule.config");
+                Simtek10058102HardwareSupportModuleConfig hsmConfig =
+                    Simtek10058102HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
             {
@@ -60,51 +61,50 @@ namespace SimLinkup.HardwareSupport.Simtek
             }
             return toReturn.ToArray();
         }
+
         #endregion
 
         #region Virtual Method Implementations
+
         public override AnalogSignal[] AnalogInputs
         {
-            get
-            {
-                return new AnalogSignal[] { _vviInputSignal };
-            }
+            get { return new[] {_vviInputSignal}; }
         }
+
         public override DigitalSignal[] DigitalInputs
         {
-            get
-            {
-                return new DigitalSignal[] { _vviPowerInputSignal};
-            }
+            get { return new[] {_vviPowerInputSignal}; }
         }
+
         public override AnalogSignal[] AnalogOutputs
         {
-            get
-            {
-                return new AnalogSignal[] { _vviOutputSignal };
-            }
+            get { return new[] {_vviOutputSignal}; }
         }
+
         public override DigitalSignal[] DigitalOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         #endregion
 
         #region Signals Handling
+
         #region Signals Event Handling
+
         private void CreateInputEventHandlers()
         {
             _vviInputSignalChangedEventHandler = new AnalogSignal.AnalogSignalChangedEventHandler(vvi_InputSignalChanged);
-            _vviPowerInputSignalChangedEventHandler = new DigitalSignal.SignalChangedEventHandler(vviPower_InputSignalChanged);
+            _vviPowerInputSignalChangedEventHandler =
+                new DigitalSignal.SignalChangedEventHandler(vviPower_InputSignalChanged);
         }
+
         private void AbandonInputEventHandlers()
         {
             _vviInputSignalChangedEventHandler = null;
             _vviPowerInputSignalChangedEventHandler = null;
         }
+
         private void RegisterForInputEvents()
         {
             if (_vviInputSignal != null)
@@ -116,6 +116,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 _vviPowerInputSignal.SignalChanged += _vviPowerInputSignalChangedEventHandler;
             }
         }
+
         private void UnregisterForInputEvents()
         {
             if (_vviInputSignalChangedEventHandler != null && _vviInputSignal != null)
@@ -139,40 +140,45 @@ namespace SimLinkup.HardwareSupport.Simtek
                 }
             }
         }
+
         #endregion
+
         #region Signal Creation
+
         private void CreateInputSignals()
         {
             _vviInputSignal = CreateVVIInputSignal();
             _vviPowerInputSignal = CreateVVIPowerInputSignal();
         }
+
         private void CreateOutputSignals()
         {
             _vviOutputSignal = CreateVVIOutputSignal();
         }
+
         private AnalogSignal CreateVVIOutputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "VVI Signal To Instrument";
             thisSignal.Id = "10058102_VVI_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00) / 20.00;
+            thisSignal.State = (-10.00 + 10.00)/20.00;
             return thisSignal;
         }
 
         private AnalogSignal CreateVVIInputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "VVI Value from Simulation";
             thisSignal.Id = "10058102_VVI_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             return thisSignal;
@@ -180,25 +186,28 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private DigitalSignal CreateVVIPowerInputSignal()
         {
-            DigitalSignal thisSignal = new DigitalSignal();
+            var thisSignal = new DigitalSignal();
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "VVI Power Off Flag Value from Simulation";
             thisSignal.Id = "10058102_VVI_Power_Off_Flag_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = true;
             return thisSignal;
         }
+
         private void vvi_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateOutputValues();
         }
+
         private void vviPower_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateOutputValues();
         }
+
         private void UpdateOutputValues()
         {
             bool vviPowerOff = false;
@@ -220,37 +229,37 @@ namespace SimLinkup.HardwareSupport.Simtek
                     }
                     else
                     {
-                        if (vviInput <-6000)
+                        if (vviInput < -6000)
                         {
                             vviOutputValue = -6.37;
                         }
                         else if (vviInput >= -6000 && vviInput < -3000)
                         {
-                            vviOutputValue = -6.37 + (((vviInput - -6000) / 3000) * 1.66);
+                            vviOutputValue = -6.37 + (((vviInput - -6000)/3000)*1.66);
                         }
                         else if (vviInput >= -3000 && vviInput < -1000)
                         {
-                            vviOutputValue = -4.71 + (((vviInput - -3000) / 2000) * 2.90);
+                            vviOutputValue = -4.71 + (((vviInput - -3000)/2000)*2.90);
                         }
                         else if (vviInput >= -1000 && vviInput < -400)
                         {
-                            vviOutputValue = -1.81 + (((vviInput - -1000) / 600) * 1.81);
+                            vviOutputValue = -1.81 + (((vviInput - -1000)/600)*1.81);
                         }
                         else if (vviInput >= -400 && vviInput < 0)
                         {
-                            vviOutputValue = 0 + (((vviInput - -400) / 400) * 1.83);
+                            vviOutputValue = 0 + (((vviInput - -400)/400)*1.83);
                         }
                         else if (vviInput >= 0 && vviInput < 1000)
                         {
-                            vviOutputValue = 1.83 + ((vviInput  / 1000) * 3.65);
+                            vviOutputValue = 1.83 + ((vviInput/1000)*3.65);
                         }
                         else if (vviInput >= 1000 && vviInput < 3000)
                         {
-                            vviOutputValue = 5.48 + (((vviInput - 1000) / 2000) * 2.9);
+                            vviOutputValue = 5.48 + (((vviInput - 1000)/2000)*2.9);
                         }
                         else if (vviInput >= 3000 && vviInput < 6000)
                         {
-                            vviOutputValue = 8.38 + (((vviInput - 3000) / 3000) * 1.62);
+                            vviOutputValue = 8.38 + (((vviInput - 3000)/3000)*1.62);
                         }
                         else if (vviInput >= 6000)
                         {
@@ -267,8 +276,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         vviOutputValue = 10;
                     }
 
-                    _vviOutputSignal.State = ((vviOutputValue + 10.0000) / 20.0000);
-
+                    _vviOutputSignal.State = ((vviOutputValue + 10.0000)/20.0000);
                 }
             }
         }
@@ -278,6 +286,18 @@ namespace SimLinkup.HardwareSupport.Simtek
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -287,6 +307,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -301,22 +322,11 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     UnregisterForInputEvents();
                     AbandonInputEventHandlers();
-
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

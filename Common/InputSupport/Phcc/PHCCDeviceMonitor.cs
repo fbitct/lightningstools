@@ -1,78 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Threading;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
 using log4net;
 using Phcc;
-using System.IO;
+
 namespace Common.InputSupport.Phcc
 {
     public class PHCCStateChangedEventArgs : EventArgs
     {
-        private PHCCInputState? _previousState;
-        private PHCCInputState? _newState;
-        private ControlType? _controlType;
-        private int? _controlIndex;
+        private readonly int? _controlIndex;
+        private readonly ControlType? _controlType;
+        private readonly PHCCInputState? _newState;
+        private readonly PHCCInputState? _previousState;
+
         public PHCCStateChangedEventArgs()
-            : base()
         {
         }
-        public PHCCStateChangedEventArgs(PHCCInputState? newState, PHCCInputState? previousState, ControlType controlType, int controlIndex )
+
+        public PHCCStateChangedEventArgs(PHCCInputState? newState, PHCCInputState? previousState,
+                                         ControlType controlType, int controlIndex)
         {
             _newState = newState;
             _previousState = previousState;
             _controlType = controlType;
             _controlIndex = controlIndex;
         }
-        public ControlType? ControlType {
-            get
-            {
-                return _controlType;
-            }
+
+        public ControlType? ControlType
+        {
+            get { return _controlType; }
         }
+
         public int? ControlIndex
         {
-            get
-            {
-                return _controlIndex;
-            }
+            get { return _controlIndex; }
         }
+
         public PHCCInputState? NewState
         {
-            get
-            {
-                return _newState;
-            }
+            get { return _newState; }
         }
+
         public PHCCInputState? PreviousState
         {
-            get
-            {
-                return _previousState;
-            }
+            get { return _previousState; }
         }
     }
+
     public sealed class PHCCDeviceMonitor : DeviceMonitor
     {
-        private static ILog _log = LogManager.GetLogger(typeof(PHCCDeviceMonitor));
+        #region Delegates
+
+        public delegate void PHCCStateChangedEventHandler(object sender, PHCCStateChangedEventArgs e);
+
+        #endregion
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (PHCCDeviceMonitor));
+
         /// <summary>
         /// Class variable to hold all references to all instantiated device monitors of this type
         /// </summary>
-        private static Dictionary<PHCCPhysicalDeviceInfo, PHCCDeviceMonitor> _monitors = new Dictionary<PHCCPhysicalDeviceInfo, PHCCDeviceMonitor>();
-        private PHCCPhysicalDeviceInfo _deviceInfo = null;
-        private PHCCDeviceManager _manager = null;
-        private PHCCInputState? _state = null;
-        private PHCCInputState? _prevState=null;
-        private global::Phcc.Device _deviceInterface = null;
-        private int _axisRangeMin = 0;
-        private int _axisRangeMax = 1023;
-        private object _stateLock = new object();
-        public delegate void PHCCStateChangedEventHandler (object sender, PHCCStateChangedEventArgs e);
-        public event PHCCStateChangedEventHandler StateChanged;        
-        
+        private static readonly Dictionary<PHCCPhysicalDeviceInfo, PHCCDeviceMonitor> _monitors =
+            new Dictionary<PHCCPhysicalDeviceInfo, PHCCDeviceMonitor>();
+
+        private readonly int _axisRangeMax = 1023;
+        private readonly int _axisRangeMin;
+
+        private readonly PHCCPhysicalDeviceInfo _deviceInfo;
+        private readonly PHCCDeviceManager _manager;
+        private readonly object _stateLock = new object();
+        private Device _deviceInterface;
+        private PHCCInputState? _prevState;
+        private PHCCInputState? _state;
+
+        public event PHCCStateChangedEventHandler StateChanged;
+
         #region Constructors
+
         /// <summary>
         /// Hidden constructor -- forces callers to use one of the static factory methods 
         /// on this class.
@@ -88,12 +94,43 @@ namespace Common.InputSupport.Phcc
             _axisRangeMax = axisRangeMax;
             Prepare();
         }
+
         #endregion
+
         #region Public Methods
+
+        public PHCCPhysicalDeviceInfo DeviceInfo
+        {
+            get { return _deviceInfo; }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="PHCCInputState"/> object containing the previous input state of the device being monitored by this object
+        /// </summary>
+        public PHCCInputState? PreviousState
+        {
+            get { return _prevState; }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="PHCCInputState"/> object containing the most-recently-polled input state of the device being monitored by this object
+        /// </summary>
+        public PHCCInputState? CurrentState
+        {
+            get
+            {
+                lock (_stateLock)
+                {
+                    return _state;
+                }
+            }
+        }
+
         public PHCCInputState? Poll()
         {
             return GetCurrentInputState(true);
         }
+
         public PHCCInputState? GetCurrentInputState(bool throwOnFail)
         {
             try
@@ -112,7 +149,7 @@ namespace Common.InputSupport.Phcc
                         {
                             short[] rawAnalogInputs = _deviceInterface.AnalogInputs;
                             bool[] rawDigitalInputs = _deviceInterface.DigitalInputs;
-                            PHCCInputState thisState = new PHCCInputState();
+                            var thisState = new PHCCInputState();
                             thisState.analogInputs = new short[35];
                             thisState.digitalInputs = new bool[1024];
                             for (int i = 0; i < rawAnalogInputs.Length; i++)
@@ -138,7 +175,7 @@ namespace Common.InputSupport.Phcc
             }
             catch (ApplicationException e)
             {
-                _log.Debug(e.Message, e); 
+                _log.Debug(e.Message, e);
                 _prepared = false;
                 if (throwOnFail)
                 {
@@ -146,38 +183,6 @@ namespace Common.InputSupport.Phcc
                 }
             }
             return null;
-        }
-
-        public PHCCPhysicalDeviceInfo DeviceInfo
-        {
-            get
-            {
-                return _deviceInfo;
-            }
-        }
-
-        /// <summary>
-        /// Returns a <see cref="PHCCInputState"/> object containing the previous input state of the device being monitored by this object
-        /// </summary>
-        public PHCCInputState? PreviousState
-        {
-            get
-            {
-                return _prevState;
-            }
-        }
-        /// <summary>
-        /// Returns a <see cref="PHCCInputState"/> object containing the most-recently-polled input state of the device being monitored by this object
-        /// </summary>
-        public PHCCInputState? CurrentState
-        {
-            get
-            {
-                lock (_stateLock)
-                {
-                    return _state;
-                }
-            }
         }
 
         /// <summary>
@@ -191,7 +196,8 @@ namespace Common.InputSupport.Phcc
         /// <returns>a PHCCDeviceMonitor object representing the PHCC device 
         /// being monitored, either created newly from-scratch, or returned from 
         /// this class's internal object pool if a monitor instance already exists</returns>
-        public static PHCCDeviceMonitor GetInstance(PHCCPhysicalDeviceInfo deviceInfo, int axisRangeMin, int axisRangeMax)
+        public static PHCCDeviceMonitor GetInstance(PHCCPhysicalDeviceInfo deviceInfo, int axisRangeMin,
+                                                    int axisRangeMax)
         {
             PHCCDeviceMonitor monitor = null;
             if (_monitors.ContainsKey(deviceInfo))
@@ -213,9 +219,11 @@ namespace Common.InputSupport.Phcc
             }
             return monitor;
         }
-       
+
         #endregion
+
         #region Private Methods
+
         public bool IsDeviceAttached(bool throwOnFail)
         {
             if (!_prepared && !_preparing)
@@ -235,9 +243,9 @@ namespace Common.InputSupport.Phcc
                     _log.Debug(e.Message, e);
                     if (throwOnFail) throw;
                 }
-                catch (System.TimeoutException e2)
+                catch (TimeoutException e2)
                 {
-                    _log.Debug(e2.Message, e2); 
+                    _log.Debug(e2.Message, e2);
                     if (throwOnFail) throw;
                 }
             }
@@ -258,10 +266,10 @@ namespace Common.InputSupport.Phcc
         /// </summary>
         protected override void Prepare()
         {
-            int elapsed = 0; 
+            int elapsed = 0;
             int timeout = 3000;
-            
-            while (_preparing && elapsed <=timeout)
+
+            while (_preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);
                 System.Windows.Forms.Application.DoEvents();
@@ -290,7 +298,7 @@ namespace Common.InputSupport.Phcc
                         try
                         {
                             //create a new PHCC Interface to use for talking to the device 
-                            _deviceInterface = new global::Phcc.Device(_deviceInfo.Key.ToString());
+                            _deviceInterface = new Device(_deviceInfo.Key.ToString());
                             GC.SuppressFinalize(_deviceInterface.SerialPort.BaseStream);
                         }
                         catch (IOException ex)
@@ -320,8 +328,8 @@ namespace Common.InputSupport.Phcc
                         //_deviceInterface.Reset();
                         GetCurrentInputState(false);
                         _deviceInterface.StartTalking();
-                        _deviceInterface.AnalogInputChanged += new AnalogInputChangedEventHandler(_deviceInterface_AnalogInputChanged);
-                        _deviceInterface.DigitalInputChanged += new DigitalInputChangedEventHandler(_deviceInterface_DigitalInputChanged);
+                        _deviceInterface.AnalogInputChanged += _deviceInterface_AnalogInputChanged;
+                        _deviceInterface.DigitalInputChanged += _deviceInterface_DigitalInputChanged;
                     }
                     catch (ApplicationException)
                     {
@@ -352,9 +360,9 @@ namespace Common.InputSupport.Phcc
                 _prevState = _state;
                 if (_prevState.HasValue)
                 {
-                    _state = (PHCCInputState)((ICloneable)_prevState).Clone();
+                    _state = (PHCCInputState) ((ICloneable) _prevState).Clone();
                 }
-                PHCCInputState thisState = new PHCCInputState();
+                var thisState = new PHCCInputState();
                 if (_state.HasValue)
                 {
                     thisState = _state.Value;
@@ -381,9 +389,9 @@ namespace Common.InputSupport.Phcc
                 _prevState = _state;
                 if (_prevState.HasValue)
                 {
-                    _state = (PHCCInputState)((ICloneable)_prevState).Clone();
+                    _state = (PHCCInputState) ((ICloneable) _prevState).Clone();
                 }
-                PHCCInputState thisState = new PHCCInputState();
+                var thisState = new PHCCInputState();
                 if (_state.HasValue)
                 {
                     thisState = _state.Value;
@@ -393,7 +401,7 @@ namespace Common.InputSupport.Phcc
                     thisState.analogInputs = new short[35];
                     thisState.digitalInputs = new bool[1024];
                 }
-                thisState.analogInputs [e.Index] = ScaleRawValue(e.NewValue);
+                thisState.analogInputs[e.Index] = ScaleRawValue(e.NewValue);
                 _state = thisState;
 
                 if (StateChanged != null)
@@ -402,24 +410,30 @@ namespace Common.InputSupport.Phcc
                 }
             }
         }
+
         private short ScaleRawValue(short rawValue)
         {
             long outputRange = System.Math.Abs(_axisRangeMax - _axisRangeMin); //size of output range
-            long maxRawValue= 1023; 
-            double pct = ((double)rawValue / (double)maxRawValue); //percentage-wise, how large is our raw value compared to the maximum raw value?
-            int convertedVal = (int)System.Math.Round((double)outputRange * pct, 0) + _axisRangeMin;
-            return (short)convertedVal;
+            long maxRawValue = 1023;
+            double pct = (rawValue/(double) maxRawValue);
+                //percentage-wise, how large is our raw value compared to the maximum raw value?
+            int convertedVal = (int) System.Math.Round(outputRange*pct, 0) + _axisRangeMin;
+            return (short) convertedVal;
         }
+
         #endregion
+
         #region Object Overrides (ToString, GetHashCode, Equals)
+
         /// <summary>
         /// Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
         {
-            return this.GetType().Name + ":DeviceInfo=" + _deviceInfo.ToString();
+            return GetType().Name + ":DeviceInfo=" + _deviceInfo;
         }
+
         /// <summary>
         /// Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
@@ -428,6 +442,7 @@ namespace Common.InputSupport.Phcc
         {
             return ToString().GetHashCode();
         }
+
         /// <summary>
         /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
         /// </summary>
@@ -438,21 +453,23 @@ namespace Common.InputSupport.Phcc
             if (obj == null)
                 return false;
 
-            if (this.GetType() != obj.GetType())
+            if (GetType() != obj.GetType())
                 return false;
 
             // safe because of the GetType check
-            PHCCDeviceMonitor js = (PHCCDeviceMonitor)obj;
+            var js = (PHCCDeviceMonitor) obj;
 
             // use this pattern to compare value members
             if (!_deviceInfo.Equals(js.DeviceInfo))
                 return false;
 
             return true;
-
         }
+
         #endregion
+
         #region Destructors
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object is not
         /// manually disposed.  Ordinarily called only by the garbage collector.
@@ -461,6 +478,7 @@ namespace Common.InputSupport.Phcc
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -486,8 +504,8 @@ namespace Common.InputSupport.Phcc
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
-
         }
+
         /// <summary>
         /// Public implementation of IDisposable.Dispose().  Cleans up managed
         /// and unmanaged resources used by this object before allowing garbage collection
@@ -512,6 +530,7 @@ namespace Common.InputSupport.Phcc
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         #endregion
     }
 }

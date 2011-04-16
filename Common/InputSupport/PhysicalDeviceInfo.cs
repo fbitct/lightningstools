@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Common.InputSupport
 {
@@ -12,33 +11,41 @@ namespace Common.InputSupport
     public abstract class PhysicalDeviceInfo
     {
         #region Instance variable declarations
-        /// <summary>
-        /// stores a key that represents this device uniquely on the system
-        /// </summary>
-        protected object _key;
+
         /// <summary>
         /// Stores a "friendly name" for this device, useful in editors
         /// </summary>
         private string _alias;
+
         /// <summary>
         /// An array of PhysicalControlInfo objects, where each
         /// element in the array represents a distinct physical control
         /// (button, axis, or Pov control) appearing on this device
         /// </summary>
         protected PhysicalControlInfo[] _controls;
+
         /// <summary>
         /// signal flag to determine if the _controls array has been populated
         /// yet, either from a call to LoadControls() or via deserialization
         /// </summary>
-        protected bool _controlsLoaded = false;
+        protected bool _controlsLoaded;
+
+        /// <summary>
+        /// stores a key that represents this device uniquely on the system
+        /// </summary>
+        protected object _key;
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// 
         /// </summary>
         public PhysicalDeviceInfo()
         {
         }
+
         /// <summary>
         /// Constructs a PhysicalDeviceInfo, given a unique key and an (optional) alias ("Friendly name") 
         /// to use for the device
@@ -52,8 +59,11 @@ namespace Common.InputSupport
             _key = key;
             _alias = alias;
         }
+
         #endregion
+
         #region Private methods
+
         /// <summary>
         /// Discovers the physical controls that appear on this device,
         /// and stores them as an array of PhysicalControlInfo objects at the instance level.
@@ -66,22 +76,21 @@ namespace Common.InputSupport
         {
             throw new NotImplementedException();
         }
+
         #endregion
 
         #region Public methods
+
         #endregion
+
         #region Public Properties
+
         protected bool ControlsLoaded
         {
-            get
-            {
-                return _controlsLoaded;
-            }
-            set
-            {
-                _controlsLoaded = value;
-            }
+            get { return _controlsLoaded; }
+            set { _controlsLoaded = value; }
         }
+
         /// <summary>
         /// Gets an array of PhysicalControlInfo objects representing
         /// the Axes appearing on this device.  If the physical controls
@@ -99,7 +108,7 @@ namespace Common.InputSupport
                     LoadControls();
                 }
                 if (_controls == null) return null;
-                List<PhysicalControlInfo> axes = new List<PhysicalControlInfo>();
+                var axes = new List<PhysicalControlInfo>();
                 foreach (PhysicalControlInfo control in _controls)
                 {
                     if (control.ControlType == ControlType.Axis)
@@ -110,6 +119,7 @@ namespace Common.InputSupport
                 return axes.ToArray();
             }
         }
+
         /// <summary>
         /// Returns an array of PhysicalControlInfo objects representing
         /// the Buttons appearing on this device.  If the physical controls
@@ -127,7 +137,7 @@ namespace Common.InputSupport
                     LoadControls();
                 }
                 if (_controls == null) return null;
-                List<PhysicalControlInfo> buttons = new List<PhysicalControlInfo>();
+                var buttons = new List<PhysicalControlInfo>();
                 foreach (PhysicalControlInfo control in _controls)
                 {
                     if (control.ControlType == ControlType.Button)
@@ -138,6 +148,7 @@ namespace Common.InputSupport
                 return buttons.ToArray();
             }
         }
+
         /// <summary>
         /// Returns an array of PhysicalControlInfo objects representing
         /// the point-of-view controls appearing on this device.  
@@ -156,7 +167,7 @@ namespace Common.InputSupport
                     LoadControls();
                 }
                 if (_controls == null) return null;
-                List<PhysicalControlInfo> povs = new List<PhysicalControlInfo>();
+                var povs = new List<PhysicalControlInfo>();
                 foreach (PhysicalControlInfo control in _controls)
                 {
                     if (control.ControlType == ControlType.Pov)
@@ -167,6 +178,7 @@ namespace Common.InputSupport
                 return povs.ToArray();
             }
         }
+
         /// <summary>
         /// Returns an array of PhysicalControlInfo objects representing
         /// all of the input controls appearing on this device.  
@@ -187,6 +199,7 @@ namespace Common.InputSupport
                 return _controls;
             }
         }
+
         /// <summary>
         /// Gets/sets the "friendly name" (alias) to associate with this device.
         /// </summary>
@@ -195,27 +208,29 @@ namespace Common.InputSupport
             get { return _alias; }
             set { _alias = value; }
         }
+
         /// <summary>
         /// Gets/sets the key that uniquely identifies this device
         /// </summary>
         public object Key
         {
             get { return _key; }
-            set
-            {
-                _key = value;
-            }
+            set { _key = value; }
         }
+
         #endregion
+
         #region Object Overrides (ToString, GetHashCode, Equals)
+
         /// <summary>
         /// Gets a textual representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
         {
-            return ("Key:" + _key.ToString());
+            return ("Key:" + _key);
         }
+
         /// <summary>
         /// Gets an integer (hash) representation of this object, 
         /// for use in hashtables.  If two objects are equal, 
@@ -226,6 +241,7 @@ namespace Common.InputSupport
         {
             return ToString().GetHashCode();
         }
+
         /// <summary>
         /// Compares two objects to determine if they are equal to each other.
         /// </summary>
@@ -235,20 +251,19 @@ namespace Common.InputSupport
         /// is not equal.</returns>
         public override bool Equals(object obj)
         {
-
             if (obj == null) return false;
 
-            if (this.GetType() != obj.GetType()) return false;
+            if (GetType() != obj.GetType()) return false;
 
             // safe because of the GetType check
-            PhysicalDeviceInfo pdi = (PhysicalDeviceInfo)obj;
+            var pdi = (PhysicalDeviceInfo) obj;
 
             // use this pattern to compare value members
             if (!_key.Equals(pdi.Key)) return false;
 
             return true;
         }
+
         #endregion
     }
-
 }

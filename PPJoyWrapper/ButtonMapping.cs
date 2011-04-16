@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace PPJoy
@@ -26,7 +24,6 @@ namespace PPJoy
         /// </summary>
         /// <seealso cref="Device"/>
         public ButtonMapping()
-            : base()
         {
         }
 
@@ -44,6 +41,7 @@ namespace PPJoy
             : base(controlNumber)
         {
         }
+
         ///<summary>
         /// Gets/sets the PPJoy <see cref="ButtonDataSources">ButtonDataSource</see> that this <see cref="ButtonMapping"/> will use as the source
         /// of the values that it will report to Windows.

@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.DirectX.DirectInput;
-using Microsoft.DirectX;
-using System.Windows.Forms;
-using System.Threading;
-using Common.InputSupport;
 using log4net;
+using Microsoft.DirectX;
+using Microsoft.DirectX.DirectInput;
+
 namespace Common.InputSupport.DirectInput
 {
     /// <summary>
@@ -14,19 +11,24 @@ namespace Common.InputSupport.DirectInput
     /// such as a joystick, gaming wheel, etc.
     /// </summary>
     [Serializable]
-    public sealed class DIPhysicalDeviceInfo:PhysicalDeviceInfo
+    public sealed class DIPhysicalDeviceInfo : PhysicalDeviceInfo
     {
         #region Instance variable declarations
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (DIPhysicalDeviceInfo));
         private Guid _guid = Guid.Empty;
-        private static ILog _log = LogManager.GetLogger(typeof(DIPhysicalDeviceInfo));
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// 
         /// </summary>
-        private DIPhysicalDeviceInfo():base()
+        private DIPhysicalDeviceInfo()
         {
         }
+
         /// <summary>
         /// Constructs a DIPhysicalDeviceInfo, given a DirectInput 
         /// Device Instance GUID and an (optional) alias ("Friendly name") 
@@ -37,17 +39,17 @@ namespace Common.InputSupport.DirectInput
         /// represented by the newly-created object</param>
         /// <param name="alias">a string containing a "friendly name" (alias)
         /// to associate with the device being represented</param>
-        public DIPhysicalDeviceInfo(Guid guid, string alias):base(guid,alias)
+        public DIPhysicalDeviceInfo(Guid guid, string alias) : base(guid, alias)
         {
             _guid = guid;
         }
-        public int DeviceNum
-        {
-            get;
-            set;
-        }
+
+        public int DeviceNum { get; set; }
+
         #endregion
+
         #region Private methods
+
         /// <summary>
         /// Discovers the physical controls that appear on this device,
         /// as reported by DirectInput, and stores them as an array 
@@ -68,7 +70,7 @@ namespace Common.InputSupport.DirectInput
                     return;
                 }
             }
-            catch (Microsoft.DirectX.DirectXException e)
+            catch (DirectXException e)
             {
                 _log.Debug(e.Message, e);
                 return;
@@ -78,7 +80,7 @@ namespace Common.InputSupport.DirectInput
                 _log.Debug(e2.Message, e2);
                 return;
             }
-            List<PhysicalControlInfo> controls = new List<PhysicalControlInfo>();
+            var controls = new List<PhysicalControlInfo>();
             Device joystick = Util.GetDIDevice(new Guid(Key.ToString()));
             if (joystick == null)
             {
@@ -93,17 +95,18 @@ namespace Common.InputSupport.DirectInput
                 if (doi.ObjectType == ObjectTypeGuid.Slider)
                 {
                     lastSlider++;
-                    PhysicalControlInfo control = new DIPhysicalControlInfo(this, doi, lastSlider, "Slider " + (lastSlider+1).ToString());
+                    PhysicalControlInfo control = new DIPhysicalControlInfo(this, doi, lastSlider,
+                                                                            "Slider " + (lastSlider + 1));
                     controls.Add(control);
                 }
-                else if ((doi.ObjectId & (int)DeviceObjectTypeFlags.Axis) != 0)
+                else if ((doi.ObjectId & (int) DeviceObjectTypeFlags.Axis) != 0)
                 {
                     if (!(doi.ObjectType == ObjectTypeGuid.XAxis ||
-                        doi.ObjectType == ObjectTypeGuid.YAxis ||
-                        doi.ObjectType == ObjectTypeGuid.ZAxis ||
-                        doi.ObjectType == ObjectTypeGuid.RxAxis ||
-                        doi.ObjectType == ObjectTypeGuid.RyAxis ||
-                        doi.ObjectType == ObjectTypeGuid.RzAxis))
+                          doi.ObjectType == ObjectTypeGuid.YAxis ||
+                          doi.ObjectType == ObjectTypeGuid.ZAxis ||
+                          doi.ObjectType == ObjectTypeGuid.RxAxis ||
+                          doi.ObjectType == ObjectTypeGuid.RyAxis ||
+                          doi.ObjectType == ObjectTypeGuid.RzAxis))
                     {
                         continue;
                     }
@@ -144,7 +147,8 @@ namespace Common.InputSupport.DirectInput
             foreach (DeviceObjectInstance doi in dol)
             {
                 lastButton++;
-                PhysicalControlInfo control = new DIPhysicalControlInfo(this, doi, lastButton, "Button " + (lastButton+1).ToString());
+                PhysicalControlInfo control = new DIPhysicalControlInfo(this, doi, lastButton,
+                                                                        "Button " + (lastButton + 1));
                 controls.Add(control);
             }
 
@@ -153,7 +157,7 @@ namespace Common.InputSupport.DirectInput
             foreach (DeviceObjectInstance doi in dol)
             {
                 lastPov++;
-                PhysicalControlInfo control = new DIPhysicalControlInfo(this, doi, lastPov, "Hat " + (lastPov +1).ToString());
+                PhysicalControlInfo control = new DIPhysicalControlInfo(this, doi, lastPov, "Hat " + (lastPov + 1));
                 controls.Add(control);
             }
             _controls = new PhysicalControlInfo[controls.Count];
@@ -163,24 +167,15 @@ namespace Common.InputSupport.DirectInput
                 _controls[thisControlIndex] = control;
                 thisControlIndex++;
             }
-            ControlsLoaded= true;
+            ControlsLoaded = true;
         }
+
         #endregion
+
         public Guid Guid
         {
             get { return _guid; }
             set { _guid = value; }
         }
-
     }
-    
-    
-
-
-
-
-
-    
-
-
 }

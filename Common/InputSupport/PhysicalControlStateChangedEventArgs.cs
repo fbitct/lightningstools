@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.InputSupport
 {
@@ -12,15 +10,17 @@ namespace Common.InputSupport
         /// <summary>
         /// a PhysicalControlInfo object representing the physical control whose state change is being signalled
         /// </summary>
-        private PhysicalControlInfo _control;
+        private readonly PhysicalControlInfo _control;
+
         /// <summary>
         /// an integer value indicating the current state of the physical control whose state change is being signalled
         /// </summary>
-        private int _currentState;
+        private readonly int _currentState;
+
         /// <summary>
         /// an integer value indicating the previous state of the physical control whose state changed is being signalled
         /// </summary>
-        private int _previousState;
+        private readonly int _previousState;
 
         /// <summary>
         /// Creates a new PhysicalControlStateChangedEventArgs event argument object and sets its required properties in a single call.
@@ -34,6 +34,7 @@ namespace Common.InputSupport
             _currentState = currentstate;
             _previousState = previousState;
         }
+
         /// <summary>
         /// Gets the PhysicalControlInfo object representing the physical control (axis, button, Pov, etc) whose state change is being signalled 
         /// </summary>
@@ -41,6 +42,7 @@ namespace Common.InputSupport
         {
             get { return _control; }
         }
+
         /// <summary>
         ///Gets an integer value indicating the current state of the physical control whose state change is being signalled.  For axes, this will
         /// be a value in the range specified by the DIDeviceMonitor's axisRangeMin and axisRangeMax values.  For Povs, it will
@@ -52,6 +54,7 @@ namespace Common.InputSupport
         {
             get { return _currentState; }
         }
+
         /// <summary>
         ///Gets an integer value indicating the previous state of the physical control whose state change is being signalled.  For axes, this will
         /// be a value in the range specified by the DIDeviceMonitor's axisRangeMin and axisRangeMax values.  For Povs, it will

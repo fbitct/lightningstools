@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 using Common.Imaging;
+using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
     public class F16HorizontalSituationIndicator : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string HSI_BACKGROUND_IMAGE_FILENAME = "hsi.bmp";
         private const string HSI_BACKGROUND_MASK_FILENAME = "hsi_mask.bmp";
         private const string HSI_BEARING_TO_BEACON_NEEDLE_IMAGE_FILENAME = "hsibeac.bmp";
@@ -38,10 +39,15 @@ namespace LightningGauges.Renderers
 
         private const string HSI_RANGE_FONT_FILENAME = "font1.bmp";
 
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
+
+        private static readonly object _imagesLock = new object();
         private static ImageMaskPair _hsiBackground;
         private static ImageMaskPair _hsiBearingToBeaconNeedle;
         private static ImageMaskPair _hsiCDIFlag;
@@ -56,16 +62,18 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _hsiOffFlag;
 
         private static FontGraphic _rangeFont;
-        private static bool _imagesLoaded = false;
-        private bool _disposed = false;
+        private static bool _imagesLoaded;
+        private bool _disposed;
+
         #endregion
 
         public F16HorizontalSituationIndicator()
-            : base()
         {
-            this.InstrumentState = new F16HSIInstrumentState();
+            InstrumentState = new F16HSIInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_hsiBackground == null)
@@ -90,7 +98,6 @@ namespace LightningGauges.Renderers
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + HSI_CDI_FLAG_MASK_FILENAME
                     );
                 _hsiCDIFlag.Use1BitAlpha = true;
-
             }
             if (_compassRose == null)
             {
@@ -168,6 +175,165 @@ namespace LightningGauges.Renderers
             }
             _imagesLoaded = true;
         }
+
+        #endregion
+
+        public F16HSIInstrumentState InstrumentState { get; set; }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16HSIInstrumentState : InstrumentStateBase
+        {
+            private const float DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES = 5.0F;
+            private const float MAX_RANGE = 999.9F;
+            private float _bearingToBeaconDegrees;
+            private float _courseDeviationDegrees;
+            private float _courseDeviationLimitDegrees = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
+            private int _desiredCourseDegrees;
+            private int _desiredHeadingDegrees;
+            private float _distanceToBeaconNauticalMiles;
+            private float _magneticHeadingDegrees;
+
+            public F16HSIInstrumentState()
+            {
+                MagneticHeadingDegrees = 0.0f;
+                BearingToBeaconDegrees = 0.0f;
+                DeviationInvalidFlag = false;
+                CourseDeviationDegrees = 0.0f;
+                CourseDeviationLimitDegrees = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
+                DesiredHeadingDegrees = 0;
+                DesiredCourseDegrees = 0;
+                DistanceToBeaconNauticalMiles = 0.0f;
+                ToFlag = false;
+                FromFlag = false;
+                ShowToFromFlag = true;
+                OffFlag = false;
+            }
+
+            public bool OffFlag { get; set; }
+            public bool ShowToFromFlag { get; set; }
+            public bool ToFlag { get; set; }
+            public bool FromFlag { get; set; }
+
+            public float DistanceToBeaconNauticalMiles
+            {
+                get { return _distanceToBeaconNauticalMiles; }
+                set
+                {
+                    float distance = value;
+                    if (distance < 0) distance = 0;
+                    if (distance > MAX_RANGE) distance = MAX_RANGE;
+                    if (float.IsNaN(distance) || float.IsNegativeInfinity(distance))
+                    {
+                        distance = 0;
+                    }
+                    if (float.IsPositiveInfinity(distance))
+                    {
+                        distance = MAX_RANGE;
+                    }
+                    _distanceToBeaconNauticalMiles = distance;
+                }
+            }
+
+            public bool DmeInvalidFlag { get; set; }
+
+            public int DesiredCourseDegrees
+            {
+                get { return _desiredCourseDegrees; }
+                set
+                {
+                    int desiredCourse = value;
+                    if (desiredCourse > 360) desiredCourse %= 360;
+                    _desiredCourseDegrees = desiredCourse;
+                }
+            }
+
+            public int DesiredHeadingDegrees
+            {
+                get { return _desiredHeadingDegrees; }
+                set
+                {
+                    int desiredHeading = value;
+                    desiredHeading %= 360;
+                    _desiredHeadingDegrees = desiredHeading;
+                }
+            }
+
+            public float CourseDeviationDegrees
+            {
+                get { return _courseDeviationDegrees; }
+                set
+                {
+                    float courseDeviation = value;
+                    courseDeviation %= 360.0f;
+                    if (float.IsInfinity(courseDeviation) || float.IsNaN(courseDeviation))
+                    {
+                        courseDeviation = 0;
+                    }
+                    _courseDeviationDegrees = courseDeviation;
+                }
+            }
+
+            public float CourseDeviationLimitDegrees
+            {
+                get { return _courseDeviationLimitDegrees; }
+                set
+                {
+                    float courseDeviationLimit = value;
+                    courseDeviationLimit %= 360.0f;
+                    if (float.IsInfinity(courseDeviationLimit) || float.IsNaN(courseDeviationLimit) ||
+                        courseDeviationLimit == 0)
+                    {
+                        courseDeviationLimit = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
+                    }
+                    _courseDeviationLimitDegrees = courseDeviationLimit;
+                }
+            }
+
+            public float MagneticHeadingDegrees
+            {
+                get { return _magneticHeadingDegrees; }
+                set
+                {
+                    float heading = value;
+                    heading %= 360.0f;
+                    if (float.IsNaN(heading) || float.IsInfinity(heading))
+                    {
+                        heading = 0;
+                    }
+                    _magneticHeadingDegrees = heading;
+                }
+            }
+
+            public float BearingToBeaconDegrees
+            {
+                get { return _bearingToBeaconDegrees; }
+                set
+                {
+                    float bearingToBeacon = value;
+                    bearingToBeacon %= 360.0f;
+                    if (float.IsInfinity(bearingToBeacon) || float.IsNaN(bearingToBeacon))
+                    {
+                        bearingToBeacon = 0;
+                    }
+                    _bearingToBeaconDegrees = bearingToBeacon;
+                }
+            }
+
+            public bool DeviationInvalidFlag { get; set; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
@@ -191,7 +357,8 @@ namespace LightningGauges.Renderers
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform((float)bounds.Width / (float)width, (float)bounds.Height / (float)height); //set the initial scale transformation 
+                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                    //set the initial scale transformation 
 
                 g.TranslateTransform(-24, -14);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
@@ -209,7 +376,7 @@ namespace LightningGauges.Renderers
                 //draw compass rose
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
+                g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
                 g.TranslateTransform(-centerX, -centerY);
                 g.DrawImage(_compassRose.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -217,8 +384,8 @@ namespace LightningGauges.Renderers
                 //draw inner wheel
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
-                g.RotateTransform(this.InstrumentState.DesiredCourseDegrees);
+                g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                g.RotateTransform(InstrumentState.DesiredCourseDegrees);
                 g.TranslateTransform(-centerX, -centerY);
                 g.TranslateTransform(0.5f, -2.0f);
                 g.DrawImage(_hsiInnerWheel.MaskedImage, new Point(0, 0));
@@ -227,7 +394,7 @@ namespace LightningGauges.Renderers
                 //draw heading bug
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(this.InstrumentState.DesiredHeadingDegrees - this.InstrumentState.MagneticHeadingDegrees);
+                g.RotateTransform(InstrumentState.DesiredHeadingDegrees - InstrumentState.MagneticHeadingDegrees);
                 g.TranslateTransform(-centerX, -centerY);
                 g.DrawImage(_hsiHeadingBug.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -236,19 +403,19 @@ namespace LightningGauges.Renderers
                 //draw the bearing to beacon indicator needle
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-(this.InstrumentState.MagneticHeadingDegrees - this.InstrumentState.BearingToBeaconDegrees));
+                g.RotateTransform(-(InstrumentState.MagneticHeadingDegrees - InstrumentState.BearingToBeaconDegrees));
                 g.TranslateTransform(-centerX, -centerY);
                 g.TranslateTransform(1, 0);
                 g.DrawImage(_hsiBearingToBeaconNeedle.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the CDI flag
-                if (this.InstrumentState.DeviationInvalidFlag)
+                if (InstrumentState.DeviationInvalidFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(centerX, centerY);
-                    g.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
-                    g.RotateTransform(this.InstrumentState.DesiredCourseDegrees);
+                    g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                    g.RotateTransform(InstrumentState.DesiredCourseDegrees);
                     g.TranslateTransform(-centerX, -centerY);
                     g.DrawImage(_hsiCDIFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -257,7 +424,7 @@ namespace LightningGauges.Renderers
                 //draw the range to the beacon
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    float distanceToBeacon = this.InstrumentState.DistanceToBeaconNauticalMiles;
+                    float distanceToBeacon = InstrumentState.DistanceToBeaconNauticalMiles;
                     if (distanceToBeacon > 999.9) distanceToBeacon = 999.9f;
                     string distanceToBeaconString = string.Format("{0:000.0}", distanceToBeacon);
                     char distanceToBeaconHundreds = distanceToBeaconString[0];
@@ -284,7 +451,7 @@ namespace LightningGauges.Renderers
                 //draw desired course
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    string desiredCourseString = string.Format("{0:000}", this.InstrumentState.DesiredCourseDegrees);
+                    string desiredCourseString = string.Format("{0:000}", InstrumentState.DesiredCourseDegrees);
                     char desiredCourseHundreds = desiredCourseString[0];
                     char desiredCourseTens = desiredCourseString[1];
                     char desiredCourseOnes = desiredCourseString[2];
@@ -308,31 +475,31 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the TO flag 
-                if (this.InstrumentState.ShowToFromFlag && this.InstrumentState.ToFlag)
+                if (InstrumentState.ShowToFromFlag && InstrumentState.ToFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(centerX, centerY);
-                    g.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
-                    g.RotateTransform(this.InstrumentState.DesiredCourseDegrees);
+                    g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                    g.RotateTransform(InstrumentState.DesiredCourseDegrees);
                     g.TranslateTransform(-centerX, -centerY);
                     g.DrawImage(_toFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 }
 
                 //draw the FROM flag 
-                if (this.InstrumentState.ShowToFromFlag && this.InstrumentState.FromFlag)
+                if (InstrumentState.ShowToFromFlag && InstrumentState.FromFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(centerX, centerY);
-                    g.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
-                    g.RotateTransform(this.InstrumentState.DesiredCourseDegrees);
+                    g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                    g.RotateTransform(InstrumentState.DesiredCourseDegrees);
                     g.TranslateTransform(-centerX, -centerY);
                     g.DrawImage(_fromFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 }
 
                 //draw the range flag
-                if (this.InstrumentState.DmeInvalidFlag)
+                if (InstrumentState.DmeInvalidFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.DrawImage(_hsiRangeFlag.MaskedImage, new Point(0, 0));
@@ -342,18 +509,20 @@ namespace LightningGauges.Renderers
                 //draw course deviation indicator
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-this.InstrumentState.MagneticHeadingDegrees);
-                g.RotateTransform(this.InstrumentState.DesiredCourseDegrees);
+                g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                g.RotateTransform(InstrumentState.DesiredCourseDegrees);
                 g.TranslateTransform(-centerX, -centerY);
-                float cdiPct = this.InstrumentState.CourseDeviationDegrees / this.InstrumentState.CourseDeviationLimitDegrees;
+                float cdiPct = InstrumentState.CourseDeviationDegrees/InstrumentState.CourseDeviationLimitDegrees;
                 float cdiRange = 46.0f;
-                float cdiPos = cdiPct * cdiRange;
+                float cdiPos = cdiPct*cdiRange;
                 g.TranslateTransform(cdiPos, -2);
                 try
                 {
                     g.DrawImage(_hsiCourseDeviationIndicator.MaskedImage, new Point(0, 0));
                 }
-                catch (OverflowException) { }
+                catch (OverflowException)
+                {
+                }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw airplane symbol
@@ -363,7 +532,7 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the OFF flag
-                if (this.InstrumentState.OffFlag)
+                if (InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(-25);
@@ -376,199 +545,12 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-        public F16HSIInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        #region Instrument State
-        [Serializable]
-        public class F16HSIInstrumentState : InstrumentStateBase
-        {
-            private const float DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES = 5.0F;
-            private const float MAX_RANGE = 999.9F;
-            private float _magneticHeadingDegrees = 0;
-            private float _bearingToBeaconDegrees = 0;
-            private float _courseDeviationDegrees = 0;
-            private float _courseDeviationLimitDegrees = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
-            private int _desiredHeadingDegrees = 0;
-            private int _desiredCourseDegrees = 0;
-            private float _distanceToBeaconNauticalMiles = 0;
-            public F16HSIInstrumentState()
-                : base()
-            {
-                this.MagneticHeadingDegrees = 0.0f;
-                this.BearingToBeaconDegrees = 0.0f;
-                this.DeviationInvalidFlag = false;
-                this.CourseDeviationDegrees = 0.0f;
-                this.CourseDeviationLimitDegrees = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
-                this.DesiredHeadingDegrees = 0;
-                this.DesiredCourseDegrees = 0;
-                this.DistanceToBeaconNauticalMiles = 0.0f;
-                this.ToFlag = false;
-                this.FromFlag = false;
-                this.ShowToFromFlag = true;
-                this.OffFlag = false;
-            }
-            public bool OffFlag
-            {
-                get;
-                set;
-            }
-            public bool ShowToFromFlag
-            {
-                get;
-                set;
-            }
-            public bool ToFlag
-            {
-                get;
-                set;
-            }
-            public bool FromFlag
-            {
-                get;
-                set;
-            }
-            public float DistanceToBeaconNauticalMiles
-            {
-                get
-                {
-                    return _distanceToBeaconNauticalMiles;
-                }
-                set
-                {
-                    float distance = value;
-                    if (distance < 0) distance = 0;
-                    if (distance > MAX_RANGE) distance = MAX_RANGE;
-                    if (float.IsNaN(distance) || float.IsNegativeInfinity(distance))
-                    {
-                        distance = 0;
-                    }
-                    if (float.IsPositiveInfinity(distance))
-                    {
-                        distance = MAX_RANGE;
-                    }
-                    _distanceToBeaconNauticalMiles = distance;
-                }
-            }
-            public bool DmeInvalidFlag
-            {
-                get;
-                set;
-            }
-            public int DesiredCourseDegrees
-            {
-                get
-                {
-                    return _desiredCourseDegrees;
-                }
-                set
-                {
-                    int desiredCourse = value;
-                    if (desiredCourse > 360) desiredCourse %= 360;
-                    _desiredCourseDegrees = desiredCourse;
-
-                }
-            }
-            public int DesiredHeadingDegrees
-            {
-                get
-                {
-                    return _desiredHeadingDegrees;
-                }
-                set
-                {
-                    int desiredHeading = value;
-                    desiredHeading %= 360;
-                    _desiredHeadingDegrees = desiredHeading;
-                }
-            }
-            public float CourseDeviationDegrees
-            {
-                get
-                {
-                    return _courseDeviationDegrees;
-                }
-                set
-                {
-                    float courseDeviation = value;
-                    courseDeviation %= 360.0f;
-                    if (float.IsInfinity(courseDeviation) || float.IsNaN(courseDeviation))
-                    {
-                        courseDeviation = 0;
-                    }
-                    _courseDeviationDegrees = courseDeviation;
-                }
-            }
-            public float CourseDeviationLimitDegrees
-            {
-                get
-                {
-                    return _courseDeviationLimitDegrees;
-                }
-                set
-                {
-                    float courseDeviationLimit = value;
-                    courseDeviationLimit %= 360.0f;
-                    if (float.IsInfinity(courseDeviationLimit) || float.IsNaN(courseDeviationLimit) || courseDeviationLimit == 0)
-                    {
-                        courseDeviationLimit = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
-                    }
-                    _courseDeviationLimitDegrees = courseDeviationLimit;
-                }
-            }
-            public float MagneticHeadingDegrees
-            {
-                get
-                {
-                    return _magneticHeadingDegrees;
-                }
-                set
-                {
-                    float heading = value;
-                    heading %= 360.0f;
-                    if (float.IsNaN(heading) || float.IsInfinity(heading))
-                    {
-                        heading = 0;
-                    }
-                    _magneticHeadingDegrees = heading;
-                }
-            }
-            public float BearingToBeaconDegrees
-            {
-                get
-                {
-                    return _bearingToBeaconDegrees;
-                }
-                set
-                {
-                    float bearingToBeacon = value;
-                    bearingToBeacon %= 360.0f;
-                    if (float.IsInfinity(bearingToBeacon) || float.IsNaN(bearingToBeacon))
-                    {
-                        bearingToBeacon = 0;
-                    }
-                    _bearingToBeaconDegrees = bearingToBeacon;
-                }
-            }
-            public bool DeviationInvalidFlag
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
 
         ~F16HorizontalSituationIndicator()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -588,13 +570,9 @@ namespace LightningGauges.Renderers
                     //Common.Util.DisposeObject(_fromFlag);
                     //Common.Util.DisposeObject(_hsiOffFlag);
                     //Common.Util.DisposeObject(_rangeFont);
-
                 }
                 _disposed = true;
             }
-
         }
-
-
     }
 }

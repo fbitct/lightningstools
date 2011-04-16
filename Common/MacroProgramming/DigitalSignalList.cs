@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Common.MacroProgramming
+﻿namespace Common.MacroProgramming
 {
-    public class DigitalSignalList:SignalList<DigitalSignal>
+    public class DigitalSignalList : SignalList<DigitalSignal>
     {
     }
 }

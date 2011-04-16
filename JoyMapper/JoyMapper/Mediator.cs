@@ -1,15 +1,18 @@
 #region Using statements
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Windows.Forms;
+using Common.InputSupport;
+using Common.InputSupport.BetaInnovations;
+using Common.InputSupport.DirectInput;
+using Common.InputSupport.Phcc;
+using JoyMapper.Properties;
+using log4net;
 using Microsoft.DirectX.DirectInput;
 using PPJoy;
-using System.Windows.Forms;
-using log4net;
-using Common.InputSupport;
-using Common.InputSupport.DirectInput;
-using Common.InputSupport.BetaInnovations;
-using Common.InputSupport.Phcc;
+using Device = PPJoy.Device;
 
 #endregion
 
@@ -23,15 +26,17 @@ namespace JoyMapper
         /// <summary>
         /// a PhysicalControlInfo object representing the physical control whose state change is being signalled
         /// </summary>
-        private PhysicalControlInfo _control;
+        private readonly PhysicalControlInfo _control;
+
         /// <summary>
         /// an integer value indicating the current state of the physical control whose state change is being signalled
         /// </summary>
-        private int _currentState;
+        private readonly int _currentState;
+
         /// <summary>
         /// an integer value indicating the previous state of the physical control whose state changed is being signalled
         /// </summary>
-        private int _previousState;
+        private readonly int _previousState;
 
         /// <summary>
         /// Creates a new PhysicalControlStateChangedEventArgs event argument object and sets its required properties in a single call.
@@ -45,6 +50,7 @@ namespace JoyMapper
             _currentState = currentstate;
             _previousState = previousState;
         }
+
         /// <summary>
         /// Gets the PhysicalControlInfo object representing the physical control (axis, button, Pov, etc) whose state change is being signalled 
         /// </summary>
@@ -52,6 +58,7 @@ namespace JoyMapper
         {
             get { return _control; }
         }
+
         /// <summary>
         ///Gets an integer value indicating the current state of the physical control whose state change is being signalled.  For axes, this will
         /// be a value in the range specified by the DIDeviceMonitor's axisRangeMin and axisRangeMax values.  For Povs, it will
@@ -63,6 +70,7 @@ namespace JoyMapper
         {
             get { return _currentState; }
         }
+
         /// <summary>
         ///Gets an integer value indicating the previous state of the physical control whose state change is being signalled.  For axes, this will
         /// be a value in the range specified by the DIDeviceMonitor's axisRangeMin and axisRangeMax values.  For Povs, it will
@@ -88,79 +96,21 @@ namespace JoyMapper
     /// </summary>
     public sealed class Mediator : IDisposable
     {
-        /// <summary>
-        /// Raised whenever one of the physical controls declared in the output map have changed
-        /// </summary>
-        public event PhysicalControlStateChangedEventHandler PhysicalControlStateChanged;
+        #region Delegates
+
         /// <summary>
         /// Event handler delegate for the PhysicalControlStateChanged event
         /// </summary>
         /// <param name="sender">the Mediator object raising the event</param>
         /// <param name="e">a PhysicalControlStateChangedEventArgs object representing the physical control whose state change is being signalled and its current/previous states.</param>
-        public delegate void PhysicalControlStateChangedEventHandler(object sender, PhysicalControlStateChangedEventArgs e);
+        public delegate void PhysicalControlStateChangedEventHandler(
+            object sender, PhysicalControlStateChangedEventArgs e);
+
+        #endregion
 
         #region Instance Variable Declarations
-        private static ILog _log = LogManager.GetLogger(typeof(Mediator));
-        /// <summary>
-        /// Stores a reference to an OutputMap object which contains a
-        /// list of input controls to watch, and (optionally) a set of 
-        /// corresponding virtual (output) controls (via PPJoy virtual joysticks) 
-        /// to send data to based on changes to the state of the corresponding input control.
-        /// </summary>
-        private OutputMap _map;
-        
-        /// <summary>
-        /// Signal flag that indicates if this Mediator is currently 
-        /// actively watching the input devices referred to in the OutputMap.
-        /// Should not be manually lowered.  To lower, set the _keepRunning flag to low, and
-        /// the running work thread will gracefully exit, and when it does, it will lower this flag.
-        /// </summary>
-        private bool _running;
-        /// <summary>
-        /// Signal flag to inform a running MediatorWork worker thread that it should quit before
-        /// its next polling loop.  Can be exposed via a public property getter/setter.
-        /// </summary>
-        private bool _keepRunning;
 
-        /// <summary>
-        /// Signal flag to indicate if this object is currently disposed.  
-        /// Used by the IDisposable.Dispose() implementation to avoid double-disposing.
-        /// </summary>
-        private bool _isDisposed;
-        /// <summary>
-        /// Signal flag to control the behavior of the Mediator -- if set to true, then the 
-        /// Mediator will send output to the corresponding virtual controls in the output map
-        /// whenever changes occur on the corresponding physical controls, 
-        /// while the Mediator is running. If set to false, then all other Mediator behavior will
-        /// continue normally (raising events, etc.) as configured, but no output will be sent to
-        /// the virtual controls.
-        /// </summary>
-        private bool _sendOutput = false;
-        /// <summary>
-        /// Signal flag used internally to determine if initialization tasks have been performed.
-        /// </summary>
-        private bool _isInitialized = false;
-        /// <summary>
-        /// Signal flag that determines whether events will be raised when physical control values change.
-        /// </summary>
-        private bool _raiseEvents = true;
-
-        /// <summary>
-        /// A Dictionary of DIDeviceMonitor objects, where the Dictionary's key 
-        /// is the DirectInput Device Instance GUID being monitored by the 
-        /// DIDeviceMonitor object contained in the corresponding Value.
-        /// Allows retrieving a running DIDeviceMonitor object from 
-        /// the collection by knowing its Device Instance GUID.
-        /// </summary>
-        private Dictionary<Guid, DIDeviceMonitor> _diDeviceMonitors = new Dictionary<Guid, DIDeviceMonitor>();
-        /// <summary>
-        /// A Dictionary of PHCCDeviceMonitor objects, where the Dictionary's key 
-        /// is the COM port name that the device being monitored by the 
-        /// BIDeviceMonitor object contained in the corresponding Value is attached to.
-        /// Allows retrieving a running PHCCDeviceMonitor object from 
-        /// the collection by knowing its COM port.
-        /// </summary>
-        private Dictionary<string, PHCCDeviceMonitor> _phccDeviceMonitors = new Dictionary<string, PHCCDeviceMonitor>();
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Mediator));
 
         /// <summary>
         /// A Dictionary of BIDeviceMonitor objects, where the Dictionary's key 
@@ -169,36 +119,106 @@ namespace JoyMapper
         /// Allows retrieving a running BIDeviceMonitor object from 
         /// the collection by knowing its Product ID.
         /// </summary>
-        private Dictionary<string, BIDeviceMonitor> _biDeviceMonitors = new Dictionary<string, BIDeviceMonitor>();
+        private readonly Dictionary<string, BIDeviceMonitor> _biDeviceMonitors =
+            new Dictionary<string, BIDeviceMonitor>();
+
+        /// <summary>
+        /// A Dictionary of DIDeviceMonitor objects, where the Dictionary's key 
+        /// is the DirectInput Device Instance GUID being monitored by the 
+        /// DIDeviceMonitor object contained in the corresponding Value.
+        /// Allows retrieving a running DIDeviceMonitor object from 
+        /// the collection by knowing its Device Instance GUID.
+        /// </summary>
+        private readonly Dictionary<Guid, DIDeviceMonitor> _diDeviceMonitors = new Dictionary<Guid, DIDeviceMonitor>();
+
+        /// <summary>
+        /// A reference to the main Windows Form hosting the application consuming this Mediator.  
+        /// </summary>
+        private readonly Control _parentForm;
+
+        /// <summary>
+        /// A Dictionary of PHCCDeviceMonitor objects, where the Dictionary's key 
+        /// is the COM port name that the device being monitored by the 
+        /// BIDeviceMonitor object contained in the corresponding Value is attached to.
+        /// Allows retrieving a running PHCCDeviceMonitor object from 
+        /// the collection by knowing its COM port.
+        /// </summary>
+        private readonly Dictionary<string, PHCCDeviceMonitor> _phccDeviceMonitors =
+            new Dictionary<string, PHCCDeviceMonitor>();
+
         /// <summary>
         /// A Dictionary of VirtualJoystick objects, where the Dictionary's key is the virtual joystick number of the VirtualJoystick contained in the corresponding Value.
         /// Allows retrieving a running VirtualJoystick object from the collection, by knowing its virtual joystick number
         /// </summary>
-        private Dictionary<int, VirtualJoystick> _virtualJoysticks = new Dictionary<int, VirtualJoystick>();
-        /// <summary>
-        /// A reference to the main Windows Form hosting the application consuming this Mediator.  
-        /// </summary>
-        private Control _parentForm;
+        private readonly Dictionary<int, VirtualJoystick> _virtualJoysticks = new Dictionary<int, VirtualJoystick>();
+
+        private DIDeviceMonitor.DIStateChangedEventHandler _diMonitorStateChangedHandler;
         private PhysicalControlInfo[] _enabledPhysicalControls;
-        private DIDeviceMonitor.DIStateChangedEventHandler _diMonitorStateChangedHandler = null;
-        private PHCCDeviceMonitor.PHCCStateChangedEventHandler _phccMonitorStateChangedHandler = null;
+
+        /// <summary>
+        /// Signal flag to indicate if this object is currently disposed.  
+        /// Used by the IDisposable.Dispose() implementation to avoid double-disposing.
+        /// </summary>
+        private bool _isDisposed;
+
+        /// <summary>
+        /// Signal flag used internally to determine if initialization tasks have been performed.
+        /// </summary>
+        private bool _isInitialized;
+
+        /// <summary>
+        /// Signal flag to inform a running MediatorWork worker thread that it should quit before
+        /// its next polling loop.  Can be exposed via a public property getter/setter.
+        /// </summary>
+        private bool _keepRunning;
+
+        /// <summary>
+        /// Stores a reference to an OutputMap object which contains a
+        /// list of input controls to watch, and (optionally) a set of 
+        /// corresponding virtual (output) controls (via PPJoy virtual joysticks) 
+        /// to send data to based on changes to the state of the corresponding input control.
+        /// </summary>
+        private OutputMap _map;
+
+        private PHCCDeviceMonitor.PHCCStateChangedEventHandler _phccMonitorStateChangedHandler;
+
+        /// <summary>
+        /// Signal flag that determines whether events will be raised when physical control values change.
+        /// </summary>
+        private bool _raiseEvents = true;
+
+        /// <summary>
+        /// Signal flag that indicates if this Mediator is currently 
+        /// actively watching the input devices referred to in the OutputMap.
+        /// Should not be manually lowered.  To lower, set the _keepRunning flag to low, and
+        /// the running work thread will gracefully exit, and when it does, it will lower this flag.
+        /// </summary>
+        private bool _running;
+
+        /// <summary>
+        /// Signal flag to control the behavior of the Mediator -- if set to true, then the 
+        /// Mediator will send output to the corresponding virtual controls in the output map
+        /// whenever changes occur on the corresponding physical controls, 
+        /// while the Mediator is running. If set to false, then all other Mediator behavior will
+        /// continue normally (raising events, etc.) as configured, but no output will be sent to
+        /// the virtual controls.
+        /// </summary>
+        private bool _sendOutput;
+
         #endregion
+
         #region Constructors
-        private Mediator():base()
+
+        private Mediator()
         {
             SetupInputDeviceStateChangedEventHandlers();
         }
 
-        private void SetupInputDeviceStateChangedEventHandlers()
-        {
-            _diMonitorStateChangedHandler = new DIDeviceMonitor.DIStateChangedEventHandler(diMonitor_StateChanged);
-            _phccMonitorStateChangedHandler = new PHCCDeviceMonitor.PHCCStateChangedEventHandler(phccMonitor_StateChanged);
-        }
         /// <summary>
         /// Creates a Mediator with an empty output map.
         /// </summary>
         /// <param name="parentForm">A reference to the main Windows Form hosting the application creating this Mediator.</param>
-        public Mediator(Control parentForm):this()
+        public Mediator(Control parentForm) : this()
         {
             _parentForm = parentForm;
         }
@@ -208,12 +228,22 @@ namespace JoyMapper
         /// </summary>
         /// <param name="parentForm">A reference to the main Windows Form hosting the application creating this Mediator.</param>
         /// <param name="map">An OutputMap object containing an output map definition to use during mediation.</param>
-        public Mediator(OutputMap map, Control parentForm):this(parentForm)
+        public Mediator(OutputMap map, Control parentForm) : this(parentForm)
         {
             _map = map;
         }
+
+        private void SetupInputDeviceStateChangedEventHandlers()
+        {
+            _diMonitorStateChangedHandler = new DIDeviceMonitor.DIStateChangedEventHandler(diMonitor_StateChanged);
+            _phccMonitorStateChangedHandler =
+                new PHCCDeviceMonitor.PHCCStateChangedEventHandler(phccMonitor_StateChanged);
+        }
+
         #endregion
+
         #region Private Methods
+
         /// <summary>
         /// Initializes this Mediator instance by creating a DeviceMonitor input 
         /// monitoring object for each
@@ -250,20 +280,23 @@ namespace JoyMapper
             {
                 if (physicalDevice is DIPhysicalDeviceInfo)
                 {
-                    Guid monitorGuid = new Guid(physicalDevice.Key.ToString());
+                    var monitorGuid = new Guid(physicalDevice.Key.ToString());
                     if (!_diDeviceMonitors.ContainsKey(monitorGuid))
                     {
-                        DIDeviceMonitor diMonitor = DIDeviceMonitor.GetInstance((DIPhysicalDeviceInfo)physicalDevice, _parentForm, VirtualJoystick.MinAnalogDataSourceVal, VirtualJoystick.MaxAnalogDataSourceVal);
+                        DIDeviceMonitor diMonitor = DIDeviceMonitor.GetInstance((DIPhysicalDeviceInfo) physicalDevice,
+                                                                                _parentForm,
+                                                                                VirtualJoystick.MinAnalogDataSourceVal,
+                                                                                VirtualJoystick.MaxAnalogDataSourceVal);
                         diMonitor.StateChanged += _diMonitorStateChangedHandler;
                         _diDeviceMonitors.Add(monitorGuid, diMonitor);
                     }
                 }
                 else if (physicalDevice is BIPhysicalDeviceInfo)
                 {
-                    string devicePath = physicalDevice.Key !=null? physicalDevice.Key.ToString():string.Empty;
+                    string devicePath = physicalDevice.Key != null ? physicalDevice.Key.ToString() : string.Empty;
                     if (!_biDeviceMonitors.ContainsKey(devicePath))
                     {
-                        BIDeviceMonitor biMonitor = BIDeviceMonitor.GetInstance((BIPhysicalDeviceInfo)physicalDevice);
+                        BIDeviceMonitor biMonitor = BIDeviceMonitor.GetInstance((BIPhysicalDeviceInfo) physicalDevice);
                         _biDeviceMonitors.Add(devicePath, biMonitor);
                     }
                 }
@@ -272,34 +305,36 @@ namespace JoyMapper
                     string monitorId = physicalDevice.Key.ToString();
                     if (!_phccDeviceMonitors.ContainsKey(monitorId))
                     {
-                        PHCCDeviceMonitor phccMonitor = PHCCDeviceMonitor.GetInstance((PHCCPhysicalDeviceInfo)physicalDevice, PPJoy.VirtualJoystick.MinAnalogDataSourceVal, PPJoy.VirtualJoystick.MaxAnalogDataSourceVal);
+                        PHCCDeviceMonitor phccMonitor =
+                            PHCCDeviceMonitor.GetInstance((PHCCPhysicalDeviceInfo) physicalDevice,
+                                                          VirtualJoystick.MinAnalogDataSourceVal,
+                                                          VirtualJoystick.MaxAnalogDataSourceVal);
                         phccMonitor.StateChanged += _phccMonitorStateChangedHandler;
                         _phccDeviceMonitors.Add(monitorId, phccMonitor);
                     }
                 }
-
             }
         }
 
         private void SetupVirtualJoysticks()
         {
             TeardownVirtualJoysticks();
-            PPJoy.Device[] ppJoyDevices = new PPJoy.DeviceManager().GetAllDevices();
+            Device[] ppJoyDevices = new DeviceManager().GetAllDevices();
             for (int i = 0; i < ppJoyDevices.Length; i++)
             {
                 if (ppJoyDevices[i].DeviceType == JoystickTypes.Virtual_Joystick)
                 {
-                    VirtualJoystick virtualStick = new VirtualJoystick(ppJoyDevices[i].UnitNum + 1);
+                    var virtualStick = new VirtualJoystick(ppJoyDevices[i].UnitNum + 1);
                     _virtualJoysticks.Add(ppJoyDevices[i].UnitNum + 1, virtualStick);
                 }
             }
         }
 
-        void phccMonitor_StateChanged(object sender, PHCCStateChangedEventArgs e)
+        private void phccMonitor_StateChanged(object sender, PHCCStateChangedEventArgs e)
         {
-            PHCCDeviceMonitor source = (PHCCDeviceMonitor)sender;
+            var source = (PHCCDeviceMonitor) sender;
             PHCCPhysicalDeviceInfo device = source.DeviceInfo;
-            List<PhysicalControlInfo> enabledControls = new List<PhysicalControlInfo>(_enabledPhysicalControls);
+            var enabledControls = new List<PhysicalControlInfo>(_enabledPhysicalControls);
             PhysicalControlInfo inputControl = null;
             if (e.ControlType == ControlType.Button)
             {
@@ -323,22 +358,23 @@ namespace JoyMapper
                     }
                 }
             }
-            if (enabledControls.Contains(inputControl)) {            
+            if (enabledControls.Contains(inputControl))
+            {
                 VirtualControlInfo outputControl = _map.GetMapping(inputControl);
-                
-                if (_phccDeviceMonitors.ContainsKey(device.Key.ToString())) 
+
+                if (_phccDeviceMonitors.ContainsKey(device.Key.ToString()))
                 {
                     ProcessStateChange(inputControl, outputControl);
-                }                    
+                }
             }
         }
 
         private void diMonitor_StateChanged(object sender, DIStateChangedEventArgs e)
         {
-            DIDeviceMonitor source = (DIDeviceMonitor)sender;
-            DIPhysicalDeviceInfo device = source.DeviceInfo ;
+            var source = (DIDeviceMonitor) sender;
+            DIPhysicalDeviceInfo device = source.DeviceInfo;
             Guid deviceId = device.Guid;
-            List<PhysicalControlInfo> enabledControls = new List<PhysicalControlInfo>(_enabledPhysicalControls);
+            var enabledControls = new List<PhysicalControlInfo>(_enabledPhysicalControls);
             foreach (PhysicalControlInfo physicalControl in device.Controls)
             {
                 if (enabledControls.Contains(physicalControl))
@@ -402,7 +438,6 @@ namespace JoyMapper
                         catch (ApplicationException e)
                         {
                             _log.Debug(e.Message, e);
-
                         }
                     }
                     if (firstPass)
@@ -429,7 +464,6 @@ namespace JoyMapper
                             catch (ApplicationException e)
                             {
                                 _log.Debug(e.Message, e);
-
                             }
                         }
                     }
@@ -490,7 +524,7 @@ namespace JoyMapper
                                 {
                                     virtualStick.SendUpdates();
                                 }
-                                catch (ApplicationException ex) 
+                                catch (ApplicationException ex)
                                 {
                                     _log.Debug(ex.Message, ex);
                                 }
@@ -499,7 +533,6 @@ namespace JoyMapper
                         catch (Exception e)
                         {
                             _log.Debug(e.Message, e);
-
                         }
                     }
                     //since this is a polling loop, let's take some time to allow the
@@ -508,7 +541,7 @@ namespace JoyMapper
                     {
                         //Application.DoEvents();
                     }
-                    int pollingPeriod = Properties.Settings.Default.PollEveryNMillis;
+                    int pollingPeriod = Settings.Default.PollEveryNMillis;
                     Thread.Sleep(pollingPeriod); //don't chew up 100% CPU 
                     firstPass = false;
                 }
@@ -520,19 +553,22 @@ namespace JoyMapper
             //if we reach here, the _keepRunning flag has lowered
             _running = false;
         }
+
         private void ProcessStateChange(PhysicalControlInfo physicalControl, VirtualControlInfo outputControl)
         {
             VirtualJoystick virtualStick = null;
 
             //find the virtual joystick that contains the output control that is mapped to this input control, if any
-            if (outputControl != null && _virtualJoysticks !=null &&  _virtualJoysticks.ContainsKey(outputControl.Parent.VirtualDeviceNum))
+            if (outputControl != null && _virtualJoysticks != null &&
+                _virtualJoysticks.ContainsKey(outputControl.Parent.VirtualDeviceNum))
             {
                 virtualStick = _virtualJoysticks[outputControl.Parent.VirtualDeviceNum];
             }
 
             //get the previous and current state of this input control
             int? prevValue = GetPhysicalControlValue(physicalControl, StateType.Previous);
-            int? newValue = GetPhysicalControlValue(physicalControl, StateType.Current); ;
+            int? newValue = GetPhysicalControlValue(physicalControl, StateType.Current);
+            ;
 
             if (newValue.HasValue) //if there's a new value (current value) for this input control
             {
@@ -546,7 +582,7 @@ namespace JoyMapper
                         virtualStick.SetAnalogDataSourceValue(outputControl.ControlNum, newValue.Value);
                     }
                 }
-                //if this control is a button, then set the appropriate PPJoy digital data source value to match
+                    //if this control is a button, then set the appropriate PPJoy digital data source value to match
                 else if (physicalControl.ControlType == ControlType.Button)
                 {
                     //determine if the input control's (button's) state is "pressed"
@@ -566,13 +602,15 @@ namespace JoyMapper
             }
             //if the current state of this control is different than the previous state, and if raising of change-notification events is enabled,
             //then raise the appropriate event
-            if (_raiseEvents && newValue.HasValue && ((prevValue.HasValue && newValue.Value != prevValue.Value)  || !prevValue.HasValue))
+            if (_raiseEvents && newValue.HasValue &&
+                ((prevValue.HasValue && newValue.Value != prevValue.Value) || !prevValue.HasValue))
             {
-                PhysicalControlStateChangedEventArgs args = new PhysicalControlStateChangedEventArgs(physicalControl, newValue.HasValue? newValue.Value:0, prevValue.HasValue? prevValue.Value:0);
+                var args = new PhysicalControlStateChangedEventArgs(physicalControl,
+                                                                    newValue.HasValue ? newValue.Value : 0,
+                                                                    prevValue.HasValue ? prevValue.Value : 0);
                 PhysicalControlStateChanged(this, args);
             }
         }
-
 
 
         /// <summary>
@@ -617,14 +655,16 @@ namespace JoyMapper
                 DIDeviceMonitor currentJoystick = _diDeviceMonitors[new Guid(devInfo.Key.ToString())];
                 if (currentJoystick == null)
                 {
-                    throw new ArgumentException("No physical joystick was found matching the Guid supplied in the 'control' parameter's .Parent.Key property.", "control");
+                    throw new ArgumentException(
+                        "No physical joystick was found matching the Guid supplied in the 'control' parameter's .Parent.Key property.",
+                        "control");
                 }
 
                 //retrieve the requested JoystickState structure (current or previous)
                 //from the relevant physical joystick's monitor object
                 if (stateType == StateType.Current)
                 {
-                    state = currentJoystick.CurrentState;  //TODO: implement this for all device types
+                    state = currentJoystick.CurrentState; //TODO: implement this for all device types
                 }
                 else
                 {
@@ -655,8 +695,8 @@ namespace JoyMapper
                         return 0; //return a 0 if the button is in the released state
                     }
                 }
-                //else if the supplied input control object refers to an Axis, then read
-                //the state in terms of that axis
+                    //else if the supplied input control object refers to an Axis, then read
+                    //the state in terms of that axis
                 else if (control.ControlType == ControlType.Axis)
                 {
                     //TODO: finish documenting this method
@@ -718,10 +758,10 @@ namespace JoyMapper
                     {
                         int min = VirtualJoystick.MinAnalogDataSourceVal;
                         int max = VirtualJoystick.MaxAnalogDataSourceVal;
-                        double linearPctage = ((double)degrees / (double)36000);
+                        double linearPctage = (degrees/(double) 36000);
                         int scaleLength = (max - min) + 2;
-                        double linearVal = (linearPctage * (double)scaleLength);
-                        int intVal = (int)(Math.Round(linearVal, MidpointRounding.ToEven));
+                        double linearVal = (linearPctage*scaleLength);
+                        var intVal = (int) (Math.Round(linearVal, MidpointRounding.ToEven));
                         if (intVal > 0 && degrees < 31500)
                         {
                             intVal++;
@@ -737,33 +777,34 @@ namespace JoyMapper
                 {
                     throw new ArgumentException("Unsupported control type", "control");
                 }
-
-            
             }
             else if (devInfo is BIPhysicalDeviceInfo)
             {
                 if (_biDeviceMonitors == null || _biDeviceMonitors.Count < 1)
                 {
-                    throw new InvalidOperationException("No BetaInnovations physical devices were found in the output map.");
+                    throw new InvalidOperationException(
+                        "No BetaInnovations physical devices were found in the output map.");
                 }
 
-                bool[] state=null;
-                string devicePath = devInfo.Key !=null? devInfo.Key.ToString():string.Empty;
+                bool[] state = null;
+                string devicePath = devInfo.Key != null ? devInfo.Key.ToString() : string.Empty;
                 BIDeviceMonitor currentJoystick = _biDeviceMonitors[devicePath];
                 if (currentJoystick == null)
                 {
-                    throw new ArgumentException("No BetaInnovations physical device was found matching the Registry device path supplied in the 'control' parameter's .Parent.Key property.", "control");
+                    throw new ArgumentException(
+                        "No BetaInnovations physical device was found matching the Registry device path supplied in the 'control' parameter's .Parent.Key property.",
+                        "control");
                 }
 
                 //retrieve the requested input state array (current or previous)
                 //from the relevant input device's monitor object
                 if (stateType == StateType.Current)
                 {
-                    state = currentJoystick.CurrentState;  
+                    state = currentJoystick.CurrentState;
                 }
                 else
                 {
-                    state = currentJoystick.PreviousState; 
+                    state = currentJoystick.PreviousState;
                 }
 
                 //read the state 
@@ -771,7 +812,7 @@ namespace JoyMapper
                 {
                     bool buttonState = false;
 
-                    if (state !=null)
+                    if (state != null)
                     {
                         //get the state of just this button from the larger state-bag
                         buttonState = state[control.ControlNum];
@@ -805,9 +846,11 @@ namespace JoyMapper
                 PHCCInputState? state;
 
                 PHCCDeviceMonitor currentPhcc = _phccDeviceMonitors[devInfo.Key.ToString()];
-                if (currentPhcc== null)
+                if (currentPhcc == null)
                 {
-                    throw new ArgumentException("No PHCC physical device was found on the COM port supplied in the 'control' parameter's .Parent.Key property.", "control");
+                    throw new ArgumentException(
+                        "No PHCC physical device was found on the COM port supplied in the 'control' parameter's .Parent.Key property.",
+                        "control");
                 }
 
                 //retrieve the requested input state array (current or previous)
@@ -845,8 +888,8 @@ namespace JoyMapper
                         return 0; //return a 0 if the button is in the released state
                     }
                 }
-                //else if the supplied input control object refers to an Axis, then read
-                //the state in terms of that axis
+                    //else if the supplied input control object refers to an Axis, then read
+                    //the state in terms of that axis
                 else if (control.ControlType == ControlType.Axis)
                 {
                     int? toReturn = null;
@@ -866,8 +909,11 @@ namespace JoyMapper
                 throw new ArgumentException("Unsupported control type", "control");
             }
         }
+
         #endregion
+
         #region Public Methods
+
         /// <summary>
         /// Causes mediation to begin, according to the mappings specified in the Output Map.  
         /// </summary>
@@ -875,12 +921,13 @@ namespace JoyMapper
         {
             if (_running) return;
             _keepRunning = true;
-            Thread t = new Thread(MediatorWork);
+            var t = new Thread(MediatorWork);
             t.SetApartmentState(ApartmentState.STA);
             t.Name = "MediatorThread";
             t.IsBackground = true;
             t.Start();
         }
+
         public void ResetMonitors()
         {
             /*
@@ -888,6 +935,7 @@ namespace JoyMapper
             _phccDeviceMonitors.Clear();
              */
         }
+
         /// <summary>
         /// Stops mediation after the next polling loop.  
         /// </summary>
@@ -905,7 +953,9 @@ namespace JoyMapper
         }
 
         #endregion
+
         #region Public Properties
+
         public bool RaiseEvents
         {
             get { return _raiseEvents; }
@@ -919,6 +969,7 @@ namespace JoyMapper
         {
             get { return _running; }
         }
+
         /// <summary>
         /// Sets or gets a value indicating if this Mediator should send output data to the virtual controls defined in the Output Map (if any).  If false, 
         /// this Mediator will still read from the physical controls defined in the Output Map, but it will not update any of the virtual control values.  If true,
@@ -927,7 +978,8 @@ namespace JoyMapper
         public bool SendOutput
         {
             get { return _sendOutput; }
-            set {
+            set
+            {
                 if (value)
                 {
                     SetupVirtualJoysticks();
@@ -936,9 +988,12 @@ namespace JoyMapper
                 {
                     TeardownVirtualJoysticks();
                 }
-                _sendOutput = value; }
+                _sendOutput = value;
+            }
         }
+
         #endregion
+
         /// <summary>
         /// Gets or sets the Output Map associated that this Mediator should use.
         /// </summary>
@@ -951,7 +1006,19 @@ namespace JoyMapper
                 _isInitialized = false;
             }
         }
+
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up managed and unmanaged objects
+        /// and suppresses finalization by the garbage collector.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer.  Normally only called by the garbage collector.
         /// </summary>
@@ -959,6 +1026,7 @@ namespace JoyMapper
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -979,7 +1047,6 @@ namespace JoyMapper
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
-
         }
 
         private void TeardownVirtualJoysticks()
@@ -994,7 +1061,6 @@ namespace JoyMapper
                 {
                     _log.Debug(e.Message, e);
                 }
-
             }
             _virtualJoysticks.Clear();
         }
@@ -1008,7 +1074,7 @@ namespace JoyMapper
                     pstick.StateChanged -= _diMonitorStateChangedHandler;
                     pstick.Dispose();
                 }
-                catch (Exception e) 
+                catch (Exception e)
                 {
                     _log.Debug(e.Message, e);
                 }
@@ -1020,7 +1086,7 @@ namespace JoyMapper
                 {
                     biDevice.Dispose();
                 }
-                catch (Exception e) 
+                catch (Exception e)
                 {
                     _log.Debug(e.Message, e);
                 }
@@ -1033,22 +1099,19 @@ namespace JoyMapper
                     phcc.StateChanged -= _phccMonitorStateChangedHandler;
                     phcc.Dispose();
                 }
-                catch (Exception e) 
+                catch (Exception e)
                 {
                     _log.Debug(e.Message, e);
                 }
             }
             _phccDeviceMonitors.Clear();
         }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed and unmanaged objects
-        /// and suppresses finalization by the garbage collector.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         #endregion
+
+        /// <summary>
+        /// Raised whenever one of the physical controls declared in the output map have changed
+        /// </summary>
+        public event PhysicalControlStateChangedEventHandler PhysicalControlStateChanged;
     }
 }

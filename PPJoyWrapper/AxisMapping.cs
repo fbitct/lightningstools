@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+
 namespace PPJoy
 {
     /// <summary>
@@ -15,21 +14,20 @@ namespace PPJoy
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class AxisMapping : Mapping
     {
-        /// <seealso cref="MinDataSource"/>
-        private AxisDataSources _minDataSource = AxisDataSources.None;
-
-        /// <seealso cref="MaxDataSource"/>
-        private AxisDataSources _maxDataSource = AxisDataSources.None; 
-
         /// <seealso cref="AxisType"/>
         private AxisTypes _axisType = AxisTypes.Unknown;
+
+        /// <seealso cref="MaxDataSource"/>
+        private AxisDataSources _maxDataSource = AxisDataSources.None;
+
+        /// <seealso cref="MinDataSource"/>
+        private AxisDataSources _minDataSource = AxisDataSources.None;
 
         /// <summary>
         /// Creates a new <see cref="AxisMapping"/> object.
         /// </summary>
         /// <seealso cref="Device"/>
         public AxisMapping()
-            : base()
         {
         }
 
@@ -48,6 +46,7 @@ namespace PPJoy
             : base(controlNumber)
         {
         }
+
         /// <summary>
         /// Gets/sets the type of Windows axis that this <see cref="AxisMapping"/> will report
         /// itself as.
@@ -139,6 +138,7 @@ namespace PPJoy
             get { return _minDataSource; }
             set { _minDataSource = value; }
         }
+
         /// <summary>
         /// Gets/sets the PPJoy <see cref="AxisDataSources">AxisDataSource</see> that 
         /// this <see cref="AxisMapping"/> will use as the source of the values that it will report to Windows.  

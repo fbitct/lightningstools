@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace F16CPD.UI.Forms
@@ -14,53 +10,47 @@ namespace F16CPD.UI.Forms
         {
             InitializeComponent();
         }
-        public List<string> RadioButtonItems
-        {
-            get;
-            set;
-        }
-        public string SelectedRadioButtonItem
-        {
-            get;
-            set;
-        }
+
+        public List<string> RadioButtonItems { get; set; }
+        public string SelectedRadioButtonItem { get; set; }
+
         private void frmInputDrilldown_Load(object sender, EventArgs e)
         {
             pnlFlow.Margin = new Padding(0);
             pnlFlow.Padding = new Padding(0);
             int i = 0;
-            foreach (string radioItem in this.RadioButtonItems)
+            foreach (string radioItem in RadioButtonItems)
             {
-                RadioButton button = new RadioButton();
+                var button = new RadioButton();
                 button.Padding = new Padding(0);
                 button.Margin = new Padding(0);
                 button.Text = radioItem;
                 button.Name = "radioButton" + i;
                 button.AutoSize = true;
-                button.CheckedChanged += new EventHandler(button_CheckedChanged);
+                button.CheckedChanged += button_CheckedChanged;
                 pnlFlow.SetFlowBreak(button, true);
                 pnlFlow.Controls.Add(button);
                 i++;
             }
-            Button cancelButton = new Button();
+            var cancelButton = new Button();
             cancelButton.Text = "&Cancel";
             pnlFlow.SetFlowBreak(cancelButton, true);
             pnlFlow.Controls.Add(cancelButton);
-            this.CancelButton = cancelButton;
+            CancelButton = cancelButton;
         }
 
-        void button_CheckedChanged(object sender, EventArgs e)
+        private void button_CheckedChanged(object sender, EventArgs e)
         {
             foreach (Control control in pnlFlow.Controls)
             {
-                RadioButton radio = control as RadioButton;
+                var radio = control as RadioButton;
                 if (radio != null)
                 {
                     if (radio.Checked)
                     {
-                        this.SelectedRadioButtonItem = radio.Text;
-                        this.DialogResult = DialogResult.OK;
-                        this.Close();
+                        SelectedRadioButtonItem = radio.Text;
+                        DialogResult = DialogResult.OK;
+                        Close();
                     }
                 }
             }

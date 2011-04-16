@@ -1,203 +1,202 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+
 namespace F4Utils.Campaign
 {
-
     public struct CellState
     {
-        public byte BaseAltitude;	// hundreds of feet MSL
-        public byte Type;			// cloud tile number (or thickness for OVC)
+        public byte BaseAltitude; // hundreds of feet MSL
+        public byte Type; // cloud tile number (or thickness for OVC)
     }
 
     public struct PersistantObject
     {
-        public float x;
-        public float y;
+        public short flags;
         public PackedVUID unionData;
         public short visType;
-        public short flags;
+        public float x;
+        public float y;
     }
+
     public struct PackedVUID
     {
         public uint creator_;
-        public uint num_;
         public byte index_;
+        public uint num_;
     }
+
     public struct PrimaryObjective
     {
         public VU_ID id;
         public short[] priority;
     }
+
     public struct CampEvent
     {
-        public short id;
         public short flags;
+        public short id;
     }
 
 
     public struct PilotInfoClass
     {
-        public short usage;								// How many times this pilot is being used
-        public byte voice_id;							// Which voice data to use
-        public byte photo_id;							// Assigned through the UI
-    };
+        public byte photo_id; // Assigned through the UI
+        public short usage; // How many times this pilot is being used
+        public byte voice_id; // Which voice data to use
+    } ;
 
     public struct MissionRequest
     {
-        public VU_ID requesterID;
-        public VU_ID targetID;
-        public VU_ID secondaryID;
-        public VU_ID pakID;
-        //32 bytes
-        public byte who;
-        public byte vs;
-        //4 bytes to align on int32 boundary
-        public uint tot;
+        public byte action_type; // Type of action we're associated with
         //4 bytes
+        public byte aircraft;
+        public short caps;
+        public byte context; // Context code (why this was requested)
+        //4 bytes
+        public byte delayed; // number of times it's been pushed back
+        public byte final_block; // time block we're landing during
+        public uint flags;
+        public short match_strength; // How much Air to Air strength we should try to match
+        //4 bytes to align on int32 boundary 
+        public byte max_to; // maximum block we found planes for
+        public byte min_to; // minimum block we found planes for
+        public byte mission;
+        public VU_ID pakID;
+        public short priority;
+        public VU_ID requesterID;
+        public byte roe_check;
+        public VU_ID secondaryID;
+        public byte[] slots; //init size=4    // squadron slots we're using.
+        public short speed;
+        public byte start_block; // time block we're taking off during
+        public VU_ID targetID;
+        public short target_num;
+        public uint tot;
+        public byte tot_type;
         public short tx;
         public short ty;
-        //4 bytes
-        public uint flags;
-        //4 bytes
-        public short caps;
-        public short target_num;
-        //4 bytes
-        public short speed;
-        public short match_strength;				// How much Air to Air strength we should try to match
-        //4 bytes
-        public short priority;
-        public byte tot_type;
-        public byte action_type;				// Type of action we're associated with
-        //4 bytes
-        public byte mission;
-        public byte aircraft;
-        public byte context;					// Context code (why this was requested)
-        public byte roe_check;
-        //4 bytes
-        public byte delayed;					// number of times it's been pushed back
-        public byte start_block;				// time block we're taking off during
-        public byte final_block;				// time block we're landing during
-        //4 bytes to align on int32 boundary 
-        public byte[] slots;//init size=4    // squadron slots we're using.
-        //4 bytes
-        public byte min_to;						// minimum block we found planes for
-        public byte max_to;						// maximum block we found planes for
+        public byte vs;
+        public byte who;
         //2 bytes
     }
 
     public struct TeamStatus
     {
         public ushort airDefenseVehs;
+        public ushort airbases;
         public ushort aircraft;
+        public ushort fuel;
+        public byte fuelLevel; // fuel in terms of pecentage
         public ushort groundVehs;
         public ushort ships;
         public ushort supply;
-        public ushort fuel;
-        public ushort airbases;
-        public byte supplyLevel;							// Supply in terms of pecentage
-        public byte fuelLevel;								// fuel in terms of pecentage
-    };
+        public byte supplyLevel; // Supply in terms of pecentage
+    } ;
 
     public struct TeamGndActionType
     {
-        public uint actionTime;							// When we start.
-        public uint actionTimeout;							// Our action will fail if not completed by this time
-        public VU_ID actionObjective;						// Primary objective this is all about
+        public VU_ID actionObjective; // Primary objective this is all about
+        public byte actionPoints; // Countdown of how much longer it will go on
+        public byte actionTempo; // How "active" we want the action to be
+        public uint actionTime; // When we start.
+        public uint actionTimeout; // Our action will fail if not completed by this time
         public byte actionType;
-        public byte actionTempo;							// How "active" we want the action to be
-        public byte actionPoints;							// Countdown of how much longer it will go on
-    };
+    } ;
 
     public struct TeamAirActionType
     {
-        public uint actionStartTime;						// When we start.
-        public uint actionStopTime;							// When we are supposed to be done by.
-        public VU_ID actionObjective;						// Primary objective this is all about
-        public VU_ID lastActionObjective;
+        public VU_ID actionObjective; // Primary objective this is all about
+        public uint actionStartTime; // When we start.
+        public uint actionStopTime; // When we are supposed to be done by.
         public byte actionType;
-    };
+        public VU_ID lastActionObjective;
+    } ;
 
     public struct TeamBasicInfo
     {
-        public byte teamFlag;
         public byte teamColor;
-        public string teamName;
+        public byte teamFlag;
         public string teamMotto;
-
+        public string teamName;
     }
+
     public struct EventNode
     {
-        public short x;
-        public short y;
-        public uint time;
-        public byte flags;
         public byte Team;
         public string eventText;
+        public byte flags;
+        public uint time;
+        public short x;
+        public short y;
     }
+
     public struct SquadInfo
     {
+        public short airbaseIcon;
+        public string airbaseName;
+        public byte country;
+        public byte currentStrength;
+        public short descriptionIndex;
+        public VU_ID id;
+        public short nameId;
+        public byte specialty;
+        public short squadronPath;
         public float x;
         public float y;
-        public VU_ID id;
-        public short descriptionIndex;
-        public short nameId;
-        public short airbaseIcon;
-        public short squadronPath;
-        public byte specialty;
-        public byte currentStrength;
-        public byte country;
-        public string airbaseName;
     }
+
     public struct VU_ID
     {
-        public uint num_;
         public uint creator_;
+        public uint num_;
     }
+
     public struct PositionData
     {
-        public float x_, y_, z_;
         public float dx_, dy_, dz_;
+        public float x_, y_, z_;
     }
 
     [Flags]
     public enum VuFlagBits : ushort
     {
-        private_ = 0x01,	// 1 --> not public
-        transfer_ = 0x02,// 1 --> can be transferred
-        tangible_ = 0x04,	// 1 --> can be seen/touched with
-        collidable_ = 0x08,	// 1 --> put in auto collision table
-        global_ = 0x10,	// 1 --> visible to all groups
-        persistent_ = 0x20,	// 1 --> keep ent local across group joins
-        pad_ = 0x40,	// unused
+        private_ = 0x01, // 1 --> not public
+        transfer_ = 0x02, // 1 --> can be transferred
+        tangible_ = 0x04, // 1 --> can be seen/touched with
+        collidable_ = 0x08, // 1 --> put in auto collision table
+        global_ = 0x10, // 1 --> visible to all groups
+        persistent_ = 0x20, // 1 --> keep ent local across group joins
+        pad_ = 0x40, // unused
     }
+
     public struct ShareData
     {
-        public ushort entityType_;	// id (table index)
+        public VU_ID assoc_; // id of ent which must be local to this ent
+        public ushort entityType_; // id (table index)
         public ushort flags_; //union of ushort value_ and VuFlagBits breakdown_
         public VU_ID id_;
-        public VU_ID ownerId_;	// owning session
-        public VU_ID assoc_;	// id of ent which must be local to this ent
+        public VU_ID ownerId_; // owning session
     }
 
     public struct VU_QUAT
     {
-        public float one;
-        public float two;
-        public float three;
         public float four;
+        public float one;
+        public float three;
+        public float two;
     }
+
     public struct VU_VECT
     {
         public float one;
-        public float two;
         public float three;
+        public float two;
     }
 
     public struct OrientationData
     {
-        public VU_QUAT quat_;	// quaternion indicating current facing
-        public VU_VECT dquat_;	// unit vector expressing quaternion delta
-        public float theta_;	// scalar indicating rate of above delta
+        public VU_VECT dquat_; // unit vector expressing quaternion delta
+        public VU_QUAT quat_; // quaternion indicating current facing
+        public float theta_; // scalar indicating rate of above delta
         /*
         public float yaw_, pitch_, roll_;
         public float dyaw_, dpitch_, droll_;
@@ -216,65 +215,67 @@ namespace F4Utils.Campaign
         Rail = 7,
         MOVEMENT_TYPES
     }
+
     public struct CampObjectiveLinkDataType
     {
-        public byte[] costs;	// Cost to go here, depending on movement type //init array size = MoveType.MOVEMENT_TYPES
+        public byte[] costs; // Cost to go here, depending on movement type //init array size = MoveType.MOVEMENT_TYPES
         public VU_ID id;
     }
+
     public struct ObjectiveDelta
     {
+        public byte[] fStatus;
+        public byte fuel;
         public VU_ID id;
         public uint last_repair;
+        public byte losses;
         public byte owner;
         public byte supply;
-        public byte fuel;
-        public byte losses;
-        public byte[] fStatus;
     }
 
     public struct LoadoutStruct
     {
-        public ushort[] WeaponID; //init size=16
         public byte[] WeaponCount; //init size=16
+        public ushort[] WeaponID; //init size=16
     }
 
     public struct LoadoutArray
     {
-        public LoadoutStruct[] Stores;//init size=5
+        public LoadoutStruct[] Stores; //init size=5
     }
 
     public struct VuEntityType
     {
-        public ushort id_;
-        public ushort collisionType_;
+        public byte[] classInfo_; //init size=8;
+        public byte collidable_;
         public float collisionRadius_;
-        public byte[] classInfo_;//init size=8;
-        public uint updateRate_;
-        public uint updateTolerance_;
-        public float fineUpdateRange_;	// max distance to send position updates
+        public ushort collisionType_;
+        public ushort createPriority_;
+        public uint damageSeed_;
         public float fineUpdateForceRange_; // distance to force position updates
         public float fineUpdateMultiplier_; // multiplier for noticing position updates
-        public uint damageSeed_;
+        public float fineUpdateRange_; // max distance to send position updates
+        public byte global_;
         public int hitpoints_;
+        public ushort id_;
         public ushort majorRevisionNumber_;
-        public ushort minorRevisionNumber_;
-        public ushort createPriority_;
         public byte managementDomain_;
-        public byte transferable_;
+        public ushort minorRevisionNumber_;
+        public byte persistent_;
         public byte private_;
         public byte tangible_;
-        public byte collidable_;
-        public byte global_;
-        public byte persistent_;
+        public byte transferable_;
+        public uint updateRate_;
+        public uint updateTolerance_;
     }
 
     public struct Falcon4EntityClassType
     {
-        public VuEntityType vuClassData;
-        public short[] visType; //init size=7
-        public short vehicleDataIndex;
-        public byte dataType;
         public int dataPtr; //ignore
+        public byte dataType;
+        public short vehicleDataIndex;
+        public short[] visType; //init size=7
+        public VuEntityType vuClassData;
     }
 
     public enum VuClassHierarchy
@@ -310,6 +311,7 @@ namespace F4Utils.Campaign
         VIS_RIGHT_DEST = 5,
         VIS_BOTH_DEST = 6
     }
+
     public enum Classtable_Domains
     {
         DOMAIN_ABSTRACT = 1,
@@ -320,6 +322,7 @@ namespace F4Utils.Campaign
         DOMAIN_UNDERGROUND = 6,
         DOMAIN_UNDERSEA = 7,
     }
+
     public enum Classtable_Classes
     {
         CLASS_ANIMAL = 1,
@@ -337,6 +340,7 @@ namespace F4Utils.Campaign
         CLASS_GROUP = 12,
         CLASS_DIALOG = 13,
     }
+
     public enum Classtable_Types
     {
         TYPE_NOTHING = 1,
@@ -2496,6 +2500,7 @@ namespace F4Utils.Campaign
         SPTYPE_APU = 3,
         SPTYPE_WTRAILER = 4,
     }
+
     public enum Mode_Types
     {
         MODE_CRIMSON = 1,
@@ -2514,6 +2519,7 @@ namespace F4Utils.Campaign
         DTYPE_VEHICLE = 5,
         DTYPE_WEAPON = 6,
     }
+
     public enum Bbox_Types
     {
         BBOX_NOTHING = 0,
@@ -2953,6 +2959,7 @@ namespace F4Utils.Campaign
         BBOX_SIX_RACK = 436,
         BBOX_QUAD_RACK = 437,
     }
+
     public enum Vis_Types
     {
         VIS_BRIDGE1 = 159,
@@ -4293,6 +4300,7 @@ namespace F4Utils.Campaign
         VIS_EA6 = 1328,
         VIS_B1B = 1329,
     }
+
     public enum Veh_types
     {
         A10_DEF,
@@ -4325,6 +4333,7 @@ namespace F4Utils.Campaign
         Tu16_DEF,
         TU95_DEF,
     }
+
     public enum SimWeap_types
     {
         AA10_DEF,
@@ -4400,6 +4409,7 @@ namespace F4Utils.Campaign
         TK370GAL_DEF,
         TK600GAL_DEF,
     }
+
     public enum OldVeh_types
     {
         NO_VEHICLE,
@@ -4496,6 +4506,7 @@ namespace F4Utils.Campaign
         ADATS,
         Rocket,
     }
+
     public enum Radar_types
     {
         RDR_NO_RADAR = 0,
@@ -4556,6 +4567,7 @@ namespace F4Utils.Campaign
         RDR_ANAPQ114 = 58,
         RDR_AGOnly = 59,
     }
+
     public enum Rwr_Symbols
     {
         RWRSYM_NONE = 0,
@@ -4593,5 +4605,5 @@ namespace F4Utils.Campaign
         COUN_NORTH_KOREA,
         COUN_GORN,
         NUM_COUNS,
-    };
+    } ;
 }

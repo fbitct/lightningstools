@@ -1,36 +1,99 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using System.Text;
 using System.Collections;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Channels;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
 using log4net;
 
 namespace F16CPD.Networking
 {
     public class F16CPDServer : MarshalByRefObject, IF16CPDServer
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof (F16CPDServer));
+        private static F16CPDServer _server;
+        private static readonly Dictionary<string, object> _simProperties = new Dictionary<string, object>();
+        private static readonly List<Message> _serverMessages = new List<Message>();
+        private static readonly List<Message> _clientMessages = new List<Message>();
+        private static bool _serviceEstablished;
+
         private F16CPDServer()
         {
         }
+
+        #region IF16CPDServer Members
+
+        public object GetSimProperty(string propertyName)
+        {
+            if (_simProperties.ContainsKey(propertyName))
+            {
+                return _simProperties[propertyName];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void SubmitMessageToServer(Message message)
+        {
+            if (_serverMessages != null)
+            {
+                if (_serverMessages.Count >= 1000)
+                {
+                    _serverMessages.RemoveRange(999, _serverMessages.Count - 1000);
+                }
+                if (message.MessageType == "RequestNewMapImage")
+                {
+                    //only allow one of these in the queue at a time
+                    ClearPendingServerMessagesOfType(message.MessageType);
+                }
+                if (message != null)
+                {
+                    _serverMessages.Add(message);
+                }
+            }
+        }
+
+        public void ClearPendingClientMessages()
+        {
+            if (_clientMessages != null)
+            {
+                _clientMessages.Clear();
+            }
+        }
+
+        public Message GetNextPendingClientMessage()
+        {
+            Message toReturn = null;
+            if (_clientMessages != null)
+            {
+                if (_clientMessages.Count > 0)
+                {
+                    toReturn = _clientMessages[0];
+                    _clientMessages.RemoveAt(0);
+                }
+            }
+            return toReturn;
+        }
+
+        public bool TestConnection()
+        {
+            return _serviceEstablished;
+        }
+
+        #endregion
+
         public static F16CPDServer GetInstance()
         {
             if (_server == null) _server = new F16CPDServer();
             return _server;
         }
-        private static ILog _log = LogManager.GetLogger(typeof(F16CPDServer));
-        private static F16CPDServer _server = null;
-        private static Dictionary<string, object> _simProperties = new Dictionary<string, object>();
-        private static List<Message> _serverMessages = new List<Message>();
-        private static List<Message> _clientMessages = new List<Message>();
-        private static bool _serviceEstablished = false;
+
         [DebuggerHidden]
         internal static void CreateService(string serviceName, int port)
         {
-
             IDictionary prop = new Hashtable();
             prop["port"] = port;
             prop["priority"] = 100;
@@ -66,7 +129,7 @@ namespace F16CPD.Networking
             {
                 // Register as an available service with the name HelloWorld     
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                    typeof(F16CPDServer), serviceName,
+                    typeof (F16CPDServer), serviceName,
                     WellKnownObjectMode.Singleton);
             }
             catch (Exception e)
@@ -79,6 +142,7 @@ namespace F16CPD.Networking
             }
             _serviceEstablished = true;
         }
+
         [DebuggerHidden]
         internal static void TearDownService(int port)
         {
@@ -105,10 +169,12 @@ namespace F16CPD.Networking
             }
             _serviceEstablished = false;
         }
+
         public static void ClearSimProperties()
         {
             _simProperties.Clear();
         }
+
         public static void SetSimProperty(string propertyName, object value)
         {
             if (_simProperties.ContainsKey(propertyName))
@@ -120,20 +186,10 @@ namespace F16CPD.Networking
                 _simProperties.Add(propertyName, value);
             }
         }
-        public object GetSimProperty(string propertyName)
-        {
-            if (_simProperties.ContainsKey(propertyName))
-            {
-                return _simProperties[propertyName];
-            }
-            else
-            {
-                return null;
-            }
-        }
+
         public static void ClearPendingServerMessagesOfType(string messageType)
         {
-            List<Message> messagesToRemove = new List<Message>();
+            var messagesToRemove = new List<Message>();
             foreach (Message message in _serverMessages)
             {
                 if (message.MessageType == messageType)
@@ -146,6 +202,7 @@ namespace F16CPD.Networking
                 _serverMessages.Remove(message);
             }
         }
+
         public static void ClearPendingServerMessages()
         {
             if (_serverMessages != null)
@@ -153,36 +210,20 @@ namespace F16CPD.Networking
                 _serverMessages.Clear();
             }
         }
-        public void SubmitMessageToServer(Message message)
-        {
-            if (_serverMessages != null)
-            {
-                if (_serverMessages.Count >= 1000)
-                {
-                    _serverMessages.RemoveRange(999, _serverMessages.Count - 1000);
-                }
-                if (message.MessageType == "RequestNewMapImage")
-                {
-                    //only allow one of these in the queue at a time
-                    ClearPendingServerMessagesOfType(message.MessageType);
-                }
-                if (message != null)
-                {
-                    _serverMessages.Add(message);
-                }
-            }
-        }
+
         public static void SubmitMessageToClient(Message message)
         {
             if (_clientMessages != null)
             {
                 if (_clientMessages.Count >= 1000)
                 {
-                    _clientMessages.RemoveRange(999, _clientMessages.Count - 1000); //limit the message queue size to 1000 messages
+                    _clientMessages.RemoveRange(999, _clientMessages.Count - 1000);
+                        //limit the message queue size to 1000 messages
                 }
                 _clientMessages.Add(message);
             }
         }
+
         public static Message GetNextPendingServerMessage()
         {
             Message toReturn = null;
@@ -195,30 +236,6 @@ namespace F16CPD.Networking
                 }
             }
             return toReturn;
-        }
-        public void ClearPendingClientMessages()
-        {
-            if (_clientMessages != null)
-            {
-                _clientMessages.Clear();
-            }
-        }
-        public Message GetNextPendingClientMessage()
-        {
-            Message toReturn = null;
-            if (_clientMessages != null)
-            {
-                if (_clientMessages.Count > 0)
-                {
-                    toReturn = _clientMessages[0];
-                    _clientMessages.RemoveAt(0);
-                }
-            }
-            return toReturn;
-        }
-        public bool TestConnection()
-        {
-            return _serviceEstablished;
         }
     }
 }

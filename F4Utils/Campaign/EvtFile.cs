@@ -1,18 +1,20 @@
 ﻿using System;
-using System.IO;
+
 namespace F4Utils.Campaign
 {
     public class EvtFile
     {
         #region Public Fields
-        public short numEvents;
+
         public CampEvent[] campEvents;
+        public short numEvents;
+
         #endregion
 
         protected EvtFile()
-            : base()
         {
         }
+
         public EvtFile(byte[] bytes, int version)
             : this()
         {
@@ -23,7 +25,7 @@ namespace F4Utils.Campaign
             campEvents = new CampEvent[numEvents];
             for (int i = 0; i < numEvents; i++)
             {
-                CampEvent thisEvent = new CampEvent();
+                var thisEvent = new CampEvent();
                 thisEvent.id = BitConverter.ToInt16(bytes, offset);
                 offset += 2;
                 thisEvent.flags = BitConverter.ToInt16(bytes, offset);

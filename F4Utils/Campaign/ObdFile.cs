@@ -1,7 +1,8 @@
 ﻿using System;
+using Lzss;
+
 namespace F4Utils.Campaign
 {
-
     public class ObdFile
     {
         #region Public Fields
@@ -10,12 +11,12 @@ namespace F4Utils.Campaign
 
         #endregion
 
-        protected int _version = 0;
+        protected int _version;
 
         protected ObdFile()
-            : base()
         {
         }
+
         public ObdFile(byte[] compressed, int version)
             : this()
         {
@@ -24,6 +25,7 @@ namespace F4Utils.Campaign
             byte[] expanded = Expand(compressed, out numObjectiveDeltas);
             if (expanded != null) Decode(expanded, version, numObjectiveDeltas);
         }
+
         protected void Decode(byte[] bytes, int version, short numObjectiveDeltas)
         {
             int curByte = 0;
@@ -31,9 +33,9 @@ namespace F4Utils.Campaign
 
             for (int i = 0; i < numObjectiveDeltas; i++)
             {
-                ObjectiveDelta thisObjectiveDelta = new ObjectiveDelta();
+                var thisObjectiveDelta = new ObjectiveDelta();
 
-                VU_ID id = new VU_ID();
+                var id = new VU_ID();
                 id.num_ = BitConverter.ToUInt32(bytes, curByte);
                 curByte += 4;
                 id.creator_ = BitConverter.ToUInt32(bytes, curByte);
@@ -69,6 +71,7 @@ namespace F4Utils.Campaign
                 deltas[i] = thisObjectiveDelta;
             }
         }
+
         protected static byte[] Expand(byte[] compressed, out short numObjectiveDeltas)
         {
             int curByte = 0;
@@ -79,10 +82,10 @@ namespace F4Utils.Campaign
             int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             if (uncompressedSize == 0) return null;
-            byte[] actualCompressed = new byte[compressed.Length - 10];
+            var actualCompressed = new byte[compressed.Length - 10];
             Array.Copy(compressed, 10, actualCompressed, 0, actualCompressed.Length);
             byte[] uncompressed = null;
-            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
+            uncompressed = Codec.Decompress(actualCompressed, uncompressedSize);
             return uncompressed;
         }
     }

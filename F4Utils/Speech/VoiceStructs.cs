@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace F4Utils.Speech
@@ -13,6 +11,7 @@ namespace F4Utils.Speech
         public uint field3;
         public TlkFileRecord[] records;
     }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TlkFileRecord
     {
@@ -47,7 +46,7 @@ namespace F4Utils.Speech
         public ushort numEvals;
         public uint evalOffset;
         public EvalFileDataRecord[] data;
-    } 
+    }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct EvalFileDataRecord
@@ -87,5 +86,4 @@ namespace F4Utils.Speech
         public UInt16 wBitsPerSample;
         public UInt16 cbSize;
     }
-
 }

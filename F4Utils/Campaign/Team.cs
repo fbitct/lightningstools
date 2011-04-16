@@ -6,55 +6,54 @@ namespace F4Utils.Campaign
     public class Team
     {
         #region Public Fields
-        public VU_ID id;
-        public ushort entityType;
-        public byte who;
+
+        public byte airDefenseExperience;
+        public byte airExperience;
+        public uint attackTime;
+        public VU_ID[] bonusObjs;
+        public uint[] bonusTime;
         public byte cteam;
-        public short flags;
-        public byte[] member;
-        public short[] stance;
+        public TeamStatus currentStats;
+        public TeamAirActionType defensiveAirAction;
+        public ushort entityType;
+        public byte equipment;
         public short firstColonel;
         public short firstCommander;
         public short firstWingman;
-        public short lastWingman;
-        public byte airExperience;
-        public byte airDefenseExperience;
-        public byte groundExperience;
-        public byte navalExperience;
-        public short initiative;
-        public ushort supplyAvail;
+        public short flags;
         public ushort fuelAvail;
-        public ushort replacementsAvail;
-        public float playerRating;
-        public uint lastPlayerMission;
-        public TeamStatus currentStats;
-        public TeamStatus startStats;
-        public short reinforcement;
-        public VU_ID[] bonusObjs;
-        public uint[] bonusTime;
-        public byte[] objtype_priority;
-        public byte[] unittype_priority;
-        public byte[] mission_priority;
-        public uint attackTime;
-        public byte offensiveLoss;
-        public byte[] max_vehicle;
-        public byte teamFlag;
-        public byte teamColor;
-        public byte equipment;
-        public string name;
-        public string teamMotto;
-
-
         public TeamGndActionType groundAction;
-        public TeamAirActionType defensiveAirAction;
+        public byte groundExperience;
+        public VU_ID id;
+        public short initiative;
+        public uint lastPlayerMission;
+        public short lastWingman;
+        public byte[] max_vehicle;
+        public byte[] member;
+        public byte[] mission_priority;
+        public string name;
+        public byte navalExperience;
+        public byte[] objtype_priority;
         public TeamAirActionType offensiveAirAction;
+        public byte offensiveLoss;
+        public float playerRating;
+        public short reinforcement;
+        public ushort replacementsAvail;
+        public short[] stance;
+        public TeamStatus startStats;
+        public ushort supplyAvail;
+        public byte teamColor;
+        public byte teamFlag;
+        public string teamMotto;
+        public byte[] unittype_priority;
+        public byte who;
 
         #endregion
 
         protected Team()
-            : base()
         {
         }
+
         public Team(byte[] bytes, ref int offset, int version)
             : this()
         {
@@ -217,7 +216,7 @@ namespace F4Utils.Campaign
             bonusObjs = new VU_ID[20];
             for (int j = 0; j < bonusObjs.Length; j++)
             {
-                VU_ID thisId = new VU_ID();
+                var thisId = new VU_ID();
                 thisId.num_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
                 thisId.creator_ = BitConverter.ToUInt32(bytes, offset);
@@ -407,21 +406,21 @@ namespace F4Utils.Campaign
 
             if (version < 51)
             {
-                if (who == (byte)CountryListEnum.COUN_RUSSIA)
+                if (who == (byte) CountryListEnum.COUN_RUSSIA)
                 {
                     firstColonel = 500;
                     firstCommander = 505;
                     firstWingman = 538;
                     lastWingman = 583;
                 }
-                else if (who == (byte)CountryListEnum.COUN_CHINA)
+                else if (who == (byte) CountryListEnum.COUN_CHINA)
                 {
                     firstColonel = 600;
                     firstCommander = 605;
                     firstWingman = 639;
                     lastWingman = 686;
                 }
-                else if (who == (byte)CountryListEnum.COUN_US)
+                else if (who == (byte) CountryListEnum.COUN_US)
                 {
                     firstColonel = 0;
                     firstCommander = 20;

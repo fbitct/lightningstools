@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.MacroProgramming;
-using Common.HardwareSupport;
 using System.IO;
-using log4net;
 using System.Runtime.Remoting;
-using System.Runtime.InteropServices;
+using Common.HardwareSupport;
+using Common.MacroProgramming;
+using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
@@ -13,42 +12,45 @@ namespace SimLinkup.HardwareSupport.Simtek
     public class Simtek100216HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(Simtek100216HardwareSupportModule ));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek100216HardwareSupportModule));
+
         #endregion
 
         #region Instance variables
-        private bool _isDisposed = false;
-        private AnalogSignal _ftitInputSignal = null;
-        private AnalogSignal.AnalogSignalChangedEventHandler _ftitInputSignalChangedEventHandler = null;
-        private AnalogSignal _ftitOutputSignal = null;
+
+        private AnalogSignal _ftitInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _ftitInputSignalChangedEventHandler;
+        private AnalogSignal _ftitOutputSignal;
+        private bool _isDisposed;
+
         #endregion
 
         #region Constructors
-        private Simtek100216HardwareSupportModule ()
-            : base()
+
+        private Simtek100216HardwareSupportModule()
         {
             CreateInputSignals();
             CreateOutputSignals();
             CreateInputEventHandlers();
             RegisterForInputEvents();
-
         }
 
         public override string FriendlyName
         {
-            get
-            {
-                return "Simtek P/N 10-0216 - Indicator, Simulated FTIT";
-            }
+            get { return "Simtek P/N 10-0216 - Indicator, Simulated FTIT"; }
         }
+
         public static IHardwareSupportModule[] GetInstances()
         {
-            List<IHardwareSupportModule> toReturn = new List<IHardwareSupportModule>();
-            toReturn.Add(new Simtek100216HardwareSupportModule ());
+            var toReturn = new List<IHardwareSupportModule>();
+            toReturn.Add(new Simtek100216HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "Simtek100216HardwareSupportModule.config");
-                Simtek100216HardwareSupportModuleConfig hsmConfig = Simtek100216HardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                        "Simtek100216HardwareSupportModule.config");
+                Simtek100216HardwareSupportModuleConfig hsmConfig =
+                    Simtek100216HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
             {
@@ -56,49 +58,48 @@ namespace SimLinkup.HardwareSupport.Simtek
             }
             return toReturn.ToArray();
         }
+
         #endregion
 
         #region Virtual Method Implementations
+
         public override AnalogSignal[] AnalogInputs
         {
-            get
-            {
-                return new AnalogSignal[] { _ftitInputSignal };
-            }
+            get { return new[] {_ftitInputSignal}; }
         }
+
         public override DigitalSignal[] DigitalInputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         public override AnalogSignal[] AnalogOutputs
         {
-            get
-            {
-                return new AnalogSignal[] { _ftitOutputSignal };
-            }
+            get { return new[] {_ftitOutputSignal}; }
         }
+
         public override DigitalSignal[] DigitalOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         #endregion
 
         #region Signals Handling
+
         #region Signals Event Handling
+
         private void CreateInputEventHandlers()
         {
-            _ftitInputSignalChangedEventHandler = new AnalogSignal.AnalogSignalChangedEventHandler(ftit_InputSignalChanged);
+            _ftitInputSignalChangedEventHandler =
+                new AnalogSignal.AnalogSignalChangedEventHandler(ftit_InputSignalChanged);
         }
+
         private void AbandonInputEventHandlers()
         {
             _ftitInputSignalChangedEventHandler = null;
         }
+
         private void RegisterForInputEvents()
         {
             if (_ftitInputSignal != null)
@@ -106,6 +107,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 _ftitInputSignal.SignalChanged += _ftitInputSignalChangedEventHandler;
             }
         }
+
         private void UnregisterForInputEvents()
         {
             if (_ftitInputSignalChangedEventHandler != null && _ftitInputSignal != null)
@@ -119,39 +121,45 @@ namespace SimLinkup.HardwareSupport.Simtek
                 }
             }
         }
+
         #endregion
+
         #region Signal Creation
+
         private void CreateInputSignals()
         {
             _ftitInputSignal = CreateFTITInputSignal();
         }
+
         private void CreateOutputSignals()
         {
             _ftitOutputSignal = CreateFTITOutputSignal();
         }
+
         private AnalogSignal CreateFTITOutputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "FTIT Signal To Instrument";
             thisSignal.Id = "100216_FTIT_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00) / 20.00; ;
+            thisSignal.State = (-10.00 + 10.00)/20.00;
+            ;
             return thisSignal;
         }
 
         private AnalogSignal CreateFTITInputSignal()
         {
-            AnalogSignal thisSignal = new AnalogSignal();
+            var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "FTIT Value from Simulation";
             thisSignal.Id = "100216_FTIT_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = this.FriendlyName;
+            thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             return thisSignal;
@@ -161,6 +169,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             UpdateOutputValues();
         }
+
         private void UpdateOutputValues()
         {
             if (_ftitInputSignal != null)
@@ -169,23 +178,23 @@ namespace SimLinkup.HardwareSupport.Simtek
                 double ftitOutputValue = 0;
                 if (_ftitOutputSignal != null)
                 {
-                    if (ftitInput <=200)
+                    if (ftitInput <= 200)
                     {
                         ftitOutputValue = -10;
                     }
-                    else if (ftitInput >= 200 && ftitInput <700)
+                    else if (ftitInput >= 200 && ftitInput < 700)
                     {
-                        ftitOutputValue = -10 + (((ftitInput - 200) / 500) * 6.25);
+                        ftitOutputValue = -10 + (((ftitInput - 200)/500)*6.25);
                     }
                     else if (ftitInput >= 700 && ftitInput < 1000)
                     {
-                        ftitOutputValue = -3.75 + (((ftitInput - 700) / 300.0) * 11.25);
+                        ftitOutputValue = -3.75 + (((ftitInput - 700)/300.0)*11.25);
                     }
                     else if (ftitInput >= 1000 && ftitInput < 1200)
                     {
-                        ftitOutputValue = 7.5 + (((ftitInput - 1000) / 200.0) * 2.5);
+                        ftitOutputValue = 7.5 + (((ftitInput - 1000)/200.0)*2.5);
                     }
-                    else if (ftitInput >=1200)
+                    else if (ftitInput >= 1200)
                     {
                         ftitOutputValue = 10;
                     }
@@ -200,8 +209,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         ftitOutputValue = 10;
                     }
 
-                    _ftitOutputSignal.State = ((ftitOutputValue + 10.0000) / 20.0000);
-
+                    _ftitOutputSignal.State = ((ftitOutputValue + 10.0000)/20.0000);
                 }
             }
         }
@@ -211,6 +219,18 @@ namespace SimLinkup.HardwareSupport.Simtek
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -220,6 +240,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -234,22 +255,11 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     UnregisterForInputEvents();
                     AbandonInputEventHandlers();
-
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

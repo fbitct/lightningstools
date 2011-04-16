@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.ComponentModel;
 using System.Drawing;
-using System.Diagnostics;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using Common.Win32;
 using log4net;
-using System.Drawing.Imaging;
-using Microsoft.DirectX;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
+
 namespace Common.Screen
 {
     public static class Util
     {
-        private static ILog _log = LogManager.GetLogger(typeof(Common.Screen.Util));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
         private static object sync = false;
+
         public static Bitmap CaptureScreenRectangle(Rectangle sourceRectangle)
         {
             if (sourceRectangle == Rectangle.Empty)
@@ -41,6 +38,7 @@ namespace Common.Screen
             }
             return toReturn;
         }
+
         public static string CleanDeviceName(string deviceName)
         {
             if (deviceName == null) return null;
@@ -54,6 +52,7 @@ namespace Common.Screen
                 return deviceName;
             }
         }
+
         public static System.Windows.Forms.Screen FindScreen(string deviceName)
         {
             foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
@@ -65,11 +64,19 @@ namespace Common.Screen
             }
             return System.Windows.Forms.Screen.PrimaryScreen;
         }
-        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm, System.Windows.Forms.Screen screen, Point point, Size size, bool hideFromTaskBar, bool hideFromAltTab)
+
+        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm,
+                                                     System.Windows.Forms.Screen screen, Point point, Size size,
+                                                     bool hideFromTaskBar, bool hideFromAltTab)
         {
-            OpenFormOnSpecificMonitor(formToOpen, parentForm, screen, point, size, hideFromTaskBar, hideFromAltTab, false);
+            OpenFormOnSpecificMonitor(formToOpen, parentForm, screen, point, size, hideFromTaskBar, hideFromAltTab,
+                                      false);
         }
-        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm, System.Windows.Forms.Screen screen, Point point, Size size, bool hideFromTaskBar, bool hideFromAltTab, bool makeCurrentThreadIntoUIThread)
+
+        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm,
+                                                     System.Windows.Forms.Screen screen, Point point, Size size,
+                                                     bool hideFromTaskBar, bool hideFromAltTab,
+                                                     bool makeCurrentThreadIntoUIThread)
         {
             OpenFormOnSpecificMonitor(formToOpen, parentForm, screen, point, size);
             if (hideFromTaskBar)
@@ -83,16 +90,21 @@ namespace Common.Screen
             }
             if (hideFromAltTab)
             {
-                NativeMethods.SetWindowLong(formToOpen.Handle, NativeMethods.GWL_EXSTYLE, (NativeMethods.GetWindowLong(formToOpen.Handle,
-                NativeMethods.GWL_EXSTYLE) | NativeMethods.WS_EX_TOOLWINDOW) & ~NativeMethods.WS_EX_APPWINDOW);
+                NativeMethods.SetWindowLong(formToOpen.Handle, NativeMethods.GWL_EXSTYLE,
+                                            (NativeMethods.GetWindowLong(formToOpen.Handle,
+                                                                         NativeMethods.GWL_EXSTYLE) |
+                                             NativeMethods.WS_EX_TOOLWINDOW) & ~NativeMethods.WS_EX_APPWINDOW);
             }
         }
-        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm, System.Windows.Forms.Screen screen, Point point, Size size)
+
+        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm,
+                                                     System.Windows.Forms.Screen screen, Point point, Size size)
         {
-            OpenFormOnSpecificMonitor(formToOpen, screen, ref point, ref size,false);
+            OpenFormOnSpecificMonitor(formToOpen, screen, ref point, ref size, false);
         }
 
-        private static void OpenFormOnSpecificMonitor(Form formToOpen, System.Windows.Forms.Screen screen, ref Point point, ref Size size, bool makeCurrentThreadIntoUIThread)
+        private static void OpenFormOnSpecificMonitor(Form formToOpen, System.Windows.Forms.Screen screen,
+                                                      ref Point point, ref Size size, bool makeCurrentThreadIntoUIThread)
         {
             // Set the StartPosition to Manual otherwise the system will assign an automatic start position
             formToOpen.StartPosition = FormStartPosition.Manual;
@@ -106,7 +118,7 @@ namespace Common.Screen
             if (makeCurrentThreadIntoUIThread)
             {
                 System.Windows.Forms.Application.UseWaitCursor = false;
-                System.Windows.Forms.Application.VisualStyleState = System.Windows.Forms.VisualStyles.VisualStyleState.NoneEnabled;
+                System.Windows.Forms.Application.VisualStyleState = VisualStyleState.NoneEnabled;
                 System.Windows.Forms.Application.Run(formToOpen);
             }
             else

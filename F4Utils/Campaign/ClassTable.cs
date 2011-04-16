@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+
 namespace F4Utils.Campaign
 {
     public static class ClassTable
@@ -7,22 +8,22 @@ namespace F4Utils.Campaign
         public static Falcon4EntityClassType[] ReadClassTable(string classTableFilePath)
         {
             if (classTableFilePath == null) throw new ArgumentNullException("classTableFilePath");
-            FileInfo ctFileInfo = new FileInfo(classTableFilePath);
+            var ctFileInfo = new FileInfo(classTableFilePath);
             if (!ctFileInfo.Exists) throw new FileNotFoundException(classTableFilePath);
-            byte[] bytes = new byte[ctFileInfo.Length];
-            using (FileStream fs = new FileStream(classTableFilePath, FileMode.Open))
+            var bytes = new byte[ctFileInfo.Length];
+            using (var fs = new FileStream(classTableFilePath, FileMode.Open))
             {
                 fs.Seek(0, SeekOrigin.Begin);
-                fs.Read(bytes, 0, (int)ctFileInfo.Length);
+                fs.Read(bytes, 0, (int) ctFileInfo.Length);
                 fs.Close();
             }
             int curByte = 0;
             short numEntities = BitConverter.ToInt16(bytes, curByte);
             curByte += 2;
-            Falcon4EntityClassType[] classTable = new Falcon4EntityClassType[numEntities];
+            var classTable = new Falcon4EntityClassType[numEntities];
             for (int i = 0; i < numEntities; i++)
             {
-                Falcon4EntityClassType thisClass = new Falcon4EntityClassType();
+                var thisClass = new Falcon4EntityClassType();
                 thisClass.vuClassData = new VuEntityType();
                 thisClass.vuClassData.id_ = BitConverter.ToUInt16(bytes, curByte);
                 curByte += 2;
@@ -70,7 +71,7 @@ namespace F4Utils.Campaign
                 curByte++;
                 thisClass.vuClassData.persistent_ = bytes[curByte];
                 curByte++;
-                curByte += 3;            //align on int32 boundary
+                curByte += 3; //align on int32 boundary
 
 
                 thisClass.visType = new short[7];

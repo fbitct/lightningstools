@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+
 namespace F4SharedMem.Win32
 {
     internal static class NativeMethods
@@ -12,28 +11,31 @@ namespace F4SharedMem.Win32
         public const UInt32 SECTION_MAP_READ = 0x0004;
         public const UInt32 SECTION_MAP_EXECUTE = 0x0008;
         public const UInt32 SECTION_EXTEND_SIZE = 0x0010;
+
         public const UInt32 SECTION_ALL_ACCESS = (STANDARD_RIGHTS_REQUIRED | SECTION_QUERY |
-            SECTION_MAP_WRITE |
-            SECTION_MAP_READ |
-            SECTION_MAP_EXECUTE |
-            SECTION_EXTEND_SIZE);
+                                                  SECTION_MAP_WRITE |
+                                                  SECTION_MAP_READ |
+                                                  SECTION_MAP_EXECUTE |
+                                                  SECTION_EXTEND_SIZE);
+
         public const UInt32 FILE_MAP_ALL_ACCESS = SECTION_ALL_ACCESS;
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        internal static extern IntPtr OpenFileMapping(uint dwDesiredAccess, 
-            bool bInheritHandle,
-           string lpName);
+        internal static extern IntPtr OpenFileMapping(uint dwDesiredAccess,
+                                                      bool bInheritHandle,
+                                                      string lpName);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern IntPtr MapViewOfFile(IntPtr hFileMappingObject, uint
-           dwDesiredAccess, uint dwFileOffsetHigh, uint dwFileOffsetLow,
-           IntPtr dwNumberOfBytesToMap);
+                                                                                   dwDesiredAccess,
+                                                    uint dwFileOffsetHigh, uint dwFileOffsetLow,
+                                                    IntPtr dwNumberOfBytesToMap);
 
-        [DllImport("kernel32.dll", SetLastError=true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool UnmapViewOfFile(IntPtr lpBaseAddress);
 
-        [DllImport("kernel32.dll", SetLastError=true)]
+        [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CloseHandle(IntPtr hObject);
 
@@ -42,10 +44,15 @@ namespace F4SharedMem.Win32
             ref IntPtr lpAddress,
             ref MEMORY_BASIC_INFORMATION lpBuffer,
             IntPtr dwLength
-        );
+            );
+
+        [DllImport("kernel32.dll")]
+        internal static extern bool GetFileSizeEx(IntPtr hFile, out IntPtr lpFileSize);
+
+        #region Nested type: MEMORY_BASIC_INFORMATION
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct MEMORY_BASIC_INFORMATION 
+        public struct MEMORY_BASIC_INFORMATION
         {
             public UIntPtr BaseAddress;
             public UIntPtr AllocationBase;
@@ -55,9 +62,7 @@ namespace F4SharedMem.Win32
             public uint Protect;
             public uint Type;
         }
-        [DllImport("kernel32.dll")]
-        internal static extern bool GetFileSizeEx(IntPtr hFile, out IntPtr lpFileSize);
 
-
+        #endregion
     }
 }

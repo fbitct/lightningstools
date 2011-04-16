@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 namespace PPJoy
@@ -9,7 +7,7 @@ namespace PPJoy
     /// <see cref="Util"/> contains static utility methods that are used throughout the PPJoy wrapper
     /// library.
     /// </summary>
-    [ComVisible (false)]
+    [ComVisible(false)]
     internal static class Util
     {
         /// <summary>
@@ -24,10 +22,9 @@ namespace PPJoy
             object result = null;
 
             GCHandle pinnedRawData = GCHandle.Alloc(rawData,
-                GCHandleType.Pinned);
+                                                    GCHandleType.Pinned);
             try
             {
-
                 // Get the address of the data array
                 IntPtr pinnedRawDataPtr =
                     pinnedRawData.AddrOfPinnedObject();
@@ -45,6 +42,5 @@ namespace PPJoy
 
             return result;
         }
-
     }
 }

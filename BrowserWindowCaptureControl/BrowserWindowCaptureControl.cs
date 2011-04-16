@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Drawing.Imaging;
 
 namespace BrowserWindowCaptureControl
 {
 
     #region IObjectSafety
+
     [Serializable]
     [ComVisible(true)]
     public enum ObjectSafetyOptions
@@ -20,12 +19,12 @@ namespace BrowserWindowCaptureControl
         INTERFACESAFE_FOR_UNTRUSTED_DATA = 0x00000002,
         INTERFACE_USES_DISPEX = 0x00000004,
         INTERFACE_USES_SECURITY_MANAGER = 0x00000008
-    };
+    } ;
 
     //
     // MS IObjectSafety Interface definition
     //
-    [ComImport()]
+    [ComImport]
     [Guid("CB5BDC81-93C1-11CF-8F20-00805F2CD064")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IObjectSafety
@@ -35,9 +34,10 @@ namespace BrowserWindowCaptureControl
 
         [PreserveSig]
         long SetInterfaceSafetyOptions(ref Guid iid, int dwOptionSetMask, int dwEnabledOptions);
-    };
+    } ;
 
     #endregion
+
     [ComVisible(true)]
     [InterfaceType(ComInterfaceType.InterfaceIsDual)]
     [Guid("E578C92E-E449-11DE-AE26-6B6D56D89593")]
@@ -46,38 +46,36 @@ namespace BrowserWindowCaptureControl
         [DispId(1)]
         string CaptureBrowserWindow();
 
-        string ImageFormat
-        {
-            get;
-            set;
-        }
+        string ImageFormat { get; set; }
     }
+
     [ComVisible(true)]
     [Guid("09683C2A-E44A-11DE-9138-9C7D56D89593")]
     [ProgId("BrowserWindowCaptureControl.BrowserWindowCaptureControl")]
     [ClassInterface(ClassInterfaceType.None)]
-    [ComSourceInterfaces(typeof(IBrowserWindowCaptureControl))]
-    [ComDefaultInterface(typeof(IBrowserWindowCaptureControl))]
+    [ComSourceInterfaces(typeof (IBrowserWindowCaptureControl))]
+    [ComDefaultInterface(typeof (IBrowserWindowCaptureControl))]
     public partial class BrowserWindowCaptureControl : UserControl, IBrowserWindowCaptureControl, IObjectSafety
     {
         //marks our code as "Safe for Scripting" so IE doesn't whine
+
+        private ImageFormat _imageFormat = System.Drawing.Imaging.ImageFormat.Png;
+
         private ObjectSafetyOptions m_options =
             ObjectSafetyOptions.INTERFACESAFE_FOR_UNTRUSTED_CALLER |
             ObjectSafetyOptions.INTERFACESAFE_FOR_UNTRUSTED_DATA;
 
-        private ImageFormat _imageFormat = System.Drawing.Imaging.ImageFormat.Png;
         public BrowserWindowCaptureControl()
         {
             InitializeComponent();
-            this.Size = new Size(0, 0);
-
+            Size = new Size(0, 0);
         }
+
+        #region IBrowserWindowCaptureControl Members
+
         public string ImageFormat
         {
-            get
-            {
-                return _imageFormat.ToString();
-            }
+            get { return _imageFormat.ToString(); }
             set
             {
                 if (value == null) throw new ArgumentNullException("value");
@@ -87,7 +85,7 @@ namespace BrowserWindowCaptureControl
                     value = value.Substring(1, value.Length - 1);
                 }
                 value = value.ToUpperInvariant();
-                ImageFormat realFormat=null;
+                ImageFormat realFormat = null;
                 switch (value)
                 {
                     case "EMF":
@@ -139,34 +137,37 @@ namespace BrowserWindowCaptureControl
                 _imageFormat = realFormat;
             }
         }
+
         public string CaptureBrowserWindow()
         {
-            StringBuilder toReturn = new StringBuilder();
+            var toReturn = new StringBuilder();
             try
             {
                 //get rectangle representing this ActiveX control's client area, relative to the entire desktop window's upper left edge
-                NativeMethods.RECT clientRect = new NativeMethods.RECT();
-                NativeMethods.GetClientRect(this.Handle, out clientRect);
+                var clientRect = new NativeMethods.RECT();
+                NativeMethods.GetClientRect(Handle, out clientRect);
 
                 //get the window handle of the control that owns this screen real estate
-                IntPtr containerHwnd= NativeMethods.WindowFromPoint(new NativeMethods.POINT() { x = clientRect.x, y = clientRect.y });
+                IntPtr containerHwnd =
+                    NativeMethods.WindowFromPoint(new NativeMethods.POINT {x = clientRect.x, y = clientRect.y});
                 int lastError = Marshal.GetLastWin32Error();
 
                 //get the window handle of the rootmost window that owns this control's container control
-                IntPtr rootWindowHwnd = NativeMethods.GetAncestor(this.Handle, NativeMethods.GA_ROOT); 
+                IntPtr rootWindowHwnd = NativeMethods.GetAncestor(Handle, NativeMethods.GA_ROOT);
 
                 //get the rectangle representing this control's parent window's client area, relative to the entire desktop window's upper left edge
-                NativeMethods.RECT rootWindowClientRect = new NativeMethods.RECT();
+                var rootWindowClientRect = new NativeMethods.RECT();
                 NativeMethods.GetClientRect(rootWindowHwnd, out rootWindowClientRect);
                 lastError = Marshal.GetLastWin32Error();
 
                 byte[] imageBytes = null;
-                using (Bitmap bmp = new Bitmap(rootWindowClientRect.width, rootWindowClientRect.height))
-                using (MemoryStream ms = new MemoryStream())
+                using (var bmp = new Bitmap(rootWindowClientRect.width, rootWindowClientRect.height))
+                using (var ms = new MemoryStream())
                 using (Graphics g = Graphics.FromImage(bmp))
                 {
                     //screen-capture this control's parent window's entire client area
-                    g.CopyFromScreen(new Point(rootWindowClientRect.x, rootWindowClientRect.y), new Point(0, 0), new Size(rootWindowClientRect.width, rootWindowClientRect.height));
+                    g.CopyFromScreen(new Point(rootWindowClientRect.x, rootWindowClientRect.y), new Point(0, 0),
+                                     new Size(rootWindowClientRect.width, rootWindowClientRect.height));
                     bmp.Save(ms, _imageFormat);
                     ms.Flush();
                     ms.Seek(0, SeekOrigin.Begin);
@@ -180,10 +181,15 @@ namespace BrowserWindowCaptureControl
             }
             return toReturn.ToString();
         }
+
+        #endregion
+
+        #region IObjectSafety Members
+
         public long GetInterfaceSafetyOptions(ref Guid iid, out int pdwSupportedOptions, out int pdwEnabledOptions)
         {
-            pdwSupportedOptions = (int)m_options;
-            pdwEnabledOptions = (int)m_options;
+            pdwSupportedOptions = (int) m_options;
+            pdwEnabledOptions = (int) m_options;
             return 0;
         }
 
@@ -191,5 +197,7 @@ namespace BrowserWindowCaptureControl
         {
             return 0;
         }
+
+        #endregion
     }
 }

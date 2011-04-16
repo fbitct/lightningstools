@@ -1,46 +1,50 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class Flight : AirUnit
     {
         #region Public Fields
 
-        public int fuel_burnt;
-        public uint last_move;
-        public uint last_combat;
-        public uint time_on_target;
-        public uint mission_over_time;
-        public short mission_target;
-        public byte use_loadout;
-        public byte[] weapons;
-        public byte loadouts;
-        public LoadoutStruct[] loadout;
-        public short[] weapon;
-        public byte mission;
-        public byte old_mission;
-        public byte last_direction;
-        public byte priority;
-        public byte mission_id;
+        public byte callsign_id;
+        public byte callsign_num;
         public byte dummy;
         public byte eval_flags;
+        public int fuel_burnt;
+        public uint last_combat;
+        public byte last_direction;
+        public uint last_move;
+        public byte last_player_slot;
+        public LoadoutStruct[] loadout;
+        public byte loadouts;
+        public byte mission;
         public byte mission_context;
+        public byte mission_id;
+        public uint mission_over_time;
+        public short mission_target;
+        public byte old_mission;
         public VU_ID package;
-        public VU_ID squadron;
-        public VU_ID requester;
-        public byte[] slots;
         public byte[] pilots;
         public byte[] plane_stats;
         public byte[] player_slots;
-        public byte last_player_slot;
-        public byte callsign_id;
-        public byte callsign_num;
+        public byte priority;
+        public VU_ID requester;
+        public byte[] slots;
+        public VU_ID squadron;
+        public uint time_on_target;
+        public byte use_loadout;
+        public short[] weapon;
+        public byte[] weapons;
+
         #endregion
+
         private const int WEAPON_IDS_WIDENED_VERSION = 73;
         private const int NEW_ENDING_FIELD_ADDED_VERSION = 73;
+
         protected Flight()
-            : base()
         {
         }
+
         public Flight(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -84,7 +88,7 @@ namespace F4Utils.Campaign
 
                     if (use_loadout != 0)
                     {
-                        LoadoutArray junk = new LoadoutArray();
+                        var junk = new LoadoutArray();
                         junk.Stores = new LoadoutStruct[5];
                         for (int j = 0; j < 5; j++)
                         {
@@ -102,7 +106,6 @@ namespace F4Utils.Campaign
                                 thisStore.WeaponCount[k] = bytes[offset];
                                 offset++;
                             }
-
                         }
                         loadout[0] = junk.Stores[0];
                     }
@@ -119,7 +122,7 @@ namespace F4Utils.Campaign
                     {
                         for (int j = 0; j < 16; j++)
                         {
-                            loadout[0].WeaponID[j] = (byte)weapon[j];
+                            loadout[0].WeaponID[j] = (byte) weapon[j];
                         }
                     }
                 }
@@ -134,7 +137,7 @@ namespace F4Utils.Campaign
                     {
                         for (int j = 0; j < 16; j++)
                         {
-                            loadout[0].WeaponID[j] = (byte)weapon[j];
+                            loadout[0].WeaponID[j] = (byte) weapon[j];
                         }
                     }
                 }
@@ -158,14 +161,14 @@ namespace F4Utils.Campaign
                 loadout = new LoadoutStruct[loadouts];
                 for (int j = 0; j < loadouts; j++)
                 {
-                    LoadoutStruct thisLoadout = new LoadoutStruct();
+                    var thisLoadout = new LoadoutStruct();
                     thisLoadout.WeaponID = new ushort[16];
                     for (int k = 0; k < 16; k++)
                     {
                         if (version >= WEAPON_IDS_WIDENED_VERSION)
                         {
                             thisLoadout.WeaponID[k] = BitConverter.ToUInt16(bytes, offset);
-                            offset+=2;
+                            offset += 2;
                         }
                         else
                         {
@@ -285,7 +288,7 @@ namespace F4Utils.Campaign
 
             if (version >= NEW_ENDING_FIELD_ADDED_VERSION)
             {
-                offset+=4;
+                offset += 4;
             }
         }
     }

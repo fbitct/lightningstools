@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using PhccTestTool.Properties;
 
 namespace PhccTestTool
 {
@@ -17,12 +14,10 @@ namespace PhccTestTool
 
         private void Splash_Load(object sender, EventArgs e)
         {
-            Bitmap bmp = (Bitmap)Properties.Resources.testTool;
+            Bitmap bmp = Resources.testTool;
             //bmp.MakeTransparent(Color.White);
-            this.Size = bmp.Size;
-            this.BackgroundImage = bmp;
-
+            Size = bmp.Size;
+            BackgroundImage = bmp;
         }
-
     }
 }

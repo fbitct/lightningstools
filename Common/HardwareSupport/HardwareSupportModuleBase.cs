@@ -1,15 +1,9 @@
-﻿
-using Common.MacroProgramming;
-using System;
+﻿using Common.MacroProgramming;
+
 namespace Common.HardwareSupport
 {
-    public abstract class HardwareSupportModuleBase:IHardwareSupportModule
+    public abstract class HardwareSupportModuleBase : IHardwareSupportModule
     {
-        protected HardwareSupportModuleBase()
-            : base()
-        {
-            
-        }
         #region IHardwareSupportModule Members
 
         public abstract DigitalSignal[] DigitalInputs { get; }
@@ -17,9 +11,11 @@ namespace Common.HardwareSupport
         public abstract AnalogSignal[] AnalogOutputs { get; }
         public abstract DigitalSignal[] DigitalOutputs { get; }
         public abstract string FriendlyName { get; }
+
         public virtual void Synchronize()
         {
         }
+
         #endregion
     }
 }

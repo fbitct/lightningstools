@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace System.Runtime.CompilerServices
+﻿namespace System.Runtime.CompilerServices
 {
     [AttributeUsage(AttributeTargets.All)]
-    public class ExtensionAttribute:Attribute
+    public class ExtensionAttribute : Attribute
     {
     }
 }

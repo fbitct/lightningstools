@@ -1,13 +1,13 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
+
 namespace Common.MacroProgramming
 {
     public static class KeyAndMouseFunctions
     {
         public const int WheelDelta = 120;
+
         /// <summary>
         /// Sends a keystroke to the system input buffer (applies to all applications, including DirectInput applications).
         /// </summary>
@@ -19,6 +19,7 @@ namespace Common.MacroProgramming
         {
             NativeMethods.SendKeyInput(keycode, extendedKey, press, release);
         }
+
         /// <summary>
         /// Sends a keystroke to the system input buffer (applies to all applications, including DirectInput applications).
         /// </summary>
@@ -48,16 +49,18 @@ namespace Common.MacroProgramming
         /// </summary>
         public static void MouseMoveAbsolute(int x, int y)
         {
-            x = x * 65535 / System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
-            y = y * 65535 / System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
-            NativeMethods.SendMouseInput((NativeMethods.MOUSEEVENTF.ABSOLUTE | NativeMethods.MOUSEEVENTF.MOVE), (uint)x, (uint)y, (uint)0, UIntPtr.Zero);
+            x = x*65535/System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            y = y*65535/System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+            NativeMethods.SendMouseInput((NativeMethods.MOUSEEVENTF.ABSOLUTE | NativeMethods.MOUSEEVENTF.MOVE), (uint) x,
+                                         (uint) y, 0, UIntPtr.Zero);
         }
+
         /// <summary>
         ///Moves the mouse wheel by given amount.
         /// </summary>
         public static void MouseWheelMove(int amount)
         {
-            NativeMethods.SendMouseInput(NativeMethods.MOUSEEVENTF.WHEEL, (uint)0, (uint)0, (uint)amount, UIntPtr.Zero);
+            NativeMethods.SendMouseInput(NativeMethods.MOUSEEVENTF.WHEEL, 0, 0, (uint) amount, UIntPtr.Zero);
         }
 
 

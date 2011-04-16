@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
@@ -12,52 +9,64 @@ namespace Common.MacroProgramming
         Middle,
         Right
     }
+
     [Serializable]
-    public sealed class MouseClick:Chainable
+    public sealed class MouseClick : Chainable
     {
-        private MouseButton _toClick = MouseButton.Left;
+        private DigitalSignal _in;
+        private DigitalSignal _out;
         private bool _press = true;
         private bool _release = true;
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
+        private MouseButton _toClick = MouseButton.Left;
 
-        public MouseClick():base()
+        public MouseClick()
         {
-            this.In = new DigitalSignal();
-            this.Out= new DigitalSignal();
+            In = new DigitalSignal();
+            Out = new DigitalSignal();
         }
+
         public MouseButton ToClick
         {
-            get
-            {
-                return _toClick;
-            }
-            set
-            {
-                _toClick = value;
-            }
+            get { return _toClick; }
+            set { _toClick = value; }
         }
 
         public bool Press
         {
-            get
-            {
-                return _press;
-            }
-            set
-            {
-                _press = value;
-            }
+            get { return _press; }
+            set { _press = value; }
         }
+
         public bool Release
         {
-            get
-            {
-                return _release;
-            }
+            get { return _release; }
+            set { _release = value; }
+        }
+
+        public DigitalSignal Out
+        {
+            get { return _out; }
             set
             {
-                _release = value;
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _out = value;
+            }
+        }
+
+        public DigitalSignal In
+        {
+            get { return _in; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _in_SignalChanged;
+                _in = value;
             }
         }
 
@@ -129,38 +138,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        public DigitalSignal Out
-        {
-            get
-            {
-                return _out;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _out = value;
-            }
-        }
-        public DigitalSignal In
-        {
-            get
-            {
-                return _in;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _in_SignalChanged;
-                _in = value;
-            }
-        }
-
-        
     }
 }

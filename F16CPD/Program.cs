@@ -1,12 +1,16 @@
 ﻿#region Using statements
-using System.Windows.Forms;
+
 using System;
-using Microsoft.VisualBasic.ApplicationServices;
-using System.Threading;
 using System.Diagnostics;
-using F16CPD.UI.Forms;
+using System.Threading;
+using System.Windows.Forms;
 using Common.Application;
+using F16CPD.Properties;
+using F16CPD.UI.Forms;
 using log4net;
+using Microsoft.VisualBasic.ApplicationServices;
+using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
+
 #endregion
 
 namespace F16CPD
@@ -17,34 +21,42 @@ namespace F16CPD
     public static class Program
     {
         #region Class variable declarations
+
         // private members
         private static frmMain mainForm;
-        private static ILog _log = LogManager.GetLogger(typeof(Program));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Program));
 
         #endregion
+
         #region Static methods
-        private static void CurrentDomain_UnhandledException(object sender, System.UnhandledExceptionEventArgs e)
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Exception ex = e.ExceptionObject as Exception;
-            if (ex !=null)  
+            var ex = e.ExceptionObject as Exception;
+            if (ex != null)
             {
                 _log.Error(ex.Message, ex);
             }
         }
-        private static void App_UnhandledException(object sender, Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs e)
+
+        private static void App_UnhandledException(object sender,
+                                                   Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs
+                                                       e)
         {
             _log.Error(e.Exception.Message, e.Exception);
             e.ExitApplication = false;
         }
+
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
         {
             _log.Error(t.Exception.Message, t.Exception);
         }
+
         private static Process PriorProcess()
-        // Returns a System.Diagnostics.Process pointing to
-        // a pre-existing process with the same name as the
-        // current one, if any; or null if the current process
-        // is unique.
+            // Returns a System.Diagnostics.Process pointing to
+            // a pre-existing process with the same name as the
+            // current one, if any; or null if the current process
+            // is unique.
         {
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);
@@ -68,7 +80,7 @@ namespace F16CPD
                 return;
             }
             // Add the event handler for handling UI thread exceptions to the event.
-            Application.ThreadException += new ThreadExceptionEventHandler(UIThreadException);
+            Application.ThreadException += UIThreadException;
 
             // Set the unhandled exception mode to force all Windows Forms errors to go through
             // our handler.
@@ -76,20 +88,20 @@ namespace F16CPD
 
             // Add the event handler for handling non-UI thread exceptions to the event. 
             AppDomain.CurrentDomain.UnhandledException +=
-                new System.UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+                CurrentDomain_UnhandledException;
 
             // ensure only a single instance of this app runs.
-            SingleInstanceApplication app = new Common.Application.SingleInstanceApplication();
-            app.StartupNextInstance += new StartupNextInstanceEventHandler(OnAppStartupNextInstance);
-            app.UnhandledException += new Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventHandler(App_UnhandledException);
+            var app = new SingleInstanceApplication();
+            app.StartupNextInstance += OnAppStartupNextInstance;
+            app.UnhandledException += App_UnhandledException;
             mainForm = new frmMain();
             mainForm.CommandLineSwitches = args;
             Control.CheckForIllegalCrossThreadCalls = false;
-            if (Properties.Settings.Default.SettingsUpgradeNeeded)
+            if (Settings.Default.SettingsUpgradeNeeded)
             {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.SettingsUpgradeNeeded = false;
-                Properties.Settings.Default.Save();
+                Settings.Default.Upgrade();
+                Settings.Default.SettingsUpgradeNeeded = false;
+                Settings.Default.Save();
             }
             app.Run(mainForm);
         }
@@ -112,6 +124,7 @@ namespace F16CPD
             // activate the current instance of the app, so that it's shown.
             mainForm.Activate();
         }
+
         #endregion
     }
 }

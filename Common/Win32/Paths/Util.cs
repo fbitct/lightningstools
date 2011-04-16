@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.IO;
 
 namespace Common.Win32.Paths
 {
@@ -9,10 +7,11 @@ namespace Common.Win32.Paths
     {
         public static string GetShortPathName(string path)
         {
-            StringBuilder sbShortPath = new StringBuilder(NativeMethods.MAX_PATH);
+            var sbShortPath = new StringBuilder(NativeMethods.MAX_PATH);
             NativeMethods.GetShortPathName(path, sbShortPath, NativeMethods.MAX_PATH);
             return sbShortPath.ToString();
         }
+
         /// 
         /// Truncates a path to fit within a certain number of 
         /// characters by replacing path components with ellipses.
@@ -28,14 +27,14 @@ namespace Common.Win32.Paths
             {
                 throw new ArgumentOutOfRangeException(
                     "path", path, "path length must be less than or equal toNativeMethods.MAX_PATH"
-                );
+                    );
             }
 
             if (maxlen > NativeMethods.MAX_PATH)
             {
                 throw new ArgumentOutOfRangeException(
                     "maxlen", maxlen, "maxlen must be less than or equal toNativeMethods.MAX_PATH"
-                );
+                    );
             }
 
             buffer = new StringBuilder(NativeMethods.MAX_PATH, NativeMethods.MAX_PATH);
@@ -62,11 +61,12 @@ namespace Common.Win32.Paths
             {
                 throw new ArgumentOutOfRangeException(
                     "path", path, "path length must be less than or equal toNativeMethods.MAX_PATH"
-                );
+                    );
             }
 
             return NativeMethods.PathIsContentType(path, contenttype);
         }
+
         /// 
         /// Converts a path to all lowercase characters to give 
         /// the path a consistent appearance. This function only 
@@ -83,7 +83,7 @@ namespace Common.Win32.Paths
             {
                 throw new ArgumentOutOfRangeException(
                     "path", path, "path length must be less than or equal toNativeMethods.MAX_PATH"
-                );
+                    );
             }
 
             buffer = new StringBuilder(NativeMethods.MAX_PATH, NativeMethods.MAX_PATH);
@@ -94,6 +94,7 @@ namespace Common.Win32.Paths
             }
             return null;
         }
+
         /// 
         /// Canonicalizes a path. This function allows the user 
         /// to specify what to remove from a path by inserting 
@@ -113,7 +114,7 @@ namespace Common.Win32.Paths
             {
                 throw new ArgumentOutOfRangeException(
                     "path", path, "path length must be less than or equal toNativeMethods.MAX_PATH"
-                );
+                    );
             }
 
             buffer = new StringBuilder(NativeMethods.MAX_PATH, NativeMethods.MAX_PATH);
@@ -123,6 +124,7 @@ namespace Common.Win32.Paths
             }
             return null;
         }
+
         /// 
         /// Determines if a given file name has one of a list of 
         /// suffixes. This function does a case-sensitive comparison. 
@@ -138,7 +140,7 @@ namespace Common.Win32.Paths
             {
                 throw new ArgumentOutOfRangeException(
                     "path", path, "path length must be less than or equal toNativeMethods.MAX_PATH"
-                );
+                    );
             }
 
             ext = NativeMethods.PathFindSuffixArray(path, extensions, extensions.Length);

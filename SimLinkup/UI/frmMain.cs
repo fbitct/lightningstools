@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using SimLinkup.Scripting;
-using Common.HardwareSupport;
-using System.IO;
+using SimLinkup.Properties;
 
 namespace SimLinkup.UI
 {
     public partial class frmMain : Form
     {
-        private Runtime.Runtime _runtime = null;
+        private Runtime.Runtime _runtime;
+
         public frmMain()
         {
             InitializeComponent();
@@ -39,14 +34,17 @@ namespace SimLinkup.UI
         {
             ToolsOptions();
         }
+
         private void mnuHelpAbout_Click(object sender, EventArgs e)
         {
             HelpAbout();
         }
+
         private void FileExit()
         {
-            this.Close();
+            Close();
         }
+
         private void Start()
         {
             StopAndDisposeRuntime();
@@ -62,9 +60,9 @@ namespace SimLinkup.UI
             mnuActionsStart.Enabled = false;
             mnuTrayStart.Enabled = false;
 
-            if (Properties.Settings.Default.MinimizeWhenStarted)
+            if (Settings.Default.MinimizeWhenStarted)
             {
-                this.WindowState = FormWindowState.Minimized;
+                WindowState = FormWindowState.Minimized;
             }
 
             CreateAndStartRuntime();
@@ -79,7 +77,7 @@ namespace SimLinkup.UI
         private void CreateRuntime()
         {
             if (_runtime != null) StopAndDisposeRuntime();
-            _runtime = new SimLinkup.Runtime.Runtime();
+            _runtime = new Runtime.Runtime();
         }
 
         private void StopAndDisposeRuntime()
@@ -102,6 +100,7 @@ namespace SimLinkup.UI
                 _runtime = null;
             }
         }
+
         private void Stop()
         {
             if (_runtime != null && _runtime.IsRunning)
@@ -122,6 +121,7 @@ namespace SimLinkup.UI
             btnStart.Enabled = true;
             mnuTrayStart.Enabled = true;
         }
+
         private void ToolsOptions()
         {
             new frmOptions().ShowDialog(this);
@@ -131,6 +131,7 @@ namespace SimLinkup.UI
         {
             new HelpAbout().ShowDialog(this);
         }
+
         protected override void OnClosing(CancelEventArgs e)
         {
             if (_runtime != null && _runtime.IsRunning)
@@ -157,7 +158,7 @@ namespace SimLinkup.UI
 
         private void nfyTrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
                 RestoreFromTray();
             }
@@ -165,14 +166,14 @@ namespace SimLinkup.UI
 
         private void frmMain_SizeChanged(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
-                if (Properties.Settings.Default.MinimizeToSystemTray)
+                if (Settings.Default.MinimizeToSystemTray)
                 {
                     MinimizeToTray();
                 }
             }
-            else  
+            else
             {
                 RestoreFromTray();
             }
@@ -180,25 +181,25 @@ namespace SimLinkup.UI
 
         private void RestoreFromTray()
         {
-            this.Visible = true;
-            this.ShowInTaskbar = true;
-            this.WindowState = FormWindowState.Normal;
+            Visible = true;
+            ShowInTaskbar = true;
+            WindowState = FormWindowState.Normal;
             nfyTrayIcon.Visible = false;
         }
 
         private void MinimizeToTray()
         {
             nfyTrayIcon.Visible = true;
-            this.WindowState = FormWindowState.Minimized;
-            this.Visible = false;
-            this.ShowInTaskbar = false;
+            WindowState = FormWindowState.Minimized;
+            Visible = false;
+            ShowInTaskbar = false;
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
             nfyTrayIcon.Text = Application.ProductName;
-            this.Text = Application.ProductName + " v" + Application.ProductVersion;
-            if (Properties.Settings.Default.StartRunningWhenLaunched)
+            Text = Application.ProductName + " v" + Application.ProductVersion;
+            if (Settings.Default.StartRunningWhenLaunched)
             {
                 Start();
             }
@@ -234,8 +235,8 @@ namespace SimLinkup.UI
             try
             {
                 CreateRuntime();
-                SignalPicker chooser = new SignalPicker();
-                chooser.ScriptingContext= _runtime.ScriptingContext;
+                var chooser = new SignalPicker();
+                chooser.ScriptingContext = _runtime.ScriptingContext;
                 chooser.ShowDialog(this);
             }
             finally
@@ -243,6 +244,5 @@ namespace SimLinkup.UI
                 DisposeRuntime();
             }
         }
-
     }
 }

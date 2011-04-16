@@ -1,57 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
-using Common.MacroProgramming;
 using Common.HardwareSupport;
-using System.IO;
-using log4net;
-using System.Runtime.Remoting;
-using AnalogDevices;
-using Microsoft.DirectX.DirectInput;
+using Common.InputSupport;
 using Common.InputSupport.DirectInput;
+using Common.MacroProgramming;
+using log4net;
+
 namespace SimLinkup.HardwareSupport.DirectInput
 {
     public class DirectInputHardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
-        private static ILog _log = LogManager.GetLogger(typeof(DirectInputHardwareSupportModule));
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (DirectInputHardwareSupportModule));
+
         #endregion
 
         #region Instance variables
-        private DIPhysicalDeviceInfo _device = null;
-        private bool _isDisposed = false;
-        private AnalogSignal[] _analogInputSignals = null;
-        private DigitalSignal[] _digitalInputSignals = null;
+
+        private readonly AnalogSignal[] _analogInputSignals;
+        private readonly DigitalSignal[] _digitalInputSignals;
+        private DIPhysicalDeviceInfo _device;
+        private bool _isDisposed;
+
         #endregion
 
         #region Constructors
+
         private DirectInputHardwareSupportModule()
-            : base()
         {
         }
+
         private DirectInputHardwareSupportModule(DIPhysicalDeviceInfo device)
             : this()
         {
             if (device == null) throw new ArgumentNullException("device");
             _device = device;
-            CreateInputSignals(_device, out _analogInputSignals, out _digitalInputSignals );
+            CreateInputSignals(_device, out _analogInputSignals, out _digitalInputSignals);
         }
 
         public override string FriendlyName
         {
-            get
-            {
-                return string.Format("DirectInput Device: {0}", _device.Alias);
-
-            }
+            get { return string.Format("DirectInput Device: {0}", _device.Alias); }
         }
+
         public static IHardwareSupportModule[] GetInstances()
         {
-            List<IHardwareSupportModule> toReturn = new List<IHardwareSupportModule>();
+            var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                using (Common.InputSupport.DirectInput.Mediator mediator = new Common.InputSupport.DirectInput.Mediator(null))
+                using (var mediator = new Mediator(null))
                 {
-                    foreach (var device in mediator.DeviceMonitors) 
+                    foreach (var device in mediator.DeviceMonitors)
                     {
                         IHardwareSupportModule thisHsm = new DirectInputHardwareSupportModule(device.Value.DeviceInfo);
                         toReturn.Add(thisHsm);
@@ -64,52 +64,47 @@ namespace SimLinkup.HardwareSupport.DirectInput
             }
             return toReturn.ToArray();
         }
+
         #endregion
 
         #region Virtual Method Implementations
+
         public override AnalogSignal[] AnalogInputs
         {
-            get
-            {
-                return _analogInputSignals;
-            }
+            get { return _analogInputSignals; }
         }
+
         public override DigitalSignal[] DigitalInputs
         {
-            get
-            {
-                return _digitalInputSignals;
-
-            }
+            get { return _digitalInputSignals; }
         }
+
         public override AnalogSignal[] AnalogOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         public override DigitalSignal[] DigitalOutputs
         {
-            get
-            {
-                return null;
-            }
+            get { return null; }
         }
+
         #endregion
 
         #region Signals Handling
+
         #region Signal Creation
 
-        private void CreateInputSignals(DIPhysicalDeviceInfo device, out AnalogSignal[] analogSignals, out DigitalSignal[] digitalSignals)
+        private void CreateInputSignals(DIPhysicalDeviceInfo device, out AnalogSignal[] analogSignals,
+                                        out DigitalSignal[] digitalSignals)
         {
             if (device == null) throw new ArgumentNullException("device");
-            List<AnalogSignal> analogSignalsToReturn = new List<AnalogSignal>();
-            List<DigitalSignal> digitalSignalsToReturn = new List<DigitalSignal>();
+            var analogSignalsToReturn = new List<AnalogSignal>();
+            var digitalSignalsToReturn = new List<DigitalSignal>();
 
-            foreach (var button in device.Buttons)
+            foreach (PhysicalControlInfo button in device.Buttons)
             {
-                DigitalSignal thisSignal = new DigitalSignal();
+                var thisSignal = new DigitalSignal();
                 thisSignal.CollectionName = "Digital Inputs";
                 thisSignal.FriendlyName = button.Alias;
                 thisSignal.Id = button.ToString();
@@ -125,9 +120,9 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 digitalSignalsToReturn.Add(thisSignal);
             }
 
-            foreach(var axis in device.Axes) 
+            foreach (PhysicalControlInfo axis in device.Axes)
             {
-                AnalogSignal thisSignal = new AnalogSignal();
+                var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = axis.Alias;
                 thisSignal.Id = axis.ToString();
@@ -143,9 +138,9 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 analogSignalsToReturn.Add(thisSignal);
             }
 
-            foreach (var axis in device.Povs)
+            foreach (PhysicalControlInfo axis in device.Povs)
             {
-                AnalogSignal thisSignal = new AnalogSignal();
+                var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = axis.Alias;
                 thisSignal.Id = axis.ToString();
@@ -165,9 +160,22 @@ namespace SimLinkup.HardwareSupport.DirectInput
         }
 
         #endregion
+
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up 
+        /// managed and unmanaged resources used by this 
+        /// object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object 
         /// is not manually disposed.  Ordinarily called only 
@@ -177,6 +185,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -194,18 +203,8 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 }
             }
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

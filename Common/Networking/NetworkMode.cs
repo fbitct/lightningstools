@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Common.Networking
+﻿namespace Common.Networking
 {
     /// <summary>
     /// Enumeration of possible networking modes that an application instance can operate under

@@ -1,25 +1,28 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class PltFile
     {
         #region Public Fields
 
+        public byte[] CallsignData;
+        public short NumCallsigns;
         public short NumPilots;
         public PilotInfoClass[] PilotInfo;
-        public short NumCallsigns;
-        public byte[] CallsignData;
+
         #endregion
 
         protected PltFile()
-            : base()
         {
         }
+
         public PltFile(byte[] bytes, int version)
             : this()
         {
             Decode(bytes, version);
         }
+
         protected void Decode(byte[] bytes, int version)
         {
             if (version < 60)
@@ -32,7 +35,7 @@ namespace F4Utils.Campaign
             PilotInfo = new PilotInfoClass[NumPilots];
             for (int j = 0; j < PilotInfo.Length; j++)
             {
-                PilotInfoClass thisPilot = new PilotInfoClass();
+                var thisPilot = new PilotInfoClass();
                 thisPilot.usage = BitConverter.ToInt16(bytes, offset);
                 offset += 2;
                 thisPilot.voice_id = bytes[offset];

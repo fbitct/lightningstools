@@ -1,28 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections;
-using System.Runtime.Remoting.Channels.Tcp;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting;
-using System.Globalization;
-using System.Windows.Forms;
 using System.ComponentModel;
-using System.Net;
 using System.Drawing;
+using System.Globalization;
+using System.Net;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Windows.Forms;
+using Common.Imaging;
 using F4SharedMem;
 
 namespace MFDExtractor.Networking
 {
     public class ExtractorClient : IExtractorClient
     {
-        private IExtractorServer _server = null;
-        private IPEndPoint _serverEndpoint = null;
-        private string _serviceName = null;
+        private readonly IPEndPoint _serverEndpoint;
+        private readonly string _serviceName;
+        private BackgroundWorker _connectionTestingBackgroundWorker;
         private DateTime _lastConnectionCheckTime = DateTime.Now.Subtract(new TimeSpan(0, 5, 0));
-        private bool _wasConnected = false;
-        private BackgroundWorker _connectionTestingBackgroundWorker = null;
+        private IExtractorServer _server;
+        private bool _wasConnected;
 
         public ExtractorClient(IPEndPoint serverEndpoint, string serviceName)
         {
@@ -30,18 +28,22 @@ namespace MFDExtractor.Networking
             _serviceName = serviceName;
             EnsureConnected();
         }
+
+        #region IExtractorClient Members
+
         public Image GetInstrumentImage(string instrumentName)
         {
             if (_server != null)
             {
                 byte[] raw = _server.GetInstrumentImageBytes(instrumentName);
-                return Common.Imaging.Util.BitmapFromBytes(raw);
+                return Util.BitmapFromBytes(raw);
             }
             else
             {
                 return null;
             }
         }
+
         public FlightData GetFlightData()
         {
             if (_server != null)
@@ -53,6 +55,7 @@ namespace MFDExtractor.Networking
                 return null;
             }
         }
+
         public void SendMessageToServer(Message message)
         {
             EnsureConnected();
@@ -70,6 +73,7 @@ namespace MFDExtractor.Networking
                 }
             }
         }
+
         public void ClearPendingMessagesToClientFromServer()
         {
             EnsureConnected();
@@ -87,6 +91,7 @@ namespace MFDExtractor.Networking
                 }
             }
         }
+
         public Message GetNextMessageToClientFromServer()
         {
             EnsureConnected();
@@ -112,7 +117,7 @@ namespace MFDExtractor.Networking
             get
             {
                 bool toReturn = false;
-                int secondsSinceLastCheck = (int)DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
+                var secondsSinceLastCheck = (int) DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
                 if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
                 {
                     return _wasConnected;
@@ -126,7 +131,7 @@ namespace MFDExtractor.Networking
                         if (_connectionTestingBackgroundWorker == null)
                         {
                             _connectionTestingBackgroundWorker = new BackgroundWorker();
-                            _connectionTestingBackgroundWorker.DoWork += new DoWorkEventHandler(_connectionTestingBackgroundWorker_DoWork);
+                            _connectionTestingBackgroundWorker.DoWork += _connectionTestingBackgroundWorker_DoWork;
                         }
                         if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
                         {
@@ -141,6 +146,9 @@ namespace MFDExtractor.Networking
                 return toReturn;
             }
         }
+
+        #endregion
+
         private void EnsureConnected()
         {
             if (_serverEndpoint == null || _serviceName == null) return;
@@ -150,7 +158,7 @@ namespace MFDExtractor.Networking
                 prop["port"] = _serverEndpoint.Port;
                 prop["machineName"] = _serverEndpoint.Address.ToString();
                 prop["priority"] = 100;
-                prop["timeout"] = (uint)1;
+                prop["timeout"] = (uint) 1;
                 prop["retryCount"] = 0;
                 prop["useIpAddress"] = 1;
                 TcpClientChannel chan = null;
@@ -181,20 +189,21 @@ namespace MFDExtractor.Networking
                 try
                 {
                     // Create an instance of the remote object
-                    _server = (Networking.ExtractorServer)Activator.GetObject(
-                        typeof(Networking.ExtractorServer),
+                    _server = (ExtractorServer) Activator.GetObject(
+                        typeof (ExtractorServer),
                         "tcp://"
-                            + _serverEndpoint.Address.ToString()
-                            + ":"
-                            + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
-                            + "/"
-                            + _serviceName);
+                        + _serverEndpoint.Address
+                        + ":"
+                        + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
+                        + "/"
+                        + _serviceName);
                 }
                 catch (Exception)
                 {
                 }
             }
         }
+
         private void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             if (_server != null)
@@ -203,9 +212,10 @@ namespace MFDExtractor.Networking
                 {
                     _wasConnected = _server.TestConnection();
                 }
-                catch {}
+                catch
+                {
+                }
             }
         }
-
     }
 }

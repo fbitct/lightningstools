@@ -1,92 +1,80 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using Common.InputSupport;
 using Common.InputSupport.DirectInput;
-using Common.Win32;
 using F16CPD.FlightInstruments;
 using F16CPD.Mfd.Controls;
 using F16CPD.Networking;
+using F16CPD.Properties;
 using F4KeyFile;
 using F4SharedMem;
 using F4SharedMem.Headers;
+using F4Utils.Terrain;
 using log4net;
+using Message = F16CPD.Networking.Message;
+
 namespace F16CPD.SimSupport.Falcon4
 {
-
     [Serializable]
     public enum TacanChannelSource
     {
         Ufc,
         Backup
     }
+
     [Serializable]
     public enum TacanBand
     {
         X,
         Y
     }
+
     //TODO: PRIO create configurable reset key
     //TODO: PRIO blank RALTs in certain attitudes
     //TODO: PRIO is there a way to read initial switch state in falcon and synchronize to that?
-    internal sealed class Falcon4Support : F16CPD.SimSupport.ISimSupportModule, IDisposable
+    internal sealed class Falcon4Support : ISimSupportModule, IDisposable
     {
-        private struct MapRenderAsyncArguments
-        {
-            public Rectangle renderRectangle;
-            public float mapScale;
-            public int rangeRingDiameterInNauticalMiles;
-            public MapRotationMode rotationMode;
-        }
-
-        [Serializable]
-        public struct TimestampedFloatValue
-        {
-            public float value;
-            public DateTime timestamp;
-        }
-        private static ILog _log = LogManager.GetLogger(typeof(Falcon4Support));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Falcon4Support));
 
         #region Instance variables
-        private KeyFile _keyFile = null;
-        private F4SharedMem.Reader _sharedMemReader = null;
-        private FalconDataFormats? _curFalconDataFormat = null;
-        private TimestampedFloatValue _lastHeadingSample;
-        private Mediator _mediator = null;
-        private KeyWithModifiers _pendingComboKeys = null;
-        private bool _isDisposed = false;
-        private bool _cpdPowerOn = true;
-        private TacanChannelSource _tacanChannelSource = TacanChannelSource.Ufc;
+
+        private readonly object _mapImageLock = new object();
+        private readonly MorseCode _morseCodeGenerator;
         private TacanBand _backupTacanBand = TacanBand.X;
-        private Bitmap _theaterMapImage = null;
-        private bool _morseCodeSignalLineValue = false;
-        private MorseCode _morseCodeGenerator;
+        private bool _cpdPowerOn = true;
+        private FalconDataFormats? _curFalconDataFormat;
+        private bool _isDisposed;
+        private bool _isSendingInput;
+        private bool _isSimRunning;
+        private KeyFile _keyFile;
+        private TimestampedFloatValue _lastHeadingSample;
         private List<TimestampedFloatValue> _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
+        private float _lastMapScale;
+        private int _lastRangeRingDiameterNauticalMiles;
+        private Bitmap _lastRenderedMapImage;
+        private Bitmap _mapAirplaneBitmap;
+        private int _mapRenderProgress;
+        private BackgroundWorker _mapRenderingBackgroundWorker;
+        private DoWorkEventHandler _mapRenderingBackgroundWorkerDoWorkDelegate;
+        private Mediator _mediator;
+        private bool _morseCodeSignalLineValue;
+        private KeyWithModifiers _pendingComboKeys;
         private Queue<bool> _pendingMorseCodeUnits = new Queue<bool>();
-        private bool _isSimRunning = false;
-        private Bitmap _mapAirplaneBitmap = null;
-        private F4Utils.Terrain.TerrainBrowser _terrainBrowser = null;
-        private BackgroundWorker _mapRenderingBackgroundWorker = null;
-        private DoWorkEventHandler _mapRenderingBackgroundWorkerDoWorkDelegate=null;
-        private Bitmap _lastRenderedMapImage = null;
-        private float _lastMapScale = 0.0f;
-        private int _lastRangeRingDiameterNauticalMiles = 0;
-        private int _mapRenderProgress = 0;
-        private object _mapImageLock = new object();
-        private bool _isSendingInput = false;
+        private Reader _sharedMemReader;
+        private TacanChannelSource _tacanChannelSource = TacanChannelSource.Ufc;
+        private TerrainBrowser _terrainBrowser;
+        private Bitmap _theaterMapImage;
+
         #endregion
 
         public Falcon4Support(F16CpdMfdManager manager, Mediator mediator)
-            : base()
         {
             _mediator = mediator;
-            this.Manager = manager;
+            Manager = manager;
             InitializeFlightData();
             /* REMOVED BECAUSE WE ARE NOT WATCHING FOR FALCON CALLBACKS AT THE MOMENT
             if (!Properties.Settings.Default.RunAsClient)
@@ -96,40 +84,39 @@ namespace F16CPD.SimSupport.Falcon4
              */
             _morseCodeGenerator = new MorseCode();
             _morseCodeGenerator.CharactersPerMinute = 53;
-            _morseCodeGenerator.UnitTimeTick += new EventHandler<UnitTimeTickEventArgs>(_morseCode_UnitTimeTick);
+            _morseCodeGenerator.UnitTimeTick += _morseCode_UnitTimeTick;
         }
+
+        #region ISimSupportModule Members
 
         public void InitializeTestMode()
         {
-            if (!Properties.Settings.Default.RunAsClient)
+            if (!Settings.Default.RunAsClient)
             {
                 LoadCurrentKeyFile();
                 EnsureTerrainBrowserLoaded();
             }
         }
-        public bool IsSendingInput 
+
+        public bool IsSendingInput
         {
-            get
-            {
-                return _isSendingInput;
-            }
+            get { return _isSendingInput; }
         }
-        public F16CpdMfdManager Manager
-        {
-            get;
-            set;
-        }
+
+        public F16CpdMfdManager Manager { get; set; }
+
         public bool IsSimRunning
         {
-            get
-            {
-                return _isSimRunning;
-            }
+            get { return _isSimRunning; }
         }
+
+        #endregion
+
         private void _morseCode_UnitTimeTick(object sender, UnitTimeTickEventArgs e)
         {
             _pendingMorseCodeUnits.Enqueue(e.CurrentSignalLineState);
         }
+
         private bool GetNextMorseCodeUnit()
         {
             bool nextUnit = false;
@@ -142,7 +129,7 @@ namespace F16CPD.SimSupport.Falcon4
             {
                 bool[] units = _pendingMorseCodeUnits.ToArray();
                 _pendingMorseCodeUnits.Clear();
-                Queue<bool> newUnits = new Queue<bool>();
+                var newUnits = new Queue<bool>();
                 for (int i = 0; i < 100; i++)
                 {
                     newUnits.Enqueue(units[i]);
@@ -153,9 +140,10 @@ namespace F16CPD.SimSupport.Falcon4
         }
 
         #region Flight Data/State Management
+
         public void InitializeFlightData()
         {
-            FlightData flightData = this.Manager.FlightData;
+            FlightData flightData = Manager.FlightData;
             flightData.AltimeterMode = AltimeterMode.Electronic;
             flightData.AutomaticLowAltitudeWarningInFeet = 300;
             flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
@@ -180,38 +168,31 @@ namespace F16CPD.SimSupport.Falcon4
             _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
             _isSimRunning = false;
         }
-        private void UpdateNewServerFlightDataWithCertainExistingClientFlightData(FlightData newServerFlightData)
-        {
-            //TODO: move all these variables to private state inside the manager
-            FlightData existingFlightData = this.Manager.FlightData;
-            newServerFlightData.AltimeterMode = existingFlightData.AltimeterMode;
-            newServerFlightData.BarometricPressureInDecimalInchesOfMercury = existingFlightData.BarometricPressureInDecimalInchesOfMercury;
-            newServerFlightData.TransitionAltitudeInFeet = existingFlightData.TransitionAltitudeInFeet;
-        }
+
         public void UpdateManagerFlightData()
         {
             bool outerMarkerFromFalcon = false;
             bool middleMarkerFromFalcon = false;
             GetNextMorseCodeUnit();
 
-            if (Properties.Settings.Default.RunAsClient)
+            if (Settings.Default.RunAsClient)
             {
                 try
                 {
-                    string serializedFlightData = (string)this.Manager.Client.GetSimProperty("F4FlightData");
+                    var serializedFlightData = (string) Manager.Client.GetSimProperty("F4FlightData");
                     FlightData fromServer = null;
                     if (!String.IsNullOrEmpty(serializedFlightData))
                     {
                         _isSimRunning = true;
-                        fromServer = (FlightData)Common.Serialization.Util.FromRawBytes(serializedFlightData);
+                        fromServer = (FlightData) Common.Serialization.Util.FromRawBytes(serializedFlightData);
                         UpdateNewServerFlightDataWithCertainExistingClientFlightData(fromServer);
-                        this.Manager.FlightData = fromServer;
+                        Manager.FlightData = fromServer;
 
-                        outerMarkerFromFalcon = this.Manager.FlightData.MarkerBeaconOuterMarkerFlag;
-                        middleMarkerFromFalcon = this.Manager.FlightData.MarkerBeaconMiddleMarkerFlag;
+                        outerMarkerFromFalcon = Manager.FlightData.MarkerBeaconOuterMarkerFlag;
+                        middleMarkerFromFalcon = Manager.FlightData.MarkerBeaconMiddleMarkerFlag;
 
-                        this.Manager.FlightData.MarkerBeaconOuterMarkerFlag &= _morseCodeSignalLineValue;
-                        this.Manager.FlightData.MarkerBeaconMiddleMarkerFlag &= _morseCodeSignalLineValue;
+                        Manager.FlightData.MarkerBeaconOuterMarkerFlag &= _morseCodeSignalLineValue;
+                        Manager.FlightData.MarkerBeaconMiddleMarkerFlag &= _morseCodeSignalLineValue;
 
                         if (outerMarkerFromFalcon)
                         {
@@ -244,7 +225,6 @@ namespace F16CPD.SimSupport.Falcon4
                             _morseCodeGenerator.StopSending();
                             _pendingMorseCodeUnits.Clear();
                         }
-
                     }
                     else
                     {
@@ -254,7 +234,7 @@ namespace F16CPD.SimSupport.Falcon4
                     {
                         fromServer = new FlightData();
                         InitializeFlightData();
-                        this.Manager.FlightData = fromServer;
+                        Manager.FlightData = fromServer;
                     }
                 }
                 catch (Exception e)
@@ -264,7 +244,7 @@ namespace F16CPD.SimSupport.Falcon4
                 return;
             }
 
-            FlightData flightData = this.Manager.FlightData;
+            FlightData flightData = Manager.FlightData;
 
             string exePath = null;
             _curFalconDataFormat = DetectFalconFormat();
@@ -272,7 +252,7 @@ namespace F16CPD.SimSupport.Falcon4
             CreateSharedMemReaderIfNotExists();
             F4SharedMem.FlightData fromFalcon = ReadF4SharedMem();
 
-            if (!Properties.Settings.Default.RunAsClient)
+            if (!Settings.Default.RunAsClient)
             {
                 if (_keyFile == null)
                 {
@@ -285,7 +265,7 @@ namespace F16CPD.SimSupport.Falcon4
             {
                 _isSimRunning = true;
                 if (fromFalcon == null) fromFalcon = new F4SharedMem.FlightData();
-                HsiBits hsibits = ((HsiBits)fromFalcon.hsiBits);
+                var hsibits = ((HsiBits) fromFalcon.hsiBits);
                 bool commandBarsOn = false;
 
                 flightData.VviOffFlag = ((hsibits & HsiBits.VVI) == HsiBits.VVI);
@@ -298,14 +278,17 @@ namespace F16CPD.SimSupport.Falcon4
                 if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
                 {
                     //&& ((fromFalcon.hsiBits & (int)F4SharedMem.Headers.HsiBits.Flying) == (int)F4SharedMem.Headers.HsiBits.Flying) 
-                    flightData.CpdPowerOnFlag = _cpdPowerOn && (!((fromFalcon.lightBits3 & (int)F4SharedMem.Headers.Bms4LightBits3.Power_Off) == (int)F4SharedMem.Headers.Bms4LightBits3.Power_Off));
+                    flightData.CpdPowerOnFlag = _cpdPowerOn &&
+                                                (!((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) ==
+                                                   (int) Bms4LightBits3.Power_Off));
                 }
                 else
                 {
                     flightData.CpdPowerOnFlag = _cpdPowerOn;
                 }
 
-                flightData.RadarAltimeterOffFlag = ((fromFalcon.lightBits & (int)LightBits.RadarAlt) == (int)LightBits.RadarAlt);
+                flightData.RadarAltimeterOffFlag = ((fromFalcon.lightBits & (int) LightBits.RadarAlt) ==
+                                                    (int) LightBits.RadarAlt);
 
                 if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
                 {
@@ -322,13 +305,13 @@ namespace F16CPD.SimSupport.Falcon4
 
                     //reset AGL altitude to zero if we're on the ground
                     if (
-                        ((fromFalcon.lightBits & (int)F4SharedMem.Headers.LightBits.WOW) == (int)F4SharedMem.Headers.LightBits.WOW)
-                          ||
-                          (
-                            ((fromFalcon.lightBits3 & (int)F4SharedMem.Headers.Bms4LightBits3.OnGround) == (int)F4SharedMem.Headers.Bms4LightBits3.OnGround)
-                                 &&
-                             _curFalconDataFormat == FalconDataFormats.BMS4
-                             )
+                        ((fromFalcon.lightBits & (int) LightBits.WOW) == (int) LightBits.WOW)
+                        ||
+                        (
+                            ((fromFalcon.lightBits3 & (int) Bms4LightBits3.OnGround) == (int) Bms4LightBits3.OnGround)
+                            &&
+                            _curFalconDataFormat == FalconDataFormats.BMS4
+                        )
                         )
                     {
                         agl = 0;
@@ -338,10 +321,11 @@ namespace F16CPD.SimSupport.Falcon4
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e); 
-                    flightData.AltitudeAboveGroundLevelInDecimalFeet = flightData.TrueAltitudeAboveMeanSeaLevelInDecimalFeet;
+                    _log.Debug(e.Message, e);
+                    flightData.AltitudeAboveGroundLevelInDecimalFeet =
+                        flightData.TrueAltitudeAboveMeanSeaLevelInDecimalFeet;
                 }
-                if (Properties.Settings.Default.UseAsiLockoutSpeed && (fromFalcon.kias < Properties.Settings.Default.AsiLockoutSpeedKnots))
+                if (Settings.Default.UseAsiLockoutSpeed && (fromFalcon.kias < Settings.Default.AsiLockoutSpeedKnots))
                 {
                     //lockout airspeed if under 60 knots
                     {
@@ -350,9 +334,9 @@ namespace F16CPD.SimSupport.Falcon4
                 }
                 else
                 {
-                    flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias * Constants.FPS_PER_KNOT;
+                    flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias*Constants.FPS_PER_KNOT;
                 }
-                int newAlow = (int)flightData.AutomaticLowAltitudeWarningInFeet;
+                int newAlow = flightData.AutomaticLowAltitudeWarningInFeet;
                 bool foundNewAlow = CheckDED_ALOW(fromFalcon, out newAlow);
                 if (foundNewAlow)
                 {
@@ -361,9 +345,12 @@ namespace F16CPD.SimSupport.Falcon4
 
                 flightData.TrueAirspeedInDecimalFeetPerSecond = fromFalcon.vt;
                 flightData.MachNumber = fromFalcon.mach;
-                flightData.GroundSpeedInDecimalFeetPerSecond = (float)Math.Sqrt((fromFalcon.xDot * fromFalcon.xDot) + (fromFalcon.yDot * fromFalcon.yDot));
+                flightData.GroundSpeedInDecimalFeetPerSecond =
+                    (float) Math.Sqrt((fromFalcon.xDot*fromFalcon.xDot) + (fromFalcon.yDot*fromFalcon.yDot));
 
-                flightData.MagneticHeadingInDecimalDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
+                flightData.MagneticHeadingInDecimalDegrees = (360 +
+                                                              (fromFalcon.yaw/Common.Math.Constants.RADIANS_PER_DEGREE))%
+                                                             360;
 
 
                 if (((hsibits & HsiBits.VVI) == HsiBits.VVI))
@@ -388,17 +375,17 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.AdiGlideslopeInvalidFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
                 flightData.AdiLocalizerInvalidFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
 
-                outerMarkerFromFalcon = ((fromFalcon.hsiBits & (int)F4SharedMem.Headers.HsiBits.OuterMarker) == (int)F4SharedMem.Headers.HsiBits.OuterMarker);
-                middleMarkerFromFalcon = ((fromFalcon.hsiBits & (int)F4SharedMem.Headers.HsiBits.MiddleMarker) == (int)F4SharedMem.Headers.HsiBits.MiddleMarker);
+                outerMarkerFromFalcon = ((fromFalcon.hsiBits & (int) HsiBits.OuterMarker) == (int) HsiBits.OuterMarker);
+                middleMarkerFromFalcon = ((fromFalcon.hsiBits & (int) HsiBits.MiddleMarker) ==
+                                          (int) HsiBits.MiddleMarker);
 
-                if (Properties.Settings.Default.RunAsServer)
+                if (Settings.Default.RunAsServer)
                 {
                     flightData.MarkerBeaconOuterMarkerFlag = outerMarkerFromFalcon;
                     flightData.MarkerBeaconMiddleMarkerFlag = middleMarkerFromFalcon;
                 }
                 else
                 {
-
                     flightData.MarkerBeaconOuterMarkerFlag = outerMarkerFromFalcon & _morseCodeSignalLineValue;
                     flightData.MarkerBeaconMiddleMarkerFlag = middleMarkerFromFalcon & _morseCodeSignalLineValue;
 
@@ -435,20 +422,23 @@ namespace F16CPD.SimSupport.Falcon4
                 }
                 else
                 {
-                    flightData.PitchAngleInDecimalDegrees = (float)((fromFalcon.pitch / Common.Math.Constants.RADIANS_PER_DEGREE));
-                    flightData.RollAngleInDecimalDegrees = fromFalcon.roll / Common.Math.Constants.RADIANS_PER_DEGREE;
+                    flightData.PitchAngleInDecimalDegrees = ((fromFalcon.pitch/Common.Math.Constants.RADIANS_PER_DEGREE));
+                    flightData.RollAngleInDecimalDegrees = fromFalcon.roll/Common.Math.Constants.RADIANS_PER_DEGREE;
                     flightData.BetaAngleInDecimalDegrees = fromFalcon.beta;
-                    flightData.GammaAngleInDecimalDegrees = fromFalcon.gamma / Common.Math.Constants.RADIANS_PER_DEGREE;
-                    flightData.WindOffsetToFlightPathMarkerInDecimalDegrees = fromFalcon.windOffset / Common.Math.Constants.RADIANS_PER_DEGREE;
+                    flightData.GammaAngleInDecimalDegrees = fromFalcon.gamma/Common.Math.Constants.RADIANS_PER_DEGREE;
+                    flightData.WindOffsetToFlightPathMarkerInDecimalDegrees = fromFalcon.windOffset/
+                                                                              Common.Math.Constants.RADIANS_PER_DEGREE;
 
                     //The following floating data is also crossed up in the flightData.h File:
                     //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
                     //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
-                    commandBarsOn = ((float)(Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
+                    commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
                     if (
-                            (Math.Abs((fromFalcon.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) > Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
-                                ||
-                            (Math.Abs((fromFalcon.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) > Pfd.ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES)
+                        (Math.Abs((fromFalcon.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
+                         Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
+                        ||
+                        (Math.Abs((fromFalcon.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
+                         Pfd.ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES)
                         )
                     {
                         commandBarsOn = false;
@@ -457,17 +447,17 @@ namespace F16CPD.SimSupport.Falcon4
 
 
                     //if the TOTALFLAGS flag is off, then we're most likely in NAV mode
-                    if ((hsibits & F4SharedMem.Headers.HsiBits.TotalFlags) != F4SharedMem.Headers.HsiBits.TotalFlags)
+                    if ((hsibits & HsiBits.TotalFlags) != HsiBits.TotalFlags)
                     {
                         flightData.HsiDisplayToFromFlag = false;
                     }
-                    //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
+                        //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
                     else if (
-                                (
-                                    ((hsibits & F4SharedMem.Headers.HsiBits.ToTrue) == F4SharedMem.Headers.HsiBits.ToTrue)
-                                        ||
-                                    ((hsibits & F4SharedMem.Headers.HsiBits.FromTrue) == F4SharedMem.Headers.HsiBits.FromTrue)
-                                )
+                        (
+                            ((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
+                            ||
+                            ((hsibits & HsiBits.FromTrue) == HsiBits.FromTrue)
+                        )
                         )
                     {
                         if (!commandBarsOn) //better make sure we're not in any ILS mode too though
@@ -480,9 +470,9 @@ namespace F16CPD.SimSupport.Falcon4
                     //if the glideslope or localizer flags on the ADI are turned on, then we must be in an ILS mode and therefore we 
                     //know we don't need to show the HSI TO/FROM flags.
                     if (
-                        ((hsibits & F4SharedMem.Headers.HsiBits.ADI_GS) == F4SharedMem.Headers.HsiBits.ADI_GS)
-                            ||
-                        ((hsibits & F4SharedMem.Headers.HsiBits.ADI_LOC) == F4SharedMem.Headers.HsiBits.ADI_LOC)
+                        ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
+                        ||
+                        ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
                         )
                     {
                         flightData.HsiDisplayToFromFlag = false;
@@ -490,8 +480,10 @@ namespace F16CPD.SimSupport.Falcon4
                     if (commandBarsOn) flightData.HsiDisplayToFromFlag = false;
 
                     flightData.AdiEnableCommandBars = commandBarsOn;
-                    flightData.AdiIlsGlideslopeDeviationInDecimalDegrees = fromFalcon.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE;
-                    flightData.AdiIlsLocalizerDeviationInDecimalDegrees = fromFalcon.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE;
+                    flightData.AdiIlsGlideslopeDeviationInDecimalDegrees = fromFalcon.AdiIlsVerPos/
+                                                                           Common.Math.Constants.RADIANS_PER_DEGREE;
+                    flightData.AdiIlsLocalizerDeviationInDecimalDegrees = fromFalcon.AdiIlsHorPos/
+                                                                          Common.Math.Constants.RADIANS_PER_DEGREE;
 
 
                     if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
@@ -541,22 +533,23 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.HsiCourseDeviationLimitInDecimalDegrees = fromFalcon.deviationLimit;
                     flightData.HsiCourseDeviationInDecimalDegrees = fromFalcon.courseDeviation;
                     flightData.HsiLocalizerDeviationInDecimalDegrees = fromFalcon.localizerCourse;
-                    flightData.HsiDesiredCourseInDegrees = (int)fromFalcon.desiredCourse;
-                    flightData.HsiDesiredHeadingInDegrees = (int)fromFalcon.desiredHeading;
+                    flightData.HsiDesiredCourseInDegrees = (int) fromFalcon.desiredCourse;
+                    flightData.HsiDesiredHeadingInDegrees = (int) fromFalcon.desiredHeading;
                     flightData.HsiBearingToBeaconInDecimalDegrees = fromFalcon.bearingToBeacon;
                     flightData.HsiDistanceToBeaconInNauticalMiles = fromFalcon.distanceToBeacon;
                 }
 
                 DetermineIndicatedRateOfTurn(flightData);
 
-                if (flightData.VerticalVelocityInDecimalFeetPerSecond > 0 && flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet > flightData.TransitionAltitudeInFeet)
+                if (flightData.VerticalVelocityInDecimalFeetPerSecond > 0 &&
+                    flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet > flightData.TransitionAltitudeInFeet)
                 {
                     ResetBaroPressureSettingToStandard(flightData);
                 }
 
                 if (_tacanChannelSource == TacanChannelSource.Backup)
                 {
-                    flightData.TacanChannel = fromFalcon.AUXTChan.ToString() + Enum.GetName(typeof(TacanBand), _backupTacanBand);
+                    flightData.TacanChannel = fromFalcon.AUXTChan + Enum.GetName(typeof (TacanBand), _backupTacanBand);
                 }
                 else if (_tacanChannelSource == TacanChannelSource.Ufc)
                 {
@@ -566,16 +559,17 @@ namespace F16CPD.SimSupport.Falcon4
                 float latMinutes = 0.0f;
                 int longWholeDegrees = 0;
                 float longMinutes = 0.0f;
-                _terrainBrowser.CalculateLatLong(fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes, out longWholeDegrees, out longMinutes);
-                flightData.LatitudeInDecimalDegrees = (float)latWholeDegrees + (latMinutes / 60.0f);
-                flightData.LongitudeInDecimalDegrees = (float)longWholeDegrees + (longMinutes / 60.0f);
+                _terrainBrowser.CalculateLatLong(fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes,
+                                                 out longWholeDegrees, out longMinutes);
+                flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes/60.0f);
+                flightData.LongitudeInDecimalDegrees = longWholeDegrees + (longMinutes/60.0f);
                 flightData.MapCoordinateFeetEast = fromFalcon.y;
                 flightData.MapCoordinateFeetNorth = fromFalcon.x;
             }
             else //Falcon's not running
             {
                 _isSimRunning = false;
-                if (Properties.Settings.Default.ShutoffIfFalconNotRunning)
+                if (Settings.Default.ShutoffIfFalconNotRunning)
                 {
                     flightData.VviOffFlag = true;
                     flightData.AoaOffFlag = true;
@@ -585,7 +579,7 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.RadarAltimeterOffFlag = true;
                     flightData.PfdOffFlag = true;
                 }
-                if (Properties.Settings.Default.RunAsServer)
+                if (Settings.Default.RunAsServer)
                 {
                     F16CPDServer.SetSimProperty("SimName", null);
                     F16CPDServer.SetSimProperty("SimVersion", null);
@@ -605,25 +599,37 @@ namespace F16CPD.SimSupport.Falcon4
             }
 
             //if running in server mode, send updated flight data to client 
-            if (Properties.Settings.Default.RunAsServer)
+            if (Settings.Default.RunAsServer)
             {
                 F16CPDServer.SetSimProperty("F4FlightData", Common.Serialization.Util.ToRawBytes(flightData));
             }
+        }
+
+        private void UpdateNewServerFlightDataWithCertainExistingClientFlightData(FlightData newServerFlightData)
+        {
+            //TODO: move all these variables to private state inside the manager
+            FlightData existingFlightData = Manager.FlightData;
+            newServerFlightData.AltimeterMode = existingFlightData.AltimeterMode;
+            newServerFlightData.BarometricPressureInDecimalInchesOfMercury =
+                existingFlightData.BarometricPressureInDecimalInchesOfMercury;
+            newServerFlightData.TransitionAltitudeInFeet = existingFlightData.TransitionAltitudeInFeet;
         }
 
         private static void ResetBaroPressureSettingToStandard(FlightData flightData)
         {
             flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
         }
+
         private void EnsureTerrainBrowserLoaded()
         {
             if (_terrainBrowser == null)
             {
-                _terrainBrowser = new F4Utils.Terrain.TerrainBrowser(true);
+                _terrainBrowser = new TerrainBrowser(true);
                 _terrainBrowser.LoadCurrentTheaterTerrainDatabase();
                 _terrainBrowser.LoadFarTilesAsync();
             }
         }
+
         private bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow)
         {
             string alowString = fromFalcon.DEDLines[1];
@@ -665,6 +671,7 @@ namespace F16CPD.SimSupport.Falcon4
             newAlow = -1;
             return false;
         }
+
         /// <summary>
         /// Determines the indicated rate of turn 
         /// </summary>
@@ -675,26 +682,29 @@ namespace F16CPD.SimSupport.Falcon4
             DateTime curTime = DateTime.Now;
 
             //determine how many seconds it's been since our last "current heading" datum snapshot?
-            float dT = (float)((curTime.Subtract(_lastHeadingSample.timestamp)).TotalMilliseconds);
+            var dT = (float) ((curTime.Subtract(_lastHeadingSample.timestamp)).TotalMilliseconds);
 
             //determine the change in heading since our last snapshot
             float currentHeading = flightData.MagneticHeadingInDecimalDegrees;
             float headingDelta = Common.Math.Util.AngleDelta(_lastHeadingSample.value, currentHeading);
 
             //now calculate the instantaneous rate of turn
-            float currentInstantaneousRateOfTurn = (headingDelta / dT) *1000;
-            if (Math.Abs(currentInstantaneousRateOfTurn) > 30 || float.IsInfinity(currentInstantaneousRateOfTurn) || float.IsNaN (currentInstantaneousRateOfTurn)) currentInstantaneousRateOfTurn = 0; //noise
-            if (Math.Abs(currentInstantaneousRateOfTurn) > (Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f))
+            float currentInstantaneousRateOfTurn = (headingDelta/dT)*1000;
+            if (Math.Abs(currentInstantaneousRateOfTurn) > 30 || float.IsInfinity(currentInstantaneousRateOfTurn) ||
+                float.IsNaN(currentInstantaneousRateOfTurn)) currentInstantaneousRateOfTurn = 0; //noise
+            if (Math.Abs(currentInstantaneousRateOfTurn) >
+                (Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f))
             {
-                currentInstantaneousRateOfTurn = (Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f) * Math.Sign(currentInstantaneousRateOfTurn);
+                currentInstantaneousRateOfTurn = (Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f)*
+                                                 Math.Sign(currentInstantaneousRateOfTurn);
             }
 
-            TimestampedFloatValue sample = new TimestampedFloatValue();
+            var sample = new TimestampedFloatValue();
             sample.timestamp = curTime;
             sample.value = currentInstantaneousRateOfTurn;
 
             //cull historic rate-of-turn samples older than n seconds
-            List<TimestampedFloatValue> replacementList = new List<TimestampedFloatValue>();
+            var replacementList = new List<TimestampedFloatValue>();
             for (int i = 0; i < _lastInstantaneousRatesOfTurn.Count; i++)
             {
                 if (!(Math.Abs(curTime.Subtract(_lastInstantaneousRatesOfTurn[i].timestamp).TotalMilliseconds) > 1000))
@@ -706,9 +716,9 @@ namespace F16CPD.SimSupport.Falcon4
 
             _lastInstantaneousRatesOfTurn.Add(sample);
 
-            float medianRateOfTurn = (float) Math.Round(MedianSampleValue(_lastInstantaneousRatesOfTurn),1);
+            var medianRateOfTurn = (float) Math.Round(MedianSampleValue(_lastInstantaneousRatesOfTurn), 1);
             float minIncrement = 0.1f;
-            while (medianRateOfTurn < flightData.RateOfTurnInDecimalDegreesPerSecond-minIncrement)
+            while (medianRateOfTurn < flightData.RateOfTurnInDecimalDegreesPerSecond - minIncrement)
             {
                 flightData.RateOfTurnInDecimalDegreesPerSecond -= minIncrement;
             }
@@ -734,9 +744,11 @@ namespace F16CPD.SimSupport.Falcon4
             _lastHeadingSample.timestamp = curTime;
             _lastHeadingSample.value = flightData.MagneticHeadingInDecimalDegrees;
         }
+
         #endregion
 
         #region Math utility functions
+
         private float AverageSampleValue(List<TimestampedFloatValue> values)
         {
             float sum = 0;
@@ -745,9 +757,10 @@ namespace F16CPD.SimSupport.Falcon4
                 sum += values[i].value;
             }
 
-            float avg = values.Count > 0 ? sum / values.Count : 0;
+            float avg = values.Count > 0 ? sum/values.Count : 0;
             return avg;
         }
+
         private float MedianSampleValue(List<TimestampedFloatValue> values)
         {
             if (values.Count == 0)
@@ -755,7 +768,7 @@ namespace F16CPD.SimSupport.Falcon4
                 return 0;
             }
 
-            float[] justTheValues = new float[values.Count];
+            var justTheValues = new float[values.Count];
             for (int i = 0; i < values.Count; i++)
             {
                 justTheValues[i] = values[i].value;
@@ -763,12 +776,12 @@ namespace F16CPD.SimSupport.Falcon4
 
             Array.Sort(justTheValues);
 
-            int itemIndex = (int)justTheValues.Length / 2;
+            int itemIndex = justTheValues.Length/2;
 
-            if (justTheValues.Length % 2 == 0)
+            if (justTheValues.Length%2 == 0)
             {
                 // Even number of items.
-                return (justTheValues[itemIndex] + justTheValues[itemIndex - 1]) / 2;
+                return (justTheValues[itemIndex] + justTheValues[itemIndex - 1])/2;
             }
             else
             {
@@ -776,13 +789,91 @@ namespace F16CPD.SimSupport.Falcon4
                 return justTheValues[itemIndex];
             }
         }
+
         #endregion
 
         #region Network messaging event handlers
+
+        public bool ProcessPendingMessageToServerFromClient(Message pendingMessage)
+        {
+            if (!Settings.Default.RunAsServer) return false;
+            bool toReturn = false;
+            if (pendingMessage != null)
+            {
+                string messageType = pendingMessage.MessageType;
+                if (messageType != null)
+                {
+                    switch (messageType)
+                    {
+                        case "Falcon4SendCallbackMessage":
+                            var callback = (string) pendingMessage.Payload;
+                            SendCallbackToFalcon(callback);
+                            toReturn = true;
+                            break;
+                        case "Falcon4IncreaseALOW":
+                            {
+                                IncreaseAlow();
+                                toReturn = true;
+                            }
+                            break;
+
+                        case "Falcon4DecreaseALOW":
+                            {
+                                DecreaseAlow();
+                                toReturn = true;
+                            }
+                            break;
+                        case "Falcon4IncreaseBaro":
+                            {
+                                IncreaseBaro();
+                                toReturn = true;
+                            }
+                            break;
+
+                        case "Falcon4DecreaseBaro":
+                            {
+                                DecreaseBaro();
+                                toReturn = true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return toReturn;
+        }
+
+        public bool ProcessPendingMessageToClientFromServer(Message pendingMessage)
+        {
+            if (!Settings.Default.RunAsClient) return false;
+            bool toReturn = false;
+            if (pendingMessage != null)
+            {
+                string messageType = pendingMessage.MessageType;
+                if (messageType != null)
+                {
+                    switch (messageType)
+                    {
+                        case "Falcon4CallbackOccurredMessage":
+                            var callback = (string) pendingMessage.Payload;
+                            ProcessDetectedCallback(callback);
+                            toReturn = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return toReturn;
+        }
+
         private void ProcessDetectedCallback(string callback)
         {
             if (String.IsNullOrEmpty(callback) || String.IsNullOrEmpty(callback.Trim())) return;
-            if (false) { }
+            if (false)
+            {
+            }
             /*
             if (callback.ToLowerInvariant().Trim() == "SimHSIModeInc".ToLowerInvariant() )
             {
@@ -893,90 +984,19 @@ namespace F16CPD.SimSupport.Falcon4
                 }
             }
             */
-            if (Properties.Settings.Default.RunAsServer)
+            if (Settings.Default.RunAsServer)
             {
-                Networking.Message message = new Networking.Message("Falcon4CallbackOccurredMessage", callback.Trim());
+                var message = new Message("Falcon4CallbackOccurredMessage", callback.Trim());
                 F16CPDServer.SubmitMessageToClient(message);
             }
-
         }
-        public bool ProcessPendingMessageToServerFromClient(F16CPD.Networking.Message pendingMessage)
-        {
-            if (!Properties.Settings.Default.RunAsServer) return false;
-            bool toReturn = false;
-            if (pendingMessage != null)
-            {
-                string messageType = pendingMessage.MessageType;
-                if (messageType != null)
-                {
-                    switch (messageType)
-                    {
-                        case "Falcon4SendCallbackMessage":
-                            string callback = (string)pendingMessage.Payload;
-                            SendCallbackToFalcon(callback);
-                            toReturn = true;
-                            break;
-                        case "Falcon4IncreaseALOW":
-                            {
-                                IncreaseAlow();
-                                toReturn = true;
-                            }
-                            break;
 
-                        case "Falcon4DecreaseALOW":
-                            {
-                                DecreaseAlow();
-                                toReturn = true;
-                            }
-                            break;
-                        case "Falcon4IncreaseBaro":
-                            {
-                                IncreaseBaro();
-                                toReturn = true;
-                            }
-                            break;
-
-                        case "Falcon4DecreaseBaro":
-                            {
-                                DecreaseBaro();
-                                toReturn = true;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            return toReturn;
-        }
-        public bool ProcessPendingMessageToClientFromServer(F16CPD.Networking.Message pendingMessage)
-        {
-            if (!Properties.Settings.Default.RunAsClient) return false;
-            bool toReturn = false;
-            if (pendingMessage != null)
-            {
-                string messageType = pendingMessage.MessageType;
-                if (messageType != null)
-                {
-                    switch (messageType)
-                    {
-                        case "Falcon4CallbackOccurredMessage":
-                            string callback = (string)pendingMessage.Payload;
-                            ProcessDetectedCallback(callback);
-                            toReturn = true;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            return toReturn;
-
-        }
         #endregion
 
         #region CPD Physical Input Control handlesr
+
         #region CPD Input Control Event Handler Dispatch Routines
+
         public void HandleInputControlEvent(CpdInputControls eventSource, MfdInputControl control)
         {
             OptionSelectButton button = null;
@@ -1127,8 +1147,8 @@ namespace F16CPD.SimSupport.Falcon4
                     SetExtFuelSwitchTransWingFirst();
                     break;
             }
-
         }
+
         public void HandleOptionSelectButtonPress(OptionSelectButton button)
         {
             string functionName = button.FunctionName;
@@ -1142,8 +1162,9 @@ namespace F16CPD.SimSupport.Falcon4
                             bool useIncrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                F4KeyFile.KeyBinding incByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiCrsIncBy1");
-                                if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int)F4KeyFile.ScanCodes.NotAssigned)
+                                KeyBinding incByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiCrsIncBy1");
+                                if (incByOneCallback != null &&
+                                    incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
                                     useIncrementByOne = true;
                                 }
@@ -1164,8 +1185,9 @@ namespace F16CPD.SimSupport.Falcon4
                             bool useDecrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                F4KeyFile.KeyBinding decByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiCrsDecBy1");
-                                if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int)F4KeyFile.ScanCodes.NotAssigned)
+                                KeyBinding decByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiCrsDecBy1");
+                                if (decByOneCallback != null &&
+                                    decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
                                     useDecrementByOne = true;
                                 }
@@ -1186,8 +1208,9 @@ namespace F16CPD.SimSupport.Falcon4
                             bool useIncrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                F4KeyFile.KeyBinding incByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiHdgIncBy1");
-                                if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int)F4KeyFile.ScanCodes.NotAssigned)
+                                KeyBinding incByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiHdgIncBy1");
+                                if (incByOneCallback != null &&
+                                    incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
                                     useIncrementByOne = true;
                                 }
@@ -1201,7 +1224,7 @@ namespace F16CPD.SimSupport.Falcon4
                                 SendCallbackToFalcon("SimHsiHeadingInc");
                             }
                         }
-                        
+
                         break;
                     case "HeadingSelectDecrease":
                         {
@@ -1209,8 +1232,9 @@ namespace F16CPD.SimSupport.Falcon4
                             bool useDecrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                F4KeyFile.KeyBinding decByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiHdgDecBy1");
-                                if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int)F4KeyFile.ScanCodes.NotAssigned)
+                                KeyBinding decByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiHdgDecBy1");
+                                if (decByOneCallback != null &&
+                                    decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
                                     useDecrementByOne = true;
                                 }
@@ -1248,20 +1272,20 @@ namespace F16CPD.SimSupport.Falcon4
 
         private void DecreaseAlow()
         {
-            if (Properties.Settings.Default.RunAsClient)
+            if (Settings.Default.RunAsClient)
             {
-                Networking.Message message = new Networking.Message("Falcon4DecreaseALOW", this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
-                this.Manager.Client.SendMessageToServer(message);
+                var message = new Message("Falcon4DecreaseALOW", Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
+                Manager.Client.SendMessageToServer(message);
             }
             else
             {
-                if (this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet > 1000)
+                if (Manager.FlightData.AutomaticLowAltitudeWarningInFeet > 1000)
                 {
-                    this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet -= 1000;
+                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet -= 1000;
                 }
                 else
                 {
-                    this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet -= 100;
+                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet -= 100;
                 }
                 SendCallbackToFalcon("DecreaseAlow");
             }
@@ -1269,50 +1293,51 @@ namespace F16CPD.SimSupport.Falcon4
 
         private void IncreaseAlow()
         {
-
-            if (Properties.Settings.Default.RunAsClient)
+            if (Settings.Default.RunAsClient)
             {
-                Networking.Message message = new Networking.Message("Falcon4IncreaseALOW", this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
-                this.Manager.Client.SendMessageToServer(message);
+                var message = new Message("Falcon4IncreaseALOW", Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
+                Manager.Client.SendMessageToServer(message);
             }
             else
             {
-                if (this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet < 1000)
+                if (Manager.FlightData.AutomaticLowAltitudeWarningInFeet < 1000)
                 {
-                    this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet += 100;
+                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet += 100;
                 }
                 else
                 {
-                    this.Manager.FlightData.AutomaticLowAltitudeWarningInFeet += 1000;
+                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet += 1000;
                 }
                 SendCallbackToFalcon("IncreaseAlow");
             }
         }
+
         private void IncreaseBaro()
         {
-
-            if (Properties.Settings.Default.RunAsClient)
+            if (Settings.Default.RunAsClient)
             {
-                Networking.Message message = new Networking.Message("Falcon4IncreaseBaro", this.Manager.FlightData.BarometricPressureInDecimalInchesOfMercury);
-                this.Manager.Client.SendMessageToServer(message);
+                var message = new Message("Falcon4IncreaseBaro",
+                                          Manager.FlightData.BarometricPressureInDecimalInchesOfMercury);
+                Manager.Client.SendMessageToServer(message);
             }
             else
             {
-                this.Manager.FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
+                Manager.FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
                 SendCallbackToFalcon("SimAltPressInc");
             }
         }
+
         private void DecreaseBaro()
         {
-
-            if (Properties.Settings.Default.RunAsClient)
+            if (Settings.Default.RunAsClient)
             {
-                Networking.Message message = new Networking.Message("Falcon4DecreaseBaro", this.Manager.FlightData.BarometricPressureInDecimalInchesOfMercury);
-                this.Manager.Client.SendMessageToServer(message);
+                var message = new Message("Falcon4DecreaseBaro",
+                                          Manager.FlightData.BarometricPressureInDecimalInchesOfMercury);
+                Manager.Client.SendMessageToServer(message);
             }
             else
             {
-                this.Manager.FlightData.BarometricPressureInDecimalInchesOfMercury -= 0.01f;
+                Manager.FlightData.BarometricPressureInDecimalInchesOfMercury -= 0.01f;
                 SendCallbackToFalcon("SimAltPressDec");
             }
         }
@@ -1320,14 +1345,17 @@ namespace F16CPD.SimSupport.Falcon4
         #endregion
 
         #region CPD Input Control Event Handler Worker Routines
+
         private void SetExtFuelSwitchTransWingFirst()
         {
             SendCallbackToFalcon("SimFuelTransWing");
         }
+
         private void SetExtFuelSwitchTransNorm()
         {
             SendCallbackToFalcon("SimFuelTransNorm");
         }
+
         private void SetFuelSelectExtCtr()
         {
             if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
@@ -1339,6 +1367,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimFuelSwitchCenterExt");
             }
         }
+
         private void SetFuelSelectExtWing()
         {
             //TODO: PRIO check these and all other callback names against FreeFalcon 5
@@ -1351,6 +1380,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimFuelSwitchWingExt");
             }
         }
+
         private void SetFuelSelectIntWing()
         {
             if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
@@ -1362,6 +1392,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimFuelSwitchWingInt");
             }
         }
+
         private void SetFuelSelectRsvr()
         {
             if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
@@ -1373,6 +1404,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimFuelSwitchResv");
             }
         }
+
         private void SetFuelSelectNorm()
         {
             if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
@@ -1384,6 +1416,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimFuelSwitchNorm");
             }
         }
+
         private void SetFuelSelectTest()
         {
             if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
@@ -1395,6 +1428,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimFuelSwitchTest");
             }
         }
+
         private void SetHsiModePlsNav()
         {
             //_currentNavMode = NavModes.PlsNav;
@@ -1407,6 +1441,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimHSIIlsNav");
             }
         }
+
         private void SetHsiModeNav()
         {
             //_currentNavMode = NavModes.Nav;
@@ -1419,6 +1454,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimHSINav");
             }
         }
+
         private void SetHsiModePlsTcn()
         {
             //_currentNavMode = NavModes.PlsTcn;
@@ -1431,6 +1467,7 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimHSIIlsTcn");
             }
         }
+
         private void SetHsiModeTcn()
         {
             //_currentNavMode = NavModes.Tcn;
@@ -1443,15 +1480,16 @@ namespace F16CPD.SimSupport.Falcon4
                 SendCallbackToFalcon("SimHSITcn");
             }
         }
-        #endregion
+
         #endregion
 
-
+        #endregion
 
         #region Falcon Process Detection and Manipulation Functions
+
         private KeyBinding FindKeyBinding(string callback)
         {
-            if (Properties.Settings.Default.RunAsServer || (!Properties.Settings.Default.RunAsServer && !Properties.Settings.Default.RunAsClient))
+            if (Settings.Default.RunAsServer || (!Settings.Default.RunAsServer && !Settings.Default.RunAsClient))
             {
                 return FindKeyBindingLocal(callback);
             }
@@ -1469,7 +1507,7 @@ namespace F16CPD.SimSupport.Falcon4
 
         private void SendCallbackToFalcon(string callback)
         {
-            if (!Properties.Settings.Default.RunAsClient)
+            if (!Settings.Default.RunAsClient)
             {
                 DateTime startTime = DateTime.Now;
                 _log.Debug("Sending callback:" + callback + " to Falcon.");
@@ -1477,12 +1515,13 @@ namespace F16CPD.SimSupport.Falcon4
                 _log.Debug("Finished sending callback:" + callback + " to Falcon.");
                 DateTime endTime = DateTime.Now;
                 TimeSpan elapsed = endTime.Subtract(startTime);
-                _log.Debug(string.Format("Time taken to send callback to Falcon: {0} milliseconds", elapsed.TotalMilliseconds));
+                _log.Debug(string.Format("Time taken to send callback to Falcon: {0} milliseconds",
+                                         elapsed.TotalMilliseconds));
             }
-            else if (Properties.Settings.Default.RunAsClient)
+            else if (Settings.Default.RunAsClient)
             {
-                Networking.Message message = new Networking.Message("Falcon4SendCallbackMessage", callback);
-                this.Manager.Client.SendMessageToServer(message);
+                var message = new Message("Falcon4SendCallbackMessage", callback);
+                Manager.Client.SendMessageToServer(message);
             }
         }
 
@@ -1492,9 +1531,10 @@ namespace F16CPD.SimSupport.Falcon4
             F4Utils.Process.Util.SendCallbackToFalcon(callback);
             _isSendingInput = false;
         }
+
         private F4SharedMem.FlightData ReadF4SharedMem()
         {
-            F4SharedMem.FlightData toReturn = new F4SharedMem.FlightData();
+            var toReturn = new F4SharedMem.FlightData();
 
             CreateSharedMemReaderIfNotExists();
             if (_sharedMemReader != null)
@@ -1503,9 +1543,10 @@ namespace F16CPD.SimSupport.Falcon4
             }
             return toReturn;
         }
+
         private void CreateSharedMemReaderIfNotExists()
         {
-            if (_sharedMemReader == null && !Properties.Settings.Default.RunAsClient)
+            if (_sharedMemReader == null && !Settings.Default.RunAsClient)
             {
                 _curFalconDataFormat = DetectFalconFormat();
                 if (_curFalconDataFormat.HasValue)
@@ -1514,33 +1555,38 @@ namespace F16CPD.SimSupport.Falcon4
                 }
             }
         }
+
         private void LoadCurrentKeyFile()
         {
-            if (!Properties.Settings.Default.RunAsClient)
+            if (!Settings.Default.RunAsClient)
             {
                 _keyFile = F4Utils.Process.Util.GetCurrentKeyFile();
             }
         }
+
         private FalconDataFormats? DetectFalconFormat()
         {
             FalconDataFormats? toReturn = null;
             //if we're running as the server or we're running in standalone mode
-            if (Properties.Settings.Default.RunAsServer || (!Properties.Settings.Default.RunAsServer && !Properties.Settings.Default.RunAsClient))
+            if (Settings.Default.RunAsServer || (!Settings.Default.RunAsServer && !Settings.Default.RunAsClient))
             {
                 toReturn = F4Utils.Process.Util.DetectFalconFormat();
-                if (Properties.Settings.Default.RunAsServer)
+                if (Settings.Default.RunAsServer)
                 {
                     F16CPDServer.SetSimProperty("SimName", "Falcon4");
-                    F16CPDServer.SetSimProperty("SimVersion", toReturn.HasValue? Enum.GetName(typeof(FalconDataFormats), toReturn):null);
+                    F16CPDServer.SetSimProperty("SimVersion",
+                                                toReturn.HasValue
+                                                    ? Enum.GetName(typeof (FalconDataFormats), toReturn)
+                                                    : null);
                 }
             }
-            else if (Properties.Settings.Default.RunAsClient)
+            else if (Settings.Default.RunAsClient)
             {
-                string simName = (string)this.Manager.Client.GetSimProperty("SimName");
-                string simVersion = (string)this.Manager.Client.GetSimProperty("SimVersion");
+                var simName = (string) Manager.Client.GetSimProperty("SimName");
+                var simVersion = (string) Manager.Client.GetSimProperty("SimVersion");
                 if (simName != null && simName.ToLowerInvariant() == "falcon4")
                 {
-                    toReturn = (FalconDataFormats)Enum.Parse(typeof(FalconDataFormats), simVersion);
+                    toReturn = (FalconDataFormats) Enum.Parse(typeof (FalconDataFormats), simVersion);
                 }
             }
 
@@ -1550,7 +1596,9 @@ namespace F16CPD.SimSupport.Falcon4
         #endregion
 
         #region Map Rendering Code
-        public void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode)
+
+        public void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale,
+                              int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode)
         {
             //set up a background worker to do map rendering, if we haven't already set one up
             if (_mapRenderingBackgroundWorker == null)
@@ -1558,12 +1606,13 @@ namespace F16CPD.SimSupport.Falcon4
                 _mapRenderingBackgroundWorker = new BackgroundWorker();
                 if (_mapRenderingBackgroundWorkerDoWorkDelegate == null)
                 {
-                    _mapRenderingBackgroundWorkerDoWorkDelegate = new DoWorkEventHandler(_mapRenderingBackgroundWorker_DoWork);
+                    _mapRenderingBackgroundWorkerDoWorkDelegate =
+                        new DoWorkEventHandler(_mapRenderingBackgroundWorker_DoWork);
                 }
-                _mapRenderingBackgroundWorker.DoWork +=_mapRenderingBackgroundWorkerDoWorkDelegate;
+                _mapRenderingBackgroundWorker.DoWork += _mapRenderingBackgroundWorkerDoWorkDelegate;
                 _mapRenderingBackgroundWorker.WorkerSupportsCancellation = true;
                 _mapRenderingBackgroundWorker.WorkerReportsProgress = true;
-                _mapRenderingBackgroundWorker.ProgressChanged += new ProgressChangedEventHandler(_mapRenderingBackgroundWorker_ProgressChanged);
+                _mapRenderingBackgroundWorker.ProgressChanged += _mapRenderingBackgroundWorker_ProgressChanged;
             }
             if (_lastMapScale != mapScale)
             {
@@ -1587,9 +1636,9 @@ namespace F16CPD.SimSupport.Falcon4
             //TODO: break on changes in rotation mode, centering mode, etc.
 
             //if the background worker is not busy, have it go render another map for us
-            if (!_mapRenderingBackgroundWorker.IsBusy )
+            if (!_mapRenderingBackgroundWorker.IsBusy)
             {
-                MapRenderAsyncArguments args = new MapRenderAsyncArguments();
+                var args = new MapRenderAsyncArguments();
                 args.renderRectangle = renderRectangle;
                 args.mapScale = mapScale;
                 args.rangeRingDiameterInNauticalMiles = rangeRingDiameterInNauticalMiles;
@@ -1601,44 +1650,48 @@ namespace F16CPD.SimSupport.Falcon4
                 if (_lastRenderedMapImage != null)
                 {
                     //in the meantime go render the last drawn map
-                    g.DrawImage(_lastRenderedMapImage, renderRectangle, new Rectangle(new Point(0, 0), _lastRenderedMapImage.Size), GraphicsUnit.Pixel);
+                    g.DrawImage(_lastRenderedMapImage, renderRectangle,
+                                new Rectangle(new Point(0, 0), _lastRenderedMapImage.Size), GraphicsUnit.Pixel);
                 }
                 else
                 {
                     Matrix gTransform = g.Transform;
                     g.ResetTransform();
                     string toDisplay = null;
-                    toDisplay = String.Format("LOADING: {0}%", _mapRenderProgress); ;
+                    toDisplay = String.Format("LOADING: {0}%", _mapRenderProgress);
+                    ;
                     Brush greenBrush = Brushes.Green;
-                    GraphicsPath path = new GraphicsPath();
-                    StringFormat sf = new StringFormat(StringFormatFlags.NoWrap);
+                    var path = new GraphicsPath();
+                    var sf = new StringFormat(StringFormatFlags.NoWrap);
                     sf.Alignment = StringAlignment.Center;
                     sf.LineAlignment = StringAlignment.Center;
-                    Font f = new Font(FontFamily.GenericMonospace, 20, System.Drawing.FontStyle.Bold);
+                    var f = new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold);
                     SizeF textSize = g.MeasureString(toDisplay, f, 1, sf);
-                    int leftX = (((renderRectangle.Width - ((int)textSize.Width)) / 2));
-                    int topY = (((renderRectangle.Height - ((int)textSize.Height)) / 2));
-                    Rectangle target = new Rectangle(leftX, topY, (int)textSize.Width, (int)textSize.Height);
-                    path.AddString(toDisplay, f.FontFamily, (int)f.Style, f.Size, target.Location, sf);
+                    int leftX = (((renderRectangle.Width - ((int) textSize.Width))/2));
+                    int topY = (((renderRectangle.Height - ((int) textSize.Height))/2));
+                    var target = new Rectangle(leftX, topY, (int) textSize.Width, (int) textSize.Height);
+                    path.AddString(toDisplay, f.FontFamily, (int) f.Style, f.Size, target.Location, sf);
                     g.FillPath(greenBrush, path);
                     g.Transform = gTransform;
                 }
             }
         }
 
-        void _mapRenderingBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void _mapRenderingBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             _mapRenderProgress = e.ProgressPercentage;
         }
 
-        void _mapRenderingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void _mapRenderingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            MapRenderAsyncArguments args = (MapRenderAsyncArguments)e.Argument;
-            Bitmap renderSurface = new Bitmap(args.renderRectangle.Width, args.renderRectangle.Height, PixelFormat.Format16bppRgb565);
+            var args = (MapRenderAsyncArguments) e.Argument;
+            var renderSurface = new Bitmap(args.renderRectangle.Width, args.renderRectangle.Height,
+                                           PixelFormat.Format16bppRgb565);
             bool success = false;
             using (Graphics g = Graphics.FromImage(renderSurface))
             {
-                success=RenderMapAsync(g, args.renderRectangle, args.mapScale, args.rangeRingDiameterInNauticalMiles, args.rotationMode, e);
+                success = RenderMapAsync(g, args.renderRectangle, args.mapScale, args.rangeRingDiameterInNauticalMiles,
+                                         args.rotationMode, e);
             }
             if (success)
             {
@@ -1658,41 +1711,53 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        public bool RenderMapAsync(Graphics g, Rectangle renderRectangle, float mapScale, int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode, DoWorkEventArgs e)
+        public bool RenderMapAsync(Graphics g, Rectangle renderRectangle, float mapScale,
+                                   int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode, DoWorkEventArgs e)
         {
             if (_terrainBrowser == null || _terrainBrowser.DetectCurrentTheaterName() == null) return false;
             _mapRenderingBackgroundWorker.ReportProgress(0);
             //define original screen size in pixels and inches
-            Size originalRenderSizeInPixels = new Size(Constants.I_NATIVE_RES_WIDTH, Constants.I_NATIVE_RES_HEIGHT);
-            SizeF originalRenderSizeInScreenInches = new SizeF(6.24f, 8.32f);
+            var originalRenderSizeInPixels = new Size(Constants.I_NATIVE_RES_WIDTH, Constants.I_NATIVE_RES_HEIGHT);
+            var originalRenderSizeInScreenInches = new SizeF(6.24f, 8.32f);
 
-            float originalRenderDiameterPixels = (float)Math.Sqrt((originalRenderSizeInPixels.Width * originalRenderSizeInPixels.Width) + (originalRenderSizeInPixels.Height * originalRenderSizeInPixels.Height));
-            float originalRenderDiameterInScreenInches = (float)Math.Sqrt((originalRenderSizeInScreenInches.Width * originalRenderSizeInScreenInches.Width) + (originalRenderSizeInScreenInches.Height * originalRenderSizeInScreenInches.Height));
+            var originalRenderDiameterPixels =
+                (float)
+                Math.Sqrt((originalRenderSizeInPixels.Width*originalRenderSizeInPixels.Width) +
+                          (originalRenderSizeInPixels.Height*originalRenderSizeInPixels.Height));
+            var originalRenderDiameterInScreenInches =
+                (float)
+                Math.Sqrt((originalRenderSizeInScreenInches.Width*originalRenderSizeInScreenInches.Width) +
+                          (originalRenderSizeInScreenInches.Height*originalRenderSizeInScreenInches.Height));
 
             //calculate how much terrain distance to render at specified scale in order to fill the screen 
-            float terrainWidthToRenderInNauticalMiles = (originalRenderDiameterInScreenInches/(1.0000000000f/mapScale)) / Constants.INCHES_PER_NAUTICAL_MILE;
-            float terrainWidthToRenderInFeet = terrainWidthToRenderInNauticalMiles * Constants.FEET_PER_NM;
+            float terrainWidthToRenderInNauticalMiles = (originalRenderDiameterInScreenInches/(1.0000000000f/mapScale))/
+                                                        Constants.INCHES_PER_NAUTICAL_MILE;
+            float terrainWidthToRenderInFeet = terrainWidthToRenderInNauticalMiles*Constants.FEET_PER_NM;
 
-            float outerMapRingDiameterPixelsUnscaled = ((float)(rangeRingDiameterInNauticalMiles) / terrainWidthToRenderInNauticalMiles) * (float)originalRenderDiameterPixels;
+            float outerMapRingDiameterPixelsUnscaled = ((rangeRingDiameterInNauticalMiles)/
+                                                        terrainWidthToRenderInNauticalMiles)*
+                                                       originalRenderDiameterPixels;
 
 
             //calculate number of elevation posts involved in rendering that amount of terrain distance
             float feetBetweenL0ElevationPosts = _terrainBrowser.CurrentTheaterDotMapFileInfo.FeetBetweenL0Posts;
-            int numL0ElevationPostsToRender = (int)(Math.Ceiling(terrainWidthToRenderInFeet / feetBetweenL0ElevationPosts));
+            var numL0ElevationPostsToRender =
+                (int) (Math.Ceiling(terrainWidthToRenderInFeet/feetBetweenL0ElevationPosts));
             if (numL0ElevationPostsToRender < 1) return false;
-            float posX = this.Manager.FlightData.MapCoordinateFeetEast;
-            float posY = this.Manager.FlightData.MapCoordinateFeetNorth;
+            float posX = Manager.FlightData.MapCoordinateFeetEast;
+            float posY = Manager.FlightData.MapCoordinateFeetNorth;
 
             //determine which Level of Detail to use for rendering the map
             //start with the lowest Level of Detail available (i.e. highest-resolution map) and work upward (i.e. toward lower-resolution maps covering greater areas)
             uint lod = 0;
             float feetBetweenElevationPosts = feetBetweenL0ElevationPosts;
-            float numThisLodElevationPostsToRender = (float)numL0ElevationPostsToRender;
+            float numThisLodElevationPostsToRender = numL0ElevationPostsToRender;
             int thisLodDetailTextureWidthPixels = 64;
 
             int numAdditionalElevationPostsToRender = 1;
 
-            while ((numThisLodElevationPostsToRender * thisLodDetailTextureWidthPixels) > originalRenderDiameterPixels )  //choose LoD that requires fewest unnecessary pixels to be rendered
+            while ((numThisLodElevationPostsToRender*thisLodDetailTextureWidthPixels) > originalRenderDiameterPixels)
+                //choose LoD that requires fewest unnecessary pixels to be rendered
             {
                 if (lod + 1 > _terrainBrowser.CurrentTheaterDotMapFileInfo.LastFarTiledLOD)
                 {
@@ -1723,56 +1788,72 @@ namespace F16CPD.SimSupport.Falcon4
             }
 
             //there's no such thing as a fractional elevation post, so round up to the next integral number of elevation posts
-            numThisLodElevationPostsToRender = (float)Math.Ceiling(numThisLodElevationPostsToRender);
+            numThisLodElevationPostsToRender = (float) Math.Ceiling(numThisLodElevationPostsToRender);
             numThisLodElevationPostsToRender += numAdditionalElevationPostsToRender;
 
             //determine which elevation post represents the map's center
-            int centerXElevationPost = (int)Math.Floor(posX / feetBetweenElevationPosts);
-            int centerYElevationPost = (int)Math.Floor(posY/ feetBetweenElevationPosts);
+            var centerXElevationPost = (int) Math.Floor(posX/feetBetweenElevationPosts);
+            var centerYElevationPost = (int) Math.Floor(posY/feetBetweenElevationPosts);
 
             //now do the same thing but allow for the concept of fractional elevation posts
-            float centerXElevationPostF = (posX/ feetBetweenElevationPosts);
-            float centerYElevationPostF = (posY / feetBetweenElevationPosts);
+            float centerXElevationPostF = (posX/feetBetweenElevationPosts);
+            float centerYElevationPostF = (posY/feetBetweenElevationPosts);
 
             //now calculate the difference between the fractional number and the integral number, to determine how far of an offset into a single elevation post's detail texture, we should take as
             //being the exact center of the map (we'll use these offsets to crop a sub-square of terrain out of a larger square of rendered terrain later in the process)
-            int xOffset = (int)Math.Floor((((centerXElevationPostF - (float)centerXElevationPost) * (float)thisLodDetailTextureWidthPixels)));
-            int yOffset = -(int)Math.Floor((((centerYElevationPostF - (float)centerYElevationPost) * (float)thisLodDetailTextureWidthPixels)));
+            var xOffset =
+                (int) Math.Floor((((centerXElevationPostF - centerXElevationPost)*thisLodDetailTextureWidthPixels)));
+            int yOffset =
+                -(int) Math.Floor((((centerYElevationPostF - centerYElevationPost)*thisLodDetailTextureWidthPixels)));
 
             //determine the boundaries of the map section that we'll be rendering
-            int leftXPost = (int)Math.Floor((decimal)(centerXElevationPost - (int)Math.Floor((((float)numThisLodElevationPostsToRender / 2.0f)))));
-            int rightXPost = (int)Math.Floor((decimal)(centerXElevationPost + (int)Math.Floor((((float)numThisLodElevationPostsToRender / 2.0f)))));
-            int topYPost = (int)Math.Floor((decimal)(centerYElevationPost + (int)Math.Floor((((float)numThisLodElevationPostsToRender / 2.0f)))));
-            int bottomYPost = (int)Math.Floor((decimal)(centerYElevationPost - (int)Math.Floor((((float)numThisLodElevationPostsToRender / 2.0f)))));
-            int clampLeftXPost=leftXPost;
-            int clampRightXPost=rightXPost;
-            int clampTopYPost=topYPost;
-            int clampBottomYPost=bottomYPost;
+            var leftXPost =
+                (int)
+                Math.Floor(
+                    (decimal) (centerXElevationPost - (int) Math.Floor(((numThisLodElevationPostsToRender/2.0f)))));
+            var rightXPost =
+                (int)
+                Math.Floor(
+                    (decimal) (centerXElevationPost + (int) Math.Floor(((numThisLodElevationPostsToRender/2.0f)))));
+            var topYPost =
+                (int)
+                Math.Floor(
+                    (decimal) (centerYElevationPost + (int) Math.Floor(((numThisLodElevationPostsToRender/2.0f)))));
+            var bottomYPost =
+                (int)
+                Math.Floor(
+                    (decimal) (centerYElevationPost - (int) Math.Floor(((numThisLodElevationPostsToRender/2.0f)))));
+            int clampLeftXPost = leftXPost;
+            int clampRightXPost = rightXPost;
+            int clampTopYPost = topYPost;
+            int clampBottomYPost = bottomYPost;
             _terrainBrowser.ClampElevationPostCoordinates(ref clampLeftXPost, ref clampTopYPost, lod);
             _terrainBrowser.ClampElevationPostCoordinates(ref clampRightXPost, ref clampBottomYPost, lod);
 
             //now store those boundaries in a Size object for convenience
-            Size elevationPostsToRenderBoundsSize = new Size((int)(Math.Abs(rightXPost - leftXPost)), (int)(Math.Abs(bottomYPost - topYPost)));
-            Size clampedElevationPostsToRenderBoundsSize =new Size((int)(Math.Abs(clampRightXPost - clampLeftXPost)), (int)(Math.Abs(clampBottomYPost - clampTopYPost)));
+            var elevationPostsToRenderBoundsSize = new Size((Math.Abs(rightXPost - leftXPost)),
+                                                            (Math.Abs(bottomYPost - topYPost)));
+            var clampedElevationPostsToRenderBoundsSize = new Size((Math.Abs(clampRightXPost - clampLeftXPost)),
+                                                                   (Math.Abs(clampBottomYPost - clampTopYPost)));
             //determine the bounds of the cropped section of the render target that we'll be using 
-            int cropWidth = ((elevationPostsToRenderBoundsSize.Width + 1 - numAdditionalElevationPostsToRender) * thisLodDetailTextureWidthPixels);
+            int cropWidth = ((elevationPostsToRenderBoundsSize.Width + 1 - numAdditionalElevationPostsToRender)*
+                             thisLodDetailTextureWidthPixels);
             float toScale = 1.0f;
             if (cropWidth > originalRenderDiameterPixels)
             {
-                int newCropWidth = (int)Math.Floor(originalRenderDiameterPixels);
-                toScale = (float)newCropWidth/ (float)cropWidth;
+                var newCropWidth = (int) Math.Floor(originalRenderDiameterPixels);
+                toScale = newCropWidth/(float) cropWidth;
                 cropWidth = newCropWidth;
             }
-            float scaleFactor = (float)cropWidth / (float)originalRenderDiameterPixels;
+            float scaleFactor = cropWidth/originalRenderDiameterPixels;
 
             //create the render target and render the overall (larger) map section to the render target
             try
             {
-                using (Bitmap renderTarget = new Bitmap(cropWidth, cropWidth, PixelFormat.Format16bppRgb565))
+                using (var renderTarget = new Bitmap(cropWidth, cropWidth, PixelFormat.Format16bppRgb565))
                 {
                     using (Graphics h = Graphics.FromImage(renderTarget))
                     {
-                        
                         Matrix origHTransform = h.Transform;
                         //h.CompositingQuality = CompositingQuality.HighQuality;
                         //h.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -1780,23 +1861,28 @@ namespace F16CPD.SimSupport.Falcon4
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
                         {
-                            h.TranslateTransform(cropWidth / 2, cropWidth / 2);
-                            h.RotateTransform(-(this.Manager.FlightData.MagneticHeadingInDecimalDegrees));
-                            h.TranslateTransform(-cropWidth / 2, -cropWidth / 2);
+                            h.TranslateTransform(cropWidth/2, cropWidth/2);
+                            h.RotateTransform(-(Manager.FlightData.MagneticHeadingInDecimalDegrees));
+                            h.TranslateTransform(-cropWidth/2, -cropWidth/2);
                         }
 
                         h.ScaleTransform(toScale, toScale);
                         h.TranslateTransform(-xOffset, -yOffset);
 
-                        Bitmap crapMap = _terrainBrowser.GetTheaterMap(_terrainBrowser.CurrentTheaterDotMapFileInfo.NumLODs-1);
+                        Bitmap crapMap =
+                            _terrainBrowser.GetTheaterMap(_terrainBrowser.CurrentTheaterDotMapFileInfo.NumLODs - 1);
                         if (crapMap != null)
                         {
                             h.Clear(crapMap.GetPixel(crapMap.Width - 1, crapMap.Height - 1));
                         }
                         int numPostsRendered = 0;
-                        for (int thisElevationPostY = (int)clampBottomYPost; thisElevationPostY <= (int)clampTopYPost; thisElevationPostY++)
+                        for (int thisElevationPostY = clampBottomYPost;
+                             thisElevationPostY <= clampTopYPost;
+                             thisElevationPostY++)
                         {
-                            for (int thisElevationPostX = (int)clampLeftXPost; thisElevationPostX <= (int)clampRightXPost; thisElevationPostX++)
+                            for (int thisElevationPostX = clampLeftXPost;
+                                 thisElevationPostX <= clampRightXPost;
+                                 thisElevationPostX++)
                             {
                                 //retrieve the detail texture corresponding to the current elevation post offset 
 
@@ -1808,17 +1894,22 @@ namespace F16CPD.SimSupport.Falcon4
                                     e.Cancel = true;
                                     return false;
                                 }
-                                thisElevationPostDetailTexture = _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX, thisElevationPostY, lod);
+                                thisElevationPostDetailTexture =
+                                    _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX,
+                                                                                     thisElevationPostY, lod);
                                 if (thisElevationPostDetailTexture == null) continue;
                                 //now draw the detail texture onto the render target
-                                sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width, thisElevationPostDetailTexture.Height);
+                                sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
+                                                           thisElevationPostDetailTexture.Height);
                                 //determine the upper-left pixel at which to place this detail texture on the render target
-                                Point destPoint = new Point(
-                                    (thisElevationPostX - leftXPost) * thisLodDetailTextureWidthPixels,
-                                    (topYPost - thisElevationPostY - 1) * thisLodDetailTextureWidthPixels
-                                );
+                                var destPoint = new Point(
+                                    (thisElevationPostX - leftXPost)*thisLodDetailTextureWidthPixels,
+                                    (topYPost - thisElevationPostY - 1)*thisLodDetailTextureWidthPixels
+                                    );
                                 //calculate the destination rectangle (in pixels) on the render target, that we'll be placing the detail texture inside of
-                                Rectangle destRect = new Rectangle(destPoint, new Size(thisLodDetailTextureWidthPixels+2, thisLodDetailTextureWidthPixels+2));
+                                var destRect = new Rectangle(destPoint,
+                                                             new Size(thisLodDetailTextureWidthPixels + 2,
+                                                                      thisLodDetailTextureWidthPixels + 2));
                                 if (_mapRenderingBackgroundWorker.CancellationPending)
                                 {
                                     _mapRenderProgress = 0;
@@ -1831,19 +1922,23 @@ namespace F16CPD.SimSupport.Falcon4
                                 numPostsRendered++;
                             }
                             _mapRenderingBackgroundWorker.ReportProgress(
-                                (int)Math.Floor((
-                                    (float)numPostsRendered /
-                                        (float)(
-                                                    clampedElevationPostsToRenderBoundsSize.Width
-                                                            *
-                                                    clampedElevationPostsToRenderBoundsSize.Height
-                                                )
-                                ) * 100.0f)
-                            );
+                                (int) Math.Floor((
+                                                     numPostsRendered/
+                                                     (float) (
+                                                                 clampedElevationPostsToRenderBoundsSize.Width
+                                                                 *
+                                                                 clampedElevationPostsToRenderBoundsSize.Height
+                                                             )
+                                                 )*100.0f)
+                                );
                             Application.DoEvents();
                         }
                     }
-                    Rectangle clipRectangle = new Rectangle((cropWidth / 2) - (int)((originalRenderSizeInPixels.Width * scaleFactor) / 2), (cropWidth / 2) - (int)((originalRenderSizeInPixels.Height * scaleFactor) / 2), (int)(originalRenderSizeInPixels.Width * scaleFactor), (int)(originalRenderSizeInPixels.Height * scaleFactor));
+                    var clipRectangle =
+                        new Rectangle((cropWidth/2) - (int) ((originalRenderSizeInPixels.Width*scaleFactor)/2),
+                                      (cropWidth/2) - (int) ((originalRenderSizeInPixels.Height*scaleFactor)/2),
+                                      (int) (originalRenderSizeInPixels.Width*scaleFactor),
+                                      (int) (originalRenderSizeInPixels.Height*scaleFactor));
                     g.DrawImage(
                         renderTarget,
                         renderRectangle,
@@ -1852,61 +1947,103 @@ namespace F16CPD.SimSupport.Falcon4
                         );
                     if (_mapAirplaneBitmap == null)
                     {
-                        _mapAirplaneBitmap = (Bitmap)Properties.Resources.F16Symbol.Clone(); ;
-                        _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255,0,255));
-                        _mapAirplaneBitmap = (Bitmap)Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap, new Size((int)Math.Floor(((float)_mapAirplaneBitmap.Width)), (int)Math.Floor(((float)_mapAirplaneBitmap.Height))));
+                        _mapAirplaneBitmap = (Bitmap) Resources.F16Symbol.Clone();
+                        ;
+                        _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255, 0, 255));
+                        _mapAirplaneBitmap =
+                            (Bitmap)
+                            Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap,
+                                                             new Size(
+                                                                 (int) Math.Floor(((float) _mapAirplaneBitmap.Width)),
+                                                                 (int) Math.Floor(((float) _mapAirplaneBitmap.Height))));
                     }
-                    g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width) / 2)), (((renderRectangle.Height - _mapAirplaneBitmap.Height) / 2)));
+                    g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width)/2)),
+                                (((renderRectangle.Height - _mapAirplaneBitmap.Height)/2)));
 
-                    float renderRectangleScaleFactor = (float)Math.Sqrt((renderRectangle.Width * renderRectangle.Width) + (renderRectangle.Height*renderRectangle.Height))/originalRenderDiameterPixels;
+                    float renderRectangleScaleFactor =
+                        (float)
+                        Math.Sqrt((renderRectangle.Width*renderRectangle.Width) +
+                                  (renderRectangle.Height*renderRectangle.Height))/originalRenderDiameterPixels;
 
 
-                    Pen mapRingPen = new Pen(Color.Magenta);
+                    var mapRingPen = new Pen(Color.Magenta);
                     Brush mapRingBrush = new SolidBrush(Color.Magenta);
                     mapRingPen.Width = 1;
                     int mapRingLineWidths = 25;
 
                     Matrix originalGTransform = g.Transform;
 
-                    g.TranslateTransform(renderRectangle.Width / 2, renderRectangle.Height / 2);
-                    g.RotateTransform(-this.Manager.FlightData.MagneticHeadingInDecimalDegrees);
-                    g.TranslateTransform(-renderRectangle.Width / 2, -renderRectangle.Height / 2);
+                    g.TranslateTransform(renderRectangle.Width/2, renderRectangle.Height/2);
+                    g.RotateTransform(-Manager.FlightData.MagneticHeadingInDecimalDegrees);
+                    g.TranslateTransform(-renderRectangle.Width/2, -renderRectangle.Height/2);
 
                     //rotate 45 degrees before drawing outer map range circle
-                    Matrix preRotate = g.Transform;  //capture current rotation so we can set it back before drawing inner map range circle
-                    g.TranslateTransform(renderRectangle.Width / 2, renderRectangle.Height / 2);
+                    Matrix preRotate = g.Transform;
+                        //capture current rotation so we can set it back before drawing inner map range circle
+                    g.TranslateTransform(renderRectangle.Width/2, renderRectangle.Height/2);
                     g.RotateTransform(-45);
-                    g.TranslateTransform(-renderRectangle.Width / 2, -renderRectangle.Height / 2);
+                    g.TranslateTransform(-renderRectangle.Width/2, -renderRectangle.Height/2);
 
                     //now draw outer map range circle
-                    int outerMapRingDiameterPixelsScaled = (int)Math.Floor(outerMapRingDiameterPixelsUnscaled * renderRectangleScaleFactor);
-                    Rectangle outerMapRingBoundingRect = new Rectangle(((renderRectangle.Width - outerMapRingDiameterPixelsScaled) / 2), ((renderRectangle.Height - outerMapRingDiameterPixelsScaled) / 2), outerMapRingDiameterPixelsScaled, outerMapRingDiameterPixelsScaled);
+                    var outerMapRingDiameterPixelsScaled =
+                        (int) Math.Floor(outerMapRingDiameterPixelsUnscaled*renderRectangleScaleFactor);
+                    var outerMapRingBoundingRect =
+                        new Rectangle(((renderRectangle.Width - outerMapRingDiameterPixelsScaled)/2),
+                                      ((renderRectangle.Height - outerMapRingDiameterPixelsScaled)/2),
+                                      outerMapRingDiameterPixelsScaled, outerMapRingDiameterPixelsScaled);
                     g.DrawEllipse(mapRingPen, outerMapRingBoundingRect);
-                    int outerMapRingBoundingRectMiddleX = outerMapRingBoundingRect.X + (int)(Math.Floor((float)outerMapRingBoundingRect.Width / (float)2));
-                    int outerMapRingBoundingRectMiddleY = outerMapRingBoundingRect.Y + (int)(Math.Floor((float)outerMapRingBoundingRect.Height / (float)2));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top), new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top + mapRingLineWidths));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY), new Point(outerMapRingBoundingRect.X + mapRingLineWidths, outerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width, outerMapRingBoundingRectMiddleY), new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineWidths, outerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom), new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom - mapRingLineWidths));
+                    int outerMapRingBoundingRectMiddleX = outerMapRingBoundingRect.X +
+                                                          (int) (Math.Floor(outerMapRingBoundingRect.Width/(float) 2));
+                    int outerMapRingBoundingRectMiddleY = outerMapRingBoundingRect.Y +
+                                                          (int) (Math.Floor(outerMapRingBoundingRect.Height/(float) 2));
+                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top),
+                               new Point(outerMapRingBoundingRectMiddleX,
+                                         outerMapRingBoundingRect.Top + mapRingLineWidths));
+                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY),
+                               new Point(outerMapRingBoundingRect.X + mapRingLineWidths, outerMapRingBoundingRectMiddleY));
+                    g.DrawLine(mapRingPen,
+                               new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width,
+                                         outerMapRingBoundingRectMiddleY),
+                               new Point(
+                                   outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineWidths,
+                                   outerMapRingBoundingRectMiddleY));
+                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom),
+                               new Point(outerMapRingBoundingRectMiddleX,
+                                         outerMapRingBoundingRect.Bottom - mapRingLineWidths));
 
                     //set rotation back before drawing inner map range circle
                     g.Transform = preRotate;
 
                     //draw inner map range circle
-                    int innerMapRingDiameterPixelsScaled = (int)(Math.Floor((float)outerMapRingDiameterPixelsScaled / 2.0f));
-                    Rectangle innerMapRingBoundingRect = new Rectangle(((renderRectangle.Width - innerMapRingDiameterPixelsScaled) / 2), ((renderRectangle.Height - innerMapRingDiameterPixelsScaled) / 2), innerMapRingDiameterPixelsScaled, innerMapRingDiameterPixelsScaled);
+                    var innerMapRingDiameterPixelsScaled = (int) (Math.Floor(outerMapRingDiameterPixelsScaled/2.0f));
+                    var innerMapRingBoundingRect =
+                        new Rectangle(((renderRectangle.Width - innerMapRingDiameterPixelsScaled)/2),
+                                      ((renderRectangle.Height - innerMapRingDiameterPixelsScaled)/2),
+                                      innerMapRingDiameterPixelsScaled, innerMapRingDiameterPixelsScaled);
                     g.DrawEllipse(mapRingPen, innerMapRingBoundingRect);
-                    int innerMapRingBoundingRectMiddleX = innerMapRingBoundingRect.X + (int)(Math.Floor((float)innerMapRingBoundingRect.Width / (float)2));
-                    int innerMapRingBoundingRectMiddleY = innerMapRingBoundingRect.Y + (int)(Math.Floor((float)innerMapRingBoundingRect.Height / (float)2));
-                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRect.X, innerMapRingBoundingRectMiddleY), new Point(innerMapRingBoundingRect.X + mapRingLineWidths, innerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width, innerMapRingBoundingRectMiddleY), new Point(innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width - mapRingLineWidths, innerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom), new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom - mapRingLineWidths));
-                    
+                    int innerMapRingBoundingRectMiddleX = innerMapRingBoundingRect.X +
+                                                          (int) (Math.Floor(innerMapRingBoundingRect.Width/(float) 2));
+                    int innerMapRingBoundingRectMiddleY = innerMapRingBoundingRect.Y +
+                                                          (int) (Math.Floor(innerMapRingBoundingRect.Height/(float) 2));
+                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRect.X, innerMapRingBoundingRectMiddleY),
+                               new Point(innerMapRingBoundingRect.X + mapRingLineWidths, innerMapRingBoundingRectMiddleY));
+                    g.DrawLine(mapRingPen,
+                               new Point(innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width,
+                                         innerMapRingBoundingRectMiddleY),
+                               new Point(
+                                   innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width - mapRingLineWidths,
+                                   innerMapRingBoundingRectMiddleY));
+                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom),
+                               new Point(innerMapRingBoundingRectMiddleX,
+                                         innerMapRingBoundingRect.Bottom - mapRingLineWidths));
+
                     //draw north marker on inner map range circle
-                    Point[] northMarkerPoints = new Point[3];
+                    var northMarkerPoints = new Point[3];
                     northMarkerPoints[0] = new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Top - 15);
-                    northMarkerPoints[1] = new Point(innerMapRingBoundingRectMiddleX-12, innerMapRingBoundingRect.Top+1);
-                    northMarkerPoints[2] = new Point(innerMapRingBoundingRectMiddleX+12, innerMapRingBoundingRect.Top+1);
+                    northMarkerPoints[1] = new Point(innerMapRingBoundingRectMiddleX - 12,
+                                                     innerMapRingBoundingRect.Top + 1);
+                    northMarkerPoints[2] = new Point(innerMapRingBoundingRectMiddleX + 12,
+                                                     innerMapRingBoundingRect.Top + 1);
                     g.FillPolygon(mapRingBrush, northMarkerPoints);
 
                     g.Transform = originalGTransform;
@@ -1923,6 +2060,17 @@ namespace F16CPD.SimSupport.Falcon4
         #endregion
 
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up managed
+        /// and unmanaged resources used by this object before allowing garbage collection
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object is not
         /// manually disposed.  Ordinarily called only by the garbage collector.
@@ -1931,6 +2079,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -1954,23 +2103,35 @@ namespace F16CPD.SimSupport.Falcon4
                     _mapRenderingBackgroundWorkerDoWorkDelegate = null;
                     Common.Util.DisposeObject(_mapRenderingBackgroundWorker);
                     _mapRenderingBackgroundWorker = null;
-
                 }
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
 
+        #region Nested type: MapRenderAsyncArguments
+
+        private struct MapRenderAsyncArguments
+        {
+            public float mapScale;
+            public int rangeRingDiameterInNauticalMiles;
+            public Rectangle renderRectangle;
+            public MapRotationMode rotationMode;
+        }
+
+        #endregion
+
+        #region Nested type: TimestampedFloatValue
+
+        [Serializable]
+        public struct TimestampedFloatValue
+        {
+            public DateTime timestamp;
+            public float value;
+        }
+
+        #endregion
     }
 }

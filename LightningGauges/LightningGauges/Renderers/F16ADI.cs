@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-using Common.SimSupport;
-using System.IO;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 using Common.Imaging;
+using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16ADI:InstrumentRendererBase, IDisposable
+    public class F16ADI : InstrumentRendererBase, IDisposable
     {
         #region Image Location Constants
-        private static string IMAGES_FOLDER_NAME = new DirectoryInfo (Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)).FullName + Path.DirectorySeparatorChar + "images";
+
         private const string ADI_BACKGROUND_IMAGE_FILENAME = "adi.bmp";
         private const string ADI_BACKGROUND_MASK_FILENAME = "adi_mask.bmp";
         private const string ADI_BALL_IMAGE_FILENAME = "adiball.bmp";
@@ -34,10 +33,16 @@ namespace LightningGauges.Renderers
         private const string ADI_AIRPLANE_SYMBOL_MASK_FILENAME = "adiplane_mask.bmp";
         private const string ADI_SLIP_INDICATOR_BALL_IMAGE_FILENAME = "adislip.bmp";
         private const string ADI_SLIP_INDICATOR_BALL_MASK_FILENAME = "adislip_mask.bmp";
+
+        private static readonly string IMAGES_FOLDER_NAME =
+            new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
+            Path.DirectorySeparatorChar + "images";
+
         #endregion
 
         #region Instance variables
-        private static object _imagesLock = new object();
+
+        private static readonly object _imagesLock = new object();
         private static ImageMaskPair _background;
         private static Image _ball;
         private static ImageMaskPair _arrows;
@@ -49,16 +54,18 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _verticalBar;
         private static ImageMaskPair _airplaneSymbol;
         private static ImageMaskPair _slipIndicatorBall;
-        private static bool _imagesLoaded = false;
-        private bool _disposed = false;
+        private static bool _imagesLoaded;
+        private bool _disposed;
+
         #endregion
 
         public F16ADI()
-            : base()
         {
-            this.InstrumentState = new F16ADIInstrumentState();
+            InstrumentState = new F16ADIInstrumentState();
         }
+
         #region Initialization Code
+
         private void LoadImageResources()
         {
             if (_background == null)
@@ -71,7 +78,8 @@ namespace LightningGauges.Renderers
 
             if (_ball == null)
             {
-                _ball = Common.Imaging.Util.LoadBitmapFromFile( IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + ADI_BALL_IMAGE_FILENAME);
+                _ball =
+                    Util.LoadBitmapFromFile(IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + ADI_BALL_IMAGE_FILENAME);
             }
 
             if (_arrows == null)
@@ -144,6 +152,153 @@ namespace LightningGauges.Renderers
             }
             _imagesLoaded = true;
         }
+
+        #endregion
+
+        public F16ADIInstrumentState InstrumentState { get; set; }
+
+        #region Instrument State
+
+        [Serializable]
+        public class F16ADIInstrumentState : InstrumentStateBase
+        {
+            private const float MIN_PITCH = -90;
+            private const float MAX_PITCH = 90;
+            private const float MIN_ROLL = -180;
+            private const float MAX_ROLL = 180;
+            private const float DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
+            private const float DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
+            private float _glideslopeDeviationDegrees;
+            private float _glideslopeDeviationLimitDegrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+            private float _localizerDeviationDegrees;
+            private float _localizerDeviationLimitDegrees = DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES;
+            private float _pitchDegrees;
+            private float _rollDegrees;
+
+            public F16ADIInstrumentState()
+            {
+                PitchDegrees = 0;
+                RollDegrees = 0;
+                GlideslopeDeviationLimitDegrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+                GlideslopeDeviationDegrees = 0;
+                LocalizerDeviationLimitDegrees = DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES;
+                LocalizerDeviationDegrees = 0;
+                OffFlag = false;
+                AuxFlag = false;
+                GlideslopeFlag = false;
+                LocalizerFlag = false;
+                ShowCommandBars = false;
+            }
+
+            public float PitchDegrees
+            {
+                get { return _pitchDegrees; }
+                set
+                {
+                    float pitch = value;
+                    if (pitch < MIN_PITCH) pitch = MIN_PITCH;
+                    if (pitch > MAX_PITCH) pitch = MAX_PITCH;
+                    if (float.IsNaN(pitch) || float.IsInfinity(pitch))
+                    {
+                        pitch = 0;
+                    }
+                    _pitchDegrees = pitch;
+                }
+            }
+
+            public float RollDegrees
+            {
+                get { return _rollDegrees; }
+                set
+                {
+                    float roll = value;
+                    if (roll < MIN_ROLL) roll = MIN_ROLL;
+                    if (roll > MAX_ROLL) roll = MAX_ROLL;
+                    if (float.IsInfinity(roll) || float.IsNaN(roll))
+                    {
+                        roll = 0;
+                    }
+                    _rollDegrees = roll;
+                }
+            }
+
+            public float LocalizerDeviationDegrees
+            {
+                get { return _localizerDeviationDegrees; }
+                set
+                {
+                    float degrees = value;
+                    degrees %= 360.0f;
+                    if (float.IsNaN(degrees) || float.IsInfinity(degrees))
+                    {
+                        degrees = 0;
+                    }
+                    _localizerDeviationDegrees = degrees;
+                }
+            }
+
+            public float LocalizerDeviationLimitDegrees
+            {
+                get { return _localizerDeviationLimitDegrees; }
+                set
+                {
+                    float degrees = value;
+                    degrees %= 360.0f;
+                    if (float.IsInfinity(degrees) || float.IsNaN(degrees) || degrees == 0)
+                    {
+                        degrees = DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES;
+                    }
+                    _localizerDeviationLimitDegrees = degrees;
+                }
+            }
+
+            public float GlideslopeDeviationLimitDegrees
+            {
+                get { return _glideslopeDeviationLimitDegrees; }
+                set
+                {
+                    float degrees = value;
+                    degrees %= 360.0f;
+                    if (float.IsNaN(degrees) || float.IsInfinity(degrees) || degrees == 0)
+                    {
+                        degrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+                    }
+                    _glideslopeDeviationLimitDegrees = degrees;
+                }
+            }
+
+            public float GlideslopeDeviationDegrees
+            {
+                get { return _glideslopeDeviationDegrees; }
+                set
+                {
+                    float degrees = value;
+                    degrees %= 360.0f;
+                    if (float.IsInfinity(degrees) || float.IsNaN(degrees))
+                    {
+                        degrees = 0;
+                    }
+                    _glideslopeDeviationDegrees = degrees;
+                }
+            }
+
+            public bool OffFlag { get; set; }
+            public bool AuxFlag { get; set; }
+            public bool GlideslopeFlag { get; set; }
+            public bool LocalizerFlag { get; set; }
+            public bool ShowCommandBars { get; set; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
@@ -163,7 +318,8 @@ namespace LightningGauges.Renderers
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform((float)bounds.Width / (float)width, (float)bounds.Height / (float)height); //set the initial scale transformation 
+                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                    //set the initial scale transformation 
                 g.TranslateTransform(-32, -31);
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
@@ -171,13 +327,13 @@ namespace LightningGauges.Renderers
 
                 //draw the ball
                 float pixelsPerDegreePitch = 2.0f;
-                float pitchDegrees = this.InstrumentState.PitchDegrees;
-                float rollDegrees = this.InstrumentState.RollDegrees;
-                float centerPixelY = ((float)_ball.Height / 2.0f) - (pixelsPerDegreePitch * pitchDegrees);
+                float pitchDegrees = InstrumentState.PitchDegrees;
+                float rollDegrees = InstrumentState.RollDegrees;
+                float centerPixelY = (_ball.Height/2.0f) - (pixelsPerDegreePitch*pitchDegrees);
                 float topPixelY = centerPixelY - 80;
-                float leftPixelX = ((float)_ball.Width / 2.0f) - 80;
-                RectangleF sourceRect = new RectangleF(leftPixelX, topPixelY, 160, 160);
-                RectangleF destRect = new RectangleF(48, 40, sourceRect.Width, sourceRect.Height);
+                float leftPixelX = (_ball.Width/2.0f) - 80;
+                var sourceRect = new RectangleF(leftPixelX, topPixelY, 160, 160);
+                var destRect = new RectangleF(48, 40, sourceRect.Width, sourceRect.Height);
 
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(128, 118);
@@ -206,15 +362,16 @@ namespace LightningGauges.Renderers
                 g.TranslateTransform(0, -5);
                 g.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                if (this.InstrumentState.ShowCommandBars && !this.InstrumentState.OffFlag)
+                if (InstrumentState.ShowCommandBars && !InstrumentState.OffFlag)
                 {
                     //draw the localizer bar
                     {
-                        float positionPct = this.InstrumentState.LocalizerDeviationDegrees / this.InstrumentState.LocalizerDeviationLimitDegrees;
+                        float positionPct = InstrumentState.LocalizerDeviationDegrees/
+                                            InstrumentState.LocalizerDeviationLimitDegrees;
                         if (Math.Abs(positionPct) <= 1.0f)
                         {
                             float canvasRange = 36.0f;
-                            float pos = (canvasRange * positionPct);
+                            float pos = (canvasRange*positionPct);
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                             g.TranslateTransform(pos, -10.0f);
                             g.DrawImage(_verticalBar.MaskedImage, new Point(0, 0));
@@ -224,12 +381,13 @@ namespace LightningGauges.Renderers
 
                     //draw the glideslope bar
                     {
-                        float positionPct = this.InstrumentState.GlideslopeDeviationDegrees / this.InstrumentState.GlideslopeDeviationLimitDegrees;
+                        float positionPct = InstrumentState.GlideslopeDeviationDegrees/
+                                            InstrumentState.GlideslopeDeviationLimitDegrees;
                         if (Math.Abs(positionPct) <= 1.0f)
                         {
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                             float canvasRange = 46.0f;
-                            float pos = (-canvasRange * positionPct);
+                            float pos = (-canvasRange*positionPct);
                             g.TranslateTransform(0.0f, pos);
                             g.DrawImage(_horizontalBar.MaskedImage, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -238,7 +396,7 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the localizer flag
-                if (this.InstrumentState.LocalizerFlag || this.InstrumentState.OffFlag)
+                if (InstrumentState.LocalizerFlag || InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(25);
@@ -248,7 +406,7 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the glideslope flag
-                if (this.InstrumentState.GlideslopeFlag || this.InstrumentState.OffFlag)
+                if (InstrumentState.GlideslopeFlag || InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(-25);
@@ -258,7 +416,7 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the aux flag
-                if (this.InstrumentState.AuxFlag || this.InstrumentState.OffFlag)
+                if (InstrumentState.AuxFlag || InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(-25);
@@ -268,7 +426,7 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the off flag
-                if (this.InstrumentState.OffFlag)
+                if (InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(25);
@@ -287,183 +445,12 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-        public F16ADIInstrumentState InstrumentState
-        {
-            get;
-            set;
-        }
-        #region Instrument State
-        [Serializable]
-        public class F16ADIInstrumentState : InstrumentStateBase
-        {
-            private const float MIN_PITCH = -90;
-            private const float MAX_PITCH = 90;
-            private const float MIN_ROLL = -180;
-            private const float MAX_ROLL = 180;
-            private const float DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES=1.0F;
-            private const float DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES=5.0F;
-            private float _pitchDegrees = 0;
-            private float _rollDegrees = 0;
-            private float _glideslopeDeviationDegrees = 0;
-            private float _glideslopeDeviationLimitDegrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
-            private float _localizerDeviationDegrees = 0;
-            private float _localizerDeviationLimitDegrees = DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES;
 
-            public F16ADIInstrumentState()
-                : base()
-            {
-                this.PitchDegrees = 0;
-                this.RollDegrees = 0;
-                this.GlideslopeDeviationLimitDegrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
-                this.GlideslopeDeviationDegrees = 0;
-                this.LocalizerDeviationLimitDegrees = DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES;
-                this.LocalizerDeviationDegrees = 0;
-                this.OffFlag = false;
-                this.AuxFlag = false;
-                this.GlideslopeFlag = false;
-                this.LocalizerFlag = false;
-                this.ShowCommandBars = false;
-            }
-            public float PitchDegrees
-            {
-                get
-                {
-                    return _pitchDegrees;
-                }
-                set
-                {
-                    float pitch = value;
-                    if (pitch < MIN_PITCH) pitch = MIN_PITCH;
-                    if (pitch > MAX_PITCH) pitch = MAX_PITCH;
-                    if (float.IsNaN(pitch) || float.IsInfinity(pitch))
-                    {
-                        pitch = 0;
-                    }
-                    _pitchDegrees = pitch;
-                }
-            }
-            public float RollDegrees
-            {
-                get
-                {
-                    return _rollDegrees;
-                }
-                set
-                {
-                    float roll = value;
-                    if (roll < MIN_ROLL) roll = MIN_ROLL;
-                    if (roll > MAX_ROLL) roll = MAX_ROLL;
-                    if (float.IsInfinity(roll) || float.IsNaN(roll))
-                    {
-                        roll = 0;
-                    }
-                    _rollDegrees = roll;
-                }
-            }
-            public float LocalizerDeviationDegrees
-            {
-                get
-                {
-                    return _localizerDeviationDegrees;
-                }
-                set
-                {
-                    float degrees = value;
-                    degrees %= 360.0f;
-                    if (float.IsNaN(degrees) || float.IsInfinity(degrees))
-                    {
-                        degrees = 0;
-                    }
-                    _localizerDeviationDegrees = degrees;
-                }
-            }
-            public float LocalizerDeviationLimitDegrees
-            {
-                get
-                {
-                    return _localizerDeviationLimitDegrees;
-                }
-                set
-                {
-                    float degrees = value;
-                    degrees %= 360.0f;
-                    if (float.IsInfinity(degrees) || float.IsNaN(degrees) || degrees ==0)
-                    {
-                        degrees = DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES;
-                    }
-                    _localizerDeviationLimitDegrees = degrees;
-                }
-            }
-            public float GlideslopeDeviationLimitDegrees
-            {
-                get
-                {
-                    return _glideslopeDeviationLimitDegrees;
-                }
-                set
-                {
-                    float degrees = value;
-                    degrees %= 360.0f;
-                    if (float.IsNaN(degrees) || float.IsInfinity(degrees) || degrees ==0)
-                    {
-                        degrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
-                    }
-                    _glideslopeDeviationLimitDegrees = degrees;
-                }
-            }
-            public float GlideslopeDeviationDegrees
-            {
-                get
-                {
-                    return _glideslopeDeviationDegrees;
-                }
-                set
-                {
-                    float degrees = value;
-                    degrees %= 360.0f;
-                    if (float.IsInfinity(degrees) || float.IsNaN(degrees))
-                    {
-                        degrees = 0;
-                    }
-                    _glideslopeDeviationDegrees = degrees;
-                }
-            }
-            public bool OffFlag
-            {
-                get;
-                set;
-            }
-            public bool AuxFlag
-            {
-                get;
-                set;
-            }
-            public bool GlideslopeFlag
-            {
-                get;
-                set;
-            }
-            public bool LocalizerFlag
-            {
-                get;
-                set;
-            }
-            public bool ShowCommandBars
-            {
-                get;
-                set;
-            }
-        }
-        #endregion
-        ~F16ADI() 
+        ~F16ADI()
         {
             Dispose(false);
         }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -481,7 +468,6 @@ namespace LightningGauges.Renderers
                     //Common.Util.DisposeObject(_verticalBar);
                     //Common.Util.DisposeObject(_airplaneSymbol);
                     //Common.Util.DisposeObject(_slipIndicatorBall);
-
                 }
                 _disposed = true;
             }

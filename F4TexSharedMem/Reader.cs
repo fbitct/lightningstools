@@ -1,25 +1,24 @@
 using System;
-using System.Runtime.InteropServices;
-using F4TexSharedMem.Win32;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using F4TexSharedMem.Win32;
+
 namespace F4TexSharedMem
 {
-    [ComVisible (true)]
+    [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class Reader : IDisposable
     {
-        private string _sharedMemoryFileName = "FalconTexturesSharedMemoryArea";
+        private bool _dataAvailable;
+        private bool _disposed;
+        private PixelFormat _format = PixelFormat.Undefined;
+        private bool _formatDetected;
         private IntPtr _hFileMappingObject = IntPtr.Zero;
         private IntPtr _lpStartAddress = IntPtr.Zero;
-        private bool _disposed = false;
-        private bool _dataAvailable = false;
-        private NativeMethods.DDSURFACEDESC2 _surfaceDesc = new NativeMethods.DDSURFACEDESC2();
-        private PixelFormat _format = PixelFormat.Undefined;
-        private bool _formatDetected = false;
-        public Reader()
-        {
-        }
+        private string _sharedMemoryFileName = "FalconTexturesSharedMemoryArea";
+        private NativeMethods.DDSURFACEDESC2 _surfaceDesc;
+
         public bool IsDataAvailable
         {
             get
@@ -58,20 +57,30 @@ namespace F4TexSharedMem
                 return _dataAvailable;
             }
         }
+
         private NativeMethods.DDSURFACEDESC2 SurfaceDesc
         {
             get { return _surfaceDesc; }
         }
 
-        public Bitmap FullImage {
-            get 
-            {
-                return GetImage(Rectangle.Empty);
-            }
+        public Bitmap FullImage
+        {
+            get { return GetImage(Rectangle.Empty); }
         }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
         private void DetectImageFormat()
         {
-            _formatDetected =false;
+            _formatDetected = false;
             if (!_dataAvailable)
             {
                 bool dataAvailable = IsDataAvailable;
@@ -80,7 +89,9 @@ namespace F4TexSharedMem
             {
                 throw new InvalidOperationException("Image data not available.");
             }
-            _surfaceDesc = (NativeMethods.DDSURFACEDESC2)Marshal.PtrToStructure(new IntPtr(_lpStartAddress.ToInt64() + 4), typeof(NativeMethods.DDSURFACEDESC2));
+            _surfaceDesc =
+                (NativeMethods.DDSURFACEDESC2)
+                Marshal.PtrToStructure(new IntPtr(_lpStartAddress.ToInt64() + 4), typeof (NativeMethods.DDSURFACEDESC2));
             switch (_surfaceDesc.ddpfPixelFormat.dwRGBBitCount)
             {
                 case 16:
@@ -99,7 +110,8 @@ namespace F4TexSharedMem
             }
             _formatDetected = true;
         }
-        public IntPtr  GetImagePointer(ref Rectangle rect) 
+
+        public IntPtr GetImagePointer(ref Rectangle rect)
         {
             if (!CheckImage()) return IntPtr.Zero;
             int surfaceWidth = Math.Abs(_surfaceDesc.dwWidth);
@@ -109,14 +121,13 @@ namespace F4TexSharedMem
             rect = ClampRect(rect, surfaceWidth, surfaceHeight);
             if (rect == Rectangle.Empty) rect = new Rectangle(0, 0, surfaceWidth, surfaceHeight);
 
-            int offset = (_surfaceDesc.lPitch * rect.Y) + (rect.X * (_surfaceDesc.ddpfPixelFormat.dwRGBBitCount / 8));
+            int offset = (_surfaceDesc.lPitch*rect.Y) + (rect.X*(_surfaceDesc.ddpfPixelFormat.dwRGBBitCount/8));
             return new IntPtr(_lpStartAddress.ToInt64() + offset + 4 + _surfaceDesc.dwSize);
-
         }
 
         private static Rectangle ClampRect(Rectangle rect, int clampToWidth, int clampToHeight)
         {
-            Rectangle toReturn = new Rectangle();
+            var toReturn = new Rectangle();
             int x = rect.X;
             int y = rect.Y;
             int width = rect.Width;
@@ -125,10 +136,14 @@ namespace F4TexSharedMem
             if (clampToWidth < 0) clampToWidth = 0;
             if (clampToHeight < 0) clampToHeight = 0;
 
-            if (x < 0) x = 0; else if (x > clampToWidth) x = clampToWidth;
-            if (y < 0) y = 0; else if (y > clampToHeight) y = clampToHeight;
-            if (width < 0) width = 0; else if (width > clampToWidth) width = clampToWidth;
-            if (height < 0) height = 0; else if (height > clampToHeight) height = clampToHeight;
+            if (x < 0) x = 0;
+            else if (x > clampToWidth) x = clampToWidth;
+            if (y < 0) y = 0;
+            else if (y > clampToHeight) y = clampToHeight;
+            if (width < 0) width = 0;
+            else if (width > clampToWidth) width = clampToWidth;
+            if (height < 0) height = 0;
+            else if (height > clampToHeight) height = clampToHeight;
             if (x + width > clampToWidth) width = clampToWidth - x;
             if (y + height > clampToHeight) height = clampToHeight - y;
             if (width < 0) width = 0;
@@ -141,6 +156,7 @@ namespace F4TexSharedMem
 
             return toReturn;
         }
+
         private bool CheckImage()
         {
             if (!_dataAvailable)
@@ -158,20 +174,23 @@ namespace F4TexSharedMem
             return true;
         }
 
-        public Bitmap GetImage (Rectangle rect)
+        public Bitmap GetImage(Rectangle rect)
         {
             if (!CheckImage()) return null;
             IntPtr start = GetImagePointer(ref rect);
-            Bitmap bmp = new Bitmap(rect.Width, rect.Height, _surfaceDesc.lPitch, _format, start);
+            var bmp = new Bitmap(rect.Width, rect.Height, _surfaceDesc.lPitch, _format, start);
             return bmp;
         }
 
         private void OpenSM()
         {
             CloseSM();
-            _hFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false, _sharedMemoryFileName);
-            _lpStartAddress = NativeMethods.MapViewOfFile(_hFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
+            _hFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
+                                                                _sharedMemoryFileName);
+            _lpStartAddress = NativeMethods.MapViewOfFile(_hFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0,
+                                                          IntPtr.Zero);
         }
+
         private void CloseSM()
         {
             if (!_hFileMappingObject.Equals(IntPtr.Zero))
@@ -180,6 +199,7 @@ namespace F4TexSharedMem
                 NativeMethods.CloseHandle(_hFileMappingObject);
             }
         }
+
         internal void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -191,11 +211,6 @@ namespace F4TexSharedMem
 
                 _disposed = true;
             }
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

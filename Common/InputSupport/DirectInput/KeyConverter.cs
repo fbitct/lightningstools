@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using Microsoft.DirectX.DirectInput;
 
 namespace Common.InputSupport.DirectInput
 {
     public static class KeyConverter
     {
-
         /// <summary>
         /// Convert the first pressed letter or number in a Keys enum to a Key value
         /// </summary>
@@ -19,11 +14,11 @@ namespace Common.InputSupport.DirectInput
         /// Not all keys are supported.  
         /// Letters, numbers, arrows, Function keys, and many other keys should work
         /// </remarks>
-        public static Microsoft.DirectX.DirectInput.Key ConvertFrom(System.Windows.Forms.Keys keys)
+        public static Key ConvertFrom(Keys keys)
         {
             switch (keys)
             {
-                #region Key Mappings from Keys to Key
+                    #region Key Mappings from Keys to Key
 
                 case Keys.A:
                     return Key.A;
@@ -199,10 +194,10 @@ namespace Common.InputSupport.DirectInput
                     return Key.RightBracket;
 
                 default:
-                    return (Key)0;
-                #endregion
+                    return 0;
+
+                    #endregion
             }
         }
-
     }
 }

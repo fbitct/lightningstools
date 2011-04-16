@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.SimSupport
 {
@@ -9,19 +7,21 @@ namespace Common.SimSupport
     {
         public override string ToString()
         {
-            return Common.Serialization.Util.ToRawBytes(this);
+            return Serialization.Util.ToRawBytes(this);
         }
+
         public override bool Equals(object obj)
         {
             return (
-                obj != null &&
-                obj is InstrumentStateBase &&
-                obj.GetHashCode() == this.GetHashCode()
-            );
+                       obj != null &&
+                       obj is InstrumentStateBase &&
+                       obj.GetHashCode() == GetHashCode()
+                   );
         }
+
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
     }
 }

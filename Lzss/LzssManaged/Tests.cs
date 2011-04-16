@@ -6,6 +6,7 @@ namespace Lzss
     public static class Tests
     {
         private const bool TORTURE = false;
+
         public static void Main(string[] args)
         {
             int timesToRun = 1;
@@ -17,30 +18,32 @@ namespace Lzss
             }
             Console.WriteLine("Press any key to exit.");
             Console.ReadKey();
-
         }
+
         public static void TestCompressionLowLevelInterface()
         {
             Console.WriteLine("Testing low-level compression interface...");
             //create a 5MB buffer of random data to attempt compression with (it will actually get bigger after "compression", since random data is not compressible
-            int nonCompressedDataSize=500*1024*1024;
-            byte[] nonCompressedDataBuffer = new byte[nonCompressedDataSize];
-            Random rnd = new Random();
+            int nonCompressedDataSize = 500*1024*1024;
+            var nonCompressedDataBuffer = new byte[nonCompressedDataSize];
+            var rnd = new Random();
             Console.WriteLine("Generating " + nonCompressedDataSize + " bytes of random data.");
             rnd.NextBytes(nonCompressedDataBuffer);
 
             //create a buffer 2x as big as our uncompressed data, to hold the results of LZSS data compression
-            byte[] compressedDataBuffer=new byte[nonCompressedDataBuffer.Length *2];
+            var compressedDataBuffer = new byte[nonCompressedDataBuffer.Length*2];
             //compress the original data
             Console.WriteLine("Compressing generated data...");
-            int compressedSize = Codec.Compress(nonCompressedDataBuffer, 0, nonCompressedDataBuffer.Length, compressedDataBuffer, 0);
-            Console.WriteLine("Size after compression: " + compressedSize.ToString());
+            int compressedSize = Codec.Compress(nonCompressedDataBuffer, 0, nonCompressedDataBuffer.Length,
+                                                compressedDataBuffer, 0);
+            Console.WriteLine("Size after compression: " + compressedSize);
 
             //create another buffer to hold the results of LSZZ decompression, to compare against our original non-compressed data
-            byte[] decompressedDataBuffer = new byte[nonCompressedDataSize];
+            var decompressedDataBuffer = new byte[nonCompressedDataSize];
             //decompress the compressed data
             Console.WriteLine("Decompressing compressed data...");
-            int bytesProcessed = Codec.Decompress(compressedDataBuffer, 0, decompressedDataBuffer, 0, nonCompressedDataSize);
+            int bytesProcessed = Codec.Decompress(compressedDataBuffer, 0, decompressedDataBuffer, 0,
+                                                  nonCompressedDataSize);
             Console.WriteLine("Bytes processed in decompression: " + bytesProcessed);
 
             Console.WriteLine("Comparing decompressed data to original data...");
@@ -53,7 +56,7 @@ namespace Lzss
                 if (originalNonCompressedData != decompressedData)
                 {
                     everythingMatched = false;
-                    Console.WriteLine("Data does not match at offset: " + i.ToString());
+                    Console.WriteLine("Data does not match at offset: " + i);
                     Console.Beep();
                     break;
                 }
@@ -63,23 +66,24 @@ namespace Lzss
                 Console.WriteLine("All data matched after compression and decompression.");
             }
             Console.WriteLine("Finished testing low-level compression interface.");
-
         }
+
         public static void TestCompressionStreamInterface()
         {
             Console.WriteLine("Testing stream-based compression interface...");
             //create a 5MB buffer of random data to attempt compression with (it will actually get bigger after "compression", since random data is not compressible
-            int nonCompressedDataSize = 500 * 1024 * 1024;
-            byte[] nonCompressedDataBuffer = new byte[nonCompressedDataSize];
-            Random rnd = new Random();
+            int nonCompressedDataSize = 500*1024*1024;
+            var nonCompressedDataBuffer = new byte[nonCompressedDataSize];
+            var rnd = new Random();
             Console.WriteLine("Generating " + nonCompressedDataSize + " bytes of random data.");
             rnd.NextBytes(nonCompressedDataBuffer);
-            Stream nonCompressedDataStream = new MemoryStream(nonCompressedDataBuffer, 0, nonCompressedDataSize, false, false);
+            Stream nonCompressedDataStream = new MemoryStream(nonCompressedDataBuffer, 0, nonCompressedDataSize, false,
+                                                              false);
 
             //compress the data
             Stream compressedDataStream = new MemoryStream();
             int compressedSize = Codec.Compress(nonCompressedDataStream, nonCompressedDataSize, compressedDataStream);
-            Console.WriteLine("Size after compression: " + compressedSize.ToString());
+            Console.WriteLine("Size after compression: " + compressedSize);
 
             //decompress the compressed data
             compressedDataStream.Seek(0, SeekOrigin.Begin);
@@ -98,15 +102,15 @@ namespace Lzss
                 if (nextDecompressedByte == -1)
                 {
                     everythingMatched = false;
-                    Console.WriteLine("Premature end of decompressed data stream at offset: " + i.ToString());
+                    Console.WriteLine("Premature end of decompressed data stream at offset: " + i);
                     Console.Beep();
                     break;
                 }
-                byte decompressedData = (byte)nextDecompressedByte;
+                var decompressedData = (byte) nextDecompressedByte;
                 if (originalNonCompressedData != decompressedData)
                 {
                     everythingMatched = false;
-                    Console.WriteLine("Data does not match at offset: " + i.ToString());
+                    Console.WriteLine("Data does not match at offset: " + i);
                     Console.Beep();
                     break;
                 }

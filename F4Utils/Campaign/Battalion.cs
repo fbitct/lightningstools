@@ -1,30 +1,33 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class Battalion : GroundUnit
     {
         #region Public Fields
-        public uint last_move;
+
+        public byte dummy;
+        public byte fatigue;
+        public byte final_heading;
+        public byte heading;
         public uint last_combat;
-        public VU_ID parent_id;
+        public uint last_move;
         public VU_ID last_obj;
         public short lfx;
         public short lfy;
+        public byte morale;
+        public VU_ID parent_id;
+        public byte position;
         public short rfx;
         public short rfy;
         public byte supply;
-        public byte fatigue;
-        public byte morale;
-        public byte heading;
-        public byte final_heading;
-        public byte dummy;
-        public byte position;
+
         #endregion
 
         protected Battalion()
-            : base()
         {
         }
+
         public Battalion(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -68,7 +71,6 @@ namespace F4Utils.Campaign
             }
             position = bytes[offset];
             offset++;
-
         }
     }
 }

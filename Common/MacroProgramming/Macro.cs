@@ -1,33 +1,29 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
-    public sealed class Macro:Chainable
+    public sealed class Macro : Chainable
     {
-        private DigitalSignal _toStart = null;
-        private DigitalSignal _waitFor = null;
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
-        [NonSerialized]
-        private Thread _workerThread=null;
-        private volatile bool _keepWaiting = false;
-        public Macro():base()
+        private DigitalSignal _in;
+        private volatile bool _keepWaiting;
+        private DigitalSignal _out;
+        private DigitalSignal _toStart;
+        private DigitalSignal _waitFor;
+        [NonSerialized] private Thread _workerThread;
+
+        public Macro()
         {
-            this.ToStart = new DigitalSignal();
-            this.WaitFor= new DigitalSignal();
-            this.In= new DigitalSignal();
-            this.Out= new DigitalSignal();
+            ToStart = new DigitalSignal();
+            WaitFor = new DigitalSignal();
+            In = new DigitalSignal();
+            Out = new DigitalSignal();
         }
+
         public DigitalSignal In
         {
-            get
-            {
-                return _in;
-            }
+            get { return _in; }
             set
             {
                 if (value == null)
@@ -38,12 +34,10 @@ namespace Common.MacroProgramming
                 _in = value;
             }
         }
+
         public DigitalSignal Out
         {
-            get
-            {
-                return _out;
-            }
+            get { return _out; }
             set
             {
                 if (value == null)
@@ -53,6 +47,34 @@ namespace Common.MacroProgramming
                 _out = value;
             }
         }
+
+        public DigitalSignal ToStart
+        {
+            get { return _toStart; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _toStart = value;
+            }
+        }
+
+        public DigitalSignal WaitFor
+        {
+            get { return _waitFor; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _waitFor_SignalChanged;
+                _waitFor = value;
+            }
+        }
+
         private void Work()
         {
             _waitFor.State = false;
@@ -66,6 +88,7 @@ namespace Common.MacroProgramming
             }
             _toStart.State = false;
         }
+
         private void Start()
         {
             if (_workerThread != null && _workerThread.IsAlive)
@@ -78,8 +101,8 @@ namespace Common.MacroProgramming
             _keepWaiting = true;
             _workerThread.Start();
             _workerThread.Join();
-            
         }
+
         public void Stop()
         {
             _keepWaiting = false;
@@ -89,6 +112,7 @@ namespace Common.MacroProgramming
             }
             _toStart.State = false;
         }
+
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -101,37 +125,6 @@ namespace Common.MacroProgramming
             }
         }
 
-        public DigitalSignal ToStart
-        {
-            get
-            {
-                return _toStart;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _toStart = value;
-            }
-        }
-        public DigitalSignal WaitFor
-        {
-            get
-            {
-                return _waitFor;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _waitFor_SignalChanged;
-                _waitFor = value;
-            }
-        }
         private void _waitFor_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -150,6 +143,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        
     }
 }

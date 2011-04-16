@@ -3,17 +3,6 @@ using System.Runtime.InteropServices;
 
 public static partial class Speex
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct JitterBufferPacket
-    {
-        public IntPtr data;
-        public UInt32 len;
-        public UInt32 timestamp;
-        public UInt32 span;
-        public UInt16 sequence;
-        public UInt16 user_data;
-    };
-
     public const int JITTER_BUFFER_OK = 0;
     public const int JITTER_BUFFER_MISSING = 1;
     public const int JITTER_BUFFER_INSERTION = 2;
@@ -36,24 +25,51 @@ public static partial class Speex
 
     [DllImport("libspeexdsp.dll")]
     public static extern IntPtr jitter_buffer_init(int step_size);
+
     [DllImport("libspeexdsp.dll")]
     public static extern void jitter_buffer_reset(IntPtr jitter);
+
     [DllImport("libspeexdsp.dll")]
     public static extern void jitter_buffer_destroy(IntPtr jitter);
+
     [DllImport("libspeexdsp.dll")]
     public static extern void jitter_buffer_put(IntPtr jitter, ref JitterBufferPacket packet);
+
     [DllImport("libspeexdsp.dll")]
-    public static extern int jitter_buffer_get(IntPtr jitter, ref JitterBufferPacket packet, int desired_span, [Out]out int start_offset);
+    public static extern int jitter_buffer_get(IntPtr jitter, ref JitterBufferPacket packet, int desired_span,
+                                               [Out] out int start_offset);
+
     [DllImport("libspeexdsp.dll")]
     public static extern int jitter_buffer_get_another(IntPtr jitter, ref JitterBufferPacket packet);
+
     [DllImport("libspeexdsp.dll")]
     public static extern int jitter_buffer_get_pointer_timestamp(IntPtr jitter);
+
     [DllImport("libspeexdsp.dll")]
     public static extern void jitter_buffer_tick(IntPtr jitter);
+
     [DllImport("libspeexdsp.dll")]
     public static extern void jitter_buffer_remaining_span(IntPtr jitter, UInt32 rem);
+
     [DllImport("libspeexdsp.dll")]
     public static extern int jitter_buffer_ctl(IntPtr jitter, int request, IntPtr ptr);
+
     [DllImport("libspeexdsp.dll")]
-    public static extern int jitter_buffer_update_delay(IntPtr jitter, ref JitterBufferPacket packet, [Out]out int start_offset);
+    public static extern int jitter_buffer_update_delay(IntPtr jitter, ref JitterBufferPacket packet,
+                                                        [Out] out int start_offset);
+
+    #region Nested type: JitterBufferPacket
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct JitterBufferPacket
+    {
+        public IntPtr data;
+        public UInt32 len;
+        public UInt32 timestamp;
+        public UInt32 span;
+        public UInt16 sequence;
+        public UInt16 user_data;
+    } ;
+
+    #endregion
 }

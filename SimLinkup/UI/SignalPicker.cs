@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Common.MacroProgramming;
+using Common.UI;
+using SimLinkup.Scripting;
 
 namespace SimLinkup.UI
 {
     public partial class SignalPicker : Form
     {
-        private Common.UI.ListViewColumnSorter lvwColumnSorter;
-        public Scripting.ScriptingContext ScriptingContext { get; set; }
+        private readonly ListViewColumnSorter lvwColumnSorter;
+
         public SignalPicker()
         {
             InitializeComponent();
-            lvwColumnSorter = new Common.UI.ListViewColumnSorter();
+            lvwColumnSorter = new ListViewColumnSorter();
             lvwColumnSorter.SortColumn = 0;
-            this.lvSignals.ListViewItemSorter = lvwColumnSorter;
-
-
+            lvSignals.ListViewItemSorter = lvwColumnSorter;
         }
+
+        public ScriptingContext ScriptingContext { get; set; }
 
         private void SignalPicker_Load(object sender, EventArgs e)
         {
@@ -32,24 +30,25 @@ namespace SimLinkup.UI
         {
             tvSignalCategories.BeginUpdate();
             tvSignalCategories.Nodes.Clear();
-            if (this.ScriptingContext != null)
+            if (ScriptingContext != null)
             {
-                List<string> distinctSignalSources = this.ScriptingContext.AllSignals.GetDistinctSignalSourceNames();
-                if (distinctSignalSources != null && distinctSignalSources.Count >0)
+                List<string> distinctSignalSources = ScriptingContext.AllSignals.GetDistinctSignalSourceNames();
+                if (distinctSignalSources != null && distinctSignalSources.Count > 0)
                 {
-                    foreach (var signalSource in distinctSignalSources)
+                    foreach (string signalSource in distinctSignalSources)
                     {
-                        TreeNode tn = new TreeNode(signalSource.ToString());
+                        var tn = new TreeNode(signalSource);
                         tn.Tag = signalSource;
                         tvSignalCategories.Nodes.Add(tn);
 
-                        SignalList<Signal> signalsThisSource = this.ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
+                        SignalList<Signal> signalsThisSource =
+                            ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
                         List<string> signalCollections = signalsThisSource.GetDistinctSignalCollectionNames();
                         if (signalCollections != null)
                         {
-                            foreach (var signalCollectionName in signalCollections)
+                            foreach (string signalCollectionName in signalCollections)
                             {
-                                TreeNode tn2= new TreeNode(signalCollectionName);
+                                var tn2 = new TreeNode(signalCollectionName);
                                 tn2.Tag = signalCollectionName;
                                 tn.Nodes.Add(tn2);
                             }
@@ -60,11 +59,12 @@ namespace SimLinkup.UI
             //tvSignalCategories.Sort();
             tvSignalCategories.EndUpdate();
         }
+
         private void UpdateListView()
         {
-            string signalCollectionName = tvSignalCategories.SelectedNode.Tag as string;
+            var signalCollectionName = tvSignalCategories.SelectedNode.Tag as string;
             object signalSource = tvSignalCategories.SelectedNode.Parent.Tag;
-            SignalList<Signal> signalsThisSource =this.ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
+            SignalList<Signal> signalsThisSource = ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
             lvSignals.SuspendLayout();
             lvSignals.BeginUpdate();
             lvSignals.Clear();
@@ -80,18 +80,20 @@ namespace SimLinkup.UI
             {
                 List<string> subSources = signalsThisCollection.GetUniqueSubSources();
 
-                if (subSources != null && subSources.Count >0)
+                if (subSources != null && subSources.Count > 0)
                 {
-                    foreach (var subSource in subSources)
+                    foreach (string subSource in subSources)
                     {
-                        ListViewGroup lvg = new ListViewGroup(subSource, HorizontalAlignment.Left);
+                        var lvg = new ListViewGroup(subSource, HorizontalAlignment.Left);
                         lvSignals.Groups.Add(lvg);
-                        SignalList<Signal> signalsThisSubsource = signalsThisCollection.GetSignalsBySubSourceFriendlyName(subSource);
-                        foreach (var signal in signalsThisSubsource)
+                        SignalList<Signal> signalsThisSubsource =
+                            signalsThisCollection.GetSignalsBySubSourceFriendlyName(subSource);
+                        foreach (Signal signal in signalsThisSubsource)
                         {
-                            ListViewItem lvi = new ListViewItem();
+                            var lvi = new ListViewItem();
                             lvi.Text = signal.FriendlyName;
-                            lvi.SubItems.Add(new ListViewItem.ListViewSubItem() { Name = "Signal Type", Text = signal.SignalType });
+                            lvi.SubItems.Add(new ListViewItem.ListViewSubItem
+                                                 {Name = "Signal Type", Text = signal.SignalType});
                             lvi.Tag = signal;
                             lvg.Items.Add(lvi);
                             lvSignals.Items.Add(lvi);
@@ -100,12 +102,13 @@ namespace SimLinkup.UI
                 }
                 else
                 {
-                    foreach (var signal in signalsThisCollection)
+                    foreach (Signal signal in signalsThisCollection)
                     {
-                        ListViewItem lvi = new ListViewItem();
+                        var lvi = new ListViewItem();
                         lvi.Text = signal.FriendlyName;
                         lvi.Tag = signal;
-                        lvi.SubItems.Add(new ListViewItem.ListViewSubItem() { Name = "Signal Type", Text = signal.SignalType });
+                        lvi.SubItems.Add(new ListViewItem.ListViewSubItem
+                                             {Name = "Signal Type", Text = signal.SignalType});
                         lvSignals.Items.Add(lvi);
                     }
                 }
@@ -119,12 +122,12 @@ namespace SimLinkup.UI
             lvSignals.EndUpdate();
             lvSignals.ResumeLayout();
             lvSignals.Sort();
-
         }
 
         private void tvSignalCategories_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (tvSignalCategories.SelectedNode.Tag != null && tvSignalCategories.SelectedNode.Parent != null && tvSignalCategories.SelectedNode.Parent.Tag != null)
+            if (tvSignalCategories.SelectedNode.Tag != null && tvSignalCategories.SelectedNode.Parent != null &&
+                tvSignalCategories.SelectedNode.Parent.Tag != null)
             {
                 UpdateListView();
             }
@@ -132,8 +135,8 @@ namespace SimLinkup.UI
             {
                 ClearListView();
             }
-
         }
+
         private void ClearListView()
         {
             lvSignals.Clear();
@@ -163,9 +166,7 @@ namespace SimLinkup.UI
             }
 
             // Perform the sort with these new sort options.
-            this.lvSignals.Sort();
-
+            lvSignals.Sort();
         }
-
     }
 }

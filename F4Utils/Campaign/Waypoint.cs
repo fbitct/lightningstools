@@ -1,31 +1,35 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class Waypoint
     {
         #region Public Fields
-        public byte haves;
+
+        public byte Action;
+        public uint Arrive;
+        public uint Depart;
+        public uint Flags;
+        public byte Formation;
         public short GridX;
         public short GridY;
         public short GridZ;
-        public uint Arrive;
-        public byte Action;
         public byte RouteAction;
-        public byte Formation;
-        public uint Flags;
-        public VU_ID TargetID;
         public byte TargetBuilding;
-        public uint Depart;
+        public VU_ID TargetID;
+        public byte haves;
 
         #endregion
+
         public const byte WP_HAVE_DEPTIME = 0x01;
         public const byte WP_HAVE_TARGET = 0x02;
 
-        private const int FLAGS_WIDENED_AT_VERSION=73;
+        private const int FLAGS_WIDENED_AT_VERSION = 73;
+
         protected Waypoint()
-            : base()
         {
         }
+
         public Waypoint(byte[] bytes, ref int offset, int version)
             : this()
         {
@@ -55,8 +59,7 @@ namespace F4Utils.Campaign
             {
                 Flags = BitConverter.ToUInt32(bytes, offset);
                 //TODO: SOME NEW FIELD, 2 BYTES LONG, COMES HERE, OR ELSE FLAGS IS EXPANDED IN AT LATEST V73 (PROBABLY EARLIER?) TO BE 4 BYTES LONG INSTEAD OF 2 BYTES LONG
-                offset += 4; 
-
+                offset += 4;
             }
             if ((haves & WP_HAVE_TARGET) != 0)
             {
@@ -73,7 +76,7 @@ namespace F4Utils.Campaign
                 TargetID = new VU_ID();
                 TargetBuilding = 255;
             }
-            if ((haves & WP_HAVE_DEPTIME) !=0)
+            if ((haves & WP_HAVE_DEPTIME) != 0)
             {
                 Depart = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;

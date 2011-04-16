@@ -1,30 +1,35 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class Unit : CampaignBase
     {
         #region Public Fields
-        public uint last_check;
-        public int roster;
-        public int unit_flags;
+
+        public VU_ID cargo_id;
+        public ushort current_wp;
         public short dest_x;
         public short dest_y;
-        public VU_ID target_id;
-        public VU_ID cargo_id;
-        public byte moved;
+        public uint last_check;
         public byte losses;
-        public byte tactic;
-        public ushort current_wp;
+        public byte moved;
         public short name_id;
-        public short reinforcement;
         public ushort numWaypoints;
+        public short reinforcement;
+        public int roster;
+        public byte tactic;
+        public VU_ID target_id;
+        public int unit_flags;
         public Waypoint[] waypoints;
+
         #endregion
+
         public const int U_FINAL = 0x100000;
+
         protected Unit()
-            : base()
         {
         }
+
         public Unit(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -78,8 +83,13 @@ namespace F4Utils.Campaign
             reinforcement = BitConverter.ToInt16(bytes, offset);
             offset += 2;
             DecodeWaypoints(bytes, ref offset, version);
-
         }
+
+        protected bool Final
+        {
+            get { return ((unit_flags & U_FINAL) > 0); }
+        }
+
         protected void DecodeWaypoints(byte[] bytes, ref int offset, int version)
         {
             if (version >= 71)
@@ -89,7 +99,7 @@ namespace F4Utils.Campaign
             }
             else
             {
-                numWaypoints = (ushort)bytes[offset];
+                numWaypoints = bytes[offset];
                 offset++;
             }
             if (numWaypoints > 500) return;
@@ -97,13 +107,6 @@ namespace F4Utils.Campaign
             for (int i = 0; i < numWaypoints; i++)
             {
                 waypoints[i] = new Waypoint(bytes, ref offset, version);
-            }
-        }
-        protected bool Final
-        {
-            get
-            {
-                return ((unit_flags & U_FINAL) > 0);
             }
         }
     }

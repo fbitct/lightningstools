@@ -5,27 +5,26 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Windows.Forms;
-using JoyMapper.Properties;
-using Microsoft.DirectX.DirectInput;
-using Microsoft.VisualBasic.Devices;
-using PPJoy;
-using log4net;
 using Common.InputSupport;
-using Common.InputSupport.DirectInput;
 using Common.InputSupport.BetaInnovations;
+using Common.InputSupport.DirectInput;
 using Common.InputSupport.Phcc;
 using Common.Strings;
+using Common.UI;
+using JoyMapper.Properties;
+using log4net;
+using Microsoft.DirectX.DirectInput;
+using Microsoft.VisualBasic.Devices;
+using Microsoft.Win32;
+using PPJoy;
+using Device = PPJoy.Device;
 
 namespace JoyMapper
 {
     internal sealed partial class frmMain : Form
     {
-        //TODO: test HasChanges functionality
-        //TODO: document all classes and methods
-        //TODO: add help manual
-        //TODO: fix menu capitalization on PPJoy menu
-        //TODO: prompt user when removing virtual joysticks which ones to remove
         #region Constants Declarations
 
         private const int IMAGE_INDEX_LOCAL_DEVICES = 0;
@@ -41,24 +40,30 @@ namespace JoyMapper
         private const int IMAGE_INDEX_AXIS_GREYED = 10;
         private const int IMAGE_INDEX_BUTTON_GREYED = 11;
         private const int IMAGE_INDEX_POV_GREYED = 12;
+
         #endregion
+
         #region Instance Variable Declarations
-        private object _stateChanging = new object();
-        private static ILog _log = LogManager.GetLogger(typeof(frmMain));
-        private bool _exiting = false;
-        private TabPage _mappingsTab;
-        private OutputMap _outputMap = new OutputMap();
-        private TreeNode _lastNode = null;
-        private SaveFileDialog _dlgSave = new SaveFileDialog();
-        private OpenFileDialog _dlgOpen = new OpenFileDialog();
-        private Mediator _mediator;
-        private bool _autoHighlightingEnabled = false;
-        private bool _hasChanges = false;
-        private bool _lastSaveCancelled = false;
-        private bool _lastOpenCancelled = false;
+
+        private static readonly ILog _log = LogManager.GetLogger(typeof (frmMain));
+        private readonly OpenFileDialog _dlgOpen = new OpenFileDialog();
+        private readonly SaveFileDialog _dlgSave = new SaveFileDialog();
+        private readonly object _stateChanging = new object();
+        private bool _autoHighlightingEnabled;
+        private bool _exiting;
         private string _fileName;
+        private bool _hasChanges;
+        private TreeNode _lastNode;
+        private bool _lastOpenCancelled;
+        private bool _lastSaveCancelled;
+        private TabPage _mappingsTab;
+        private Mediator _mediator;
+        private OutputMap _outputMap = new OutputMap();
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// Creates a new instance of this form.
         /// </summary>
@@ -66,8 +71,11 @@ namespace JoyMapper
         {
             InitializeComponent();
         }
+
         #endregion
+
         #region Private Methods
+
         /// <summary>
         /// Informs the mediator to start sending output through to PPJoy. Also performs minimization
         /// of the main window if the user preference is configured to do so.
@@ -103,8 +111,8 @@ namespace JoyMapper
             //update menu/toolbar items enabled/disabled states
             SetMenuAndToolbarEnabledDisabledStates();
             DisableMappingsTab();
-
         }
+
         /// <summary>
         /// Informs the mediator to stop sending output to PPJoy
         /// </summary>
@@ -119,6 +127,7 @@ namespace JoyMapper
             SetMenuAndToolbarEnabledDisabledStates();
             EnableMappingsTab();
         }
+
         /// <summary>
         /// Reads the last-edited node's values from the controls on the Mappings tab, and updates
         /// the output map accordingly
@@ -151,13 +160,14 @@ namespace JoyMapper
                 {
                     //get a reference to the actual physical control that was edited (from the
                     //TreeNode's .Tag property
-                    PhysicalControlInfo inputControl = (PhysicalControlInfo)_lastNode.Tag;
+                    var inputControl = (PhysicalControlInfo) _lastNode.Tag;
 
                     //now call the method that will actually capture the new mapping for this item
                     StoreCurrentMapping(inputControl);
                 }
             }
         }
+
         /// <summary>
         /// Creates a set of default mappings where each physical button, Pov, and axis gets mapped
         /// to a corresponding virtual control.
@@ -165,17 +175,18 @@ namespace JoyMapper
         /// <returns>a boolean indicating true if any net changes to the output map have occurred as a result of executing this method, or false if no net changes have occurred.</returns>
         private bool CreateDefaultMappings()
         {
-
-            bool shouldContinue=PromptForSaveChanges("The requested operation cannot be undone.  There are currently unsaved changes.  Would you like to save all unsaved changes before continuing?");
+            bool shouldContinue =
+                PromptForSaveChanges(
+                    "The requested operation cannot be undone.  There are currently unsaved changes.  Would you like to save all unsaved changes before continuing?");
             if (!shouldContinue)
             {
                 return false;
             }
-            OutputMap oldMap = (OutputMap)(((ICloneable)_outputMap).Clone());
+            var oldMap = (OutputMap) (((ICloneable) _outputMap).Clone());
 
             //Create a new output map from scratch (similar to File-New), containing all the detected input devices
             CreateNewOutputMap();
-            
+
             //iterate over the controls tree to find each physical device and each control on that device,
             //then map each physical control to the next available like-kind virtual control
             foreach (TreeNode topLevelCategoryNode in treeMain.Nodes)
@@ -186,7 +197,7 @@ namespace JoyMapper
                     {
                         //this node represents a physical device, so obtain the physical device info object
                         //from the node's .Tag property
-                        PhysicalDeviceInfo device = (PhysicalDeviceInfo)deviceNode.Tag;
+                        var device = (PhysicalDeviceInfo) deviceNode.Tag;
 
                         //under each device node, there are "container" nodes that break up the
                         //device's controls by category (button, Pov, axis).  Iterate over these node's
@@ -201,11 +212,13 @@ namespace JoyMapper
                                     {
                                         //the current node is a physical control so obtain the physical control info object
                                         //from the node's .Tag property
-                                        PhysicalControlInfo physicalControl = (PhysicalControlInfo)controlNode.Tag;
+                                        var physicalControl = (PhysicalControlInfo) controlNode.Tag;
 
-                                        VirtualControlInfo virtualControl = null; // holds the virtual control we'll map this physical control to
+                                        VirtualControlInfo virtualControl = null;
+                                            // holds the virtual control we'll map this physical control to
 
-                                        if (physicalControl.ControlType == ControlType.Axis || physicalControl.ControlType == ControlType.Pov)
+                                        if (physicalControl.ControlType == ControlType.Axis ||
+                                            physicalControl.ControlType == ControlType.Pov)
                                         {
                                             //if this node represents an axis or Pov control, map to the next available virtual axis data source of the same type
                                             virtualControl = GetNextUnassignedPPJoyAxisControl(physicalControl);
@@ -235,6 +248,7 @@ namespace JoyMapper
             //return true if any changes were made to the output map during this process
             return !(oldMap.Equals(_outputMap));
         }
+
         /// <summary>
         /// Merges two OutputMap objects together.
         /// </summary>
@@ -258,7 +272,7 @@ namespace JoyMapper
             {
                 if (targetMap.ContainsMappingFrom(physicalControl)) //target map already contains this mapping
                 {
-                    if (overrideExistingMappings)//if we're allowed to override the existing mapping in the target map
+                    if (overrideExistingMappings) //if we're allowed to override the existing mapping in the target map
                     {
                         VirtualControlInfo toAssign = sourceMap.GetMapping(physicalControl);
                         if (toAssign != null)
@@ -297,6 +311,7 @@ namespace JoyMapper
                 }
             }
         }
+
         /// <summary>
         /// Gets the next-available unassigned PPJoy button data source, starting at 
         /// Virtual Joystick 1, Digital0 and
@@ -309,19 +324,19 @@ namespace JoyMapper
         /// unmapped virtual digital data source can be found.</returns>
         private VirtualControlInfo GetNextUnassignedPPJoyButtonControl()
         {
-            PPJoy.Device[] ppjoyDevices= new PPJoy.DeviceManager().GetAllDevices();
+            Device[] ppjoyDevices = new DeviceManager().GetAllDevices();
             for (int i = 0; i < ppjoyDevices.Length; i++)
             {
-                PPJoy.Device thisDevice = ppjoyDevices[i];
+                Device thisDevice = ppjoyDevices[i];
                 if (thisDevice.DeviceType != JoystickTypes.Virtual_Joystick)
                 {
                     continue;
                 }
-                MappingCollection mappings= thisDevice.GetMappings();
+                MappingCollection mappings = thisDevice.GetMappings();
                 foreach (ButtonMapping mapping in mappings.ButtonMappings)
                 {
-                    VirtualDeviceInfo virtualDevice = new VirtualDeviceInfo(thisDevice.UnitNum + 1);
-                    VirtualControlInfo virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Button, mapping.ControlNumber);
+                    var virtualDevice = new VirtualDeviceInfo(thisDevice.UnitNum + 1);
+                    var virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Button, mapping.ControlNumber);
                     if (!_outputMap.ContainsMappingTo(virtualControl))
                     {
                         return virtualControl;
@@ -351,10 +366,10 @@ namespace JoyMapper
             //an exposed virtual axis of the same type (i.e. mapping a physical X axis to a virtual
             //axis data source exposed by a virtual X axis is ok, but other permutations are not).
 
-            PPJoy.Device[] ppjoyDevices= new PPJoy.DeviceManager().GetAllDevices();
+            Device[] ppjoyDevices = new DeviceManager().GetAllDevices();
             for (int i = 0; i < ppjoyDevices.Length; i++)
             {
-                PPJoy.Device thisDevice = ppjoyDevices[i];
+                Device thisDevice = ppjoyDevices[i];
                 if (thisDevice.DeviceType != JoystickTypes.Virtual_Joystick)
                 {
                     continue;
@@ -362,17 +377,20 @@ namespace JoyMapper
                 MappingCollection mappings = thisDevice.GetMappings();
                 foreach (Mapping mapping in mappings)
                 {
-                    if (mapping is PovMapping) {
+                    if (mapping is PovMapping)
+                    {
                         if (mapping is ContinuousPovMapping)
                         {
-                            ContinuousPovDataSources datasource = ((ContinuousPovMapping)mapping).DataSource;
-                            if (datasource != ContinuousPovDataSources.None) {
-                                string dataSourceName = Enum.GetName(typeof(ContinuousPovDataSources), datasource);
-                                string dataSourceNumber = dataSourceName.Replace("Analog", string.Empty).Replace("Reversed", string.Empty);
+                            ContinuousPovDataSources datasource = ((ContinuousPovMapping) mapping).DataSource;
+                            if (datasource != ContinuousPovDataSources.None)
+                            {
+                                string dataSourceName = Enum.GetName(typeof (ContinuousPovDataSources), datasource);
+                                string dataSourceNumber =
+                                    dataSourceName.Replace("Analog", string.Empty).Replace("Reversed", string.Empty);
                                 int dsNum = Int32.Parse(dataSourceNumber);
 
-                                VirtualDeviceInfo virtualDevice = new VirtualDeviceInfo(thisDevice.UnitNum + 1);
-                                VirtualControlInfo virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Axis, dsNum);
+                                var virtualDevice = new VirtualDeviceInfo(thisDevice.UnitNum + 1);
+                                var virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Axis, dsNum);
                                 if (!_outputMap.ContainsMappingTo(virtualControl))
                                 {
                                     return virtualControl;
@@ -381,12 +399,13 @@ namespace JoyMapper
                         }
                         //TODO: implement directional POV auto-mapping
                     }
-                    else if(mapping is AxisMapping)
+                    else if (mapping is AxisMapping)
                     {
-                        if (CompareAxisTypes((AxisMapping)mapping, physicalControl))
+                        if (CompareAxisTypes((AxisMapping) mapping, physicalControl))
                         {
-                            VirtualDeviceInfo virtualDevice = new VirtualDeviceInfo(thisDevice.UnitNum + 1);
-                            VirtualControlInfo virtualControl = new VirtualControlInfo(virtualDevice, physicalControl.ControlType, mapping.ControlNumber);
+                            var virtualDevice = new VirtualDeviceInfo(thisDevice.UnitNum + 1);
+                            var virtualControl = new VirtualControlInfo(virtualDevice, physicalControl.ControlType,
+                                                                        mapping.ControlNumber);
                             if (!_outputMap.ContainsMappingTo(virtualControl))
                             {
                                 return virtualControl;
@@ -433,7 +452,8 @@ namespace JoyMapper
             {
                 areSame = true;
             }
-            else if (physicalControl.AxisType == AxisType.Unknown && (physicalControl.ControlType == ControlType.Axis || physicalControl.ControlType == ControlType.Pov))
+            else if (physicalControl.AxisType == AxisType.Unknown &&
+                     (physicalControl.ControlType == ControlType.Axis || physicalControl.ControlType == ControlType.Pov))
             {
                 areSame = true;
             }
@@ -443,6 +463,7 @@ namespace JoyMapper
             }
             return areSame;
         }
+
         /// <summary>
         /// Creates a new Output Map and initializes it with all of the currently-detected devices
         /// known to DirectInput, and all of their controls, with no actual mappings established
@@ -454,7 +475,7 @@ namespace JoyMapper
         {
             //create a new, blank Output Map and set that as the form's Output Map
             _outputMap = new OutputMap();
-            
+
             //get a list of joysticks that DirectInput can currently detect
             DeviceList detectedJoysticks = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AllDevices);
 
@@ -462,14 +483,16 @@ namespace JoyMapper
             //and if it's physical, then it should appear in the new output map.
             foreach (DeviceInstance instance in detectedJoysticks)
             {
-                DIPhysicalDeviceInfo deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
+                var deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
                 //Get the DIDeviceMonitor object from the monitor pool that represents the input
                 //device being evaluated.   If no monitor exists in the pool yet for that device,
                 //one will be created and added to the pool.  This avoids having multiple objects
                 //taking control of a device at the same time -- all communication with
                 //the device itself will occur via the monitor object, not via DirectInput directly.
-                DIDeviceMonitor dev = DIDeviceMonitor.GetInstance (deviceInfo, this, PPJoy.VirtualJoystick.MinAnalogDataSourceVal, PPJoy.VirtualJoystick.MaxAnalogDataSourceVal);
-                
+                DIDeviceMonitor dev = DIDeviceMonitor.GetInstance(deviceInfo, this,
+                                                                  VirtualJoystick.MinAnalogDataSourceVal,
+                                                                  VirtualJoystick.MaxAnalogDataSourceVal);
+
                 //get the vendor ID and product ID from the current device
                 int? productId = dev.VendorIdentityProductId;
 
@@ -480,9 +503,9 @@ namespace JoyMapper
                     bool isVirtual = false;
                     try
                     {
-                        isVirtual = new PPJoy.DeviceManager().IsVirtualDevice(productId.Value);
+                        isVirtual = new DeviceManager().IsVirtualDevice(productId.Value);
                     }
-                    catch (DeviceNotFoundException e) 
+                    catch (DeviceNotFoundException e)
                     {
                         _log.Debug(e.Message, e);
                     }
@@ -490,13 +513,13 @@ namespace JoyMapper
                     {
                         dev.Dispose();
                     }
-                    else 
+                    else
                     {
                         //if it's not a PPJoy virtual device, then we can add it to the map.
 
                         //create a PhysicalDeviceInfo object to represent the current device, allowing
                         //us to get a list of its controls
-                        DIPhysicalDeviceInfo thisDev = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
+                        var thisDev = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
 
                         //add all the device's controls to the map, mapping them to nothing (null).
                         //This will ensure that they appear in the control tree on the form, without
@@ -565,7 +588,9 @@ namespace JoyMapper
                     //one will be created and added to the pool.  This avoids having multiple objects
                     //taking control of a device at the same time -- all communication with
                     //the device itself will occur via the monitor object, not via the PHCC Interface Library directly.
-                    PHCCDeviceMonitor dev = PHCCDeviceMonitor.GetInstance(phccDevice, PPJoy.VirtualJoystick.MinAnalogDataSourceVal, PPJoy.VirtualJoystick.MaxAnalogDataSourceVal);
+                    PHCCDeviceMonitor dev = PHCCDeviceMonitor.GetInstance(phccDevice,
+                                                                          VirtualJoystick.MinAnalogDataSourceVal,
+                                                                          VirtualJoystick.MaxAnalogDataSourceVal);
 
                     //add all the device's controls to the map, mapping them to nothing (null).
                     //This will ensure that they appear in the control tree on the form, without
@@ -586,19 +611,21 @@ namespace JoyMapper
             //can override that behavior from the outside, if needed in special cases.
             _hasChanges = false;
         }
+
         /// <summary>
         /// Enables menu items on the Tools menu, and their corresonding toolbar buttons
         /// </summary>
-        private void EnableToolsMenuFunctionality() {
+        private void EnableToolsMenuFunctionality()
+        {
             mnuPPJoyOpenPPJoyControlPanel.Enabled = true;
             mnuToolsOpenWindowsJoystickControlPanel.Enabled = true;
             mnuTools.Enabled = true;
-            mnuToolsOptions.Enabled  = true;
+            mnuToolsOptions.Enabled = true;
             mnuViewRefreshDeviceList.Enabled = true;
             btnOptions.Enabled = true;
             btnRefreshDevices.Enabled = true;
         }
-        
+
         /// <summary>
         /// Disables menu items that can't/shouldn't be used during
         /// active mediation (i.e. when data is actively being sent to PPJoy)
@@ -610,6 +637,7 @@ namespace JoyMapper
             mnuPPJoyOpenPPJoyControlPanel.Enabled = false; //shouldn't change the underlying PPJoy stuff either!
             btnRefreshDevices.Enabled = false;
         }
+
         /// <summary>
         /// Enables menu items that can't/shouldn't be used during
         /// active mediation (i.e. when data is actively being sent to PPJoy)
@@ -629,6 +657,7 @@ namespace JoyMapper
         {
             mnuPPJoy.Enabled = false;
         }
+
         /// <summary>
         /// Enables menu items on the PPJoy menu
         /// </summary>
@@ -636,6 +665,7 @@ namespace JoyMapper
         {
             mnuPPJoy.Enabled = true;
         }
+
         /// <summary>
         /// Disables the "Create Default Mapping" menu item.
         /// </summary>
@@ -643,6 +673,7 @@ namespace JoyMapper
         {
             mnuActionsCreateDefaultMapping.Enabled = false;
         }
+
         /// <summary>
         /// Disables the File-New menu item and corresponding toolbar buttons
         /// </summary>
@@ -651,6 +682,7 @@ namespace JoyMapper
             mnuFileNew.Enabled = false;
             btnNew.Enabled = false;
         }
+
         /// <summary>
         /// Disables the File-Open menu item and corresponding toolbar button
         /// </summary>
@@ -659,6 +691,7 @@ namespace JoyMapper
             mnuFileOpen.Enabled = false;
             btnOpen.Enabled = false;
         }
+
         /// <summary>
         /// Disables all menu items and toolbar buttons that allow saving the current output map
         /// </summary>
@@ -668,6 +701,7 @@ namespace JoyMapper
             mnuFileSave.Enabled = false;
             btnSave.Enabled = false;
         }
+
         /// <summary>
         /// Disables all menu items and toolbar buttons that would allow starting mediation (presumably
         /// because mediation is already started)
@@ -678,6 +712,7 @@ namespace JoyMapper
             mnuTrayCtxStartMapping.Enabled = false;
             btnStart.Enabled = false;
         }
+
         /// <summary>
         /// Disables all menu items and toolbar buttons that would allow stopping mediation (presumably
         /// because mediation is already stopped)
@@ -688,6 +723,7 @@ namespace JoyMapper
             mnuTrayCtxStopMapping.Enabled = false;
             btnStop.Enabled = false;
         }
+
         /// <summary>
         /// Updates the controls on the Mappings tab to display the current mapping for a 
         /// given physical control.
@@ -705,7 +741,7 @@ namespace JoyMapper
             //if the specified physical (input) control is not currently mapped to any 
             //virtual (output) control, then display the <unmapped> states in the
             //Mapping tab's controls
-            if (outputControl == null) 
+            if (outputControl == null)
             {
                 //find the index of the item in the Virtual Device combobox 
                 //representing the <unmapped> virtual device
@@ -730,13 +766,13 @@ namespace JoyMapper
 
                 //we've rendered the unmapped state for the specified physical control, 
                 //so we're done.
-                return;  
+                return;
             }
-            else  // if the specified virtual control *is* mapped to some virtual control, then display that mapping now
+            else // if the specified virtual control *is* mapped to some virtual control, then display that mapping now
             {
                 string expectedText = null; //reference to strings we'll use to search comboboxes with
 
-                if (inputControl.ControlType == ControlType.Axis || inputControl.ControlType == ControlType.Pov )
+                if (inputControl.ControlType == ControlType.Axis || inputControl.ControlType == ControlType.Pov)
                 {
                     //if the specified physical control is an axis or a Pov, then we know we're
                     //looking for an Analog string in the Virtual Control combobox, and we know
@@ -764,7 +800,7 @@ namespace JoyMapper
                 //now that our comboboxes are populated, we can set the currently-selected
                 //value in the Virtual Control combobox, based on the search strings we created earlier
                 cboVirtualControl.SelectedIndex = cboVirtualControl.FindStringExact(expectedText);
-                
+
                 cboVirtualControl.Enabled = true; //and we can enable the Virtual Control combobox for editing as well
 
                 //the next thing to do is to set the currently-selected Virtual Device in the Virtual Device
@@ -776,6 +812,7 @@ namespace JoyMapper
                 cboVirtualDevice.SelectedIndex = cboVirtualDevice.FindStringExact(expectedText);
             }
         }
+
         /// <summary>
         /// Enables the "Create Default Mapping" menu item on the Actions menu
         /// </summary>
@@ -789,7 +826,6 @@ namespace JoyMapper
             catch (ApplicationException e)
             {
                 _log.Debug(e.Message, e);
-
             }
             if (numSticksDefined > 0 && _outputMap.PhysicalDevices.Length > 0)
             {
@@ -800,6 +836,7 @@ namespace JoyMapper
                 mnuActionsCreateDefaultMapping.Enabled = false;
             }
         }
+
         /// <summary>
         /// Enables the File-New menu item and corresponding toolbar items
         /// </summary>
@@ -808,6 +845,7 @@ namespace JoyMapper
             mnuFileNew.Enabled = true;
             btnNew.Enabled = true;
         }
+
         /// <summary>
         /// Enables the File-Import menu item 
         /// </summary>
@@ -815,6 +853,7 @@ namespace JoyMapper
         {
             mnuFileImport.Enabled = true;
         }
+
         /// <summary>
         /// Disables the File-Import menu item 
         /// </summary>
@@ -822,6 +861,7 @@ namespace JoyMapper
         {
             mnuFileImport.Enabled = false;
         }
+
         /// <summary>
         /// Enables the File-Open menu item and the corresponding toolbar item
         /// </summary>
@@ -830,6 +870,7 @@ namespace JoyMapper
             mnuFileOpen.Enabled = true;
             btnOpen.Enabled = true;
         }
+
         /// <summary>
         /// Enables the File-Save and File-SaveAs menu items and corresponding toolbar items
         /// </summary>
@@ -839,6 +880,7 @@ namespace JoyMapper
             mnuFileSave.Enabled = true;
             btnSave.Enabled = true;
         }
+
         /// <summary>
         /// Enables the Actions-StartMapping menu item, the corresponding context-menu item, and
         /// the corresponding toolbar button (presumably, because mediation is now stopped)
@@ -849,6 +891,7 @@ namespace JoyMapper
             mnuTrayCtxStartMapping.Enabled = true;
             btnStart.Enabled = true;
         }
+
         /// <summary>
         /// Enables the Actions-StopMapping menu item, the corresponding context-menu item, and 
         /// the corresponding toolbar button (presumably, because mediation is now active)
@@ -859,6 +902,7 @@ namespace JoyMapper
             mnuTrayCtxStopMapping.Enabled = true;
             btnStop.Enabled = true;
         }
+
         /// <summary>
         /// Implements the behavior for the File-Exit menu command
         /// </summary>
@@ -882,10 +926,12 @@ namespace JoyMapper
                 return false;
             }
         }
+
         private bool PromptForSaveChanges()
         {
             return PromptForSaveChanges("Do you want to save changes?");
         }
+
         /// <summary>
         /// Prompts the user to save pending changes, if there are any.  If the user responds "Yes", then
         /// the Save File dialog is presented.  
@@ -902,7 +948,8 @@ namespace JoyMapper
             if (_hasChanges) //if there are unsaved changes in the output map
             {
                 //prompt the user to save those unsaved changes
-                DialogResult promptForSave = MessageBox.Show(promptText, Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
+                DialogResult promptForSave = MessageBox.Show(promptText, Application.ProductName,
+                                                             MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation);
                 if (promptForSave == DialogResult.Cancel)
                 {
                     //if the user decided to cancel the operation, we'll set the continue flag appropriately
@@ -917,12 +964,13 @@ namespace JoyMapper
                 {
                     //if the user said yes to saving the changes, then we need to 
                     //display the appropriate File-Save Common Dialog.
-                    SaveFile(); 
+                    SaveFile();
 
                     if (_lastSaveCancelled == false)
-                    { //if the user didn't cancel out of the dialog box, they must have saved the file,
+                    {
+                        //if the user didn't cancel out of the dialog box, they must have saved the file,
                         //so we are good to continue
-                        shouldContinue = true;  //set the continue flag accordingly
+                        shouldContinue = true; //set the continue flag accordingly
                     }
                     else
                     {
@@ -932,7 +980,6 @@ namespace JoyMapper
                         shouldContinue = false; //it's already false, btw -- this is just here for completeness
                     }
                 } //end "else if"
-
             } //end if (_hasChanges)
             else
             {
@@ -943,6 +990,7 @@ namespace JoyMapper
             }
             return shouldContinue;
         }
+
         /// <summary>
         /// Implements the behavior for the File-New menu command
         /// </summary>
@@ -958,7 +1006,7 @@ namespace JoyMapper
             _lastNode = null; //clear the last-selected-node reference
             CreateNewOutputMap(); //create a new Output Map at the form level
             _fileName = null; //set the file name for this new output map to NULL (Untitled)
-            this.Text = Application.ProductName + " - " + "Untitled"; //set the form's window title appropriately
+            Text = Application.ProductName + " - " + "Untitled"; //set the form's window title appropriately
             RenderOutputMap(); //render the new output map to the control tree
             treeMain.SelectedNode = treeMain.Nodes[0]; //set the current node in the control tree to the root node
             _hasChanges = false; //reset the unsaved-changes flag since no changes can possibly have occurred yet
@@ -968,6 +1016,7 @@ namespace JoyMapper
             SetMenuAndToolbarEnabledDisabledStates();
             return true;
         }
+
         /// <summary>
         /// Opens a saved mapping file
         /// </summary>
@@ -987,6 +1036,7 @@ namespace JoyMapper
             ShowOpenFileDialog();
             return true;
         }
+
         /// <summary>
         /// Implements the File-Save and File-SaveAs menu item behavior
         /// </summary>
@@ -1002,12 +1052,13 @@ namespace JoyMapper
             else //otherwise, we already know what filepath this map should be saved to
             {
                 //Convert the stored mapping file name to a FileInfo object
-                FileInfo file = new FileInfo(_fileName);
+                var file = new FileInfo(_fileName);
 
                 //save the current output map to that file
                 SaveMappingsFile(file);
             }
         }
+
         /// <summary>
         /// Displays the File-SaveAs dialog box
         /// </summary>
@@ -1022,23 +1073,29 @@ namespace JoyMapper
             _dlgSave.Reset(); //reset the common dialog to its defaults
             _dlgSave.OverwritePrompt = true; //prompt the user to overwrite existing files
             _dlgSave.ValidateNames = true; //make sure the user provides a valid file name
-            
-            //get the application's path to use as a default path
-            string appPath = System.IO.Path.GetFullPath(Application.ExecutablePath); 
 
-            _dlgSave.InitialDirectory = appPath; //set the initial directory for the save dialog to the application's directory
+            //get the application's path to use as a default path
+            string appPath = Path.GetFullPath(Application.ExecutablePath);
+
+            _dlgSave.InitialDirectory = appPath;
+                //set the initial directory for the save dialog to the application's directory
             _dlgSave.CheckPathExists = true; //make sure the user chooses a path that actually exists
-            _dlgSave.AddExtension = true; //automatically add the .map file extension if the user doesn't explicitly give it
-            _dlgSave.CreatePrompt = false; //don't prompt the user to create a file that doesn't exist -- that's the whole point here
+            _dlgSave.AddExtension = true;
+                //automatically add the .map file extension if the user doesn't explicitly give it
+            _dlgSave.CreatePrompt = false;
+                //don't prompt the user to create a file that doesn't exist -- that's the whole point here
             _dlgSave.DefaultExt = ".map"; //set the default file extension to use
-            _dlgSave.DereferenceLinks = true;  //allows the SaveAs dialog to navigate softlinks in the file system by providing the full path back to the application instead of the path via softlink
+            _dlgSave.DereferenceLinks = true;
+                //allows the SaveAs dialog to navigate softlinks in the file system by providing the full path back to the application instead of the path via softlink
             _dlgSave.Filter = "JoyMapper files (*.map)|*.map|All files(*.*)|*.*"; //set the possible filter values
             _dlgSave.FilterIndex = 0; //use *.map as the default filter
             _dlgSave.ShowHelp = false; //don't show the help functionality since we haven't implemented any
             _dlgSave.SupportMultiDottedExtensions = true; //allow files with names like a.b.c.d.map
             _dlgSave.Title = "Save As"; //set the dialog's title
-            _dlgSave.ShowDialog(this); //show the dialog -- an event handler callback will be called when the user dismisses the dialog box either through cancelling or though success
+            _dlgSave.ShowDialog(this);
+                //show the dialog -- an event handler callback will be called when the user dismisses the dialog box either through cancelling or though success
         }
+
         /// <summary>
         /// Shows the Help-About dialog
         /// </summary>
@@ -1046,6 +1103,7 @@ namespace JoyMapper
         {
             new frmHelpAbout().ShowDialog(this);
         }
+
         /// <summary>
         /// Loads an output map from a file and sets the current output map to that newly-loaded map
         /// </summary>
@@ -1067,14 +1125,18 @@ namespace JoyMapper
             {
                 //if the operation wasn't successful, then alert the user to that fact and quit out of 
                 //this method call
-                MessageBox.Show("An error occurred while loading the file:" + file.FullName + "\n\nMessage:\n" + e.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "An error occurred while loading the file:" + file.FullName + "\n\nMessage:\n" + e.Message,
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             catch (SerializationException se)
             {
                 //if the operation wasn't successful, then alert the user to that fact and quit out of 
                 //this method call
-                MessageBox.Show("The file:" + file.FullName + " does not appear to be a valid " + Application.ProductName + " file." + "\n\nMessage:\n" + se.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "The file:" + file.FullName + " does not appear to be a valid " + Application.ProductName + " file." +
+                    "\n\nMessage:\n" + se.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
@@ -1087,12 +1149,12 @@ namespace JoyMapper
             {
                 if (treeMain.SelectedNode.Tag is PhysicalControlInfo)
                 {
-                    DisplayCurrentMapping((PhysicalControlInfo)treeMain.SelectedNode.Tag);
+                    DisplayCurrentMapping((PhysicalControlInfo) treeMain.SelectedNode.Tag);
                 }
             }
             //set the application's title to include the file name of the newly-loaded file
-            this.Text = Application.ProductName + " - " + _fileName;
-            
+            Text = Application.ProductName + " - " + _fileName;
+
             //since we just loaded the file, there can't have been any unsaved changes yet
             _hasChanges = false;
 
@@ -1100,19 +1162,20 @@ namespace JoyMapper
             //new output map and currently-selected item 
             SetMenuAndToolbarEnabledDisabledStates();
 
-            
-            return true;// that's all folks!  if we're here, all went well!  return TRUE to indicate that
 
+            return true; // that's all folks!  if we're here, all went well!  return TRUE to indicate that
         }
+
         /// <summary>
         /// Minimizes the application's primary form to the system tray
         /// </summary>
         private void MinimizeToSystemTray()
         {
-            this.WindowState = FormWindowState.Minimized; //minimize the primary window 
-            this.ShowInTaskbar = false; //make sure it won't show in the taskbar since we want it only in the system tray
+            WindowState = FormWindowState.Minimized; //minimize the primary window 
+            ShowInTaskbar = false; //make sure it won't show in the taskbar since we want it only in the system tray
             nfyTrayIcon.Visible = true; //show the system tray icon
         }
+
         /// <summary>
         /// Populates the combobox of selectable Virtual Controls that a given physical control can be 
         /// mapped to, taking into account mappings that are already being used 
@@ -1122,9 +1185,10 @@ namespace JoyMapper
         private void PopulateSelectableOutputControls(PhysicalControlInfo inputControl, VirtualDeviceInfo virtualDevice)
         {
             //populate the combo boxes in the mappings tab with their initial values
-            List<string> virtualControls = new List<string>(); //list of strings that will be associated with the output control combobox
+            var virtualControls = new List<string>();
+                //list of strings that will be associated with the output control combobox
             virtualControls.Add("<unmapped>"); //string representing the unmapped state
-            
+
             //if the input control is an axis or Pov control, then the set of
             //selectable output controls consists of the set of unmapped axes data sources on the supplied virtual
             //joystick device.
@@ -1132,18 +1196,18 @@ namespace JoyMapper
             {
                 for (int i = 0; i < VirtualJoystick.MaxAnalogDataSources; i++)
                 {
-                    VirtualControlInfo virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Axis, i);
+                    var virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Axis, i);
                     bool axisIsMapped = false;
 
                     //for the current axis being evaluated, check to see if a mapping already exists to that axis.
                     //If it does, then we can't add it to the list of selectable mappings, as that would
                     //allow duplicate mappings to exist.
-                    if (_outputMap.ContainsMappingTo (virtualControl))
+                    if (_outputMap.ContainsMappingTo(virtualControl))
                     {
-                        if (inputControl !=null && _outputMap.ContainsMappingTo(virtualControl)) 
+                        if (inputControl != null && _outputMap.ContainsMappingTo(virtualControl))
                         {
                             VirtualControlInfo thisInputControlMapping = (_outputMap.GetMapping(inputControl));
-                            if (thisInputControlMapping != null && thisInputControlMapping.Equals (virtualControl))
+                            if (thisInputControlMapping != null && thisInputControlMapping.Equals(virtualControl))
                             {
                                 axisIsMapped = false;
                             }
@@ -1159,20 +1223,19 @@ namespace JoyMapper
                     {
                         virtualControls.Add("Analog" + i);
                     }
-                }//end for
-            }//end if
-            //otherwise, if the supplied input control is a Button control, then the 
-            //set of allowable mappings consists of the set of unmapped button data sources on the
-            //supplied virtual device.
+                } //end for
+            } //end if
+                //otherwise, if the supplied input control is a Button control, then the 
+                //set of allowable mappings consists of the set of unmapped button data sources on the
+                //supplied virtual device.
             else if (inputControl.ControlType == ControlType.Button)
             {
-
                 //for each button data source on the supplied virtual device, check for
                 //an existing mapping to that data source, and if none exists, add
                 //that button data source to the list of selectable output mappings
                 for (int i = 0; i < VirtualJoystick.MaxDigitalDataSources; i++)
                 {
-                    VirtualControlInfo virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Button, i);
+                    var virtualControl = new VirtualControlInfo(virtualDevice, ControlType.Button, i);
                     bool buttonIsMapped = false;
                     //check for an existing mapping
                     if (_outputMap.ContainsMappingTo(virtualControl))
@@ -1182,14 +1245,14 @@ namespace JoyMapper
                             VirtualControlInfo thisInputControlMapping = (_outputMap.GetMapping(inputControl));
                             if (thisInputControlMapping != null && thisInputControlMapping.Equals(virtualControl))
                             {
-                                buttonIsMapped  = false;
+                                buttonIsMapped = false;
                             }
                             else
                             {
                                 buttonIsMapped = true;
                             }
                         }
-                    }                    
+                    }
                     //if no existing mapping is found, then this virtual data source is selectable as an output mapping
                     if (!buttonIsMapped)
                     {
@@ -1200,29 +1263,31 @@ namespace JoyMapper
 
             //sort the list of selectable mappings
             virtualControls.Sort(new NumericComparer().Compare);
-            
+
             //now bind the combobox's internal list to this list of selectable mappings
             cboVirtualControl.DataSource = virtualControls;
         }
+
         /// <summary>
         /// Populates the Virtual Device combobox
         /// </summary>
         private void PopulateVirtualDevicesList()
         {
-            List<String> virtualDeviceNames = new List<String>();
-            PPJoy.Device[] ppJoyDevices = new PPJoy.DeviceManager().GetAllDevices();
-            
+            var virtualDeviceNames = new List<String>();
+            Device[] ppJoyDevices = new DeviceManager().GetAllDevices();
+
             for (int i = 0; i < ppJoyDevices.Length; i++)
             {
                 if (ppJoyDevices[i].DeviceType == JoystickTypes.Virtual_Joystick)
                 {
-                    virtualDeviceNames.Add("PPJoy Virtual joystick " + (ppJoyDevices[i].UnitNum +1));
+                    virtualDeviceNames.Add("PPJoy Virtual joystick " + (ppJoyDevices[i].UnitNum + 1));
                 }
             }
             virtualDeviceNames.Add("<unmapped>");
             virtualDeviceNames.Sort(new NumericComparer().Compare);
             cboVirtualDevice.DataSource = virtualDeviceNames;
         }
+
         /// <summary>
         /// Gets the text to display next to a particular control's node in the TreeView
         /// </summary>
@@ -1230,29 +1295,29 @@ namespace JoyMapper
         /// <returns>a String containing the text to display next to the control's node in the TreeView</returns>
         private string GetControlDisplayText(PhysicalControlInfo pci)
         {
-            string controlName=null;
+            string controlName = null;
             if (pci.ControlType == ControlType.Axis) //if the current control is an Axis control
             {
                 if (pci.AxisType == AxisType.Slider)
                 {
                     //if the current control is a Slider axis, then use a one-based description
                     //for the axis name
-                    controlName = pci.AxisType.ToString() + " " + (pci.ControlNum + 1) + " Axis";
+                    controlName = pci.AxisType + " " + (pci.ControlNum + 1) + " Axis";
                 }
                 else
                 {
                     //if the current control is an ordinary (non-slider, non-Pov) axis, then use
                     //the axis's name as the descriptor
-                    controlName = pci.AxisType.ToString() + " Axis";
+                    controlName = pci.AxisType + " Axis";
                 }
             }
             else if (pci.ControlType == ControlType.Pov)
             {
-                controlName = pci.AxisType.ToString() + " " + (pci.ControlNum + 1);
+                controlName = pci.AxisType + " " + (pci.ControlNum + 1);
             }
             else if (pci.ControlType == ControlType.Button)
             {
-                controlName = pci.ControlType.ToString() + " " + (pci.ControlNum + 1);
+                controlName = pci.ControlType + " " + (pci.ControlNum + 1);
             }
             else
             {
@@ -1264,26 +1329,31 @@ namespace JoyMapper
                 {
                     if (pci.AxisType != AxisType.Unknown)
                     {
-                        controlName += ((pci.Alias != null && !String.Equals(pci.Alias, String.Empty)) ? " - " + pci.Alias : "");
+                        controlName += ((pci.Alias != null && !String.Equals(pci.Alias, String.Empty))
+                                            ? " - " + pci.Alias
+                                            : "");
                     }
-                    else {
+                    else
+                    {
                         controlName = pci.Alias; //so it doesn't read "Unknown Axis - xxx", just "Axis xxx".
                     }
                 }
             }
             return controlName;
         }
+
         /// <summary>
         /// Renders the currently loaded output map as a set of nodes in a treeview
         /// </summary>
         private void RenderOutputMap()
         {
-            UpdateMediatorMap(); //update the mediator with the current output map so that mediation behavior matches what's being displayed
+            UpdateMediatorMap();
+                //update the mediator with the current output map so that mediation behavior matches what's being displayed
 
             //clear all device nodes and their children from the treeview 
             TreeNode nodeLocalDevs = treeMain.Nodes["nodeLocalDevices"];
             nodeLocalDevs.Nodes.Clear();
-            
+
             //add each physical device and its constituent controls to the treeview
             foreach (PhysicalDeviceInfo pdi in _outputMap.PhysicalDevices)
             {
@@ -1292,36 +1362,41 @@ namespace JoyMapper
                 int numPovs = 0;
 
                 //add a node for the current physical device
-                TreeNode thisInstanceNode = nodeLocalDevs.Nodes.Add(pdi.Key.ToString(),pdi.Alias, IMAGE_INDEX_JOYSTICK, IMAGE_INDEX_JOYSTICK);
+                TreeNode thisInstanceNode = nodeLocalDevs.Nodes.Add(pdi.Key.ToString(), pdi.Alias, IMAGE_INDEX_JOYSTICK,
+                                                                    IMAGE_INDEX_JOYSTICK);
                 //store the PhysicalDeviceInfo object representing the current physical device, in the .Tag property of the treenode so we can easily retrieve it later
-                thisInstanceNode.Tag = pdi; 
+                thisInstanceNode.Tag = pdi;
 
                 //create nodes for axes, buttons, and Povs that may exist on this physical device
-                TreeNode thisInstanceAxesNode = thisInstanceNode.Nodes.Add("AXES", "Axes", IMAGE_INDEX_AXIS, IMAGE_INDEX_AXIS);
-                TreeNode thisInstanceButtonsNode = thisInstanceNode.Nodes.Add("BUTTONS", "Buttons", IMAGE_INDEX_BUTTON, IMAGE_INDEX_BUTTON);
-                TreeNode thisInstancePovsNode = thisInstanceNode.Nodes.Add("Povs", "Povs", IMAGE_INDEX_Pov, IMAGE_INDEX_Pov);
+                TreeNode thisInstanceAxesNode = thisInstanceNode.Nodes.Add("AXES", "Axes", IMAGE_INDEX_AXIS,
+                                                                           IMAGE_INDEX_AXIS);
+                TreeNode thisInstanceButtonsNode = thisInstanceNode.Nodes.Add("BUTTONS", "Buttons", IMAGE_INDEX_BUTTON,
+                                                                              IMAGE_INDEX_BUTTON);
+                TreeNode thisInstancePovsNode = thisInstanceNode.Nodes.Add("Povs", "Povs", IMAGE_INDEX_Pov,
+                                                                           IMAGE_INDEX_Pov);
 
                 //for each control on this physical device, add a corresponding treeview node representing that control
                 foreach (PhysicalControlInfo pci in _outputMap.GetDeviceSpecificMappings(pdi).Keys)
                 {
-                    TreeNode newNode=null;
+                    TreeNode newNode = null;
                     if (pci.ControlType == ControlType.Axis) //if the current control is an Axis control
                     {
                         numAxes++;
-                        string axisName=GetControlDisplayText(pci);
+                        string axisName = GetControlDisplayText(pci);
                         //create a new treeview node to represent the current axis control, using the 
                         //appropriate axis image
                         newNode = thisInstanceAxesNode.Nodes.Add(pci.ToString(),
-                            axisName, IMAGE_INDEX_AXIS, IMAGE_INDEX_AXIS);
+                                                                 axisName, IMAGE_INDEX_AXIS, IMAGE_INDEX_AXIS);
                         //store a reference to the PhysicalControlInfo object that represents the current axis control, in the .Tag property of the treenode, for easy retrieval later
                         newNode.Tag = pci;
-                    }//end if
-                    else if (pci.ControlType == ControlType.Pov)//if the current control is a Pov control
+                    } //end if
+                    else if (pci.ControlType == ControlType.Pov) //if the current control is a Pov control
                     {
                         numPovs++;
-                        string povName = GetControlDisplayText (pci);
+                        string povName = GetControlDisplayText(pci);
                         //create a new Pov node for the current control, using a one-based counter for the Pov name, and using the appropriate Pov image
-                        newNode = thisInstancePovsNode.Nodes.Add(pci.ToString(),povName , IMAGE_INDEX_Pov, IMAGE_INDEX_Pov);
+                        newNode = thisInstancePovsNode.Nodes.Add(pci.ToString(), povName, IMAGE_INDEX_Pov,
+                                                                 IMAGE_INDEX_Pov);
                         //store a reference to the PhysicalControlInfo object that represents the current Pov control, in the .Tag property of the treenode, for easy retrieval later
                         newNode.Tag = pci;
                     }
@@ -1330,7 +1405,8 @@ namespace JoyMapper
                         numButtons++;
                         string buttonName = GetControlDisplayText(pci);
                         //create a new Button node for the current control, using a one-based counter for the Button name, and using the appropriate Button image
-                        newNode = thisInstanceButtonsNode.Nodes.Add(pci.ToString(), buttonName, IMAGE_INDEX_BUTTON, IMAGE_INDEX_BUTTON);
+                        newNode = thisInstanceButtonsNode.Nodes.Add(pci.ToString(), buttonName, IMAGE_INDEX_BUTTON,
+                                                                    IMAGE_INDEX_BUTTON);
                         //store a reference to the PhysicalControlInfo object that represents the current Button control, in the .Tag property of the treenode, for easy retrieval later
                         newNode.Tag = pci;
                     }
@@ -1375,7 +1451,7 @@ namespace JoyMapper
                 }
             } //end foreach physicaldeviceinfo
             //sort the treeview nodes
-            treeMain.TreeViewNodeSorter = new Common.UI.TreeNodeNumericComparer();
+            treeMain.TreeViewNodeSorter = new TreeNodeNumericComparer();
             treeMain.Sort();
 
             //ensure the root node is selected and only the device nodes are visible initially
@@ -1385,6 +1461,7 @@ namespace JoyMapper
             treeMain.SelectedNode.Expand();
             treeMain.Select();
         }
+
         /// <summary>
         /// Re-detects known devices on this system, and refreshes the list of devices visible in the treeview.  
         /// </summary>
@@ -1392,10 +1469,10 @@ namespace JoyMapper
         {
             bool changesDetected = false; //flag which is raised if changes to the current device set are detected
             treeMain.SelectedNode = treeMain.Nodes[0];
-            OutputMap oldMap = ((OutputMap)((ICloneable)_outputMap).Clone());
+            var oldMap = ((OutputMap) ((ICloneable) _outputMap).Clone());
 
             //create a list to store all detected controls across all known input devices
-            List<PhysicalControlInfo> detectedInputControls = new List<PhysicalControlInfo>();
+            var detectedInputControls = new List<PhysicalControlInfo>();
 
             //detect all known DirectInput joysticks on this system
             DeviceList detectedJoysticks = Manager.GetDevices(DeviceClass.GameControl, EnumDevicesFlags.AllDevices);
@@ -1404,7 +1481,7 @@ namespace JoyMapper
             foreach (DeviceInstance instance in detectedJoysticks)
             {
                 Microsoft.DirectX.DirectInput.Device device = Common.InputSupport.Util.GetDIDevice(instance.InstanceGuid);
-                
+
                 //get the vendor ID and product ID of the current device
                 int? productId = device.Properties.VendorIdentityProductId;
 
@@ -1414,7 +1491,7 @@ namespace JoyMapper
                     bool isVirtual = false;
                     try
                     {
-                        isVirtual = new PPJoy.DeviceManager().IsVirtualDevice(productId.Value);
+                        isVirtual = new DeviceManager().IsVirtualDevice(productId.Value);
                     }
                     catch (DeviceNotFoundException e)
                     {
@@ -1423,9 +1500,11 @@ namespace JoyMapper
                     if (!isVirtual)
                     {
                         //create a PhysicalDeviceInfo object to represent the current device
-                        DIPhysicalDeviceInfo thisDev = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
+                        var thisDev = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
                         //if the device is physical, then create a monitor for it if it's not already created
-                        DIDeviceMonitor dev = DIDeviceMonitor.GetInstance(thisDev, this, PPJoy.VirtualJoystick.MinAnalogDataSourceVal, PPJoy.VirtualJoystick.MaxAnalogDataSourceVal);
+                        DIDeviceMonitor dev = DIDeviceMonitor.GetInstance(thisDev, this,
+                                                                          VirtualJoystick.MinAnalogDataSourceVal,
+                                                                          VirtualJoystick.MaxAnalogDataSourceVal);
                         //obtain a list of the device's controls
                         foreach (PhysicalControlInfo pci in thisDev.Controls)
                         {
@@ -1455,14 +1534,14 @@ namespace JoyMapper
                                     }
                                 }
                             } //end if
-                        }//end foreach
+                        } //end foreach
                     }
                     else
                     {
                         device.Dispose();
-                    }//end if
-                }//end if
-            }//end foreach
+                    } //end if
+                } //end if
+            } //end foreach
 
 
             //detect all BetaInnovations HID input devices on this system
@@ -1512,8 +1591,8 @@ namespace JoyMapper
                                 }
                             }
                         } //end if
-                    }//end foreach
-                }//end foreach
+                    } //end foreach
+                } //end foreach
             }
 
             //detect all PHCC devices on this system
@@ -1529,13 +1608,15 @@ namespace JoyMapper
                 _log.Debug(e.Message, e);
             }
 
-            if (phccDevices  != null)
+            if (phccDevices != null)
             {
                 //for each PHCC device detected, enumerate its controls.
                 foreach (PHCCPhysicalDeviceInfo phccDevice in phccDevices)
                 {
                     //create a monitor for the device if one has not already been created
-                    PHCCDeviceMonitor monitor = PHCCDeviceMonitor.GetInstance(phccDevice, PPJoy.VirtualJoystick.MinAnalogDataSourceVal, PPJoy.VirtualJoystick.MaxAnalogDataSourceVal);
+                    PHCCDeviceMonitor monitor = PHCCDeviceMonitor.GetInstance(phccDevice,
+                                                                              VirtualJoystick.MinAnalogDataSourceVal,
+                                                                              VirtualJoystick.MaxAnalogDataSourceVal);
                     foreach (PhysicalControlInfo pci in phccDevice.Controls)
                     {
                         //add the current control to the master list of controls
@@ -1564,11 +1645,11 @@ namespace JoyMapper
                                 }
                             }
                         } //end if
-                    }//end foreach
-                }//end foreach
-            }            
-            
-            
+                    } //end foreach
+                } //end foreach
+            }
+
+
             //now, compare the list of controls in the current output map to
             //the list of controls we just detected.  If there's an item
             //in the old list that doesn't appear in the new list,
@@ -1586,22 +1667,24 @@ namespace JoyMapper
             }
             //update the HasChanges flag so we can keep the form's titlebar's Asterisk indicator in sync
             _hasChanges |= changesDetected;
-            
+
             //the output map has changed, so we'll re-render it
             RenderOutputMap();
 
             //since the output map has changed, we should now update the selectable menu items/toolbar states as well
             SetMenuAndToolbarEnabledDisabledStates();
         }
+
         /// <summary>
         /// Restores the main editor window from its minimized-to-tray state
         /// </summary>
         private void RestoreFromSystemTray()
         {
             nfyTrayIcon.Visible = false; //hide the tray icon when we're in this state
-            this.ShowInTaskbar = true; //show a button in the main taskbar when this form is in the Normal size state
-            this.Activate(); //make the main form the current window
+            ShowInTaskbar = true; //show a button in the main taskbar when this form is in the Normal size state
+            Activate(); //make the main form the current window
         }
+
         /// <summary>
         /// Saves the current output map to a file
         /// </summary>
@@ -1624,13 +1707,14 @@ namespace JoyMapper
             catch (IOException e)
             {
                 //if anything went wrong during the save process, notify the user, and return a value of false, indicating an error occurred.
-                MessageBox.Show("An error occurred while saving the mappings file:\n" + e.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("An error occurred while saving the mappings file:\n" + e.Message,
+                                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
             //if the save was successful, update the titlebar with the new file name.  
             //Note that the changes-pending asterisk will not be required,
             //since we've just committed any pending changes to disk.
-            this.Text = Application.ProductName + " - " + file.FullName;
+            Text = Application.ProductName + " - " + file.FullName;
 
             //reset the changes-pending flag since we've just committed all pending changes
             _hasChanges = false;
@@ -1645,6 +1729,7 @@ namespace JoyMapper
             //return a value of true to inform the caller that the save was successful.
             return true;
         }
+
         /// <summary>
         /// Enables menu items/toolbar items associated with the Enable functionality for a treeview item
         /// </summary>
@@ -1652,6 +1737,7 @@ namespace JoyMapper
         {
             mnuCtxTreeItemsEnable.Enabled = true;
         }
+
         /// <summary>
         /// Disables menu items/toolbar items associated with the Enable functionality for a treeview item
         /// </summary>
@@ -1659,6 +1745,7 @@ namespace JoyMapper
         {
             mnuCtxTreeItemsEnable.Enabled = false;
         }
+
         /// <summary>
         /// Enables menu items/toolbar items associated with the Disable functionality for a treeview item
         /// </summary>
@@ -1666,6 +1753,7 @@ namespace JoyMapper
         {
             mnuCtxTreeItemsDisable.Enabled = true;
         }
+
         /// <summary>
         /// Disables menu items/toolbar items associated with the Disable functionality for a treeview item
         /// </summary>
@@ -1673,19 +1761,19 @@ namespace JoyMapper
         {
             mnuCtxTreeItemsDisable.Enabled = false;
         }
+
         /// <summary>
         /// Removes the currently-selected node from the treeview, and removes 
         /// the corresponding mappings from the output map.
         /// </summary>
         private void RemoveCurrentItem()
         {
-
             TreeNode curNode = treeMain.SelectedNode;
             TreeNode parentNode = treeMain.SelectedNode.Parent;
             treeMain.SelectedNode = treeMain.Nodes[0];
 
             //get a copy of the output map as it exists before we make any changes to it
-            OutputMap mapBefore = (OutputMap)((ICloneable)_outputMap).Clone();
+            var mapBefore = (OutputMap) ((ICloneable) _outputMap).Clone();
 
             if (parentNode == null) parentNode = curNode;
 
@@ -1697,53 +1785,53 @@ namespace JoyMapper
                 {
                     foreach (TreeNode controlNode in curNode.Nodes)
                     {
-                        _outputMap.RemoveMapping((PhysicalControlInfo)controlNode.Tag);
+                        _outputMap.RemoveMapping((PhysicalControlInfo) controlNode.Tag);
                     }
                 }
-                //if the current node is the "Buttons" container node, then remove all mappings from
-                //all child nodes 
+                    //if the current node is the "Buttons" container node, then remove all mappings from
+                    //all child nodes 
                 else if (curNode.Text.StartsWith("Buttons", StringComparison.InvariantCultureIgnoreCase))
                 {
                     foreach (TreeNode controlNode in curNode.Nodes)
                     {
-                        _outputMap.RemoveMapping((PhysicalControlInfo)controlNode.Tag);
+                        _outputMap.RemoveMapping((PhysicalControlInfo) controlNode.Tag);
                     }
                 }
-                //if the current node is the "Povs" container node, then remove all mappings from
-                //all child nodes 
+                    //if the current node is the "Povs" container node, then remove all mappings from
+                    //all child nodes 
                 else if (curNode.Text.StartsWith("Povs", StringComparison.InvariantCultureIgnoreCase))
                 {
                     foreach (TreeNode controlNode in curNode.Nodes)
                     {
-                        _outputMap.RemoveMapping((PhysicalControlInfo)controlNode.Tag);
+                        _outputMap.RemoveMapping((PhysicalControlInfo) controlNode.Tag);
                     }
                 }
-                //if the current node is the "Local Devices" container node, then remove all mappings from
-                //all child nodes 
+                    //if the current node is the "Local Devices" container node, then remove all mappings from
+                    //all child nodes 
                 else if (curNode.Text.StartsWith("Local Devices", StringComparison.InvariantCultureIgnoreCase))
                 {
                     foreach (TreeNode deviceNode in curNode.Nodes)
                     {
-                        _outputMap.RemoveMapping((PhysicalDeviceInfo)deviceNode.Tag);
+                        _outputMap.RemoveMapping((PhysicalDeviceInfo) deviceNode.Tag);
                     }
                 }
-                //if the current node is a leaf node, then convert the node's .Tag object
-                //to the appropriate object type and remove the mapping from the output map
+                    //if the current node is a leaf node, then convert the node's .Tag object
+                    //to the appropriate object type and remove the mapping from the output map
                 else if (curNode.Tag != null)
                 {
                     if (curNode.Tag is PhysicalDeviceInfo)
                     {
-                        _outputMap.RemoveMapping((PhysicalDeviceInfo)curNode.Tag);
+                        _outputMap.RemoveMapping((PhysicalDeviceInfo) curNode.Tag);
                     }
                     else if (curNode.Tag is PhysicalControlInfo)
                     {
-                        _outputMap.RemoveMapping((PhysicalControlInfo)curNode.Tag);
+                        _outputMap.RemoveMapping((PhysicalControlInfo) curNode.Tag);
                     }
                 }
             }
 
             //make a copy of the output map after the changes have been made
-            OutputMap mapAfter = (OutputMap)((ICloneable) _outputMap).Clone();
+            var mapAfter = (OutputMap) ((ICloneable) _outputMap).Clone();
 
             //compare the output map after changes to the output map before changes, and if the two are different,
             //then update the global HasChanges flag 
@@ -1755,10 +1843,11 @@ namespace JoyMapper
             //select the node's parent in the treeview
             parentNode.EnsureVisible();
             treeMain.SelectedNode = parentNode;
-            
+
             //update menu and toolbar states since the output map has changed
             SetMenuAndToolbarEnabledDisabledStates();
         }
+
         /// <summary>
         /// Disables the "Remove" menu item functionality
         /// </summary>
@@ -1766,6 +1855,7 @@ namespace JoyMapper
         {
             mnuCtxTreeItemsRemove.Enabled = false;
         }
+
         /// <summary>
         /// Enables the "Remove" menu item functionality
         /// </summary>
@@ -1773,18 +1863,18 @@ namespace JoyMapper
         {
             mnuCtxTreeItemsRemove.Enabled = true;
         }
+
         /// <summary>
         /// Determines the valid states for all menu and toolbar items and sets their .Enabled
         /// property to allow/prevent selection of each such item
         /// </summary>
         private void SetMenuAndToolbarEnabledDisabledStates()
         {
-
             if (_outputMap != null && _outputMap.ContainsValidMappings())
             {
                 //there's a valid mapping set and it contains items,
                 //so mapping is possible to start
-                if (_mediator !=null && _mediator.SendOutput)
+                if (_mediator != null && _mediator.SendOutput)
                 {
                     //there's already a mediator and it's running, 
                     //so we can't enable starting the mediator
@@ -1806,7 +1896,7 @@ namespace JoyMapper
                 //so no mediation is possible.  
                 DisableStartMappingFunctionality();
 
-                if (_mediator !=null && _mediator.SendOutput)
+                if (_mediator != null && _mediator.SendOutput)
                 {
                     //there is a mediator and the mediator is running, so we have to 
                     //enable stopping it
@@ -1820,7 +1910,7 @@ namespace JoyMapper
                 }
             }
             //if the mediator is currently sending output to PPJoy, then
-            if (_mediator !=null && _mediator.SendOutput)
+            if (_mediator != null && _mediator.SendOutput)
             {
                 //don't ask the mediator to raise "change notification" events -- we don't
                 //want to sacrifice performance by processing those while active mediation is occuring
@@ -1838,10 +1928,12 @@ namespace JoyMapper
                 DisableFileNewFunctionality(); //we don't want to lose the existing output map while mediation's running
                 DisableFileImportFunctionality();
                 DisableFileOpenFunctionality(); //we don't want to open a new output map while mediation's running
-                DisableCreateDefaultMapping(); //we don't want to allow changes to the output map while mediation's running
-                treeMain.Enabled = false; //again, we don't want to allow changes to the output map while mediation's running
-                
-                DisableAutoHighlightingFunctionality(); 
+                DisableCreateDefaultMapping();
+                    //we don't want to allow changes to the output map while mediation's running
+                treeMain.Enabled = false;
+                    //again, we don't want to allow changes to the output map while mediation's running
+
+                DisableAutoHighlightingFunctionality();
             }
             else //the mediator is not currently sending output to PPJoy, so
             {
@@ -1849,7 +1941,7 @@ namespace JoyMapper
                 {
                     try
                     {
-                        _mediator.RaiseEvents = true;  //we can track change events
+                        _mediator.RaiseEvents = true; //we can track change events
                     }
                     catch (NullReferenceException e)
                     {
@@ -1857,7 +1949,7 @@ namespace JoyMapper
                     }
                 }
                 EnableMediationSensitiveMenuFunctionality();
-                EnableToolsMenuFunctionality(); 
+                EnableToolsMenuFunctionality();
                 EnablePPJoyMenuFunctionality(); //are basically re-enabled here
                 EnableFileNewFunctionality();
                 EnableFileImportFunctionality();
@@ -1885,7 +1977,7 @@ namespace JoyMapper
                 {
                     EnableEnableItemFunctionality(); //enable the "Enable" menu items
                     DisableDisableItemFunctionality(); //disable the "Disable" menu items
-                }//end if
+                } //end if
                 DisableRemoveItemFunctionality();
                 if (treeMain.SelectedNode.Nodes.Count > 0) //if the node has children
                 {
@@ -1893,7 +1985,7 @@ namespace JoyMapper
                     {
                         EnableRemoveItemFunctionality(); //enable the "Remove" menu items
                     }
-                } 
+                }
             }
             else //(treeMain.SelectedNode == null)
             {
@@ -1902,25 +1994,30 @@ namespace JoyMapper
                 DisableRemoveItemFunctionality(); //disable the "Remove" menu items
             }
 
-            ShowChangesAsteriskIfNeeded(); //update the application's title bar to indicate if unsaved changes exist in the output map
+            ShowChangesAsteriskIfNeeded();
+                //update the application's title bar to indicate if unsaved changes exist in the output map
         }
+
         private void DisableMappingsTab()
         {
             tabMain.Enabled = false;
         }
+
         private void EnableMappingsTab()
         {
             tabMain.Enabled = true;
         }
+
         private void DisableAutoHighlightingFunctionality()
         {
-
             btnAutoHighlighting.Enabled = false;
         }
+
         private void EnableAutoHighlightingFunctionality()
         {
             btnAutoHighlighting.Enabled = true;
         }
+
         /// <summary>
         /// Updates the application's title bar with an asterisk if unsaved changes exist in the output map
         /// </summary>
@@ -1928,34 +2025,39 @@ namespace JoyMapper
         {
             if (_hasChanges)
             {
-                if (!this.Text.EndsWith(" *"))
+                if (!Text.EndsWith(" *"))
                 {
-                    this.Text = this.Text + " *";
+                    Text = Text + " *";
                 }
             }
         }
+
         /// <summary>
         /// Displays the Open File common dialog
         /// </summary>
         private void ShowOpenFileDialog()
         {
             _dlgOpen.Reset(); //reset the dialog's properties to the default set of properties
-            _dlgOpen.ValidateNames = true;  //make sure the supplied file name is a valid Win32 file name
+            _dlgOpen.ValidateNames = true; //make sure the supplied file name is a valid Win32 file name
             _dlgOpen.Multiselect = false; //only allow selecting one file
             _dlgOpen.ShowReadOnly = false; //don't show the "Read-Only" checkbox 
-            string appPath = System.IO.Path.GetFullPath(Application.ExecutablePath);
+            string appPath = Path.GetFullPath(Application.ExecutablePath);
             _dlgOpen.InitialDirectory = appPath; //set the dialog to search from the application's path first
             _dlgOpen.CheckPathExists = true; //make sure any user-supplied paths exist
-            _dlgOpen.AddExtension = true; //automatically add an extension to user-supplied file names if the raw name doesn't exist
-            _dlgOpen.DefaultExt = ".map";  //this is the default extension to add 
-            _dlgOpen.DereferenceLinks = true; //follow shortcuts to their targets if the user selects a shortcut instead of the file it points to
-            _dlgOpen.Filter = "Joymapper files (*.map)|*.map|All files(*.*)|*.*"; //set up the basic filter types for this dialog
+            _dlgOpen.AddExtension = true;
+                //automatically add an extension to user-supplied file names if the raw name doesn't exist
+            _dlgOpen.DefaultExt = ".map"; //this is the default extension to add 
+            _dlgOpen.DereferenceLinks = true;
+                //follow shortcuts to their targets if the user selects a shortcut instead of the file it points to
+            _dlgOpen.Filter = "Joymapper files (*.map)|*.map|All files(*.*)|*.*";
+                //set up the basic filter types for this dialog
             _dlgOpen.FilterIndex = 0; //choose the default filter
             _dlgOpen.ShowHelp = false; //disable context-sensitive help within the FileOpen dialog
             _dlgOpen.SupportMultiDottedExtensions = true; //allow file names with multiple "dots" in the filename
             _dlgOpen.Title = "Open"; //set the dialog's titlebar text
             _dlgOpen.ShowDialog(this); //show the dialog
         }
+
         /// <summary>
         /// Shuts down the application cleanly.
         /// </summary>
@@ -1966,7 +2068,7 @@ namespace JoyMapper
                 _exiting = true; //set a flag indicating we're currently exiting the application
                 StopMapping(); //tell the mediator not to send any more updates to PPJoy
                 StopMediatingAndDisposeMediator();
-                this.nfyTrayIcon.Visible = false;
+                nfyTrayIcon.Visible = false;
                 Application.Exit(); //hard-exit the application
             }
         }
@@ -1977,7 +2079,7 @@ namespace JoyMapper
             {
                 try
                 {
-                    _mediator.RaiseEvents = false;  //tell the mediator to stop sending us events
+                    _mediator.RaiseEvents = false; //tell the mediator to stop sending us events
                     _mediator.StopMediating(); //shut down the mediator 
                     _mediator.Dispose(); //manually dispose of the mediator
                 }
@@ -1988,6 +2090,7 @@ namespace JoyMapper
             }
             _mediator = null;
         }
+
         /// <summary>
         /// Updates the output map with the mapping values supplied by the user for a specific physical control
         /// </summary>
@@ -1996,7 +2099,8 @@ namespace JoyMapper
         {
             bool changed = false; //flag to signal if anything's changed as a result of these new mappings
             string selectedVirtualDeviceName = cboVirtualDevice.Text; //read the value of the "Virtual Device" combo box
-            string selectedVirtualControlName = cboVirtualControl.Text; //read the value of the "Virtual Control" combo box
+            string selectedVirtualControlName = cboVirtualControl.Text;
+                //read the value of the "Virtual Control" combo box
             string alias = txtDescription.Text; //read the contents of the "Description" textbox
 
             if (txtDescription.Text != null && String.Equals(txtDescription.Text, String.Empty))
@@ -2012,18 +2116,19 @@ namespace JoyMapper
                 changed = true;
             }
 
-            string newDisplayText=null;
+            string newDisplayText = null;
             if (_lastNode.Tag != null)
             {
-                if (_lastNode.Tag is PhysicalControlInfo) //if the node the user just edited is a node that represents a physical control
+                if (_lastNode.Tag is PhysicalControlInfo)
+                    //if the node the user just edited is a node that represents a physical control
                 {
                     //figure out what to display next to the control's node in the TreeView 
-                    newDisplayText = GetControlDisplayText((PhysicalControlInfo)_lastNode.Tag);
+                    newDisplayText = GetControlDisplayText((PhysicalControlInfo) _lastNode.Tag);
                 }
                 else if (_lastNode.Tag is PhysicalDeviceInfo) //else if the edited node is a Device node
                 {
                     //Device's descriptions are simple -- they always match the Device's alias
-                    newDisplayText = ((PhysicalDeviceInfo)_lastNode.Tag).Alias;
+                    newDisplayText = ((PhysicalDeviceInfo) _lastNode.Tag).Alias;
                 }
 
                 //update the text displayed next to the treeview node for this control
@@ -2032,10 +2137,11 @@ namespace JoyMapper
                     _lastNode.Text = newDisplayText;
                 }
             }
-            
+
             //if the user selected any of the '<unmapped>' combo box entries, then we need to remove the 
             //current mapping from the output map
-            if (selectedVirtualDeviceName == "<unmapped>" || selectedVirtualControlName == "<unmapped>" || selectedVirtualDeviceName == "" || selectedVirtualControlName == "")
+            if (selectedVirtualDeviceName == "<unmapped>" || selectedVirtualControlName == "<unmapped>" ||
+                selectedVirtualDeviceName == "" || selectedVirtualControlName == "")
             {
                 changed = changed | _outputMap.SetMapping(inputControl, null);
             }
@@ -2045,24 +2151,24 @@ namespace JoyMapper
 
                 //if the physical control is a Button, then we know to expect that the mapping must be to
                 //a Digital data source
-                if (inputControl.ControlType == ControlType.Button )
+                if (inputControl.ControlType == ControlType.Button)
                 {
                     //determine *which* digital data source the user selected by removing the word "Digital"
                     //from the text of the selected entry in the Virtual Control combobox
                     string virtualControlNumber = selectedVirtualControlName.Replace("Digital", "").Trim();
-                    controlNum = Int32.Parse(virtualControlNumber); 
+                    controlNum = Int32.Parse(virtualControlNumber);
                 }
-                //if the physical control is an Axis, then we know to expect that the mapping must be to
-                //an Analog data source
-                else if (inputControl.ControlType == ControlType.Axis) 
+                    //if the physical control is an Axis, then we know to expect that the mapping must be to
+                    //an Analog data source
+                else if (inputControl.ControlType == ControlType.Axis)
                 {
                     //determine *which* analog data source the user selected by removing the word "Analog"
                     //from the text of the selected entry in the Virtual Control combobox
                     string virtualControlNumber = selectedVirtualControlName.Replace("Analog", "").Trim();
                     controlNum = Int32.Parse(virtualControlNumber);
                 }
-                //if the physical control is a POV, then we know to expect that the mapping must be to
-                //an Analog data source
+                    //if the physical control is a POV, then we know to expect that the mapping must be to
+                    //an Analog data source
                 else if (inputControl.ControlType == ControlType.Pov)
                 {
                     //determine *which* analog data source the user selected by removing the word "Analog"
@@ -2078,19 +2184,18 @@ namespace JoyMapper
 
                 //create the appropriate objects to represent the user's choice of virtual device
                 //and virtual control 
-                VirtualDeviceInfo virtualDevice = new VirtualDeviceInfo(PPJoyDeviceNumber);
+                var virtualDevice = new VirtualDeviceInfo(PPJoyDeviceNumber);
                 VirtualControlInfo outputControl = null;
                 if (inputControl.ControlType == ControlType.Axis || inputControl.ControlType == ControlType.Pov)
                 {
                     outputControl = new VirtualControlInfo(virtualDevice, ControlType.Axis, controlNum);
                 }
-                else if (inputControl.ControlType == ControlType.Button) 
+                else if (inputControl.ControlType == ControlType.Button)
                 {
                     outputControl = new VirtualControlInfo(virtualDevice, ControlType.Button, controlNum);
                 }
                 //save the user's choices in the output map, detecting any changes that are made as a result
                 changed = changed | _outputMap.SetMapping(inputControl, outputControl);
-
             }
             if (changed)
             {
@@ -2098,6 +2203,7 @@ namespace JoyMapper
             }
             //SetMenuAndToolbarEnabledDisabledStates();
         }
+
         /// <summary>
         /// Displays the Options dialog box.
         /// </summary>
@@ -2117,8 +2223,8 @@ namespace JoyMapper
                 btnAutoHighlighting.Text = "Auto-highlighting (off)";
                 DisableAutoHighlightingFunctionality();
             }
-
         }
+
         /// <summary>
         /// Determines if the user wants to exit the application even if there are unsaved changes. 
         /// Presents the user with the opportunity to save changes, and parses their answer
@@ -2134,20 +2240,21 @@ namespace JoyMapper
             }
             return PromptForSaveChanges();
         }
+
         /// <summary>
         /// Displays the PPJoy control panel
         /// </summary>
         private void OpenPPJoyControlPanel()
         {
-            Process proc = new Process();
+            var proc = new Process();
             proc.EnableRaisingEvents = false;
             string toStart = GetPPJoyControlPanelFilePath();
             if (toStart == null)
             {
                 toStart = "PPortJoy.cpl";
             }
-            FileInfo fi = new FileInfo(toStart);
-            if (fi.Exists || toStart.Equals( "PPortJoy.cpl",StringComparison.InvariantCultureIgnoreCase))
+            var fi = new FileInfo(toStart);
+            if (fi.Exists || toStart.Equals("PPortJoy.cpl", StringComparison.InvariantCultureIgnoreCase))
             {
                 try
                 {
@@ -2156,11 +2263,15 @@ namespace JoyMapper
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show(string.Format("An error occurred while attempting to launch the PPJoy control panel:\n The path {0} could not be found.", toStart), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show(
+                        string.Format(
+                            "An error occurred while attempting to launch the PPJoy control panel:\n The path {0} could not be found.",
+                            toStart), Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
         }
-        
+
         /// <summary>
         /// Applies a set of maximum device capabilities to all detected PPJoy virtual joystick devices.
         /// These capabilities represent the maximum number of axes, buttons, hats, etc., as
@@ -2170,20 +2281,19 @@ namespace JoyMapper
         private void AssignMaximumCapabilitiesToAllPPJoyVirtualDevices()
         {
             StopMediatingAndDisposeMediator();
-            PPJoy.Device[] devices = new PPJoy.DeviceManager().GetAllDevices();
-            foreach (PPJoy.Device device in devices)
+            Device[] devices = new DeviceManager().GetAllDevices();
+            foreach (Device device in devices)
             {
                 Application.DoEvents();
                 if (device != null && device.DeviceType == JoystickTypes.Virtual_Joystick)
                 {
                     try
                     {
-                        device.SetMappings(JoystickMapScope.Device, new PPJoy.DeviceManager().IdealMappings);
+                        device.SetMappings(JoystickMapScope.Device, new DeviceManager().IdealMappings);
                     }
                     catch (Exception e)
                     {
                         _log.Debug(e.Message, e);
-
                     }
                 }
             }
@@ -2195,23 +2305,27 @@ namespace JoyMapper
             CreateMediator();
             UpdateMediatorMap();
         }
-        
-        
+
+
         private string GetPPJoyControlPanelFilePath()
         {
-            Computer c = new Computer();
-            using (Microsoft.Win32.RegistryKey uninstallKey = c.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"))
+            var c = new Computer();
+            using (
+                RegistryKey uninstallKey =
+                    c.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"))
             {
                 string[] subkeys = uninstallKey.GetSubKeyNames();
                 foreach (string subkeyName in subkeys)
                 {
-                    if (subkeyName.Equals("Parallel Port Joystick", StringComparison.InvariantCultureIgnoreCase) || subkeyName.StartsWith("PPJoy Joystick Driver", StringComparison.InvariantCultureIgnoreCase))
+                    if (subkeyName.Equals("Parallel Port Joystick", StringComparison.InvariantCultureIgnoreCase) ||
+                        subkeyName.StartsWith("PPJoy Joystick Driver", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        Microsoft.Win32.RegistryKey ppjoyUninstallerSubkey = uninstallKey.OpenSubKey(subkeyName);
-                        string cplPath = (string)ppjoyUninstallerSubkey.GetValue("DisplayIcon", null, Microsoft.Win32.RegistryValueOptions.None);
+                        RegistryKey ppjoyUninstallerSubkey = uninstallKey.OpenSubKey(subkeyName);
+                        var cplPath =
+                            (string) ppjoyUninstallerSubkey.GetValue("DisplayIcon", null, RegistryValueOptions.None);
                         if (!string.IsNullOrEmpty(cplPath))
                         {
-                            FileInfo fi = new FileInfo(cplPath);
+                            var fi = new FileInfo(cplPath);
                             if (fi.Exists)
                             {
                                 return cplPath;
@@ -2222,21 +2336,24 @@ namespace JoyMapper
                             }
                         }
                         return null;
-                        
                     }
                 }
             }
             return null;
         }
+
         private bool IsPPJoyInstalled()
         {
-            Computer c = new Computer();
-            using (Microsoft.Win32.RegistryKey uninstallKey= c.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"))
+            var c = new Computer();
+            using (
+                RegistryKey uninstallKey =
+                    c.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\"))
             {
                 string[] subkeys = uninstallKey.GetSubKeyNames();
                 foreach (string subkeyName in subkeys)
                 {
-                    if (subkeyName.Equals( "Parallel Port Joystick", StringComparison.InvariantCultureIgnoreCase) || subkeyName.StartsWith("PPJoy Joystick Driver", StringComparison.InvariantCultureIgnoreCase))
+                    if (subkeyName.Equals("Parallel Port Joystick", StringComparison.InvariantCultureIgnoreCase) ||
+                        subkeyName.StartsWith("PPJoy Joystick Driver", StringComparison.InvariantCultureIgnoreCase))
                     {
                         return true;
                     }
@@ -2244,7 +2361,7 @@ namespace JoyMapper
             }
             return false;
         }
-        
+
         /// <summary>
         /// Removes all PPJoy virtual joysticks from PPJoy.
         /// </summary>
@@ -2252,16 +2369,17 @@ namespace JoyMapper
         {
             StopMediatingAndDisposeMediator();
 
-            PPJoy.Device[] devices = null;
+            Device[] devices = null;
             try
             {
-                devices = new PPJoy.DeviceManager().GetAllDevices();  //get an array containing all registered PPJoy devices
-                foreach (PPJoy.Device dev in devices) //for each device in the array
+                devices = new DeviceManager().GetAllDevices(); //get an array containing all registered PPJoy devices
+                foreach (Device dev in devices) //for each device in the array
                 {
-                    Application.DoEvents(); 
-                    PPJoy.Device device = dev;
+                    Application.DoEvents();
+                    Device device = dev;
 
-                    if (device.DeviceType == JoystickTypes.Virtual_Joystick) //if the device is a Virtual Joystick device, then
+                    if (device.DeviceType == JoystickTypes.Virtual_Joystick)
+                        //if the device is a Virtual Joystick device, then
                     {
                         int unitNum = device.UnitNum;
                         int numTries = 0;
@@ -2285,16 +2403,14 @@ namespace JoyMapper
                             try
                             {
                                 //see if the device is still there
-                                device = new PPJoy.DeviceManager().GetDevice(0,unitNum);
+                                device = new DeviceManager().GetDevice(0, unitNum);
                             }
                             catch (PPJoyException e)
                             {
                                 _log.Debug(e.Message, e);
-
                             }
-                            
-                            numTries++; //increment the attempts counter
 
+                            numTries++; //increment the attempts counter
                         } //end while
 
                         try
@@ -2303,7 +2419,7 @@ namespace JoyMapper
                             device.Delete(true, false);
                             for (int i = 0; i < 300; i++)
                             {
-                                System.Threading.Thread.Sleep(10);
+                                Thread.Sleep(10);
                                 Application.DoEvents();
                             }
                         }
@@ -2313,15 +2429,15 @@ namespace JoyMapper
                         }
                     } //end if
                 } //end foreach
-            }//end try
+            } //end try
             catch (PPJoyException e) //over-arching catch statement to prevent errors herein from bubbling up
             {
                 _log.Debug(e.Message, e);
             }
             CreateMediatorAndUpdateMediatorMap();
         }
-        
-        
+
+
         /// <summary>
         /// Defines new PPJoy virtual joystick devices
         /// </summary>
@@ -2329,44 +2445,42 @@ namespace JoyMapper
         {
             int numVirtualDevices = Util.CountPPJoyVirtualDevices();
             DialogResult result = DialogResult.None;
-            
+
             //prompt the user to see how many additional devices to create
-            frmPPJoyDevicesToCreate promptForm = new frmPPJoyDevicesToCreate();
+            var promptForm = new frmPPJoyDevicesToCreate();
             result = promptForm.ShowDialog(this);
-            
+
             if (result == DialogResult.OK)
             {
                 StopMediatingAndDisposeMediator();
 
-                PPJoy.DeviceManager manager = new PPJoy.DeviceManager();
+                var manager = new DeviceManager();
                 int devicesCreated = 0;
                 int currentDeviceUnitNum = 0;
-                List<int> unitNumsToSetIdealMappingsOn = new List<int>();
+                var unitNumsToSetIdealMappingsOn = new List<int>();
                 while (devicesCreated < promptForm.NumDevicesToCreate)
                 {
                     Application.DoEvents();
                     try
                     {
-                        manager.CreateDevice(0, JoystickTypes.Virtual_Joystick, JoystickSubTypes.NotApplicable, currentDeviceUnitNum);
+                        manager.CreateDevice(0, JoystickTypes.Virtual_Joystick, JoystickSubTypes.NotApplicable,
+                                             currentDeviceUnitNum);
                         unitNumsToSetIdealMappingsOn.Add(currentDeviceUnitNum);
                         devicesCreated++; //if successful, increment count of devices created
                     }
                     catch (DeviceAlreadyExistsException e)
                     {
                         _log.Debug(e.Message, e);
-
                     }
                     catch (OperationFailedException e)
                     {
                         _log.Debug(e.Message, e);
-
                     }
                     currentDeviceUnitNum++; //increment the device unit number 
                     if (currentDeviceUnitNum > manager.MaxValidUnitNumber(JoystickTypes.Virtual_Joystick))
                     {
                         break;
                     }
-
                 }
                 //foreach (int unitNum in unitNumsToSetIdealMappingsOn)
                 //{
@@ -2376,26 +2490,24 @@ namespace JoyMapper
                 //    }
                 //    catch (ApplicationException)
                 //    {
-            //                _log.Debug(e.Message, e);
+                //                _log.Debug(e.Message, e);
                 //    }
                 //}
-
             }
             CreateMediatorAndUpdateMediatorMap();
-
-
         }
-        
+
         /// <summary>
         /// Displays the Windows "Gaming Devices" control panel.
         /// </summary>
         private void OpenWindowsJoystickControlPanel()
         {
-            Process proc = new Process();
+            var proc = new Process();
             proc.EnableRaisingEvents = false;
             proc.StartInfo.FileName = "joy.cpl";
             proc.Start();
         }
+
         /// <summary>
         /// Gets a value that indicates if the specified node's mappings are enabled.  If the specified node is not a leaf node, then the value returned indicates if *all* of the children of the supplied container node have their mappings enabled.  If any child node does not have its mappings enabled, the return value is false.
         /// </summary>
@@ -2404,13 +2516,13 @@ namespace JoyMapper
         private bool IsNodeEnabled(TreeNode node)
         {
             if (node == null) return false;
-            
+
             //obtain the node's .Tag object
             object tag = node.Tag;
 
             if (tag is PhysicalControlInfo) //if the tag represents a Physical Control
             {
-                if (_outputMap.IsMappingEnabled((PhysicalControlInfo)tag))
+                if (_outputMap.IsMappingEnabled((PhysicalControlInfo) tag))
                 {
                     return true; //mapping is enabled for this physical control
                 }
@@ -2421,7 +2533,7 @@ namespace JoyMapper
             }
             else if (tag is PhysicalDeviceInfo) //if the tag represents a Phyaical Device
             {
-                if (_outputMap.IsMappingEnabled((PhysicalDeviceInfo)tag))
+                if (_outputMap.IsMappingEnabled((PhysicalDeviceInfo) tag))
                 {
                     return true; //mapping is enabled for at least one of this device's controls
                 }
@@ -2439,12 +2551,13 @@ namespace JoyMapper
                 {
                     if (IsNodeEnabled(child))
                     {
-                        return true;  //the child was enabled, so the parent is enabled
+                        return true; //the child was enabled, so the parent is enabled
                     }
                 }
                 return false; //all children were disabled, so the parent is disabled.
             }
         }
+
         private bool AreAnyChildNodesDisabled(TreeNode node)
         {
             if (node == null)
@@ -2457,7 +2570,7 @@ namespace JoyMapper
             {
                 return false;
             }
-            else 
+            else
             {
                 //this node is a container node, so we'll have to
                 //recursively call the IsNodeEnabled() function for each of the children
@@ -2466,12 +2579,13 @@ namespace JoyMapper
                 {
                     if (!IsNodeEnabled(child))
                     {
-                        return true;  
+                        return true;
                     }
                 }
                 return false; //all children were enabled
             }
         }
+
         /// <summary>
         /// Greys out a TreeNode representing a Physical Device.
         /// </summary>
@@ -2479,17 +2593,18 @@ namespace JoyMapper
         private void DisableDeviceNode(TreeNode deviceNode)
         {
             //get an object representing the associated Physical Device itself
-            PhysicalDeviceInfo currentDevice = deviceNode.Tag as PhysicalDeviceInfo;
-            if (currentDevice != null)  //if this is not null, then we have found such an object
+            var currentDevice = deviceNode.Tag as PhysicalDeviceInfo;
+            if (currentDevice != null) //if this is not null, then we have found such an object
             {
                 //out the node's descriptive text and set its icon to the
                 //Greyed-state icon
                 deviceNode.ImageIndex = IMAGE_INDEX_JOYSTICK_GREYED;
                 deviceNode.SelectedImageIndex = IMAGE_INDEX_JOYSTICK_GREYED;
-                deviceNode.ForeColor = this.BackColor;
+                deviceNode.ForeColor = BackColor;
                 deviceNode.Collapse(true); //collapse the node if it's expanded, hiding its children nodes
             }
         }
+
         /// <summary>
         /// Un-greys out a node representing a Physical Device.
         /// </summary>
@@ -2497,7 +2612,7 @@ namespace JoyMapper
         private void EnableDeviceNode(TreeNode deviceNode)
         {
             //get an object representing the associated Physical Device itself
-            PhysicalDeviceInfo currentDevice = deviceNode.Tag as PhysicalDeviceInfo;
+            var currentDevice = deviceNode.Tag as PhysicalDeviceInfo;
             if (currentDevice != null) //if this is not null, then we have found such an object
             {
                 //ungrey out the node's descriptive text and set its icon to the
@@ -2508,6 +2623,7 @@ namespace JoyMapper
                 deviceNode.Expand(); //expand the device node to show the container nodes below it
             }
         }
+
         /// <summary>
         /// Disables mapping for the physical control represented by a specific TreeNode.
         /// </summary>
@@ -2515,7 +2631,7 @@ namespace JoyMapper
         private void DisableControlNode(TreeNode controlNode)
         {
             //get an object representing the actual physical control that the TreeNode represents
-            PhysicalControlInfo currentControl = controlNode.Tag as PhysicalControlInfo;
+            var currentControl = controlNode.Tag as PhysicalControlInfo;
 
             if (currentControl != null) //if we found such an object, then this node is truly a Control node
             {
@@ -2540,9 +2656,10 @@ namespace JoyMapper
                     controlNode.SelectedImageIndex = IMAGE_INDEX_POV_GREYED;
                 }
                 //grey-out the control's text description in the TreeView
-                controlNode.ForeColor = this.BackColor;
+                controlNode.ForeColor = BackColor;
             }
         }
+
         /// <summary>
         /// Enables mapping for the physical control represented by a specific TreeNode.
         /// </summary>
@@ -2550,7 +2667,7 @@ namespace JoyMapper
         private void EnableControlNode(TreeNode controlNode)
         {
             //get an object representing the actual physical control that the TreeNode represents
-            PhysicalControlInfo currentControl = controlNode.Tag as PhysicalControlInfo;
+            var currentControl = controlNode.Tag as PhysicalControlInfo;
             if (currentControl != null) //if we found such an object, then this node is truly a Control node
             {
                 //enable mapping for this physical control
@@ -2577,6 +2694,7 @@ namespace JoyMapper
                 controlNode.ForeColor = treeMain.ForeColor;
             }
         }
+
         private void DisableNode(TreeNode node)
         {
             //TODO: comment this
@@ -2596,15 +2714,14 @@ namespace JoyMapper
                 {
                     DisableContainerNode(node.Parent); //disable the control container node
                 }
-                if (node.Parent !=null && !IsNodeEnabled(node.Parent.Parent))
+                if (node.Parent != null && !IsNodeEnabled(node.Parent.Parent))
                 {
                     DisableContainerNode(node.Parent.Parent); //disable the device node
                 }
-                if (node.Parent !=null && node.Parent.Parent !=null && !IsNodeEnabled(node.Parent.Parent.Parent))
+                if (node.Parent != null && node.Parent.Parent != null && !IsNodeEnabled(node.Parent.Parent.Parent))
                 {
                     DisableContainerNode(node.Parent.Parent.Parent); //disable the local devices node
                 }
-                
             }
             else if (tag is PhysicalDeviceInfo)
             {
@@ -2613,7 +2730,7 @@ namespace JoyMapper
                 {
                     DisableContainerNode(node.Parent); //disable the device node
                 }
-                if (node.Parent !=null && !IsNodeEnabled(node.Parent.Parent))
+                if (node.Parent != null && !IsNodeEnabled(node.Parent.Parent))
                 {
                     DisableContainerNode(node.Parent.Parent); //disable the local devices node
                 }
@@ -2623,15 +2740,16 @@ namespace JoyMapper
                 DisableContainerNode(node); //the control container node itself
                 if (!IsNodeEnabled(node.Parent))
                 {
-                    DisableContainerNode(node.Parent);  //the device node
+                    DisableContainerNode(node.Parent); //the device node
                 }
-                if (node.Parent !=null && !IsNodeEnabled(node.Parent.Parent))
+                if (node.Parent != null && !IsNodeEnabled(node.Parent.Parent))
                 {
-                    DisableContainerNode(node.Parent.Parent);  //the the local devices node
+                    DisableContainerNode(node.Parent.Parent); //the the local devices node
                 }
             }
             SetMenuAndToolbarEnabledDisabledStates();
         }
+
         private void EnableContainerNode(TreeNode node)
         {
             //TODO: comment this
@@ -2660,6 +2778,7 @@ namespace JoyMapper
                 node.ForeColor = treeMain.ForeColor;
             }
         }
+
         /// <summary>
         /// Disables a node in the Treeview whose only purpose is to serve as a container for other kinds of nodes.
         /// </summary>
@@ -2689,9 +2808,10 @@ namespace JoyMapper
                     node.ImageIndex = IMAGE_INDEX_LOCAL_DEVICES_GREYED;
                     node.SelectedImageIndex = IMAGE_INDEX_LOCAL_DEVICES_GREYED;
                 }
-                node.ForeColor = this.BackColor;
+                node.ForeColor = BackColor;
             }
         }
+
         /// <summary>
         /// Enables a node in the TreeView, and its child nodes.
         /// </summary>
@@ -2715,7 +2835,7 @@ namespace JoyMapper
                 EnableContainerNode(node.Parent.Parent); //device node
                 EnableContainerNode(node.Parent.Parent.Parent); //local devices node
             }
-            else if (tag is PhysicalDeviceInfo) 
+            else if (tag is PhysicalDeviceInfo)
             {
                 EnableDeviceNode(node); //device node itself
                 EnableContainerNode(node.Parent); //local devices node
@@ -2730,6 +2850,7 @@ namespace JoyMapper
             //update the menu & toolbar enabled/disabled states
             SetMenuAndToolbarEnabledDisabledStates();
         }
+
         /// <summary>
         /// Updates the Mediator object's copy of the output map.  The Mediator uses
         /// a separate copy of the Output Map, which allows for making changes to the
@@ -2741,7 +2862,7 @@ namespace JoyMapper
         private void UpdateMediatorMap()
         {
             //copy this form's instance of the output map 
-            OutputMap toUse = (OutputMap)((ICloneable)_outputMap).Clone();
+            var toUse = (OutputMap) ((ICloneable) _outputMap).Clone();
 
             if (_mediator != null)
             {
@@ -2759,10 +2880,10 @@ namespace JoyMapper
                 catch (NullReferenceException e)
                 {
                     _log.Debug(e.Message, e);
-
                 }
             }
         }
+
         /// <summary>
         /// Finds the TreeNode that corresponds to a specific physical input control.
         /// </summary>
@@ -2778,7 +2899,7 @@ namespace JoyMapper
                     {
                         foreach (TreeNode controlNode in containerNode.Nodes)
                         {
-                            PhysicalControlInfo controlInNode = (PhysicalControlInfo)controlNode.Tag;
+                            var controlInNode = (PhysicalControlInfo) controlNode.Tag;
 
                             if (controlInNode != null && controlInNode.Equals(control))
                             {
@@ -2790,8 +2911,11 @@ namespace JoyMapper
             }
             return null;
         }
+
         #endregion
+
         #region Event Handlers
+
         /// <summary>
         /// Event handler for PhysicalControlStateChanged events that are raised by the Mediator.
         /// </summary>
@@ -2808,10 +2932,12 @@ namespace JoyMapper
                 //changes state causes a different event to fire.  This may result in a large
                 //number of events firing, but allows for fine-grained handling of each event.
 
-                TreeNode controlNode = findNodeForControl(e.Control); //find the TreeView node corresponding to the physical control whose state change is being signalled by the event
+                TreeNode controlNode = findNodeForControl(e.Control);
+                    //find the TreeView node corresponding to the physical control whose state change is being signalled by the event
                 if (controlNode != null && IsNodeEnabled(controlNode)) //if we found one
                 {
-                    if (e.Control.ControlType == ControlType.Button) //if the control raising the change event is a Button control
+                    if (e.Control.ControlType == ControlType.Button)
+                        //if the control raising the change event is a Button control
                     {
                         if (e.CurrentState == 1) //if the button is now in the pressed state
                         {
@@ -2830,16 +2956,18 @@ namespace JoyMapper
                             controlNode.SelectedImageIndex = IMAGE_INDEX_BUTTON;
                         }
                     }
-                    else if (e.Control.ControlType == ControlType.Axis) //if the control raising the event is an Axis control
+                    else if (e.Control.ControlType == ControlType.Axis)
+                        //if the control raising the event is an Axis control
                     {
                         //based on the axis' raw value, calculate the percentage that this value represents of the maximum possible value
-                        int maxRange = (VirtualJoystick.MaxAnalogDataSourceVal - VirtualJoystick.MinAnalogDataSourceVal) + 1;
+                        int maxRange = (VirtualJoystick.MaxAnalogDataSourceVal -
+                                        VirtualJoystick.MinAnalogDataSourceVal) + 1;
                         double pctOfRange = 0;
                         if (e.CurrentState > 1)
                         {
-                            pctOfRange = ((double)e.CurrentState / (double)maxRange);
+                            pctOfRange = (e.CurrentState/(double) maxRange);
                         }
-                        if ((double)(((double)e.CurrentState - (double)e.PreviousState) / (double)maxRange) < (double)0.01)
+                        if (((e.CurrentState - (double) e.PreviousState)/maxRange) < 0.01)
                         {
                             return;
                         }
@@ -2852,7 +2980,8 @@ namespace JoyMapper
                         controlNode.ImageIndex = IMAGE_INDEX_AXIS_MOVED;
                         controlNode.SelectedImageIndex = IMAGE_INDEX_AXIS_MOVED;
                     }
-                    else if (e.Control.ControlType == ControlType.Pov) //if the control raising the event is a POV control
+                    else if (e.Control.ControlType == ControlType.Pov)
+                        //if the control raising the event is a POV control
                     {
                         highlight = true;
                         if (e.CurrentState == -1) //if the POV is centered
@@ -2867,16 +2996,18 @@ namespace JoyMapper
                         {
                             //update the POV's TreeView node to set the icon to the Highlighted state
                             //and update the ToolTip text to indicate the exact state
-                            string currentState = "UNKNOWN"; //start with the assumption that we can't determine the position of the POV
+                            string currentState = "UNKNOWN";
+                                //start with the assumption that we can't determine the position of the POV
 
                             //calculate the scale length for raw axis values
-                            int scaleLength = (VirtualJoystick.MaxAnalogDataSourceVal - VirtualJoystick.MinAnalogDataSourceVal) + 1;
+                            int scaleLength = (VirtualJoystick.MaxAnalogDataSourceVal -
+                                               VirtualJoystick.MinAnalogDataSourceVal) + 1;
 
                             //calculate the percentage that the current POV axis value represents of the total scale length
-                            double pct = (double)e.CurrentState / (double)scaleLength;
+                            double pct = e.CurrentState/(double) scaleLength;
 
                             //translate that percentage into degrees, where zero degrees is due north
-                            double degrees = pct * 360;
+                            double degrees = pct*360;
 
                             //now translate the degrees into a word describing the cardinal direction represented by the POV's position
                             if (degrees >= 0 && degrees < 22.5)
@@ -2936,6 +3067,7 @@ namespace JoyMapper
                 }
             }
         }
+
         /// <summary>
         /// Clears all the ToolTip texts on all TreeView nodes
         /// </summary>
@@ -2955,6 +3087,7 @@ namespace JoyMapper
             }
             treeMain.Nodes[0].ToolTipText = String.Empty;
         }
+
         /// <summary>
         /// Event handler for the toolbar's "New" button's press event
         /// </summary>
@@ -2964,6 +3097,7 @@ namespace JoyMapper
         {
             NewFile();
         }
+
         /// <summary>
         /// Event handler for the toolbar's "Open" button's press event.
         /// </summary>
@@ -2973,6 +3107,7 @@ namespace JoyMapper
         {
             OpenFile();
         }
+
         /// <summary>
         /// Event handler for the toolbar's "Options" button's press event.
         /// </summary>
@@ -3012,6 +3147,7 @@ namespace JoyMapper
         {
             StopMapping();
         }
+
         /// <summary>
         /// Event handler for the Virtual Control combo box's SelectionChangeCommmitted event.
         /// </summary>
@@ -3023,6 +3159,7 @@ namespace JoyMapper
             //the currently-selected physical control node 
             CheckAndStoreCurrentMapping();
         }
+
         /// <summary>
         /// Event handler for the Virtual Device combo box's SelectionChangeCommitted event.
         /// </summary>
@@ -3046,10 +3183,10 @@ namespace JoyMapper
                 string selectedVirtualDevice = cboVirtualDevice.Text;
                 string virtualDeviceNumber = selectedVirtualDevice.Replace("PPJoy Virtual joystick ", "").Trim();
                 int ppJoyDeviceNum = Int32.Parse(virtualDeviceNumber);
-                VirtualDeviceInfo virtualDevice = new VirtualDeviceInfo(ppJoyDeviceNum);
-                
+                var virtualDevice = new VirtualDeviceInfo(ppJoyDeviceNum);
+
                 //populate the Virtual Control combobox based on the type of control node selected in the main TreeView
-                PopulateSelectableOutputControls((PhysicalControlInfo)_lastNode.Tag, virtualDevice);
+                PopulateSelectableOutputControls((PhysicalControlInfo) _lastNode.Tag, virtualDevice);
 
                 //set the initial selection of the Virtual Control combobox to the "<unmapped>" entry.
                 int unmappedIndex = cboVirtualControl.FindStringExact("<unmapped>");
@@ -3083,7 +3220,7 @@ namespace JoyMapper
             string fileName = _dlgOpen.FileName;
 
             //attempt to load the mapping file specified by the user
-            FileInfo file = new FileInfo(fileName);
+            var file = new FileInfo(fileName);
             try
             {
                 LoadMappingsFile(file);
@@ -3095,6 +3232,7 @@ namespace JoyMapper
                 throw;
             }
         }
+
         /// <summary>
         /// Event handler for the FileSave common dialog's dismissal (OK/Cancel) events.
         /// </summary>
@@ -3113,16 +3251,17 @@ namespace JoyMapper
             _fileName = _dlgSave.FileName;
 
             //attempt to save the current mappings file to the location specified by the user
-            FileInfo file = new FileInfo(_fileName);
+            var file = new FileInfo(_fileName);
             SaveMappingsFile(file);
         }
+
         /// <summary>
         /// Event handler for the FormClosing event.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">Event arguments for the FormClosing event.</param>
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
-        { 
+        {
             //if the user attempts to close the form using the form's close button or
             //the form's control menu, then we can ask the user to save any unsaved
             //changes, and if the user cancels that operation, then we can cancel
@@ -3132,19 +3271,20 @@ namespace JoyMapper
                 e.Cancel = true;
             }
         }
+
         /// <summary>
         /// Adds greyed-out versions of the main color images in the TreeView's ImageList control, to the ImageList control.
         /// </summary>
         private void AddGreyedOutImages()
         {
-
             int numImages = imglstImages.Images.Count;
 
             //for each image originally in the ImageList control
             for (int i = 0; i < numImages; i++)
             {
                 Image img = imglstImages.Images[i]; //get a reference to the current Image from the control
-                Image greyedOut = (Image)Common.Imaging.Util.ConvertImageToGreyscale((Bitmap)img); //convert this image to greyscale
+                Image greyedOut = Common.Imaging.Util.ConvertImageToGreyscale((Bitmap) img);
+                    //convert this image to greyscale
                 imglstImages.Images.Add(greyedOut); //add the greyscale version back into the control
             }
         }
@@ -3174,11 +3314,11 @@ namespace JoyMapper
             nfyTrayIcon.ContextMenuStrip = mnuCtxTrayIcon;
 
             //update the application's title bar to indicate an untitled map is loaded
-            this.Text = Application.ProductName + " - Untitled";
+            Text = Application.ProductName + " - Untitled";
 
             //register event handlers for the common dialog events
-            _dlgSave.FileOk += new CancelEventHandler(dlgSave_FileOk);
-            _dlgOpen.FileOk += new CancelEventHandler(dlgOpen_FileOk);
+            _dlgSave.FileOk += dlgSave_FileOk;
+            _dlgOpen.FileOk += dlgOpen_FileOk;
 
             //initialize form-level variables that need to be initialized during the Load event
             _mappingsTab = tabMain.TabPages["tabMappings"];
@@ -3191,9 +3331,11 @@ namespace JoyMapper
             cboVirtualDevice.ValueMember = "InstanceGuid";
 
             //check if PPJoy is installed
-            if (!IsPPJoyInstalled()) 
+            if (!IsPPJoyInstalled())
             {
-                MessageBox.Show("WARNING: " + Application.ProductName + " requires PPJoy, which was not found on this machine.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(
+                    "WARNING: " + Application.ProductName + " requires PPJoy, which was not found on this machine.",
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 StopRunning();
             }
             /*
@@ -3211,9 +3353,13 @@ namespace JoyMapper
 
             //check for presence of at least one PPJoy virtual device and prompt
             //user to auto-create these devices if they're not found
-            if (!(new PPJoy.DeviceManager().GetAllDevices().Length > 0))
+            if (!(new DeviceManager().GetAllDevices().Length > 0))
             {
-                DialogResult dr = MessageBox.Show("PPJoy is installed on this system, but no PPJoy virtual joystick devices have been configured.  Would you like to configure these devices now?", Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                DialogResult dr =
+                    MessageBox.Show(
+                        "PPJoy is installed on this system, but no PPJoy virtual joystick devices have been configured.  Would you like to configure these devices now?",
+                        Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1);
                 if (dr == DialogResult.Yes)
                 {
                     //CreateNewPPJoyVirtualJoystickDevices();
@@ -3221,11 +3367,10 @@ namespace JoyMapper
                 }
             }
 
-            
-            
+
             //initialize menu items states (set whether they're enabled or disabled)
             SetMenuAndToolbarEnabledDisabledStates();
-            
+
             //populate the combo boxes in the mappings tab with their initial values
             PopulateVirtualDevicesList();
 
@@ -3244,7 +3389,7 @@ namespace JoyMapper
                 DisableAutoHighlightingFunctionality();
             }
             bool success = false;
-            if (set.LoadDefaultMappingFile) 
+            if (set.LoadDefaultMappingFile)
             {
                 //if the user's settings call 
                 //for a certain mapping file to be 
@@ -3252,7 +3397,7 @@ namespace JoyMapper
                 //load that file now
 
                 string fileName = set.DefaultMappingFile;
-                FileInfo file = new FileInfo(fileName);
+                var file = new FileInfo(fileName);
                 success = LoadMappingsFile(file);
 
                 if (success) //if we successfully loaded the file specified in the settings
@@ -3270,14 +3415,15 @@ namespace JoyMapper
                         }
                     }
                 }
-                else  //the file specieid in the settings didn't load successfully,
+                else //the file specieid in the settings didn't load successfully,
                     //so we need to initialize the application using the NewFile()
                     //method.
                 {
                     NewFile();
                 }
             }
-            else {
+            else
+            {
                 //if there's no default mapping file specified, then we have
                 //to initialize the application using the NewFile() method.
                 NewFile();
@@ -3288,35 +3434,35 @@ namespace JoyMapper
         {
             //create a new Mediator that can raise input-device state-changed events to the event handler in this form's code
             _mediator = new Mediator(this);
-            _mediator.PhysicalControlStateChanged += new Mediator.PhysicalControlStateChangedEventHandler(_mediator_PhysicalControlStateChanged);
-
+            _mediator.PhysicalControlStateChanged += _mediator_PhysicalControlStateChanged;
         }
+
         /// <summary>
         /// Event handler for the form's SizeChanged event.
         /// </summary>
-
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">Event arguments for the SizeChanged event.</param>
         private void frmMain_SizeChanged(object sender, EventArgs e)
         {
             //NOTE: this event is fired *after* the window already has changed size
-            
-            if (this.WindowState == FormWindowState.Minimized)
+
+            if (WindowState == FormWindowState.Minimized)
             {
                 //if the user minimizes the application's main form, then add the app
                 //icon to the system tray, hide the app's main form, and remove the app's
                 //button from the task tray
                 MinimizeToSystemTray();
             }
-            else 
+            else
             {
                 //if the main form is in some state other than the minimized state,
                 //then we should not have the tray icon visible, but teh app's window
                 //should be visible.
-                
+
                 RestoreFromSystemTray();
             }
         }
+
         /// <summary>
         /// Event handler for the "Actions" menu's "Create Default Mappings" menu item.
         /// </summary>
@@ -3324,19 +3470,20 @@ namespace JoyMapper
         /// <param name="e">Event arguments for the Click event.</param>
         private void mnuActionsCreateDefaultMappings_Click(object sender, EventArgs e)
         {
-            treeMain.SelectedNode = treeMain.Nodes[0]; //select the root node in the tree (forces pending updates to the output map to commit)
+            treeMain.SelectedNode = treeMain.Nodes[0];
+                //select the root node in the tree (forces pending updates to the output map to commit)
             bool hadChanges = _hasChanges; //store the current state of the HasChanges flag
             //get a copy of the current output map
-            OutputMap mapBefore = (OutputMap)((ICloneable)_outputMap).Clone();
+            var mapBefore = (OutputMap) ((ICloneable) _outputMap).Clone();
             //call the logic that creates the default mappings in the output map
             CreateDefaultMappings();
             //get a copy of the output map that exists after creating default mappings
-            OutputMap mapAfter = (OutputMap)((ICloneable)_outputMap).Clone();
+            var mapAfter = (OutputMap) ((ICloneable) _outputMap).Clone();
 
             //compare the two maps (before and after), and if they're different,
             //raise the HasChanges flag if it isn't raised already.
             _hasChanges = hadChanges | (!mapBefore.Equals(mapAfter));
-            
+
             //render the new output map
             RenderOutputMap();
 
@@ -3397,7 +3544,7 @@ namespace JoyMapper
             //set the main form to the Normal size state.  This will cause
             //the SizeChanged event handler to run, which, in turn, will call
             //RestoreFromSystemTray().
-            this.WindowState = FormWindowState.Normal; 
+            WindowState = FormWindowState.Normal;
         }
 
         /// <summary>
@@ -3511,7 +3658,7 @@ namespace JoyMapper
                     //so enable editing tab and populate and make visible the relevant
                     //controls on that tab
                     tabMain.Enabled = true;
-                    txtDescription.Text = ((PhysicalControlInfo)e.Node.Tag).Alias;
+                    txtDescription.Text = ((PhysicalControlInfo) e.Node.Tag).Alias;
                     txtDescription.ReadOnly = false;
                     cboVirtualControl.Show();
                     cboVirtualDevice.Show();
@@ -3526,7 +3673,7 @@ namespace JoyMapper
                         _mappingsTab.Show();
                         _mappingsTab.BringToFront();
                     }
-                    DisplayCurrentMapping((PhysicalControlInfo)e.Node.Tag);
+                    DisplayCurrentMapping((PhysicalControlInfo) e.Node.Tag);
                 }
                 else if (parent.Text == "Local Devices")
                 {
@@ -3534,7 +3681,7 @@ namespace JoyMapper
                     //so enable editing tab, but hide controls on 
                     //that tab that aren't relevant to input device editing
                     tabMain.Enabled = true;
-                    txtDescription.Text = ((PhysicalDeviceInfo)e.Node.Tag).Alias;
+                    txtDescription.Text = ((PhysicalDeviceInfo) e.Node.Tag).Alias;
                     txtDescription.ReadOnly = true;
                     cboVirtualControl.Hide();
                     cboVirtualDevice.Hide();
@@ -3549,21 +3696,19 @@ namespace JoyMapper
                         _mappingsTab.Show();
                         _mappingsTab.BringToFront();
                     }
-
                 }
                 else //a non-Device container node is selected
                 {
                     tabMain.Enabled = false; //nothing to edit here, so remove
-                                             //the Mappings tab from the Tab control
+                    //the Mappings tab from the Tab control
                     if (_mappingsTab != null)
                     {
                         tabMain.TabPages.Remove(_mappingsTab);
                     }
-
                 }
             }
             else //the Local Devices node is selected, nothing to edit here, so remove
-                 //the Mappings tab from the Tab control
+                //the Mappings tab from the Tab control
             {
                 tabMain.Enabled = false;
                 if (_mappingsTab != null)
@@ -3575,6 +3720,7 @@ namespace JoyMapper
             //update the menu and toolbar enabled/disabled states
             SetMenuAndToolbarEnabledDisabledStates();
         }
+
         /// <summary>
         /// Event handler for the form's TreeView's BeforeSelect event.
         /// </summary>
@@ -3590,6 +3736,7 @@ namespace JoyMapper
             //call the common method for validating and saving a node's edits
             CheckAndStoreCurrentMapping();
         }
+
         /// <summary>
         /// Event handler for the "Tools" menu's "Open PPJoy Control Panel" menu item.
         /// </summary>
@@ -3600,6 +3747,7 @@ namespace JoyMapper
             //display the PPJoy control panel
             OpenPPJoyControlPanel();
         }
+
         /// <summary>
         /// Event handler for the "Tools" menu's "Open Windows Joystick Control Panel" menu item.
         /// </summary>
@@ -3610,6 +3758,7 @@ namespace JoyMapper
             //display the Windows Gaming Devices control panel
             OpenWindowsJoystickControlPanel();
         }
+
         /// <summary
         /// Event handler for the "PPJoy" menu's "Create new PPJoy Virtual Joystick Devices" menu item.
         /// </summary>
@@ -3629,6 +3778,7 @@ namespace JoyMapper
         {
             AssignMaximumCapabilitiesToAllPPJoyVirtualDevices();
         }
+
         /// <summary
         /// Event handler for the TreeView's context menu's "Disable" menu item.
         /// </summary>
@@ -3638,6 +3788,7 @@ namespace JoyMapper
         {
             DisableNode(treeMain.SelectedNode);
         }
+
         /// <summary
         /// Event handler for the TreeView's context menu's "Enable" menu item.
         /// </summary>
@@ -3681,8 +3832,8 @@ namespace JoyMapper
                     {
                         if (controlNode.Tag != null)
                         {
-                            PhysicalControlInfo control = (PhysicalControlInfo)controlNode.Tag;
-                            if (control.ControlType == ControlType.Axis) 
+                            var control = (PhysicalControlInfo) controlNode.Tag;
+                            if (control.ControlType == ControlType.Axis)
                             {
                                 if (IsNodeEnabled(controlNode))
                                 {
@@ -3705,7 +3856,14 @@ namespace JoyMapper
         {
             RemoveCurrentItem();
         }
+
         #endregion
+
+        //TODO: test HasChanges functionality
+        //TODO: document all classes and methods
+        //TODO: add help manual
+        //TODO: fix menu capitalization on PPJoy menu
+        //TODO: prompt user when removing virtual joysticks which ones to remove
 
         /// <summary>
         /// Event handler for the Auto Highlighting button's Click event
@@ -3719,7 +3877,7 @@ namespace JoyMapper
             //toggle the "checked" state of the auto-highlighting button
             btnAutoHighlighting.Checked = _autoHighlightingEnabled;
 
-            
+
             if (!_autoHighlightingEnabled) //if auto highlighting is disabled
             {
                 //set the button's text appropriately
@@ -3733,13 +3891,13 @@ namespace JoyMapper
             }
             else
             {
-
                 btnAutoHighlighting.Text = "Auto-highlighting (on)";
             }
             Settings set = Settings.Default;
             set.EnableAutoHighlighting = _autoHighlightingEnabled;
             set.Save();
         }
+
         private void ClearAllActiveButtonStateImages()
         {
             foreach (TreeNode deviceNode in treeMain.Nodes[0].Nodes)
@@ -3750,7 +3908,7 @@ namespace JoyMapper
                     {
                         if (controlNode != null && IsNodeEnabled(controlNode)) //if we found one
                         {
-                            PhysicalControlInfo control = (PhysicalControlInfo)controlNode.Tag;
+                            var control = (PhysicalControlInfo) controlNode.Tag;
                             if (control != null)
                             {
                                 if (control.ControlType == ControlType.Button) //if the control is a Button control
@@ -3779,7 +3937,7 @@ namespace JoyMapper
         {
             int numSticksDefined = Util.CountPPJoyVirtualDevices();
             int maxAllowed = Util.GetMaxPPJoyVirtualDevicesAllowed();
-            
+
             if (numSticksDefined >= maxAllowed)
             {
                 mnuPPJoyCreateNewVirtualDevices.Enabled = false;
@@ -3799,7 +3957,6 @@ namespace JoyMapper
                 mnuPPJoyRemoveAllPPJoyVirtualSticks.Enabled = true;
                 mnuPPJoyAssignMaximumCapabilities.Enabled = true;
             }
-            
         }
 
         private void btnRefreshDevices_Click(object sender, EventArgs e)
@@ -3820,7 +3977,7 @@ namespace JoyMapper
             bool currentlyHasChanges = _hasChanges;
 
             //store the current output map
-            OutputMap oldMap = ((OutputMap)((ICloneable)_outputMap).Clone());
+            var oldMap = ((OutputMap) ((ICloneable) _outputMap).Clone());
 
             _hasChanges = false;
             //detect and store output map of currently-detected devices
@@ -3844,9 +4001,10 @@ namespace JoyMapper
 
             //merge the newly-loaded output map with original output map
             MergeMaps(oldMap, _outputMap, true);
- 
+
             //disable any devices that aren't attached
-            foreach (PhysicalDeviceInfo device in _outputMap.EnabledPhysicalDevices) {
+            foreach (PhysicalDeviceInfo device in _outputMap.EnabledPhysicalDevices)
+            {
                 bool isAttached = false;
                 foreach (PhysicalDeviceInfo attachedDevice in currentDevicesAndControls.EnabledPhysicalDevices)
                 {
@@ -3877,24 +4035,23 @@ namespace JoyMapper
 
         private void nfyTrayIcon_Click(object sender, EventArgs e)
         {
-            MouseEventArgs args = e as MouseEventArgs;
+            var args = e as MouseEventArgs;
             if (args != null)
             {
                 if (args.Button == MouseButtons.Left)
                 {
-                    this.WindowState = FormWindowState.Normal;
+                    WindowState = FormWindowState.Normal;
                 }
             }
         }
 
         private void tblMappingsLayoutTable_Resize(object sender, EventArgs e)
         {
-            txtDescription.Width = (int)tblMappingsLayoutTable.ColumnStyles[1].Width;
-            cboVirtualDevice.Width = (int)tblMappingsLayoutTable.ColumnStyles[1].Width;
-            cboVirtualDevice.DropDownWidth = (int)Math.Max((cboVirtualDevice.Width - 10), 10);
-            cboVirtualControl.Width = (int)tblMappingsLayoutTable.ColumnStyles[1].Width;
-            cboVirtualControl.DropDownWidth =(int)Math.Max( (cboVirtualControl.Width -10),10);
+            txtDescription.Width = (int) tblMappingsLayoutTable.ColumnStyles[1].Width;
+            cboVirtualDevice.Width = (int) tblMappingsLayoutTable.ColumnStyles[1].Width;
+            cboVirtualDevice.DropDownWidth = Math.Max((cboVirtualDevice.Width - 10), 10);
+            cboVirtualControl.Width = (int) tblMappingsLayoutTable.ColumnStyles[1].Width;
+            cboVirtualControl.DropDownWidth = Math.Max((cboVirtualControl.Width - 10), 10);
         }
-
     }
 }

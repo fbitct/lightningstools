@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common.InputSupport.DirectInput;
 
 namespace Common.InputSupport
 {
@@ -14,19 +11,15 @@ namespace Common.InputSupport
     [Serializable]
     public abstract class PhysicalControlInfo
     {
-
         #region Instance Variable Declarations
-        private bool _isDirty = true;
-        private int _hashCode = 0;
+
         /// <summary>
         /// Stores a "friendly name" for this physical control -- useful in editors
         /// </summary>
         private String _alias;
-        /// <summary>
-        /// Stores a reference to a PhysicalDeviceInfo object representing 
-        /// the physical input device on which this control appears 
-        /// </summary>
-        private PhysicalDeviceInfo _parent;
+
+        protected AxisType _axisType = AxisType.Unknown;
+
         /// <summary>
         /// Represents the "offset" of this control in the collection of similar
         /// controls on a device.  For example, button Number 1 on a device would
@@ -35,10 +28,21 @@ namespace Common.InputSupport
         /// It is also relevant for Pov controls.
         /// </summary>
         private int _controlNum = -1;
+
         protected ControlType _controlType = ControlType.Unknown;
-        protected AxisType _axisType = AxisType.Unknown;
+        private int _hashCode;
+        private bool _isDirty = true;
+
+        /// <summary>
+        /// Stores a reference to a PhysicalDeviceInfo object representing 
+        /// the physical input device on which this control appears 
+        /// </summary>
+        private PhysicalDeviceInfo _parent;
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// Private default constructor is effectively disabled, 
         /// meaning that that some other constructor must be used
@@ -47,6 +51,7 @@ namespace Common.InputSupport
         protected PhysicalControlInfo()
         {
         }
+
         /// <summary>
         /// Creates a new PhysicalControlInfo object.
         /// </summary>
@@ -79,7 +84,8 @@ namespace Common.InputSupport
         /// <param name="axisType">the type of Axis this control represents</param>
         /// <param name="alias">A string containing a "friendly name" (alias) to 
         /// associate with this control.</param>
-        public PhysicalControlInfo(PhysicalDeviceInfo parent, int controlNum, ControlType controlType, AxisType axisType, string alias)
+        public PhysicalControlInfo(PhysicalDeviceInfo parent, int controlNum, ControlType controlType, AxisType axisType,
+                                   string alias)
         {
             _parent = parent;
             _controlType = controlType;
@@ -88,10 +94,10 @@ namespace Common.InputSupport
             _alias = alias;
         }
 
-
-
         #endregion
+
         #region Public Properties
+
         /// <summary>
         /// Gets a PhysicalDeviceInfo object representing the physical device
         /// on which this control appears
@@ -105,6 +111,7 @@ namespace Common.InputSupport
                 _isDirty = true;
             }
         }
+
         /// <summary>
         /// Gets the zero-based index of this control in the collection 
         /// of similar controls on the parent device.  
@@ -118,14 +125,20 @@ namespace Common.InputSupport
                 _isDirty = true;
             }
         }
+
         /// <summary>
         /// Gets/sets the "friendly name" (alias) associated with this control
         /// </summary>
         public String Alias
         {
             get { return _alias; }
-            set { _alias = value; _isDirty = true; }
+            set
+            {
+                _alias = value;
+                _isDirty = true;
+            }
         }
+
         /// <summary>
         /// Gets the type of axis represented by this control (if the control is
         /// an axis -- otherwise, returns AxisType.Unknown
@@ -134,7 +147,7 @@ namespace Common.InputSupport
         {
             get
             {
-                if (_axisType == AxisType.Unknown && this.ControlType == ControlType.Pov)
+                if (_axisType == AxisType.Unknown && ControlType == ControlType.Pov)
                 {
                     _axisType = AxisType.Pov;
                 }
@@ -146,31 +159,34 @@ namespace Common.InputSupport
                 _isDirty = true;
             }
         }
+
         /// <summary>
         /// Gets the type of this control (button, axis, Pov)
         /// </summary>
         public virtual ControlType ControlType
         {
-            get
-            {
-                return _controlType;
-            }
+            get { return _controlType; }
             set
             {
                 _controlType = value;
                 _isDirty = true;
             }
         }
+
         #endregion
+
         #region Object Overrides (ToString, GetHashCode, Equals)
+
         /// <summary>
         /// Gets a textual representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
         {
-            return ("DeviceKey:" + _parent.Key.ToString() + ":ControlNum:" + _controlNum.ToString() + ":ControlType:" + ControlType.ToString() + ":AxisType:" + AxisType.ToString());
+            return ("DeviceKey:" + _parent.Key + ":ControlNum:" + _controlNum + ":ControlType:" + ControlType +
+                    ":AxisType:" + AxisType);
         }
+
         /// <summary>
         /// Gets an integer (hash) representation of this object, 
         /// for use in hashtables.  If two objects are equal, 
@@ -179,13 +195,14 @@ namespace Common.InputSupport
         /// <returns>an integer containing a hashed representation of this object</returns>
         public override int GetHashCode()
         {
-            if (_isDirty || _hashCode == 0) 
+            if (_isDirty || _hashCode == 0)
             {
                 _hashCode = ToString().GetHashCode();
                 _isDirty = false;
             }
             return _hashCode;
         }
+
         /// <summary>
         /// Compares two objects to determine if they are equal to each other.
         /// </summary>
@@ -195,13 +212,12 @@ namespace Common.InputSupport
         /// is not equal.</returns>
         public override bool Equals(object obj)
         {
-
             if (obj == null) return false;
 
-            if (this.GetType() != obj.GetType()) return false;
+            if (GetType() != obj.GetType()) return false;
 
             // safe because of the GetType check
-            PhysicalControlInfo pc = (PhysicalControlInfo)obj;
+            var pc = (PhysicalControlInfo) obj;
 
             // use this pattern to compare value members
             if (!_parent.Key.Equals(pc._parent.Key)) return false;
@@ -211,6 +227,7 @@ namespace Common.InputSupport
 
             return true;
         }
+
         #endregion
     }
 }

@@ -1,25 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
 using System.Xml;
-using System.IO;
+using System.Xml.Schema;
+using System.Xml.Serialization;
+
 namespace Common.Collections
 {
     [XmlRoot("dictionary")]
     public class SerializableDictionary<TKey, TValue>
         : Dictionary<TKey, TValue>, IXmlSerializable, ICloneable
     {
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            string xml = Serialization.Util.SerializeToXml(this, GetType());
+            return Serialization.Util.DeserializeFromXml(xml, GetType());
+        }
+
+        #endregion
+
         #region IXmlSerializable Members
-        public System.Xml.Schema.XmlSchema GetSchema()
+
+        public XmlSchema GetSchema()
         {
             return null;
         }
 
-        public void ReadXml(System.Xml.XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
-            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+            var keySerializer = new XmlSerializer(typeof (TKey));
+            var valueSerializer = new XmlSerializer(typeof (TValue));
 
             bool wasEmpty = reader.IsEmptyElement;
             reader.Read();
@@ -27,19 +38,19 @@ namespace Common.Collections
             if (wasEmpty)
                 return;
 
-            while (reader.NodeType != System.Xml.XmlNodeType.EndElement)
+            while (reader.NodeType != XmlNodeType.EndElement)
             {
                 reader.ReadStartElement("item");
 
                 reader.ReadStartElement("key");
-                TKey key = (TKey)keySerializer.Deserialize(reader);
+                var key = (TKey) keySerializer.Deserialize(reader);
                 reader.ReadEndElement();
 
                 reader.ReadStartElement("value");
-                TValue value = (TValue)valueSerializer.Deserialize(reader);
+                var value = (TValue) valueSerializer.Deserialize(reader);
                 reader.ReadEndElement();
 
-                this.Add(key, value);
+                Add(key, value);
 
                 reader.ReadEndElement();
                 reader.MoveToContent();
@@ -47,12 +58,12 @@ namespace Common.Collections
             reader.ReadEndElement();
         }
 
-        public void WriteXml(System.Xml.XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
-            XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-            XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+            var keySerializer = new XmlSerializer(typeof (TKey));
+            var valueSerializer = new XmlSerializer(typeof (TValue));
 
-            foreach (TKey key in this.Keys)
+            foreach (TKey key in Keys)
             {
                 writer.WriteStartElement("item");
 
@@ -68,11 +79,7 @@ namespace Common.Collections
                 writer.WriteEndElement();
             }
         }
-        public object Clone()
-        {
-            string xml = Common.Serialization.Util.SerializeToXml(this, this.GetType());
-            return Common.Serialization.Util.DeserializeFromXml(xml, this.GetType());
-        }
+
         #endregion
     }
 }

@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using log4net;
+using Microsoft.DirectX.DirectInput;
 
 namespace Common.InputSupport
 {
     public static class Util
     {
-        private static ILog _log = LogManager.GetLogger(typeof(Common.InputSupport.Util));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
+
         /// <summary>
         /// Gets the DirectInput Device associated with a specific 
         /// Device Instance Guid.  Safer than DirectInput's Device
@@ -19,9 +19,9 @@ namespace Common.InputSupport
         /// <param name="instanceGuid">the DirectInput Device Instance GUID
         /// of the Device to retrieve.</param>
         /// <returns></returns>
-        public static Microsoft.DirectX.DirectInput.Device GetDIDevice(Guid instanceGuid)
+        public static Device GetDIDevice(Guid instanceGuid)
         {
-            Microsoft.DirectX.DirectInput.Device device = null;
+            Device device = null;
             DateTime startTime = DateTime.Now;
             DateTime endTime = startTime.Add(TimeSpan.FromMilliseconds(1000));
 
@@ -29,21 +29,24 @@ namespace Common.InputSupport
             {
                 try
                 {
-                    device = new Microsoft.DirectX.DirectInput.Device(instanceGuid);
+                    device = new Device(instanceGuid);
                 }
-                catch (ApplicationException e) 
+                catch (ApplicationException e)
                 {
                     _log.Debug(e.Message, e);
                 }
-                catch (NullReferenceException) { }
+                catch (NullReferenceException)
+                {
+                }
                 Thread.Sleep(20);
             }
             return device;
         }
+
         public static PovDirections GetPovDirection(int state)
         {
-            float currentDegrees = state / 100;
-            if (state  == -1) currentDegrees = -1;
+            float currentDegrees = state/100;
+            if (state == -1) currentDegrees = -1;
             /*  POV directions in degrees
                       0
                 337.5  22.5   

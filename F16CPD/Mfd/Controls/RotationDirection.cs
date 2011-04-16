@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.Text;
-
-namespace F16CPD.Mfd.Controls
+﻿namespace F16CPD.Mfd.Controls
 {
     public enum RotationDirection
     {

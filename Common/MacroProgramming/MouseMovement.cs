@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Runtime.Remoting.Contexts;
+
 namespace Common.MacroProgramming
 {
     [Serializable]
@@ -11,20 +8,87 @@ namespace Common.MacroProgramming
         Relative,
         Absolute
     }
-    [Serializable]
-    public sealed class MouseMovement:Chainable
-    {
-        private int _x = 0;
-        private int _y = 0;
-        private DigitalSignal _in = null;
-        private DigitalSignal _out = null;
-        private MouseMoveMode _mode = MouseMoveMode.Relative;
 
-        public MouseMovement():base()
+    [Serializable]
+    public sealed class MouseMovement : Chainable
+    {
+        private DigitalSignal _in;
+        private MouseMoveMode _mode = MouseMoveMode.Relative;
+        private DigitalSignal _out;
+        private int _x;
+        private int _y;
+
+        public MouseMovement()
         {
-            this.In = new DigitalSignal();
-            this.Out = new DigitalSignal();
+            In = new DigitalSignal();
+            Out = new DigitalSignal();
         }
+
+        public DigitalSignal Out
+        {
+            get { return _out; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                _out = value;
+            }
+        }
+
+        public DigitalSignal In
+        {
+            get { return _in; }
+            set
+            {
+                if (value == null)
+                {
+                    value = new DigitalSignal();
+                }
+                value.SignalChanged += _in_SignalChanged;
+                _in = value;
+            }
+        }
+
+        public int X
+        {
+            get { return _x; }
+            set
+            {
+                if (_mode == MouseMoveMode.Absolute)
+                {
+                    if (value < 0)
+                    {
+                        throw new ArgumentOutOfRangeException("value");
+                    }
+                }
+                _x = value;
+            }
+        }
+
+        public int Y
+        {
+            get { return _y; }
+            set
+            {
+                if (_mode == MouseMoveMode.Absolute)
+                {
+                    if (value < 0)
+                    {
+                        throw new ArgumentOutOfRangeException("value");
+                    }
+                }
+                _y = value;
+            }
+        }
+
+        public MouseMoveMode Mode
+        {
+            get { return _mode; }
+            set { _mode = value; }
+        }
+
         private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
@@ -54,85 +118,5 @@ namespace Common.MacroProgramming
                 }
             }
         }
-        public DigitalSignal Out
-        {
-            get
-            {
-                return _out;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                _out = value;
-            }
-        }
-        public DigitalSignal In
-        {
-            get
-            {
-                return _in;
-            }
-            set
-            {
-                if (value == null)
-                {
-                    value = new DigitalSignal();
-                }
-                value.SignalChanged += _in_SignalChanged;
-                _in = value;
-            }
-        }
-
-        public int X
-        {
-            get
-            {
-                return _x;
-            }
-            set
-            {
-                if (_mode == MouseMoveMode.Absolute)
-                {
-                    if (value < 0)
-                    {
-                        throw new ArgumentOutOfRangeException("value");
-                    }
-                }
-                _x = value;
-            }
-        }
-        public int Y
-        {
-            get
-            {
-                return _y;
-            }
-            set
-            {
-                if (_mode == MouseMoveMode.Absolute)
-                {
-                    if (value < 0)
-                    {
-                        throw new ArgumentOutOfRangeException("value");
-                    }
-                }
-                _y = value;
-            }
-        }
-        public MouseMoveMode Mode
-        {
-            get
-            {
-                return _mode;
-            }
-            set
-            {
-                _mode = value;
-            }
-        }
-        
     }
 }

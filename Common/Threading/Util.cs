@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Common.Threading
@@ -15,10 +13,13 @@ namespace Common.Threading
             {
                 t.Abort();
             }
-            catch { }
+            catch
+            {
+            }
             Common.Util.DisposeObject(t);
             t = null;
         }
+
         public static void WaitAllHandlesInListAndClearList(List<WaitHandle> toWait, int millisecondsTimeout)
         {
             if (toWait != null && toWait.Count > 0)

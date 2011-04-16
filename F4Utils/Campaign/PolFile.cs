@@ -1,23 +1,27 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class PolFile
     {
         #region Public Fields
+
         public short numPrimaryObjectives;
-        public byte teammask;
         public PrimaryObjective[] primaryObjectives;
+        public byte teammask;
+
         #endregion
 
         protected PolFile()
-            : base()
         {
         }
+
         public PolFile(byte[] bytes, int version)
             : this()
         {
             Decode(bytes, version);
         }
+
         protected void Decode(byte[] bytes, int version)
         {
             int offset = 0;
@@ -28,7 +32,7 @@ namespace F4Utils.Campaign
             primaryObjectives = new PrimaryObjective[numPrimaryObjectives];
             for (int i = 0; i < numPrimaryObjectives; i++)
             {
-                PrimaryObjective thisObjective = new PrimaryObjective();
+                var thisObjective = new PrimaryObjective();
                 thisObjective.id = new VU_ID();
                 thisObjective.id.num_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;

@@ -1,57 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.DirectX.DirectInput;
 using System.Threading;
-using Microsoft.DirectX;
 using System.Windows.Forms;
 using log4net;
+using Microsoft.DirectX;
+using Microsoft.DirectX.DirectInput;
 
 namespace Common.InputSupport.DirectInput
 {
     public sealed class DIDeviceMonitor : DeviceMonitor, IDisposable
     {
+        #region Delegates
 
         public delegate void DIStateChangedEventHandler(object sender, DIStateChangedEventArgs e);
+
+        #endregion
+
         public event DIStateChangedEventHandler StateChanged;
+
         #region Instance Variable Declarations
+
         /// <summary>
         /// Class variable to hold all references to all instantiated device monitors of this type
         /// </summary>
-        private static Dictionary<Guid, DIDeviceMonitor> _monitors = new Dictionary<Guid, DIDeviceMonitor>();
-        private static ILog _log = LogManager.GetLogger(typeof(DIDeviceMonitor));
-        private DIPhysicalDeviceInfo _deviceInfo;
+        private static readonly Dictionary<Guid, DIDeviceMonitor> _monitors = new Dictionary<Guid, DIDeviceMonitor>();
 
-        /// <summary>
-        /// The DirectInput Device object being monitored by this object instance
-        /// </summary>
-        private Device _underlyingDxDevice = null;
-        private AutoResetEvent _diEvent = new AutoResetEvent(false);
-        private Thread _eventMonitorThread = null;
-        private object _stateLock = new object();
+        private static readonly ILog _log = LogManager.GetLogger(typeof (DIDeviceMonitor));
 
-        /// <summary>
-        /// The last-polled JoystickState structure from the DirectInput Device 
-        /// being monitored by this object instance
-        /// </summary>
-        private JoystickState? _state = null;
-        /// <summary>
-        /// The previous JoystickState structure from the DirectInput Device 
-        /// being monitored by this object instance
-        /// </summary>
-        private JoystickState? _prevState = null;
-        /// <summary>
-        /// Reference to one of the application's Windows Forms, which will act as
-        /// the notification form for events raised by DirectInput -- currently unused
-        /// </summary>
-        private System.Windows.Forms.Control _parentForm;
-        /// <summary>
-        /// Value passed in this object's constructor, indicating the integer value
-        /// that should represent an axis' minimum reported value for any axis being
-        /// monitored by this object instance.  This enables DirectInput to perform 
-        /// translation between the internal values used by the device, and the values 
-        /// that are expected by calling code.
-        /// </summary>
-        private int _axisRangeMin = 0;
         /// <summary>
         /// Value passed in this object's constructor, indicating the integer value 
         /// that should represent an axis' maximum reported value for any axis being 
@@ -59,9 +34,50 @@ namespace Common.InputSupport.DirectInput
         /// translation between the internal values used by the device, and the values
         /// that are expected by calling code.
         /// </summary>
-        private int _axisRangeMax = 1024;
+        private readonly int _axisRangeMax = 1024;
+
+        /// <summary>
+        /// Value passed in this object's constructor, indicating the integer value
+        /// that should represent an axis' minimum reported value for any axis being
+        /// monitored by this object instance.  This enables DirectInput to perform 
+        /// translation between the internal values used by the device, and the values 
+        /// that are expected by calling code.
+        /// </summary>
+        private readonly int _axisRangeMin;
+
+        private readonly DIPhysicalDeviceInfo _deviceInfo;
+
+        private readonly AutoResetEvent _diEvent = new AutoResetEvent(false);
+        private readonly object _stateLock = new object();
+        private Thread _eventMonitorThread;
+
+        /// <summary>
+        /// Reference to one of the application's Windows Forms, which will act as
+        /// the notification form for events raised by DirectInput -- currently unused
+        /// </summary>
+        private Control _parentForm;
+
+        /// <summary>
+        /// The previous JoystickState structure from the DirectInput Device 
+        /// being monitored by this object instance
+        /// </summary>
+        private JoystickState? _prevState;
+
+        /// <summary>
+        /// The last-polled JoystickState structure from the DirectInput Device 
+        /// being monitored by this object instance
+        /// </summary>
+        private JoystickState? _state;
+
+        /// <summary>
+        /// The DirectInput Device object being monitored by this object instance
+        /// </summary>
+        private Device _underlyingDxDevice;
+
         #endregion
+
         #region Constructors
+
         /// <summary>
         /// Hidden default constructor -- forces callers to use one of the static 
         /// factory methods on this class
@@ -69,6 +85,7 @@ namespace Common.InputSupport.DirectInput
         private DIDeviceMonitor()
         {
         }
+
         /// <summary>
         /// Hidden constructor -- forces callers to use one of the static factory methods
         /// on this class.
@@ -83,7 +100,7 @@ namespace Common.InputSupport.DirectInput
         /// MINIMUM value</param>
         /// <param name="axisRangeMax">Value to report when an axis is reporting its 
         /// MAXIMUM value</param>
-        private DIDeviceMonitor(DIPhysicalDeviceInfo device, System.Windows.Forms.Control parentForm, int axisRangeMin, int axisRangeMax)
+        private DIDeviceMonitor(DIPhysicalDeviceInfo device, Control parentForm, int axisRangeMin, int axisRangeMax)
         {
             _deviceInfo = device;
             _parentForm = parentForm;
@@ -91,8 +108,11 @@ namespace Common.InputSupport.DirectInput
             _axisRangeMax = axisRangeMax;
             Prepare();
         }
+
         #endregion
+
         #region Public Properties
+
         /// <summary>
         /// Returns the DirectInput Device object being monitored by this object 
         /// </summary>
@@ -100,6 +120,7 @@ namespace Common.InputSupport.DirectInput
         {
             get { return _underlyingDxDevice; }
         }
+
         /// <summary>
         /// Returns a DirectInput JoystickState structure representing the previous joystick state of the device being monitored by this object
         /// </summary>
@@ -113,6 +134,7 @@ namespace Common.InputSupport.DirectInput
                 }
             }
         }
+
         /// <summary>
         /// Returns a DirectInput JoystickState structure representing the most-recently-polled joystick state of the device being monitored by this object
         /// </summary>
@@ -126,43 +148,15 @@ namespace Common.InputSupport.DirectInput
                 }
             }
         }
+
         public DIPhysicalDeviceInfo DeviceInfo
         {
             get { return _deviceInfo; }
         }
 
-
         #endregion
+
         #region Public Methods
-        /// <summary>
-        /// Factory method to create instances of this class.  Stands in place of a constructor,
-        /// in order to re-use instances 
-        /// when relevant constructor parameters are the same
-        /// </summary>
-        /// <param name="deviceInfo">a <see cfef="DIPhysicalDeviceInfo"/> object representing the 
-        /// DirectInput Device Instance to monitor</param>
-        /// <param name="parentForm">and an (optional) reference to a parent Windows Form 
-        /// which will receive events directly from DirectInput if eventing is enabled
-        /// (currently, not implemented)</param>
-        /// <param name="axisRangeMin">Value to report when an axis is reporting its 
-        /// MINIMUM value</param>
-        /// <param name="axisRangeMax">Value to report when an axis is reporting its 
-        /// MAXIMUM value</param>
-        /// <returns>a DIDeviceMonitor object representing the DirectInput device being 
-        /// monitored, either created newly from-scratch, or returned from this class's 
-        /// internal object pool if a monitor instance already exists</returns>
-        public static DIDeviceMonitor GetInstance(DIPhysicalDeviceInfo device, System.Windows.Forms.Control parentForm, int axisRangeMin, int axisRangeMax)
-        {
-            DIDeviceMonitor monitor = null;
-            Guid deviceId = new Guid(device.Key.ToString());
-            if (_monitors.ContainsKey(deviceId))
-            {
-                return _monitors[deviceId];
-            }
-            monitor = new DIDeviceMonitor(device, parentForm, axisRangeMin, axisRangeMax);
-            _monitors.Add(deviceId, monitor);
-            return monitor;
-        }
 
         /// <summary>
         /// Returns an int? containing the Vendor Identity and the Product Id for the 
@@ -192,6 +186,38 @@ namespace Common.InputSupport.DirectInput
                 }
             }
         }
+
+        /// <summary>
+        /// Factory method to create instances of this class.  Stands in place of a constructor,
+        /// in order to re-use instances 
+        /// when relevant constructor parameters are the same
+        /// </summary>
+        /// <param name="deviceInfo">a <see cfef="DIPhysicalDeviceInfo"/> object representing the 
+        /// DirectInput Device Instance to monitor</param>
+        /// <param name="parentForm">and an (optional) reference to a parent Windows Form 
+        /// which will receive events directly from DirectInput if eventing is enabled
+        /// (currently, not implemented)</param>
+        /// <param name="axisRangeMin">Value to report when an axis is reporting its 
+        /// MINIMUM value</param>
+        /// <param name="axisRangeMax">Value to report when an axis is reporting its 
+        /// MAXIMUM value</param>
+        /// <returns>a DIDeviceMonitor object representing the DirectInput device being 
+        /// monitored, either created newly from-scratch, or returned from this class's 
+        /// internal object pool if a monitor instance already exists</returns>
+        public static DIDeviceMonitor GetInstance(DIPhysicalDeviceInfo device, Control parentForm, int axisRangeMin,
+                                                  int axisRangeMax)
+        {
+            DIDeviceMonitor monitor = null;
+            var deviceId = new Guid(device.Key.ToString());
+            if (_monitors.ContainsKey(deviceId))
+            {
+                return _monitors[deviceId];
+            }
+            monitor = new DIDeviceMonitor(device, parentForm, axisRangeMin, axisRangeMax);
+            _monitors.Add(deviceId, monitor);
+            return monitor;
+        }
+
         /// <summary>
         /// Polls the monitored DirectInput device.  This method also updates the 
         /// previous state variable to the results of the previous polling,
@@ -224,13 +250,13 @@ namespace Common.InputSupport.DirectInput
             }
             catch (DirectXException e)
             {
-                _log.Debug(e.Message, e); 
+                _log.Debug(e.Message, e);
                 Prepared = false;
                 throw;
             }
             catch (NullReferenceException e2)
             {
-                _log.Debug(e2.Message, e2); 
+                _log.Debug(e2.Message, e2);
                 Prepared = false;
             }
             catch (AccessViolationException e3)
@@ -241,7 +267,9 @@ namespace Common.InputSupport.DirectInput
         }
 
         #endregion
+
         #region Private Methods
+
         /// <summary>
         /// Initializes this object's state and sets up a DirectInput Device object
         /// to monitor the device instance specified in this object's _guid variable.
@@ -250,13 +278,13 @@ namespace Common.InputSupport.DirectInput
         /// </summary>
         protected override void Prepare()
         {
- 			int elapsed = 0;
+            int elapsed = 0;
             int timeout = 1000;
-            while (Preparing && elapsed <=timeout)
+            while (Preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);
                 System.Windows.Forms.Application.DoEvents();
-				elapsed += 20;
+                elapsed += 20;
             }
             if (!Preparing)
             {
@@ -295,15 +323,15 @@ namespace Common.InputSupport.DirectInput
                     }
 
                     _underlyingDxDevice.SetCooperativeLevel(null,
-                        CooperativeLevelFlags.NonExclusive |
-                        CooperativeLevelFlags.Background);
+                                                            CooperativeLevelFlags.NonExclusive |
+                                                            CooperativeLevelFlags.Background);
 
                     _underlyingDxDevice.SetDataFormat(DeviceDataFormat.Joystick);
 
                     //Set joystick axis ranges.
                     foreach (DeviceObjectInstance doi in _underlyingDxDevice.Objects)
                     {
-                        if ((doi.ObjectId & (int)DeviceObjectTypeFlags.Axis) != 0)
+                        if ((doi.ObjectId & (int) DeviceObjectTypeFlags.Axis) != 0)
                         {
                             _underlyingDxDevice.Properties.SetRange(
                                 ParameterHow.ById,
@@ -314,7 +342,7 @@ namespace Common.InputSupport.DirectInput
                     _underlyingDxDevice.Properties.AxisModeAbsolute = true;
                     _underlyingDxDevice.SetEventNotification(_diEvent);
                     _underlyingDxDevice.Acquire();
-                    _eventMonitorThread = new Thread(new ThreadStart(DIEventMonitorThreadWork));
+                    _eventMonitorThread = new Thread(DIEventMonitorThreadWork);
                     _eventMonitorThread.SetApartmentState(ApartmentState.STA);
                     _eventMonitorThread.Name = "DIMonitorThread:" + _underlyingDxDevice.DeviceInformation.InstanceGuid;
                     _eventMonitorThread.Priority = ThreadPriority.Normal;
@@ -329,7 +357,7 @@ namespace Common.InputSupport.DirectInput
                     Prepared = false;
                     throw;
                 }
-				catch (AccessViolationException e2)
+                catch (AccessViolationException e2)
                 {
                     _log.Debug(e2.Message, e2);
                     Prepared = false;
@@ -341,6 +369,7 @@ namespace Common.InputSupport.DirectInput
                 }
             }
         }
+
         public void DIEventMonitorThreadWork()
         {
             if (_underlyingDxDevice != null)
@@ -390,7 +419,7 @@ namespace Common.InputSupport.DirectInput
                 {
                     _log.Debug(e2.Message, e2);
                 }
-				catch (AccessViolationException e3)
+                catch (AccessViolationException e3)
                 {
                     _log.Debug(e3.Message, e3);
                 }
@@ -398,15 +427,18 @@ namespace Common.InputSupport.DirectInput
         }
 
         #endregion
+
         #region Object Overrides (ToString, GetHashCode, Equals)
+
         /// <summary>
         /// Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
         {
-            return this.GetType().Name + ":" + _deviceInfo.Guid.ToString();
+            return GetType().Name + ":" + _deviceInfo.Guid;
         }
+
         /// <summary>
         /// Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
@@ -415,6 +447,7 @@ namespace Common.InputSupport.DirectInput
         {
             return ToString().GetHashCode();
         }
+
         /// <summary>
         /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
         /// </summary>
@@ -424,19 +457,31 @@ namespace Common.InputSupport.DirectInput
         {
             if (obj == null) return false;
 
-            if (this.GetType() != obj.GetType()) return false;
+            if (GetType() != obj.GetType()) return false;
 
             // safe because of the GetType check
-            DIDeviceMonitor js = (DIDeviceMonitor)obj;
+            var js = (DIDeviceMonitor) obj;
 
             // use this pattern to compare value members
-            if (!this.DeviceInfo.Guid.Equals(js.DeviceInfo.Guid)) return false;
+            if (!DeviceInfo.Guid.Equals(js.DeviceInfo.Guid)) return false;
 
             return true;
-
         }
+
         #endregion
+
         #region Destructors
+
+        /// <summary>
+        /// Public implementation of IDisposable.Dispose().  Cleans up managed
+        /// and unmanaged resources used by this object before allowing garbage collection
+        /// </summary>
+        public new void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object is not
         /// manually disposed.  Ordinarily called only by the garbage collector.
@@ -445,6 +490,7 @@ namespace Common.InputSupport.DirectInput
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -462,10 +508,11 @@ namespace Common.InputSupport.DirectInput
                 {
                     try
                     {
-						if (_monitors != null && this.DeviceInfo !=null && _monitors.ContainsKey(this.DeviceInfo.Guid))
-	                    {
-	                        _monitors.Remove(this.DeviceInfo.Guid);
-	                    }                    }
+                        if (_monitors != null && DeviceInfo != null && _monitors.ContainsKey(DeviceInfo.Guid))
+                        {
+                            _monitors.Remove(DeviceInfo.Guid);
+                        }
+                    }
                     catch (Exception e)
                     {
                         _log.Debug(e.Message, e);
@@ -476,15 +523,15 @@ namespace Common.InputSupport.DirectInput
                         {
                             _underlyingDxDevice.Unacquire();
                         }
-                        catch (DirectXException e) 
+                        catch (DirectXException e)
                         {
                             _log.Debug(e.Message, e);
                         }
-                        catch (NullReferenceException e2) 
+                        catch (NullReferenceException e2)
                         {
                             _log.Debug(e2.Message, e2);
                         }
-						catch (AccessViolationException e3) 
+                        catch (AccessViolationException e3)
                         {
                             _log.Debug(e3.Message, e3);
                         }
@@ -493,15 +540,15 @@ namespace Common.InputSupport.DirectInput
                         {
                             _underlyingDxDevice.Dispose();
                         }
-                        catch (DirectXException e) 
+                        catch (DirectXException e)
                         {
                             _log.Debug(e.Message, e);
                         }
-                        catch (NullReferenceException e2) 
+                        catch (NullReferenceException e2)
                         {
                             _log.Debug(e2.Message, e2);
                         }
-						catch (AccessViolationException e3) 
+                        catch (AccessViolationException e3)
                         {
                             _log.Debug(e3.Message, e3);
                         }
@@ -510,17 +557,8 @@ namespace Common.InputSupport.DirectInput
             }
             // Code to dispose the un-managed resources of the class
             IsDisposed = true;
+        }
 
-        }
-        /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
-        /// </summary>
-        public new void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
         #endregion
     }
 }

@@ -10,12 +10,14 @@ namespace Common.InputSupport.BetaInnovations
     public class BIException : ApplicationException
     {
         #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BIException"/> class.
         /// </summary>
         public BIException()
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BIException"/> class.
         /// </summary>
@@ -24,6 +26,7 @@ namespace Common.InputSupport.BetaInnovations
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BIException"/> class.
         /// </summary>
@@ -33,6 +36,7 @@ namespace Common.InputSupport.BetaInnovations
             : base(message, inner)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BIException"/> class.
         /// </summary>
@@ -42,6 +46,7 @@ namespace Common.InputSupport.BetaInnovations
             : base(info, context)
         {
         }
+
         #endregion
     }
 }

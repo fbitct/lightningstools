@@ -5,41 +5,44 @@ namespace F4Utils.Campaign
     public class Package : AirUnit
     {
         #region Public Fields
-        public byte elements;
-        public VU_ID[] element;
-        public VU_ID interceptor;
+
         public VU_ID awacs;
-        public VU_ID jstar;
-        public VU_ID ecm;
-        public VU_ID tanker;
-        public byte wait_cycles;
-        public byte flights;
-        public short wait_for;
-        public short iax;
-        public short iay;
-        public short eax;
-        public short eay;
         public short bpx;
         public short bpy;
+        public short caps;
+        public short eax;
+        public short eay;
+        public VU_ID ecm;
+        public Waypoint[] egress_waypoints;
+        public VU_ID[] element;
+        public byte elements;
+        public byte flights;
+        public short iax;
+        public short iay;
+        public Waypoint[] ingress_waypoints;
+        public VU_ID interceptor;
+        public VU_ID jstar;
+        public MissionRequest mis_request;
+        public byte num_egress_waypoints;
+        public byte num_ingress_waypoints;
+        public uint package_flags;
+        public short requests;
+        public short responses;
+        public uint takeoff;
+        public VU_ID tanker;
+        public short threat_stats;
+        public uint tp_time;
         public short tpx;
         public short tpy;
-        public uint takeoff;
-        public uint tp_time;
-        public uint package_flags;
-        public short caps;
-        public short requests;
-        public short threat_stats;
-        public short responses;
-        public byte num_ingress_waypoints;
-        public Waypoint[] ingress_waypoints;
-        public byte num_egress_waypoints;
-        public Waypoint[] egress_waypoints;
-        public MissionRequest mis_request;
+        public byte wait_cycles;
+        public short wait_for;
+
         #endregion
+
         protected Package()
-            : base()
         {
         }
+
         public Package(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -49,7 +52,7 @@ namespace F4Utils.Campaign
             if (elements < 5) element = new VU_ID[5];
             for (int i = 0; i < elements; i++)
             {
-                VU_ID thisElement = new VU_ID();
+                var thisElement = new VU_ID();
                 thisElement.num_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
                 thisElement.creator_ = BitConverter.ToUInt32(bytes, offset);
@@ -86,7 +89,6 @@ namespace F4Utils.Campaign
                 offset += 4;
                 tanker.creator_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
-
             }
             wait_cycles = bytes[offset];
             offset++;
@@ -107,10 +109,10 @@ namespace F4Utils.Campaign
                 responses = BitConverter.ToInt16(bytes, offset);
                 offset += 2;
 
-                mis_request.mission = (byte)BitConverter.ToInt16(bytes, offset);
+                mis_request.mission = (byte) BitConverter.ToInt16(bytes, offset);
                 offset += 2;
 
-                mis_request.context = (byte)BitConverter.ToInt16(bytes, offset);
+                mis_request.context = (byte) BitConverter.ToInt16(bytes, offset);
                 offset += 2;
 
                 mis_request.requesterID = new VU_ID();
@@ -130,7 +132,7 @@ namespace F4Utils.Campaign
                     mis_request.tot = BitConverter.ToUInt32(bytes, offset);
                     offset += 4;
                 }
-                else if (version >=16)
+                else if (version >= 16)
                 {
                     mis_request.tot = BitConverter.ToUInt32(bytes, offset);
                     offset += 4;
@@ -301,7 +303,6 @@ namespace F4Utils.Campaign
 
                 if (!(version < 35))
                 {
-
                     mis_request.delayed = bytes[offset];
                     offset++;
 
@@ -324,11 +325,9 @@ namespace F4Utils.Campaign
                     mis_request.max_to = bytes[offset];
                     offset++;
 
-                    offset += 3;// align on int32 boundary
+                    offset += 3; // align on int32 boundary
                 }
             }
-            
-
         }
     }
 }

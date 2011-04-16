@@ -1,24 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.InputSupport.Phcc
 {
-    public struct PHCCInputState: ICloneable
+    public struct PHCCInputState : ICloneable
     {
-        public bool[] digitalInputs;
         public short[] analogInputs;
-        public PHCCInputState(bool[] digitalInputs, short[] analogInputs):this()
+        public bool[] digitalInputs;
+
+        public PHCCInputState(bool[] digitalInputs, short[] analogInputs) : this()
         {
             this.digitalInputs = digitalInputs;
             this.analogInputs = analogInputs;
         }
+
+        #region ICloneable Members
+
         public object Clone()
         {
-            PHCCInputState clone = new PHCCInputState();
-            clone.digitalInputs = (bool[])this.digitalInputs.Clone();
-            clone.analogInputs = (short[])this.analogInputs.Clone();
+            var clone = new PHCCInputState();
+            clone.digitalInputs = (bool[]) digitalInputs.Clone();
+            clone.analogInputs = (short[]) analogInputs.Clone();
             return clone;
         }
+
+        #endregion
     }
 }

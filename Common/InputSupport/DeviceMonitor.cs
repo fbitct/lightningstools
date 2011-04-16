@@ -1,77 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.InputSupport
 {
     public abstract class DeviceMonitor
     {
         /// <summary>
+        /// Flag to indicate that this object instance has already been disposed
+        /// </summary>
+        protected volatile bool _isDisposed;
+
+        /// <summary>
         /// Flag indicating whether this object instance is in the Prepared state (meaning, input has been acquired and instance variables have been initialized
         /// </summary>
-        protected volatile bool _prepared = false;
+        protected volatile bool _prepared;
+
         /// <summary>
         /// Flag to signal that this object is currently running the Prepare() task, so subsequent calls to Prepare() should just wait for the signal to drop
         /// </summary>
-        protected volatile bool _preparing = false;
+        protected volatile bool _preparing;
 
-        /// <summary>
-        /// Flag to indicate that this object instance has already been disposed
-        /// </summary>
-        protected volatile bool _isDisposed = false;
-
-        /// <summary>
-        /// Initializes this object's state and sets up objects
-        /// to monitor the device instance that this object is responsible for.
-        /// During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
-        /// Prepare() will simply wait until the _preparing flag is lowered.
-        /// </summary>
-        protected virtual void Prepare()
-        {
-            throw new NotImplementedException();
-        }
         protected bool IsDisposed
         {
-            get
-            {
-                return _isDisposed;
-            }
-            set
-            {
-                _isDisposed = value;
-            }
+            get { return _isDisposed; }
+            set { _isDisposed = value; }
         }
+
         protected bool Prepared
         {
-            get
-            {
-                return _prepared;
-            }
-            set
-            {
-                _prepared = value;
-            }
+            get { return _prepared; }
+            set { _prepared = value; }
         }
+
         protected bool Preparing
         {
-            get
-            {
-                return _preparing;
-            }
-            set
-            {
-                _preparing = value;
-            }
+            get { return _preparing; }
+            set { _preparing = value; }
         }
+
         #region Object Overrides (ToString, GetHashCode, Equals)
+
         /// <summary>
         /// Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
         {
-            return this.GetType().Name;
+            return GetType().Name;
         }
+
         /// <summary>
         /// Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
@@ -80,6 +56,7 @@ namespace Common.InputSupport
         {
             return ToString().GetHashCode();
         }
+
         /// <summary>
         /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
         /// </summary>
@@ -89,13 +66,15 @@ namespace Common.InputSupport
         {
             if (obj == null) return false;
 
-            if (this.GetType() != obj.GetType()) return false;
+            if (GetType() != obj.GetType()) return false;
 
             return true;
-
         }
+
         #endregion
+
         #region Destructors
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object is not
         /// manually disposed.  Ordinarily called only by the garbage collector.
@@ -104,6 +83,7 @@ namespace Common.InputSupport
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -119,8 +99,8 @@ namespace Common.InputSupport
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
-
         }
+
         /// <summary>
         /// Public implementation of IDisposable.Dispose().  Cleans up managed
         /// and unmanaged resources used by this object before allowing garbage collection
@@ -130,6 +110,18 @@ namespace Common.InputSupport
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         #endregion
+
+        /// <summary>
+        /// Initializes this object's state and sets up objects
+        /// to monitor the device instance that this object is responsible for.
+        /// During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
+        /// Prepare() will simply wait until the _preparing flag is lowered.
+        /// </summary>
+        protected virtual void Prepare()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

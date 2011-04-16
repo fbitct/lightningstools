@@ -1,28 +1,31 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class Objective : CampaignBase
     {
         #region Public Fields
-        public uint lastRepair;
-        public uint obj_flags;
-        public byte supply;
-        public byte fuel;
-        public byte losses;
-        public byte[] fstatus;
-        public byte priority;
-        public short nameId;
-        public VU_ID parent;
-        public byte first_owner;
-        public byte links;
-        public CampObjectiveLinkDataType[] link_data;
+
         public float[] detect_ratio; //radar_data, init size=8
+        public byte first_owner;
+        public byte[] fstatus;
+        public byte fuel;
+        public uint lastRepair;
+        public CampObjectiveLinkDataType[] link_data;
+        public byte links;
+        public byte losses;
+        public short nameId;
+        public uint obj_flags;
+        public VU_ID parent;
+        public byte priority;
+        public byte supply;
+
         #endregion
 
         protected Objective()
-            : base()
         {
         }
+
         public Objective(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -86,14 +89,14 @@ namespace F4Utils.Campaign
             }
             for (int i = 0; i < links; i++)
             {
-                CampObjectiveLinkDataType thisLink = new CampObjectiveLinkDataType();
-                thisLink.costs = new byte[(int)MoveType.MOVEMENT_TYPES];
-                for (int j = 0; j < (int)MoveType.MOVEMENT_TYPES; j++)
+                var thisLink = new CampObjectiveLinkDataType();
+                thisLink.costs = new byte[(int) MoveType.MOVEMENT_TYPES];
+                for (int j = 0; j < (int) MoveType.MOVEMENT_TYPES; j++)
                 {
                     thisLink.costs[j] = bytes[offset];
                     offset++;
                 }
-                VU_ID newId = new VU_ID();
+                var newId = new VU_ID();
                 newId.num_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
                 newId.creator_ = BitConverter.ToUInt32(bytes, offset);
@@ -125,7 +128,6 @@ namespace F4Utils.Campaign
             {
                 detect_ratio = null;
             }
-
         }
     }
 }

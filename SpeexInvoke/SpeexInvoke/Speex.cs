@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-
-
 public static partial class Speex
 {
-
     public const int SPEEX_SET_ENH = 0;
     public const int SPEEX_GET_ENH = 1;
     public const int SPEEX_GET_FRAME_SIZE = 3;
@@ -89,30 +86,40 @@ public static partial class Speex
 
     [DllImport("libspeex.dll")]
     public static extern IntPtr speex_encoder_init(IntPtr mode);
+
     [DllImport("libspeex.dll")]
     public static extern void speex_encoder_destroy(IntPtr state);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_encode(IntPtr state, float[] f_in, ref SpeexBits bits);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_encode_int(IntPtr state, Int16[] i_in, ref SpeexBits bits);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_encoder_ctl(IntPtr state, int request, IntPtr ptr);
+
     [DllImport("libspeex.dll")]
     public static extern IntPtr speex_decoder_init(IntPtr mode);
+
     [DllImport("libspeex.dll")]
     public static extern void speex_decoder_destroy(IntPtr state);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_decode(IntPtr state, ref SpeexBits bits, float[] f_out);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_decode_int(IntPtr state, ref SpeexBits bits, Int16[] i_out);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_decoder_ctl(IntPtr state, int request, IntPtr ptr);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_mode_query(IntPtr mode, int request, IntPtr ptr);
+
     [DllImport("libspeex.dll")]
     public static extern int speex_lib_ctl(int request, IntPtr ptr);
 
     [DllImport("libspeex.dll")]
     public static extern IntPtr speex_lib_get_mode(int mode);
-
 }

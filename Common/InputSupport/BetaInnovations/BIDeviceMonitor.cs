@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Threading;
 using log4net;
+
 namespace Common.InputSupport.BetaInnovations
 {
     public sealed class BIDeviceMonitor : DeviceMonitor
@@ -11,14 +10,18 @@ namespace Common.InputSupport.BetaInnovations
         /// <summary>
         /// Class variable to hold all references to all instantiated device monitors of this type
         /// </summary>
-        private static ILog _log = LogManager.GetLogger(typeof(BIDeviceMonitor));
-        private static Dictionary<BIPhysicalDeviceInfo, BIDeviceMonitor> _monitors = new Dictionary<BIPhysicalDeviceInfo, BIDeviceMonitor>();
-        private BIPhysicalDeviceInfo _device = null;
-        private BIDeviceManager _manager = null;
-        private bool[] _state;
+        private static readonly ILog _log = LogManager.GetLogger(typeof (BIDeviceMonitor));
+
+        private static readonly Dictionary<BIPhysicalDeviceInfo, BIDeviceMonitor> _monitors =
+            new Dictionary<BIPhysicalDeviceInfo, BIDeviceMonitor>();
+
+        private readonly BIPhysicalDeviceInfo _device;
+        private BIDeviceManager _manager;
         private bool[] _prevState;
+        private bool[] _state;
 
         #region Constructors
+
         /// <summary>
         /// Hidden constructor -- forces callers to use one of the static factory methods 
         /// on this class.
@@ -30,15 +33,39 @@ namespace Common.InputSupport.BetaInnovations
             _device = device;
             Prepare();
         }
+
         #endregion
+
         #region Public Methods
+
+        public BIPhysicalDeviceInfo Device
+        {
+            get { return _device; }
+        }
+
+        /// <summary>
+        /// Returns an array representing the previous input state of the device being monitored by this object
+        /// </summary>
+        public bool[] PreviousState
+        {
+            get { return _prevState; }
+        }
+
+        /// <summary>
+        /// Returns an array representing the most-recently-polled input state of the device being monitored by this object
+        /// </summary>
+        public bool[] CurrentState
+        {
+            get { return _state; }
+        }
+
         public bool[] Poll()
         {
             return Poll(true);
         }
+
         public bool[] Poll(bool throwOnFail)
         {
-
             try
             {
                 if (!_prepared)
@@ -51,14 +78,14 @@ namespace Common.InputSupport.BetaInnovations
                 //}
                 //else
                 //{
-                    bool[] newState;
-                    newState = _manager.Poll(_device, throwOnFail);
-                    if (newState != null)
-                    {
-                        _prevState = _state;
-                        _state = newState;
-                    }
-                    return newState;
+                bool[] newState;
+                newState = _manager.Poll(_device, throwOnFail);
+                if (newState != null)
+                {
+                    _prevState = _state;
+                    _state = newState;
+                }
+                return newState;
                 //}
             }
             catch (BIException e)
@@ -71,35 +98,6 @@ namespace Common.InputSupport.BetaInnovations
                 }
             }
             return null;
-        }
-
-        public BIPhysicalDeviceInfo Device
-        {
-            get
-            {
-                return _device;
-            }
-        }
-        
-        /// <summary>
-        /// Returns an array representing the previous input state of the device being monitored by this object
-        /// </summary>
-        public bool[] PreviousState
-        {
-            get
-            {
-                return _prevState;
-            }
-        }
-        /// <summary>
-        /// Returns an array representing the most-recently-polled input state of the device being monitored by this object
-        /// </summary>
-        public bool[] CurrentState
-        {
-            get
-            {
-                return _state;
-            }
         }
 
         /// <summary>
@@ -118,14 +116,16 @@ namespace Common.InputSupport.BetaInnovations
             {
                 return _monitors[device];
             }
-            
+
             monitor = new BIDeviceMonitor(device);
             _monitors.Add(device, monitor);
             return monitor;
         }
 
         #endregion
+
         #region Private Methods
+
         /// <summary>
         /// Initializes this object's state and sets up BetaInnovations SDK objects
         /// to monitor the BetaInnoviations device instance that this object 
@@ -137,7 +137,7 @@ namespace Common.InputSupport.BetaInnovations
         {
             int elapsed = 0;
             int timeout = 1000;
-            while (_preparing && elapsed <=timeout)
+            while (_preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);
                 System.Windows.Forms.Application.DoEvents();
@@ -172,7 +172,7 @@ namespace Common.InputSupport.BetaInnovations
                 }
                 catch (BIException ex)
                 {
-                    _log.Error(ex.Message, ex); 
+                    _log.Error(ex.Message, ex);
                     _prepared = false;
                     throw;
                 }
@@ -182,16 +182,20 @@ namespace Common.InputSupport.BetaInnovations
                 }
             }
         }
+
         #endregion
+
         #region Object Overrides (ToString, GetHashCode, Equals)
+
         /// <summary>
         /// Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
         {
-            return this.GetType().Name + ":Device=" + _device.ToString();
+            return GetType().Name + ":Device=" + _device;
         }
+
         /// <summary>
         /// Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
@@ -200,6 +204,7 @@ namespace Common.InputSupport.BetaInnovations
         {
             return ToString().GetHashCode();
         }
+
         /// <summary>
         /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
         /// </summary>
@@ -210,21 +215,23 @@ namespace Common.InputSupport.BetaInnovations
             if (obj == null)
                 return false;
 
-            if (this.GetType() != obj.GetType())
+            if (GetType() != obj.GetType())
                 return false;
 
             // safe because of the GetType check
-            BIDeviceMonitor js = (BIDeviceMonitor)obj;
+            var js = (BIDeviceMonitor) obj;
 
             // use this pattern to compare value members
             if (!_device.Equals(js.Device))
                 return false;
 
             return true;
-
         }
+
         #endregion
+
         #region Destructors
+
         /// <summary>
         /// Standard finalizer, which will call Dispose() if this object is not
         /// manually disposed.  Ordinarily called only by the garbage collector.
@@ -233,6 +240,7 @@ namespace Common.InputSupport.BetaInnovations
         {
             Dispose();
         }
+
         /// <summary>
         /// Private implementation of Dispose()
         /// </summary>
@@ -258,8 +266,8 @@ namespace Common.InputSupport.BetaInnovations
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
-
         }
+
         /// <summary>
         /// Public implementation of IDisposable.Dispose().  Cleans up managed
         /// and unmanaged resources used by this object before allowing garbage collection
@@ -269,6 +277,7 @@ namespace Common.InputSupport.BetaInnovations
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         #endregion
     }
 }

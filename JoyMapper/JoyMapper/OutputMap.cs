@@ -1,9 +1,11 @@
 #region Using statements
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Common.InputSupport;
+
 #endregion
 
 namespace JoyMapper
@@ -12,28 +14,30 @@ namespace JoyMapper
     public sealed class OutputMap : ICloneable
     {
         #region Instance variable declarations
-        /// <summary>
-        /// A Dictionary of mappings between PhysicalControlInfo objects 
-        /// (the keys in the dictionary) and corresponding 
-        /// VirtualControlInfo objects (the values in the dictionary)
-        /// </summary>
-        private Dictionary<PhysicalControlInfo, VirtualControlInfo> _mappings = new Dictionary<PhysicalControlInfo, VirtualControlInfo>();
+
         /// <summary>
         /// A list of PhysicalControlInfo objects representing the set of 
         /// "disabled" controls -- controls that appear in the mappings but 
         /// which should be ignored by Mediators
         /// </summary>
-        private List<PhysicalControlInfo> _disabledMappings = new List<PhysicalControlInfo>();
-        #endregion
-        #region Constructors
+        private readonly List<PhysicalControlInfo> _disabledMappings = new List<PhysicalControlInfo>();
+
         /// <summary>
-        /// Default constructor
+        /// A Dictionary of mappings between PhysicalControlInfo objects 
+        /// (the keys in the dictionary) and corresponding 
+        /// VirtualControlInfo objects (the values in the dictionary)
         /// </summary>
-        public OutputMap()
-        {
-        }
+        private readonly Dictionary<PhysicalControlInfo, VirtualControlInfo> _mappings =
+            new Dictionary<PhysicalControlInfo, VirtualControlInfo>();
+
         #endregion
+
+        #region Constructors
+
+        #endregion
+
         #region Public Methods
+
         /// <summary>
         /// Returns a deep copy of this Output Map
         /// </summary>
@@ -42,6 +46,7 @@ namespace JoyMapper
         {
             return Common.Serialization.Util.DeepClone(this);
         }
+
         /// <summary>
         /// Loads an OutputMap object from a file where it has previously been saved to
         /// </summary>
@@ -53,12 +58,13 @@ namespace JoyMapper
             OutputMap map = null;
             using (FileStream fs = mappingFile.OpenRead())
             {
-                BinaryFormatter serializer = new BinaryFormatter();
-                map = (OutputMap)serializer.Deserialize(fs);
+                var serializer = new BinaryFormatter();
+                map = (OutputMap) serializer.Deserialize(fs);
                 fs.Close();
             }
             return map;
         }
+
         /// <summary>
         /// Saves an OutputMap to a file.
         /// </summary>
@@ -69,11 +75,12 @@ namespace JoyMapper
         {
             using (FileStream fs = outputFile.OpenWrite())
             {
-                BinaryFormatter serializer = new BinaryFormatter();
+                var serializer = new BinaryFormatter();
                 serializer.Serialize(fs, map);
                 fs.Close();
             }
         }
+
         /// <summary>
         /// Marks a specific physical control in the map as 'disabled', preventing it 
         /// from being seen by Mediators
@@ -87,6 +94,7 @@ namespace JoyMapper
                 _disabledMappings.Add(inputControl);
             }
         }
+
         /// <summary>
         /// Marks all PhysicalControlInfo objects associated with the specified 
         /// PhysicalDeviceInfo object, as disabled.
@@ -101,6 +109,7 @@ namespace JoyMapper
                 DisableMapping(control);
             }
         }
+
         /// <summary>
         /// Marks a specific PhysicalControlInfo in the Output Map as 'enabled'
         /// </summary>
@@ -113,6 +122,7 @@ namespace JoyMapper
                 _disabledMappings.Remove(inputControl);
             }
         }
+
         /// <summary>
         /// Marks all PhysicalControlInfo objects in the Output Map, which belong to the 
         /// specified PhysicalDeviceInfo object, as 'enabled' in the Output Map
@@ -127,6 +137,7 @@ namespace JoyMapper
                 EnableMapping(control);
             }
         }
+
         /// <summary>
         /// Removes all mappings from the output map which are associated with a given physical input device
         /// </summary>
@@ -142,6 +153,7 @@ namespace JoyMapper
                 RemoveMapping(control);
             }
         }
+
         /// <summary>
         /// Removes a mapping from the output map
         /// </summary>
@@ -155,12 +167,14 @@ namespace JoyMapper
                 toReturn = true;
                 _mappings.Remove(inputControl);
             }
-            if (_disabledMappings.Contains(inputControl)) {
+            if (_disabledMappings.Contains(inputControl))
+            {
                 toReturn = true;
                 _disabledMappings.Remove(inputControl);
             }
             return toReturn;
         }
+
         /// <summary>
         /// Defines or removes a mapping in the output map.
         /// </summary>
@@ -206,6 +220,7 @@ namespace JoyMapper
                 }
             }
         }
+
         /// <summary>
         /// Returns the VirtualControlInfo object currently mapped to the specified 
         /// PhysicalControlInfo object, if any.  If no mapping is defined for the 
@@ -221,7 +236,7 @@ namespace JoyMapper
         {
             if (_mappings.ContainsKey(inputControl))
             {
-                VirtualControlInfo vc = (VirtualControlInfo)_mappings[inputControl];
+                VirtualControlInfo vc = _mappings[inputControl];
                 return vc;
             }
             else
@@ -241,7 +256,7 @@ namespace JoyMapper
         /// representing the virtual (output) controls </returns>
         public Dictionary<PhysicalControlInfo, VirtualControlInfo> GetDeviceSpecificMappings(PhysicalDeviceInfo device)
         {
-            Dictionary<PhysicalControlInfo, VirtualControlInfo> toReturn = new Dictionary<PhysicalControlInfo, VirtualControlInfo>();
+            var toReturn = new Dictionary<PhysicalControlInfo, VirtualControlInfo>();
             foreach (PhysicalControlInfo control in _mappings.Keys)
             {
                 PhysicalDeviceInfo controlDevice = control.Parent;
@@ -252,6 +267,7 @@ namespace JoyMapper
             }
             return toReturn;
         }
+
         /// <summary>
         /// Checks to see if this output map contains any actual mappings, or if all its mappings 
         /// are undefined.  If even a single valid output mapping exists, 
@@ -278,6 +294,7 @@ namespace JoyMapper
             }
             return result;
         }
+
         /// <summary>
         /// Checks to see if a given physical device is enabled in the output map for being 
         /// read from by Mediators.
@@ -298,6 +315,7 @@ namespace JoyMapper
             }
             return false;
         }
+
         /// <summary>
         /// Checks whether the output map contains a mapping from a given physical input control
         /// </summary>
@@ -307,6 +325,7 @@ namespace JoyMapper
         {
             return (_mappings.ContainsKey(physicalControl));
         }
+
         /// <summary>
         /// Checks whether the output map contains a mapping to a specific virtual data source
         /// </summary>
@@ -316,6 +335,7 @@ namespace JoyMapper
         {
             return (_mappings.ContainsValue(virtualControl));
         }
+
         /// <summary>
         /// Checks whether a specific physical control is enabled in the output map 
         /// for being read from by Mediators.
@@ -329,8 +349,11 @@ namespace JoyMapper
         {
             return (!(_disabledMappings.Contains(control)));
         }
+
         #endregion
+
         #region Public Properties
+
         /// <summary>
         /// Gets an array of PhysicalControlInfo objects, where each object 
         /// in the array represents a single physical input control
@@ -341,7 +364,7 @@ namespace JoyMapper
         {
             get
             {
-                List<PhysicalControlInfo> physicalControls = new List<PhysicalControlInfo>();
+                var physicalControls = new List<PhysicalControlInfo>();
                 foreach (PhysicalControlInfo pci in _mappings.Keys)
                 {
                     if (!physicalControls.Contains(pci))
@@ -352,6 +375,7 @@ namespace JoyMapper
                 return physicalControls.ToArray();
             }
         }
+
         /// <summary>
         /// Gets an array of PhysicalControlInfo objects, where each object in the array 
         /// represents a single physical input control registered with (known to)
@@ -361,7 +385,7 @@ namespace JoyMapper
         {
             get
             {
-                List<PhysicalControlInfo> physicalControls = new List<PhysicalControlInfo>();
+                var physicalControls = new List<PhysicalControlInfo>();
                 foreach (PhysicalControlInfo pci in _mappings.Keys)
                 {
                     if (!physicalControls.Contains(pci) && IsMappingEnabled(pci))
@@ -372,6 +396,7 @@ namespace JoyMapper
                 return physicalControls.ToArray();
             }
         }
+
         /// <summary>
         /// Gets an array of PhysicalControlInfo objects, where each object in the array 
         /// represents a single physical input control registered with (known to)
@@ -381,7 +406,7 @@ namespace JoyMapper
         {
             get
             {
-                List<PhysicalControlInfo> physicalControls = new List<PhysicalControlInfo>();
+                var physicalControls = new List<PhysicalControlInfo>();
                 foreach (PhysicalControlInfo pci in _mappings.Keys)
                 {
                     if (!physicalControls.Contains(pci) && !IsMappingEnabled(pci))
@@ -392,6 +417,7 @@ namespace JoyMapper
                 return physicalControls.ToArray();
             }
         }
+
         /// <summary>
         /// Returns an array of PhysicalDeviceInfo objects, where each element in the array
         /// represents a unique physical device referenced in the full set of defined mappings
@@ -401,7 +427,7 @@ namespace JoyMapper
         {
             get
             {
-                List<PhysicalDeviceInfo> uniquePhysicalDevices = new List<PhysicalDeviceInfo>();
+                var uniquePhysicalDevices = new List<PhysicalDeviceInfo>();
                 foreach (PhysicalControlInfo pci in _mappings.Keys)
                 {
                     if (!uniquePhysicalDevices.Contains(pci.Parent))
@@ -412,13 +438,14 @@ namespace JoyMapper
                 return uniquePhysicalDevices.ToArray();
             }
         }
+
         /// Returns an array of PhysicalDeviceInfo objects, where each element in the array
         /// represents a unique physical device referenced in the set of enabled mappings
         public PhysicalDeviceInfo[] EnabledPhysicalDevices
         {
             get
             {
-                List<PhysicalDeviceInfo> enabledPhysicalDevices = new List<PhysicalDeviceInfo>();
+                var enabledPhysicalDevices = new List<PhysicalDeviceInfo>();
                 PhysicalDeviceInfo[] physicalDevices = PhysicalDevices;
                 foreach (PhysicalDeviceInfo device in physicalDevices)
                 {
@@ -430,6 +457,7 @@ namespace JoyMapper
                 return enabledPhysicalDevices.ToArray();
             }
         }
+
         /// Returns an array of PhysicalDeviceInfo objects, where each element in the array
         /// represents a unique physical device referenced in the full set of mappings, where
         /// all of the physical controls on the physical device are marked as 'disabled' in
@@ -438,8 +466,7 @@ namespace JoyMapper
         {
             get
             {
-
-                List<PhysicalDeviceInfo> disabledPhysicalDevices = new List<PhysicalDeviceInfo>();
+                var disabledPhysicalDevices = new List<PhysicalDeviceInfo>();
                 PhysicalDeviceInfo[] physicalDevices = PhysicalDevices;
                 foreach (PhysicalDeviceInfo device in physicalDevices)
                 {
@@ -452,33 +479,34 @@ namespace JoyMapper
             }
         }
 
-
         #endregion
 
         #region Object overrides
+
         public override bool Equals(object obj)
         {
             if (obj == null)
                 return false;
 
-            if (this.GetType() != obj.GetType())
+            if (GetType() != obj.GetType())
                 return false;
 
             // safe because of the GetType check
-            OutputMap map = (OutputMap)obj;
+            var map = (OutputMap) obj;
 
             return Common.Serialization.Util.DeepEquals(this, map);
-
         }
+
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
         }
+
         public override string ToString()
         {
             return ("OutputMap:" + Common.Serialization.Util.ToRawBytes(this));
         }
-        #endregion
 
+        #endregion
     }
 }

@@ -1,24 +1,27 @@
 ﻿using System;
+
 namespace F4Utils.Campaign
 {
     public class AirTaskingManager : CampaignManager
     {
         #region Public Fields
-        public short flags;
-        public short averageCAStrength;
-        public short averageCAMissions;
-        public byte sampleCycles;
-        public byte numAirbases;
+
         public ATMAirbase[] airbases;
+        public short averageCAMissions;
+        public short averageCAStrength;
         public byte cycle;
-        public short numMissionRequests;
+        public short flags;
         public MissionRequest[] missionRequests;
+        public byte numAirbases;
+        public short numMissionRequests;
+        public byte sampleCycles;
+
         #endregion
 
         protected AirTaskingManager()
-            : base()
         {
         }
+
         public AirTaskingManager(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -42,7 +45,6 @@ namespace F4Utils.Campaign
                 averageCAMissions = 500;
                 averageCAStrength = 500;
                 sampleCycles = 10;
-
             }
             numAirbases = bytes[offset];
             offset++;
@@ -71,7 +73,7 @@ namespace F4Utils.Campaign
             {
                 for (int j = 0; j < numMissionRequests; j++)
                 {
-                    MissionRequest mis_request = new MissionRequest();
+                    var mis_request = new MissionRequest();
 
                     mis_request.requesterID = new VU_ID();
                     mis_request.requesterID.num_ = BitConverter.ToUInt32(bytes, offset);
@@ -173,9 +175,8 @@ namespace F4Utils.Campaign
                     mis_request.max_to = bytes[offset];
                     offset++;
 
-                    offset += 3;// align on int32 boundary
+                    offset += 3; // align on int32 boundary
                     missionRequests[j] = mis_request;
-
                 }
             }
         }

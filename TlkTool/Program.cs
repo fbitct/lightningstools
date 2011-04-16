@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using F4Utils.Speech;
-using System.Reflection;
 using System.Windows.Forms;
+using Common.Strings;
+using F4Utils.Speech;
 
 namespace TlkTool
 {
@@ -30,6 +30,7 @@ namespace TlkTool
         public const string ACTION_LH2WAV = "LH2WAV";
         public const string ACTION_LH2SPX = "LH2SPX";
         public const string ACTION_SPX2LH = "SPX2LH";
+
         [STAThread]
         public static int Main(string[] args)
         {
@@ -39,8 +40,10 @@ namespace TlkTool
             string inputFileOrFolderSpec = null;
             string outputFileOrFolderSpec = null;
             CodecType codecType = CodecType.Unknown;
-            uint? fileNum=null;
-            bool successfullyParsed = ParseCommandLineOptions(args, out action, out inputFileOrFolderSpec, out outputFileOrFolderSpec, out codecType, out fileNum, out errorMessage);
+            uint? fileNum = null;
+            bool successfullyParsed = ParseCommandLineOptions(args, out action, out inputFileOrFolderSpec,
+                                                              out outputFileOrFolderSpec, out codecType, out fileNum,
+                                                              out errorMessage);
 
             if (successfullyParsed)
             {
@@ -102,7 +105,7 @@ namespace TlkTool
                         case ACTION_SPX2LH:
                             SPX2LH(inputFileOrFolderSpec, outputFileOrFolderSpec);
                             break;
-                            
+
                         default:
                             return ERR_LEVEL__ERROR_OCCURRED;
                     }
@@ -127,9 +130,11 @@ namespace TlkTool
             Console.Error.WriteLine(err);
             return ERR_LEVEL__ERROR_OCCURRED;
         }
-        private static bool ParseCommandLineOptions(string[] args, out string action, out string inputFileOrFolderSpec, out string outputFileOrFolderSpec, out CodecType codecType, out uint? fileNum, out string errorMessage)
-        {
 
+        private static bool ParseCommandLineOptions(string[] args, out string action, out string inputFileOrFolderSpec,
+                                                    out string outputFileOrFolderSpec, out CodecType codecType,
+                                                    out uint? fileNum, out string errorMessage)
+        {
             //set default values for output parms
             {
                 inputFileOrFolderSpec = null;
@@ -140,7 +145,8 @@ namespace TlkTool
                 codecType = CodecType.Unknown;
             }
 
-            if (args == null || args.Length == 0) //no args means no "action" specified -- what, we're mind-readers, now?
+            if (args == null || args.Length == 0)
+                //no args means no "action" specified -- what, we're mind-readers, now?
             {
                 errorMessage = "Please specify the input file (or folder) and output file (or folder).";
                 return false;
@@ -152,11 +158,13 @@ namespace TlkTool
             {
                 //two args would be an action and either an input file or an output file specified...but which (input or output file/directory) 
                 //does it represent?  Fuck it...this is an error for now.
-                errorMessage = "Can't tell if the second argument is an input file or an output file...please specify both.";
+                errorMessage =
+                    "Can't tell if the second argument is an input file or an output file...please specify both.";
                 return false;
             }
 
-            if (args.Length >=3 && args.Length <=5) //3 or 4 args = an action + an input file + an output file, plus optionally a codec in one case
+            if (args.Length >= 3 && args.Length <= 5)
+                //3 or 4 args = an action + an input file + an output file, plus optionally a codec in one case
             {
                 //always wanna know the action, then the input, then the output
                 inputFileOrFolderSpec = args[1];
@@ -179,28 +187,28 @@ namespace TlkTool
             action = args[0];
             if (!string.IsNullOrEmpty(action)) action = action.ToUpper().Trim();
 
-            if (string.IsNullOrEmpty(action) || 
+            if (string.IsNullOrEmpty(action) ||
                 (
                     action != ACTION_COMM2XML &&
                     action != ACTION_EVAL2XML &&
-                    action != ACTION_FRAG2XML && 
-                    action != ACTION_LH2TLK && 
-                    action != ACTION_SPX2TLK && 
-                    action != ACTION_TLK2LH && 
-                    action != ACTION_TLK2SPX && 
-                    action != ACTION_TLK2WAV && 
-                    action != ACTION_WAV2TLK && 
-                    action != ACTION_XML2COMM && 
-                    action != ACTION_XML2EVAL && 
+                    action != ACTION_FRAG2XML &&
+                    action != ACTION_LH2TLK &&
+                    action != ACTION_SPX2TLK &&
+                    action != ACTION_TLK2LH &&
+                    action != ACTION_TLK2SPX &&
+                    action != ACTION_TLK2WAV &&
+                    action != ACTION_WAV2TLK &&
+                    action != ACTION_XML2COMM &&
+                    action != ACTION_XML2EVAL &&
                     action != ACTION_XML2FRAG &&
                     action != ACTION_WAV2SPX &&
                     action != ACTION_SPX2WAV &&
                     action != ACTION_WAV2LH &&
                     action != ACTION_LH2WAV &&
                     action != ACTION_LH2SPX &&
-                    action != ACTION_SPX2LH 
+                    action != ACTION_SPX2LH
                 )
-            )
+                )
             {
                 errorMessage = string.Format("Invalid action: {0}", action);
                 return false;
@@ -221,16 +229,17 @@ namespace TlkTool
                 {
                     codec = args[3];
                     if (!string.IsNullOrEmpty(codec)) codec = codec.ToUpper().Trim().Replace(".", "");
-                    
                 }
-                if (action == ACTION_TLK2LH || action == ACTION_TLK2SPX || action == ACTION_LH2TLK || action == ACTION_SPX2TLK || action == ACTION_TLK2WAV || action == ACTION_WAV2TLK)
+                if (action == ACTION_TLK2LH || action == ACTION_TLK2SPX || action == ACTION_LH2TLK ||
+                    action == ACTION_SPX2TLK || action == ACTION_TLK2WAV || action == ACTION_WAV2TLK)
                 {
                     string fileNumString = null;
-                    if (action == ACTION_TLK2LH || action == ACTION_TLK2SPX || action == ACTION_LH2TLK || action == ACTION_SPX2TLK || action == ACTION_TLK2WAV)
+                    if (action == ACTION_TLK2LH || action == ACTION_TLK2SPX || action == ACTION_LH2TLK ||
+                        action == ACTION_SPX2TLK || action == ACTION_TLK2WAV)
                     {
                         fileNumString = args[3];
                     }
-                    else if (action == ACTION_WAV2TLK && args.Length >4)
+                    else if (action == ACTION_WAV2TLK && args.Length > 4)
                     {
                         fileNumString = args[4];
                     }
@@ -239,9 +248,9 @@ namespace TlkTool
                     {
                         int fileNumParsed = -1;
                         bool parsed = int.TryParse(fileNumString, out fileNumParsed);
-                        if (parsed && fileNumParsed >0)
+                        if (parsed && fileNumParsed > 0)
                         {
-                            fileNum = (uint)fileNumParsed;
+                            fileNum = (uint) fileNumParsed;
                         }
                         else
                         {
@@ -252,10 +261,10 @@ namespace TlkTool
                 }
                 else
                 {
-                    errorMessage = string.Format("Cannot specify <codec> when the <action> is not in {0}", ACTION_WAV2TLK.ToString());
+                    errorMessage = string.Format("Cannot specify <codec> when the <action> is not in {0}",
+                                                 ACTION_WAV2TLK);
                     return false;
                 }
-
             }
             if (action == ACTION_WAV2TLK)
             {
@@ -269,7 +278,8 @@ namespace TlkTool
                 }
                 else
                 {
-                    errorMessage = string.Format("Invalid <codec>:{0}", string.IsNullOrEmpty(codec)?"(missing)": codec);
+                    errorMessage = string.Format("Invalid <codec>:{0}",
+                                                 string.IsNullOrEmpty(codec) ? "(missing)" : codec);
                     return false;
                 }
             }
@@ -277,7 +287,7 @@ namespace TlkTool
             {
                 if (fileNum.HasValue)
                 {
-                    if (!ValidateFileExists(ref inputFileOrFolderSpec, (fileNum.ToString()+"." + codecType.ToString()), ref errorMessage))
+                    if (!ValidateFileExists(ref inputFileOrFolderSpec, (fileNum + "." + codecType), ref errorMessage))
                     {
                         return false;
                     }
@@ -306,9 +316,8 @@ namespace TlkTool
                         }
                     }
                 }
-
             }
-            else if (action == ACTION_TLK2SPX || action ==ACTION_TLK2LH)
+            else if (action == ACTION_TLK2SPX || action == ACTION_TLK2LH)
             {
                 if (!ValidateFileExists(ref inputFileOrFolderSpec, "falcon.tlk", ref errorMessage))
                 {
@@ -316,7 +325,8 @@ namespace TlkTool
                 }
                 if (fileNum.HasValue)
                 {
-                    if (!ValidateCanCreateFile(ref outputFileOrFolderSpec, (fileNum.ToString() + "." + codecType.ToString()), ref errorMessage))
+                    if (
+                        !ValidateCanCreateFile(ref outputFileOrFolderSpec, (fileNum + "." + codecType), ref errorMessage))
                     {
                         return false;
                     }
@@ -337,7 +347,7 @@ namespace TlkTool
                 }
                 if (fileNum.HasValue)
                 {
-                    if (!ValidateCanCreateFile(ref outputFileOrFolderSpec, (fileNum.ToString() + ".WAV"), ref errorMessage))
+                    if (!ValidateCanCreateFile(ref outputFileOrFolderSpec, (fileNum + ".WAV"), ref errorMessage))
                     {
                         return false;
                     }
@@ -417,7 +427,8 @@ namespace TlkTool
                     return false;
                 }
             }
-            else if (action == ACTION_WAV2SPX || action == ACTION_SPX2WAV || action == ACTION_WAV2LH || action == ACTION_LH2WAV || action == ACTION_LH2SPX || action == ACTION_SPX2LH)
+            else if (action == ACTION_WAV2SPX || action == ACTION_SPX2WAV || action == ACTION_WAV2LH ||
+                     action == ACTION_LH2WAV || action == ACTION_LH2SPX || action == ACTION_SPX2LH)
             {
                 if (!ValidateFileExists(ref inputFileOrFolderSpec, string.Empty, ref errorMessage))
                 {
@@ -439,17 +450,22 @@ namespace TlkTool
                 errorMessage = string.Format("Invalid action: {0}", action);
                 return false;
             }
-           
-            if (codecType == CodecType.LH && (action == ACTION_LH2SPX || action ==  ACTION_LH2WAV || action == ACTION_WAV2LH || action == ACTION_SPX2LH || action == ACTION_TLK2WAV || action == ACTION_WAV2TLK))
+
+            if (codecType == CodecType.LH &&
+                (action == ACTION_LH2SPX || action == ACTION_LH2WAV || action == ACTION_WAV2LH ||
+                 action == ACTION_SPX2LH || action == ACTION_TLK2WAV || action == ACTION_WAV2TLK))
             {
                 if (!File.Exists(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "ST80W.dll")))
                 {
-                    errorMessage = string.Format("Missing ST80W.dll; please copy it from your F4 installation folder, to {0}", Path.GetDirectoryName(Application.ExecutablePath));
+                    errorMessage =
+                        string.Format("Missing ST80W.dll; please copy it from your F4 installation folder, to {0}",
+                                      Path.GetDirectoryName(Application.ExecutablePath));
                     return false;
                 }
             }
             return true;
         }
+
         private static bool ValidateFileExists(ref string filespec, string defaultFileName, ref string errorMessage)
         {
             if (Directory.Exists(filespec))
@@ -464,6 +480,7 @@ namespace TlkTool
             }
             return true;
         }
+
         private static bool ValidateDirectoryExistsOrCanCreate(string dirSpec, ref string errorMessage)
         {
             bool isValid = true;
@@ -481,6 +498,7 @@ namespace TlkTool
             }
             return isValid;
         }
+
         private static bool ValidateCanCreateFile(ref string filespec, string defaultFileName, ref string errorMessage)
         {
             bool isValid = true;
@@ -491,7 +509,7 @@ namespace TlkTool
 
             try
             {
-                DirectoryInfo di = new DirectoryInfo(new FileInfo(filespec).DirectoryName);
+                var di = new DirectoryInfo(new FileInfo(filespec).DirectoryName);
 
                 if (!di.Exists)
                 {
@@ -501,7 +519,9 @@ namespace TlkTool
                         filespec = Path.Combine(filespec, defaultFileName);
                     }
                 }
-                using (FileStream fs = File.Open(filespec, FileMode.Create, FileAccess.Write)) { }
+                using (FileStream fs = File.Open(filespec, FileMode.Create, FileAccess.Write))
+                {
+                }
             }
             catch (Exception e)
             {
@@ -512,13 +532,19 @@ namespace TlkTool
             {
                 if (File.Exists(filespec))
                 {
-                    try { File.Delete(filespec); }
-                    catch { }
+                    try
+                    {
+                        File.Delete(filespec);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 
             return isValid;
         }
+
         private static bool ValidateDirectoryExists(string folderspec, ref string errorMessage)
         {
             bool audioFilesFolderPathIsValid = Directory.Exists(folderspec);
@@ -529,11 +555,13 @@ namespace TlkTool
             }
             return true;
         }
+
         private static int ShowUsageAndWriteError(string errorMessage)
         {
             ShowUsage(Console.Out);
             return WriteError(errorMessage);
         }
+
         private static void ShowUsage(TextWriter o)
         {
             string appName = new FileInfo(Application.ExecutablePath).Name;
@@ -555,10 +583,11 @@ namespace TlkTool
             o.WriteLine("    <codec> ::={ SPX | LH }   (required when action= WAV2TLK)");
             o.WriteLine();
             o.WriteLine("    <tlkId> ::={ 0, 1, 2, ...} (Tlk ID of the TLK file to extract;");
-            o.WriteLine("                                 required when outputFileOrFolder refers to an individual file)");
+            o.WriteLine(
+                "                                 required when outputFileOrFolder refers to an individual file)");
             o.WriteLine();
             o.WriteLine("Examples:");
-            
+
             o.WriteLine(string.Format(@"{0} {1} .\falcon.tlk .\lh\ ", appName, ACTION_TLK2LH));
             o.WriteLine(string.Format(@"{0} {1} .\falcon.tlk .\lh\{2}.lh {2}", appName, ACTION_TLK2LH, 300));
             o.WriteLine(string.Format(@"{0} {1} .\falcon.tlk .\lh\ {2}", appName, ACTION_TLK2LH, 300));
@@ -567,9 +596,10 @@ namespace TlkTool
             o.WriteLine(string.Format(@"{0} {1} .\lh\{2}.lh .\falcon.tlk {2}", appName, ACTION_LH2TLK, 300));
             o.WriteLine(string.Format(@"{0} {1} .\lh\ .\falcon.tlk {2}", appName, ACTION_LH2TLK, 300));
 
-            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2}", appName, ACTION_WAV2TLK, CodecType.LH.ToString()));
-            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK, CodecType.LH.ToString(), 300));
-            o.WriteLine(string.Format(@"{0} {1} .\wav\{3}.wav .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK, CodecType.LH.ToString(), 300));
+            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2}", appName, ACTION_WAV2TLK, CodecType.LH));
+            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK, CodecType.LH, 300));
+            o.WriteLine(string.Format(@"{0} {1} .\wav\{3}.wav .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK,
+                                      CodecType.LH, 300));
 
 
             o.WriteLine(string.Format(@"{0} {1} .\falcon.tlk .\spx\ ", appName, ACTION_TLK2SPX));
@@ -580,9 +610,11 @@ namespace TlkTool
             o.WriteLine(string.Format(@"{0} {1} .\spx\{2}.lh .\falcon.tlk {2}", appName, ACTION_SPX2TLK, 300));
             o.WriteLine(string.Format(@"{0} {1} .\spx\ .\falcon.tlk {2}", appName, ACTION_SPX2TLK, 300));
 
-            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2}", appName, ACTION_WAV2TLK, CodecType.SPX.ToString()));
-            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK, CodecType.SPX.ToString(), 300));
-            o.WriteLine(string.Format(@"{0} {1} .\wav\{3}.wav .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK, CodecType.SPX.ToString(), 300));
+            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2}", appName, ACTION_WAV2TLK, CodecType.SPX));
+            o.WriteLine(string.Format(@"{0} {1} .\wav\ .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK, CodecType.SPX,
+                                      300));
+            o.WriteLine(string.Format(@"{0} {1} .\wav\{3}.wav .\falcon.tlk {2} {3}", appName, ACTION_WAV2TLK,
+                                      CodecType.SPX, 300));
 
 
             o.WriteLine(string.Format(@"{0} {1} .\falcon.tlk .\wav\ ", appName, ACTION_TLK2WAV));
@@ -662,42 +694,52 @@ namespace TlkTool
             FragFile fragFile = FragFile.LoadFromXml(fragXmlFile);
             fragFile.SaveAsBinary(outputBinFile);
         }
+
         private static void FRAG2XML(string fragBinFile, string outputXmlFile)
         {
             FragFile fragFile = FragFile.LoadFromBinary(fragBinFile);
             fragFile.SaveAsXml(outputXmlFile);
         }
+
         private static void COMM2XML(string commBinFile, string outputXmlFile)
         {
             CommFile commFile = CommFile.LoadFromBinary(commBinFile);
             commFile.SaveAsXml(outputXmlFile);
         }
+
         private static void XML2COMM(string commXmlFile, string outputBinFile)
         {
             CommFile commFile = CommFile.LoadFromXml(commXmlFile);
             commFile.SaveAsBinary(outputBinFile);
         }
+
         private static void EVAL2XML(string evalBinFile, string outputXmlFile)
         {
             EvalFile evalFile = EvalFile.LoadFromBinary(evalBinFile);
             evalFile.SaveAsXml(outputXmlFile);
         }
+
         private static void XML2EVAL(string evalXmlFile, string outputBinFile)
         {
             EvalFile evalFile = EvalFile.LoadFromXml(evalXmlFile);
             evalFile.SaveAsBinary(outputBinFile);
         }
-        private static int TLK2COMPRESSED(string tlkFilePath, string outputFileOrFolder, CodecType codecType, uint? fileNum)
+
+        private static int TLK2COMPRESSED(string tlkFilePath, string outputFileOrFolder, CodecType codecType,
+                                          uint? fileNum)
         {
-            string extension = "." + codecType.ToString();
+            string extension = "." + codecType;
             TlkFile tlkFile = TlkFile.Load(tlkFilePath);
 
             CodecType tlkFileCodecType = tlkFile.DetectTlkFileCodecType();
-            if (tlkFileCodecType != codecType) 
+            if (tlkFileCodecType != codecType)
             {
                 if (tlkFileCodecType != CodecType.Unknown)
                 {
-                    Console.Error.WriteLine(string.Format("Invalid <codec> argument: {0} was built using files that were encoded using the {1} codec, not the {2} codec.", tlkFilePath, tlkFileCodecType.ToString(), codecType.ToString()));
+                    Console.Error.WriteLine(
+                        string.Format(
+                            "Invalid <codec> argument: {0} was built using files that were encoded using the {1} codec, not the {2} codec.",
+                            tlkFilePath, tlkFileCodecType, codecType));
                     return ERR_LEVEL__ERROR_OCCURRED;
                 }
             }
@@ -709,7 +751,7 @@ namespace TlkTool
                 if (fileNum.HasValue && fileNum != i) continue;
                 try
                 {
-                    var dataItem = tlkFile.Records[i];
+                    TlkFileRecord dataItem = tlkFile.Records[i];
                     string thisFileName = null;
                     if (fileNum.HasValue && !Directory.Exists(outputFileOrFolder))
                     {
@@ -717,7 +759,7 @@ namespace TlkTool
                     }
                     else
                     {
-                        thisFileName = Path.Combine(outputFileOrFolder, i.ToString() + extension);
+                        thisFileName = Path.Combine(outputFileOrFolder, i + extension);
                     }
                     Console.Write("Extracting " + thisFileName + "...");
                     tlkFile.WriteRecordToFile(dataItem, thisFileName);
@@ -726,13 +768,14 @@ namespace TlkTool
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine(string.Format("Error: {0}", ex.ToString()));
+                    Console.Error.WriteLine(string.Format("Error: {0}", ex));
                     failed++;
                 }
                 Console.WriteLine();
             }
             if (failed == 0 && successful == 0) failed = 1;
-            Console.WriteLine(string.Format("Finished extracting {0} successful / {1} failed {2} file(s) from {3}.", successful, failed, extension, tlkFilePath));
+            Console.WriteLine(string.Format("Finished extracting {0} successful / {1} failed {2} file(s) from {3}.",
+                                            successful, failed, extension, tlkFilePath));
             if (failed == 0)
             {
                 return ERR_LEVEL__SUCCESS;
@@ -742,14 +785,15 @@ namespace TlkTool
                 return ERR_LEVEL__ERROR_OCCURRED;
             }
         }
-       
+
         private static void TLK2WAV(string tlkFilePath, string outputFileOrFolder, uint? fileNum)
         {
             string extension = ".WAV";
             TlkFile tlkFile = TlkFile.Load(tlkFilePath);
 
             CodecType tlkFileCodec = tlkFile.DetectTlkFileCodecType();
-            Console.WriteLine(string.Format("Extracting {0} file(s) from {1} using {2} codec...", extension, tlkFilePath, tlkFileCodec));
+            Console.WriteLine(string.Format("Extracting {0} file(s) from {1} using {2} codec...", extension, tlkFilePath,
+                                            tlkFileCodec));
             int successful = 0;
             int failed = 0;
             for (int i = 0; i < tlkFile.Records.Length; i++)
@@ -757,7 +801,7 @@ namespace TlkTool
                 if (fileNum.HasValue && fileNum != i) continue;
                 try
                 {
-                    var dataItem = tlkFile.Records[i];
+                    TlkFileRecord dataItem = tlkFile.Records[i];
                     string thisFileName = null;
                     if (fileNum.HasValue && !Directory.Exists(outputFileOrFolder))
                     {
@@ -765,7 +809,7 @@ namespace TlkTool
                     }
                     else
                     {
-                        thisFileName = Path.Combine(outputFileOrFolder, i.ToString() + extension);
+                        thisFileName = Path.Combine(outputFileOrFolder, i + extension);
                     }
                     Console.Write("Extracting " + thisFileName + "...");
                     tlkFile.DecompressRecordAndWriteToFile(tlkFileCodec, dataItem, thisFileName);
@@ -774,20 +818,21 @@ namespace TlkTool
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine(string.Format("Error: {0}", ex.ToString()));
+                    Console.Error.WriteLine(string.Format("Error: {0}", ex));
                     failed++;
                 }
                 Console.WriteLine();
             }
             if (failed == 0 && successful == 0) failed = 1;
-            Console.WriteLine(string.Format("Finished extracting {0} successful / {1} failed {2} file(s) from {3}.", successful, failed, extension, tlkFilePath));
+            Console.WriteLine(string.Format("Finished extracting {0} successful / {1} failed {2} file(s) from {3}.",
+                                            successful, failed, extension, tlkFilePath));
         }
 
         private static void WAV2TLK(string wavsFileOrFolder, string tlkFilePath, CodecType codecType, uint? fileNum)
         {
             string codecTypeDesc = codecType == CodecType.LH ? "LH" : codecType == CodecType.SPX ? "SPX" : "Unknown";
-            
-            Dictionary<uint, string> wavsToInclude = new Dictionary<uint, string>();
+
+            var wavsToInclude = new Dictionary<uint, string>();
             if (fileNum.HasValue)
             {
                 wavsToInclude.Add(fileNum.Value, wavsFileOrFolder);
@@ -795,7 +840,7 @@ namespace TlkTool
             else
             {
                 string[] files = Directory.GetFiles(wavsFileOrFolder, "*.wav");
-                Array.Sort(files, new Common.Strings.NumericComparer());
+                Array.Sort(files, new NumericComparer());
                 foreach (string file in files)
                 {
                     uint rslt;
@@ -808,22 +853,28 @@ namespace TlkTool
             }
             if (fileNum.HasValue || new FileInfo(tlkFilePath).Exists)
             {
-                Console.WriteLine(string.Format("Importing {0} .WAV(s) (using {1} codec) into {2}...", wavsToInclude.Count, codecTypeDesc, tlkFilePath));
+                Console.WriteLine(string.Format("Importing {0} .WAV(s) (using {1} codec) into {2}...",
+                                                wavsToInclude.Count, codecTypeDesc, tlkFilePath));
                 TlkFile.ImportWAVFiles(codecType, wavsToInclude, tlkFilePath, Console.Out);
-                Console.WriteLine(string.Format("Finished importing {0} .WAV(s) (using {1} codec) into {2}.", wavsToInclude.Count, codecTypeDesc, tlkFilePath));
+                Console.WriteLine(string.Format("Finished importing {0} .WAV(s) (using {1} codec) into {2}.",
+                                                wavsToInclude.Count, codecTypeDesc, tlkFilePath));
             }
             else
             {
-                Console.WriteLine(string.Format("Creating new .TLK file {0} from .WAV(s) (using {1} codec)...", tlkFilePath, codecTypeDesc));
-                TlkFile.BuildFromWAVFiles(codecType, new List<string>(wavsToInclude.Values).ToArray(), tlkFilePath, Console.Out);
-                Console.WriteLine(string.Format("Finished creating new .TLK file {0} from .WAV(s) (using {1} codec).", tlkFilePath, codecTypeDesc));
+                Console.WriteLine(string.Format("Creating new .TLK file {0} from .WAV(s) (using {1} codec)...",
+                                                tlkFilePath, codecTypeDesc));
+                TlkFile.BuildFromWAVFiles(codecType, new List<string>(wavsToInclude.Values).ToArray(), tlkFilePath,
+                                          Console.Out);
+                Console.WriteLine(string.Format("Finished creating new .TLK file {0} from .WAV(s) (using {1} codec).",
+                                                tlkFilePath, codecTypeDesc));
             }
-
         }
-        private static void COMPRESSED2TLK(string compressedFileOrFolder, string tlkFilePath, CodecType codecType, uint? fileNum)
+
+        private static void COMPRESSED2TLK(string compressedFileOrFolder, string tlkFilePath, CodecType codecType,
+                                           uint? fileNum)
         {
-            string extension = "." + codecType.ToString();
-            Dictionary<uint, string> compressedFilesToInclude = new Dictionary<uint,string>();
+            string extension = "." + codecType;
+            var compressedFilesToInclude = new Dictionary<uint, string>();
             if (!extension.StartsWith(".")) extension = "." + extension;
             if (fileNum.HasValue)
             {
@@ -832,7 +883,7 @@ namespace TlkTool
             else
             {
                 string[] files = Directory.GetFiles(compressedFileOrFolder, "*" + extension);
-                Array.Sort(files, new Common.Strings.NumericComparer());
+                Array.Sort(files, new NumericComparer());
                 foreach (string file in files)
                 {
                     uint rslt;
@@ -845,17 +896,22 @@ namespace TlkTool
             }
             if (fileNum.HasValue || new FileInfo(tlkFilePath).Exists)
             {
-                Console.WriteLine(string.Format("Importing {0} .{1} file(s) into {2}...", compressedFilesToInclude.Count, codecType.ToString(), tlkFilePath));
+                Console.WriteLine(string.Format("Importing {0} .{1} file(s) into {2}...", compressedFilesToInclude.Count,
+                                                codecType, tlkFilePath));
                 TlkFile.ImportCompressedFiles(compressedFilesToInclude, tlkFilePath, codecType, Console.Out);
-                Console.WriteLine(string.Format("Finished importing {0} .{1} file(s) into {2}.", compressedFilesToInclude.Count, codecType.ToString(), tlkFilePath));
+                Console.WriteLine(string.Format("Finished importing {0} .{1} file(s) into {2}.",
+                                                compressedFilesToInclude.Count, codecType, tlkFilePath));
             }
             else
             {
                 Console.WriteLine(string.Format("Creating new .TLK file {0} from {1} file(s)...", tlkFilePath, extension));
-                TlkFile.BuildFromCompressedAudioFiles(new List<string>(compressedFilesToInclude.Values).ToArray(), tlkFilePath, Console.Out);
-                Console.WriteLine(string.Format("Finished creating new .TLK file {0} from {1} file(s).", tlkFilePath, extension));
+                TlkFile.BuildFromCompressedAudioFiles(new List<string>(compressedFilesToInclude.Values).ToArray(),
+                                                      tlkFilePath, Console.Out);
+                Console.WriteLine(string.Format("Finished creating new .TLK file {0} from {1} file(s).", tlkFilePath,
+                                                extension));
             }
         }
+
         private static void SPX2LH(string inputFileOrFolderSpec, string outputFileOrFolderSpec)
         {
             ConvertCompressedFileFormats(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.SPX, CodecType.LH);
@@ -868,7 +924,7 @@ namespace TlkTool
 
         private static void LH2WAV(string inputFileOrFolderSpec, string outputFileOrFolderSpec)
         {
-            ConvertCompressedFileFormats(inputFileOrFolderSpec, outputFileOrFolderSpec,CodecType.LH, CodecType.Unknown);
+            ConvertCompressedFileFormats(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.LH, CodecType.Unknown);
         }
 
         private static void WAV2LH(string inputFileOrFolderSpec, string outputFileOrFolderSpec)
@@ -883,41 +939,46 @@ namespace TlkTool
 
         private static void WAV2SPX(string inputFileOrFolderSpec, string outputFileOrFolderSpec)
         {
-            ConvertCompressedFileFormats(inputFileOrFolderSpec, outputFileOrFolderSpec,CodecType.Unknown, CodecType.SPX);
+            ConvertCompressedFileFormats(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.Unknown, CodecType.SPX);
         }
 
 
-        private static void ConvertCompressedFileFormats(string sourceFileOrFolderSpec, string outputFileOrFolderSpec, CodecType sourceCodec, CodecType targetCodec)
+        private static void ConvertCompressedFileFormats(string sourceFileOrFolderSpec, string outputFileOrFolderSpec,
+                                                         CodecType sourceCodec, CodecType targetCodec)
         {
             string[] inputFiles = null;
-            string sourceCodecString=sourceCodec.ToString();
-            if (sourceCodecString=="Unknown") sourceCodecString="WAV";
-            string targetCodecString= targetCodec.ToString();
+            string sourceCodecString = sourceCodec.ToString();
+            if (sourceCodecString == "Unknown") sourceCodecString = "WAV";
+            string targetCodecString = targetCodec.ToString();
             if (targetCodecString == "Unknown") targetCodecString = "WAV";
 
             if (Directory.Exists(sourceFileOrFolderSpec))
             {
-                
                 inputFiles = Directory.GetFiles(sourceFileOrFolderSpec, "*." + sourceCodecString);
             }
             else
             {
-                inputFiles = new string[] { sourceFileOrFolderSpec };
+                inputFiles = new[] {sourceFileOrFolderSpec};
             }
-            Array.Sort(inputFiles, new Common.Strings.NumericComparer());
+            Array.Sort(inputFiles, new NumericComparer());
             if (inputFiles.Length == 0)
             {
                 Console.WriteLine(string.Format("No {0} file(s) were found to convert!", "." + sourceCodecString));
                 return;
             }
-            Console.WriteLine(string.Format("Converting {0} .{1} file(s) to .{2} format...", inputFiles.Length, sourceCodecString, targetCodecString));
+            Console.WriteLine(string.Format("Converting {0} .{1} file(s) to .{2} format...", inputFiles.Length,
+                                            sourceCodecString, targetCodecString));
             foreach (string inputFile in inputFiles)
             {
-                string targetDirectory = Directory.Exists(outputFileOrFolderSpec)? outputFileOrFolderSpec: Path.GetDirectoryName(outputFileOrFolderSpec);
-                string targetFileName = Path.Combine(targetDirectory, Path.GetFileNameWithoutExtension(Path.GetFileName(inputFile)) + "." + targetCodecString);
-                
+                string targetDirectory = Directory.Exists(outputFileOrFolderSpec)
+                                             ? outputFileOrFolderSpec
+                                             : Path.GetDirectoryName(outputFileOrFolderSpec);
+                string targetFileName = Path.Combine(targetDirectory,
+                                                     Path.GetFileNameWithoutExtension(Path.GetFileName(inputFile)) + "." +
+                                                     targetCodecString);
+
                 Console.Write(string.Format("Converting {0} to {1}...", inputFile, targetFileName));
-                using (FileStream sourceFileStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
+                using (var sourceFileStream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
                 {
                     const int WAV_HEADER_SIZE = 44;
 
@@ -925,44 +986,51 @@ namespace TlkTool
                     uint compressedLength = 0;
                     if (sourceCodec == CodecType.Unknown)
                     {
-                        uncompressedLength = (uint)new FileInfo(inputFile).Length - WAV_HEADER_SIZE;
+                        uncompressedLength = (uint) new FileInfo(inputFile).Length - WAV_HEADER_SIZE;
                     }
                     else
                     {
-                        byte[] fieldBytes = new byte[4];
+                        var fieldBytes = new byte[4];
                         sourceFileStream.Read(fieldBytes, 0, 4);
                         uncompressedLength = BitConverter.ToUInt32(fieldBytes, 0);
                         sourceFileStream.Read(fieldBytes, 0, 4);
                         compressedLength = BitConverter.ToUInt32(fieldBytes, 0);
                     }
-                    using (MemoryStream sourceFilePcmStream = new MemoryStream((int)uncompressedLength))
+                    using (var sourceFilePcmStream = new MemoryStream((int) uncompressedLength))
                     {
                         if (sourceCodec == CodecType.Unknown)
                         {
                             sourceFileStream.Seek(WAV_HEADER_SIZE, SeekOrigin.Begin);
-                            byte[] sourceFilePcmBytes = new byte[uncompressedLength];
-                            sourceFileStream.Read(sourceFilePcmBytes, 0, (int)uncompressedLength);
-                            sourceFilePcmStream.Write(sourceFilePcmBytes, 0, (int)uncompressedLength);
+                            var sourceFilePcmBytes = new byte[uncompressedLength];
+                            sourceFileStream.Read(sourceFilePcmBytes, 0, (int) uncompressedLength);
+                            sourceFilePcmStream.Write(sourceFilePcmBytes, 0, (int) uncompressedLength);
                             sourceFilePcmStream.Seek(0, SeekOrigin.Begin);
                         }
                         else
                         {
-                            TlkFile.DecompressAudioDataFromStream(sourceCodec, sourceFileStream, (int)compressedLength, (int)uncompressedLength, sourceFilePcmStream);
+                            TlkFile.DecompressAudioDataFromStream(sourceCodec, sourceFileStream, (int) compressedLength,
+                                                                  (int) uncompressedLength, sourceFilePcmStream);
                             sourceFilePcmStream.Seek(0, SeekOrigin.Begin);
                         }
-                        using (FileStream targetFileStream = new FileStream(targetFileName, FileMode.Create, FileAccess.ReadWrite))
+                        using (
+                            var targetFileStream = new FileStream(targetFileName, FileMode.Create, FileAccess.ReadWrite)
+                            )
                         {
                             if (targetCodec == CodecType.Unknown)
                             {
-                                byte[] pcmBuffer = new byte[uncompressedLength];
+                                var pcmBuffer = new byte[uncompressedLength];
                                 sourceFilePcmStream.Read(pcmBuffer, 0, pcmBuffer.Length);
                                 TlkFile.WritePCMBitsAsWAVToStream(pcmBuffer, 0, pcmBuffer.Length, targetFileStream);
                             }
                             else
                             {
                                 targetFileStream.Write(BitConverter.GetBytes(uncompressedLength), 0, 4);
-                                targetFileStream.Seek(4, SeekOrigin.Current); //leave room for writing the compressed file length
-                                compressedLength = (uint)TlkFile.CompressAudioToStream(targetCodec, sourceFilePcmStream, (int)uncompressedLength, targetFileStream);
+                                targetFileStream.Seek(4, SeekOrigin.Current);
+                                    //leave room for writing the compressed file length
+                                compressedLength =
+                                    (uint)
+                                    TlkFile.CompressAudioToStream(targetCodec, sourceFilePcmStream,
+                                                                  (int) uncompressedLength, targetFileStream);
                                 targetFileStream.Flush();
                                 targetFileStream.Seek(4, SeekOrigin.Begin);
                                 targetFileStream.Write(BitConverter.GetBytes(compressedLength), 0, 4);
@@ -974,8 +1042,8 @@ namespace TlkTool
                 }
                 Console.WriteLine("Completed.");
             }
-            Console.WriteLine(string.Format("Finished converting {0} .{1} file(s) to .{2} format.", inputFiles.Length, sourceCodecString, targetCodecString));
+            Console.WriteLine(string.Format("Finished converting {0} .{1} file(s) to .{2} format.", inputFiles.Length,
+                                            sourceCodecString, targetCodecString));
         }
     }
-
 }
