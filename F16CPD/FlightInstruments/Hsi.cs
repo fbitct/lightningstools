@@ -17,13 +17,14 @@ namespace F16CPD.FlightInstruments
         {
             if (Manager.FlightData.HsiOffFlag)
             {
-                Matrix origTransform = g.Transform;
-                string toDisplay = "NO HSI DATA";
+                const string toDisplay = "NO HSI DATA";
                 Brush greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
                 var path = new GraphicsPath();
-                var sf = new StringFormat(StringFormatFlags.NoWrap);
-                sf.Alignment = StringAlignment.Center;
-                sf.LineAlignment = StringAlignment.Center;
+                var sf = new StringFormat(StringFormatFlags.NoWrap)
+                             {
+                                 Alignment = StringAlignment.Center,
+                                 LineAlignment = StringAlignment.Center
+                             };
                 var layoutRectangle = new Rectangle(new Point(0, 0), renderSize);
                 path.AddString(toDisplay, FontFamily.GenericMonospace, (int) FontStyle.Bold, 20, layoutRectangle, sf);
                 g.FillPath(greenBrush, path);
@@ -40,36 +41,37 @@ namespace F16CPD.FlightInstruments
                 compassRose.MakeTransparent(Color.Black);
                 float currentHeadingInDecimalDegrees = ((Manager.FlightData.MagneticHeadingInDecimalDegrees))%360;
 
-                var whitePen = new Pen(Color.White);
-                whitePen.Width = 3;
-                Point pointA = Point.Empty;
-                Point pointB = Point.Empty;
-                Point pointC = Point.Empty;
-                Point pointD = Point.Empty;
-                Point[] points = null;
+                var whitePen = new Pen(Color.White) {Width = 3};
+                Point pointA;
+                Point pointB;
+                Point pointC;
+                Point pointD;
+                Point[] points;
                 Brush whiteBrush = new SolidBrush(Color.White);
 
-                var airplaneSymbolPointList = new List<Point>();
-                airplaneSymbolPointList.Add(new Point(15, 3));
-                airplaneSymbolPointList.Add(new Point(15, 13));
-                airplaneSymbolPointList.Add(new Point(4, 13));
-                airplaneSymbolPointList.Add(new Point(4, 17));
-                airplaneSymbolPointList.Add(new Point(15, 17));
-                airplaneSymbolPointList.Add(new Point(15, 30));
-                airplaneSymbolPointList.Add(new Point(12, 30));
-                airplaneSymbolPointList.Add(new Point(12, 34));
-                airplaneSymbolPointList.Add(new Point(15, 34));
-                airplaneSymbolPointList.Add(new Point(15, 36));
-                airplaneSymbolPointList.Add(new Point(19, 36));
-                airplaneSymbolPointList.Add(new Point(19, 34));
-                airplaneSymbolPointList.Add(new Point(22, 34));
-                airplaneSymbolPointList.Add(new Point(22, 30));
-                airplaneSymbolPointList.Add(new Point(19, 30));
-                airplaneSymbolPointList.Add(new Point(19, 17));
-                airplaneSymbolPointList.Add(new Point(30, 17));
-                airplaneSymbolPointList.Add(new Point(30, 13));
-                airplaneSymbolPointList.Add(new Point(19, 13));
-                airplaneSymbolPointList.Add(new Point(19, 3));
+                var airplaneSymbolPointList = new List<Point>
+                                                  {
+                                                      new Point(15, 3),
+                                                      new Point(15, 13),
+                                                      new Point(4, 13),
+                                                      new Point(4, 17),
+                                                      new Point(15, 17),
+                                                      new Point(15, 30),
+                                                      new Point(12, 30),
+                                                      new Point(12, 34),
+                                                      new Point(15, 34),
+                                                      new Point(15, 36),
+                                                      new Point(19, 36),
+                                                      new Point(19, 34),
+                                                      new Point(22, 34),
+                                                      new Point(22, 30),
+                                                      new Point(19, 30),
+                                                      new Point(19, 17),
+                                                      new Point(30, 17),
+                                                      new Point(30, 13),
+                                                      new Point(19, 13),
+                                                      new Point(19, 3)
+                                                  };
                 //draw airplane symbol
                 var blackPen = new Pen(Color.Black);
                 Point[] airplaneSymbolPoints = airplaneSymbolPointList.ToArray();
@@ -87,19 +89,13 @@ namespace F16CPD.FlightInstruments
 
                     //compute course deviation and TO/FROM
                     float deviationLimitDecimalDegrees = Manager.FlightData.HsiCourseDeviationLimitInDecimalDegrees%180;
-                    float desiredCourseInDegrees = Manager.FlightData.HsiDesiredCourseInDegrees;
                     float courseDeviationDecimalDegrees = Manager.FlightData.HsiCourseDeviationInDecimalDegrees;
-                    float bearingToBeaconInDegrees = Manager.FlightData.HsiBearingToBeaconInDecimalDegrees;
-                    float myCourseDeviationDecimalDegrees = Common.Math.Util.AngleDelta(desiredCourseInDegrees,
-                                                                                        bearingToBeaconInDegrees);
                     if (Math.Abs(courseDeviationDecimalDegrees) <= 90)
                     {
                         toFlag = true;
-                        fromFlag = false;
                     }
                     else
                     {
-                        toFlag = false;
                         fromFlag = true;
                     }
 
@@ -123,10 +119,9 @@ namespace F16CPD.FlightInstruments
 
 
                     //draw course deviation ring
-                    float course = Manager.FlightData.HsiDesiredCourseInDegrees;
-                    crg.TranslateTransform((float) compassRose.Width/2, (float) (compassRose.Height/2) - 1);
+                    crg.TranslateTransform((float) compassRose.Width/2, (float) (compassRose.Height/2.0) - 1);
                     crg.RotateTransform((Manager.FlightData.HsiDesiredCourseInDegrees)%360);
-                    crg.TranslateTransform(-((float) compassRose.Width/2), -((float) (compassRose.Height/2) - 1));
+                    crg.TranslateTransform(-((float) compassRose.Width/2), -((float) (compassRose.Height/2.0) - 1));
 
                     if (_courseDeviationDiamond == null)
                     {
@@ -204,19 +199,12 @@ namespace F16CPD.FlightInstruments
                     crg.FillPolygon(whiteBrush, points);
 
                     //draw course deviation indicator needle
-                    Pen cdiNeedlePen = null;
+                    Pen cdiNeedlePen;
 
 
                     if (Manager.FlightData.HsiDeviationInvalidFlag)
                     {
-                        if (Manager.NightMode)
-                        {
-                            cdiNeedlePen = new Pen(Color.White);
-                        }
-                        else
-                        {
-                            cdiNeedlePen = new Pen(Color.Yellow);
-                        }
+                        cdiNeedlePen = Manager.NightMode ? new Pen(Color.White) : new Pen(Color.Yellow);
                         cdiNeedlePen.DashStyle = DashStyle.Dash;
                         cdiNeedlePen.DashCap = DashCap.Flat;
                         cdiNeedlePen.DashPattern = new float[] {1, 1};
@@ -226,8 +214,8 @@ namespace F16CPD.FlightInstruments
                         cdiNeedlePen = new Pen(Color.White);
                     }
                     cdiNeedlePen.Width = 4;
-                    int needleX = (compassRose.Width/2);
-                    int distanceBetweenDiamondCenters = 33;
+                    var needleX = (compassRose.Width/2);
+                    const int distanceBetweenDiamondCenters = 33;
                     if (deviationLimitDecimalDegrees != 0)
                     {
                         needleX +=
@@ -241,9 +229,9 @@ namespace F16CPD.FlightInstruments
 
                     //draw heading bug
                     crg.ResetTransform();
-                    crg.TranslateTransform((float) compassRose.Width/2, (float) (compassRose.Height/2) - 1);
+                    crg.TranslateTransform((float) compassRose.Width/2, (float) (compassRose.Height/2.0) - 1);
                     crg.RotateTransform(Manager.FlightData.HsiDesiredHeadingInDegrees%360);
-                    crg.TranslateTransform(-(float) compassRose.Width/2, -(float) (compassRose.Height/2) - 1);
+                    crg.TranslateTransform(-(float) compassRose.Width/2, -(float) (compassRose.Height/2.0) - 1);
                     crg.TranslateTransform(154, 6);
                     var bugA = new Point(0, 1);
                     var bugB = new Point(0, 15);
@@ -259,8 +247,7 @@ namespace F16CPD.FlightInstruments
                     crg.FillPolygon(headingBugBrush, bugPoints);
 
                     //draw bearing to beacon indicator
-                    var aquaPen = new Pen(Color.Aqua);
-                    aquaPen.Width = 2;
+                    var aquaPen = new Pen(Color.Aqua) {Width = 2};
                     crg.ResetTransform();
                     crg.TranslateTransform((float) compassRose.Width/2, (float) compassRose.Height/2);
                     crg.RotateTransform(Manager.FlightData.HsiBearingToBeaconInDecimalDegrees%360);
@@ -310,9 +297,6 @@ namespace F16CPD.FlightInstruments
 
                 //draw heading numeric value in heading box
                 var headingBoxFont = new Font("Lucida Console", 22, FontStyle.Bold);
-                var headingBoxFormat = new StringFormat();
-                headingBoxFormat.Alignment = StringAlignment.Center;
-                headingBoxFormat.LineAlignment = StringAlignment.Center;
                 var headingBoxTextRectangle = new Rectangle(new Point(258, 6), new Size(68, 30));
                 var headingBoxNumToDisplay = (int) (Math.Round(currentHeadingInDecimalDegrees, 0)%360);
                 if (Settings.Default.DisplayNorthAsThreeSixZero)
@@ -333,9 +317,11 @@ namespace F16CPD.FlightInstruments
                 var dmeTextRectangle = new Rectangle(new Point(1, 1), new Size(125, 18));
 
                 var textFont = new Font("Lucida Console", 12, FontStyle.Bold);
-                var textFormat = new StringFormat();
-                textFormat.Alignment = StringAlignment.Far;
-                textFormat.LineAlignment = StringAlignment.Far;
+                var textFormat = new StringFormat
+                                     {
+                                         Alignment = StringAlignment.Far,
+                                         LineAlignment = StringAlignment.Far
+                                     };
 
                 int selectedCourse = (Manager.FlightData.HsiDesiredCourseInDegrees);
 
@@ -368,30 +354,8 @@ namespace F16CPD.FlightInstruments
 
                 if (Manager.FlightData.HsiDisplayToFromFlag)
                 {
-                    Pen toFromFrequencyPen = null;
-                    if (Manager.FlightData.HsiDeviationInvalidFlag)
-                    {
-                        toFromFrequencyPen = new Pen(Color.Yellow);
-                    }
-                    else
-                    {
-                        toFromFrequencyPen = new Pen(Color.White);
-                    }
+                    Pen toFromFrequencyPen = Manager.FlightData.HsiDeviationInvalidFlag ? new Pen(Color.Yellow) : new Pen(Color.White);
                     toFromFrequencyPen.Width = 3;
-                    var toLineTopPoint =
-                        new Point(selectedHeadingTextRectangle.Left + (selectedHeadingTextRectangle.Width/2) + 10,
-                                  selectedHeadingTextRectangle.Bottom + 75);
-                    var toLineBottomPoint =
-                        new Point(selectedHeadingTextRectangle.Left + (selectedHeadingTextRectangle.Width/2) + 10,
-                                  selectedHeadingTextRectangle.Bottom + 92);
-                    var fromLineTopPoint =
-                        new Point(selectedHeadingTextRectangle.Left + (selectedHeadingTextRectangle.Width/2) + 10,
-                                  toLineBottomPoint.Y + 20);
-                    var fromLineBottomPoint =
-                        new Point(selectedHeadingTextRectangle.Left + (selectedHeadingTextRectangle.Width/2) + 10,
-                                  toLineBottomPoint.Y + 37);
-                    int toFromArrowLeftX = toLineTopPoint.X - 10;
-                    int toFromArrowRightX = toLineTopPoint.X + 10;
 
                     /*
                     //draw TACAN frequency
@@ -441,7 +405,7 @@ namespace F16CPD.FlightInstruments
                     var clipRectangle = new Rectangle(dmeTextRectangle.X, dmeTextRectangle.Y + 4, dmeTextRectangle.Width,
                                                       7);
                     g.Clip = new Region(clipRectangle);
-                    int strokeWidth = 5;
+                    const int strokeWidth = 5;
                     bool alternate = false;
                     for (int i = dmeTextRectangle.Left - 20; i <= dmeTextRectangle.Right; i += strokeWidth)
                     {
@@ -450,8 +414,7 @@ namespace F16CPD.FlightInstruments
                         {
                             thisColor = Color.White;
                         }
-                        var thisPen = new Pen(thisColor);
-                        thisPen.Width = strokeWidth;
+                        var thisPen = new Pen(thisColor) {Width = strokeWidth};
                         g.DrawLine(thisPen, new Point(i, dmeTextRectangle.Bottom),
                                    new Point(i + (strokeWidth*2), dmeTextRectangle.Top));
                         alternate = !alternate;

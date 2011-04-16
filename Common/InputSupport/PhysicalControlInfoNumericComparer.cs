@@ -1,9 +1,9 @@
 using System.Collections;
-using Common.InputSupport;
 using Common.Strings;
+
 // required for PhysicalControlInfoNumericComparer : IComparer only
 
-namespace Common.UI
+namespace Common.InputSupport
 {
     /// <summary>
     /// Compares two PhysicalControlInfo objects by their Aliases (useful in editors)

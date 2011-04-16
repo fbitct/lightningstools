@@ -9,14 +9,13 @@ namespace F16CPD
     {
         public static void Test()
         {
-            var blink = new MorseCode();
-            blink.PlainText = "Paris";
-            blink.UnitTimeTick += blink_UnitTimeTick;
+            var blink = new MorseCode {PlainText = "Paris"};
+            blink.UnitTimeTick += BlinkUnitTimeTick;
             blink.StartSending();
             Thread.Sleep(5000);
         }
 
-        private static void blink_UnitTimeTick(object sender, UnitTimeTickEventArgs e)
+        private static void BlinkUnitTimeTick(object sender, UnitTimeTickEventArgs e)
         {
             Debug.Write(e.CurrentSignalLineState ? "1" : "0");
         }
@@ -28,9 +27,9 @@ namespace F16CPD
         {
         }
 
-        public UnitTimeTickEventArgs(bool CurrentSignalLineState)
+        public UnitTimeTickEventArgs(bool currentSignalLineState)
         {
-            this.CurrentSignalLineState = CurrentSignalLineState;
+            CurrentSignalLineState = currentSignalLineState;
         }
 
         public bool CurrentSignalLineState { get; set; }
@@ -91,11 +90,11 @@ namespace F16CPD
         {
             if (_sending) throw new InvalidOperationException("Already sending");
             _worker = new BackgroundWorker();
-            _worker.DoWork += _worker_DoWork;
+            _worker.DoWork += WorkerDoWork;
             _worker.RunWorkerAsync();
         }
 
-        private void _worker_DoWork(object sender, DoWorkEventArgs e)
+        private void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
             _sending = true;
             do
@@ -152,7 +151,7 @@ namespace F16CPD
             }
         }
 
-        private string GetQuinaryStringForMorsePatternChar(char patternChar)
+        private static string GetQuinaryStringForMorsePatternChar(char patternChar)
         {
             string toReturn = "";
             switch (patternChar)
@@ -179,7 +178,7 @@ namespace F16CPD
             return toReturn;
         }
 
-        private string GetMorsePatternStringForPlainChar(char someChar)
+        private static string GetMorsePatternStringForPlainChar(char someChar)
         {
             string toReturn = "";
             switch (Char.ToUpper(someChar))
@@ -351,7 +350,7 @@ namespace F16CPD
 
         private void SendUnits(string quinary)
         {
-            foreach (char aChar in quinary)
+            foreach (var aChar in quinary)
             {
                 OnUnitTimeTick(this, new UnitTimeTickEventArgs(aChar == '1'));
                 Thread.Sleep(_unitTimeMillis);

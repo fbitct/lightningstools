@@ -13,18 +13,18 @@ namespace F16CPD.UI.Util
     /// </summary>
     internal class ResizeHelper : IMessageFilter
     {
-        private Form _TheWindow;
+        private Form _theWindow;
 
         public ResizeHelper(Form form)
         {
-            _TheWindow = form;
+            _theWindow = form;
             Application.AddMessageFilter(this);
         }
 
         public Form TheWindow
         {
-            get { return _TheWindow; }
-            set { _TheWindow = value; }
+            get { return _theWindow; }
+            set { _theWindow = value; }
         }
 
         //[System.Diagnostics.DebuggerHidden()]
@@ -33,10 +33,10 @@ namespace F16CPD.UI.Util
 
         bool IMessageFilter.PreFilterMessage(ref Message m)
         {
-            if (!_TheWindow.IsDisposed && _TheWindow.Visible && 0 == _TheWindow.OwnedForms.Length)
+            if (!_theWindow.IsDisposed && _theWindow.Visible && 0 == _theWindow.OwnedForms.Length)
             {
                 Point pt = Cursor.Position;
-                Rectangle formBounds = _TheWindow.DesktopBounds;
+                Rectangle formBounds = _theWindow.DesktopBounds;
                 if (formBounds.Contains(pt))
                 {
                     // Create a rectangular area which is 7 pix smaller than windows's size
@@ -116,39 +116,23 @@ namespace F16CPD.UI.Util
                             //this._TheWindow.Cursor = cursor;
                             return true; // The message is handled
                         }
-                        else if (m.Msg == NativeMethods.WM.WM_LBUTTONDOWN)
+                        if (m.Msg == NativeMethods.WM.WM_LBUTTONDOWN)
                         {
                             // Start resizing
                             NativeMethods.ReleaseCapture();
-                            NativeMethods.SendMessage(_TheWindow.Handle, NativeMethods.WM.WM_NCLBUTTONDOWN,
+                            NativeMethods.SendMessage(_theWindow.Handle, NativeMethods.WM.WM_NCLBUTTONDOWN,
                                                       htValue, 0);
                             return true; // The message is handled					
                         }
-                        else
-                        {
-                            _TheWindow.Cursor = Cursors.Default;
-                            return false; // The message is NOT handled					
-                        }
+                        _theWindow.Cursor = Cursors.Default;
+                        return false; // The message is NOT handled					
                     }
-                    else // Cursor inside the window
-                    {
-                        bounds.Inflate(-50, -50);
-                        if (bounds.Contains(pt))
-                        {
-                            _TheWindow.Cursor = Cursors.SizeAll;
-                        }
-                        else
-                        {
-                            _TheWindow.Cursor = Cursors.Default;
-                        }
-                        return false;
-                    }
-                }
-                else
-                {
-                    _TheWindow.Cursor = Cursors.Default;
+                    bounds.Inflate(-50, -50);
+                    _theWindow.Cursor = bounds.Contains(pt) ? Cursors.SizeAll : Cursors.Default;
                     return false;
                 }
+                _theWindow.Cursor = Cursors.Default;
+                return false;
             }
             return false;
         }

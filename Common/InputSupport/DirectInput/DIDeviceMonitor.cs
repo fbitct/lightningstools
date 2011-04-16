@@ -91,7 +91,7 @@ namespace Common.InputSupport.DirectInput
         /// on this class.
         /// Creates a new DIDeviceMonitor object
         /// </summary>
-        /// <param name="DeviceInfo">a DIPhysicalDeviceInfo object representing the 
+        /// <param name="device">a DIPhysicalDeviceInfo object representing the 
         /// DirectInput Device Instance to monitor</param>
         /// <param name="parentForm">and an (optional) reference to a parent Windows Form 
         /// which will receive events directly from DirectInput if eventing is enabled 
@@ -180,10 +180,7 @@ namespace Common.InputSupport.DirectInput
                 {
                     return _underlyingDxDevice.Properties.VendorIdentityProductId;
                 }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
         }
 
@@ -192,7 +189,7 @@ namespace Common.InputSupport.DirectInput
         /// in order to re-use instances 
         /// when relevant constructor parameters are the same
         /// </summary>
-        /// <param name="deviceInfo">a <see cfef="DIPhysicalDeviceInfo"/> object representing the 
+        /// <param name="device">a <see cfef="DIPhysicalDeviceInfo"/> object representing the 
         /// DirectInput Device Instance to monitor</param>
         /// <param name="parentForm">and an (optional) reference to a parent Windows Form 
         /// which will receive events directly from DirectInput if eventing is enabled
@@ -207,13 +204,12 @@ namespace Common.InputSupport.DirectInput
         public static DIDeviceMonitor GetInstance(DIPhysicalDeviceInfo device, Control parentForm, int axisRangeMin,
                                                   int axisRangeMax)
         {
-            DIDeviceMonitor monitor = null;
             var deviceId = new Guid(device.Key.ToString());
             if (_monitors.ContainsKey(deviceId))
             {
                 return _monitors[deviceId];
             }
-            monitor = new DIDeviceMonitor(device, parentForm, axisRangeMin, axisRangeMax);
+            var monitor = new DIDeviceMonitor(device, parentForm, axisRangeMin, axisRangeMax);
             _monitors.Add(deviceId, monitor);
             return monitor;
         }
@@ -279,7 +275,7 @@ namespace Common.InputSupport.DirectInput
         protected override void Prepare()
         {
             int elapsed = 0;
-            int timeout = 1000;
+            const int timeout = 1000;
             while (Preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);

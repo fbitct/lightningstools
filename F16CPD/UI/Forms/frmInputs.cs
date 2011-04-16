@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Common.Collections;
 using Common.InputSupport;
@@ -20,8 +21,7 @@ namespace F16CPD.UI.Forms
         {
             InitializeComponent();
             InitializeControlBindings();
-            Mediator = new Mediator(this);
-            Mediator.RaiseEvents = true;
+            Mediator = new Mediator(this) {RaiseEvents = true};
             LoadControlBindings();
         }
 
@@ -94,14 +94,7 @@ namespace F16CPD.UI.Forms
                         if (result != DialogResult.Cancel)
                         {
                             string selectedItem = drillDown.SelectedRadioButtonItem;
-                            if (!String.IsNullOrEmpty(selectedItem))
-                            {
-                                control = GetControlByControlName(selectedItem);
-                            }
-                            else
-                            {
-                                control = CpdInputControls.Unknown;
-                            }
+                            control = !String.IsNullOrEmpty(selectedItem) ? GetControlByControlName(selectedItem) : CpdInputControls.Unknown;
                         }
                         else
                         {
@@ -133,14 +126,7 @@ namespace F16CPD.UI.Forms
             CpdInputControls toReturn = CpdInputControls.Unknown;
             if (!String.IsNullOrEmpty(controlName))
             {
-                foreach (CpdInputControls val in Enum.GetValues(typeof (CpdInputControls)))
-                {
-                    if (GetControlName(val) == controlName)
-                    {
-                        toReturn = val;
-                        break;
-                    }
-                }
+                toReturn = Enum.GetValues(typeof (CpdInputControls)).Cast<CpdInputControls>().FirstOrDefault(val => GetControlName(val) == controlName);
             }
             return toReturn;
         }
@@ -341,129 +327,126 @@ namespace F16CPD.UI.Forms
             {
                 return CpdInputControls.OsbButton1;
             }
-            else if (RectangleContainsPoint(osbButton2Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton2Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton2;
             }
-            else if (RectangleContainsPoint(osbButton3Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton3Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton3;
             }
-            else if (RectangleContainsPoint(osbButton4Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton4Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton4;
             }
-            else if (RectangleContainsPoint(osbButton5Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton5Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton5;
             }
-            else if (RectangleContainsPoint(osbButton6Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton6Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton6;
             }
-            else if (RectangleContainsPoint(osbButton7Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton7Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton7;
             }
-            else if (RectangleContainsPoint(osbButton8Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton8Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton8;
             }
-            else if (RectangleContainsPoint(osbButton9Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton9Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton9;
             }
-            else if (RectangleContainsPoint(osbButton10Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton10Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton10;
             }
-            else if (RectangleContainsPoint(osbButton11Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton11Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton11;
             }
-            else if (RectangleContainsPoint(osbButton12Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton12Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton12;
             }
-            else if (RectangleContainsPoint(osbButton13Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton13Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton13;
             }
-            else if (RectangleContainsPoint(osbButton14Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton14Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton14;
             }
-            else if (RectangleContainsPoint(osbButton15Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton15Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton15;
             }
-            else if (RectangleContainsPoint(osbButton16Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton16Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton16;
             }
-            else if (RectangleContainsPoint(osbButton17Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton17Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton17;
             }
-            else if (RectangleContainsPoint(osbButton18Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton18Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton18;
             }
-            else if (RectangleContainsPoint(osbButton19Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton19Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton19;
             }
-            else if (RectangleContainsPoint(osbButton20Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton20Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton20;
             }
-            else if (RectangleContainsPoint(osbButton21Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton21Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton21;
             }
-            else if (RectangleContainsPoint(osbButton22Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton22Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton22;
             }
-            else if (RectangleContainsPoint(osbButton23Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton23Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton23;
             }
-            else if (RectangleContainsPoint(osbButton24Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton24Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton24;
             }
-            else if (RectangleContainsPoint(osbButton25Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton25Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton25;
             }
-            else if (RectangleContainsPoint(osbButton26Rect, clickedPoint))
+            if (RectangleContainsPoint(osbButton26Rect, clickedPoint))
             {
                 return CpdInputControls.OsbButton26;
             }
-            else if (RectangleContainsPoint(hsiModeToggleRect, clickedPoint))
+            if (RectangleContainsPoint(hsiModeToggleRect, clickedPoint))
             {
                 return CpdInputControls.HsiModeControl;
             }
-            else if (RectangleContainsPoint(headingKnobRect, clickedPoint))
+            if (RectangleContainsPoint(headingKnobRect, clickedPoint))
             {
                 return CpdInputControls.ParameterAdjustKnob;
             }
-            else if (RectangleContainsPoint(fuelSelectToggleRect, clickedPoint))
+            if (RectangleContainsPoint(fuelSelectToggleRect, clickedPoint))
             {
                 return CpdInputControls.FuelSelectControl;
             }
-            else if (RectangleContainsPoint(extFuelTransSwitchRect, clickedPoint))
+            if (RectangleContainsPoint(extFuelTransSwitchRect, clickedPoint))
             {
                 return CpdInputControls.ExtFuelTransSwitch;
             }
-            else
-            {
-                return CpdInputControls.Unknown;
-            }
+            return CpdInputControls.Unknown;
         }
 
-        private bool RectangleContainsPoint(Rectangle rect, Point p)
+        private static bool RectangleContainsPoint(Rectangle rect, Point p)
         {
             return (rect.X <= p.X && rect.Y <= p.Y && rect.X + rect.Width >= p.X && rect.Y + rect.Height >= p.Y);
         }

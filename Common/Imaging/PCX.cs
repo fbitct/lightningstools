@@ -12,7 +12,7 @@ namespace Common.Imaging
         {
             var fi = new FileInfo(filepath);
             if (!fi.Exists) throw new FileNotFoundException(filepath);
-            byte[] bytes = null;
+            byte[] bytes;
             using (var fs = new FileStream(filepath, FileMode.Open))
             {
                 bytes = new byte[fi.Length];
@@ -78,8 +78,8 @@ namespace Common.Imaging
             if (divResult > 0) scanLineSize = ((scanLineSize/4) + 1)*4;
 
             // Set the bitmap size data member
-            var BitmapSize = new Size(header.X2 - header.X1 + 1, header.Y2 - header.Y1 + 1);
-            long imageSize = scanLineSize*BitmapSize.Height;
+            var bitmapSize = new Size(header.X2 - header.X1 + 1, header.Y2 - header.Y1 + 1);
+            long imageSize = scanLineSize*bitmapSize.Height;
 
             // Prepare a buffer large enough to hold the image
             var rawBitmap = new byte[imageSize];
@@ -88,7 +88,7 @@ namespace Common.Imaging
             long dataPos = 0;
             long pos = 128; // That's where the data begins
 
-            for (int y = 0; y < BitmapSize.Height; y++)
+            for (int y = 0; y < bitmapSize.Height; y++)
             {
                 int x = 0;
                 // Decompress the scan line
@@ -99,14 +99,14 @@ namespace Common.Imaging
                     {
                         // Two high bits are set = Repeat
                         value -= 192; // Repeat how many times?
-                        byte Color = pcxBytes[pos++]; // What color?
+                        byte color = pcxBytes[pos++]; // What color?
 
-                        if (x <= BitmapSize.Width)
+                        if (x <= bitmapSize.Width)
                         {
                             // Image data.  Place in the raw bitmap.
                             for (byte bRepeat = 0; bRepeat < value; bRepeat++)
                             {
-                                rawBitmap[dataPos++] = Color;
+                                rawBitmap[dataPos++] = color;
                                 x++;
                             }
                         }
@@ -115,7 +115,7 @@ namespace Common.Imaging
                     }
                     else
                     {
-                        if (x <= BitmapSize.Width)
+                        if (x <= bitmapSize.Width)
                             rawBitmap[dataPos++] = (byte) value;
                         x++;
                     }
@@ -129,7 +129,7 @@ namespace Common.Imaging
                 }
             }
 
-            var toReturn = new Bitmap(BitmapSize.Width, BitmapSize.Height, PixelFormat.Format8bppIndexed);
+            var toReturn = new Bitmap(bitmapSize.Width, bitmapSize.Height, PixelFormat.Format8bppIndexed);
 
             if (header.Version == 5 && pcxBytes.Length > 769)
             {

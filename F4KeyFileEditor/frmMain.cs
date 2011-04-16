@@ -21,7 +21,7 @@ namespace F4KeyFileEditor
             Text = Application.ProductName + " v" + Application.ProductVersion;
         }
 
-        private string GetKeyDescription(KeyWithModifiers keys)
+        private static string GetKeyDescription(KeyWithModifiers keys)
         {
             if (keys == null) throw new ArgumentNullException("keys");
             string keyScanCodeName = ((ScanCodes) keys.ScanCode).ToString();
@@ -302,15 +302,15 @@ namespace F4KeyFileEditor
             {
                 return (keyModifierNames + " " + keyScanCodeName).ToUpper();
             }
-            else if (keys.Modifiers == KeyModifiers.None && keys.ScanCode > 0)
+            if (keys.Modifiers == KeyModifiers.None && keys.ScanCode > 0)
             {
                 return keyScanCodeName.ToUpper();
             }
-            else if (keys.Modifiers != KeyModifiers.None && keys.ScanCode <= 0)
+            if (keys.Modifiers != KeyModifiers.None && keys.ScanCode <= 0)
             {
                 return keyModifierNames.ToUpper();
             }
-            else if (keys.Modifiers == KeyModifiers.None && keys.ScanCode <= 0)
+            if (keys.Modifiers == KeyModifiers.None && keys.ScanCode <= 0)
             {
                 return "";
             }
@@ -387,24 +387,21 @@ namespace F4KeyFileEditor
             }
         }
 
-        private string GetUIAccessibilityDescription(UIAcccessibility accessibility)
+        private static string GetUIAccessibilityDescription(UIAcccessibility accessibility)
         {
             switch (accessibility)
             {
                 case UIAcccessibility.VisibleWithChangesAllowed:
                     return "Visible, Changes Allowed";
-                    break;
                 case UIAcccessibility.VisibleNoChangesAllowed:
                     return "Visible, No Changes Allowed";
-                    break;
                 case UIAcccessibility.Invisible:
                     return "Invisible";
-                    break;
             }
             return "Unknown";
         }
 
-        private string RemoveLeadingAndTrailingQuotes(string toRemove)
+        private static string RemoveLeadingAndTrailingQuotes(string toRemove)
         {
             string toReturn = toRemove;
             if (toReturn.StartsWith("\""))
@@ -420,30 +417,32 @@ namespace F4KeyFileEditor
 
         private void LoadKeyFile()
         {
-            var dlgOpen = new OpenFileDialog();
-            dlgOpen.AddExtension = true;
-            dlgOpen.AutoUpgradeEnabled = true;
-            dlgOpen.CheckFileExists = true;
-            dlgOpen.CheckPathExists = true;
-            dlgOpen.DefaultExt = ".key";
-            dlgOpen.Filter = "Falcon 4 Key Files (*.key)|*.key";
-            dlgOpen.FilterIndex = 0;
-            dlgOpen.DereferenceLinks = true;
+            var dlgOpen = new OpenFileDialog
+                              {
+                                  AddExtension = true,
+                                  AutoUpgradeEnabled = true,
+                                  CheckFileExists = true,
+                                  CheckPathExists = true,
+                                  DefaultExt = ".key",
+                                  Filter = "Falcon 4 Key Files (*.key)|*.key",
+                                  FilterIndex = 0,
+                                  DereferenceLinks = true,
+                                  Multiselect = false,
+                                  ReadOnlyChecked = false,
+                                  RestoreDirectory = true,
+                                  ShowHelp = false,
+                                  ShowReadOnly = false,
+                                  SupportMultiDottedExtensions = true,
+                                  Title = "Open Key File",
+                                  ValidateNames = true
+                              };
             //dlgOpen.InitialDirectory = new FileInfo(Application.ExecutablePath).DirectoryName;
-            dlgOpen.Multiselect = false;
-            dlgOpen.ReadOnlyChecked = false;
-            dlgOpen.RestoreDirectory = true;
-            dlgOpen.ShowHelp = false;
-            dlgOpen.ShowReadOnly = false;
-            dlgOpen.SupportMultiDottedExtensions = true;
-            dlgOpen.Title = "Open Key File";
-            dlgOpen.ValidateNames = true;
             DialogResult result = dlgOpen.ShowDialog(this);
             if (result == DialogResult.Cancel)
             {
                 return;
             }
-            else if (result == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
                 LoadKeyFile(dlgOpen.FileName);
             }
@@ -495,33 +494,32 @@ namespace F4KeyFileEditor
         {
             if (string.IsNullOrEmpty(keyFilePath))
             {
-                var dlgSave = new SaveFileDialog();
-                dlgSave.AddExtension = true;
-                dlgSave.AutoUpgradeEnabled = true;
-                dlgSave.CheckFileExists = false;
-                dlgSave.CheckPathExists = true;
-                dlgSave.CreatePrompt = false;
-                dlgSave.DefaultExt = ".key";
-                dlgSave.DereferenceLinks = true;
-                dlgSave.FileName = null;
-                dlgSave.Filter = "Falcon 4 Key Files (*.key)|*.key";
-                dlgSave.FilterIndex = 0;
+                var dlgSave = new SaveFileDialog
+                                  {
+                                      AddExtension = true,
+                                      AutoUpgradeEnabled = true,
+                                      CheckFileExists = false,
+                                      CheckPathExists = true,
+                                      CreatePrompt = false,
+                                      DefaultExt = ".key",
+                                      DereferenceLinks = true,
+                                      FileName = null,
+                                      Filter = "Falcon 4 Key Files (*.key)|*.key",
+                                      FilterIndex = 0,
+                                      OverwritePrompt = overwritePrompt,
+                                      RestoreDirectory = true,
+                                      ShowHelp = false,
+                                      SupportMultiDottedExtensions = true,
+                                      Title = "Save Key File",
+                                      ValidateNames = true
+                                  };
                 //dlgSave.InitialDirectory = new FileInfo(Application.ExecutablePath).DirectoryName;
-                dlgSave.OverwritePrompt = overwritePrompt;
-                dlgSave.RestoreDirectory = true;
-                dlgSave.ShowHelp = false;
-                dlgSave.SupportMultiDottedExtensions = true;
-                dlgSave.Title = "Save Key File";
-                dlgSave.ValidateNames = true;
                 DialogResult result = dlgSave.ShowDialog(this);
                 if (result == DialogResult.Cancel)
                 {
                     return;
                 }
-                else
-                {
-                    keyFilePath = dlgSave.FileName;
-                }
+                keyFilePath = dlgSave.FileName;
             }
             SaveKeyFileAs(keyFilePath);
         }

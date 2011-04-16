@@ -17,7 +17,7 @@ namespace Common.InputSupport.UI
         {
             InitializeComponent();
             _mediatorHandler =
-                new Mediator.PhysicalControlStateChangedEventHandler(_mediator_PhysicalControlStateChanged);
+                new Mediator.PhysicalControlStateChangedEventHandler(MediatorPhysicalControlStateChanged);
             PreviewKeyDown += PreviewKeyDownHandler;
             KeyDown += Form_KeyDown;
             SelectedControl = new InputControlSelection();
@@ -40,7 +40,7 @@ namespace Common.InputSupport.UI
             }
         }
 
-        private void _mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
+        private void MediatorPhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
         {
             if (e.Control.ControlType == ControlType.Button || e.Control.ControlType == ControlType.Pov)
             {
@@ -64,46 +64,37 @@ namespace Common.InputSupport.UI
                         202.5  157.5
                             180
                      */
-                    PovDirections? direction = null;
                     if ((currentDegrees > 337.5 && currentDegrees <= 360) ||
                         (currentDegrees >= 0 && currentDegrees <= 22.5))
                     {
-                        direction = PovDirections.Up;
                         rdoPovUp.Checked = true;
                     }
                     else if (currentDegrees > 22.5 && currentDegrees <= 67.5)
                     {
-                        direction = PovDirections.UpRight;
                         rdoPovUpRight.Checked = true;
                     }
                     else if (currentDegrees > 67.5 && currentDegrees <= 112.5)
                     {
-                        direction = PovDirections.Right;
                         rdoPovRight.Checked = true;
                     }
                     else if (currentDegrees > 112.5 && currentDegrees <= 157.5)
                     {
-                        direction = PovDirections.DownRight;
                         rdoPovDownRight.Checked = true;
                     }
                     else if (currentDegrees > 157.5 && currentDegrees <= 202.5)
                     {
-                        direction = PovDirections.Down;
                         rdoPovDown.Checked = true;
                     }
                     else if (currentDegrees > 202.5 && currentDegrees <= 247.5)
                     {
-                        direction = PovDirections.DownLeft;
                         rdoPovDownLeft.Checked = true;
                     }
                     else if (currentDegrees > 247.5 && currentDegrees <= 292.5)
                     {
-                        direction = PovDirections.Left;
                         rdoPovLeft.Checked = true;
                     }
                     else if (currentDegrees > 292.5 && currentDegrees <= 337.5)
                     {
-                        direction = PovDirections.UpLeft;
                         rdoPovUpLeft.Checked = true;
                     }
                 }
@@ -240,7 +231,6 @@ namespace Common.InputSupport.UI
                 SelectCurrentJoystick();
                 SelectCurrentJoystickControl();
 
-                var device = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
                 var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
                 if (control != null)
                 {

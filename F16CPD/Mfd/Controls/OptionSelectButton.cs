@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using F16CPD.Mfd.Menus;
 
 namespace F16CPD.Mfd.Controls
@@ -79,20 +80,15 @@ namespace F16CPD.Mfd.Controls
             var backgroundRectangle = new Rectangle(new Point(0, 0), labelSize);
 
             int maxTextAreaWidth = backgroundRectangle.Width;
-            int numLinesOfText = 1;
-            foreach (char thisChar in text)
-            {
-                if (thisChar == '\n')
-                {
-                    numLinesOfText++;
-                }
-            }
+            int numLinesOfText = 1 + text.Count(thisChar => thisChar == '\n');
             var textSize = new Size(maxTextAreaWidth, (font.Height*numLinesOfText));
 
-            var textFormat = new StringFormat();
-            textFormat.Trimming = StringTrimming.EllipsisCharacter;
-            textFormat.LineAlignment = StringAlignment.Center;
-            textFormat.Alignment = StringAlignment.Center;
+            var textFormat = new StringFormat
+                                 {
+                                     Trimming = StringTrimming.EllipsisCharacter,
+                                     LineAlignment = StringAlignment.Center,
+                                     Alignment = StringAlignment.Center
+                                 };
 
             int textX = 0;
             int textY = 0;

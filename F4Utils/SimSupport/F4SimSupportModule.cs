@@ -38,10 +38,7 @@ namespace F4Utils.SimSupport
                     if (_smReader == null) return false;
                     return _smReader.IsFalconRunning;
                 }
-                else
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -85,7 +82,7 @@ namespace F4Utils.SimSupport
             }
         }
 
-        private FlightData GetFakeFlightData()
+        private static FlightData GetFakeFlightData()
         {
             var toReturn = new FlightData();
             var rnd = new Random();
@@ -427,14 +424,7 @@ namespace F4Utils.SimSupport
                             float myCourseDeviationDecimalDegrees =
                                 Common.Math.Util.AngleDelta(_lastFlightData.desiredCourse,
                                                             _lastFlightData.bearingToBeacon);
-                            if (Math.Abs(myCourseDeviationDecimalDegrees) <= 90)
-                            {
-                                ((DigitalSignal) output).State = true;
-                            }
-                            else
-                            {
-                                ((DigitalSignal) output).State = false;
-                            }
+                            ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) <= 90;
                         }
                         break;
                     case F4SimOutputs.HSI__FROM_FLAG:
@@ -442,14 +432,7 @@ namespace F4Utils.SimSupport
                             float myCourseDeviationDecimalDegrees =
                                 Common.Math.Util.AngleDelta(_lastFlightData.desiredCourse,
                                                             _lastFlightData.bearingToBeacon);
-                            if (Math.Abs(myCourseDeviationDecimalDegrees) <= 90)
-                            {
-                                ((DigitalSignal) output).State = false;
-                            }
-                            else
-                            {
-                                ((DigitalSignal) output).State = true;
-                            }
+                            ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) > 90;
                         }
                         break;
                     case F4SimOutputs.HSI__OFF_FLAG:
@@ -969,24 +952,10 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.RwrObjectCount;
                         break;
                     case F4SimOutputs.RWR__SYMBOL_ID:
-                        if (_lastFlightData.RWRsymbol.Length > ((Signal) output).Index)
-                        {
-                            ((AnalogSignal) output).State = _lastFlightData.RWRsymbol[((Signal) output).Index.Value];
-                        }
-                        else
-                        {
-                            ((AnalogSignal) output).State = 0;
-                        }
+                        ((AnalogSignal) output).State = _lastFlightData.RWRsymbol.Length > ((Signal) output).Index ? _lastFlightData.RWRsymbol[((Signal) output).Index.Value] : 0;
                         break;
                     case F4SimOutputs.RWR__BEARING_DEGREES:
-                        if (_lastFlightData.bearing.Length > ((Signal) output).Index)
-                        {
-                            ((AnalogSignal) output).State = _lastFlightData.bearing[((Signal) output).Index.Value];
-                        }
-                        else
-                        {
-                            ((AnalogSignal) output).State = 0;
-                        }
+                        ((AnalogSignal) output).State = _lastFlightData.bearing.Length > ((Signal) output).Index ? _lastFlightData.bearing[((Signal) output).Index.Value] : 0;
                         break;
                     case F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG:
                         if (_lastFlightData.missileActivity.Length > ((Signal) output).Index)
@@ -1022,14 +991,7 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__LETHALITY:
-                        if (_lastFlightData.lethality.Length > ((Signal) output).Index)
-                        {
-                            ((AnalogSignal) output).State = _lastFlightData.lethality[((Signal) output).Index.Value];
-                        }
-                        else
-                        {
-                            ((AnalogSignal) output).State = 0;
-                        }
+                        ((AnalogSignal) output).State = _lastFlightData.lethality.Length > ((Signal) output).Index ? _lastFlightData.lethality[((Signal) output).Index.Value] : 0;
                         break;
                     case F4SimOutputs.RWR__NEWDETECTION_FLAG:
                         if (_lastFlightData.newDetection != null)
@@ -1070,7 +1032,7 @@ namespace F4Utils.SimSupport
                                SourceFriendlyName = "Falcon 4"
                            };
             }
-            else if (dataType.IsAssignableFrom(typeof (bool)))
+            if (dataType.IsAssignableFrom(typeof (bool)))
             {
                 return new DigitalSimOutput
                            {
@@ -1083,19 +1045,16 @@ namespace F4Utils.SimSupport
                                SourceFriendlyName = "Falcon 4"
                            };
             }
-            else
-            {
-                return new AnalogSimOutput
-                           {
-                               CollectionName = collectionName,
-                               FriendlyName = friendlyName,
-                               Id = "F4_" + Enum.GetName(typeof (F4SimOutputs), simOutputEnumVal) + indexString,
-                               Index = index,
-                               PublisherObject = this,
-                               Source = TestMode ? this : (object) _smReader,
-                               SourceFriendlyName = "Falcon 4",
-                           };
-            }
+            return new AnalogSimOutput
+                       {
+                           CollectionName = collectionName,
+                           FriendlyName = friendlyName,
+                           Id = "F4_" + Enum.GetName(typeof (F4SimOutputs), simOutputEnumVal) + indexString,
+                           Index = index,
+                           PublisherObject = this,
+                           Source = TestMode ? this : (object) _smReader,
+                           SourceFriendlyName = "Falcon 4",
+                       };
         }
 
         private ISimOutput CreateNewF4SimOutput(string collectionName, string friendlyName, int simOutputEnumVal,

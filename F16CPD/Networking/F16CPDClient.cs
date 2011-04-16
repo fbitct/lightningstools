@@ -51,9 +51,9 @@ namespace F16CPD.Networking
                         if (_connectionTestingBackgroundWorker == null)
                         {
                             _connectionTestingBackgroundWorker = new BackgroundWorker();
-                            _connectionTestingBackgroundWorker.DoWork += _connectionTestingBackgroundWorker_DoWork;
+                            _connectionTestingBackgroundWorker.DoWork += ConnectionTestingBackgroundWorkerDoWork;
                         }
-                        if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
+                        if (!_connectionTestingBackgroundWorker.IsBusy)
                         {
                             _connectionTestingBackgroundWorker.RunWorkerAsync();
                         }
@@ -200,7 +200,7 @@ namespace F16CPD.Networking
         }
 
         [DebuggerHidden]
-        private void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void ConnectionTestingBackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             if (_server != null)
             {

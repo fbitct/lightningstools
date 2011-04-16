@@ -24,7 +24,7 @@ namespace Common.InputSupport
 
         #region Mouse events
 
-        private event MouseEventHandler m_MouseMove;
+        private event MouseEventHandler MouseMoveEventHandler;
 
         /// <summary>
         /// Occurs when the mouse pointer is moved. 
@@ -33,17 +33,17 @@ namespace Common.InputSupport
         {
             add
             {
-                if (m_MouseMove == null)
+                if (MouseMoveEventHandler == null)
                 {
                     HookManager.MouseMove += HookManager_MouseMove;
                 }
-                m_MouseMove += value;
+                MouseMoveEventHandler += value;
             }
 
             remove
             {
-                m_MouseMove -= value;
-                if (m_MouseMove == null)
+                MouseMoveEventHandler -= value;
+                if (MouseMoveEventHandler == null)
                 {
                     HookManager.MouseMove -= HookManager_MouseMove;
                 }
@@ -52,9 +52,9 @@ namespace Common.InputSupport
 
         private void HookManager_MouseMove(object sender, MouseEventArgs e)
         {
-            if (m_MouseMove != null)
+            if (MouseMoveEventHandler != null)
             {
-                m_MouseMove.Invoke(this, e);
+                MouseMoveEventHandler.Invoke(this, e);
             }
         }
 

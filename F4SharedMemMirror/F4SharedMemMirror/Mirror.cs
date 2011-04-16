@@ -6,7 +6,6 @@ using System.Threading;
 using System.Windows.Forms;
 using F4SharedMem;
 using F4SharedMemMirror.Properties;
-using F4SharedMemMirror.Remoting;
 
 namespace F4SharedMemMirror
 {
@@ -66,7 +65,7 @@ namespace F4SharedMemMirror
         {
             if (_running) throw new InvalidOperationException();
             _running = true;
-            SharedMemoryMirrorClient client = null;
+            SharedMemoryMirrorClient client;
             try
             {
                 string serverIPAddress = Settings.Default.ServerIPAddress;
@@ -77,7 +76,7 @@ namespace F4SharedMemMirror
                 var endpoint = new IPEndPoint(serverAddress, portNum);
                 client = new SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
             }
-            catch (RemotingException e)
+            catch (RemotingException)
             {
                 client = null;
             }
@@ -98,7 +97,7 @@ namespace F4SharedMemMirror
                             var endpoint = new IPEndPoint(serverAddress, portNum);
                             client = new SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
                         }
-                        catch (RemotingException e)
+                        catch (RemotingException)
                         {
                             client = null;
                         }
@@ -147,7 +146,7 @@ namespace F4SharedMemMirror
             {
                 SharedMemoryMirrorServer.TearDownService(portNum);
             }
-            catch (RemotingException e)
+            catch (RemotingException)
             {
             }
 
@@ -155,7 +154,7 @@ namespace F4SharedMemMirror
             {
                 SharedMemoryMirrorServer.CreateService("F4SharedMemoryMirrorService", portNum);
             }
-            catch (RemotingException e)
+            catch (RemotingException)
             {
             }
 
@@ -182,7 +181,7 @@ namespace F4SharedMemMirror
             {
                 SharedMemoryMirrorServer.TearDownService(21142);
             }
-            catch (RemotingException e)
+            catch (RemotingException)
             {
             }
         }
@@ -199,7 +198,7 @@ namespace F4SharedMemMirror
                         {
                             _smReader.Dispose();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                         }
                     }
@@ -207,9 +206,9 @@ namespace F4SharedMemMirror
                     {
                         try
                         {
-                            _smReader.Dispose();
+                            if (_smReader != null) _smReader.Dispose();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                         }
                     }

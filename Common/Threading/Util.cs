@@ -27,7 +27,7 @@ namespace Common.Threading
                 try
                 {
                     WaitHandle[] handles = toWait.ToArray();
-                    if (handles != null && handles.Length > 0)
+                    if (handles.Length > 0)
                     {
                         WaitHandle.WaitAll(handles, millisecondsTimeout);
                     }
@@ -39,7 +39,7 @@ namespace Common.Threading
                 {
                 }
             }
-            toWait.Clear();
+            if (toWait != null) toWait.Clear();
         }
     }
 }

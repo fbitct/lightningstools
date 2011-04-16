@@ -16,7 +16,7 @@ namespace F4TexSharedMemTester
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private static void Form1_Load(object sender, EventArgs e)
         {
         }
 

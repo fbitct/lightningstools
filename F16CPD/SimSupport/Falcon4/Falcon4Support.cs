@@ -44,8 +44,8 @@ namespace F16CPD.SimSupport.Falcon4
 
         private readonly object _mapImageLock = new object();
         private readonly MorseCode _morseCodeGenerator;
-        private TacanBand _backupTacanBand = TacanBand.X;
-        private bool _cpdPowerOn = true;
+        private const TacanBand _backupTacanBand = TacanBand.X;
+        private const bool _cpdPowerOn = true;
         private FalconDataFormats? _curFalconDataFormat;
         private bool _isDisposed;
         private bool _isSendingInput;
@@ -82,9 +82,8 @@ namespace F16CPD.SimSupport.Falcon4
                 SetupDirectInputMonitoring();
             }
              */
-            _morseCodeGenerator = new MorseCode();
-            _morseCodeGenerator.CharactersPerMinute = 53;
-            _morseCodeGenerator.UnitTimeTick += _morseCode_UnitTimeTick;
+            _morseCodeGenerator = new MorseCode {CharactersPerMinute = 53};
+            _morseCodeGenerator.UnitTimeTick += MorseCodeUnitTimeTick;
         }
 
         #region ISimSupportModule Members
@@ -112,7 +111,7 @@ namespace F16CPD.SimSupport.Falcon4
 
         #endregion
 
-        private void _morseCode_UnitTimeTick(object sender, UnitTimeTickEventArgs e)
+        private void MorseCodeUnitTimeTick(object sender, UnitTimeTickEventArgs e)
         {
             _pendingMorseCodeUnits.Enqueue(e.CurrentSignalLineState);
         }
@@ -171,8 +170,8 @@ namespace F16CPD.SimSupport.Falcon4
 
         public void UpdateManagerFlightData()
         {
-            bool outerMarkerFromFalcon = false;
-            bool middleMarkerFromFalcon = false;
+            bool outerMarkerFromFalcon;
+            bool middleMarkerFromFalcon;
             GetNextMorseCodeUnit();
 
             if (Settings.Default.RunAsClient)
@@ -196,35 +195,38 @@ namespace F16CPD.SimSupport.Falcon4
 
                         if (outerMarkerFromFalcon)
                         {
-                            if (_morseCodeGenerator.PlainText != "T")
-                            {
-                                _morseCodeGenerator.PlainText = "T"; //dot
-                            }
+                            if (_morseCodeGenerator != null)
+                                if (_morseCodeGenerator.PlainText != "T")
+                                {
+                                    _morseCodeGenerator.PlainText = "T"; //dot
+                                }
                         }
                         else if (middleMarkerFromFalcon)
                         {
-                            if (_morseCodeGenerator.PlainText != "A")
-                            {
-                                _morseCodeGenerator.PlainText = "A"; //dot-dash
-                            }
+                            if (_morseCodeGenerator != null)
+                                if (_morseCodeGenerator.PlainText != "A")
+                                {
+                                    _morseCodeGenerator.PlainText = "A"; //dot-dash
+                                }
                         }
-                        if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
-                        {
-                            if (!_morseCodeGenerator.KeepSending)
+                        if (_morseCodeGenerator != null)
+                            if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
                             {
-                                _morseCodeGenerator.KeepSending = true;
+                                if (!_morseCodeGenerator.KeepSending)
+                                {
+                                    _morseCodeGenerator.KeepSending = true;
+                                }
+                                if (!_morseCodeGenerator.Sending)
+                                {
+                                    _pendingMorseCodeUnits.Clear();
+                                    _morseCodeGenerator.StartSending();
+                                }
                             }
-                            if (!_morseCodeGenerator.Sending)
+                            else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
                             {
+                                _morseCodeGenerator.StopSending();
                                 _pendingMorseCodeUnits.Clear();
-                                _morseCodeGenerator.StartSending();
                             }
-                        }
-                        else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
-                        {
-                            _morseCodeGenerator.StopSending();
-                            _pendingMorseCodeUnits.Clear();
-                        }
                     }
                     else
                     {
@@ -246,9 +248,8 @@ namespace F16CPD.SimSupport.Falcon4
 
             FlightData flightData = Manager.FlightData;
 
-            string exePath = null;
             _curFalconDataFormat = DetectFalconFormat();
-            exePath = F4Utils.Process.Util.GetFalconExePath();
+            string exePath = F4Utils.Process.Util.GetFalconExePath();
             CreateSharedMemReaderIfNotExists();
             F4SharedMem.FlightData fromFalcon = ReadF4SharedMem();
 
@@ -266,7 +267,6 @@ namespace F16CPD.SimSupport.Falcon4
                 _isSimRunning = true;
                 if (fromFalcon == null) fromFalcon = new F4SharedMem.FlightData();
                 var hsibits = ((HsiBits) fromFalcon.hsiBits);
-                bool commandBarsOn = false;
 
                 flightData.VviOffFlag = ((hsibits & HsiBits.VVI) == HsiBits.VVI);
                 flightData.AoaOffFlag = ((hsibits & HsiBits.AOA) == HsiBits.AOA);
@@ -279,8 +279,7 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     //&& ((fromFalcon.hsiBits & (int)F4SharedMem.Headers.HsiBits.Flying) == (int)F4SharedMem.Headers.HsiBits.Flying) 
                     flightData.CpdPowerOnFlag = _cpdPowerOn &&
-                                                (!((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) ==
-                                                   (int) Bms4LightBits3.Power_Off));
+                                                ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) != (int) Bms4LightBits3.Power_Off);
                 }
                 else
                 {
@@ -362,14 +361,7 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.VerticalVelocityInDecimalFeetPerSecond = -fromFalcon.zDot;
                 }
 
-                if (((hsibits & HsiBits.AOA) == HsiBits.AOA))
-                {
-                    flightData.AngleOfAttackInDegrees = 0;
-                }
-                else
-                {
-                    flightData.AngleOfAttackInDegrees = fromFalcon.alpha;
-                }
+                flightData.AngleOfAttackInDegrees = ((hsibits & HsiBits.AOA) == HsiBits.AOA) ? 0 : fromFalcon.alpha;
 
                 flightData.AdiAuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
                 flightData.AdiGlideslopeInvalidFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
@@ -432,7 +424,7 @@ namespace F16CPD.SimSupport.Falcon4
                     //The following floating data is also crossed up in the flightData.h File:
                     //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
                     //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
-                    commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
+                    bool commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
                     if (
                         (Math.Abs((fromFalcon.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
                          Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
@@ -555,10 +547,10 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     flightData.TacanChannel = fromFalcon.UFCTChan.ToString();
                 }
-                int latWholeDegrees = 0;
-                float latMinutes = 0.0f;
-                int longWholeDegrees = 0;
-                float longMinutes = 0.0f;
+                int latWholeDegrees;
+                float latMinutes;
+                int longWholeDegrees;
+                float longMinutes;
                 _terrainBrowser.CalculateLatLong(fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes,
                                                  out longWholeDegrees, out longMinutes);
                 flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes/60.0f);
@@ -630,7 +622,7 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow)
+        private static bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow)
         {
             string alowString = fromFalcon.DEDLines[1];
             string alowInverseString = fromFalcon.Invert[1];
@@ -638,11 +630,11 @@ namespace F16CPD.SimSupport.Falcon4
             if (alowString.Contains("CARA ALOW"))
             {
                 string newAlowString = "";
-                int tryParse = 0;
                 for (int i = 0; i < alowString.Length; i++)
                 {
                     char someChar = alowString[i];
                     char inverseChar = alowInverseString[i];
+                    int tryParse;
                     if (Int32.TryParse(new String(someChar, 1), out tryParse))
                     {
                         if (inverseChar != ' ')
@@ -658,15 +650,12 @@ namespace F16CPD.SimSupport.Falcon4
                     newAlow = -1;
                     return false;
                 }
-                else
+                bool success = Int32.TryParse(newAlowString, out newAlow);
+                if (!success)
                 {
-                    bool success = Int32.TryParse(newAlowString, out newAlow);
-                    if (!success)
-                    {
-                        newAlow = -1;
-                    }
-                    return success;
+                    newAlow = -1;
                 }
+                return success;
             }
             newAlow = -1;
             return false;
@@ -682,11 +671,11 @@ namespace F16CPD.SimSupport.Falcon4
             DateTime curTime = DateTime.Now;
 
             //determine how many seconds it's been since our last "current heading" datum snapshot?
-            var dT = (float) ((curTime.Subtract(_lastHeadingSample.timestamp)).TotalMilliseconds);
+            var dT = (float) ((curTime.Subtract(_lastHeadingSample.Timestamp)).TotalMilliseconds);
 
             //determine the change in heading since our last snapshot
             float currentHeading = flightData.MagneticHeadingInDecimalDegrees;
-            float headingDelta = Common.Math.Util.AngleDelta(_lastHeadingSample.value, currentHeading);
+            float headingDelta = Common.Math.Util.AngleDelta(_lastHeadingSample.Value, currentHeading);
 
             //now calculate the instantaneous rate of turn
             float currentInstantaneousRateOfTurn = (headingDelta/dT)*1000;
@@ -699,15 +688,13 @@ namespace F16CPD.SimSupport.Falcon4
                                                  Math.Sign(currentInstantaneousRateOfTurn);
             }
 
-            var sample = new TimestampedFloatValue();
-            sample.timestamp = curTime;
-            sample.value = currentInstantaneousRateOfTurn;
+            var sample = new TimestampedFloatValue {Timestamp = curTime, Value = currentInstantaneousRateOfTurn};
 
             //cull historic rate-of-turn samples older than n seconds
             var replacementList = new List<TimestampedFloatValue>();
             for (int i = 0; i < _lastInstantaneousRatesOfTurn.Count; i++)
             {
-                if (!(Math.Abs(curTime.Subtract(_lastInstantaneousRatesOfTurn[i].timestamp).TotalMilliseconds) > 1000))
+                if (!(Math.Abs(curTime.Subtract(_lastInstantaneousRatesOfTurn[i].Timestamp).TotalMilliseconds) > 1000))
                 {
                     replacementList.Add(_lastInstantaneousRatesOfTurn[i]);
                 }
@@ -717,7 +704,7 @@ namespace F16CPD.SimSupport.Falcon4
             _lastInstantaneousRatesOfTurn.Add(sample);
 
             var medianRateOfTurn = (float) Math.Round(MedianSampleValue(_lastInstantaneousRatesOfTurn), 1);
-            float minIncrement = 0.1f;
+            const float minIncrement = 0.1f;
             while (medianRateOfTurn < flightData.RateOfTurnInDecimalDegreesPerSecond - minIncrement)
             {
                 flightData.RateOfTurnInDecimalDegreesPerSecond -= minIncrement;
@@ -740,9 +727,11 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.RateOfTurnInDecimalDegreesPerSecond = medianRateOfTurn;
             }
 
-            _lastHeadingSample = new TimestampedFloatValue();
-            _lastHeadingSample.timestamp = curTime;
-            _lastHeadingSample.value = flightData.MagneticHeadingInDecimalDegrees;
+            _lastHeadingSample = new TimestampedFloatValue
+                                     {
+                                         Timestamp = curTime,
+                                         Value = flightData.MagneticHeadingInDecimalDegrees
+                                     };
         }
 
         #endregion
@@ -754,14 +743,14 @@ namespace F16CPD.SimSupport.Falcon4
             float sum = 0;
             for (int i = 0; i < values.Count; i++)
             {
-                sum += values[i].value;
+                sum += values[i].Value;
             }
 
             float avg = values.Count > 0 ? sum/values.Count : 0;
             return avg;
         }
 
-        private float MedianSampleValue(List<TimestampedFloatValue> values)
+        private static float MedianSampleValue(List<TimestampedFloatValue> values)
         {
             if (values.Count == 0)
             {
@@ -771,7 +760,7 @@ namespace F16CPD.SimSupport.Falcon4
             var justTheValues = new float[values.Count];
             for (int i = 0; i < values.Count; i++)
             {
-                justTheValues[i] = values[i].value;
+                justTheValues[i] = values[i].Value;
             }
 
             Array.Sort(justTheValues);
@@ -783,11 +772,8 @@ namespace F16CPD.SimSupport.Falcon4
                 // Even number of items.
                 return (justTheValues[itemIndex] + justTheValues[itemIndex - 1])/2;
             }
-            else
-            {
-                // Odd number of items.
-                return justTheValues[itemIndex];
-            }
+            // Odd number of items.
+            return justTheValues[itemIndex];
         }
 
         #endregion
@@ -868,12 +854,9 @@ namespace F16CPD.SimSupport.Falcon4
             return toReturn;
         }
 
-        private void ProcessDetectedCallback(string callback)
+        private static void ProcessDetectedCallback(string callback)
         {
             if (String.IsNullOrEmpty(callback) || String.IsNullOrEmpty(callback.Trim())) return;
-            if (false)
-            {
-            }
             /*
             if (callback.ToLowerInvariant().Trim() == "SimHSIModeInc".ToLowerInvariant() )
             {
@@ -999,7 +982,7 @@ namespace F16CPD.SimSupport.Falcon4
 
         public void HandleInputControlEvent(CpdInputControls eventSource, MfdInputControl control)
         {
-            OptionSelectButton button = null;
+            OptionSelectButton button;
             switch (eventSource)
             {
                 case CpdInputControls.OsbButton1:
@@ -1169,14 +1152,7 @@ namespace F16CPD.SimSupport.Falcon4
                                     useIncrementByOne = true;
                                 }
                             }
-                            if (useIncrementByOne)
-                            {
-                                SendCallbackToFalcon("SimHsiCrsIncBy1");
-                            }
-                            else
-                            {
-                                SendCallbackToFalcon("SimHsiCourseInc");
-                            }
+                            SendCallbackToFalcon(useIncrementByOne ? "SimHsiCrsIncBy1" : "SimHsiCourseInc");
                         }
                         break;
                     case "CourseSelectDecrease":
@@ -1192,14 +1168,7 @@ namespace F16CPD.SimSupport.Falcon4
                                     useDecrementByOne = true;
                                 }
                             }
-                            if (useDecrementByOne)
-                            {
-                                SendCallbackToFalcon("SimHsiCrsDecBy1");
-                            }
-                            else
-                            {
-                                SendCallbackToFalcon("SimHsiCourseDec");
-                            }
+                            SendCallbackToFalcon(useDecrementByOne ? "SimHsiCrsDecBy1" : "SimHsiCourseDec");
                         }
                         break;
                     case "HeadingSelectIncrease":
@@ -1215,14 +1184,7 @@ namespace F16CPD.SimSupport.Falcon4
                                     useIncrementByOne = true;
                                 }
                             }
-                            if (useIncrementByOne)
-                            {
-                                SendCallbackToFalcon("SimHsiHdgIncBy1");
-                            }
-                            else
-                            {
-                                SendCallbackToFalcon("SimHsiHeadingInc");
-                            }
+                            SendCallbackToFalcon(useIncrementByOne ? "SimHsiHdgIncBy1" : "SimHsiHeadingInc");
                         }
 
                         break;
@@ -1239,14 +1201,7 @@ namespace F16CPD.SimSupport.Falcon4
                                     useDecrementByOne = true;
                                 }
                             }
-                            if (useDecrementByOne)
-                            {
-                                SendCallbackToFalcon("SimHsiHdgDecBy1");
-                            }
-                            else
-                            {
-                                SendCallbackToFalcon("SimHsiHeadingDec");
-                            }
+                            SendCallbackToFalcon(useDecrementByOne ? "SimHsiHdgDecBy1" : "SimHsiHeadingDec");
                         }
                         break;
                     case "BarometricPressureSettingIncrease":
@@ -1493,13 +1448,10 @@ namespace F16CPD.SimSupport.Falcon4
             {
                 return FindKeyBindingLocal(callback);
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
-        private KeyBinding FindKeyBindingLocal(string callback)
+        private static KeyBinding FindKeyBindingLocal(string callback)
         {
             return F4Utils.Process.Util.FindKeyBinding(callback);
         }
@@ -1607,12 +1559,12 @@ namespace F16CPD.SimSupport.Falcon4
                 if (_mapRenderingBackgroundWorkerDoWorkDelegate == null)
                 {
                     _mapRenderingBackgroundWorkerDoWorkDelegate =
-                        new DoWorkEventHandler(_mapRenderingBackgroundWorker_DoWork);
+                        new DoWorkEventHandler(MapRenderingBackgroundWorkerDoWork);
                 }
                 _mapRenderingBackgroundWorker.DoWork += _mapRenderingBackgroundWorkerDoWorkDelegate;
                 _mapRenderingBackgroundWorker.WorkerSupportsCancellation = true;
                 _mapRenderingBackgroundWorker.WorkerReportsProgress = true;
-                _mapRenderingBackgroundWorker.ProgressChanged += _mapRenderingBackgroundWorker_ProgressChanged;
+                _mapRenderingBackgroundWorker.ProgressChanged += MapRenderingBackgroundWorkerProgressChanged;
             }
             if (_lastMapScale != mapScale)
             {
@@ -1638,11 +1590,13 @@ namespace F16CPD.SimSupport.Falcon4
             //if the background worker is not busy, have it go render another map for us
             if (!_mapRenderingBackgroundWorker.IsBusy)
             {
-                var args = new MapRenderAsyncArguments();
-                args.renderRectangle = renderRectangle;
-                args.mapScale = mapScale;
-                args.rangeRingDiameterInNauticalMiles = rangeRingDiameterInNauticalMiles;
-                args.rotationMode = rotationMode;
+                var args = new MapRenderAsyncArguments
+                               {
+                                   RenderRectangle = renderRectangle,
+                                   MapScale = mapScale,
+                                   RangeRingDiameterInNauticalMiles = rangeRingDiameterInNauticalMiles,
+                                   RotationMode = rotationMode
+                               };
                 _mapRenderingBackgroundWorker.RunWorkerAsync(args);
             }
             lock (_mapImageLock)
@@ -1657,14 +1611,14 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     Matrix gTransform = g.Transform;
                     g.ResetTransform();
-                    string toDisplay = null;
-                    toDisplay = String.Format("LOADING: {0}%", _mapRenderProgress);
-                    ;
+                    string toDisplay = String.Format("LOADING: {0}%", _mapRenderProgress);
                     Brush greenBrush = Brushes.Green;
                     var path = new GraphicsPath();
-                    var sf = new StringFormat(StringFormatFlags.NoWrap);
-                    sf.Alignment = StringAlignment.Center;
-                    sf.LineAlignment = StringAlignment.Center;
+                    var sf = new StringFormat(StringFormatFlags.NoWrap)
+                                 {
+                                     Alignment = StringAlignment.Center,
+                                     LineAlignment = StringAlignment.Center
+                                 };
                     var f = new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold);
                     SizeF textSize = g.MeasureString(toDisplay, f, 1, sf);
                     int leftX = (((renderRectangle.Width - ((int) textSize.Width))/2));
@@ -1677,21 +1631,21 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private void _mapRenderingBackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void MapRenderingBackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             _mapRenderProgress = e.ProgressPercentage;
         }
 
-        private void _mapRenderingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void MapRenderingBackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             var args = (MapRenderAsyncArguments) e.Argument;
-            var renderSurface = new Bitmap(args.renderRectangle.Width, args.renderRectangle.Height,
+            var renderSurface = new Bitmap(args.RenderRectangle.Width, args.RenderRectangle.Height,
                                            PixelFormat.Format16bppRgb565);
-            bool success = false;
+            bool success;
             using (Graphics g = Graphics.FromImage(renderSurface))
             {
-                success = RenderMapAsync(g, args.renderRectangle, args.mapScale, args.rangeRingDiameterInNauticalMiles,
-                                         args.rotationMode, e);
+                success = RenderMapAsync(g, args.RenderRectangle, args.MapScale, args.RangeRingDiameterInNauticalMiles,
+                                         args.RotationMode, e);
             }
             if (success)
             {
@@ -1754,7 +1708,7 @@ namespace F16CPD.SimSupport.Falcon4
             float numThisLodElevationPostsToRender = numL0ElevationPostsToRender;
             int thisLodDetailTextureWidthPixels = 64;
 
-            int numAdditionalElevationPostsToRender = 1;
+            const int numAdditionalElevationPostsToRender = 1;
 
             while ((numThisLodElevationPostsToRender*thisLodDetailTextureWidthPixels) > originalRenderDiameterPixels)
                 //choose LoD that requires fewest unnecessary pixels to be rendered
@@ -1763,27 +1717,17 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     break;
                 }
+                lod++;
+                feetBetweenElevationPosts *= 2.0f;
+                numThisLodElevationPostsToRender /= 2.0f;
+                if (lod > _terrainBrowser.CurrentTheaterDotMapFileInfo.LastNearTiledLOD)
+                {
+                    thisLodDetailTextureWidthPixels = 32;
+                }
                 else
                 {
-                    lod++;
-                    feetBetweenElevationPosts *= 2.0f;
-                    numThisLodElevationPostsToRender /= 2.0f;
-                    if (lod > _terrainBrowser.CurrentTheaterDotMapFileInfo.LastNearTiledLOD)
-                    {
-                        thisLodDetailTextureWidthPixels = 32;
-                    }
-                    else
-                    {
-                        Bitmap sample = _terrainBrowser.GetDetailTextureForElevationPost(0, 0, lod);
-                        if (sample != null)
-                        {
-                            thisLodDetailTextureWidthPixels = sample.Width;
-                        }
-                        else
-                        {
-                            thisLodDetailTextureWidthPixels = 1;
-                        }
-                    }
+                    var sample = _terrainBrowser.GetDetailTextureForElevationPost(0, 0, lod);
+                    thisLodDetailTextureWidthPixels = sample != null ? sample.Width : 1;
                 }
             }
 
@@ -1861,9 +1805,9 @@ namespace F16CPD.SimSupport.Falcon4
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
                         {
-                            h.TranslateTransform(cropWidth/2, cropWidth/2);
+                            h.TranslateTransform(cropWidth/2.0f, cropWidth/2.0f);
                             h.RotateTransform(-(Manager.FlightData.MagneticHeadingInDecimalDegrees));
-                            h.TranslateTransform(-cropWidth/2, -cropWidth/2);
+                            h.TranslateTransform(-cropWidth/2.0f, -cropWidth/2.0f);
                         }
 
                         h.ScaleTransform(toScale, toScale);
@@ -1886,21 +1830,18 @@ namespace F16CPD.SimSupport.Falcon4
                             {
                                 //retrieve the detail texture corresponding to the current elevation post offset 
 
-                                Bitmap thisElevationPostDetailTexture = null;
-                                Rectangle sourceRect = Rectangle.Empty;
                                 if (_mapRenderingBackgroundWorker.CancellationPending)
                                 {
                                     _mapRenderProgress = 0;
                                     e.Cancel = true;
                                     return false;
                                 }
-                                thisElevationPostDetailTexture =
-                                    _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX,
-                                                                                     thisElevationPostY, lod);
+                                Bitmap thisElevationPostDetailTexture = _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX,
+                                                                                                                         thisElevationPostY, lod);
                                 if (thisElevationPostDetailTexture == null) continue;
                                 //now draw the detail texture onto the render target
-                                sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
-                                                           thisElevationPostDetailTexture.Height);
+                                var sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
+                                                                     thisElevationPostDetailTexture.Height);
                                 //determine the upper-left pixel at which to place this detail texture on the render target
                                 var destPoint = new Point(
                                     (thisElevationPostX - leftXPost)*thisLodDetailTextureWidthPixels,
@@ -1948,7 +1889,6 @@ namespace F16CPD.SimSupport.Falcon4
                     if (_mapAirplaneBitmap == null)
                     {
                         _mapAirplaneBitmap = (Bitmap) Resources.F16Symbol.Clone();
-                        ;
                         _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255, 0, 255));
                         _mapAirplaneBitmap =
                             (Bitmap)
@@ -1969,20 +1909,20 @@ namespace F16CPD.SimSupport.Falcon4
                     var mapRingPen = new Pen(Color.Magenta);
                     Brush mapRingBrush = new SolidBrush(Color.Magenta);
                     mapRingPen.Width = 1;
-                    int mapRingLineWidths = 25;
+                    const int mapRingLineWidths = 25;
 
                     Matrix originalGTransform = g.Transform;
 
-                    g.TranslateTransform(renderRectangle.Width/2, renderRectangle.Height/2);
-                    g.RotateTransform(-Manager.FlightData.MagneticHeadingInDecimalDegrees);
-                    g.TranslateTransform(-renderRectangle.Width/2, -renderRectangle.Height/2);
+                    g.TranslateTransform(renderRectangle.Width/2.0f, renderRectangle.Height/2.0f);
+                    g.RotateTransform(-Manager.FlightData.MagneticHeadingInDecimalDegrees);       
+                    g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
 
                     //rotate 45 degrees before drawing outer map range circle
                     Matrix preRotate = g.Transform;
                         //capture current rotation so we can set it back before drawing inner map range circle
-                    g.TranslateTransform(renderRectangle.Width/2, renderRectangle.Height/2);
+                    g.TranslateTransform(renderRectangle.Width/2.0f, renderRectangle.Height/2.0f);
                     g.RotateTransform(-45);
-                    g.TranslateTransform(-renderRectangle.Width/2, -renderRectangle.Height/2);
+                    g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
 
                     //now draw outer map range circle
                     var outerMapRingDiameterPixelsScaled =
@@ -2115,10 +2055,10 @@ namespace F16CPD.SimSupport.Falcon4
 
         private struct MapRenderAsyncArguments
         {
-            public float mapScale;
-            public int rangeRingDiameterInNauticalMiles;
-            public Rectangle renderRectangle;
-            public MapRotationMode rotationMode;
+            public float MapScale;
+            public int RangeRingDiameterInNauticalMiles;
+            public Rectangle RenderRectangle;
+            public MapRotationMode RotationMode;
         }
 
         #endregion
@@ -2128,8 +2068,8 @@ namespace F16CPD.SimSupport.Falcon4
         [Serializable]
         public struct TimestampedFloatValue
         {
-            public DateTime timestamp;
-            public float value;
+            public DateTime Timestamp;
+            public float Value;
         }
 
         #endregion

@@ -27,11 +27,11 @@ namespace F16CPD.Mfd.Controls
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append(GetType().FullName != null ? GetType().FullName : "null");
+            sb.Append(GetType().FullName ?? "null");
             sb.Append(":CpdInputControl:");
             sb.Append(Enum.GetName(typeof (CpdInputControls), CpdInputControl));
             sb.Append(":ControlName:");
-            sb.Append(ControlName != null ? ControlName : "null");
+            sb.Append(ControlName ?? "null");
             sb.Append(":DirectInputDevice:");
             sb.Append(DirectInputDevice != null ? DirectInputDevice.ToString() : "null");
             sb.Append(":DirectInputControl:");
@@ -77,10 +77,7 @@ namespace F16CPD.Mfd.Controls
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         #endregion

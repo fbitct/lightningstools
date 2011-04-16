@@ -19,8 +19,10 @@ namespace Common.UI.UserControls
     /// want to use this control in conjunction with mouse events
     /// then you must ensure that the mouse is never in any part of the 
     /// control when it is shown (like a tooltip). Otherwise, 
-    /// <see cref="System.Windows.Forms.MouseEnter"/> and 
-    /// <see cref="System.Windows.Forms.MouseLeave"/> events
+    /// <see cref="System.Windows.Forms.MouseEnter" />
+    ///   and 
+    /// <see cref="System.Windows.Forms.MouseLeave" />
+    ///   events
     /// are broken, and the Forms Message Filter
     /// goes into a continuous loop when attempting to show
     /// the control.

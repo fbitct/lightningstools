@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace F4KeyFile
@@ -30,25 +31,14 @@ namespace F4KeyFile
                 {
                     return _bindings.ToArray();
                 }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
             set { _bindings = new List<IBinding>(value); }
         }
 
         public IBinding FindBindingForCallback(string callback)
         {
-            foreach (IBinding thisBinding in Bindings)
-            {
-                if (thisBinding.Callback != null && callback != null &&
-                    thisBinding.Callback.ToLowerInvariant().Trim() == callback.ToLowerInvariant().Trim())
-                {
-                    return thisBinding;
-                }
-            }
-            return null;
+            return Bindings.FirstOrDefault(thisBinding => thisBinding.Callback != null && callback != null && thisBinding.Callback.ToLowerInvariant().Trim() == callback.ToLowerInvariant().Trim());
         }
 
         public void Load()
@@ -68,12 +58,15 @@ namespace F4KeyFile
                 while (!sr.EndOfStream)
                 {
                     lineNum++;
-                    string currentLine = sr.ReadLine();
-                    string currentLineTrim = currentLine.Trim();
-                    if (currentLineTrim.StartsWith("/"))
+                    var currentLine = sr.ReadLine();
+                    if (currentLine != null)
                     {
-                        _bindings.Add(new CommentLine(currentLine) {LineNum = lineNum});
-                        continue;
+                        string currentLineTrim = currentLine.Trim();
+                        if (currentLineTrim.StartsWith("/"))
+                        {
+                            _bindings.Add(new CommentLine(currentLine) {LineNum = lineNum});
+                            continue;
+                        }
                     }
 
                     List<string> tokenList = Util.Tokenize(currentLine);
@@ -109,7 +102,7 @@ namespace F4KeyFile
                     {
                         _bindings.Add(directInputBinding);
                     }
-                    else if (keyBinding != null)
+                    else
                     {
                         _bindings.Add(keyBinding);
                     }

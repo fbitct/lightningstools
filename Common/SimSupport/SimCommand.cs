@@ -19,7 +19,6 @@ namespace Common.SimSupport
                     value = new DigitalSignal();
                 }
                 value.SignalChanged += value_SignalChanged;
-                ;
                 _in = value;
             }
         }

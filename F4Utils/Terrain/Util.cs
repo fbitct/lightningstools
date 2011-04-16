@@ -15,9 +15,7 @@ namespace F4Utils.Terrain
             var fileInfo = new FileInfo(theaterDotMapFilePath);
             if (!fileInfo.Exists) throw new FileNotFoundException(theaterDotMapFilePath);
 
-            var mapInfo = new TheaterDotMapFileInfo();
-            mapInfo.Pallete = new Color[256];
-            mapInfo.GreenPallete = new Color[256];
+            var mapInfo = new TheaterDotMapFileInfo {Pallete = new Color[256], GreenPallete = new Color[256]};
             var bytesToRead = (int) fileInfo.Length;
             var bytesRead = new byte[bytesToRead];
 
@@ -46,14 +44,14 @@ namespace F4Utils.Terrain
                 var cG = (byte) ((pallete[i] >> 8) & 0xFF);
                 var cB = (byte) ((pallete[i] >> 16) & 0xFF);
                 var cA = (byte) ((pallete[i] >> 24) & 0xFF);
-                Color thisColor = Color.FromArgb(cA, cR, cG, cB);
+                var thisColor = Color.FromArgb(cA, cR, cG, cB);
                 mapInfo.Pallete[i] = thisColor;
 
-                byte gR = 0x00;
+                const byte gR = 0x00;
                 var gG = (byte) ((thisColor.R*0.25f) + (thisColor.G*0.5f) + (thisColor.B*0.25f));
-                byte gB = 0x00;
+                const byte gB = 0x00;
                 var gA = (byte) ((pallete[i] >> 24) & 0xFF);
-                Color greenColor = Color.FromArgb(gA, gR, gG, gB);
+                var greenColor = Color.FromArgb(gA, gR, gG, gB);
                 mapInfo.GreenPallete[i] = greenColor;
             }
             mapInfo.LODMapWidths = new UInt32[mapInfo.NumLODs];
@@ -107,9 +105,11 @@ namespace F4Utils.Terrain
 
             for (int h = 0; h < textureBinFileInfo.numSets; h++)
             {
-                var thisSetRecord = new TextureBinSetRecord();
+                var thisSetRecord = new TextureBinSetRecord
+                                        {
+                                            numTiles = BitConverter.ToUInt32(bytesRead, curByte)
+                                        };
 
-                thisSetRecord.numTiles = BitConverter.ToUInt32(bytesRead, curByte);
                 curByte += 4;
                 thisSetRecord.terrainType = bytesRead[curByte];
                 curByte++;
@@ -117,8 +117,10 @@ namespace F4Utils.Terrain
                 thisSetRecord.tileRecords = new TextureBinTileRecord[thisSetRecord.numTiles];
                 for (int i = 0; i < thisSetRecord.numTiles; i++)
                 {
-                    var tileRecord = new TextureBinTileRecord();
-                    tileRecord.tileName = Encoding.ASCII.GetString(bytesRead, curByte, 20);
+                    var tileRecord = new TextureBinTileRecord
+                                         {
+                                             tileName = Encoding.ASCII.GetString(bytesRead, curByte, 20)
+                                         };
                     int nullLoc = tileRecord.tileName.IndexOf('\0');
                     if (nullLoc > 0) tileRecord.tileName = tileRecord.tileName.Substring(0, nullLoc);
                     curByte += 20;
@@ -130,8 +132,7 @@ namespace F4Utils.Terrain
                     curByte += 4;
                     for (int j = 0; j < tileRecord.numAreas; j++)
                     {
-                        var thisAreaRecord = new TextureBinAreaRecord();
-                        thisAreaRecord.type = BitConverter.ToInt32(bytesRead, curByte);
+                        var thisAreaRecord = new TextureBinAreaRecord {type = BitConverter.ToInt32(bytesRead, curByte)};
                         curByte += 4;
                         thisAreaRecord.size = BitConverter.ToSingle(bytesRead, curByte);
                         curByte += 4;
@@ -143,8 +144,7 @@ namespace F4Utils.Terrain
                     }
                     for (int k = 0; k < tileRecord.numPaths; k++)
                     {
-                        var thisPathRecord = new TextureBinPathRecord();
-                        thisPathRecord.type = BitConverter.ToInt32(bytesRead, curByte);
+                        var thisPathRecord = new TextureBinPathRecord {type = BitConverter.ToInt32(bytesRead, curByte)};
                         curByte += 4;
                         thisPathRecord.size = BitConverter.ToSingle(bytesRead, curByte);
                         curByte += 4;
@@ -190,8 +190,8 @@ namespace F4Utils.Terrain
                 var cG = (byte) ((thisPalleteEntry >> 8) & 0xFF);
                 var cB = (byte) ((thisPalleteEntry >> 16) & 0xFF);
                 //byte cA = (byte)((thisPalleteEntry >> 24) & 0xFF);
-                byte cA = 0xFF;
-                Color thisColor = Color.FromArgb(cA, cR, cG, cB);
+                const byte cA = 0xFF;
+                var thisColor = Color.FromArgb(cA, cR, cG, cB);
                 pallete[i] = thisColor;
 
                 curByte += 4;
@@ -204,9 +204,7 @@ namespace F4Utils.Terrain
                 tilesAtLod = BitConverter.ToUInt32(bytesRead, curByte);
                 curByte += 4;
             } while (curByte < bytesToRead);
-            var toReturn = new FarTilesDotPalFileInfo();
-            toReturn.numTextures = texCount;
-            toReturn.pallete = pallete;
+            var toReturn = new FarTilesDotPalFileInfo {numTextures = texCount, pallete = pallete};
             return toReturn;
         }
 
@@ -220,11 +218,13 @@ namespace F4Utils.Terrain
                 new FileInfo(Path.GetDirectoryName(theaterDotMapFilePath) + Path.DirectorySeparatorChar + "theater.O" +
                              lodLevel);
 
-            var toReturn = new TheaterDotLxFileInfo();
-            toReturn.MinElevation = UInt16.MaxValue;
-            toReturn.MaxElevation = 0;
+            var toReturn = new TheaterDotLxFileInfo
+                               {
+                                   MinElevation = UInt16.MaxValue,
+                                   MaxElevation = 0,
+                                   LoDLevel = lodLevel
+                               };
 
-            toReturn.LoDLevel = lodLevel;
             long bytesToRead = oFileInfo.Length;
             var bytesRead = new byte[bytesToRead];
             using (FileStream stream = File.OpenRead(oFileInfo.FullName))
@@ -246,12 +246,8 @@ namespace F4Utils.Terrain
                     isFourByte = false;
                     break;
                 }
-                else
-                {
-                    var record = new TheaterDotOxFileRecord();
-                    record.LRecordStartingOffset = thisDword;
-                    oFileRecords.Add(record);
-                }
+                var record = new TheaterDotOxFileRecord {LRecordStartingOffset = thisDword};
+                oFileRecords.Add(record);
                 curByte += 4;
             }
 
@@ -262,8 +258,7 @@ namespace F4Utils.Terrain
                 while (curByte < bytesToRead)
                 {
                     UInt32 thisWord = BitConverter.ToUInt16(bytesRead, curByte);
-                    var record = new TheaterDotOxFileRecord();
-                    record.LRecordStartingOffset = thisWord;
+                    var record = new TheaterDotOxFileRecord {LRecordStartingOffset = thisWord};
                     oFileRecords.Add(record);
                     curByte += 2;
                 }
@@ -286,8 +281,10 @@ namespace F4Utils.Terrain
                 toReturn.LRecordSizeBytes = 9;
                 while (curByte < bytesToRead)
                 {
-                    var record = new TheaterDotLxFileRecord();
-                    record.TextureId = BitConverter.ToUInt32(bytesRead, curByte);
+                    var record = new TheaterDotLxFileRecord
+                                     {
+                                         TextureId = BitConverter.ToUInt32(bytesRead, curByte)
+                                     };
                     if (record.TextureId > maxTextureOffset) maxTextureOffset = record.TextureId;
                     if (record.TextureId < minTextureOffset) minTextureOffset = record.TextureId;
                     record.Elevation = BitConverter.ToUInt16(bytesRead, curByte + 4);
@@ -305,12 +302,13 @@ namespace F4Utils.Terrain
                 toReturn.LRecordSizeBytes = 7;
                 while (curByte < bytesToRead)
                 {
-                    var record = new TheaterDotLxFileRecord();
-                    record.TextureId = BitConverter.ToUInt16(bytesRead, curByte);
+                    var record = new TheaterDotLxFileRecord
+                                     {
+                                         TextureId = BitConverter.ToUInt16(bytesRead, curByte)
+                                     };
                     if (record.TextureId > maxTextureOffset) maxTextureOffset = record.TextureId;
                     if (record.TextureId < minTextureOffset) minTextureOffset = record.TextureId;
                     record.Elevation = BitConverter.ToUInt16(bytesRead, curByte + 2);
-                    ;
                     if (record.Elevation < toReturn.MinElevation) toReturn.MinElevation = record.Elevation;
                     if (record.Elevation > toReturn.MaxElevation) toReturn.MaxElevation = record.Elevation;
                     record.Pallete = bytesRead[curByte + 4];

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
@@ -34,8 +35,8 @@ namespace F16CPD
     //TODO: retest networking now that output rotation is enabled.
     public sealed class F16CpdMfdManager : MfdManager, IDisposable
     {
-        private const int _maxBrightness = 255;
-        private const int _numBrightnessSteps = 30;
+        private const int MAX_BRIGHTNESS = 255;
+        private const int NUM_BRIGHTNESS_STEPS = 30;
         private readonly object _mapImageLock = new object();
         private int _airspeedIndexInKnots;
         private int _altitudeIndexInFeet;
@@ -126,7 +127,7 @@ namespace F16CPD
 
         public int MaxBrightness
         {
-            get { return _maxBrightness; }
+            get { return MAX_BRIGHTNESS; }
         }
 
         public bool NightMode
@@ -150,7 +151,7 @@ namespace F16CPD
             }
         }
 
-        private void TeardownService()
+        private static void TeardownService()
         {
             if (Settings.Default.RunAsServer)
             {
@@ -375,13 +376,13 @@ namespace F16CPD
             MfdMenuPage chartsPage = BuildChartsMenuPage();
             MfdMenuPage controlMapPage = BuildControlMapMenuPage();
             MfdMenuPage controlOverlayPage = BuildControlOverlayMenuPage();
-            MfdMenuPage BitmapAnnotationPage = BuildBitmapAnnotationMenuPage();
-            base.MenuPages = new[]
-                                 {
-                                     primaryPage, instrumentsDisplayPage, testPage, tgpPage, messagePage, tadPage,
-                                     controlMapPage, controlOverlayPage, BitmapAnnotationPage, checklistsPage, chartsPage
-                                 };
-            foreach (MfdMenuPage thisPage in base.MenuPages)
+            MfdMenuPage bitmapAnnotationPage = BuildBitmapAnnotationMenuPage();
+            MenuPages = new[]
+                            {
+                                primaryPage, instrumentsDisplayPage, testPage, tgpPage, messagePage, tadPage,
+                                controlMapPage, controlOverlayPage, bitmapAnnotationPage, checklistsPage, chartsPage
+                            };
+            foreach (MfdMenuPage thisPage in MenuPages)
             {
                 OptionSelectButton nightModeButton = CreateOptionSelectButton(thisPage, 6, "NGT", false);
                 nightModeButton.FunctionName = "NightMode";
@@ -411,14 +412,14 @@ namespace F16CPD
                 brightnessDecreaseButton.LabelLocation = new Point(-10000, -10000);
                 thisPage.OptionSelectButtons.Add(brightnessDecreaseButton);
             }
-            base.ActiveMenuPage = instrumentsDisplayPage;
+            ActiveMenuPage = instrumentsDisplayPage;
         }
 
         private void brightnessDecreaseButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
         {
             unchecked
             {
-                var brightnessStep = (int) (_maxBrightness/(float) _numBrightnessSteps);
+                const int brightnessStep = (int) (MAX_BRIGHTNESS/(float) NUM_BRIGHTNESS_STEPS);
                 _brightness -= brightnessStep;
                 if (_brightness < 0) _brightness = 0;
                 Settings.Default.Brightness = _brightness;
@@ -430,9 +431,9 @@ namespace F16CPD
         {
             unchecked
             {
-                var brightnessStep = (int) (_maxBrightness/(float) _numBrightnessSteps);
+                const int brightnessStep = (int) (MAX_BRIGHTNESS/(float) NUM_BRIGHTNESS_STEPS);
                 _brightness += brightnessStep;
-                if (_brightness > _maxBrightness) _brightness = _maxBrightness;
+                if (_brightness > MAX_BRIGHTNESS) _brightness = MAX_BRIGHTNESS;
                 Settings.Default.Brightness = _brightness;
                 Util.SaveCurrentProperties();
             }
@@ -446,9 +447,11 @@ namespace F16CPD
         private MfdMenuPage BuildTestPage()
         {
             var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-            buttons.Add(CreateOptionSelectButton(thisPage, 3, "2PRV", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 4, "PRV", false));
+            var buttons = new List<OptionSelectButton>
+                              {
+                                  CreateOptionSelectButton(thisPage, 3, "2PRV", false),
+                                  CreateOptionSelectButton(thisPage, 4, "PRV", false)
+                              };
 
             OptionSelectButton testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", true);
             testPageSelectButton.Pressed += testPageSelectButton_Press;
@@ -533,7 +536,7 @@ namespace F16CPD
         {
             var thisPage = new MfdMenuPage(this);
             var buttons = new List<OptionSelectButton>();
-            int triangleLegLengthPixels = 25;
+            const int triangleLegLengthPixels = 25;
             OptionSelectButton pneuButton = CreateOptionSelectButton(thisPage, 3, "PNEU", false);
             pneuButton.FunctionName = "ToggleAltimeterModeElecPneu";
             pneuButton.Pressed += pneuButton_Press;
@@ -679,10 +682,8 @@ namespace F16CPD
 
         private void headingSelectUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
-            var button = (OptionSelectButton) sender;
             DateTime whenPressed = e.WhenPressed;
             var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            float secondsPressed = (howLongPressed/1000);
             int numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -696,10 +697,8 @@ namespace F16CPD
 
         private void headingSelectDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
-            var button = (OptionSelectButton) sender;
             DateTime whenPressed = e.WhenPressed;
             var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            float secondsPressed = (howLongPressed/1000);
             int numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -743,11 +742,8 @@ namespace F16CPD
 
         private void courseSelectDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
-            var button = (OptionSelectButton) sender;
-
             DateTime whenPressed = e.WhenPressed;
             var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            float secondsPressed = (howLongPressed/1000);
             int numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -761,10 +757,8 @@ namespace F16CPD
 
         private void courseSelectUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
-            var button = (OptionSelectButton) sender;
             DateTime whenPressed = e.WhenPressed;
             var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            float secondsPressed = (howLongPressed/1000);
             int numTimes = 1;
             if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
 
@@ -778,7 +772,6 @@ namespace F16CPD
 
         private void barometricPressureDownButton_Press(object sender, EventArgs e)
         {
-            var button = (OptionSelectButton) sender;
             FlightData.BarometricPressureInDecimalInchesOfMercury -= 0.01f;
             if (_simSupportModule != null)
                 _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton10, (OptionSelectButton) sender);
@@ -786,7 +779,6 @@ namespace F16CPD
 
         private void barometricPressureUpButton_Press(object sender, EventArgs e)
         {
-            var button = (OptionSelectButton) sender;
             FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
             if (_simSupportModule != null)
                 _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton9, (OptionSelectButton) sender);
@@ -794,11 +786,9 @@ namespace F16CPD
 
         private void altitudeIndexDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
-            var button = (OptionSelectButton) sender;
-
             DateTime whenPressed = e.WhenPressed;
             var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            float secondsPressed = (howLongPressed/1000);
+            float secondsPressed = (howLongPressed/1000.0f);
             int valueDelta = 20;
 
             if (howLongPressed >= 200) valueDelta = 100;
@@ -811,11 +801,9 @@ namespace F16CPD
 
         private void altitudeIndexUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
         {
-            var button = (OptionSelectButton) sender;
-
             DateTime whenPressed = e.WhenPressed;
             var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            float secondsPressed = (howLongPressed/1000);
+            float secondsPressed = (howLongPressed/1000.0f);
             int valueDelta = 20;
 
             if (howLongPressed >= 200) valueDelta = 100;
@@ -845,14 +833,8 @@ namespace F16CPD
 
         private MfdMenuPage FindMenuPageByName(string name)
         {
-            foreach (MfdMenuPage page in MenuPages)
-            {
-                if (name.ToLowerInvariant().Trim() == page.Name.ToLowerInvariant().Trim())
-                {
-                    return page;
-                }
-            }
-            return null;
+            return
+                MenuPages.FirstOrDefault(page => name.ToLowerInvariant().Trim() == page.Name.ToLowerInvariant().Trim());
         }
 
         private MfdMenuPage BuildTargetingPodMenuPage()
@@ -896,8 +878,7 @@ namespace F16CPD
         private MfdMenuPage BuildMessageMenuPage()
         {
             var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-            buttons.Add(CreateOptionSelectButton(thisPage, 2, "TO USB", false));
+            var buttons = new List<OptionSelectButton> {CreateOptionSelectButton(thisPage, 2, "TO USB", false)};
 
             OptionSelectButton testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
             testPageSelectButton.Pressed += testPageSelectButton_Press;
@@ -936,14 +917,13 @@ namespace F16CPD
             return thisPage;
         }
 
-        private string GetCADRGScaleTextForMapScale(float mapScale)
+        private static string GetCADRGScaleTextForMapScale(float mapScale)
         {
             string toReturn = "1:";
 
             var millions = (int) Math.Round(mapScale/(1000.0f*1000.0f), 0);
             var thousands = (int) Math.Round(mapScale/1000.0f, 0);
             var hundreds = (int) Math.Round(mapScale/100.0f, 0);
-            var tens = (int) Math.Round(mapScale/10.0f, 0);
             var ones = (int) Math.Round(mapScale, 0);
             if (millions > 0)
             {
@@ -1354,7 +1334,7 @@ namespace F16CPD
         }
 
 
-        private FileInfo GetPrevFile(FileInfo currentFile, FileInfo[] files)
+        private static FileInfo GetPrevFile(FileInfo currentFile, FileInfo[] files)
         {
             if (files == null || files.Length == 0) return null;
             if (currentFile == null) return files[0];
@@ -1366,16 +1346,13 @@ namespace F16CPD
                     {
                         return files[i - 1];
                     }
-                    else
-                    {
-                        return files[files.Length - 1];
-                    }
+                    return files[files.Length - 1];
                 }
             }
             return files[files.Length - 1];
         }
 
-        private FileInfo GetNextFile(FileInfo currentFile, FileInfo[] files)
+        private static FileInfo GetNextFile(FileInfo currentFile, FileInfo[] files)
         {
             if (files == null || files.Length == 0) return null;
             if (currentFile == null) return files[0];
@@ -1387,32 +1364,37 @@ namespace F16CPD
                     {
                         return files[i + 1];
                     }
-                    else
-                    {
-                        return files[0];
-                    }
+                    return files[0];
                 }
             }
             return files[0];
         }
 
-        private FileInfo[] GetChecklistsFiles()
+        private static FileInfo[] GetChecklistsFiles()
         {
-            string searchPattern = "*.pdf";
+            const string searchPattern = "*.pdf";
             var di = new DirectoryInfo(Application.ExecutablePath);
-            string folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "checklists";
-            return GetFilesOfType(searchPattern, folderToSearch);
+            if (di.Parent != null)
+            {
+                string folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "checklists";
+                return GetFilesOfType(searchPattern, folderToSearch);
+            }
+            return null;
         }
 
-        private FileInfo[] GetChartFiles()
+        private static FileInfo[] GetChartFiles()
         {
-            string searchPattern = "*.pdf";
+            const string searchPattern = "*.pdf";
             var di = new DirectoryInfo(Application.ExecutablePath);
-            string folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "charts";
-            return GetFilesOfType(searchPattern, folderToSearch);
+            if (di.Parent != null)
+            {
+                string folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "charts";
+                return GetFilesOfType(searchPattern, folderToSearch);
+            }
+            return null;
         }
 
-        private FileInfo[] GetFilesOfType(string searchPattern, string folderToSearch)
+        private static FileInfo[] GetFilesOfType(string searchPattern, string folderToSearch)
         {
             if (String.IsNullOrEmpty(searchPattern) || String.IsNullOrEmpty(folderToSearch))
             {
@@ -1453,7 +1435,7 @@ namespace F16CPD
             if (_mapRangeRingsDiameterInNauticalMiles > 5000) _mapRangeRingsDiameterInNauticalMiles = 5000;
         }
 
-        private float GetMapScaleForCADRGScaleText(string CADRGScaletext)
+        private static float GetMapScaleForCADRGScaleText(string CADRGScaletext)
         {
             float toReturn = float.NaN;
             switch (CADRGScaletext)
@@ -1509,7 +1491,7 @@ namespace F16CPD
             return toReturn;
         }
 
-        private float GetNextLowerMapScale(float mapScale)
+        private static float GetNextLowerMapScale(float mapScale)
         {
             float toReturn = mapScale;
             string mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
@@ -1566,7 +1548,7 @@ namespace F16CPD
             return toReturn;
         }
 
-        private float GetNextHigherMapScale(float mapScale)
+        private static float GetNextHigherMapScale(float mapScale)
         {
             float toReturn = mapScale;
             string mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
@@ -1636,9 +1618,11 @@ namespace F16CPD
         private MfdMenuPage BuildControlMapMenuPage()
         {
             var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-            buttons.Add(CreateOptionSelectButton(thisPage, 1, "CNTL", true));
-            buttons.Add(CreateOptionSelectButton(thisPage, 2, "PROF", false));
+            var buttons = new List<OptionSelectButton>
+                              {
+                                  CreateOptionSelectButton(thisPage, 1, "CNTL", true),
+                                  CreateOptionSelectButton(thisPage, 2, "PROF", false)
+                              };
 
             OptionSelectButton controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 3, "MAP", true);
             controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
@@ -1704,9 +1688,11 @@ namespace F16CPD
         private MfdMenuPage BuildControlOverlayMenuPage()
         {
             var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-            buttons.Add(CreateOptionSelectButton(thisPage, 1, "CNTL", true));
-            buttons.Add(CreateOptionSelectButton(thisPage, 2, "PROF", false));
+            var buttons = new List<OptionSelectButton>
+                              {
+                                  CreateOptionSelectButton(thisPage, 1, "CNTL", true),
+                                  CreateOptionSelectButton(thisPage, 2, "PROF", false)
+                              };
 
             OptionSelectButton controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 3, "MAP", false);
             controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
@@ -1757,9 +1743,11 @@ namespace F16CPD
         private MfdMenuPage BuildBitmapAnnotationMenuPage()
         {
             var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-            buttons.Add(CreateOptionSelectButton(thisPage, 2, "TO\n\rINTEL", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 4, "OWN\n\rFRISCO", false));
+            var buttons = new List<OptionSelectButton>
+                              {
+                                  CreateOptionSelectButton(thisPage, 2, "TO\n\rINTEL", false),
+                                  CreateOptionSelectButton(thisPage, 4, "OWN\n\rFRISCO", false)
+                              };
 
             OptionSelectButton testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
             testPageSelectButton.Pressed += testPageSelectButton_Press;
@@ -1804,19 +1792,21 @@ namespace F16CPD
             return thisPage;
         }
 
-        private OptionSelectButton CreateOptionSelectButton(MfdMenuPage page, float positionNum, string labelText,
+        private static OptionSelectButton CreateOptionSelectButton(MfdMenuPage page, float positionNum, string labelText,
                                                             bool invertLabelText)
         {
             return CreateOptionSelectButton(page, positionNum, labelText, invertLabelText, null);
         }
 
-        private OptionSelectButton CreateOptionSelectButton(MfdMenuPage page, float positionNum, string labelText,
+        private static OptionSelectButton CreateOptionSelectButton(MfdMenuPage page, float positionNum, string labelText,
                                                             bool invertLabelText, int? triangleLegLengthPixels)
         {
-            var button = new OptionSelectButton(page);
-            button.PositionNumber = positionNum;
-            button.LabelText = labelText;
-            button.InvertLabelText = invertLabelText;
+            var button = new OptionSelectButton(page)
+                             {
+                                 PositionNumber = positionNum,
+                                 LabelText = labelText,
+                                 InvertLabelText = invertLabelText
+                             };
             Rectangle boundingRectangle = CalculateOSBLabelBitmapRectangle(positionNum);
             button.LabelLocation = boundingRectangle.Location;
             button.LabelSize = boundingRectangle.Size;
@@ -1860,20 +1850,20 @@ namespace F16CPD
             return button;
         }
 
-        private Rectangle CalculateOSBLabelBitmapRectangle(float positionNum)
+        private static Rectangle CalculateOSBLabelBitmapRectangle(float positionNum)
         {
-            float pixelsPerInch = Constants.F_NATIVE_RES_HEIGHT/8.32f;
-            float bezelButtonRevealWidthInches = 0.83376676384839650145772594752187f;
+            const float pixelsPerInch = Constants.F_NATIVE_RES_HEIGHT/8.32f;
+            const float bezelButtonRevealWidthInches = 0.83376676384839650145772594752187f;
             var bezelButtonRevealWidthPixels = (int) Math.Floor((bezelButtonRevealWidthInches*pixelsPerInch));
 
-            float bezelButtonRevealHeightInches = 0.83695842450765864332603938730853f;
+            const float bezelButtonRevealHeightInches = 0.83695842450765864332603938730853f;
             var bezelButtonRevealHeightPixels = (int) Math.Floor((bezelButtonRevealHeightInches*pixelsPerInch));
 
             var maxTextWidthPixels = (int) (bezelButtonRevealWidthPixels*1.5f);
-            float bezelButtonSeparatorWidthInches = 0.14500291545189504373177842565598f;
+            const float bezelButtonSeparatorWidthInches = 0.14500291545189504373177842565598f;
             var bezelButtonSeparatorWidthPixels = (int) (Math.Ceiling(bezelButtonSeparatorWidthInches*pixelsPerInch));
-            float bezelButtonSeparatorHeightInches = bezelButtonSeparatorWidthInches;
-                //0.14555798687089715536105032822757f;
+            const float bezelButtonSeparatorHeightInches = bezelButtonSeparatorWidthInches;
+            //0.14555798687089715536105032822757f;
             var bezelButtonSeparatorHeightPixels = (int) (Math.Ceiling(bezelButtonSeparatorHeightInches*pixelsPerInch));
             var leftMarginPixels =
                 (int)
@@ -1951,7 +1941,7 @@ namespace F16CPD
             var labelWidth = (int) (35*(ScreenBoundsPixels.Width/Constants.F_NATIVE_RES_WIDTH));
             var labelHeight = (int) (20*(ScreenBoundsPixels.Height/Constants.F_NATIVE_RES_HEIGHT));
             var overallRenderRectangle = new Rectangle(0, 0, ScreenBoundsPixels.Width, ScreenBoundsPixels.Height);
-            OptionSelectButton button = null;
+            OptionSelectButton button;
             Matrix origTransform = g.Transform;
 
             //Debug.WriteLine("here 2 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
@@ -2012,8 +2002,7 @@ namespace F16CPD
             {
                 //Debug.WriteLine("here 3 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                 OptionSelectButton scaleLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapScaleLabel");
-                string scaleString = "";
-                scaleString = "CADRG\r\n" + GetCADRGScaleTextForMapScale(_mapScale);
+                string scaleString = "CADRG\r\n" + GetCADRGScaleTextForMapScale(_mapScale);
                 scaleLabel.LabelText = scaleString;
 
                 OptionSelectButton mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
@@ -2030,13 +2019,14 @@ namespace F16CPD
                 if (_currentChecklistFile != null)
                 {
                     shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChecklistFile.FullName);
-                    var fi = new FileInfo(shortName);
-                    shortName = fi.Name;
                     shortName = Common.Win32.Paths.Util.Compact(_currentChecklistFile.Name, 64);
                     shortName = BreakStringIntoLines(shortName, 9);
                 }
-                string labelText = _currentChecklistFile != null ? shortName.ToUpperInvariant() : "NO CHKLST\nFILES";
-                currentChecklistFileLabel.LabelText = labelText;
+                if (shortName != null)
+                {
+                    string labelText = shortName.ToUpperInvariant();
+                    currentChecklistFileLabel.LabelText = labelText;
+                }
 
                 OptionSelectButton currentChecklistPageNumLabel =
                     ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistPageNumLabel");
@@ -2051,13 +2041,14 @@ namespace F16CPD
                 if (_currentChartFile != null)
                 {
                     shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChartFile.FullName);
-                    var fi = new FileInfo(shortName);
-                    shortName = fi.Name;
                     shortName = Common.Win32.Paths.Util.Compact(_currentChartFile.Name, 64);
                     shortName = BreakStringIntoLines(shortName, 9);
                 }
-                string labelText = _currentChartFile != null ? shortName.ToUpperInvariant() : "NO CHART\nFILES";
-                currentChartFileLabel.LabelText = labelText;
+                if (shortName != null)
+                {
+                    string labelText = shortName.ToUpperInvariant();
+                    currentChartFileLabel.LabelText = labelText;
+                }
 
                 OptionSelectButton currentChartPageNumLabel =
                     ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartPageNumLabel");
@@ -2073,11 +2064,13 @@ namespace F16CPD
 
             if (!FlightData.CpdPowerOnFlag)
             {
-                string toDisplay = "OFF";
+                const string toDisplay = "OFF";
                 var path = new GraphicsPath();
-                var sf = new StringFormat(StringFormatFlags.NoWrap);
-                sf.Alignment = StringAlignment.Center;
-                sf.LineAlignment = StringAlignment.Center;
+                var sf = new StringFormat(StringFormatFlags.NoWrap)
+                             {
+                                 Alignment = StringAlignment.Center,
+                                 LineAlignment = StringAlignment.Center
+                             };
                 var f = new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold);
                 SizeF textSize = g.MeasureString(toDisplay, f, overallRenderRectangle.Size, sf);
                 int leftX = (((Constants.I_NATIVE_RES_WIDTH - ((int) textSize.Width))/2));
@@ -2157,10 +2150,12 @@ namespace F16CPD
                         GetLatestMapImageFromServerAsync();
 
                         //send new request to server to generate a new map image 
-                        var payload = new Dictionary<string, object>();
-                        payload.Add("RenderSize", ScreenBoundsPixels);
-                        payload.Add("MapScale", _mapScale);
-                        payload.Add("RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles);
+                        var payload = new Dictionary<string, object>
+                                          {
+                                              {"RenderSize", ScreenBoundsPixels},
+                                              {"MapScale", _mapScale},
+                                              {"RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles}
+                                          };
                         var message = new Message("RequestNewMapImage", payload);
                         Client.SendMessageToServer(message);
                         //Debug.WriteLine("here 10 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
@@ -2218,7 +2213,7 @@ namespace F16CPD
             }
         }
 
-        private string BreakStringIntoLines(string toBreak, int maxLineLength)
+        private static string BreakStringIntoLines(string toBreak, int maxLineLength)
         {
             if (toBreak == null) return null;
             if (maxLineLength <= 0) return "";
@@ -2344,7 +2339,7 @@ namespace F16CPD
         {
             //get any pending map image from server
             var mapBytes = (byte[]) Client.GetSimProperty("CurrentMapImage");
-                //causes a method invoke on the server to occur
+            //causes a method invoke on the server to occur
             Bitmap mapFromServer = null;
             if (mapBytes != null && mapBytes.Length > 0)
             {
@@ -2424,7 +2419,7 @@ namespace F16CPD
             //Debug.WriteLine("TAD render time:" + tadRenderTime.TotalMilliseconds);
         }
 
-        private void InformClientOfCpdInputControlChangedEvent(CpdInputControls control)
+        private static void InformClientOfCpdInputControlChangedEvent(CpdInputControls control)
         {
             if (!Settings.Default.RunAsServer) return;
             var message = new Message("CpdInputControlChangedEvent", control);

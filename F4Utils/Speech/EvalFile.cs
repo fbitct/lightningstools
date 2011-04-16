@@ -7,7 +7,7 @@ namespace F4Utils.Speech
 {
     public class EvalFile
     {
-        public EvalFileHeaderRecord[] headers;
+        public EvalFileHeaderRecord[] Headers;
 
         private EvalFile()
         {
@@ -29,11 +29,11 @@ namespace F4Utils.Speech
             int fileLen = bytes.Length;
             EvalFileHeaderRecord thisHeader = ReadHeader(bytes, 0);
             uint numEvals = thisHeader.evalOffset/8;
-            evalFile.headers = new EvalFileHeaderRecord[numEvals];
-            evalFile.headers[0] = thisHeader;
+            evalFile.Headers = new EvalFileHeaderRecord[numEvals];
+            evalFile.Headers[0] = thisHeader;
             for (int i = 1; i < numEvals; i++)
             {
-                evalFile.headers[i] = ReadHeader(bytes, i);
+                evalFile.Headers[i] = ReadHeader(bytes, i);
             }
 
             return evalFile;
@@ -43,8 +43,10 @@ namespace F4Utils.Speech
         {
             int pEvalHeader = recordNum*8;
 
-            var thisHeader = new EvalFileHeaderRecord();
-            thisHeader.evalHdrNbr = BitConverter.ToUInt16(bytes, pEvalHeader);
+            var thisHeader = new EvalFileHeaderRecord
+                                 {
+                                     evalHdrNbr = BitConverter.ToUInt16(bytes, pEvalHeader)
+                                 };
             pEvalHeader += 2;
             thisHeader.numEvals = BitConverter.ToUInt16(bytes, pEvalHeader);
             pEvalHeader += 2;
@@ -55,8 +57,10 @@ namespace F4Utils.Speech
             var pEvalData = (int) thisHeader.evalOffset;
             for (int i = 0; i < thisHeader.numEvals; i++)
             {
-                var thisData = new EvalFileDataRecord();
-                thisData.evalElem = BitConverter.ToInt16(bytes, pEvalData);
+                var thisData = new EvalFileDataRecord
+                                   {
+                                       evalElem = BitConverter.ToInt16(bytes, pEvalData)
+                                   };
                 pEvalData += 2;
                 thisData.fragNbr = BitConverter.ToUInt16(bytes, pEvalData);
                 pEvalData += 2;
@@ -67,13 +71,13 @@ namespace F4Utils.Speech
 
         public void FixupOffsets()
         {
-            uint offset = (uint) headers.Length*8;
-            for (ushort i = 0; i < headers.Length; i++)
+            uint offset = (uint) Headers.Length*8;
+            for (ushort i = 0; i < Headers.Length; i++)
             {
-                EvalFileHeaderRecord thisHeader = headers[i];
+                EvalFileHeaderRecord thisHeader = Headers[i];
                 thisHeader.numEvals = (ushort) (thisHeader.data != null ? thisHeader.data.Length : 0);
                 thisHeader.evalOffset = offset;
-                headers[i] = thisHeader;
+                Headers[i] = thisHeader;
                 offset += (uint) (4*thisHeader.numEvals);
             }
         }
@@ -85,23 +89,23 @@ namespace F4Utils.Speech
             using (var fs = new FileStream(evalFilePath, FileMode.Create))
             {
                 //write headers
-                if (headers != null)
+                if (Headers != null)
                 {
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < Headers.Length; i++)
                     {
-                        EvalFileHeaderRecord thisHeader = headers[i];
+                        EvalFileHeaderRecord thisHeader = Headers[i];
                         fs.Write(BitConverter.GetBytes(thisHeader.evalHdrNbr), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.numEvals), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.evalOffset), 0, 4);
                     }
 
                     //write data
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < Headers.Length; i++)
                     {
-                        EvalFileHeaderRecord thisHeader = headers[i];
+                        EvalFileHeaderRecord thisHeader = Headers[i];
                         if (thisHeader.data != null)
                         {
-                            for (int j = 0; j < thisHeader.data.Length; j++)
+                            for (var j = 0; j < thisHeader.data.Length; j++)
                             {
                                 EvalFileDataRecord thisDataRecord = thisHeader.data[j];
                                 fs.Write(BitConverter.GetBytes(thisDataRecord.evalElem), 0, 2);
@@ -118,13 +122,15 @@ namespace F4Utils.Speech
         public void SaveAsXml(string evalXmlFilePath)
         {
             var fi = new FileInfo(evalXmlFilePath);
-            var xws = new XmlWriterSettings();
-            xws.Indent = true;
-            xws.NewLineOnAttributes = false;
-            xws.OmitXmlDeclaration = false;
-            xws.IndentChars = "\t";
-            xws.CheckCharacters = true;
-            xws.Encoding = Encoding.UTF8;
+            var xws = new XmlWriterSettings
+                          {
+                              Indent = true,
+                              NewLineOnAttributes = false,
+                              OmitXmlDeclaration = false,
+                              IndentChars = "\t",
+                              CheckCharacters = true,
+                              Encoding = Encoding.UTF8
+                          };
 
             using (var fs = new FileStream(evalXmlFilePath, FileMode.Create))
             using (XmlWriter xw = XmlWriter.Create(fs, xws))
@@ -134,11 +140,11 @@ namespace F4Utils.Speech
                 //xw.WriteStartAttribute("numEvals");
                 //xw.WriteValue(this.headers.Length);
                 //xw.WriteEndAttribute();
-                if (headers != null)
+                if (Headers != null)
                 {
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < Headers.Length; i++)
                     {
-                        EvalFileHeaderRecord thisHeader = headers[i];
+                        EvalFileHeaderRecord thisHeader = Headers[i];
                         if (thisHeader.data != null)
                         {
                             xw.WriteStartElement("Eval"); //<Eval>
@@ -150,7 +156,7 @@ namespace F4Utils.Speech
                             //xw.WriteValue(thisHeader.numEvals);
                             //xw.WriteEndAttribute();
 
-                            for (int j = 0; j < thisHeader.data.Length; j++)
+                            for (var j = 0; j < thisHeader.data.Length; j++)
                             {
                                 EvalFileDataRecord thisDataRecord = thisHeader.data[j];
                                 xw.WriteStartElement("Element"); //<Element>
@@ -183,8 +189,6 @@ namespace F4Utils.Speech
             {
                 var thisHeader = new EvalFileHeaderRecord();
                 var dataRecords = new EvalFileDataRecord[0];
-                long val = 0;
-                bool parsed = false;
                 long thisEvalElement = 0;
 
                 while (xr.Read())
@@ -203,6 +207,8 @@ namespace F4Utils.Speech
                         //}
                         headers = new EvalFileHeaderRecord[0];
                     }
+                    long val;
+                    bool parsed;
                     if (xr.NodeType == XmlNodeType.Element && xr.Name == "Eval")
                     {
                         thisHeader = new EvalFileHeaderRecord();
@@ -291,7 +297,7 @@ namespace F4Utils.Speech
                     }
                 }
             }
-            toReturn.headers = headers;
+            toReturn.Headers = headers;
             toReturn.FixupOffsets();
             return toReturn;
         }

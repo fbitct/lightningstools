@@ -17,10 +17,10 @@ namespace F16CPD.UI.Forms
         /// </SUMMARY>
         protected IContainer components;
 
-        protected bool drag;
+        protected bool Drag;
         protected bool draggable = true;
         protected string exclude_list = "";
-        protected Point start_point = new Point(0, 0);
+        protected Point StartPoint = new Point(0, 0);
 
         #endregion
 
@@ -120,8 +120,8 @@ namespace F16CPD.UI.Forms
                 //On Mouse Down set the flag drag=true and 
                 //Store the clicked point to the start_point variable
                 //
-                drag = true;
-                start_point = new Point(e.X, e.Y);
+                Drag = true;
+                StartPoint = new Point(e.X, e.Y);
             }
             base.OnMouseDown(e);
         }
@@ -133,7 +133,7 @@ namespace F16CPD.UI.Forms
                 //
                 //Set the drag flag = false;
                 //
-                drag = false;
+                Drag = false;
             }
             base.OnMouseUp(e);
         }
@@ -143,12 +143,12 @@ namespace F16CPD.UI.Forms
             //
             //If drag = true, drag the form
             //
-            if (drag && draggable)
+            if (Drag && draggable)
             {
                 var p1 = new Point(e.X, e.Y);
                 Point p2 = PointToScreen(p1);
-                var p3 = new Point(p2.X - start_point.X,
-                                   p2.Y - start_point.Y);
+                var p3 = new Point(p2.X - StartPoint.X,
+                                   p2.Y - StartPoint.Y);
                 DesktopLocation = p3;
                 Location = p3;
             }

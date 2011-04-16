@@ -43,10 +43,7 @@ namespace F4Utils.Process
             {
                 return _knownCallbacks[callback];
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static void SendCallbackToFalcon(string callback)
@@ -173,7 +170,7 @@ namespace F4Utils.Process
             string toReturn = null;
             if (windowHandle != IntPtr.Zero)
             {
-                int procId = 0;
+                int procId;
                 NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
                 System.Diagnostics.Process process = System.Diagnostics.Process.GetProcessById(procId);
                 toReturn = process.MainModule.FileName;
@@ -199,11 +196,10 @@ namespace F4Utils.Process
             {
                 try
                 {
-                    string configFolder = null;
                     if (exePath != null)
                     {
                         exePath = Path.GetDirectoryName(exePath);
-                        configFolder = exePath + Path.DirectorySeparatorChar + "config";
+                        string configFolder = exePath + Path.DirectorySeparatorChar + "config";
                         using (
                             StreamReader reader =
                                 File.OpenText(configFolder + Path.DirectorySeparatorChar + "options.cfg"))
@@ -220,7 +216,7 @@ namespace F4Utils.Process
                                         if (equalsLoc >= 16)
                                         {
                                             callsign = line.Substring(equalsLoc + 1, line.Length - equalsLoc - 1);
-                                            if (callsign != null) callsign = callsign.Trim();
+                                            callsign = callsign.Trim();
                                             if (!String.IsNullOrEmpty(callsign))
                                             {
                                                 var bytes = new List<byte>();
@@ -270,28 +266,34 @@ namespace F4Utils.Process
                 try
                 {
                     RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Benchmark Sims");
-                    string[] subkeys = key.GetSubKeyNames();
-                    if (subkeys != null && subkeys.Length > 0)
+                    if (key != null)
                     {
-                        bool callsignFound = false;
-                        foreach (string subkey in subkeys)
+                        var subkeys = key.GetSubKeyNames();
+                        if (subkeys != null && subkeys.Length > 0)
                         {
-                            RegistryKey toRead = key.OpenSubKey(subkey, false);
-                            var baseDir = (string) toRead.GetValue("baseDir", null);
-                            var exePathFI = new FileInfo(exePath);
-                            string exeDir = exePathFI.Directory.FullName;
-                            if (baseDir != null && string.Compare(baseDir, exeDir, true) == 0)
+                            bool callsignFound = false;
+                            foreach (string subkey in subkeys)
                             {
-                                callsign = Encoding.ASCII.GetString((byte[]) toRead.GetValue("PilotCallsign"));
-                                int firstNull = callsign.IndexOf('\0');
-                                callsign = callsign.Substring(0, firstNull);
-                                callsignFound = true;
-                                break;
+                                RegistryKey toRead = key.OpenSubKey(subkey, false);
+                                if (toRead != null)
+                                {
+                                    var baseDir = (string) toRead.GetValue("baseDir", null);
+                                    var exePathFI = new FileInfo(exePath);
+                                    string exeDir = exePathFI.Directory.FullName;
+                                    if (baseDir != null && string.Compare(baseDir, exeDir, true) == 0)
+                                    {
+                                        callsign = Encoding.ASCII.GetString((byte[]) toRead.GetValue("PilotCallsign"));
+                                        int firstNull = callsign.IndexOf('\0');
+                                        callsign = callsign.Substring(0, firstNull);
+                                        callsignFound = true;
+                                        break;
+                                    }
+                                }
                             }
-                        }
-                        if (!callsignFound)
-                        {
-                            callsign = "Viper";
+                            if (!callsignFound)
+                            {
+                                callsign = "Viper";
+                            }
                         }
                     }
                 }
@@ -306,9 +308,12 @@ namespace F4Utils.Process
                 try
                 {
                     RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\MicroProse\Falcon\4.0");
-                    callsign = Encoding.ASCII.GetString((byte[]) key.GetValue("PilotCallsign"));
-                    int firstNull = callsign.IndexOf('\0');
-                    callsign = callsign.Substring(0, firstNull);
+                    if (key != null) callsign = Encoding.ASCII.GetString((byte[]) key.GetValue("PilotCallsign"));
+                    if (callsign != null)
+                    {
+                        int firstNull = callsign.IndexOf('\0');
+                        callsign = callsign.Substring(0, firstNull);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -342,7 +347,7 @@ namespace F4Utils.Process
                     toReturn = FalconDataFormats.BMS3;
                     try
                     {
-                        FileVersionInfo verInfo = FileVersionInfo.GetVersionInfo(exePath);
+                        var verInfo = FileVersionInfo.GetVersionInfo(exePath);
 
                         if (verInfo.ProductMajorPart >= 4)
                         {
@@ -371,7 +376,7 @@ namespace F4Utils.Process
             {
                 string callsign = DetectCurrentCallsign();
                 string configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar + "config";
-                string pilotOptionsPath = null;
+                string pilotOptionsPath;
                 if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.AlliedForce)
                 {
                     pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign + ".pop2";

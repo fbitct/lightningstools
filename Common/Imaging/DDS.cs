@@ -6,9 +6,9 @@ using DdsFileTypePlugin;
 
 namespace DdsFileTypePlugin
 {
-    public class DdsFile
+    public class DDSFile
     {
-        public DDSHeader m_header;
+        public DDSHeader Header;
 
         public void Load(Stream stream)
         {
@@ -33,7 +33,7 @@ namespace DdsFileTypePlugin
 
         public struct DDSHeader
         {
-            public int m_pitchOrLinearSize;
+            public int PitchOrLinearSize;
         }
 
         #endregion
@@ -49,7 +49,7 @@ namespace Common.Imaging
             if (filePath == null) throw new ArgumentNullException("filePath");
             var fi = new FileInfo(filePath);
             if (!fi.Exists) throw new FileNotFoundException(filePath);
-            var file = new DdsFile();
+            var file = new DDSFile();
             using (var fs = new FileStream(filePath, FileMode.Open))
             {
                 file.Load(fs);
@@ -60,7 +60,7 @@ namespace Common.Imaging
         public static Bitmap GetBitmapFromDDSFileBytes(byte[] bytes)
         {
             if (bytes == null) throw new ArgumentNullException("bytes");
-            var file = new DdsFile();
+            var file = new DDSFile();
             using (var ms = new MemoryStream(bytes))
             {
                 file.Load(ms);
@@ -70,16 +70,16 @@ namespace Common.Imaging
 
         public static Bitmap GetBitmapFromDDSFileStream(Stream s)
         {
-            var file = new DdsFile();
+            var file = new DDSFile();
             file.Load(s);
             return GetBitmapFromDDSFile(file);
         }
 
-        public static unsafe Bitmap GetBitmapFromDDSFile(DdsFile file)
+        public static unsafe Bitmap GetBitmapFromDDSFile(DDSFile file)
         {
             int width = file.GetWidth();
             int height = file.GetHeight();
-            int stride = file.m_header.m_pitchOrLinearSize;
+            int stride = file.Header.PitchOrLinearSize;
             var toReturn = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             int curByte = 0;
             BitmapData data = toReturn.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,

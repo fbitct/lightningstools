@@ -2,11 +2,11 @@
 using System.Windows.Forms;
 using Common.Win32;
 
-namespace F16CPD
+namespace F16CPD.UI.Util
 {
     internal class DisplaySettingsManager
     {
-        private readonly int[] orientationValues = new int[4]
+        private readonly int[] _orientationValues = new[]
                                                        {
                                                            NativeMethods.DMDO_DEFAULT,
                                                            NativeMethods.DMDO_90,
@@ -20,13 +20,13 @@ namespace F16CPD
             return GetSettings(ref dm, NativeMethods.ENUM_CURRENT_SETTINGS);
         }
 
-        private int GetSettings(ref NativeMethods.DEVMODE dm, int iModeNum)
+        private static int GetSettings(ref NativeMethods.DEVMODE dm, int iModeNum)
         {
             // helper to wrap EnumDisplaySettings Win32 API
             return NativeMethods.EnumDisplaySettings(null, iModeNum, ref dm);
         }
 
-        private void ChangeSettings(NativeMethods.DEVMODE dm)
+        private static void ChangeSettings(NativeMethods.DEVMODE dm)
         {
             // helper to wrap ChangeDisplaySettings Win32 API
             if (DialogResult.Yes ==
@@ -75,9 +75,9 @@ namespace F16CPD
             dm.dmPelsWidth = temp;
 
             // set the orientation value to what's next clockwise
-            int index = Array.IndexOf(orientationValues, (object) dm.dmDisplayOrientation);
+            int index = Array.IndexOf(_orientationValues, (object) dm.dmDisplayOrientation);
             int newIndex = (index == 0) ? 3 : index - 1;
-            dm.dmDisplayOrientation = orientationValues[newIndex];
+            dm.dmDisplayOrientation = _orientationValues[newIndex];
 
             // switch to new settings
             ChangeSettings(dm);
@@ -95,9 +95,9 @@ namespace F16CPD
             dm.dmPelsWidth = temp;
 
             // set the orientation value to what's next anti-clockwise
-            int index = Array.IndexOf(orientationValues, (object) dm.dmDisplayOrientation);
+            int index = Array.IndexOf(_orientationValues, (object) dm.dmDisplayOrientation);
             int newIndex = (index == 3) ? 0 : index + 1;
-            dm.dmDisplayOrientation = orientationValues[newIndex];
+            dm.dmDisplayOrientation = _orientationValues[newIndex];
 
             // switch to new settings
             ChangeSettings(dm);

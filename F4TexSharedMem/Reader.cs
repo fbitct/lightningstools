@@ -16,7 +16,7 @@ namespace F4TexSharedMem
         private bool _formatDetected;
         private IntPtr _hFileMappingObject = IntPtr.Zero;
         private IntPtr _lpStartAddress = IntPtr.Zero;
-        private string _sharedMemoryFileName = "FalconTexturesSharedMemoryArea";
+        private const string SHARED_MEMORY_FILE_NAME = "FalconTexturesSharedMemoryArea";
         private NativeMethods.DDSURFACEDESC2 _surfaceDesc;
 
         public bool IsDataAvailable
@@ -45,14 +45,7 @@ namespace F4TexSharedMem
                     catch (Exception)
                     {
                     }
-                    if (checkFor != 0)
-                    {
-                        _dataAvailable = true;
-                    }
-                    else
-                    {
-                        _dataAvailable = false;
-                    }
+                    _dataAvailable = checkFor != 0;
                 }
                 return _dataAvailable;
             }
@@ -186,7 +179,7 @@ namespace F4TexSharedMem
         {
             CloseSM();
             _hFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
-                                                                _sharedMemoryFileName);
+                                                                SHARED_MEMORY_FILE_NAME);
             _lpStartAddress = NativeMethods.MapViewOfFile(_hFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0,
                                                           IntPtr.Zero);
         }

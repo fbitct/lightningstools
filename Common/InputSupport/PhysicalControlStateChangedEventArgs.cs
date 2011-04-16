@@ -48,7 +48,7 @@ namespace Common.InputSupport
         /// be a value in the range specified by the DIDeviceMonitor's axisRangeMin and axisRangeMax values.  For Povs, it will
         /// be a value in the same range as the axis, but can also be set to -1, indicating centered.  For Povs, the translation from
         /// degrees to linear values in the corresponding axis range will already have been performed.  For buttons, this value is either zero or one, 
-        /// where 0=unpressed and 1=pressed.  Any negative value <1 indicates an error during polling.
+        /// where 0=unpressed and 1=pressed.  Any negative value &lt;1 indicates an error during polling.
         /// </summary>
         public int CurrentState
         {
@@ -60,7 +60,7 @@ namespace Common.InputSupport
         /// be a value in the range specified by the DIDeviceMonitor's axisRangeMin and axisRangeMax values.  For Povs, it will
         /// be a value in the same range as the axis, but can also be set to -1, indicating centered.  For Povs, the translation from
         /// degrees to linear values in the corresponding axis range will already have been performed.  For buttons, this value is either zero or one, 
-        /// where 0=unpressed and 1=pressed.  Any negative value <1 indicates an error during polling.
+        /// where 0=unpressed and 1=pressed.  Any negative value &lt;1 indicates an error during polling.
         /// </summary>
         public int PreviousState
         {

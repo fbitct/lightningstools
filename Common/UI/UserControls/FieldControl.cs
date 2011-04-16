@@ -30,8 +30,8 @@ namespace Common.UI.UserControls
     {
         #region Public Constants
 
-        public const byte MinimumValue = 0;
-        public const byte MaximumValue = 255;
+        public const byte MINIMUM_VALUE = 0;
+        public const byte MAXIMUM_VALUE = 255;
 
         #endregion // Public Constants
 
@@ -64,7 +64,7 @@ namespace Common.UI.UserControls
                 {
                     minimumSize = TextRenderer.MeasureText(g,
                                                            "222", Font, Size,
-                                                           _textFormatFlags);
+                                                           TEXT_FORMAT_FLAGS);
                 }
                 return minimumSize;
             }
@@ -75,9 +75,9 @@ namespace Common.UI.UserControls
             get { return _rangeLower; }
             set
             {
-                if (value < MinimumValue)
+                if (value < MINIMUM_VALUE)
                 {
-                    _rangeLower = MinimumValue;
+                    _rangeLower = MINIMUM_VALUE;
                 }
                 else if (value > _rangeUpper)
                 {
@@ -104,9 +104,9 @@ namespace Common.UI.UserControls
                 {
                     _rangeUpper = _rangeLower;
                 }
-                else if (value > MaximumValue)
+                else if (value > MAXIMUM_VALUE)
                 {
-                    _rangeUpper = MaximumValue;
+                    _rangeUpper = MAXIMUM_VALUE;
                 }
                 else
                 {
@@ -230,14 +230,14 @@ namespace Common.UI.UserControls
                 e.SuppressKeyPress = true;
                 return;
             }
-            else if (IsForwardKey(e))
+            if (IsForwardKey(e))
             {
                 if (e.Control)
                 {
                     SendCedeFocusEvent(Direction.Forward, Selection.All);
                     return;
                 }
-                else if (SelectionLength == 0 && SelectionStart == TextLength)
+                if (SelectionLength == 0 && SelectionStart == TextLength)
                 {
                     SendCedeFocusEvent(Direction.Forward, Selection.None);
                     return;
@@ -250,7 +250,7 @@ namespace Common.UI.UserControls
                     SendCedeFocusEvent(Direction.Reverse, Selection.All);
                     return;
                 }
-                else if (SelectionLength == 0 && SelectionStart == 0)
+                if (SelectionLength == 0 && SelectionStart == 0)
                 {
                     SendCedeFocusEvent(Direction.Reverse, Selection.None);
                     return;
@@ -326,9 +326,7 @@ namespace Common.UI.UserControls
 
             if (null != TextChangedEvent)
             {
-                var args = new TextChangedEventArgs();
-                args.FieldIndex = FieldIndex;
-                args.Text = Text;
+                var args = new TextChangedEventArgs {FieldIndex = FieldIndex, Text = Text};
                 TextChangedEvent(this, args);
             }
 
@@ -407,10 +405,10 @@ namespace Common.UI.UserControls
             {
                 return true;
             }
-            else if (e.Modifiers == Keys.Control &&
-                     (e.KeyCode == Keys.C ||
-                      e.KeyCode == Keys.V ||
-                      e.KeyCode == Keys.X))
+            if (e.Modifiers == Keys.Control &&
+                (e.KeyCode == Keys.C ||
+                 e.KeyCode == Keys.V ||
+                 e.KeyCode == Keys.X))
             {
                 return true;
             }
@@ -457,9 +455,7 @@ namespace Common.UI.UserControls
         {
             if (null != CedeFocusEvent)
             {
-                var args = new CedeFocusEventArgs();
-                args.FieldIndex = FieldIndex;
-                args.Action = action;
+                var args = new CedeFocusEventArgs {FieldIndex = FieldIndex, Action = action};
                 CedeFocusEvent(this, args);
             }
         }
@@ -468,11 +464,13 @@ namespace Common.UI.UserControls
         {
             if (null != CedeFocusEvent)
             {
-                var args = new CedeFocusEventArgs();
-                args.FieldIndex = FieldIndex;
-                args.Action = Action.None;
-                args.Direction = direction;
-                args.Selection = selection;
+                var args = new CedeFocusEventArgs
+                               {
+                                   FieldIndex = FieldIndex,
+                                   Action = Action.None,
+                                   Direction = direction,
+                                   Selection = selection
+                               };
                 CedeFocusEvent(this, args);
             }
         }
@@ -483,9 +481,9 @@ namespace Common.UI.UserControls
 
         private int _fieldIndex = -1;
         private byte _rangeLower; // = MinimumValue;  // this is removed for FxCop approval
-        private byte _rangeUpper = MaximumValue;
+        private byte _rangeUpper = MAXIMUM_VALUE;
 
-        private TextFormatFlags _textFormatFlags = TextFormatFlags.HorizontalCenter |
+        private const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.HorizontalCenter |
                                                    TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
 
         #endregion // Private Data

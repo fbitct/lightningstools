@@ -15,29 +15,29 @@ namespace Common.Strings
         {
             //get rid of special cases
             if ((s1 == null) && (s2 == null)) return 0;
-            else if (s1 == null) return -1;
-            else if (s2 == null) return 1;
+            if (s1 == null) return -1;
+            if (s2 == null) return 1;
 
             if ((s1.Equals(string.Empty) && (s2.Equals(string.Empty)))) return 0;
-            else if (s1.Equals(string.Empty)) return -1;
-            else if (s2.Equals(string.Empty)) return -1;
+            if (s1.Equals(string.Empty)) return -1;
+            if (s2.Equals(string.Empty)) return -1;
 
             //WE style, special case
-            bool sp1 = Char.IsLetterOrDigit(s1, 0);
-            bool sp2 = Char.IsLetterOrDigit(s2, 0);
+            var sp1 = Char.IsLetterOrDigit(s1, 0);
+            var sp2 = Char.IsLetterOrDigit(s2, 0);
             if (sp1 && !sp2) return 1;
             if (!sp1 && sp2) return -1;
 
             int i1 = 0, i2 = 0; //current index
-            int r = 0; // temp result
             while (true)
             {
-                bool c1 = Char.IsDigit(s1, i1);
-                bool c2 = Char.IsDigit(s2, i2);
+                var c1 = Char.IsDigit(s1, i1);
+                var c2 = Char.IsDigit(s2, i2);
+                int r; // temp result
                 if (!c1 && !c2)
                 {
-                    bool letter1 = Char.IsLetter(s1, i1);
-                    bool letter2 = Char.IsLetter(s2, i2);
+                    var letter1 = Char.IsLetter(s1, i1);
+                    var letter2 = Char.IsLetter(s2, i2);
                     if ((letter1 && letter2) || (!letter1 && !letter2))
                     {
                         if (letter1 && letter2)
@@ -72,11 +72,11 @@ namespace Common.Strings
                 {
                     return 0;
                 }
-                else if (i1 >= s1.Length)
+                if (i1 >= s1.Length)
                 {
                     return -1;
                 }
-                else if (i2 >= s2.Length)
+                if (i2 >= s2.Length)
                 {
                     return -1;
                 }
@@ -103,7 +103,7 @@ namespace Common.Strings
             int nzLength2 = end2 - nzStart2;
 
             if (nzLength1 < nzLength2) return -1;
-            else if (nzLength1 > nzLength2) return 1;
+            if (nzLength1 > nzLength2) return 1;
 
             for (int j1 = nzStart1, j2 = nzStart2; j1 <= i1; j1++, j2++)
             {

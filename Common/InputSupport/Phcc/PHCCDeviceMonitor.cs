@@ -149,14 +149,16 @@ namespace Common.InputSupport.Phcc
                         {
                             short[] rawAnalogInputs = _deviceInterface.AnalogInputs;
                             bool[] rawDigitalInputs = _deviceInterface.DigitalInputs;
-                            var thisState = new PHCCInputState();
-                            thisState.analogInputs = new short[35];
-                            thisState.digitalInputs = new bool[1024];
+                            var thisState = new PHCCInputState
+                                                {
+                                                    AnalogInputs = new short[35],
+                                                    DigitalInputs = new bool[1024]
+                                                };
                             for (int i = 0; i < rawAnalogInputs.Length; i++)
                             {
-                                thisState.analogInputs[i] = ScaleRawValue(rawAnalogInputs[i]);
+                                thisState.AnalogInputs[i] = ScaleRawValue(rawAnalogInputs[i]);
                             }
-                            thisState.digitalInputs = rawDigitalInputs;
+                            thisState.DigitalInputs = rawDigitalInputs;
                             newState = thisState;
                         }
                     }
@@ -267,7 +269,7 @@ namespace Common.InputSupport.Phcc
         protected override void Prepare()
         {
             int elapsed = 0;
-            int timeout = 3000;
+            const int timeout = 3000;
 
             while (_preparing && elapsed <= timeout)
             {
@@ -327,9 +329,12 @@ namespace Common.InputSupport.Phcc
                         }
                         //_deviceInterface.Reset();
                         GetCurrentInputState(false);
-                        _deviceInterface.StartTalking();
-                        _deviceInterface.AnalogInputChanged += _deviceInterface_AnalogInputChanged;
-                        _deviceInterface.DigitalInputChanged += _deviceInterface_DigitalInputChanged;
+                        if (_deviceInterface != null)
+                        {
+                            _deviceInterface.StartTalking();
+                            _deviceInterface.AnalogInputChanged += DeviceInterfaceAnalogInputChanged;
+                            _deviceInterface.DigitalInputChanged += DeviceInterfaceDigitalInputChanged;
+                        }
                     }
                     catch (ApplicationException)
                     {
@@ -353,7 +358,7 @@ namespace Common.InputSupport.Phcc
             }
         }
 
-        private void _deviceInterface_DigitalInputChanged(object sender, DigitalInputChangedEventArgs e)
+        private void DeviceInterfaceDigitalInputChanged(object sender, DigitalInputChangedEventArgs e)
         {
             lock (_stateLock)
             {
@@ -369,10 +374,10 @@ namespace Common.InputSupport.Phcc
                 }
                 else
                 {
-                    thisState.analogInputs = new short[35];
-                    thisState.digitalInputs = new bool[1024];
+                    thisState.AnalogInputs = new short[35];
+                    thisState.DigitalInputs = new bool[1024];
                 }
-                thisState.digitalInputs[e.Index] = e.NewValue;
+                thisState.DigitalInputs[e.Index] = e.NewValue;
                 _state = thisState;
 
                 if (StateChanged != null)
@@ -382,7 +387,7 @@ namespace Common.InputSupport.Phcc
             }
         }
 
-        private void _deviceInterface_AnalogInputChanged(object sender, AnalogInputChangedEventArgs e)
+        private void DeviceInterfaceAnalogInputChanged(object sender, AnalogInputChangedEventArgs e)
         {
             lock (_stateLock)
             {
@@ -398,10 +403,10 @@ namespace Common.InputSupport.Phcc
                 }
                 else
                 {
-                    thisState.analogInputs = new short[35];
-                    thisState.digitalInputs = new bool[1024];
+                    thisState.AnalogInputs = new short[35];
+                    thisState.DigitalInputs = new bool[1024];
                 }
-                thisState.analogInputs[e.Index] = ScaleRawValue(e.NewValue);
+                thisState.AnalogInputs[e.Index] = ScaleRawValue(e.NewValue);
                 _state = thisState;
 
                 if (StateChanged != null)
@@ -414,7 +419,7 @@ namespace Common.InputSupport.Phcc
         private short ScaleRawValue(short rawValue)
         {
             long outputRange = System.Math.Abs(_axisRangeMax - _axisRangeMin); //size of output range
-            long maxRawValue = 1023;
+            const long maxRawValue = 1023;
             double pct = (rawValue/(double) maxRawValue);
                 //percentage-wise, how large is our raw value compared to the maximum raw value?
             int convertedVal = (int) System.Math.Round(outputRange*pct, 0) + _axisRangeMin;

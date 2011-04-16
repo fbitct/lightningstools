@@ -15,12 +15,12 @@ namespace Common.UI.UserControls
         {
             get
             {
-                Size minimumSize = Size.Empty;
-                using (Graphics g = Graphics.FromHwnd(Handle))
+                Size minimumSize;
+                using (var g = Graphics.FromHwnd(Handle))
                 {
                     minimumSize = TextRenderer.MeasureText(g,
                                                            Text, Font, Size,
-                                                           _textFormatFlags);
+                                                           TEXT_FORMAT_FLAGS);
                 }
                 return minimumSize;
             }
@@ -107,7 +107,7 @@ namespace Common.UI.UserControls
             }
 
             TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle,
-                                  textColor, _textFormatFlags);
+                                  textColor, TEXT_FORMAT_FLAGS);
         }
 
         protected override void OnParentBackColorChanged(EventArgs e)
@@ -126,7 +126,7 @@ namespace Common.UI.UserControls
         protected override void OnSizeChanged(EventArgs e)
         {
             base.OnSizeChanged(e);
-            base.Size = MinimumSize;
+            Size = MinimumSize;
         }
 
         #endregion // Protected Methods
@@ -136,7 +136,7 @@ namespace Common.UI.UserControls
         private bool _backColorChanged;
         private bool _readOnly;
 
-        private TextFormatFlags _textFormatFlags = TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix |
+        private const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix |
                                                    TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
 
         #endregion // Private Data

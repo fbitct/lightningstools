@@ -143,10 +143,7 @@ namespace Common.InputSupport.DirectInput
                     }
                     return _controlType;
                 }
-                else
-                {
-                    return _controlType;
-                }
+                return _controlType;
             }
             set { _controlType = value; }
         }

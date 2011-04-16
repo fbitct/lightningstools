@@ -7,7 +7,7 @@ namespace F4Utils.Speech
 {
     public class CommFile
     {
-        public CommFileHeaderRecord[] headers;
+        public CommFileHeaderRecord[] Headers;
 
         private CommFile()
         {
@@ -29,11 +29,11 @@ namespace F4Utils.Speech
 
             CommFileHeaderRecord firstHeader = ReadHeader(bytes, 0);
             uint numHeaders = firstHeader.commOffset/14;
-            commFile.headers = new CommFileHeaderRecord[numHeaders];
-            commFile.headers[0] = firstHeader;
+            commFile.Headers = new CommFileHeaderRecord[numHeaders];
+            commFile.Headers[0] = firstHeader;
             for (int i = 1; i < numHeaders; i++)
             {
-                commFile.headers[i] = ReadHeader(bytes, i);
+                commFile.Headers[i] = ReadHeader(bytes, i);
             }
 
             return commFile;
@@ -42,8 +42,10 @@ namespace F4Utils.Speech
         private static CommFileHeaderRecord ReadHeader(byte[] bytes, int headerNum)
         {
             int pCommHeader = headerNum*14;
-            var thisHeader = new CommFileHeaderRecord();
-            thisHeader.commHdrNbr = BitConverter.ToUInt16(bytes, pCommHeader);
+            var thisHeader = new CommFileHeaderRecord
+                                 {
+                                     commHdrNbr = BitConverter.ToUInt16(bytes, pCommHeader)
+                                 };
             pCommHeader += 2;
             thisHeader.warp = BitConverter.ToUInt16(bytes, pCommHeader);
             pCommHeader += 2;
@@ -63,8 +65,10 @@ namespace F4Utils.Speech
             uint pData = thisHeader.commOffset;
             for (int i = 0; i < thisHeader.totalElements; i++)
             {
-                var thisData = new CommFileDataRecord();
-                thisData.fragIdOrEvalId = BitConverter.ToInt16(bytes, (int) pData);
+                var thisData = new CommFileDataRecord
+                                   {
+                                       fragIdOrEvalId = BitConverter.ToInt16(bytes, (int) pData)
+                                   };
                 pData += 2;
                 thisHeader.data[i] = thisData;
             }
@@ -73,13 +77,13 @@ namespace F4Utils.Speech
 
         public void FixupOffsets()
         {
-            if (headers == null) return;
-            uint offset = (uint) headers.Length*14;
-            for (ushort i = 0; i < headers.Length; i++)
+            if (Headers == null) return;
+            uint offset = (uint) Headers.Length*14;
+            for (ushort i = 0; i < Headers.Length; i++)
             {
-                CommFileHeaderRecord thisHeader = headers[i];
+                CommFileHeaderRecord thisHeader = Headers[i];
                 thisHeader.commOffset = offset;
-                headers[i] = thisHeader;
+                Headers[i] = thisHeader;
                 offset += (uint) 2*thisHeader.totalElements;
             }
         }
@@ -91,13 +95,16 @@ namespace F4Utils.Speech
             using (var fs = new FileStream(commFilePath, FileMode.Create))
             {
                 //write headers
-                if (headers != null)
+                if (Headers != null)
                 {
-                    Array.Sort(headers,
-                               delegate(CommFileHeaderRecord hdr1, CommFileHeaderRecord hdr2) { return hdr1.commHdrNbr.CompareTo(hdr2.commHdrNbr); });
-                    for (int i = 0; i < headers.Length; i++)
+                    Array.Sort(Headers,
+                               delegate(CommFileHeaderRecord hdr1, CommFileHeaderRecord hdr2)
+                                   {
+                                       return hdr1.commHdrNbr.CompareTo(hdr2.commHdrNbr);
+                                   });
+                    for (int i = 0; i < Headers.Length; i++)
                     {
-                        CommFileHeaderRecord thisHeader = headers[i];
+                        CommFileHeaderRecord thisHeader = Headers[i];
                         fs.Write(BitConverter.GetBytes(thisHeader.commHdrNbr), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.warp), 0, 2);
                         fs.WriteByte(thisHeader.priority);
@@ -109,9 +116,9 @@ namespace F4Utils.Speech
                     }
 
                     //write data
-                    for (int i = 0; i < headers.Length; i++)
+                    for (int i = 0; i < Headers.Length; i++)
                     {
-                        CommFileHeaderRecord thisHeader = headers[i];
+                        CommFileHeaderRecord thisHeader = Headers[i];
                         if (thisHeader.data != null)
                         {
                             for (int j = 0; j < thisHeader.data.Length; j++)
@@ -130,13 +137,15 @@ namespace F4Utils.Speech
         public void SaveAsXml(string commXmlFilePath)
         {
             var fi = new FileInfo(commXmlFilePath);
-            var xws = new XmlWriterSettings();
-            xws.Indent = true;
-            xws.NewLineOnAttributes = false;
-            xws.OmitXmlDeclaration = false;
-            xws.IndentChars = "\t";
-            xws.CheckCharacters = true;
-            xws.Encoding = Encoding.UTF8;
+            var xws = new XmlWriterSettings
+                          {
+                              Indent = true,
+                              NewLineOnAttributes = false,
+                              OmitXmlDeclaration = false,
+                              IndentChars = "\t",
+                              CheckCharacters = true,
+                              Encoding = Encoding.UTF8
+                          };
 
 
             using (var fs = new FileStream(commXmlFilePath, FileMode.Create))
@@ -147,13 +156,13 @@ namespace F4Utils.Speech
                 //xw.WriteStartAttribute("numComms");
                 //xw.WriteValue(this.headers.Length);
                 //xw.WriteEndAttribute();
-                if (headers != null)
+                if (Headers != null)
                 {
-                    Array.Sort(headers,
+                    Array.Sort(Headers,
                                delegate(CommFileHeaderRecord hdr1, CommFileHeaderRecord hdr2) { return hdr1.commHdrNbr.CompareTo(hdr2.commHdrNbr); });
-                    for (int i = 0; i < headers.Length; i++)
+                    for (int i = 0; i < Headers.Length; i++)
                     {
-                        CommFileHeaderRecord thisHeader = headers[i];
+                        CommFileHeaderRecord thisHeader = Headers[i];
                         if (thisHeader.data != null)
                         {
                             xw.WriteStartElement("Comm");
@@ -223,9 +232,9 @@ namespace F4Utils.Speech
                 var dataRecords = new CommFileDataRecord[0];
                 while (xr.Read())
                 {
-                    long val = 0;
-                    string attribValString = null;
-                    bool parsed = false;
+                    long val;
+                    string attribValString;
+                    bool parsed;
                     if (xr.NodeType == XmlNodeType.Element && xr.Name == "CommFile")
                     {
                         //attribValString = xr.GetAttribute("numComms");
@@ -384,10 +393,9 @@ namespace F4Utils.Speech
 
                         attribValString = xr.GetAttribute("index");
                         parsed = Int64.TryParse(attribValString, out val);
-                        int index = 0;
                         if (parsed)
                         {
-                            index = (int) val;
+                            var index = (int) val;
                             if (index > dataRecords.Length - 1)
                             {
                                 //throw new IOException(string.Format("Could not parse {0}, @index attribute value in /CommFile/Comm/CommElement element exceeds (@totalElements-1) value declared in parent /CommFile/Comm element.", commXmlFilePath));
@@ -416,7 +424,7 @@ namespace F4Utils.Speech
                     }
                 }
             }
-            toReturn.headers = headers;
+            toReturn.Headers = headers;
             toReturn.FixupOffsets();
             return toReturn;
         }

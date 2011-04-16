@@ -22,7 +22,7 @@ namespace F16CPD.FlightInstruments
         public const float ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES = 5.0f;
         public const float MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND = 3.0f;
 
-        private const float baroChangePerThousandFeet = 1.08f;
+        private const float BARO_CHANGE_PER_THOUSAND_FEET = 1.08f;
         private readonly Bitmap[] _altitudeTapes = new Bitmap[200];
         private readonly Bitmap[] _singleDigitBitmaps = new Bitmap[1000];
         private readonly Bitmap[] _tripleDigitBitmaps = new Bitmap[1000];
@@ -44,7 +44,7 @@ namespace F16CPD.FlightInstruments
 
             var topBox = new Rectangle(0, 0, renderSize.Width, 239);
             int centerYPfd = topBox.Bottom;
-            int centerXPfd = 300;
+            const int centerXPfd = 300;
 
             if (Manager.FlightData.PfdOffFlag)
             {
@@ -76,11 +76,13 @@ namespace F16CPD.FlightInstruments
             Color greenColor = Color.FromArgb(0, 255, 0);
             Brush greenBrush = new SolidBrush(greenColor);
 
-            string toDisplay = "NO PFD DATA";
+            const string toDisplay = "NO PFD DATA";
             var path = new GraphicsPath();
-            var sf = new StringFormat(StringFormatFlags.NoWrap);
-            sf.Alignment = StringAlignment.Center;
-            sf.LineAlignment = StringAlignment.Center;
+            var sf = new StringFormat(StringFormatFlags.NoWrap)
+                         {
+                             Alignment = StringAlignment.Center,
+                             LineAlignment = StringAlignment.Center
+                         };
             var layoutRectangle = new Rectangle(new Point(0, 0), renderSize);
             path.AddString(toDisplay, FontFamily.GenericMonospace, (int) FontStyle.Bold, 20, layoutRectangle, sf);
             g.FillPath(greenBrush, path);
@@ -95,9 +97,6 @@ namespace F16CPD.FlightInstruments
             float pitchAngleDegrees = Manager.FlightData.PitchAngleInDecimalDegrees;
             float rollAngleDegrees = Manager.FlightData.RollAngleInDecimalDegrees;
             float aoaAngleDegrees = Manager.FlightData.AngleOfAttackInDegrees;
-            float sideslipAngleDegrees = Manager.FlightData.BetaAngleInDecimalDegrees;
-            float climbAngleDegrees = Manager.FlightData.GammaAngleInDecimalDegrees;
-            float windOffsetDegrees = Manager.FlightData.WindOffsetToFlightPathMarkerInDecimalDegrees;
             if (_climbDiveMarkerSymbol == null)
             {
                 _climbDiveMarkerSymbol = Resources.climbDiveMarker;
@@ -109,14 +108,14 @@ namespace F16CPD.FlightInstruments
                 _cagedClimbDiveMarkerSymbol = Resources.cagedClimbDiveMarker;
                 _cagedClimbDiveMarkerSymbol.MakeTransparent(Color.FromArgb(0, 255, 0, 128));
             }
-            int verticalDistanceBetweenPitchLines = 25;
-            int degreesBetweenTicks = 5;
-            float pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines/degreesBetweenTicks;
+            const int verticalDistanceBetweenPitchLines = 25;
+            const int degreesBetweenTicks = 5;
+            const float pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines/degreesBetweenTicks;
 
 
             DrawAdiSkyAndGround(g, renderSize, centerYPfd, centerXPfd, pitchAngleDegrees, rollAngleDegrees,
                                 pixelsSeparationPerDegreeOfPitch);
-            DrawAdiPitchLadder(g, renderSize, centerYPfd, centerXPfd, pitchAngleDegrees, rollAngleDegrees);
+            DrawAdiPitchLadder(g, centerYPfd, centerXPfd, pitchAngleDegrees, rollAngleDegrees);
             DrawAdiRollIndexLines(g, centerXPfd, centerYPfd);
 
             var whitePen = new Pen(Color.White);
@@ -168,9 +167,9 @@ namespace F16CPD.FlightInstruments
 
             //prepare draw localizer indicator line
 
-            float minIlsHorizontalPositionVal = -ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES;
-            float maxIlsHorizontalPositionVal = ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES;
-            float IlsHorizontalPositionRange = maxIlsHorizontalPositionVal - minIlsHorizontalPositionVal;
+            const float minIlsHorizontalPositionVal = -ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES;
+            const float maxIlsHorizontalPositionVal = ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES;
+            const float IlsHorizontalPositionRange = maxIlsHorizontalPositionVal - minIlsHorizontalPositionVal;
             float currentIlsHorizontalPositionVal = Manager.FlightData.AdiIlsLocalizerDeviationInDecimalDegrees +
                                                     Math.Abs(minIlsHorizontalPositionVal);
             if (currentIlsHorizontalPositionVal < 0) currentIlsHorizontalPositionVal = 0;
@@ -187,10 +186,8 @@ namespace F16CPD.FlightInstruments
             var ilsBarTop = new Point(currentIlsBarX, topGlideSlopeMarkerCenterPoint.Y);
             var ilsBarBottom = new Point(currentIlsBarX, bottomGlideSlopeMarkerCenterPoint.Y);
 
-            var localizerBarPen = new Pen(Color.Yellow);
-            localizerBarPen.Width = 3;
-            var glideslopeBarPen = new Pen(Color.Yellow);
-            glideslopeBarPen.Width = 3;
+            var localizerBarPen = new Pen(Color.Yellow) {Width = 3};
+            var glideslopeBarPen = new Pen(Color.Yellow) {Width = 3};
             if (Manager.FlightData.AdiEnableCommandBars && !Manager.FlightData.AdiLocalizerInvalidFlag &&
                 !Manager.FlightData.AdiOffFlag)
             {
@@ -206,9 +203,9 @@ namespace F16CPD.FlightInstruments
             }
 
             //prepare to draw glideslope bar
-            float minIlsVerticalPositionVal = -ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES;
-            float maxIlsVerticalPositionVal = ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES;
-            float IlsVerticalPositionRange = maxIlsVerticalPositionVal - minIlsVerticalPositionVal;
+            const float minIlsVerticalPositionVal = -ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES;
+            const float maxIlsVerticalPositionVal = ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES;
+            const float IlsVerticalPositionRange = maxIlsVerticalPositionVal - minIlsVerticalPositionVal;
 
             float currentIlsVerticalPositionVal = (-Manager.FlightData.AdiIlsGlideslopeDeviationInDecimalDegrees) +
                                                   Math.Abs(minIlsVerticalPositionVal);
@@ -253,8 +250,7 @@ namespace F16CPD.FlightInstruments
 
         private void DrawAdiFixedPitchReferenceBars(Graphics g, int centerXPfd, int centerYPfd)
         {
-            var whitePen = new Pen(Color.White);
-            whitePen.Width = 2;
+            var whitePen = new Pen(Color.White) {Width = 2};
             int baseY = centerYPfd - 3;
             int baseX = centerXPfd - 100;
             var pointsList = new List<Point>();
@@ -312,7 +308,6 @@ namespace F16CPD.FlightInstruments
             var path = new GraphicsPath();
             path.AddPolygon(leftTriangleInside);
             path.AddPolygon(leftTriangleOutside);
-            var region = new Region(path);
             g.FillPath(Brushes.White, path);
             if (rollDegrees >= 44 && rollDegrees <= 46 && !off)
             {
@@ -348,8 +343,7 @@ namespace F16CPD.FlightInstruments
 
         private static void DrawAdiRollIndexLines(Graphics g, int centerXPfd, int centerYPfd)
         {
-            var whitePen = new Pen(Color.White);
-            whitePen.Width = 2;
+            var whitePen = new Pen(Color.White) {Width = 2};
             int baseX = centerXPfd;
             int baseY = centerYPfd + 3;
 
@@ -364,12 +358,11 @@ namespace F16CPD.FlightInstruments
             g.DrawLine(whitePen, baseX + 147, baseY - 87, baseX + 171, baseY - 102);
         }
 
-        private void DrawAdiPitchLadder(Graphics g, Size renderSize, int centerYPfd, int centerXPfd,
+        private void DrawAdiPitchLadder(Graphics g, int centerYPfd, int centerXPfd,
                                         float pitchAngleDegrees, float rollAngleDegrees)
         {
             //obtain pitch ladder Bitmap
-            Bitmap adiPitchLadder = GetAdiPitchLadder(pitchAngleDegrees, rollAngleDegrees, renderSize.Width,
-                                                      renderSize.Height);
+            Bitmap adiPitchLadder = GetAdiPitchLadder(pitchAngleDegrees, rollAngleDegrees);
             int centerYAdiBars = (adiPitchLadder.Height/2) + 1;
             int adiBarsXpos = centerXPfd - (adiPitchLadder.Width/2);
             int adiBarsYpos = centerYPfd - centerYAdiBars;
@@ -409,8 +402,7 @@ namespace F16CPD.FlightInstruments
                 g.FillRectangle(groundBrush,
                                 new Rectangle(-(renderSize.Width/2), centerY, (renderSize.Width*2),
                                               (int) (pixelsSeparationPerDegreeOfPitch*180)));
-                var horizonLinePen = new Pen(Color.Black);
-                horizonLinePen.Width = 1;
+                var horizonLinePen = new Pen(Color.Black) {Width = 1};
                 g.DrawLine(horizonLinePen, -1000, centerY, renderSize.Width + 1000, centerYPfd);
                 g.Transform = curTransform;
             }
@@ -423,9 +415,11 @@ namespace F16CPD.FlightInstruments
             {
                 var adiOffFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
                 var path = new GraphicsPath();
-                var adiOffFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-                adiOffFlagStringFormat.Alignment = StringAlignment.Center;
-                adiOffFlagStringFormat.LineAlignment = StringAlignment.Near;
+                var adiOffFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                                 {
+                                                     Alignment = StringAlignment.Center,
+                                                     LineAlignment = StringAlignment.Near
+                                                 };
                 var adiOffFlagTextLayoutRectangle = new Rectangle(location, new Size(75, 25));
                 path.AddString("OFF", adiOffFlagFont.FontFamily, (int) adiOffFlagFont.Style, adiOffFlagFont.SizeInPoints,
                                adiOffFlagTextLayoutRectangle, adiOffFlagStringFormat);
@@ -449,9 +443,11 @@ namespace F16CPD.FlightInstruments
             {
                 var aoaOffFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
                 var path = new GraphicsPath();
-                var aoaOffFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-                aoaOffFlagStringFormat.Alignment = StringAlignment.Center;
-                aoaOffFlagStringFormat.LineAlignment = StringAlignment.Near;
+                var aoaOffFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                                 {
+                                                     Alignment = StringAlignment.Center,
+                                                     LineAlignment = StringAlignment.Near
+                                                 };
                 var aoaOffFlagTextLayoutRectangle = new Rectangle(location, new Size(75, 25));
                 path.AddString("OFF", aoaOffFlagFont.FontFamily, (int) aoaOffFlagFont.Style, aoaOffFlagFont.SizeInPoints,
                                aoaOffFlagTextLayoutRectangle, aoaOffFlagStringFormat);
@@ -475,9 +471,11 @@ namespace F16CPD.FlightInstruments
             {
                 var vviOffFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
                 var path = new GraphicsPath();
-                var vviOffFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-                vviOffFlagStringFormat.Alignment = StringAlignment.Center;
-                vviOffFlagStringFormat.LineAlignment = StringAlignment.Near;
+                var vviOffFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                                 {
+                                                     Alignment = StringAlignment.Center,
+                                                     LineAlignment = StringAlignment.Near
+                                                 };
                 var vviOffFlagTextLayoutRectangle = new Rectangle(location, new Size(60, 25));
                 path.AddString("OFF", vviOffFlagFont.FontFamily, (int) vviOffFlagFont.Style, vviOffFlagFont.SizeInPoints,
                                vviOffFlagTextLayoutRectangle, vviOffFlagStringFormat);
@@ -501,9 +499,11 @@ namespace F16CPD.FlightInstruments
             {
                 var adiGsFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
                 var path = new GraphicsPath();
-                var adiGsFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-                adiGsFlagStringFormat.Alignment = StringAlignment.Center;
-                adiGsFlagStringFormat.LineAlignment = StringAlignment.Near;
+                var adiGsFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                                {
+                                                    Alignment = StringAlignment.Center,
+                                                    LineAlignment = StringAlignment.Near
+                                                };
                 var adiGsFlagTextLayoutRectangle = new Rectangle(location, new Size(60, 25));
                 path.AddString("GS", adiGsFlagFont.FontFamily, (int) adiGsFlagFont.Style, adiGsFlagFont.SizeInPoints,
                                adiGsFlagTextLayoutRectangle, adiGsFlagStringFormat);
@@ -527,9 +527,11 @@ namespace F16CPD.FlightInstruments
             {
                 var adiAuxFont = new Font("Lucida Console", 25, FontStyle.Bold);
                 var path = new GraphicsPath();
-                var adiAuxStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-                adiAuxStringFormat.Alignment = StringAlignment.Center;
-                adiAuxStringFormat.LineAlignment = StringAlignment.Near;
+                var adiAuxStringFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                             {
+                                                 Alignment = StringAlignment.Center,
+                                                 LineAlignment = StringAlignment.Near
+                                             };
                 var adiAuxTextLayoutRectangle = new Rectangle(location, new Size(60, 25));
                 path.AddString("AUX", adiAuxFont.FontFamily, (int) adiAuxFont.Style, adiAuxFont.SizeInPoints,
                                adiAuxTextLayoutRectangle, adiAuxStringFormat);
@@ -547,9 +549,11 @@ namespace F16CPD.FlightInstruments
                 var adiLocFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
 
                 var path = new GraphicsPath();
-                var adiLocFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap);
-                adiLocFlagStringFormat.Alignment = StringAlignment.Center;
-                adiLocFlagStringFormat.LineAlignment = StringAlignment.Near;
+                var adiLocFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                                 {
+                                                     Alignment = StringAlignment.Center,
+                                                     LineAlignment = StringAlignment.Near
+                                                 };
                 var adiLocFlagTextLayoutRectangle = new Rectangle(location, new Size(60, 25));
                 path.AddString("LOC", adiLocFlagFont.FontFamily, (int) adiLocFlagFont.Style, adiLocFlagFont.SizeInPoints,
                                adiLocFlagTextLayoutRectangle, adiLocFlagStringFormat);
@@ -684,10 +688,10 @@ namespace F16CPD.FlightInstruments
                 (int)
                 (centerYPfd - (_climbDiveMarkerSymbol.Height/2) + (aoaAngleDegrees*pixelsSeparationPerDegreeOfPitch) - 7) +
                 1;
-            int minCdmCenterX = 130;
-            int minCdmCenterY = 30;
-            int maxCdmX = 470;
-            int maxCdmY = 420;
+            const int minCdmCenterX = 130;
+            const int minCdmCenterY = 30;
+            const int maxCdmX = 470;
+            const int maxCdmY = 420;
 
             bool climbDiveMarkerOutOfBounds = false;
             if (climbDiveMarkerCenterX < minCdmCenterX)
@@ -712,14 +716,8 @@ namespace F16CPD.FlightInstruments
             }
             if (!Manager.FlightData.AdiOffFlag)
             {
-                if (climbDiveMarkerOutOfBounds)
-                {
-                    g.DrawImage(_cagedClimbDiveMarkerSymbol, climbDiveMarkerCenterX, climbDiveMarkerCenterY);
-                }
-                else
-                {
-                    g.DrawImage(_climbDiveMarkerSymbol, climbDiveMarkerCenterX, climbDiveMarkerCenterY);
-                }
+                g.DrawImage(climbDiveMarkerOutOfBounds ? _cagedClimbDiveMarkerSymbol : _climbDiveMarkerSymbol,
+                            climbDiveMarkerCenterX, climbDiveMarkerCenterY);
             }
         }
 
@@ -727,28 +725,21 @@ namespace F16CPD.FlightInstruments
         {
             var whitePen = new Pen(Color.White);
             //draw rate of turn indicator
-            int dashWidth = 31;
-            int dashHeight = 5;
-            int leftDashX = 222;
-            int leftDashY = 450;
+            const int dashWidth = 31;
+            const int dashHeight = 5;
+            const int leftDashX = 222;
+            const int leftDashY = 450;
             var dashWhitePen = new Pen(Color.White);
             var dashRedPen = new Pen(Color.FromArgb(89, 1, 0));
-            Pen pen = null;
-            for (int i = 1; i <= 5; i++)
+            Pen pen;
+            for (var i = 1; i <= 5; i++)
             {
-                if (i%2 == 1)
-                {
-                    pen = dashWhitePen;
-                }
-                else
-                {
-                    pen = dashRedPen;
-                }
+                pen = i%2 == 1 ? dashWhitePen : dashRedPen;
                 pen.Width = dashHeight;
                 g.DrawLine(pen, new Point(leftDashX + (dashWidth*(i - 1)), leftDashY),
                            new Point(leftDashX + (dashWidth*(i)), leftDashY));
             }
-            var rateOfTurnXRange = (int) ((dashWidth*4.0f));
+            const int rateOfTurnXRange = (int) ((dashWidth*4.0f));
             int rateOfTurnCenterXPos = leftDashX + (rateOfTurnXRange/2) + (dashWidth/2);
             float instantaneousRateOfTurn = Manager.FlightData.RateOfTurnInDecimalDegreesPerSecond;
             float indicatedRateOfTurn = LimitRateOfTurn(instantaneousRateOfTurn);
@@ -799,24 +790,32 @@ namespace F16CPD.FlightInstruments
             var aglRectangle = new Rectangle(new Point(537, 457), new Size(63, 16));
             var aglOutlineRectangle = new Rectangle(new Point(532, 453), new Size(74, 24));
 
-            var groundSpeedFormat = new StringFormat(StringFormatFlags.NoWrap);
-            groundSpeedFormat.Alignment = StringAlignment.Near;
-            groundSpeedFormat.LineAlignment = StringAlignment.Center;
+            var groundSpeedFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                        {
+                                            Alignment = StringAlignment.Near,
+                                            LineAlignment = StringAlignment.Center
+                                        };
             groundSpeedFormat.FormatFlags |= StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
 
-            var machFormat = new StringFormat(StringFormatFlags.NoWrap);
-            machFormat.Alignment = StringAlignment.Near;
-            machFormat.LineAlignment = StringAlignment.Center;
+            var machFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                 {
+                                     Alignment = StringAlignment.Near,
+                                     LineAlignment = StringAlignment.Center
+                                 };
             machFormat.FormatFlags |= StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
 
-            var alowFormat = new StringFormat(StringFormatFlags.NoWrap);
-            alowFormat.Alignment = StringAlignment.Far;
-            alowFormat.LineAlignment = StringAlignment.Near;
+            var alowFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                 {
+                                     Alignment = StringAlignment.Far,
+                                     LineAlignment = StringAlignment.Near
+                                 };
             alowFormat.FormatFlags |= StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
 
-            var aglFormat = new StringFormat(StringFormatFlags.NoWrap);
-            aglFormat.Alignment = StringAlignment.Far;
-            aglFormat.LineAlignment = StringAlignment.Near;
+            var aglFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                {
+                                    Alignment = StringAlignment.Far,
+                                    LineAlignment = StringAlignment.Near
+                                };
             aglFormat.FormatFlags |= StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
 
             var path = new GraphicsPath();
@@ -855,8 +854,6 @@ namespace F16CPD.FlightInstruments
             var vviBoundingBox = new Rectangle(new Point(473, 111), new Size(27, 256));
             var vviUpperBoundingBox = new Rectangle(new Point(vviBoundingBox.Left, vviBoundingBox.Top),
                                                     new Size(vviBoundingBox.Width, centerYPfd - vviBoundingBox.Top));
-            var vviLowerBoundingBox = new Rectangle(new Point(vviBoundingBox.Left, vviUpperBoundingBox.Bottom + 1),
-                                                    new Size(vviBoundingBox.Width, vviBoundingBox.Bottom - centerYPfd));
 
             //draw vertical velocity tape Bitmap
             float verticalVelocityFpm = (Manager.FlightData.VerticalVelocityInDecimalFeetPerSecond*60);
@@ -872,8 +869,7 @@ namespace F16CPD.FlightInstruments
             var path = new GraphicsPath();
             var pointList = new List<Point>();
 
-            Bitmap verticalVelocityTapeBitmap = GetVerticalVelocityTapeBitmap(verticalVelocityKFpmNormalized,
-                                                                              vviBoundingBox.Width,
+            var verticalVelocityTapeBitmap = GetVerticalVelocityTapeBitmap(vviBoundingBox.Width,
                                                                               vviBoundingBox.Height);
 
             g.DrawImage(
@@ -921,18 +917,12 @@ namespace F16CPD.FlightInstruments
                 g.DrawPath(blackPen, path);
 
                 //draw VVI quantity text
-                string vviQuantity = null;
-                if (Settings.Default.DisplayVerticalVelocityInDecimalThousands)
-                {
-                    vviQuantity = string.Format("{0:0.0}", verticalVelocityFpm/1000.0f);
-                }
-                else
-                {
-                    vviQuantity = string.Format("{0:0}", verticalVelocityFpm);
-                }
-                var vviQuantityFormat = new StringFormat(StringFormatFlags.NoWrap);
-                vviQuantityFormat.Alignment = StringAlignment.Far; //right justify
-                vviQuantityFormat.LineAlignment = StringAlignment.Near;
+                string vviQuantity = Settings.Default.DisplayVerticalVelocityInDecimalThousands ? string.Format("{0:0.0}", verticalVelocityFpm/1000.0f) : string.Format("{0:0}", verticalVelocityFpm);
+                var vviQuantityFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                            {
+                                                Alignment = StringAlignment.Far,
+                                                LineAlignment = StringAlignment.Near
+                                            };
                 float fontSize = vviTotalFont.Size;
                 if (vviQuantity.Length > 4)
                 {
@@ -1002,11 +992,11 @@ namespace F16CPD.FlightInstruments
             //draw left AOA indicator triangle
             var aoaTriangleLeftPoints = new Point[3];
             aoaTriangleLeftPoints[0] = new Point(aoaStripBoundingBox.Left, centerYPfd);
-                //right-most point on left triangle
+            //right-most point on left triangle
             aoaTriangleLeftPoints[1] = new Point(aoaStripBoundingBox.Left - 16, centerYPfd - 10);
-                //upper point on left triangle
+            //upper point on left triangle
             aoaTriangleLeftPoints[2] = new Point(aoaStripBoundingBox.Left - 16, centerYPfd + 10);
-                //lower point on left triangle
+            //lower point on left triangle
             g.FillPolygon(Brushes.Black, aoaTriangleLeftPoints);
             whitePen.Width = 1;
             g.DrawPolygon(whitePen, aoaTriangleLeftPoints);
@@ -1014,11 +1004,11 @@ namespace F16CPD.FlightInstruments
             //draw right AOA indicator triangle
             var aoaTriangleRightPoints = new Point[3];
             aoaTriangleRightPoints[0] = new Point(aoaStripBoundingBox.Right, centerYPfd);
-                //left-most point on right triangle
+            //left-most point on right triangle
             aoaTriangleRightPoints[1] = new Point(aoaStripBoundingBox.Right + 16, centerYPfd - 10);
-                //upper point on left triangle
+            //upper point on left triangle
             aoaTriangleRightPoints[2] = new Point(aoaStripBoundingBox.Right + 16, centerYPfd + 10);
-                //lower point on left triangle
+            //lower point on left triangle
             g.FillPolygon(Brushes.Black, aoaTriangleRightPoints);
             whitePen.Width = 1;
             g.DrawPolygon(whitePen, aoaTriangleRightPoints);
@@ -1034,53 +1024,31 @@ namespace F16CPD.FlightInstruments
         private void DrawMarkerBeacon(Graphics g, Point topGlideSlopeMarkerCenterPoint)
         {
             //Draw MARKER BEACON light
-            Color greenColor = Color.FromArgb(0, 255, 0);
-            Brush greenBrush = new SolidBrush(greenColor);
-            Color blueColor = Color.FromArgb(0, 128, 255);
-            Brush blueBrush = new SolidBrush(blueColor);
-            Color amberColor = Color.FromArgb(255, 191, 0);
-            Brush amberBrush = new SolidBrush(amberColor);
+            var greenColor = Color.FromArgb(0, 255, 0);
+            var greenBrush = new SolidBrush(greenColor);
             var markerBeaconFont = new Font("Lucida Console", 10, FontStyle.Bold);
 
             var markerBeaconIndicatorRectangle = new Rectangle(topGlideSlopeMarkerCenterPoint.X, 430, 30, 30);
-            Brush markerBeaconBackgroundBrush = null;
+            Brush markerBeaconBackgroundBrush;
             if (Manager.FlightData.MarkerBeaconOuterMarkerFlag)
             {
-                if (!Manager.NightMode)
-                {
-                    //markerBeaconBackgroundBrush = blueBrush;
-                    markerBeaconBackgroundBrush = greenBrush;
-                }
-                else
-                {
-                    markerBeaconBackgroundBrush = greenBrush;
-                }
+                markerBeaconBackgroundBrush = greenBrush;
             }
             else if (Manager.FlightData.MarkerBeaconMiddleMarkerFlag)
             {
-                if (!Manager.NightMode)
-                {
-                    //markerBeaconBackgroundBrush = amberBrush;
-                    markerBeaconBackgroundBrush = greenBrush;
-                }
-                else
-                {
-                    markerBeaconBackgroundBrush = greenBrush;
-                }
+                markerBeaconBackgroundBrush = greenBrush;
             }
             else
             {
                 markerBeaconBackgroundBrush = Brushes.Black;
             }
             g.FillEllipse(markerBeaconBackgroundBrush, markerBeaconIndicatorRectangle);
-            string markerBeaconString = "MRK\nBCN";
+            const string markerBeaconString = "MRK\nBCN";
             var path = new GraphicsPath();
-            var sf = new StringFormat();
-            sf.LineAlignment = StringAlignment.Center;
-            sf.Alignment = StringAlignment.Center;
+            var sf = new StringFormat {LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center};
             path.AddString(markerBeaconString, markerBeaconFont.FontFamily, (int) markerBeaconFont.Style,
                            markerBeaconFont.SizeInPoints, markerBeaconIndicatorRectangle, sf);
-            Brush markerBeaconTextBrush = null;
+            Brush markerBeaconTextBrush;
             if (Manager.FlightData.MarkerBeaconOuterMarkerFlag || Manager.FlightData.MarkerBeaconMiddleMarkerFlag)
             {
                 markerBeaconTextBrush = Brushes.Black;
@@ -1128,9 +1096,9 @@ namespace F16CPD.FlightInstruments
                 //perform our own simulated indicated altitude adjustment for F4 versions that do not support the barometer setting
             {
                 float baroDifference = Manager.FlightData.BarometricPressureInDecimalInchesOfMercury - 29.92f;
-                float indicatedAltitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
+                float indicatedAltitudeCorrection = (baroDifference/BARO_CHANGE_PER_THOUSAND_FEET)*1000.0f;
                 indicatedAltitude = trueAltitudeMsl + indicatedAltitudeCorrection;
-                    //correct indicated altitude for current baro pressure setting
+                //correct indicated altitude for current baro pressure setting
             }
 
             Bitmap altitudeTapeBitmap = GetAltitudeTapeBitmap(indicatedAltitude, altitudeStripBoundingBox.Width - 1,
@@ -1149,9 +1117,11 @@ namespace F16CPD.FlightInstruments
             g.DrawRectangle(blackPen, altitudeStripBoundingBox);
 
             //draw altitude index box
-            var altitudeIndexFormat = new StringFormat(StringFormatFlags.NoWrap);
-            altitudeIndexFormat.Alignment = StringAlignment.Center;
-            altitudeIndexFormat.LineAlignment = StringAlignment.Center;
+            var altitudeIndexFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                          {
+                                              Alignment = StringAlignment.Center,
+                                              LineAlignment = StringAlignment.Center
+                                          };
             g.FillRectangle(Brushes.Black, altitudeIndexBox);
 
             //add altitude index text to altitude index box
@@ -1170,9 +1140,11 @@ namespace F16CPD.FlightInstruments
                        altitudeStripBoundingBox.Right, altitudeStripBoundingBox.Bottom);
 
             //draw barometric pressure box
-            var baroPressureFormat = new StringFormat(StringFormatFlags.NoWrap);
-            baroPressureFormat.Alignment = StringAlignment.Center;
-            baroPressureFormat.LineAlignment = StringAlignment.Center;
+            var baroPressureFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                         {
+                                             Alignment = StringAlignment.Center,
+                                             LineAlignment = StringAlignment.Center
+                                         };
             g.FillRectangle(Brushes.Black, barometricPressureBox);
 
             float barometricPressure = Manager.FlightData.BarometricPressureInDecimalInchesOfMercury;
@@ -1229,9 +1201,11 @@ namespace F16CPD.FlightInstruments
             g.DrawImage(onesDigitBitmap, onesDigitRectangle);
 
             var altitudeFeetTextRectangle = new Rectangle(new Point(540, 210), new Size(45, 10));
-            var altitudeFeetTextFormat = new StringFormat(StringFormatFlags.NoWrap);
-            altitudeFeetTextFormat.Alignment = StringAlignment.Center;
-            altitudeFeetTextFormat.LineAlignment = StringAlignment.Center;
+            var altitudeFeetTextFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                             {
+                                                 Alignment = StringAlignment.Center,
+                                                 LineAlignment = StringAlignment.Center
+                                             };
             altitudeFeetTextFormat.FormatFlags |= StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
             var path = new GraphicsPath();
             path.AddString("FEET", altitudeFeetTextFont.FontFamily, (int) altitudeFeetTextFont.Style,
@@ -1245,13 +1219,6 @@ namespace F16CPD.FlightInstruments
             //************************************
             //AIRSPEED TAPE
             //************************************
-
-            Point pointA, pointB, pointC, pointD, pointE, pointF, pointG, pointH, pointI, pointJ, pointK;
-            Point[] points;
-
-            Bitmap hundredsDigit, tensDigit, onesDigits;
-
-            Rectangle hundredsDigitRectangle, tensDigitRectangle, onesDigitRectangle, onesDigitsRectangle;
 
             var airspeedIndexFont = new Font("Lucida Console", 13, FontStyle.Bold);
             var airspeedKtsFont = new Font("Lucida Console", 14, FontStyle.Bold);
@@ -1288,9 +1255,11 @@ namespace F16CPD.FlightInstruments
             g.DrawRectangle(new Pen(Color.Black), airspeedStripBoundingBox);
 
             //draw airspeed index box
-            var airspeedIndexFormat = new StringFormat(StringFormatFlags.NoWrap);
-            airspeedIndexFormat.Alignment = StringAlignment.Center;
-            airspeedIndexFormat.LineAlignment = StringAlignment.Center;
+            var airspeedIndexFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                          {
+                                              Alignment = StringAlignment.Center,
+                                              LineAlignment = StringAlignment.Center
+                                          };
             g.FillRectangle(Brushes.Black, airspeedIndexBox);
 
             //add airspeed index text to index box
@@ -1298,8 +1267,7 @@ namespace F16CPD.FlightInstruments
                          airspeedIndexTextBox, airspeedIndexFormat);
 
             //draw white line under airspeed index box
-            var whitePen = new Pen(Color.White);
-            whitePen.Width = 2;
+            var whitePen = new Pen(Color.White) {Width = 2};
             g.DrawLine(whitePen, airspeedIndexBox.Left, airspeedIndexBox.Bottom, airspeedIndexBox.Right,
                        airspeedIndexBox.Bottom);
 
@@ -1309,44 +1277,44 @@ namespace F16CPD.FlightInstruments
                        airspeedStripBoundingBox.Right, airspeedStripBoundingBox.Bottom);
 
             //draw airspeed counter box
-            pointA = new Point(
+            var pointA = new Point(
                 2, 222);
-            pointB = new Point(
+            var pointB = new Point(
                 2, 255);
-            pointC = new Point(
+            var pointC = new Point(
                 26, 255);
-            pointD = new Point(
+            var pointD = new Point(
                 26, 267);
-            pointE = new Point(
+            var pointE = new Point(
                 47, 267);
-            pointF = new Point(
+            var pointF = new Point(
                 47, 243);
-            pointG = new Point(
+            var pointG = new Point(
                 54, 239);
-            pointH = new Point(
+            var pointH = new Point(
                 47, 234);
-            pointI = new Point(
+            var pointI = new Point(
                 47, 212);
-            pointJ = new Point(
+            var pointJ = new Point(
                 26, 212);
-            pointK = new Point(
+            var pointK = new Point(
                 26, 222);
 
             whitePen.Width = 1;
-            points = new[] {pointA, pointB, pointC, pointD, pointE, pointF, pointG, pointH, pointI, pointJ, pointK};
+            var points = new[] {pointA, pointB, pointC, pointD, pointE, pointF, pointG, pointH, pointI, pointJ, pointK};
             g.FillPolygon(Brushes.Black, points);
             g.DrawPolygon(whitePen, points);
 
             string airspeedString = string.Format("{0:0000}", Math.Truncate(airspeedKnots));
-            hundredsDigit = GetSingleDigitBitmap(Int32.Parse(new String(airspeedString[1], 1)));
-            tensDigit = GetSingleDigitBitmap(Int32.Parse(new String(airspeedString[2], 1)));
+            Bitmap hundredsDigit = GetSingleDigitBitmap(Int32.Parse(new String(airspeedString[1], 1)));
+            Bitmap tensDigit = GetSingleDigitBitmap(Int32.Parse(new String(airspeedString[2], 1)));
             int onesVal = Int32.Parse(new String(airspeedString[3], 1));
             var onesFrac = (float) Math.Round((onesVal + (airspeedKnots - Math.Truncate(airspeedKnots))), 1);
-            onesDigits = GetSingleDigitBitmap(onesFrac, true);
-            hundredsDigitRectangle = new Rectangle(new Point(5, 230),
-                                                   new Size(hundredsDigit.Width, hundredsDigit.Height));
-            tensDigitRectangle = new Rectangle(new Point(18, 230), new Size(tensDigit.Width, tensDigit.Height));
-            onesDigitsRectangle = new Rectangle(new Point(32, 217), new Size(onesDigits.Width, onesDigits.Height));
+            Bitmap onesDigits = GetSingleDigitBitmap(onesFrac, true);
+            var hundredsDigitRectangle = new Rectangle(new Point(5, 230),
+                                                             new Size(hundredsDigit.Width, hundredsDigit.Height));
+            var tensDigitRectangle = new Rectangle(new Point(18, 230), new Size(tensDigit.Width, tensDigit.Height));
+            var onesDigitsRectangle = new Rectangle(new Point(32, 217), new Size(onesDigits.Width, onesDigits.Height));
 
             //draw airspeed counter digits
             g.DrawImage(hundredsDigit, hundredsDigitRectangle);
@@ -1354,9 +1322,11 @@ namespace F16CPD.FlightInstruments
             g.DrawImage(onesDigits, onesDigitsRectangle);
 
             var airspeedKtsRectangle = new Rectangle(new Point(15, 200), new Size(40, 15));
-            var airspeedKtsFormat = new StringFormat(StringFormatFlags.NoWrap);
-            airspeedKtsFormat.Alignment = StringAlignment.Center;
-            airspeedKtsFormat.LineAlignment = StringAlignment.Center;
+            var airspeedKtsFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                        {
+                                            Alignment = StringAlignment.Center,
+                                            LineAlignment = StringAlignment.Center
+                                        };
             airspeedKtsFormat.FormatFlags |= StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox;
             var path = new GraphicsPath();
             path.AddString("KTS", airspeedKtsFont.FontFamily, (int) airspeedKtsFont.Style, airspeedKtsFont.SizeInPoints,
@@ -1365,13 +1335,13 @@ namespace F16CPD.FlightInstruments
             g.FillPath(Brushes.White, path);
         }
 
-        private float LimitRateOfTurn(float instantaneousRateOfTurnDegreesPerSecond)
+        private static float LimitRateOfTurn(float instantaneousRateOfTurnDegreesPerSecond)
         {
             float indicatedRateOfTurnDegreesPerSecond = instantaneousRateOfTurnDegreesPerSecond;
 
             /*  LIMIT INDICATED RATE OF TURN TO BE WITHIN CERTAIN OUTER BOUNDARIES */
-            float maxIndicatedRateOfTurnDegreesPerSecond = MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.75f;
-            float minIndicatedRateOfTurnDegreesPerSecond = -maxIndicatedRateOfTurnDegreesPerSecond;
+            const float maxIndicatedRateOfTurnDegreesPerSecond = MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.75f;
+            const float minIndicatedRateOfTurnDegreesPerSecond = -maxIndicatedRateOfTurnDegreesPerSecond;
 
             if (instantaneousRateOfTurnDegreesPerSecond < minIndicatedRateOfTurnDegreesPerSecond)
             {
@@ -1386,7 +1356,7 @@ namespace F16CPD.FlightInstruments
 
         private Bitmap GetAltitudeTapeBitmap(float altitudeInFeet, int widthPixels, int heightPixels)
         {
-            int verticalSeparationBetweenTicks = 10;
+            const int verticalSeparationBetweenTicks = 10;
 
             var thousands = (int) (altitudeInFeet/1000.0f);
 
@@ -1417,8 +1387,8 @@ namespace F16CPD.FlightInstruments
 
             var start = (Bitmap) _altitudeTapes[thousands + 4].Clone();
             var centerPoint = new Point(start.Width/2, start.Height/2);
-            int altitudeBetweenTicksInFeet = 20;
-            float pixelsSeparationPerFootOfAltitude = verticalSeparationBetweenTicks/(float) altitudeBetweenTicksInFeet;
+            const int altitudeBetweenTicksInFeet = 20;
+            const float pixelsSeparationPerFootOfAltitude = verticalSeparationBetweenTicks/(float) altitudeBetweenTicksInFeet;
             int currentValY = centerPoint.Y -
                               ((int) (((altitudeInFeet - (thousands*1000))*pixelsSeparationPerFootOfAltitude)));
             int topY = (currentValY - (heightPixels/2));
@@ -1466,10 +1436,10 @@ namespace F16CPD.FlightInstruments
             return cropped;
         }
 
-        private Bitmap GetVerticalVelocityTapeBitmap(float verticalVelocity, int widthPixels, int heightPixels)
+        private Bitmap GetVerticalVelocityTapeBitmap(int widthPixels, int heightPixels)
         {
-            verticalVelocity = 0; //override passed-in vertical velocity so tape doesn't move
-            int verticalSeparationBetweenTicks = 20;
+            float verticalVelocity = 0; //override passed-in vertical velocity so tape doesn't move
+            const int verticalSeparationBetweenTicks = 20;
             if (_vviTape == null)
             {
                 _vviTape = GenerateValuesTape(
@@ -1495,9 +1465,9 @@ namespace F16CPD.FlightInstruments
                     );
                 Bitmap start = _vviTape;
                 var centerPoint = new Point(start.Width/2, start.Height/2);
-                int velocityBetweenTicksInHundredFps = 1; //in hundreds of feet per second
-                float pixelsSeparationPerHundredFps = verticalSeparationBetweenTicks/
-                                                      (float) velocityBetweenTicksInHundredFps;
+                const int velocityBetweenTicksInHundredFps = 1;
+                const float pixelsSeparationPerHundredFps = verticalSeparationBetweenTicks/
+                                                            (float) velocityBetweenTicksInHundredFps;
                 int currentValY = centerPoint.Y - ((int) ((verticalVelocity*pixelsSeparationPerHundredFps)));
                 int topY = (currentValY - (heightPixels/2));
                 int bottomY = (currentValY + (heightPixels/2));
@@ -1517,9 +1487,9 @@ namespace F16CPD.FlightInstruments
                 //cut zero-mark cutout into tape
                 using (Graphics g = Graphics.FromImage(cropped))
                 {
-                    int centerY = (cropped.Height/2);
-                    int rightX = cropped.Width;
-                    int leftX = 0;
+                    var centerY = (cropped.Height/2);
+                    var rightX = cropped.Width;
+                    const int leftX = 0;
                     var upperRightTriangleCorner = new Point(rightX, centerY - 20);
                     var lowerRightTriangleCorner = new Point(rightX, centerY + 20);
                     var middleLeftTriangleCorner = new Point(leftX, centerY);
@@ -1534,28 +1504,34 @@ namespace F16CPD.FlightInstruments
 
         private Bitmap GetAoATapeBitmap(float aoaInDegrees, int widthPixels, int heightPixels)
         {
-            int verticalSeparationBetweenTicks = 10;
-            int scaleMaxVal = 90;
-            int scaleMinVal = -90;
+            const int verticalSeparationBetweenTicks = 10;
+            const int scaleMaxVal = 90;
+            const int scaleMinVal = -90;
             if (aoaInDegrees > scaleMaxVal) aoaInDegrees = scaleMaxVal;
             if (aoaInDegrees < scaleMinVal) aoaInDegrees = scaleMinVal;
             if (_aoaTape == null)
             {
-                var aoaYellow = new TapeEdgeColoringInstruction();
-                aoaYellow.color = Color.Yellow;
-                aoaYellow.minVal = AOA_YELLOW_RANGE_MIN_ANGLE_DEGREES;
-                aoaYellow.maxVal = AOA_YELLOW_RANGE_MAX_ANGLE_DEGREES;
+                var aoaYellow = new TapeEdgeColoringInstruction
+                                    {
+                                        Color = Color.Yellow,
+                                        MinVal = AOA_YELLOW_RANGE_MIN_ANGLE_DEGREES,
+                                        MaxVal = AOA_YELLOW_RANGE_MAX_ANGLE_DEGREES
+                                    };
 
-                var aoaGreen = new TapeEdgeColoringInstruction();
-                aoaGreen.color = Color.Green;
-                aoaGreen.minVal = AOA_GREEN_RANGE_MIN_ANGLE_DEGREES;
-                aoaGreen.maxVal = AOA_GREEN_RANGE_MAX_ANGLE_DEGREES;
+                var aoaGreen = new TapeEdgeColoringInstruction
+                                   {
+                                       Color = Color.Green,
+                                       MinVal = AOA_GREEN_RANGE_MIN_ANGLE_DEGREES,
+                                       MaxVal = AOA_GREEN_RANGE_MAX_ANGLE_DEGREES
+                                   };
 
 
-                var aoaRed = new TapeEdgeColoringInstruction();
-                aoaRed.color = Color.Red;
-                aoaRed.minVal = AOA_RED_RANGE_MIN_ANGLE_DEGREES;
-                aoaRed.maxVal = AOA_RED_RANGE_MAX_ANGLE_DEGREES;
+                var aoaRed = new TapeEdgeColoringInstruction
+                                 {
+                                     Color = Color.Red,
+                                     MinVal = AOA_RED_RANGE_MIN_ANGLE_DEGREES,
+                                     MaxVal = AOA_RED_RANGE_MAX_ANGLE_DEGREES
+                                 };
 
                 _aoaTape = GenerateValuesTape(
                     Color.FromArgb(160, Color.Gray), //positiveBackgroundColor
@@ -1582,11 +1558,11 @@ namespace F16CPD.FlightInstruments
 
             Bitmap start = _aoaTape;
             var centerPoint = new Point(start.Width/2, start.Height/2);
-            int quantityBetweenTicksInDegreesAoa = 1;
-            float pixelsSeparationPerDegreeAoa = verticalSeparationBetweenTicks/(float) quantityBetweenTicksInDegreesAoa;
-            int currentValY = centerPoint.Y - ((int) ((aoaInDegrees*pixelsSeparationPerDegreeAoa)));
-            int topY = (currentValY - (heightPixels/2));
-            int bottomY = (currentValY + (heightPixels/2));
+            const int quantityBetweenTicksInDegreesAoa = 1;
+            const float pixelsSeparationPerDegreeAoa = verticalSeparationBetweenTicks/(float) quantityBetweenTicksInDegreesAoa;
+            var currentValY = centerPoint.Y - ((int) ((aoaInDegrees*pixelsSeparationPerDegreeAoa)));
+            var topY = (currentValY - (heightPixels/2));
+            var bottomY = (currentValY + (heightPixels/2));
 
             var topLeftCrop = new Point(0, topY);
             var bottomRightCrop = new Point(start.Width, bottomY);
@@ -1605,9 +1581,9 @@ namespace F16CPD.FlightInstruments
 
         private Bitmap GetAirspeedTapeBitmap(float indicatedAirspeedKnots, int widthPixels, int heightPixels)
         {
-            int verticalSeparationBetweenTicks = 9;
-            int scaleMaxVal = 1200;
-            int scaleMinVal = -1200;
+            const int verticalSeparationBetweenTicks = 9;
+            const int scaleMaxVal = 1200;
+            const int scaleMinVal = -1200;
             if (indicatedAirspeedKnots > scaleMaxVal) indicatedAirspeedKnots = scaleMaxVal;
             if (indicatedAirspeedKnots < scaleMinVal) indicatedAirspeedKnots = scaleMinVal;
 
@@ -1640,8 +1616,8 @@ namespace F16CPD.FlightInstruments
             var start = (Bitmap) _airspeedTape.Clone();
 
             var centerPoint = new Point(start.Width/2, start.Height/2);
-            int knotsBetweenTicks = 20;
-            float pixelsSeparationPerKnot = verticalSeparationBetweenTicks/(float) knotsBetweenTicks;
+            const int knotsBetweenTicks = 20;
+            const float pixelsSeparationPerKnot = verticalSeparationBetweenTicks/(float) knotsBetweenTicks;
             int currentAirspeedY = centerPoint.Y - ((int) ((indicatedAirspeedKnots*pixelsSeparationPerKnot)));
 
 
@@ -1691,18 +1667,18 @@ namespace F16CPD.FlightInstruments
             return cropped;
         }
 
-        private Bitmap GetAdiPitchLadder(float degreesPitch, float degreesRoll, int width, int height)
+        private Bitmap GetAdiPitchLadder(float degreesPitch, float degreesRoll)
         {
             if (_adiPitchBars == null)
             {
                 _adiPitchBars = GenerateAdiPitchBarBitmap();
             }
-            Bitmap start = _adiPitchBars;
+            var start = _adiPitchBars;
             var centerPoint = new Point(start.Width/2, start.Height/2);
 
-            int verticalDistanceBetweenPitchLines = 25;
-            int degreesBetweenTicks = 5;
-            float pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines/degreesBetweenTicks;
+            const int verticalDistanceBetweenPitchLines = 25;
+            const int degreesBetweenTicks = 5;
+            const float pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines/degreesBetweenTicks;
             int currentPitchY = centerPoint.Y - ((int) ((degreesPitch*pixelsSeparationPerDegreeOfPitch)));
             var topY = (int) (currentPitchY - (25*pixelsSeparationPerDegreeOfPitch));
             var bottomY = (int) (currentPitchY + (25*pixelsSeparationPerDegreeOfPitch) + 1);
@@ -1719,7 +1695,7 @@ namespace F16CPD.FlightInstruments
                                               bottomRightCrop.Y - topLeftCrop.Y);
             //Bitmap cropped = Common.Imaging.Util.CropBitmap(start, cropRectangle);
 
-            int heightOffset = 44;
+            const int heightOffset = 44;
             var adi = new Bitmap(cropRectangle.Height + (heightOffset*2), cropRectangle.Height + (heightOffset*2),
                                  PixelFormat.Format16bppRgb565);
             adi.MakeTransparent();
@@ -1752,20 +1728,19 @@ namespace F16CPD.FlightInstruments
 
         private static Bitmap GenerateAdiPitchBarBitmap()
         {
-            bool useBentPitchLines = false;
-            int positivePitchLineExtenderHeightPixels = 14;
-            int negativePitchLineExtenderHeightPixels = 13;
-            int negativePitchInsideDashWidthPixels = 13;
-            int negativePitchDashGapPixels = 13;
-            int negativePitchMiddleDashWidthPixels = 11;
-            int negativePitchOuterDashWidthPixels = 11;
+            const int positivePitchLineExtenderHeightPixels = 14;
+            const int negativePitchLineExtenderHeightPixels = 13;
+            const int negativePitchInsideDashWidthPixels = 13;
+            const int negativePitchDashGapPixels = 13;
+            const int negativePitchMiddleDashWidthPixels = 11;
+            const int negativePitchOuterDashWidthPixels = 11;
 
-            int majorPositivePitchLineWidthPixels = 61;
-            int minorPositivePitchLineWidthPixels = 39;
-            int verticalDistanceBetweenPitchLines = 25;
-            int degreesBetweenTicks = 5;
-            int pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines/degreesBetweenTicks;
-            int horizontalOffsetPixelsFromCenterLine = 28;
+            const int majorPositivePitchLineWidthPixels = 61;
+            const int minorPositivePitchLineWidthPixels = 39;
+            const int verticalDistanceBetweenPitchLines = 25;
+            const int degreesBetweenTicks = 5;
+            const int pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines/degreesBetweenTicks;
+            const int horizontalOffsetPixelsFromCenterLine = 28;
 
             var labelFont = new Font("Lucida Console", 10, FontStyle.Bold);
 
@@ -1783,14 +1758,13 @@ namespace F16CPD.FlightInstruments
             int centerPointX = boundingRectangle.Left + (boundingRectangle.Width/2);
             var whitePen = new Pen(Color.White);
             Brush whiteBrush = new SolidBrush(Color.White);
-            using (Graphics g = Graphics.FromImage(bitmap))
+            using (var g = Graphics.FromImage(bitmap))
             {
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
                 g.CompositingQuality = CompositingQuality.HighSpeed;
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 whitePen.Width = 2;
-                Matrix origTransform = g.Transform;
 
                 //produce positive pitch lines
                 for (int i = 5; i < 90; i += degreesBetweenTicks)
@@ -1801,18 +1775,12 @@ namespace F16CPD.FlightInstruments
                     {
                         pitchLineWidthPixels = majorPositivePitchLineWidthPixels;
 
-                        if (useBentPitchLines)
-                        {
-                            g.Transform = origTransform;
-                            g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                            g.RotateTransform(i/2);
-                            g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
-                        }
-
                         //print the label for this pitch line
-                        var labelFormat = new StringFormat(StringFormatFlags.NoWrap);
-                        labelFormat.Alignment = StringAlignment.Near;
-                        labelFormat.LineAlignment = StringAlignment.Center;
+                        var labelFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                              {
+                                                  Alignment = StringAlignment.Near,
+                                                  LineAlignment = StringAlignment.Center
+                                              };
                         g.DrawString(string.Format("{0:0}", i), labelFont, whiteBrush,
                                      new Point(0, pitchLineCenterY + 7), labelFormat);
                     }
@@ -1824,44 +1792,20 @@ namespace F16CPD.FlightInstruments
                     int rhsPitchLineMaxX = centerPointX + pitchLineWidthPixels + horizontalOffsetPixelsFromCenterLine;
                     int rhsPitchLineExtenderBottomY = pitchLineCenterY + positivePitchLineExtenderHeightPixels;
 
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                        g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                        g.RotateTransform(i/2);
-                        g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
-                    }
                     g.DrawLine(whitePen, lhsPitchLineMinX, pitchLineCenterY, lhsPitchLineMaxX, pitchLineCenterY);
-                        //draw LHS pitch line
+                    //draw LHS pitch line
                     g.DrawLine(whitePen, lhsPitchLineMinX, pitchLineCenterY, lhsPitchLineMinX,
                                lhsPitchLineExtenderBottomY); //draw LHS pitch line extender
 
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                        g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                        g.RotateTransform(-i/2);
-                        g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
-                    }
                     g.DrawLine(whitePen, rhsPitchLineMinX, pitchLineCenterY, rhsPitchLineMaxX, pitchLineCenterY);
-                        //draw RHS pitch line
+                    //draw RHS pitch line
                     g.DrawLine(whitePen, rhsPitchLineMaxX, pitchLineCenterY, rhsPitchLineMaxX,
                                rhsPitchLineExtenderBottomY); //draw RHS pitch line extender
-
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                    }
-                }
-
-                if (useBentPitchLines)
-                {
-                    g.Transform = origTransform;
                 }
 
                 //draw the zenith symbol
                 whitePen.Width = 1;
-                int zenithSymbolWidth = 25;
+                const int zenithSymbolWidth = 25;
                 var zenithRectangle =
                     new Rectangle(
                         new Point(((positiveBoundingRectangle.Width - zenithSymbolWidth)/2),
@@ -1873,38 +1817,30 @@ namespace F16CPD.FlightInstruments
 
                 whitePen.Width = 2;
                 //produce negative pitch lines
-                for (int i = -5; i > -90; i -= degreesBetweenTicks)
+                for (var i = -5; i > -90; i -= degreesBetweenTicks)
                 {
-                    int pitchLineCenterY = negativeBoundingRectangle.Top +
+                    var pitchLineCenterY = negativeBoundingRectangle.Top +
                                            ((Math.Abs(i)*pixelsSeparationPerDegreeOfPitch));
-                    int pitchLineExtenderY = pitchLineCenterY - negativePitchLineExtenderHeightPixels;
-                    int lhsPitchLineInsideDashMinX = centerPointX - negativePitchInsideDashWidthPixels -
+                    var pitchLineExtenderY = pitchLineCenterY - negativePitchLineExtenderHeightPixels;
+                    var lhsPitchLineInsideDashMinX = centerPointX - negativePitchInsideDashWidthPixels -
                                                      horizontalOffsetPixelsFromCenterLine;
-                    int lhsPitchLineInsideDashMaxX = centerPointX - horizontalOffsetPixelsFromCenterLine;
-                    int lhsPitchLineMiddleDashMinX = lhsPitchLineInsideDashMinX - negativePitchDashGapPixels -
+                    var lhsPitchLineInsideDashMaxX = centerPointX - horizontalOffsetPixelsFromCenterLine;
+                    var lhsPitchLineMiddleDashMinX = lhsPitchLineInsideDashMinX - negativePitchDashGapPixels -
                                                      negativePitchMiddleDashWidthPixels;
-                    int lhsPitchLineMiddleDashMaxX = lhsPitchLineInsideDashMinX - negativePitchDashGapPixels;
-                    int lhsPitchLineOuterDashMinX = lhsPitchLineMiddleDashMinX - negativePitchDashGapPixels -
+                    var lhsPitchLineMiddleDashMaxX = lhsPitchLineInsideDashMinX - negativePitchDashGapPixels;
+                    var lhsPitchLineOuterDashMinX = lhsPitchLineMiddleDashMinX - negativePitchDashGapPixels -
                                                     negativePitchOuterDashWidthPixels;
-                    int lhsPitchLineOuterDashMaxX = lhsPitchLineMiddleDashMinX - negativePitchDashGapPixels;
+                    var lhsPitchLineOuterDashMaxX = lhsPitchLineMiddleDashMinX - negativePitchDashGapPixels;
 
-                    int rhsPitchLineInsideDashMinX = centerPointX + horizontalOffsetPixelsFromCenterLine;
-                    int rhsPitchLineInsideDashMaxX = centerPointX + negativePitchInsideDashWidthPixels +
+                    var rhsPitchLineInsideDashMinX = centerPointX + horizontalOffsetPixelsFromCenterLine;
+                    var rhsPitchLineInsideDashMaxX = centerPointX + negativePitchInsideDashWidthPixels +
                                                      horizontalOffsetPixelsFromCenterLine;
-                    int rhsPitchLineMiddleDashMinX = rhsPitchLineInsideDashMaxX + negativePitchDashGapPixels;
-                    int rhsPitchLineMiddleDashMaxX = rhsPitchLineInsideDashMaxX + negativePitchDashGapPixels +
+                    var rhsPitchLineMiddleDashMinX = rhsPitchLineInsideDashMaxX + negativePitchDashGapPixels;
+                    var rhsPitchLineMiddleDashMaxX = rhsPitchLineInsideDashMaxX + negativePitchDashGapPixels +
                                                      negativePitchMiddleDashWidthPixels;
-                    int rhsPitchLineOuterDashMinX = rhsPitchLineMiddleDashMaxX + negativePitchDashGapPixels;
-                    int rhsPitchLineOuterDashMaxX = rhsPitchLineMiddleDashMaxX + negativePitchDashGapPixels +
+                    var rhsPitchLineOuterDashMinX = rhsPitchLineMiddleDashMaxX + negativePitchDashGapPixels;
+                    var rhsPitchLineOuterDashMaxX = rhsPitchLineMiddleDashMaxX + negativePitchDashGapPixels +
                                                     negativePitchOuterDashWidthPixels;
-
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                        g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                        g.RotateTransform(i/2);
-                        g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
-                    }
 
                     g.DrawLine(whitePen, lhsPitchLineInsideDashMinX, pitchLineCenterY, lhsPitchLineInsideDashMaxX,
                                pitchLineCenterY); //draw LHS inside dash
@@ -1917,38 +1853,18 @@ namespace F16CPD.FlightInstruments
                                    pitchLineCenterY);
 
                         //print the label for this pitch line
-                        if (useBentPitchLines)
-                        {
-                            g.Transform = origTransform;
-                            g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                            g.RotateTransform(i/2);
-                            g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
-                        }
 
-                        var labelFormat = new StringFormat(StringFormatFlags.NoWrap);
-                        labelFormat.Alignment = StringAlignment.Near;
-                        labelFormat.LineAlignment = StringAlignment.Center;
+                        var labelFormat = new StringFormat(StringFormatFlags.NoWrap)
+                                              {
+                                                  Alignment = StringAlignment.Near,
+                                                  LineAlignment = StringAlignment.Center
+                                              };
                         g.DrawString(string.Format("{0:0}", Math.Abs(i)), labelFont, whiteBrush,
                                      new Point(0, pitchLineCenterY), labelFormat);
-                    }
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                        g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                        g.RotateTransform(i/2);
-                        g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
                     }
                     //draw the LHS pitch extender line
                     g.DrawLine(whitePen, lhsPitchLineInsideDashMaxX, pitchLineCenterY, lhsPitchLineInsideDashMaxX,
                                pitchLineExtenderY);
-
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                        g.TranslateTransform(bitmap.Width/2, pitchLineCenterY);
-                        g.RotateTransform(-i/2);
-                        g.TranslateTransform(-bitmap.Width/2, -pitchLineCenterY);
-                    }
 
                     g.DrawLine(whitePen, rhsPitchLineInsideDashMinX, pitchLineCenterY, rhsPitchLineInsideDashMaxX,
                                pitchLineCenterY); //draw RHS inside dash
@@ -1963,20 +1879,10 @@ namespace F16CPD.FlightInstruments
                     //draw the RHS pitch extender line
                     g.DrawLine(whitePen, rhsPitchLineInsideDashMinX, pitchLineCenterY, rhsPitchLineInsideDashMinX,
                                pitchLineExtenderY);
-
-                    if (useBentPitchLines)
-                    {
-                        g.Transform = origTransform;
-                    }
-                }
-
-                if (useBentPitchLines)
-                {
-                    g.Transform = origTransform;
                 }
 
                 //draw the nadir symbol
-                int nadirSymbolWidth = 25;
+                const int nadirSymbolWidth = 25;
                 whitePen.Width = 1;
                 var nadirRectangle =
                     new Rectangle(
@@ -1999,9 +1905,9 @@ namespace F16CPD.FlightInstruments
                                                  int scaleMaxVal, int scaleMinVal, int tapeWidthInPixels,
                                                  HAlignment ticsAlignment, int textPaddingPixels, Font majorUnitFont,
                                                  HAlignment textAlignment, bool negativeUnitsHaveNegativeSign,
-                                                 TapeEdgeColoringInstruction[] coloringInstructions)
+                                                 IEnumerable<TapeEdgeColoringInstruction> coloringInstructions)
         {
-            int tapeHeightInPixels = ((((scaleMaxVal - scaleMinVal)/minorUnitInterval)*
+            var tapeHeightInPixels = ((((scaleMaxVal - scaleMinVal)/minorUnitInterval)*
                                        verticalSeparationBetweenTicksInPixels));
             int positiveRange = scaleMaxVal;
             if (scaleMinVal > 0) positiveRange = scaleMaxVal - scaleMinVal;
@@ -2015,7 +1921,6 @@ namespace F16CPD.FlightInstruments
             int negativeRegionHeightInPixels = (negativeRange/minorUnitInterval)*verticalSeparationBetweenTicksInPixels;
             var toReturn = new Bitmap(tapeWidthInPixels, tapeHeightInPixels, PixelFormat.Format16bppRgb565);
             toReturn.MakeTransparent();
-            var boundingRectangle = new Rectangle(new Point(0, 0), new Size(toReturn.Width, toReturn.Height));
             var positiveRegionBoundingRectangle = new Rectangle(new Point(0, 0),
                                                                 new Size(toReturn.Width, positiveRegionHeightInPixels));
             var negativeRegionBoundingRectangle = new Rectangle(new Point(0, positiveRegionBoundingRectangle.Bottom),
@@ -2445,23 +2350,23 @@ namespace F16CPD.FlightInstruments
                 {
                     foreach (TapeEdgeColoringInstruction instruction in coloringInstructions)
                     {
-                        Color color = instruction.color;
+                        var color = instruction.Color;
                         Brush colorBrush = new SolidBrush(color);
-                        Rectangle rect = Rectangle.Empty;
-                        if (instruction.minVal > 0)
+                        Rectangle rect;
+                        if (instruction.MinVal > 0)
                         {
                             rect = new Rectangle(
                                 new Point(
                                     positiveRegionBoundingRectangle.Right - 5,
                                     positiveRegionBoundingRectangle.Bottom -
-                                    ((instruction.maxVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels)
+                                    ((instruction.MaxVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels)
                                     ),
                                 new Size(
                                     5,
                                     (positiveRegionBoundingRectangle.Bottom -
-                                     ((instruction.minVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels)) -
+                                     ((instruction.MinVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels)) -
                                     (positiveRegionBoundingRectangle.Bottom -
-                                     ((instruction.maxVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels))
+                                     ((instruction.MaxVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels))
                                     )
                                 );
                         }
@@ -2471,14 +2376,14 @@ namespace F16CPD.FlightInstruments
                                 new Point(
                                     negativeRegionBoundingRectangle.Right - 5,
                                     (negativeRegionBoundingRectangle.Top +
-                                     ((instruction.minVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels))
+                                     ((instruction.MinVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels))
                                     ),
                                 new Size(
                                     5,
                                     (negativeRegionBoundingRectangle.Top +
-                                     ((instruction.maxVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels)) -
+                                     ((instruction.MaxVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels)) -
                                     (negativeRegionBoundingRectangle.Top +
-                                     ((instruction.minVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels))
+                                     ((instruction.MinVal/minorUnitInterval)*verticalSeparationBetweenTicksInPixels))
                                     )
                                 );
                         }
@@ -2506,29 +2411,20 @@ namespace F16CPD.FlightInstruments
                 }
             }
             if (digit < 1 && digit >= 0) digit += 10;
-            int digitWidth = 9;
-            int digitHeight = 15;
-            int digitHorizontalMargin = 4;
-            int digitVerticalMargin = 4;
-            var digitRectangle = new Rectangle(
-                new Point(0, 0),
-                new Size(
-                    digitWidth + (digitHorizontalMargin*2),
-                    digitHeight + (digitVerticalMargin*2)
-                    )
-                );
+            const int digitHeight = 15;
+            const int digitVerticalMargin = 4;
 
             Bitmap verticalNumberStrip = GetVerticalNumberStrip();
 
-            int leftX = 0;
-            int rightX = verticalNumberStrip.Width;
+            const int leftX = 0;
+            var rightX = verticalNumberStrip.Width;
             var topY = (int) (verticalNumberStrip.Height - ((digitVerticalMargin*2) + digitHeight)*(digit + 1));
             topY += digitVerticalMargin;
             int bottomY = topY + digitHeight + digitVerticalMargin;
 
             if (showExtraDigitsTopAndBottom)
             {
-                var overRunArea = (int) ((digitHeight + (digitVerticalMargin*2))*0.6);
+                const int overRunArea = (int) ((digitHeight + (digitVerticalMargin*2))*0.6);
                 topY -= (overRunArea + digitVerticalMargin);
                 bottomY += overRunArea;
             }
@@ -2540,7 +2436,7 @@ namespace F16CPD.FlightInstruments
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 var sourceRectangle = new Rectangle(new Point(leftX, topY), new Size(rightX - leftX, bottomY - topY));
-                Rectangle destRectangle = Rectangle.Empty;
+                Rectangle destRectangle;
                 if (showExtraDigitsTopAndBottom)
                 {
                     destRectangle = new Rectangle(new Point(0, 0), new Size(verticalNumberStrip.Width, bottomY - topY));
@@ -2573,11 +2469,11 @@ namespace F16CPD.FlightInstruments
         private Bitmap GetVerticalNumberStrip()
         {
             if (_verticalNumberStrip != null) return _verticalNumberStrip;
-            int digitWidth = 9;
-            int digitHeight = 15;
+            const int digitWidth = 9;
+            const int digitHeight = 15;
 
-            int digitHorizontalMargin = 4;
-            int digitVerticalMargin = 4;
+            const int digitHorizontalMargin = 4;
+            const int digitVerticalMargin = 4;
 
             var digitRectangle = new Rectangle(
                 new Point(0, 0),
@@ -2597,16 +2493,13 @@ namespace F16CPD.FlightInstruments
             var toReturn = new Bitmap(overallRectangle.Width, overallRectangle.Height, PixelFormat.Format16bppRgb565);
 
             toReturn.MakeTransparent();
-            using (Graphics g = Graphics.FromImage(toReturn))
+            using (var g = Graphics.FromImage(toReturn))
             {
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 Brush whiteBrush = new SolidBrush(Color.White);
                 var font = new Font("Lucida Console", 12, FontStyle.Bold);
-                var format = new StringFormat();
-                format.Alignment = StringAlignment.Center;
-                format.LineAlignment = StringAlignment.Center;
                 digitRectangle.Offset(0, digitVerticalMargin);
 
                 for (int i = 11; i >= 0; i--)
@@ -2673,9 +2566,9 @@ namespace F16CPD.FlightInstruments
 
         private struct TapeEdgeColoringInstruction
         {
-            public Color color;
-            public int maxVal;
-            public int minVal;
+            public Color Color;
+            public int MaxVal;
+            public int MinVal;
         }
 
         #endregion

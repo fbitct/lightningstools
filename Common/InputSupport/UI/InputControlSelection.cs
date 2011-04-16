@@ -23,7 +23,7 @@ namespace Common.InputSupport.UI
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append(GetType().FullName != null ? GetType().FullName : "null");
+            sb.Append(GetType().FullName ?? "null");
             sb.Append(":DirectInputDevice:");
             sb.Append(DirectInputDevice != null ? DirectInputDevice.ToString() : "null");
             sb.Append(":DirectInputControl:");
@@ -69,10 +69,7 @@ namespace Common.InputSupport.UI
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         #endregion

@@ -18,11 +18,7 @@ namespace Common.InputSupport.Phcc
 
         public static PHCCDeviceManager GetInstance()
         {
-            if (_instance == null)
-            {
-                _instance = new PHCCDeviceManager();
-            }
-            return _instance;
+            return _instance ?? (_instance = new PHCCDeviceManager());
         }
 
         public bool IsDeviceAttached(PHCCPhysicalDeviceInfo device)
@@ -70,8 +66,7 @@ namespace Common.InputSupport.Phcc
                 controls.Add(thisControl);
             }
 
-            var toReturn = new PHCCPhysicalControlInfo[controls.Count];
-            toReturn = controls.ToArray();
+            PHCCPhysicalControlInfo[] toReturn = controls.ToArray();
             return toReturn;
         }
 
@@ -102,8 +97,7 @@ namespace Common.InputSupport.Phcc
                     _log.Debug(ex.Message, ex);
                 }
             }
-            var toReturn = new PHCCPhysicalDeviceInfo[devices.Count];
-            toReturn = devices.ToArray();
+            PHCCPhysicalDeviceInfo[] toReturn = devices.ToArray();
             return toReturn;
         }
 

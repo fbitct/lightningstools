@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Common.Win32;
@@ -14,7 +15,7 @@ namespace Common.UI.UserControls
     {
         #region Public Constants
 
-        public const int FieldCount = 4;
+        public const int FIELD_COUNT = 4;
 
         #endregion // Public Constants
 
@@ -30,14 +31,7 @@ namespace Common.UI.UserControls
         public bool AllowInternalTab
         {
             get
-            {
-                foreach (FieldControl fc in _fieldControls)
-                {
-                    return fc.TabStop;
-                }
-
-                return false;
-            }
+            { return _fieldControls.Select(fc => fc.TabStop).FirstOrDefault(); }
             set
             {
                 foreach (FieldControl fc in _fieldControls)
@@ -51,17 +45,7 @@ namespace Common.UI.UserControls
         public bool AnyBlank
         {
             get
-            {
-                foreach (FieldControl fc in _fieldControls)
-                {
-                    if (fc.Blank)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+            { return _fieldControls.Any(fc => fc.Blank); }
         }
 
         [Browsable(true)]
@@ -91,10 +75,10 @@ namespace Common.UI.UserControls
                 switch (BorderStyle)
                 {
                     case BorderStyle.Fixed3D:
-                        offset += Fixed3DOffset.Height;
+                        offset += _fixed3DOffset.Height;
                         break;
                     case BorderStyle.FixedSingle:
-                        offset += FixedSingleOffset.Height;
+                        offset += _fixedSingleOffset.Height;
                         break;
                 }
 
@@ -106,17 +90,7 @@ namespace Common.UI.UserControls
         public bool Blank
         {
             get
-            {
-                foreach (FieldControl fc in _fieldControls)
-                {
-                    if (!fc.Blank)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
-            }
+            { return _fieldControls.All(fc => fc.Blank); }
         }
 
         [Browsable(true)]
@@ -135,17 +109,7 @@ namespace Common.UI.UserControls
         public override bool Focused
         {
             get
-            {
-                foreach (FieldControl fc in _fieldControls)
-                {
-                    if (fc.Focused)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+            { return _fieldControls.Any(fc => fc.Focused); }
         }
 
         [Browsable(true)]
@@ -184,7 +148,6 @@ namespace Common.UI.UserControls
             get
             {
                 var sb = new StringBuilder();
-                ;
 
                 for (int index = 0; index < _fieldControls.Length; ++index)
                 {
@@ -215,9 +178,9 @@ namespace Common.UI.UserControls
 
         public byte[] GetAddressBytes()
         {
-            var bytes = new byte[FieldCount];
+            var bytes = new byte[FIELD_COUNT];
 
-            for (int index = 0; index < FieldCount; ++index)
+            for (int index = 0; index < FIELD_COUNT; ++index)
             {
                 bytes[index] = _fieldControls[index].Value;
             }
@@ -234,7 +197,7 @@ namespace Common.UI.UserControls
                 return;
             }
 
-            int length = System.Math.Min(FieldCount, bytes.Length);
+            int length = System.Math.Min(FIELD_COUNT, bytes.Length);
 
             for (int i = 0; i < length; ++i)
             {
@@ -244,7 +207,7 @@ namespace Common.UI.UserControls
 
         public void SetFieldFocus(int fieldIndex)
         {
-            if ((fieldIndex >= 0) && (fieldIndex < FieldCount))
+            if ((fieldIndex >= 0) && (fieldIndex < FIELD_COUNT))
             {
                 _fieldControls[fieldIndex].TakeFocus(Direction.Forward, Selection.All);
             }
@@ -252,7 +215,7 @@ namespace Common.UI.UserControls
 
         public void SetFieldRange(int fieldIndex, byte rangeLower, byte rangeUpper)
         {
-            if ((fieldIndex >= 0) && (fieldIndex < FieldCount))
+            if ((fieldIndex >= 0) && (fieldIndex < FIELD_COUNT))
             {
                 _fieldControls[fieldIndex].RangeLower = rangeLower;
                 _fieldControls[fieldIndex].RangeUpper = rangeUpper;
@@ -263,7 +226,7 @@ namespace Common.UI.UserControls
         {
             var sb = new StringBuilder();
 
-            for (int index = 0; index < FieldCount; ++index)
+            for (int index = 0; index < FIELD_COUNT; ++index)
             {
                 sb.Append(_fieldControls[index].ToString());
 
@@ -312,7 +275,7 @@ namespace Common.UI.UserControls
 
                 Controls.Add(_fieldControls[index]);
 
-                if (index < (FieldCount - 1))
+                if (index < (FIELD_COUNT - 1))
                 {
                     _dotControls[index] = new DotControl();
 
@@ -477,14 +440,7 @@ namespace Common.UI.UserControls
                 newSize.Height = Height;
             }
 
-            if (AutoHeight)
-            {
-                Size = new Size(newSize.Width, MinimumSize.Height);
-            }
-            else
-            {
-                Size = newSize;
-            }
+            Size = AutoHeight ? new Size(newSize.Width, MinimumSize.Height) : newSize;
 
             LayoutControls();
         }
@@ -554,16 +510,9 @@ namespace Common.UI.UserControls
             Text = e.Data.GetData(DataFormats.Text).ToString();
         }
 
-        private void IPAddressControl_DragEnter(object sender, DragEventArgs e)
+        private static void IPAddressControl_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.Text))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effect = DragDropEffects.None;
-            }
+            e.Effect = e.Data.GetDataPresent(DataFormats.Text) ? DragDropEffects.Copy : DragDropEffects.None;
         }
 
         private void LayoutControls()
@@ -597,12 +546,12 @@ namespace Common.UI.UserControls
             switch (BorderStyle)
             {
                 case BorderStyle.Fixed3D:
-                    x = Fixed3DOffset.Width;
-                    y = Fixed3DOffset.Height;
+                    x = _fixed3DOffset.Width;
+                    y = _fixed3DOffset.Height;
                     break;
                 case BorderStyle.FixedSingle:
-                    x = FixedSingleOffset.Width;
-                    y = FixedSingleOffset.Height;
+                    x = _fixedSingleOffset.Width;
+                    y = _fixedSingleOffset.Height;
                     break;
             }
 
@@ -639,7 +588,7 @@ namespace Common.UI.UserControls
 
                 case Action.End:
 
-                    _fieldControls[FieldCount - 1].TakeFocus(Action.End);
+                    _fieldControls[FIELD_COUNT - 1].TakeFocus(Action.End);
                     return;
 
                 case Action.Trim:
@@ -654,7 +603,7 @@ namespace Common.UI.UserControls
             }
 
             if ((e.Direction == Direction.Reverse && e.FieldIndex == 0) ||
-                (e.Direction == Direction.Forward && e.FieldIndex == (FieldCount - 1)))
+                (e.Direction == Direction.Forward && e.FieldIndex == (FIELD_COUNT - 1)))
             {
                 return;
             }
@@ -700,9 +649,7 @@ namespace Common.UI.UserControls
         {
             if (null != FieldChangedEvent)
             {
-                var args = new FieldChangedEventArgs();
-                args.FieldIndex = e.FieldIndex;
-                args.Text = e.Text;
+                var args = new FieldChangedEventArgs {FieldIndex = e.FieldIndex, Text = e.Text};
                 FieldChangedEvent(this, args);
             }
 
@@ -758,9 +705,9 @@ namespace Common.UI.UserControls
                 return;
             }
 
-            int textIndex = 0;
+            var textIndex = 0;
 
-            int index = 0;
+            int index;
 
             for (index = 0; index < _dotControls.Length; ++index)
             {
@@ -790,11 +737,11 @@ namespace Common.UI.UserControls
 
         #region Private Data
 
-        private readonly DotControl[] _dotControls = new DotControl[FieldCount - 1];
-        private readonly FieldControl[] _fieldControls = new FieldControl[FieldCount];
+        private readonly DotControl[] _dotControls = new DotControl[FIELD_COUNT - 1];
+        private readonly FieldControl[] _fieldControls = new FieldControl[FIELD_COUNT];
         private readonly TextBox _referenceTextBox = new TextBox();
-        private Size Fixed3DOffset = new Size(3, 3);
-        private Size FixedSingleOffset = new Size(2, 2);
+        private Size _fixed3DOffset = new Size(3, 3);
+        private Size _fixedSingleOffset = new Size(2, 2);
         private bool _autoHeight = true;
         private bool _backColorChanged;
         private BorderStyle _borderStyle = BorderStyle.Fixed3D;

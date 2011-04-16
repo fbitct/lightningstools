@@ -16,7 +16,7 @@ namespace F16CPD.UI.Forms
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.UserPaint, true);
 
-            if (!base.DesignMode)
+            if (!DesignMode)
             {
                 _resizeHelper = new ResizeHelper(this);
             }

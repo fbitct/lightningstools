@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Common.Exeptions
+namespace Common.Exceptions
 {
     /// <summary>
     /// Represents an error that occurs when performing a Win32 or Interop operation.

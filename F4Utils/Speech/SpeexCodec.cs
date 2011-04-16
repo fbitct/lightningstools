@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace F4Utils.Speech
 {
-    public class SpeexCodec : IDisposable, IAudioCodec
+    public class SpeexCodec : IAudioCodec
     {
         private const int MAX_FRAME_SIZE = 2000;
         private bool _disposed;
@@ -26,7 +26,6 @@ namespace F4Utils.Speech
 
             var compressedBits = new byte[200];
             var decompressedBits = new short[MAX_FRAME_SIZE];
-            int frameSize = 0;
 
             IntPtr unmanagedStoragePointer = IntPtr.Zero;
             var compressedBitsGCHandle = new GCHandle();
@@ -40,21 +39,20 @@ namespace F4Utils.Speech
                 try
                 {
                     Speex.speex_bits_init(ref speexBits);
-                    IntPtr mode = Speex.speex_lib_get_mode(Speex.SPEEX_MODEID_NB);
+                    var mode = Speex.speex_lib_get_mode(Speex.SPEEX_MODEID_NB);
                     decoderState = Speex.speex_decoder_init(mode);
                     Marshal.WriteInt32(unmanagedStoragePointer, 0);
                     Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_SET_ENH, unmanagedStoragePointer);
 
                     Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_GET_FRAME_SIZE, unmanagedStoragePointer);
-                    frameSize = Marshal.ReadInt32(unmanagedStoragePointer);
+                    int frameSize = Marshal.ReadInt32(unmanagedStoragePointer);
 
-                    int rate = 8000;
+                    const int rate = 8000;
                     Marshal.WriteInt32(unmanagedStoragePointer, rate);
                     Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_SET_SAMPLING_RATE, unmanagedStoragePointer);
 
-                    int lookahead;
                     Speex.speex_decoder_ctl(decoderState, Speex.SPEEX_GET_LOOKAHEAD, unmanagedStoragePointer);
-                    lookahead = Marshal.ReadInt32(unmanagedStoragePointer);
+                    var lookahead = Marshal.ReadInt32(unmanagedStoragePointer);
 
                     using (var inStream = new MemoryStream(inputBuffer, inputBufferOffset, dataLength))
                     using (
@@ -77,7 +75,7 @@ namespace F4Utils.Speech
                             {
                                 break;
                             }
-                            else if (returnVal == -2)
+                            if (returnVal == -2)
                             {
                                 throw new IOException("Decoding error: corrupted stream?\n");
                             }
@@ -156,7 +154,7 @@ namespace F4Utils.Speech
 
         #endregion
 
-        private void Initialize()
+        private static void Initialize()
         {
         }
 
@@ -194,7 +192,7 @@ namespace F4Utils.Speech
                     IntPtr mode = Speex.speex_lib_get_mode(Speex.SPEEX_MODEID_NB);
 
                     var header = new Speex.SpeexHeader();
-                    int rate = 8000;
+                    const int rate = 8000;
                     Speex.speex_init_header(ref header, rate, 1, mode);
                     header.frames_per_packet = 1;
                     header.vbr = 0;
@@ -203,9 +201,9 @@ namespace F4Utils.Speech
                     encoderState = Speex.speex_encoder_init(mode);
 
                     Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_GET_FRAME_SIZE, unmanagedStorage);
-                    int frame_size = Marshal.ReadInt32(unmanagedStorage);
+                    int frameSize = Marshal.ReadInt32(unmanagedStorage);
 
-                    int complexity = 10;
+                    const int complexity = 10;
                     Marshal.WriteInt32(unmanagedStorage, complexity);
                     Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_SET_COMPLEXITY, unmanagedStorage);
 
@@ -215,7 +213,7 @@ namespace F4Utils.Speech
                     Marshal.WriteInt32(unmanagedStorage, quality);
                     Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_SET_QUALITY, unmanagedStorage);
 
-                    int lookahead = 0;
+                    const int lookahead = 0;
                     Marshal.WriteInt32(unmanagedStorage, lookahead);
                     Speex.speex_encoder_ctl(encoderState, Speex.SPEEX_GET_LOOKAHEAD, unmanagedStorage);
 
@@ -229,7 +227,7 @@ namespace F4Utils.Speech
                     {
                         while (true)
                         {
-                            int pcmBytesToRead = 16/8*header.nb_channels*frame_size;
+                            int pcmBytesToRead = 16/8*header.nb_channels*frameSize;
                             int numBytesRead = inStream.Read(input, 0, pcmBytesToRead);
                             if (numBytesRead == 0) break;
                             int numSamplesToBlank = (pcmBytesToRead - numBytesRead)/(16/8*header.nb_channels);

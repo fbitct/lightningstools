@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Common.Win32;
@@ -44,12 +45,10 @@ namespace Common.Imaging
         {
             if (bitmap == null) return null;
 
-            Bitmap toIconify = null;
-            toIconify = bitmap;
-            Icon toReturn = null;
-            IntPtr hIcon = IntPtr.Zero;
-            hIcon = toIconify.GetHicon();
-            Icon temp = Icon.FromHandle(hIcon);
+            var toIconify = bitmap;
+            Icon toReturn;
+            var hIcon = toIconify.GetHicon();
+            var temp = Icon.FromHandle(hIcon);
             using (var ms = new MemoryStream())
             {
                 temp.Save(ms);
@@ -65,6 +64,7 @@ namespace Common.Imaging
         /// Convert's a <see cref="Bitmap"/> to a different pixel format
         /// </summary>
         /// <param name="img">a <see cref="Bitmap"/> Bitmap to convert</param>
+        /// <param name="format"></param>
         public static void ConvertPixelFormat(ref Image img, PixelFormat format)
         {
             if (img == null) return;
@@ -84,7 +84,7 @@ namespace Common.Imaging
 
             Image originalImg = img;
             Image converted = null;
-            Graphics graphics = null;
+            Graphics graphics;
             bool success = false;
             try
             {
@@ -133,7 +133,7 @@ namespace Common.Imaging
             {
                 try
                 {
-                    int x = image.Width;
+                    var x = image.Width;
                 }
                 catch (Exception e)
                 {
@@ -144,7 +144,6 @@ namespace Common.Imaging
                 {
                     int encoderValue = -1;
                     string codecMimeType = "image/tiff";
-                    ImageFormat format = ImageFormat.Tiff;
                     switch (compressionType)
                     {
                         case "LZW":
@@ -160,23 +159,18 @@ namespace Common.Imaging
                     switch (imageFormat)
                     {
                         case "BMP":
-                            format = ImageFormat.Bmp;
                             codecMimeType = "image/bmp";
                             break;
                         case "GIF":
-                            format = ImageFormat.Gif;
                             codecMimeType = "image/gif";
                             break;
                         case "JPEG":
-                            format = ImageFormat.Jpeg;
                             codecMimeType = "image/jpeg";
                             break;
                         case "PNG":
-                            format = ImageFormat.Png;
                             codecMimeType = "image/png";
                             break;
                         default:
-                            format = ImageFormat.Tiff;
                             codecMimeType = "image/tiff";
                             break;
                     }
@@ -184,16 +178,8 @@ namespace Common.Imaging
                     Encoder encoder = Encoder.Compression;
                     var codecParams = new EncoderParameters(1);
                     ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
-                    ImageCodecInfo codecToUse = null;
                     codecParams.Param[0] = new EncoderParameter(encoder, encoderValue);
-                    foreach (ImageCodecInfo codec in codecs)
-                    {
-                        if (codec.MimeType == codecMimeType)
-                        {
-                            codecToUse = codec;
-                            break;
-                        }
-                    }
+                    ImageCodecInfo codecToUse = codecs.FirstOrDefault(codec => codec.MimeType == codecMimeType);
                     try
                     {
                         image.Save(ms, codecToUse, codecParams);
@@ -239,17 +225,10 @@ namespace Common.Imaging
             int sourceWidth = imgToResize.Width;
             int sourceHeight = imgToResize.Height;
 
-            float nPercent = 0;
-            float nPercentW = 0;
-            float nPercentH = 0;
+            float nPercentW = (size.Width/(float) sourceWidth);
+            float nPercentH = (size.Height/(float) sourceHeight);
 
-            nPercentW = (size.Width/(float) sourceWidth);
-            nPercentH = (size.Height/(float) sourceHeight);
-
-            if (nPercentH < nPercentW)
-                nPercent = nPercentH;
-            else
-                nPercent = nPercentW;
+            float nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
 
             var destWidth = (int) (sourceWidth*nPercent);
             var destHeight = (int) (sourceHeight*nPercent);
@@ -280,20 +259,17 @@ namespace Common.Imaging
             {
                 return null;
             }
-            else
+            Image toReturn;
+            try
             {
-                Image toReturn = null;
-                try
-                {
-                    toReturn = (Image) image.Clone();
-                }
-                catch (Exception e)
-                {
-                    _log.Debug(e.Message, e);
-                    toReturn = null;
-                }
-                return toReturn;
+                toReturn = (Image) image.Clone();
             }
+            catch (Exception e)
+            {
+                _log.Debug(e.Message, e);
+                toReturn = null;
+            }
+            return toReturn;
         }
 
         public static Image GetDimmerImage(Image toProcess, float percentLuminanceRetained)
@@ -404,7 +380,6 @@ namespace Common.Imaging
             ConvertPixelFormat(ref asImage, PixelFormat.Format32bppPArgb);
             bitmap = (Bitmap) asImage;
 
-            Rectangle cropRectangle;
             int minXNonBlackPixel = 0;
             int maxXNonBlackPixel = 0;
             int minYNonBlackPixel = 0;
@@ -444,8 +419,8 @@ namespace Common.Imaging
                     bitmap.UnlockBits(sourceImageLock);
                 }
             }
-            cropRectangle = new Rectangle(minXNonBlackPixel, minYNonBlackPixel, maxXNonBlackPixel - minXNonBlackPixel,
-                                          maxYNonBlackPixel - minYNonBlackPixel);
+            var cropRectangle = new Rectangle(minXNonBlackPixel, minYNonBlackPixel, maxXNonBlackPixel - minXNonBlackPixel,
+                                                    maxYNonBlackPixel - minYNonBlackPixel);
             var toReturn = new Bitmap(cropRectangle.Width, cropRectangle.Height, bitmap.PixelFormat);
             using (Graphics g = Graphics.FromImage(toReturn))
             {
@@ -462,8 +437,7 @@ namespace Common.Imaging
             bitmap = inverted;
         }
 
-        // <summary>
-
+        /// <summary>
         /// Copies a bitmap into a 1bpp/8bpp bitmap of the same dimensions, fast
         /// </summary>
         /// <param name="b">original bitmap</param>
@@ -474,16 +448,18 @@ namespace Common.Imaging
             if (bpp != 1 && bpp != 8) throw new ArgumentException("1 or 8", "bpp");
             int w = b.Width, h = b.Height;
             IntPtr hbm = b.GetHbitmap();
-            var bmi = new NativeMethods.BITMAPINFO();
-            bmi.biSize = 40;
-            bmi.biWidth = w;
-            bmi.biHeight = h;
-            bmi.biPlanes = 1;
-            bmi.biBitCount = (short) bpp;
-            bmi.biCompression = NativeMethods.BI_RGB;
-            bmi.biSizeBitmap = (uint) (((w + 7) & 0xFFFFFFF8)*h/8);
-            bmi.biXPelsPerMeter = 1000000;
-            bmi.biYPelsPerMeter = 1000000;
+            var bmi = new NativeMethods.BITMAPINFO
+                          {
+                              biSize = 40,
+                              biWidth = w,
+                              biHeight = h,
+                              biPlanes = 1,
+                              biBitCount = (short) bpp,
+                              biCompression = NativeMethods.BI_RGB,
+                              biSizeBitmap = (uint) (((w + 7) & 0xFFFFFFF8)*h/8),
+                              biXPelsPerMeter = 1000000,
+                              biYPelsPerMeter = 1000000
+                          };
             uint ncols = (uint) 1 << bpp;
             bmi.biClrUsed = ncols;
             bmi.biClrImportant = ncols;

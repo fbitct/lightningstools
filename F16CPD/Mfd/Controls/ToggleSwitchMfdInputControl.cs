@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace F16CPD.Mfd.Controls
 {
@@ -34,9 +35,9 @@ namespace F16CPD.Mfd.Controls
 
     public class ToggleSwitchMfdInputControl : MfdInputControl
     {
-        protected int _curPosition = -1;
+        protected int CurPosition = -1;
         protected List<ToggleSwitchPositionMfdInputControl> _positions = new List<ToggleSwitchPositionMfdInputControl>();
-        protected int _prevPosition = -1;
+        protected int PrevPosition = -1;
 
         public List<ToggleSwitchPositionMfdInputControl> Positions
         {
@@ -46,22 +47,15 @@ namespace F16CPD.Mfd.Controls
 
         public int CurrentPositionIndex
         {
-            get { return _curPosition; }
+            get { return CurPosition; }
             set
             {
-                int curPosition = _curPosition;
+                int curPosition = CurPosition;
                 if (value < 0) throw new ArgumentOutOfRangeException();
-                if (value <= _positions.Count - 1)
+                CurPosition = value <= _positions.Count - 1 ? value : 0;
+                if (curPosition != CurPosition)
                 {
-                    _curPosition = value;
-                }
-                else
-                {
-                    _curPosition = 0;
-                }
-                if (curPosition != _curPosition)
-                {
-                    _prevPosition = curPosition;
+                    PrevPosition = curPosition;
                 }
                 OnPositionChanged();
             }
@@ -69,23 +63,23 @@ namespace F16CPD.Mfd.Controls
 
         public ToggleSwitchPositionMfdInputControl CurrentPosition
         {
-            get { return _positions[_curPosition]; }
+            get { return _positions[CurPosition]; }
             set
             {
                 if (value == null) throw new ArgumentNullException();
-                int curPosition = _curPosition;
+                int curPosition = CurPosition;
                 int i = 0;
                 foreach (ToggleSwitchPositionMfdInputControl position in _positions)
                 {
                     if (position.PositionName == value.PositionName)
                     {
-                        _curPosition = i;
+                        CurPosition = i;
                     }
                     i++;
                 }
-                if (curPosition != _curPosition)
+                if (curPosition != CurPosition)
                 {
-                    _prevPosition = curPosition;
+                    PrevPosition = curPosition;
                 }
                 OnPositionChanged();
             }
@@ -101,27 +95,18 @@ namespace F16CPD.Mfd.Controls
 
         public ToggleSwitchPositionMfdInputControl GetPositionByName(string positionName)
         {
-            ToggleSwitchPositionMfdInputControl toReturn = null;
-            foreach (ToggleSwitchPositionMfdInputControl position in _positions)
-            {
-                if (position.PositionName == positionName)
-                {
-                    toReturn = position;
-                    break;
-                }
-            }
-            return toReturn;
+            return _positions.FirstOrDefault(position => position.PositionName == positionName);
         }
 
         public void Toggle()
         {
-            int curPosition = _curPosition;
-            _curPosition++;
-            if (_curPosition > _positions.Count - 1)
+            int curPosition = CurPosition;
+            CurPosition++;
+            if (CurPosition > _positions.Count - 1)
             {
-                _curPosition = 0;
+                CurPosition = 0;
             }
-            if (curPosition != _curPosition)
+            if (curPosition != CurPosition)
             {
                 OnPositionChanged();
             }
@@ -133,13 +118,13 @@ namespace F16CPD.Mfd.Controls
             {
                 ToggleSwitchPositionMfdInputControl prevPosition = null;
                 ToggleSwitchPositionMfdInputControl curPosition = null;
-                if (_prevPosition >= 0)
+                if (PrevPosition >= 0)
                 {
-                    prevPosition = Positions[_prevPosition];
+                    prevPosition = Positions[PrevPosition];
                 }
-                if (_curPosition >= 0)
+                if (CurPosition >= 0)
                 {
-                    curPosition = Positions[_curPosition];
+                    curPosition = Positions[CurPosition];
                 }
                 PositionChanged(this, new ToggleSwitchPositionChangedEventArgs(prevPosition, curPosition));
             }

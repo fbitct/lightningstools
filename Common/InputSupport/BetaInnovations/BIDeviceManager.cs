@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Text;
 using BIUSBWrapper;
-using Common.Exeptions;
+using Common.Exceptions;
 
 namespace Common.InputSupport.BetaInnovations
 {
@@ -12,7 +12,6 @@ namespace Common.InputSupport.BetaInnovations
     {
         private static BIDeviceManager _instance;
         private readonly DeviceParam[] _deviceList = new DeviceParam[BIUSB.MAX_DEVICES];
-        private DeviceStatus[] _deviceStatus = new DeviceStatus[BIUSB.MAX_DEVICES];
         private bool _devicesOpen;
         private bool _isDisposed;
         private uint _numDevices;

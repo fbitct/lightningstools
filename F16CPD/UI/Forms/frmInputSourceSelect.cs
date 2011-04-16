@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Common.InputSupport;
 using Common.InputSupport.DirectInput;
@@ -59,8 +60,8 @@ namespace F16CPD.UI.Forms
                 cboJoystickControl.SelectedItem = control;
                 if (control.ControlType == ControlType.Pov)
                 {
-                    float currentDegrees = e.CurrentState/100;
-                    if (e.CurrentState == -1) currentDegrees = -1;
+                    float currentDegrees = e.CurrentState/100.0f;
+                    if (e.CurrentState == -1) currentDegrees = -  1;
                     /*  POV directions in degrees
                               0
                         337.5  22.5   
@@ -72,46 +73,37 @@ namespace F16CPD.UI.Forms
                         202.5  157.5
                             180
                      */
-                    PovDirections? direction = null;
                     if ((currentDegrees > 337.5 && currentDegrees <= 360) ||
                         (currentDegrees >= 0 && currentDegrees <= 22.5))
                     {
-                        direction = PovDirections.Up;
                         rdoPovUp.Checked = true;
                     }
                     else if (currentDegrees > 22.5 && currentDegrees <= 67.5)
                     {
-                        direction = PovDirections.UpRight;
                         rdoPovUpRight.Checked = true;
                     }
                     else if (currentDegrees > 67.5 && currentDegrees <= 112.5)
                     {
-                        direction = PovDirections.Right;
                         rdoPovRight.Checked = true;
                     }
                     else if (currentDegrees > 112.5 && currentDegrees <= 157.5)
                     {
-                        direction = PovDirections.DownRight;
                         rdoPovDownRight.Checked = true;
                     }
                     else if (currentDegrees > 157.5 && currentDegrees <= 202.5)
                     {
-                        direction = PovDirections.Down;
                         rdoPovDown.Checked = true;
                     }
                     else if (currentDegrees > 202.5 && currentDegrees <= 247.5)
                     {
-                        direction = PovDirections.DownLeft;
                         rdoPovDownLeft.Checked = true;
                     }
                     else if (currentDegrees > 247.5 && currentDegrees <= 292.5)
                     {
-                        direction = PovDirections.Left;
                         rdoPovLeft.Checked = true;
                     }
                     else if (currentDegrees > 292.5 && currentDegrees <= 337.5)
                     {
-                        direction = PovDirections.UpLeft;
                         rdoPovUpLeft.Checked = true;
                     }
                 }
@@ -167,14 +159,7 @@ namespace F16CPD.UI.Forms
 
         private void EnableDisableControls()
         {
-            if (cbJoysticks.Items.Count == 0)
-            {
-                rdoJoystick.Enabled = false;
-            }
-            else
-            {
-                rdoJoystick.Enabled = true;
-            }
+            rdoJoystick.Enabled = cbJoysticks.Items.Count != 0;
 
             if (rdoKeystroke.Checked)
             {
@@ -196,7 +181,6 @@ namespace F16CPD.UI.Forms
                 SelectCurrentJoystick();
                 SelectCurrentJoystickControl();
 
-                var device = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
                 var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
                 if (control != null)
                 {
@@ -233,13 +217,7 @@ namespace F16CPD.UI.Forms
 
         private List<DIPhysicalDeviceInfo> GetKnownDirectInputDevices()
         {
-            var knownDevices = new List<DIPhysicalDeviceInfo>();
-            foreach (Guid key in Mediator.DeviceMonitors.Keys)
-            {
-                DIDeviceMonitor monitor = Mediator.DeviceMonitors[key];
-                knownDevices.Add(monitor.DeviceInfo);
-            }
-            return knownDevices;
+            return Mediator.DeviceMonitors.Keys.Select(key => Mediator.DeviceMonitors[key]).Select(monitor => monitor.DeviceInfo).ToList();
         }
 
         private void cmdOk_Click(object sender, EventArgs e)
@@ -316,9 +294,7 @@ namespace F16CPD.UI.Forms
         private ControlBinding GetThisControlBinding()
         {
             string controlName = ControlBindings[CpdInputControl].ControlName;
-            var thisControlBinding = new ControlBinding();
-            thisControlBinding.CpdInputControl = CpdInputControl;
-            thisControlBinding.ControlName = controlName;
+            var thisControlBinding = new ControlBinding {CpdInputControl = CpdInputControl, ControlName = controlName};
             if (rdoJoystick.Checked)
             {
                 var device = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
@@ -464,7 +440,6 @@ namespace F16CPD.UI.Forms
                 cbJoysticks.Items.Add(pair.Value.DeviceInfo);
             }
             cbJoysticks.DisplayMember = "Alias";
-            DIPhysicalDeviceInfo thisDevice = ControlBindings[CpdInputControl].DirectInputDevice;
         }
 
         private void PopulateJoystickControlsComboBox()

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -30,10 +31,7 @@ namespace F16CPD.Networking
             {
                 return _simProperties[propertyName];
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public void SubmitMessageToServer(Message message)
@@ -44,13 +42,13 @@ namespace F16CPD.Networking
                 {
                     _serverMessages.RemoveRange(999, _serverMessages.Count - 1000);
                 }
-                if (message.MessageType == "RequestNewMapImage")
-                {
-                    //only allow one of these in the queue at a time
-                    ClearPendingServerMessagesOfType(message.MessageType);
-                }
                 if (message != null)
                 {
+                    if (message.MessageType == "RequestNewMapImage")
+                    {
+                        //only allow one of these in the queue at a time
+                        ClearPendingServerMessagesOfType(message.MessageType);
+                    }
                     _serverMessages.Add(message);
                 }
             }
@@ -87,8 +85,7 @@ namespace F16CPD.Networking
 
         public static F16CPDServer GetInstance()
         {
-            if (_server == null) _server = new F16CPDServer();
-            return _server;
+            return _server ?? (_server = new F16CPDServer());
         }
 
         [DebuggerHidden]
@@ -189,14 +186,7 @@ namespace F16CPD.Networking
 
         public static void ClearPendingServerMessagesOfType(string messageType)
         {
-            var messagesToRemove = new List<Message>();
-            foreach (Message message in _serverMessages)
-            {
-                if (message.MessageType == messageType)
-                {
-                    messagesToRemove.Add(message);
-                }
-            }
+            var messagesToRemove = _serverMessages.Where(message => message.MessageType == messageType).ToList();
             foreach (Message message in messagesToRemove)
             {
                 _serverMessages.Remove(message);

@@ -143,7 +143,6 @@ namespace Common.InputSupport.DirectInput
             }
             int lastButton = -1;
             dol = joystick.GetObjects(DeviceObjectTypeFlags.Button);
-            int numButtons = joystick.Caps.NumberButtons;
             foreach (DeviceObjectInstance doi in dol)
             {
                 lastButton++;

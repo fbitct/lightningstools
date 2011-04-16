@@ -4,27 +4,27 @@ namespace F16CPD.Mfd.Controls
 {
     public class RotaryEncoderPositionChangedEventArgs : EventArgs
     {
-        protected RotationDirection _rotationDirection = RotationDirection.Empty;
+        protected RotationDirection RotationDirection = RotationDirection.Empty;
 
         public RotaryEncoderPositionChangedEventArgs(RotationDirection direction)
         {
-            _rotationDirection = direction;
+            RotationDirection = direction;
         }
     }
 
     public class RotaryEncoderMfdInputControl : MfdInputControl
     {
-        protected MomentaryButtonMfdInputControl _clockwiseMomentary;
-        protected MomentaryButtonMfdInputControl _counterClockwiseMomentary;
+        protected MomentaryButtonMfdInputControl ClockwiseMomentary;
+        protected MomentaryButtonMfdInputControl CounterClockwiseMomentary;
 
         public MomentaryButtonMfdInputControl ClockwiseMomentaryInputControl
         {
-            get { return _clockwiseMomentary; }
+            get { return ClockwiseMomentary; }
         }
 
         public MomentaryButtonMfdInputControl CounterclockwiseMomentaryInputControl
         {
-            get { return _counterClockwiseMomentary; }
+            get { return CounterClockwiseMomentary; }
         }
 
         public event EventHandler<RotaryEncoderPositionChangedEventArgs> Rotated;
@@ -37,10 +37,10 @@ namespace F16CPD.Mfd.Controls
                 case RotationDirection.Empty:
                     break;
                 case RotationDirection.Counterclockwise:
-                    toReturn = _counterClockwiseMomentary;
+                    toReturn = CounterClockwiseMomentary;
                     break;
                 case RotationDirection.Clockwise:
-                    toReturn = _clockwiseMomentary;
+                    toReturn = ClockwiseMomentary;
                     break;
                 default:
                     break;

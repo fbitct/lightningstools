@@ -34,8 +34,8 @@ namespace Common.HardwareSupport.MotorControl
             {
                 return;
             }
-            else if (_maxPositionReachedSignal != null && _maxPositionReachedSignal.State &&
-                     args.CurrentState >= args.PreviousState)
+            if (_maxPositionReachedSignal != null && _maxPositionReachedSignal.State &&
+                args.CurrentState >= args.PreviousState)
             {
                 return;
             }

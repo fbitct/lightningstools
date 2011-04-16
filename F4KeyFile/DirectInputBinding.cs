@@ -198,7 +198,7 @@ namespace F4KeyFile
             }
             var modifiers = (KeyModifiers) Int32.Parse(tokenList[6]);
             var comboKey = new KeyWithModifiers(keycode, modifiers);
-            DirectInputBinding binding = null;
+            DirectInputBinding binding;
             if (tokenList.Count == 8)
             {
                 bool isGuid = false;

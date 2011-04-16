@@ -190,7 +190,7 @@ namespace F4SharedMem
             Type thisType = GetType();
             Type dataType = data.GetType();
             FieldInfo[] fields = dataType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            for (int i = 0; i < fields.Length; i++)
+            for (var i = 0; i < fields.Length; i++)
             {
                 FieldInfo currentField = fields[i];
                 FieldInfo thisField = thisType.GetField(currentField.Name);
@@ -211,7 +211,7 @@ namespace F4SharedMem
                             {
                                 invert = true; //this is an inversion line
                             }
-                            for (int k = 0; k < currentItem.chars.Length; k++)
+                            for (var k = 0; k < currentItem.chars.Length; k++)
                             {
                                 sbyte chr = currentItem.chars[k];
                                 if (invert)

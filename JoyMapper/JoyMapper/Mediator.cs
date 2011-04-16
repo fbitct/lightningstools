@@ -872,7 +872,7 @@ namespace JoyMapper
                     if (state != null)
                     {
                         //get the state of just this button from the larger state-bag
-                        buttonState = state.Value.digitalInputs[control.ControlNum];
+                        buttonState = state.Value.DigitalInputs[control.ControlNum];
                     }
                     else
                     {
@@ -895,7 +895,7 @@ namespace JoyMapper
                     int? toReturn = null;
                     if (state.HasValue)
                     {
-                        toReturn = state.Value.analogInputs[control.ControlNum];
+                        toReturn = state.Value.AnalogInputs[control.ControlNum];
                     }
                     return toReturn;
                 }

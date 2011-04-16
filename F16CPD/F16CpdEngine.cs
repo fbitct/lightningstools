@@ -32,34 +32,32 @@ namespace F16CPD
         private const int WMSZ_BOTTOM = 6;
 
 
-        protected static ILog _log = LogManager.GetLogger(typeof (F16CpdEngine));
-        protected Bitmap _bezel = Resources.cpdbezel;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(F16CpdEngine));
+        private readonly Bitmap _bezel = Resources.cpdbezel;
 
-        protected SerializableDictionary<CpdInputControls, ControlBinding> _controlBindings =
+        private SerializableDictionary<CpdInputControls, ControlBinding> _controlBindings =
             new SerializableDictionary<CpdInputControls, ControlBinding>();
 
-        protected bool _disposing;
-        protected FlightDataValuesSimulator _flightDataValuesSimulator = new FlightDataValuesSimulator();
-        protected double _heightFactor = 4;
-        protected bool _isDisposed;
+        private bool _disposing;
+        private readonly FlightDataValuesSimulator _flightDataValuesSimulator = new FlightDataValuesSimulator();
+        private double _heightFactor = 4;
+        private bool _isDisposed;
 
-        protected bool _keepRunning;
+        private bool _keepRunning;
         private Thread _keyboardWatcherThread;
-        protected bool _loading;
-        protected F16CpdMfdManager _manager;
-        protected Mediator _mediator;
-        protected Mediator.PhysicalControlStateChangedEventHandler _mediatorHandler;
-        protected bool _mouseDown;
-        protected DateTime? _mouseDownTime;
-        protected Bitmap _renderTarget;
-        protected ISimSupportModule _simSupportModule;
-        protected bool _testCalledOnce;
-        protected double _widthFactor = 3;
+        private F16CpdMfdManager _manager;
+        private Mediator _mediator;
+        private Mediator.PhysicalControlStateChangedEventHandler _mediatorHandler;
+        private bool _mouseDown;
+        private DateTime? _mouseDownTime;
+        private Bitmap _renderTarget;
+        private ISimSupportModule _simSupportModule;
+        private bool _testCalledOnce;
+        private double _widthFactor = 3;
 
         public F16CpdEngine()
         {
             InitializeComponent();
-            _loading = true;
         }
 
         public bool TestMode { get; set; }
@@ -71,10 +69,7 @@ namespace F16CPD
             {
                 return new Bitmap(ClientRectangle.Width, ClientRectangle.Height, PixelFormat.Format16bppRgb565);
             }
-            else
-            {
-                return new Bitmap(ClientRectangle.Height, ClientRectangle.Width, PixelFormat.Format16bppRgb565);
-            }
+            return new Bitmap(ClientRectangle.Height, ClientRectangle.Width, PixelFormat.Format16bppRgb565);
         }
 
         private void InitializeInternal()
@@ -84,11 +79,10 @@ namespace F16CPD
                 _mediator.PhysicalControlStateChanged -= _mediatorHandler;
                 Common.Util.DisposeObject(_mediator);
             }
-            _mediator = new Mediator(this);
-            _mediator.RaiseEvents = true;
+            _mediator = new Mediator(this) {RaiseEvents = true};
             LoadControlBindings();
             _mediatorHandler =
-                new Mediator.PhysicalControlStateChangedEventHandler(_mediator_PhysicalControlStateChanged);
+                new Mediator.PhysicalControlStateChangedEventHandler(MediatorPhysicalControlStateChanged);
             _mediator.PhysicalControlStateChanged += _mediatorHandler;
             foreach (DIDeviceMonitor deviceMonitor in _mediator.DeviceMonitors.Values)
             {
@@ -107,14 +101,14 @@ namespace F16CPD
             _keyboardWatcherThread.Start();
         }
 
-        private void AbortThread(ref Thread t)
+        private static void AbortThread(ref Thread t)
         {
             if (t == null) return;
             try
             {
                 t.Abort();
             }
-            catch (Exception e)
+            catch
             {
             }
             Common.Util.DisposeObject(t);
@@ -143,7 +137,7 @@ namespace F16CPD
 
         private void KeyboardWatcherThreadWork()
         {
-            AutoResetEvent resetEvent = null;
+            AutoResetEvent resetEvent;
             Device device = null;
             try
             {
@@ -254,7 +248,6 @@ namespace F16CPD
                             CpdInputControls controlType = binding.CpdInputControl;
                             if (controlType != CpdInputControls.Unknown)
                             {
-                                if (_manager != null)
                                 {
                                     _manager.FireHandler(controlType);
                                     break;
@@ -266,7 +259,7 @@ namespace F16CPD
             }
         }
 
-        private void _mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
+        private void MediatorPhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
         {
             if (e == null || e.Control == null || e.Control.Parent == null) return;
             if (e.Control.ControlType == ControlType.Axis || e.Control.ControlType == ControlType.Unknown) return;
@@ -278,11 +271,11 @@ namespace F16CPD
                         continue;
                     var control = (DIPhysicalControlInfo) e.Control;
                     var device = (DIPhysicalDeviceInfo) e.Control.Parent;
-                    if (device != null && binding.DirectInputDevice != null && device.Guid != Guid.Empty &&
+                    if (binding.DirectInputDevice != null && device.Guid != Guid.Empty &&
                         binding.DirectInputDevice.Guid != Guid.Empty && device.Guid == binding.DirectInputDevice.Guid)
                     {
                         //something on a device we're interested in just changed
-                        if (control != null && control.Equals(binding.DirectInputControl))
+                        if (control.Equals(binding.DirectInputControl))
                         {
                             if (binding.BindingType == BindingType.DirectInputButtonBinding &&
                                 control.ControlType == ControlType.Button)
@@ -294,10 +287,10 @@ namespace F16CPD
                                 }
                                 break;
                             }
-                            else if (binding.BindingType == BindingType.DirectInputPovBinding &&
-                                     control.ControlType == ControlType.Pov)
+                            if (binding.BindingType == BindingType.DirectInputPovBinding &&
+                                control.ControlType == ControlType.Pov)
                             {
-                                float currentDegrees = e.CurrentState/100;
+                                float currentDegrees = e.CurrentState/100.0f;
                                 if (e.CurrentState == -1) currentDegrees = -1;
                                 /*  POV directions in degrees
                                           0
@@ -449,7 +442,6 @@ namespace F16CPD
                 Location = location;
                 SetClientSizeCore(size.Width, size.Height);
                 UpdateManagerSize();
-                _loading = false;
                 UpdateManagerSize();
                 TransparencyKey = Color.AntiqueWhite;
             }
@@ -568,23 +560,17 @@ namespace F16CPD
             int oldWidth = DesktopBounds.Width;
             int oldHeight = DesktopBounds.Height;
 
-            int newWidth = oldWidth;
-            int newHeight = oldHeight;
-            int minWidth = 0;
-            int minHeight = 0;
+            int newWidth;
+            int newHeight;
             if (rotation == RotateFlipType.RotateNoneFlipNone || rotation == RotateFlipType.Rotate180FlipNone)
             {
                 newWidth = Math.Min(oldHeight, oldWidth);
                 newHeight = Math.Max(oldHeight, oldWidth);
-                minWidth = 200;
-                minHeight = 267;
             }
             else
             {
                 newWidth = Math.Max(oldHeight, oldWidth);
                 newHeight = Math.Min(oldHeight, oldWidth);
-                minWidth = 267;
-                minHeight = 200;
             }
             Width = newWidth;
             Height = newHeight;
@@ -678,17 +664,16 @@ namespace F16CPD
                     Point curPos = Cursor.Position;
 
                     if ((outerBounds.Contains(curPos) && !innerBounds.Contains(curPos)) ||
-                        (Cursor == Cursors.SizeAll && drag))
+                        (Cursor == Cursors.SizeAll && Drag))
                     {
-                        var greenPen = new Pen(Color.Green);
-                        greenPen.Width = 7;
+                        var greenPen = new Pen(Color.Green) {Width = 7};
                         var renderTargetBounds = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height);
                         h.DrawRectangle(greenPen, renderTargetBounds);
                     }
 
 
                     var attrs = new ImageAttributes();
-                    ColorMatrix cm = null;
+                    ColorMatrix cm;
                     if (_manager.NightMode)
                     {
                         cm = new ColorMatrix
@@ -882,7 +867,7 @@ namespace F16CPD
         /// Private implementation of Dispose()
         /// </summary>
         /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
-        protected void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!_isDisposed)
             {

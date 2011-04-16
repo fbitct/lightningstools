@@ -14,14 +14,14 @@ namespace Common.UI.UserControls
 
         public byte CharCode
         {
-            get { return (byte) ((string) DdnChars.SelectedItem)[1]; }
+            get { return (byte) ((string) _ddnChars.SelectedItem)[1]; }
             set
             {
-                foreach (object item in DdnChars.Items)
+                foreach (object item in _ddnChars.Items)
                 {
                     if (item.ToString() == " " + (char) value)
                     {
-                        DdnChars.SelectedItem = item;
+                        _ddnChars.SelectedItem = item;
                         return;
                     }
                 }
@@ -34,12 +34,12 @@ namespace Common.UI.UserControls
             get
             {
                 byte toReturn = 0;
-                if (CbxShift.Checked)
-                    toReturn += ModShift;
-                if (CbxControl.Checked)
-                    toReturn += ModControl;
-                if (CbxAlt.Checked)
-                    toReturn += ModAlt;
+                if (_cbxShift.Checked)
+                    toReturn += MOD_SHIFT;
+                if (_cbxControl.Checked)
+                    toReturn += MOD_CONTROL;
+                if (_cbxAlt.Checked)
+                    toReturn += MOD_ALT;
                 return toReturn;
             }
         }
@@ -50,11 +50,11 @@ namespace Common.UI.UserControls
             get
             {
                 var k = (Keys) CharCode;
-                if (CbxShift.Checked)
+                if (_cbxShift.Checked)
                     k |= Keys.Shift;
-                if (CbxControl.Checked)
+                if (_cbxControl.Checked)
                     k |= Keys.Control;
-                if (CbxAlt.Checked)
+                if (_cbxAlt.Checked)
                     k |= Keys.Alt;
                 return k;
             }
@@ -75,22 +75,22 @@ namespace Common.UI.UserControls
 
         public bool Shift
         {
-            get { return CbxShift.Checked; }
-            set { CbxShift.Checked = value; }
+            get { return _cbxShift.Checked; }
+            set { _cbxShift.Checked = value; }
         }
 
 
         public bool Control
         {
-            get { return CbxControl.Checked; }
-            set { CbxControl.Checked = value; }
+            get { return _cbxControl.Checked; }
+            set { _cbxControl.Checked = value; }
         }
 
 
         public bool Alt
         {
-            get { return CbxAlt.Checked; }
-            set { CbxAlt.Checked = value; }
+            get { return _cbxAlt.Checked; }
+            set { _cbxAlt.Checked = value; }
         }
 
 
@@ -98,30 +98,29 @@ namespace Common.UI.UserControls
         {
             get
             {
-                byte ModCount = 0;
-                ModCount += (byte) ((Shift) ? 1 : 0);
-                ModCount += (byte) ((Control) ? 1 : 0);
-                ModCount += (byte) ((Alt) ? 1 : 0);
-                if (ModCount < MinModifiers)
+                byte modCount = 0;
+                modCount += (byte) ((Shift) ? 1 : 0);
+                modCount += (byte) ((Control) ? 1 : 0);
+                modCount += (byte) ((Alt) ? 1 : 0);
+                if (modCount < MinModifiers)
                     return false;
-                else
-                    return true;
+                return true;
             }
         }
 
         #endregion
 
-        private const byte ModAlt = 1, ModControl = 2, ModShift = 4, ModWin = 8;
+        private const byte MOD_ALT = 1, MOD_CONTROL = 2, MOD_SHIFT = 4;
 
         /// <summary> 
         /// Required designer variable.
         /// </summary>
         private readonly Container components;
 
-        private CheckBox CbxAlt;
-        private CheckBox CbxControl;
-        private CheckBox CbxShift;
-        private ComboBox DdnChars;
+        private CheckBox _cbxAlt;
+        private CheckBox _cbxControl;
+        private CheckBox _cbxShift;
+        private ComboBox _ddnChars;
 
 
         public ShortcutInput()
@@ -130,12 +129,12 @@ namespace Common.UI.UserControls
             InitializeComponent();
 
             for (int i = 65; i < 91; i++)
-                DdnChars.Items.Add(" " + (char) i);
+                _ddnChars.Items.Add(" " + (char) i);
 
             for (int i = 48; i < 58; i++)
-                DdnChars.Items.Add(" " + (char) i);
+                _ddnChars.Items.Add(" " + (char) i);
 
-            DdnChars.SelectedIndex = 0;
+            _ddnChars.SelectedIndex = 0;
         }
 
 
@@ -181,50 +180,50 @@ namespace Common.UI.UserControls
         /// </summary>
         private void InitializeComponent()
         {
-            this.CbxShift = new System.Windows.Forms.CheckBox();
-            this.CbxControl = new System.Windows.Forms.CheckBox();
-            this.CbxAlt = new System.Windows.Forms.CheckBox();
-            this.DdnChars = new System.Windows.Forms.ComboBox();
+            this._cbxShift = new System.Windows.Forms.CheckBox();
+            this._cbxControl = new System.Windows.Forms.CheckBox();
+            this._cbxAlt = new System.Windows.Forms.CheckBox();
+            this._ddnChars = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // CbxShift
             // 
-            this.CbxShift.Location = new System.Drawing.Point(14, 3);
-            this.CbxShift.Name = "CbxShift";
-            this.CbxShift.Size = new System.Drawing.Size(56, 24);
-            this.CbxShift.TabIndex = 0;
-            this.CbxShift.Text = "Shift";
+            this._cbxShift.Location = new System.Drawing.Point(14, 3);
+            this._cbxShift.Name = "_cbxShift";
+            this._cbxShift.Size = new System.Drawing.Size(56, 24);
+            this._cbxShift.TabIndex = 0;
+            this._cbxShift.Text = "Shift";
             // 
             // CbxControl
             // 
-            this.CbxControl.Location = new System.Drawing.Point(70, 3);
-            this.CbxControl.Name = "CbxControl";
-            this.CbxControl.Size = new System.Drawing.Size(64, 24);
-            this.CbxControl.TabIndex = 1;
-            this.CbxControl.Text = "Control";
+            this._cbxControl.Location = new System.Drawing.Point(70, 3);
+            this._cbxControl.Name = "_cbxControl";
+            this._cbxControl.Size = new System.Drawing.Size(64, 24);
+            this._cbxControl.TabIndex = 1;
+            this._cbxControl.Text = "Control";
             // 
             // CbxAlt
             // 
-            this.CbxAlt.Location = new System.Drawing.Point(142, 3);
-            this.CbxAlt.Name = "CbxAlt";
-            this.CbxAlt.Size = new System.Drawing.Size(40, 24);
-            this.CbxAlt.TabIndex = 2;
-            this.CbxAlt.Text = "Alt";
+            this._cbxAlt.Location = new System.Drawing.Point(142, 3);
+            this._cbxAlt.Name = "_cbxAlt";
+            this._cbxAlt.Size = new System.Drawing.Size(40, 24);
+            this._cbxAlt.TabIndex = 2;
+            this._cbxAlt.Text = "Alt";
             // 
             // DdnChars
             // 
-            this.DdnChars.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.DdnChars.Location = new System.Drawing.Point(190, 3);
-            this.DdnChars.Name = "DdnChars";
-            this.DdnChars.Size = new System.Drawing.Size(40, 21);
-            this.DdnChars.TabIndex = 4;
+            this._ddnChars.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._ddnChars.Location = new System.Drawing.Point(190, 3);
+            this._ddnChars.Name = "_ddnChars";
+            this._ddnChars.Size = new System.Drawing.Size(40, 21);
+            this._ddnChars.TabIndex = 4;
             // 
             // ShortcutInput
             // 
-            this.Controls.Add(this.DdnChars);
-            this.Controls.Add(this.CbxAlt);
-            this.Controls.Add(this.CbxControl);
-            this.Controls.Add(this.CbxShift);
+            this.Controls.Add(this._ddnChars);
+            this.Controls.Add(this._cbxAlt);
+            this.Controls.Add(this._cbxControl);
+            this.Controls.Add(this._cbxShift);
             this.Name = "ShortcutInput";
             this.Size = new System.Drawing.Size(248, 29);
             this.ResumeLayout(false);

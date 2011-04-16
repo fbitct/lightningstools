@@ -83,7 +83,7 @@ namespace F16CPD
             if (_loaded) return true;
             if (_checked) return _loaded;
             _checked = true;
-            RegistryKey key = null;
+            RegistryKey key;
             try
             {
                 key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\GPL GhostScript\8.64", false);
@@ -102,8 +102,7 @@ namespace F16CPD
             var fi = new FileInfo(valString);
             if (!fi.Directory.Exists) return false;
             if (!fi.Exists) return false;
-            string oldPath = Environment.GetEnvironmentVariable("PATH");
-            if (oldPath == null) oldPath = "";
+            string oldPath = Environment.GetEnvironmentVariable("PATH") ?? "";
             if (!oldPath.Contains(fi.DirectoryName))
             {
                 string newPath = oldPath + Path.PathSeparator + fi.DirectoryName;
@@ -164,8 +163,8 @@ namespace F16CPD
         {
             if (filename == null) return null;
             var fi = new FileInfo(filename);
-            string extension = fi.Extension;
-            string toReturn = filename;
+            var extension = fi.Extension;
+            var toReturn = filename;
             if (fi.Extension != null && fi.Extension.Length > 0)
             {
                 toReturn = toReturn.Substring(0, toReturn.Length - fi.Extension.Length);

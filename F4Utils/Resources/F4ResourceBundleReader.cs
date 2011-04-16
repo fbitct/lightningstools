@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace F4Utils.Resources
@@ -26,10 +27,7 @@ namespace F4Utils.Resources
                 {
                     return -1;
                 }
-                else
-                {
-                    return (int) _resourceIndex.NumResources;
-                }
+                return (int) _resourceIndex.NumResources;
             }
         }
 
@@ -66,20 +64,15 @@ namespace F4Utils.Resources
                     }
                     string resourceName = Encoding.ASCII.GetString(resourceId);
                     int nullLoc = resourceName.IndexOf('\0');
-                    if (nullLoc > 0)
-                    {
-                        resourceName = resourceName.Substring(0, nullLoc);
-                    }
-                    else
-                    {
-                        resourceName = null;
-                    }
+                    resourceName = nullLoc > 0 ? resourceName.Substring(0, nullLoc) : null;
                     if (resourceType == (uint) (F4ResourceType.ImageResource))
                     {
-                        var thisResourceHeader = new F4ImageResourceHeader();
-                        thisResourceHeader.Type = resourceType;
-                        thisResourceHeader.ID = resourceName;
-                        thisResourceHeader.Flags = BitConverter.ToUInt32(bytes, curByte);
+                        var thisResourceHeader = new F4ImageResourceHeader
+                                                     {
+                                                         Type = resourceType,
+                                                         ID = resourceName,
+                                                         Flags = BitConverter.ToUInt32(bytes, curByte)
+                                                     };
                         curByte += 4;
                         thisResourceHeader.CenterX = BitConverter.ToUInt16(bytes, curByte);
                         curByte += 2;
@@ -100,10 +93,12 @@ namespace F4Utils.Resources
                     }
                     else if (resourceType == (uint) (F4ResourceType.SoundResource))
                     {
-                        var thisResourceHeader = new F4SoundResourceHeader();
-                        thisResourceHeader.Type = resourceType;
-                        thisResourceHeader.ID = resourceName;
-                        thisResourceHeader.Flags = BitConverter.ToUInt32(bytes, curByte);
+                        var thisResourceHeader = new F4SoundResourceHeader
+                                                     {
+                                                         Type = resourceType,
+                                                         ID = resourceName,
+                                                         Flags = BitConverter.ToUInt32(bytes, curByte)
+                                                     };
                         curByte += 4;
                         thisResourceHeader.Channels = BitConverter.ToUInt16(bytes, curByte);
                         curByte += 2;
@@ -118,10 +113,12 @@ namespace F4Utils.Resources
                     }
                     else if (resourceType == (uint) (F4ResourceType.FlatResource))
                     {
-                        var thisResourceHeader = new F4FlatResourceHeader();
-                        thisResourceHeader.Type = resourceType;
-                        thisResourceHeader.ID = resourceName;
-                        thisResourceHeader.Offset = BitConverter.ToUInt32(bytes, curByte);
+                        var thisResourceHeader = new F4FlatResourceHeader
+                                                     {
+                                                         Type = resourceType,
+                                                         ID = resourceName,
+                                                         Offset = BitConverter.ToUInt32(bytes, curByte)
+                                                     };
                         curByte += 4;
                         thisResourceHeader.Size = BitConverter.ToUInt32(bytes, curByte);
                         curByte += 4;
@@ -172,10 +169,7 @@ namespace F4Utils.Resources
             {
                 return F4ResourceType.Unknown;
             }
-            else
-            {
-                return (F4ResourceType) _resourceIndex.ResourceHeaders[resourceNum].Type;
-            }
+            return (F4ResourceType) _resourceIndex.ResourceHeaders[resourceNum].Type;
         }
 
         public virtual string GetResourceID(int resourceNum)
@@ -184,10 +178,7 @@ namespace F4Utils.Resources
             {
                 return null;
             }
-            else
-            {
-                return _resourceIndex.ResourceHeaders[resourceNum].ID;
-            }
+            return _resourceIndex.ResourceHeaders[resourceNum].ID;
         }
 
         public virtual byte[] GetSoundResource(string resourceId)
@@ -319,16 +310,10 @@ namespace F4Utils.Resources
             {
                 return null;
             }
-            for (int i = 0; i < _resourceIndex.ResourceHeaders.Length; i++)
-            {
-                F4ResourceHeader thisResourceHeader = _resourceIndex.ResourceHeaders[i];
-                string thisResourceId = thisResourceHeader.ID;
-                if (thisResourceId.ToLowerInvariant() == resourceId.ToLowerInvariant())
-                {
-                    return thisResourceHeader;
-                }
-            }
-            return null;
+            return (from thisResourceHeader in _resourceIndex.ResourceHeaders
+                    let thisResourceId = thisResourceHeader.ID
+                    where thisResourceId.ToLowerInvariant() == resourceId.ToLowerInvariant()
+                    select thisResourceHeader).FirstOrDefault();
         }
 
         #region Nested type: F4FlatResourceHeader

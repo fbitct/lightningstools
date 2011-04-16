@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using F16CPD.Mfd.Controls;
 
 namespace F16CPD.Mfd.Menus
@@ -29,65 +30,38 @@ namespace F16CPD.Mfd.Menus
         /// Checks a set of x/y coordinates to see if that corresponds 
         /// to a screen position occupied by an Option Select Buttonlabel.  If so, 
         /// returns the corresponding <see cref="OptionSelectButton"/> object.  
-        /// If not, returns <see langword="null/>.
+        /// If not, returns <see langword="null"/>.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
         public OptionSelectButton GetOptionSelectButtonByLocation(int x, int y)
         {
-            foreach (OptionSelectButton button in OptionSelectButtons)
-            {
-                if (!button.Visible) continue;
-                var origLabelRectangle = new Rectangle(button.LabelLocation, button.LabelSize);
-                var labelX =
-                    (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.X);
-                var labelY =
-                    (int) (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Y);
-                var labelWidth =
-                    (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.Width);
-                var labelHeight =
-                    (int)
-                    (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Height);
-
-                var labelRectangle = new Rectangle(labelX, labelY, labelWidth, labelHeight);
-                if (x >= labelRectangle.X && y >= labelRectangle.Y && x <= (labelRectangle.X + labelRectangle.Width) &&
-                    y <= (labelRectangle.Y + labelRectangle.Height))
-                {
-                    return button;
-                }
-            }
-            return null;
+            return (from button in OptionSelectButtons
+                    where button.Visible
+                    let origLabelRectangle = new Rectangle(button.LabelLocation, button.LabelSize)
+                    let labelX = (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.X)
+                    let labelY = (int) (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Y)
+                    let labelWidth = (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.Width)
+                    let labelHeight = (int) (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Height)
+                    let labelRectangle = new Rectangle(labelX, labelY, labelWidth, labelHeight)
+                    where x >= labelRectangle.X && y >= labelRectangle.Y && x <= (labelRectangle.X + labelRectangle.Width) && y <= (labelRectangle.Y + labelRectangle.Height)
+                    select button).FirstOrDefault();
         }
 
         public OptionSelectButton FindOptionSelectButtonByPositionNumber(float positionNumber)
         {
-            foreach (OptionSelectButton button in OptionSelectButtons)
-            {
-                if (button.PositionNumber == positionNumber)
-                {
-                    return button;
-                }
-            }
-            return null;
+            return OptionSelectButtons.FirstOrDefault(button => button.PositionNumber == positionNumber);
         }
 
         public OptionSelectButton FindOptionSelectButtonByFunctionName(string functionName)
         {
-            foreach (OptionSelectButton button in OptionSelectButtons)
-            {
-                if (button.FunctionName == functionName) return button;
-            }
-            return null;
+            return OptionSelectButtons.FirstOrDefault(button => button.FunctionName == functionName);
         }
 
         public OptionSelectButton FindOptionSelectButtonByLabelText(string labelText)
         {
-            foreach (OptionSelectButton button in OptionSelectButtons)
-            {
-                if (button.LabelText == labelText) return button;
-            }
-            return null;
+            return OptionSelectButtons.FirstOrDefault(button => button.LabelText == labelText);
         }
     }
 }

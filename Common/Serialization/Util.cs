@@ -47,7 +47,7 @@ namespace Common.Serialization
         /// <returns>an object which is the root of the cloned object graph</returns>
         public static T DeepClone<T>(T toClone)
         {
-            T cloned = default(T);
+            T cloned;
             using (var ms = new MemoryStream(1000))
             {
                 var bf = new BinaryFormatter();
@@ -86,7 +86,7 @@ namespace Common.Serialization
         /// <summary>
         /// Serializes an object to a string.
         /// </summary>
-        /// <param name="x">The object to serialize.</param>
+        /// <param name="toSerialize">The object to serialize.</param>
         /// <returns>a String containing the raw bytes of the supplied object.</returns>
         public static String ToRawBytes(Object toSerialize)
         {
@@ -185,7 +185,7 @@ namespace Common.Serialization
         public static String SerializeToXml(object x, Type type)
         {
             if (x == null) return null;
-            string toReturn = null;
+            string toReturn;
             var serializer = new XmlSerializer(type);
             using (var ms = new MemoryStream())
             {
@@ -211,7 +211,7 @@ namespace Common.Serialization
         public static object DeserializeFromXml(string xml, Type type)
         {
             if (xml == null) return null;
-            object toReturn = null;
+            object toReturn;
             var serializer = new XmlSerializer(type);
             using (var ms = new MemoryStream())
             using (var sw = new StreamWriter(ms))

@@ -15,19 +15,16 @@ namespace Common
                 result = (T) Enum.Parse(typeof (T), strTypeFixed, true);
                 return true;
             }
-            else
+            foreach (string value in Enum.GetNames(typeof (T)))
             {
-                foreach (string value in Enum.GetNames(typeof (T)))
+                if (value.Equals(strTypeFixed, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (value.Equals(strTypeFixed, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result = (T) Enum.Parse(typeof (T), value);
-                        return true;
-                    }
+                    result = (T) Enum.Parse(typeof (T), value);
+                    return true;
                 }
-                result = default(T);
-                return false;
             }
+            result = default(T);
+            return false;
         }
 
         public static byte SetBit(byte bits, int index, bool newVal)

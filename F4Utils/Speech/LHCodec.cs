@@ -23,13 +23,10 @@ namespace F4Utils.Speech
         public int Decode(byte[] inputBuffer, int inputBufferOffset, int dataLength, ref byte[] outputBuffer,
                           int outputBufferOffset)
         {
-            StreamTalk80.LH_ERRCODE errorCode;
-            short outputCodedSize;
-            int loopCount, compDecodeSize = 0;
-            short decodeSize;
-            loopCount = dataLength;
+            int compDecodeSize = 0;
+            int loopCount = dataLength;
 
-            outputCodedSize = PMSIZE;
+            short outputCodedSize = PMSIZE;
 
             GCHandle pinnedInputBufferHandle = GCHandle.Alloc(inputBuffer, GCHandleType.Pinned);
             IntPtr inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(inputBuffer, inputBufferOffset);
@@ -38,11 +35,11 @@ namespace F4Utils.Speech
 
             while (loopCount > 0)
             {
-                decodeSize = (short) loopCount;
+                var decodeSize = (short) loopCount;
                 if (decodeSize > CODESIZE)
                     decodeSize = CODESIZE;
 
-                errorCode = StreamTalk80.Decode(
+                StreamTalk80.LH_ERRCODE errorCode = StreamTalk80.Decode(
                     _hDecoder,
                     inputPtr,
                     ref decodeSize,
@@ -54,11 +51,11 @@ namespace F4Utils.Speech
                 {
                     throw new StreamTalk80Exception("Bad argument.");
                 }
-                else if (errorCode == StreamTalk80.LH_ERRCODE.LH_BADHANDLE)
+                if (errorCode == StreamTalk80.LH_ERRCODE.LH_BADHANDLE)
                 {
                     throw new StreamTalk80Exception("Bad handle.");
                 }
-                else if (errorCode == StreamTalk80.LH_ERRCODE.LH_EFAILURE)
+                if (errorCode == StreamTalk80.LH_ERRCODE.LH_EFAILURE)
                 {
                     throw new StreamTalk80Exception("Decompress failed.");
                 }
@@ -75,13 +72,10 @@ namespace F4Utils.Speech
         public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer,
                           int outputBufferOffset)
         {
-            StreamTalk80.LH_ERRCODE errorCode;
-            short outputCodedSize;
-            int loopCount, compDecodeSize = 0;
-            short decodeSize;
-            loopCount = dataLength;
+            int compDecodeSize = 0;
+            int loopCount = dataLength;
 
-            outputCodedSize = CODESIZE;
+            short outputCodedSize = CODESIZE;
 
             GCHandle pinnedInputBufferHandle = GCHandle.Alloc(inputBuffer, GCHandleType.Pinned);
             IntPtr inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(inputBuffer, inputBufferOffset);
@@ -90,13 +84,13 @@ namespace F4Utils.Speech
 
             while (loopCount > 0)
             {
-                decodeSize = (short) loopCount;
+                var decodeSize = (short) loopCount;
                 if (decodeSize > PMSIZE)
                     decodeSize = PMSIZE;
                 else if (decodeSize < PMSIZE)
                     break;
 
-                errorCode = StreamTalk80.Encode(
+                StreamTalk80.LH_ERRCODE errorCode = StreamTalk80.Encode(
                     _hCoder,
                     inputPtr,
                     ref decodeSize,
@@ -108,11 +102,11 @@ namespace F4Utils.Speech
                 {
                     throw new StreamTalk80Exception("Bad argument.");
                 }
-                else if (errorCode == StreamTalk80.LH_ERRCODE.LH_BADHANDLE)
+                if (errorCode == StreamTalk80.LH_ERRCODE.LH_BADHANDLE)
                 {
                     throw new StreamTalk80Exception("Bad handle.");
                 }
-                else if (errorCode == StreamTalk80.LH_ERRCODE.LH_EFAILURE)
+                if (errorCode == StreamTalk80.LH_ERRCODE.LH_EFAILURE)
                 {
                     throw new StreamTalk80Exception("Compress failed.");
                 }
@@ -173,13 +167,13 @@ namespace F4Utils.Speech
 
         private void Initialize()
         {
-            var CodecInfoStruct = new StreamTalk80.CODECINFO();
-            var CodecInfoExStruct = new StreamTalk80.CODECINFOEX();
-            StreamTalk80.GetCodecInfo(ref CodecInfoStruct);
-            StreamTalk80.GetCodecInfoEx(ref CodecInfoExStruct, Marshal.SizeOf(typeof (StreamTalk80.CODECINFOEX)));
+            var codecInfoStruct = new StreamTalk80.CODECINFO();
+            var codecInfoExStruct = new StreamTalk80.CODECINFOEX();
+            StreamTalk80.GetCodecInfo(ref codecInfoStruct);
+            StreamTalk80.GetCodecInfoEx(ref codecInfoExStruct, Marshal.SizeOf(typeof (StreamTalk80.CODECINFOEX)));
 
-            PMSIZE = CodecInfoExStruct.wInputBufferSize;
-            CODESIZE = CodecInfoExStruct.wCodedBufferSize;
+            PMSIZE = codecInfoExStruct.wInputBufferSize;
+            CODESIZE = codecInfoExStruct.wCodedBufferSize;
             if (PMSIZE == 0)
                 PMSIZE = 4096;
             if (CODESIZE == 0)

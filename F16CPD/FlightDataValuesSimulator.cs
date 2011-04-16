@@ -12,26 +12,28 @@
 
         public FlightData GetInitialFlightData()
         {
-            var flightData = new FlightData();
-            flightData.AltimeterMode = AltimeterMode.Electronic;
-            flightData.AutomaticLowAltitudeWarningInFeet = 300;
-            flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
-            flightData.HsiDesiredCourseInDegrees = 0;
-            flightData.HsiDesiredHeadingInDegrees = 0;
-            flightData.HsiDeviationInvalidFlag = false;
-            flightData.TransitionAltitudeInFeet = 18000;
-            flightData.RateOfTurnInDecimalDegreesPerSecond = 0;
-            flightData.VviOffFlag = false;
-            flightData.AoaOffFlag = false;
-            flightData.HsiOffFlag = false;
-            flightData.AdiOffFlag = false;
-            flightData.PfdOffFlag = false;
-            flightData.RadarAltimeterOffFlag = false;
-            flightData.CpdPowerOnFlag = true;
-            flightData.MarkerBeaconOuterMarkerFlag = false;
-            flightData.MarkerBeaconMiddleMarkerFlag = false;
-            flightData.AdiEnableCommandBars = false;
-            flightData.TacanChannel = "106X";
+            var flightData = new FlightData
+                                 {
+                                     AltimeterMode = AltimeterMode.Electronic,
+                                     AutomaticLowAltitudeWarningInFeet = 300,
+                                     BarometricPressureInDecimalInchesOfMercury = 29.92f,
+                                     HsiDesiredCourseInDegrees = 0,
+                                     HsiDesiredHeadingInDegrees = 0,
+                                     HsiDeviationInvalidFlag = false,
+                                     TransitionAltitudeInFeet = 18000,
+                                     RateOfTurnInDecimalDegreesPerSecond = 0,
+                                     VviOffFlag = false,
+                                     AoaOffFlag = false,
+                                     HsiOffFlag = false,
+                                     AdiOffFlag = false,
+                                     PfdOffFlag = false,
+                                     RadarAltimeterOffFlag = false,
+                                     CpdPowerOnFlag = true,
+                                     MarkerBeaconOuterMarkerFlag = false,
+                                     MarkerBeaconMiddleMarkerFlag = false,
+                                     AdiEnableCommandBars = false,
+                                     TacanChannel = "106X"
+                                 };
             return flightData;
         }
 
@@ -168,14 +170,7 @@
             if (_timesCalled%50 == 0)
             {
                 //dual-valued enumerations
-                if (toReturn.AltimeterMode == AltimeterMode.Electronic)
-                {
-                    toReturn.AltimeterMode = AltimeterMode.Pneumatic;
-                }
-                else
-                {
-                    toReturn.AltimeterMode = AltimeterMode.Electronic;
-                }
+                toReturn.AltimeterMode = toReturn.AltimeterMode == AltimeterMode.Electronic ? AltimeterMode.Pneumatic : AltimeterMode.Electronic;
 
                 //boolean values/flags
                 toReturn.HsiDisplayToFromFlag = !toUpdate.HsiDisplayToFromFlag;

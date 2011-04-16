@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.InputSupport
 {
@@ -108,15 +108,7 @@ namespace Common.InputSupport
                     LoadControls();
                 }
                 if (_controls == null) return null;
-                var axes = new List<PhysicalControlInfo>();
-                foreach (PhysicalControlInfo control in _controls)
-                {
-                    if (control.ControlType == ControlType.Axis)
-                    {
-                        axes.Add(control);
-                    }
-                }
-                return axes.ToArray();
+                return _controls.Where(control => control.ControlType == ControlType.Axis).ToArray();
             }
         }
 
@@ -137,15 +129,7 @@ namespace Common.InputSupport
                     LoadControls();
                 }
                 if (_controls == null) return null;
-                var buttons = new List<PhysicalControlInfo>();
-                foreach (PhysicalControlInfo control in _controls)
-                {
-                    if (control.ControlType == ControlType.Button)
-                    {
-                        buttons.Add(control);
-                    }
-                }
-                return buttons.ToArray();
+                return _controls.Where(control => control.ControlType == ControlType.Button).ToArray();
             }
         }
 
@@ -167,15 +151,7 @@ namespace Common.InputSupport
                     LoadControls();
                 }
                 if (_controls == null) return null;
-                var povs = new List<PhysicalControlInfo>();
-                foreach (PhysicalControlInfo control in _controls)
-                {
-                    if (control.ControlType == ControlType.Pov)
-                    {
-                        povs.Add(control);
-                    }
-                }
-                return povs.ToArray();
+                return _controls.Where(control => control.ControlType == ControlType.Pov).ToArray();
             }
         }
 

@@ -21,19 +21,20 @@ namespace F16CPD.UI.Forms
             int i = 0;
             foreach (string radioItem in RadioButtonItems)
             {
-                var button = new RadioButton();
-                button.Padding = new Padding(0);
-                button.Margin = new Padding(0);
-                button.Text = radioItem;
-                button.Name = "radioButton" + i;
-                button.AutoSize = true;
+                var button = new RadioButton
+                                 {
+                                     Padding = new Padding(0),
+                                     Margin = new Padding(0),
+                                     Text = radioItem,
+                                     Name = "radioButton" + i,
+                                     AutoSize = true
+                                 };
                 button.CheckedChanged += button_CheckedChanged;
                 pnlFlow.SetFlowBreak(button, true);
                 pnlFlow.Controls.Add(button);
                 i++;
             }
-            var cancelButton = new Button();
-            cancelButton.Text = "&Cancel";
+            var cancelButton = new Button {Text = "&Cancel"};
             pnlFlow.SetFlowBreak(cancelButton, true);
             pnlFlow.Controls.Add(cancelButton);
             CancelButton = cancelButton;

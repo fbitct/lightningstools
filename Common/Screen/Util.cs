@@ -11,7 +11,6 @@ namespace Common.Screen
     public static class Util
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
-        private static object sync = false;
 
         public static Bitmap CaptureScreenRectangle(Rectangle sourceRectangle)
         {
@@ -47,10 +46,7 @@ namespace Common.Screen
             {
                 return deviceName.Substring(0, firstNull).Trim();
             }
-            else
-            {
-                return deviceName;
-            }
+            return deviceName;
         }
 
         public static System.Windows.Forms.Screen FindScreen(string deviceName)

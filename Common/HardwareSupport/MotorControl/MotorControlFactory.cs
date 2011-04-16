@@ -10,10 +10,12 @@ namespace Common.HardwareSupport.MotorControl
             AnalogSignal outputLine
             )
         {
-            var stepper = new StepperMotor();
-            stepper.GoToPositionSignal = goToPositionSignal;
-            stepper.NumStepsInRangeOfTravel = numStepsInTravelRange;
-            stepper.PhysicalOutput = outputLine;
+            var stepper = new StepperMotor
+                              {
+                                  GoToPositionSignal = goToPositionSignal,
+                                  NumStepsInRangeOfTravel = numStepsInTravelRange,
+                                  PhysicalOutput = outputLine
+                              };
             return stepper;
         }
 
@@ -26,12 +28,14 @@ namespace Common.HardwareSupport.MotorControl
             AnalogSignal outputLine
             )
         {
-            var stepper = new StepperMotor();
-            stepper.GoToPositionSignal = goToPositionSignal;
-            stepper.NumStepsInRangeOfTravel = numStepsInTravelRange;
-            stepper.MinPositionReachedSignal = minPositionReachedSignal;
-            stepper.MaxPositionReachedSignal = maxPositionReachedSignal;
-            stepper.PhysicalOutput = outputLine;
+            var stepper = new StepperMotor
+                              {
+                                  GoToPositionSignal = goToPositionSignal,
+                                  NumStepsInRangeOfTravel = numStepsInTravelRange,
+                                  MinPositionReachedSignal = minPositionReachedSignal,
+                                  MaxPositionReachedSignal = maxPositionReachedSignal,
+                                  PhysicalOutput = outputLine
+                              };
             return stepper;
         }
 
@@ -45,15 +49,14 @@ namespace Common.HardwareSupport.MotorControl
             AnalogSignal outputLine
             )
         {
-            var stepper = new StepperMotor();
-            stepper.GoToPositionSignal = goToPositionSignal;
-            stepper.NumStepsInRangeOfTravel = numStepsInTravelRange;
-            var minPositionReachedRE = new RangeEvaluator();
-            minPositionReachedRE.Range = minPositionRange;
-            minPositionReachedRE.In = goToPositionSignal;
+            var stepper = new StepperMotor
+                              {
+                                  GoToPositionSignal = goToPositionSignal,
+                                  NumStepsInRangeOfTravel = numStepsInTravelRange
+                              };
+            var minPositionReachedRE = new RangeEvaluator {Range = minPositionRange, In = goToPositionSignal};
             stepper.MinPositionReachedSignal = minPositionReachedRE.Out;
-            var maxPositionReachedRE = new RangeEvaluator();
-            maxPositionReachedRE.In = goToPositionSignal;
+            var maxPositionReachedRE = new RangeEvaluator {In = goToPositionSignal};
             stepper.MaxPositionReachedSignal = maxPositionReachedRE.Out;
             stepper.PhysicalOutput = outputLine;
             return stepper;
@@ -68,14 +71,10 @@ namespace Common.HardwareSupport.MotorControl
             AnalogSignal outputLine
             )
         {
-            var motor = new PositionableMotorWithFeedback();
-            motor.GoToPositionSignal = goToPositionSignal;
-            var minPositionReachedRE = new RangeEvaluator();
-            minPositionReachedRE.Range = minPositionRange;
-            minPositionReachedRE.In = goToPositionSignal;
+            var motor = new PositionableMotorWithFeedback {GoToPositionSignal = goToPositionSignal};
+            var minPositionReachedRE = new RangeEvaluator {Range = minPositionRange, In = goToPositionSignal};
             motor.MinPositionReachedSignal = minPositionReachedRE.Out;
-            var maxPositionReachedRE = new RangeEvaluator();
-            maxPositionReachedRE.In = goToPositionSignal;
+            var maxPositionReachedRE = new RangeEvaluator {In = goToPositionSignal};
             motor.MaxPositionReachedSignal = maxPositionReachedRE.Out;
             motor.PhysicalOutput = outputLine;
             return motor;
@@ -87,9 +86,7 @@ namespace Common.HardwareSupport.MotorControl
             AnalogSignal outputLine
             )
         {
-            var motor = new DirectionalMotor();
-            motor.SpeedAndDirection = speedAndDirection;
-            motor.PhysicalOutput = outputLine;
+            var motor = new DirectionalMotor {SpeedAndDirection = speedAndDirection, PhysicalOutput = outputLine};
             return motor;
         }
 
@@ -99,9 +96,11 @@ namespace Common.HardwareSupport.MotorControl
             AnalogSignal outputLine
             )
         {
-            var toReturn = new PositionableMotor();
-            toReturn.GoToPositionSignal = goToPositionSignal;
-            toReturn.PhysicalOutput = outputLine;
+            var toReturn = new PositionableMotor
+                               {
+                                   GoToPositionSignal = goToPositionSignal,
+                                   PhysicalOutput = outputLine
+                               };
             return toReturn;
         }
     }

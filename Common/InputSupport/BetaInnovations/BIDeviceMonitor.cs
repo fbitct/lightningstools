@@ -78,8 +78,7 @@ namespace Common.InputSupport.BetaInnovations
                 //}
                 //else
                 //{
-                bool[] newState;
-                newState = _manager.Poll(_device, throwOnFail);
+                var newState = _manager.Poll(_device, throwOnFail);
                 if (newState != null)
                 {
                     _prevState = _state;
@@ -111,13 +110,12 @@ namespace Common.InputSupport.BetaInnovations
         /// this class's internal object pool if a monitor instance already exists</returns>
         public static BIDeviceMonitor GetInstance(BIPhysicalDeviceInfo device)
         {
-            BIDeviceMonitor monitor = null;
             if (_monitors.ContainsKey(device))
             {
                 return _monitors[device];
             }
 
-            monitor = new BIDeviceMonitor(device);
+            var monitor = new BIDeviceMonitor(device);
             _monitors.Add(device, monitor);
             return monitor;
         }
@@ -136,7 +134,7 @@ namespace Common.InputSupport.BetaInnovations
         protected override void Prepare()
         {
             int elapsed = 0;
-            int timeout = 1000;
+            const int timeout = 1000;
             while (_preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);

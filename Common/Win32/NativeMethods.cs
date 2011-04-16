@@ -110,9 +110,7 @@ namespace Common.Win32
         // helper for creating an initialized DEVMODE structure
         public static DEVMODE CreateDevmode()
         {
-            var dm = new DEVMODE();
-            dm.dmDeviceName = new String(new char[32]);
-            dm.dmFormName = new String(new char[32]);
+            var dm = new DEVMODE {dmDeviceName = new String(new char[32]), dmFormName = new String(new char[32])};
             dm.dmSize = (short) Marshal.SizeOf(dm);
             return dm;
         }

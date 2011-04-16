@@ -17,10 +17,7 @@ namespace Common.UI.UserControls
                     return SelectionRules.Moveable | SelectionRules.Visible | SelectionRules.LeftSizeable |
                            SelectionRules.RightSizeable;
                 }
-                else
-                {
-                    return SelectionRules.AllSizeable | SelectionRules.Moveable | SelectionRules.Visible;
-                }
+                return SelectionRules.AllSizeable | SelectionRules.Moveable | SelectionRules.Visible;
             }
         }
 
@@ -30,10 +27,12 @@ namespace Common.UI.UserControls
             {
                 var control = (IPAddressControl) Control;
 
-                IList snapLines = base.SnapLines;
+                var snapLines = base.SnapLines;
 
-                snapLines.Add(new SnapLine(SnapLineType.Baseline, control.Baseline));
-
+                if (snapLines != null)
+                {
+                    snapLines.Add(new SnapLine(SnapLineType.Baseline, control.Baseline));
+                }
                 return snapLines;
             }
         }

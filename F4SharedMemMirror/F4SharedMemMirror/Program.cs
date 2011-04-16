@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.ApplicationServices;
@@ -59,13 +60,7 @@ namespace F4SharedMemMirror
         {
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);
-            foreach (Process p in procs)
-            {
-                if ((p.Id != curr.Id) &&
-                    (p.MainModule.FileName == curr.MainModule.FileName))
-                    return p;
-            }
-            return null;
+            return procs.FirstOrDefault(p => (p.Id != curr.Id) && (p.MainModule.FileName == curr.MainModule.FileName));
         }
 
         /// <summary>

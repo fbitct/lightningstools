@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
@@ -43,8 +44,9 @@ namespace F16CPD.UI.Forms
                         RegistryKey startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
-                        startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
-                                            RegistryValueKind.String);
+                        if (startupKey != null)
+                            startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
+                                                RegistryValueKind.String);
                     }
                 }
                 catch (Exception ex)
@@ -61,7 +63,7 @@ namespace F16CPD.UI.Forms
                         RegistryKey startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
-                        startupKey.DeleteValue(Application.ProductName, false);
+                        if (startupKey != null) startupKey.DeleteValue(Application.ProductName, false);
                     }
                 }
                 catch (Exception ex)
@@ -233,10 +235,10 @@ namespace F16CPD.UI.Forms
         private void Start()
         {
             Thread.CurrentThread.Priority = Settings.Default.Priority;
-            IPAddress address = null;
             if (rdoClientMode.Checked)
             {
                 bool validIpAddress = false;
+                IPAddress address = null;
                 validIpAddress = IPAddress.TryParse(txtServerIPAddress.Text, out address);
                 if (String.IsNullOrEmpty(txtServerIPAddress.Text.Trim()) || !validIpAddress)
                 {
@@ -282,16 +284,9 @@ namespace F16CPD.UI.Forms
             _cpdEngine = new F16CpdEngine();
             if (CommandLineSwitches != null)
             {
-                foreach (string thisSwitch in CommandLineSwitches)
+                if (CommandLineSwitches.Where(thisSwitch => !String.IsNullOrEmpty(thisSwitch)).Any(thisSwitch => thisSwitch.ToLowerInvariant() == "testmode"))
                 {
-                    if (!String.IsNullOrEmpty(thisSwitch))
-                    {
-                        if (thisSwitch.ToLowerInvariant() == "testmode")
-                        {
-                            _cpdEngine.TestMode = true;
-                            break;
-                        }
-                    }
+                    _cpdEngine.TestMode = true;
                 }
             }
             lblRotation.Enabled = false;
@@ -490,7 +485,7 @@ namespace F16CPD.UI.Forms
             if (result == DialogResult.OK)
             {
                 RotateFlipType rotation = Settings.Default.Rotation;
-                Size newSize = Size.Empty;
+                Size newSize;
                 if (rotation == RotateFlipType.RotateNoneFlipNone || rotation == RotateFlipType.Rotate180FlipNone)
                 {
                     newSize = new Size(800, 600);
@@ -509,7 +504,6 @@ namespace F16CPD.UI.Forms
 
         private void cbOutputRotation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RotateFlipType oldRotation = Settings.Default.Rotation;
             RotateFlipType newRotation = RotateFlipType.RotateNoneFlipNone;
             if ((string) cbOutputRotation.SelectedItem == "No rotation")
             {
@@ -558,27 +552,13 @@ namespace F16CPD.UI.Forms
 
         private void rdoVertVelocityInThousands_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdoVertVelocityInThousands.Checked)
-            {
-                Settings.Default.DisplayVerticalVelocityInDecimalThousands = true;
-            }
-            else
-            {
-                Settings.Default.DisplayVerticalVelocityInDecimalThousands = false;
-            }
+            Settings.Default.DisplayVerticalVelocityInDecimalThousands = rdoVertVelocityInThousands.Checked;
             F16CPD.Util.SaveCurrentProperties();
         }
 
         private void rdoVertVelocityInUnitFeet_CheckedChanged(object sender, EventArgs e)
         {
-            if (rdoVertVelocityInThousands.Checked)
-            {
-                Settings.Default.DisplayVerticalVelocityInDecimalThousands = true;
-            }
-            else
-            {
-                Settings.Default.DisplayVerticalVelocityInDecimalThousands = false;
-            }
+            Settings.Default.DisplayVerticalVelocityInDecimalThousands = rdoVertVelocityInThousands.Checked;
             F16CPD.Util.SaveCurrentProperties();
         }
 
@@ -590,7 +570,7 @@ namespace F16CPD.UI.Forms
         /// </summary>
         public new void Dispose()
         {
-            Dispose(true, true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -611,7 +591,7 @@ namespace F16CPD.UI.Forms
         /// Private implementation of Dispose()
         /// </summary>
         /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
-        private void Dispose(bool disposing, bool myDispose)
+        private void Dispose(bool disposing)
             //bool myDispose is there to differentiate this method from another that it would otherwise hide
         {
             if (!_isDisposed)

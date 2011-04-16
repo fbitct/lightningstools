@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Common.Application;
@@ -23,7 +24,7 @@ namespace F16CPD
         #region Class variable declarations
 
         // private members
-        private static frmMain mainForm;
+        private static frmMain _mainForm;
         private static readonly ILog _log = LogManager.GetLogger(typeof (Program));
 
         #endregion
@@ -60,13 +61,7 @@ namespace F16CPD
         {
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);
-            foreach (Process p in procs)
-            {
-                if ((p.Id != curr.Id) &&
-                    (p.MainModule.FileName == curr.MainModule.FileName))
-                    return p;
-            }
-            return null;
+            return procs.FirstOrDefault(p => (p.Id != curr.Id) && (p.MainModule.FileName == curr.MainModule.FileName));
         }
 
         /// <summary>
@@ -94,8 +89,7 @@ namespace F16CPD
             var app = new SingleInstanceApplication();
             app.StartupNextInstance += OnAppStartupNextInstance;
             app.UnhandledException += App_UnhandledException;
-            mainForm = new frmMain();
-            mainForm.CommandLineSwitches = args;
+            _mainForm = new frmMain {CommandLineSwitches = args};
             Control.CheckForIllegalCrossThreadCalls = false;
             if (Settings.Default.SettingsUpgradeNeeded)
             {
@@ -103,7 +97,7 @@ namespace F16CPD
                 Settings.Default.SettingsUpgradeNeeded = false;
                 Settings.Default.Save();
             }
-            app.Run(mainForm);
+            app.Run(_mainForm);
         }
 
         /// <summary>
@@ -116,13 +110,13 @@ namespace F16CPD
         private static void OnAppStartupNextInstance(object sender, StartupNextInstanceEventArgs e)
         {
             // if the window is currently minimized, then restore it.
-            if (mainForm.WindowState == FormWindowState.Minimized)
+            if (_mainForm.WindowState == FormWindowState.Minimized)
             {
-                mainForm.WindowState = FormWindowState.Normal;
+                _mainForm.WindowState = FormWindowState.Normal;
             }
 
             // activate the current instance of the app, so that it's shown.
-            mainForm.Activate();
+            _mainForm.Activate();
         }
 
         #endregion

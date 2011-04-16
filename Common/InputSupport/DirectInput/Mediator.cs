@@ -52,7 +52,6 @@ namespace Common.InputSupport.DirectInput
         private bool _isDisposed;
 
         /// <summary>
-        /// <summary>
         /// Signal flag used internally to determine if initialization tasks have been performed.
         /// </summary>
         private bool _isInitialized;
@@ -129,8 +128,8 @@ namespace Common.InputSupport.DirectInput
             int curDevice = 0;
             foreach (DeviceInstance instance in detectedJoysticks)
             {
-                var deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName);
-                deviceInfo.DeviceNum = curDevice;
+                var deviceInfo = new DIPhysicalDeviceInfo(instance.InstanceGuid, instance.InstanceName)
+                                     {DeviceNum = curDevice};
                 //Get the DIDeviceMonitor object from the monitor pool that represents the input
                 //device being evaluated.   If no monitor exists in the pool yet for that device,
                 //one will be created and added to the pool.  This avoids having multiple objects
@@ -147,7 +146,6 @@ namespace Common.InputSupport.DirectInput
         {
             var source = (DIDeviceMonitor) sender;
             DIPhysicalDeviceInfo device = source.DeviceInfo;
-            Guid deviceId = device.Guid;
             foreach (PhysicalControlInfo physicalControl in device.Controls)
             {
                 ProcessStateChange(physicalControl);
@@ -235,7 +233,7 @@ namespace Common.InputSupport.DirectInput
                 //the state in terms of that button
                 if (control.ControlType == ControlType.Button)
                 {
-                    byte buttonState = 0;
+                    byte buttonState;
 
                     if (state.HasValue)
                     {
@@ -250,14 +248,11 @@ namespace Common.InputSupport.DirectInput
                     {
                         return 1; //return a 1 if the button is in the pressed state 
                     }
-                    else
-                    {
-                        return 0; //return a 0 if the button is in the released state
-                    }
+                    return 0; //return a 0 if the button is in the released state
                 }
                     //else if the supplied input control object refers to an Axis, then read
                     //the state in terms of that axis
-                else if (control.ControlType == ControlType.Axis)
+                if (control.ControlType == ControlType.Axis)
                 {
                     int? toReturn = null;
 
