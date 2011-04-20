@@ -22,101 +22,26 @@ namespace MFDExtractor
     public sealed class Extractor : IDisposable
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof (Extractor));
-
-        #region Extractor state
-
-        /// <summary>
-        /// Reference to an instance of this class -- this reference is required so that we
-        /// can implement the Singleton pattern, which allows only a single instance of this
-        /// class to be created as an object, per app-domain
-        /// </summary>
         private static Extractor _extractor;
-
-        #region Public Property Backing Fields
-
         private object _flightData;
-
-        /// <summary>
-        /// Flag to trigger the Extractor engine's worker threads to keep running or stop
-        /// </summary>
         private volatile bool _keepRunning;
-
-        /// <summary>
-        /// Flag to indicate if the Extractor engine is currently running
-        /// </summary>
         private volatile bool _running;
-
-        /// <summary>
-        /// 3D-mode flag
-        /// </summary>
         private volatile bool _threeDeeMode;
-
-        /// <summary>
-        /// 2D-mode primary-view flag
-        /// </summary>
         private volatile bool _twoDeePrimaryView = true;
-
-        #endregion
-
         private bool _disposed;
-
-        #endregion
-
-        #region Public Events
-
-        /// <summary>
-        /// Event declaration for the DataChanged event
-        /// </summary>
         public event EventHandler DataChanged;
-
-        /// <summary>
-        /// Event declaration for the Started event
-        /// </summary>
         public event EventHandler Started;
-
-        /// <summary>
-        /// Event declaration for the Stopping event
-        /// </summary>
         public event EventHandler Stopping;
-
-        /// <summary>
-        /// Event declaration for the Stopped event
-        /// </summary>
         public event EventHandler Stopped;
-
-        /// <summary>
-        /// Event declaration for the Starting event
-        /// </summary>
         public event EventHandler Starting;
-
-        #endregion
-
-        #region Threads
-
-        /// <summary>
-        /// Referencce to the thread that is responsible for orchestrating the image capture sequence
-        /// </summary>
         private Thread _captureOrchestrationThread;
-
         private FormManager _formManager;
         private InputSupport _inputSupport;
-
-
         private MessageManager _messageManager;
         private NetworkManager _networkManager;
         private InstrumentRenderers _renderers;
         private SettingsManager _settingsManager;
         private Falcon4SimSupport _simSupport;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Default constructor.  Private modifier hides this constructor, preventing instances
-        /// of this class from being created arbitrarily.  User code must call the appropriate 
-        /// Factory method (i.e. the .GetInstance() method ) to obtain an object reference.
-        /// </summary>
         private Extractor()
         {
             Initialize();
@@ -124,8 +49,6 @@ namespace MFDExtractor
 
         private void Initialize()
         {
-            //load user settings when an instance of the Extractor engine is created by
-            //one of the Factory methods
             _settingsManager = new SettingsManager();
             LoadSettings();
             SetupInstrumentRenderers();
@@ -136,10 +59,7 @@ namespace MFDExtractor
             _formManager = new FormManager(_settingsManager, _renderers);
         }
 
-        #endregion
-
-        #region Public Methods
-
+       
         /// <summary>
         /// Starts the Extractor
         /// </summary>
@@ -219,9 +139,6 @@ namespace MFDExtractor
         }
 
         /// <summary>
-        /// Calls Dispose() on the current Extractor instance
-        /// </summary>
-        /// <summary>
         /// Factory Method to create or return an instance of the Extractor.  Only one instance can be active within an AppDomain (Singleton pattern)
         /// </summary>
         /// <returns></returns>
@@ -241,10 +158,6 @@ namespace MFDExtractor
         {
             _settingsManager.LoadSettings();
         }
-
-        #endregion
-
-        #region Public Properties
 
         public Mediator Mediator
         {
@@ -289,8 +202,6 @@ namespace MFDExtractor
             get { return _threeDeeMode; }
             set { _threeDeeMode = value; }
         }
-
-        #endregion
 
         #region Capture Implementation 
 
