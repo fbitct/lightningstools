@@ -49,7 +49,11 @@ namespace JoyMapper
 
         private static void LogException(Exception e)
         {
-            if (e is ThreadAbortException || e is ThreadInterruptedException) return;
+            if (e is ThreadAbortException)
+            {
+                Thread.ResetAbort();
+            }
+            else if (e is ThreadInterruptedException) return;
             _log.Error(e.Message, e);
         }
 

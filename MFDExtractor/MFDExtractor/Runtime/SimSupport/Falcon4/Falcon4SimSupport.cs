@@ -560,6 +560,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             catch (ThreadAbortException)
             {
+                Thread.ResetAbort();
             }
             catch (ThreadInterruptedException)
             {

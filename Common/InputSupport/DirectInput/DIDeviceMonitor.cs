@@ -381,7 +381,7 @@ namespace Common.InputSupport.DirectInput
                 }
                 catch (ThreadAbortException)
                 {
-                    //_log.Debug(e.Message, e);
+                    Thread.ResetAbort();
                 }
                 catch (ThreadInterruptedException)
                 {

@@ -404,6 +404,7 @@ namespace PhccTestTool
             }
             catch (ThreadAbortException)
             {
+                Thread.ResetAbort();
             }
             Activate();
         }
@@ -2226,6 +2227,7 @@ namespace PhccTestTool
             }
             catch (ThreadAbortException)
             {
+                Thread.ResetAbort();
             }
             if (sp != null)
             {

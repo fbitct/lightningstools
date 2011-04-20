@@ -352,6 +352,7 @@ namespace MFDExtractor.UI
                         }
                         catch (ThreadAbortException)
                         {
+                            Thread.ResetAbort();
                         }
                         catch (ThreadInterruptedException)
                         {

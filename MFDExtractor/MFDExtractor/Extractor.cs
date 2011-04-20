@@ -545,6 +545,7 @@ namespace MFDExtractor
                     }
                     catch (ThreadAbortException)
                     {
+                        Thread.ResetAbort();
                     }
                     catch (Exception e)
                     {
@@ -581,6 +582,7 @@ namespace MFDExtractor
             }
             catch (ThreadAbortException)
             {
+                Thread.ResetAbort();
             }
             catch (ThreadInterruptedException)
             {

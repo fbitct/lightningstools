@@ -455,6 +455,7 @@ namespace MFDExtractor.Runtime
             }
             catch (ThreadAbortException)
             {
+                Thread.ResetAbort();
             }
             catch (Exception e)
             {

@@ -191,6 +191,7 @@ namespace F16CPD
             }
             catch (ThreadAbortException)
             {
+                Thread.ResetAbort();
             }
             catch (Exception e)
             {
