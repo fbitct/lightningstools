@@ -143,7 +143,6 @@
       <DependentUpon>InputSourceSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="InputSupport\Util.cs" />
-    <Compile Include="Logging\Util.cs" />
     <Compile Include="MacroProgramming\AnalogPassthrough.cs" />
     <Compile Include="MacroProgramming\AnalogSignal.cs" />
     <Compile Include="MacroProgramming\AnalogSignalNormalizer.cs" />

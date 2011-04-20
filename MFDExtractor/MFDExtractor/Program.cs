@@ -111,7 +111,6 @@ namespace MFDExtractor
                     _log.Error(e.Message, e);
                 }
             }
-            Common.Logging.Util.LogBasicMachineInfo();
             Application.Run(mainForm);
         }
 
