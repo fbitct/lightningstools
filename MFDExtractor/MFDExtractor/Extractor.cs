@@ -468,6 +468,7 @@ namespace MFDExtractor
         private void CaptureOrchestrationThreadWork()
         {
             var toWait = new List<WaitHandle>();
+            int pollingDelay = Settings.Default.PollingDelay;
             try
             {
                 while (_keepRunning)
@@ -554,7 +555,7 @@ namespace MFDExtractor
 
                     DateTime thisLoopFinishTime = DateTime.Now;
                     TimeSpan timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
-                    int millisToSleep = Settings.Default.PollingDelay - ((int) timeElapsed.TotalMilliseconds);
+                    int millisToSleep = pollingDelay - ((int) timeElapsed.TotalMilliseconds);
                     if (_settingsManager.TestMode) millisToSleep = 500;
                     DateTime sleepUntil = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, millisToSleep));
                     while (DateTime.Now < sleepUntil)

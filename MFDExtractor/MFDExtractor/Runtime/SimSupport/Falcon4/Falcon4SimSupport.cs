@@ -199,7 +199,6 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         if (doMore)
                         {
                             toReturn = _falconSmReader.GetCurrentData();
-
                             bool computeRalt = false;
                             if (Properties.Settings.Default.EnableISISOutput)
                             {

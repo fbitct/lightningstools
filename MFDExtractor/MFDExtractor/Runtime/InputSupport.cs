@@ -378,20 +378,38 @@ namespace MFDExtractor.Runtime
 
         public static Keys UpdateKeyEventArgsWithExtendedKeyInfo(Keys keys)
         {
-            if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
+            keys = MarkKeysWithShiftModifierIfShiftKeyIsPressed(keys);
+            keys = MarkKeysWithCtrlModifierIfCtrlIsPressed(keys);
+            keys = MarkKeysWithAltModifierIfAltIsPressed(keys);
+            return keys;
+        }
+
+        private static Keys MarkKeysWithAltModifierIfAltIsPressed(Keys keys)
+        {
+            if ((NativeMethods.GetKeyState(NativeMethods.VK_MENU) & 0x8000) != 0)
             {
-                keys |= Keys.Shift;
-                //SHIFT is pressed
+                keys |= Keys.Alt;
+                //ALT is pressed
             }
+            return keys;
+        }
+
+        private static Keys MarkKeysWithCtrlModifierIfCtrlIsPressed(Keys keys)
+        {
             if ((NativeMethods.GetKeyState(NativeMethods.VK_CONTROL) & 0x8000) != 0)
             {
                 keys |= Keys.Control;
                 //CONTROL is pressed
             }
-            if ((NativeMethods.GetKeyState(NativeMethods.VK_MENU) & 0x8000) != 0)
+            return keys;
+        }
+
+        private static Keys MarkKeysWithShiftModifierIfShiftKeyIsPressed(Keys keys)
+        {
+            if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
             {
-                keys |= Keys.Alt;
-                //ALT is pressed
+                keys |= Keys.Shift;
+                //SHIFT is pressed
             }
             return keys;
         }
@@ -402,12 +420,7 @@ namespace MFDExtractor.Runtime
             Device device = null;
             try
             {
-                resetEvent = new AutoResetEvent(false);
-                device = new Device(SystemGuid.Keyboard);
-                device.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-                device.SetEventNotification(resetEvent);
-                device.Properties.BufferSize = 255;
-                device.Acquire();
+                device = CreateAndAcquireDevice(out resetEvent);
                 var lastKeyboardState = new bool[Enum.GetValues(typeof (Key)).Length];
                 var currentKeyboardState = new bool[Enum.GetValues(typeof (Key)).Length];
                 while (!_disposed)
@@ -470,6 +483,17 @@ namespace MFDExtractor.Runtime
                 Common.Util.DisposeObject(device);
                 device = null;
             }
+        }
+
+        private static Device CreateAndAcquireDevice(out AutoResetEvent resetEvent)
+        {
+            resetEvent = new AutoResetEvent(false);
+            var device = new Device(SystemGuid.Keyboard);
+            device.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
+            device.SetEventNotification(resetEvent);
+            device.Properties.BufferSize = 255;
+            device.Acquire();
+            return device;
         }
 
         #region Object Disposal & Destructors
