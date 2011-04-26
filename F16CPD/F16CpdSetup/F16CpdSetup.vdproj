@@ -82,13 +82,13 @@
         "Entry"
         {
         "MsmKey" = "8:_590AD9F1171F54637E085C4F4D097C8B"
-        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
+        "OwnerKey" = "8:_DA1655E19E874020BCDD791B4C2A5977"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_590AD9F1171F54637E085C4F4D097C8B"
-        "OwnerKey" = "8:_DA1655E19E874020BCDD791B4C2A5977"
+        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -124,7 +124,7 @@
         "Entry"
         {
         "MsmKey" = "8:_8C306D9FA0D27422B7003596B3F3247F"
-        "OwnerKey" = "8:_DA1655E19E874020BCDD791B4C2A5977"
+        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -136,7 +136,7 @@
         "Entry"
         {
         "MsmKey" = "8:_8C306D9FA0D27422B7003596B3F3247F"
-        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
+        "OwnerKey" = "8:_DA1655E19E874020BCDD791B4C2A5977"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -154,13 +154,13 @@
         "Entry"
         {
         "MsmKey" = "8:_CB756D8A3E589D3751204630C1373CD7"
-        "OwnerKey" = "8:_DA1655E19E874020BCDD791B4C2A5977"
+        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_CB756D8A3E589D3751204630C1373CD7"
-        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
+        "OwnerKey" = "8:_DA1655E19E874020BCDD791B4C2A5977"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -220,30 +220,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FE9F748794ACDE4713E9DCACB230D1A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6E5074E4EF9C45AA158965BD545C1919"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4D10E80AADA16F1BE994C5CD717D1169"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_464338D948F4C94AA6DF43BF1B080CDB"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -251,6 +227,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_B91A709A70AA849BCE65C0945C368143"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_0617A974B33537084571648BDC969B30"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -269,6 +251,24 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8C306D9FA0D27422B7003596B3F3247F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_FE9F748794ACDE4713E9DCACB230D1A4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6E5074E4EF9C45AA158965BD545C1919"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4D10E80AADA16F1BE994C5CD717D1169"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -921,7 +921,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:F-16 Center Pedestal Display"
         "ProductCode" = "8:{2EFE1C77-8875-4337-A5EF-B1A92E78127F}"
-        "PackageCode" = "8:{6EA1F152-2DA5-4B57-8BAA-B49AF00E6040}"
+        "PackageCode" = "8:{15C4A378-1A24-4FD4-AC25-25BB0BB0B501}"
         "UpgradeCode" = "8:{7C3129E4-6A78-4D6F-87B3-A8784E98FD74}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1484,7 +1484,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_DA1655E19E874020BCDD791B4C2A5977"
             {
-            "SourcePath" = "8:..\\obj\\x86\\Release\\F16CPD.exe"
+            "SourcePath" = "8:..\\obj\\x86\\Debug\\F16CPD.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_9141180F222E4DCAB363AEC87B799CCA"

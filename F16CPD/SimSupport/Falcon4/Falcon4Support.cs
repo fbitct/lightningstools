@@ -279,7 +279,8 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     //&& ((fromFalcon.hsiBits & (int)F4SharedMem.Headers.HsiBits.Flying) == (int)F4SharedMem.Headers.HsiBits.Flying) 
                     flightData.CpdPowerOnFlag = _cpdPowerOn &&
-                                                ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) != (int) Bms4LightBits3.Power_Off);
+                                                ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) !=
+                                                 (int) Bms4LightBits3.Power_Off);
                 }
                 else
                 {
@@ -1726,7 +1727,7 @@ namespace F16CPD.SimSupport.Falcon4
                 }
                 else
                 {
-                    var sample = _terrainBrowser.GetDetailTextureForElevationPost(0, 0, lod);
+                    Bitmap sample = _terrainBrowser.GetDetailTextureForElevationPost(0, 0, lod);
                     thisLodDetailTextureWidthPixels = sample != null ? sample.Width : 1;
                 }
             }
@@ -1836,12 +1837,13 @@ namespace F16CPD.SimSupport.Falcon4
                                     e.Cancel = true;
                                     return false;
                                 }
-                                Bitmap thisElevationPostDetailTexture = _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX,
-                                                                                                                         thisElevationPostY, lod);
+                                Bitmap thisElevationPostDetailTexture =
+                                    _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX,
+                                                                                     thisElevationPostY, lod);
                                 if (thisElevationPostDetailTexture == null) continue;
                                 //now draw the detail texture onto the render target
                                 var sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
-                                                                     thisElevationPostDetailTexture.Height);
+                                                               thisElevationPostDetailTexture.Height);
                                 //determine the upper-left pixel at which to place this detail texture on the render target
                                 var destPoint = new Point(
                                     (thisElevationPostX - leftXPost)*thisLodDetailTextureWidthPixels,
@@ -1914,12 +1916,12 @@ namespace F16CPD.SimSupport.Falcon4
                     Matrix originalGTransform = g.Transform;
 
                     g.TranslateTransform(renderRectangle.Width/2.0f, renderRectangle.Height/2.0f);
-                    g.RotateTransform(-Manager.FlightData.MagneticHeadingInDecimalDegrees);       
+                    g.RotateTransform(-Manager.FlightData.MagneticHeadingInDecimalDegrees);
                     g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
 
                     //rotate 45 degrees before drawing outer map range circle
                     Matrix preRotate = g.Transform;
-                        //capture current rotation so we can set it back before drawing inner map range circle
+                    //capture current rotation so we can set it back before drawing inner map range circle
                     g.TranslateTransform(renderRectangle.Width/2.0f, renderRectangle.Height/2.0f);
                     g.RotateTransform(-45);
                     g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);

@@ -19,6 +19,7 @@ using F16CPD.SimSupport.Falcon4;
 using F16CPD.UI.Forms;
 using log4net;
 using Microsoft.DirectX.DirectInput;
+using System.Diagnostics;
 
 namespace F16CPD
 {
@@ -72,6 +73,7 @@ namespace F16CPD
             return new Bitmap(ClientRectangle.Height, ClientRectangle.Width, PixelFormat.Format16bppRgb565);
         }
 
+        [DebuggerStepThrough]
         private void InitializeInternal()
         {
             if (_mediator != null)
@@ -84,7 +86,7 @@ namespace F16CPD
             _mediatorHandler =
                 new Mediator.PhysicalControlStateChangedEventHandler(MediatorPhysicalControlStateChanged);
             _mediator.PhysicalControlStateChanged += _mediatorHandler;
-            foreach (DIDeviceMonitor deviceMonitor in _mediator.DeviceMonitors.Values)
+            foreach (var deviceMonitor in _mediator.DeviceMonitors.Values)
             {
                 deviceMonitor.Poll();
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Common.MacroProgramming;
@@ -173,7 +174,9 @@ namespace F4Utils.Process
                 int procId;
                 NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
                 System.Diagnostics.Process process = System.Diagnostics.Process.GetProcessById(procId);
-                toReturn = process.MainModule.FileName;
+                toReturn = (from ProcessModule module in process.Modules
+                            where module.ModuleName.Contains("F4") || module.ModuleName.ToUpper().Contains("FALCON")
+                            select module.FileName).FirstOrDefault();
             }
             return toReturn;
         }
@@ -194,132 +197,151 @@ namespace F4Utils.Process
 
             if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.AlliedForce)
             {
-                try
-                {
-                    if (exePath != null)
-                    {
-                        exePath = Path.GetDirectoryName(exePath);
-                        string configFolder = exePath + Path.DirectorySeparatorChar + "config";
-                        using (
-                            StreamReader reader =
-                                File.OpenText(configFolder + Path.DirectorySeparatorChar + "options.cfg"))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                string line = reader.ReadLine();
-                                if (line != null)
-                                {
-                                    line = line.Trim();
-                                    if (line.StartsWith("gr_PilotCallsign"))
-                                    {
-                                        int equalsLoc = line.IndexOf('=');
-                                        if (equalsLoc >= 16)
-                                        {
-                                            callsign = line.Substring(equalsLoc + 1, line.Length - equalsLoc - 1);
-                                            callsign = callsign.Trim();
-                                            if (!String.IsNullOrEmpty(callsign))
-                                            {
-                                                var bytes = new List<byte>();
-                                                List<string> byteStrings = Common.Strings.Util.Tokenize(callsign);
-                                                bool firstByte = true;
-                                                foreach (string byteString in byteStrings)
-                                                {
-                                                    if (firstByte)
-                                                    {
-                                                        firstByte = false;
-                                                        continue;
-                                                    }
-                                                    byte thisByte = byte.Parse(byteString, NumberStyles.HexNumber);
-                                                    bytes.Add(thisByte);
-                                                }
-                                                byte[] allBytes = bytes.ToArray();
-                                                string decoded = Encoding.ASCII.GetString(allBytes);
-                                                if (!string.IsNullOrEmpty(decoded))
-                                                {
-                                                    decoded = decoded.Trim();
-                                                }
-                                                int nullLoc = decoded.IndexOf('\0');
-                                                if (nullLoc >= 0)
-                                                {
-                                                    decoded = decoded.Substring(0, nullLoc);
-                                                    callsign = decoded;
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _log.Error(ex.Message, ex);
-                    callsign = "Viper";
-                }
+                callsign = DetectF4AFCallsign(exePath, callsign);
             }
             else if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4 && verInfo != null &&
                      ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) ||
                       (verInfo.ProductMajorPart > 4)))
             {
-                try
+                callsign = DetectBMSCallsign(exePath, callsign);
+            }
+            else
+            {
+                callsign = DetectF4ClassicCallsign(callsign);
+            }
+            return callsign;
+        }
+
+        private static string DetectF4ClassicCallsign(string callsign)
+        {
+            try
+            {
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\MicroProse\Falcon\4.0");
+                if (key != null) callsign = Encoding.ASCII.GetString((byte[]) key.GetValue("PilotCallsign"));
+                if (callsign != null)
                 {
-                    RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Benchmark Sims");
-                    if (key != null)
+                    int firstNull = callsign.IndexOf('\0');
+                    callsign = callsign.Substring(0, firstNull);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex.Message, ex);
+                callsign = "Viper";
+            }
+            return callsign;
+        }
+
+        private static string DetectBMSCallsign(string exePath, string callsign)
+        {
+            try
+            {
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Benchmark Sims");
+                if (key != null)
+                {
+                    var subkeys = key.GetSubKeyNames();
+                    if (subkeys != null && subkeys.Length > 0)
                     {
-                        var subkeys = key.GetSubKeyNames();
-                        if (subkeys != null && subkeys.Length > 0)
+                        bool callsignFound = false;
+                        foreach (string subkey in subkeys)
                         {
-                            bool callsignFound = false;
-                            foreach (string subkey in subkeys)
+                            RegistryKey toRead = key.OpenSubKey(subkey, false);
+                            if (toRead != null)
                             {
-                                RegistryKey toRead = key.OpenSubKey(subkey, false);
-                                if (toRead != null)
+                                var baseDir = (string) toRead.GetValue("baseDir", null);
+                                var exePathFI = new FileInfo(exePath);
+                                string exeDir = exePathFI.Directory.FullName;
+
+                                if (baseDir != null && exeDir !=null &&  (string.Compare(baseDir, exeDir, true) == 0) || exeDir.StartsWith(baseDir))
                                 {
-                                    var baseDir = (string) toRead.GetValue("baseDir", null);
-                                    var exePathFI = new FileInfo(exePath);
-                                    string exeDir = exePathFI.Directory.FullName;
-                                    if (baseDir != null && string.Compare(baseDir, exeDir, true) == 0)
+                                    callsign = Encoding.ASCII.GetString((byte[]) toRead.GetValue("PilotCallsign"));
+                                    int firstNull = callsign.IndexOf('\0');
+                                    callsign = callsign.Substring(0, firstNull);
+                                    callsignFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!callsignFound)
+                        {
+                            callsign = "Viper";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex.Message, ex);
+                callsign = "Viper";
+            }
+            return callsign;
+        }
+
+        private static string DetectF4AFCallsign(string exePath, string callsign)
+        {
+            try
+            {
+                if (exePath != null)
+                {
+                    exePath = Path.GetDirectoryName(exePath);
+                    string configFolder = exePath + Path.DirectorySeparatorChar + "config";
+                    using (
+                        StreamReader reader =
+                            File.OpenText(configFolder + Path.DirectorySeparatorChar + "options.cfg"))
+                    {
+                        while (!reader.EndOfStream)
+                        {
+                            string line = reader.ReadLine();
+                            if (line != null)
+                            {
+                                line = line.Trim();
+                                if (line.StartsWith("gr_PilotCallsign"))
+                                {
+                                    int equalsLoc = line.IndexOf('=');
+                                    if (equalsLoc >= 16)
                                     {
-                                        callsign = Encoding.ASCII.GetString((byte[]) toRead.GetValue("PilotCallsign"));
-                                        int firstNull = callsign.IndexOf('\0');
-                                        callsign = callsign.Substring(0, firstNull);
-                                        callsignFound = true;
+                                        callsign = line.Substring(equalsLoc + 1, line.Length - equalsLoc - 1);
+                                        callsign = callsign.Trim();
+                                        if (!String.IsNullOrEmpty(callsign))
+                                        {
+                                            var bytes = new List<byte>();
+                                            List<string> byteStrings = Common.Strings.Util.Tokenize(callsign);
+                                            bool firstByte = true;
+                                            foreach (string byteString in byteStrings)
+                                            {
+                                                if (firstByte)
+                                                {
+                                                    firstByte = false;
+                                                    continue;
+                                                }
+                                                byte thisByte = byte.Parse(byteString, NumberStyles.HexNumber);
+                                                bytes.Add(thisByte);
+                                            }
+                                            byte[] allBytes = bytes.ToArray();
+                                            string decoded = Encoding.ASCII.GetString(allBytes);
+                                            if (!string.IsNullOrEmpty(decoded))
+                                            {
+                                                decoded = decoded.Trim();
+                                            }
+                                            int nullLoc = decoded.IndexOf('\0');
+                                            if (nullLoc >= 0)
+                                            {
+                                                decoded = decoded.Substring(0, nullLoc);
+                                                callsign = decoded;
+                                            }
+                                        }
                                         break;
                                     }
                                 }
                             }
-                            if (!callsignFound)
-                            {
-                                callsign = "Viper";
-                            }
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    _log.Error(ex.Message, ex);
-                    callsign = "Viper";
-                }
             }
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\MicroProse\Falcon\4.0");
-                    if (key != null) callsign = Encoding.ASCII.GetString((byte[]) key.GetValue("PilotCallsign"));
-                    if (callsign != null)
-                    {
-                        int firstNull = callsign.IndexOf('\0');
-                        callsign = callsign.Substring(0, firstNull);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _log.Error(ex.Message, ex);
-                    callsign = "Viper";
-                }
+                _log.Error(ex.Message, ex);
+                callsign = "Viper";
             }
             return callsign;
         }
@@ -375,7 +397,16 @@ namespace F4Utils.Process
             if (exeFilePath != null)
             {
                 string callsign = DetectCurrentCallsign();
-                string configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar + "config";
+                string configFolder = string.Empty;
+
+                if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.BMS4)
+                {
+                    configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + "User" + Path.DirectorySeparatorChar + "config";
+                }
+                else
+                {
+                    configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar + "config";
+                }
                 string pilotOptionsPath;
                 if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.AlliedForce)
                 {
