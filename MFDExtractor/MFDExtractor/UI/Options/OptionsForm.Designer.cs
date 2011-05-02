@@ -1,7 +1,7 @@
 using Common.UI.UserControls;
-namespace MFDExtractor.UI
+namespace MFDExtractor.UI.Options
 {
-    partial class frmOptions
+    partial class OptionsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace MFDExtractor.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOptions));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsForm));
             this.cmdOk = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.errControlErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
@@ -4308,7 +4308,7 @@ namespace MFDExtractor.UI
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmOptions";
+            this.Name = "OptionsForm";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -15,13 +15,12 @@ using MFDExtractor.Runtime;
 using MFDExtractor.Runtime.Settings;
 using MFDExtractor.Runtime.SimSupport.Falcon4;
 using MFDExtractor.UI;
-using Util = F4Utils.Process.Util;
 
 namespace MFDExtractor
 {
     public sealed class Extractor : IDisposable
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Extractor));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Extractor));
         private static Extractor _extractor;
         private object _flightData;
         private volatile bool _keepRunning;
@@ -29,11 +28,6 @@ namespace MFDExtractor
         private volatile bool _threeDeeMode;
         private volatile bool _twoDeePrimaryView = true;
         private bool _disposed;
-        public event EventHandler DataChanged;
-        public event EventHandler Started;
-        public event EventHandler Stopping;
-        public event EventHandler Stopped;
-        public event EventHandler Starting;
         private Thread _captureOrchestrationThread;
         private FormManager _formManager;
         private InputSupport _inputSupport;
@@ -42,6 +36,15 @@ namespace MFDExtractor
         private InstrumentRenderers _renderers;
         private SettingsManager _settingsManager;
         private Falcon4SimSupport _simSupport;
+
+        private static string _createdOnThread;
+
+        public event EventHandler DataChanged;
+        public event EventHandler Started;
+        public event EventHandler Stopping;
+        public event EventHandler Stopped;
+        public event EventHandler Starting;
+
         private Extractor()
         {
             Initialize();
@@ -72,7 +75,6 @@ namespace MFDExtractor
             }
             F4Utils.Process.KeyFileUtils.ResetCurrentKeyFile();
 
-            DateTime beginStartingEventTime = DateTime.Now;
             //Fire the Starting event to all listeners
             if (Starting != null)
             {
@@ -126,6 +128,8 @@ namespace MFDExtractor
             if (_extractor == null)
             {
                 _extractor = new Extractor();
+                _createdOnThread = string.Format("{0}:{1}", Thread.CurrentThread.ManagedThreadId,
+                                                 Thread.CurrentThread.Name);
             }
             return _extractor;
         }
@@ -319,11 +323,7 @@ namespace MFDExtractor
                 Image image = null;
                 try
                 {
-                    image = imageDelegate();
-                    if (image == null)
-                    {
-                        image = Common.Imaging.Util.CloneBitmap(blankImageDelegate());
-                    }
+                    image = imageDelegate() ?? Common.Imaging.Util.CloneBitmap(blankImageDelegate());
                     SetInstrumentImage(image, instrumentName, networkMode);
                     if (perfCounter != null)
                     {
@@ -332,7 +332,7 @@ namespace MFDExtractor
                 }
                 catch (Exception e)
                 {
-                    _log.Error(e.Message, e);
+                    Log.Error(e.Message, e);
                 }
                 finally
                 {
@@ -361,7 +361,7 @@ namespace MFDExtractor
             if (image == null) return;
             if (InstrumentFormController.Instances.ContainsKey(instrumentName))
             {
-                (InstrumentFormController.Instances[instrumentName].Renderer as CanvasRenderer).Image = image;
+                ((CanvasRenderer) InstrumentFormController.Instances[instrumentName].Renderer).Image = image;
             }
             if (networkMode == NetworkMode.Server)
             {
@@ -439,7 +439,6 @@ namespace MFDExtractor
         /// </summary>
         private void CaptureOrchestrationThreadWork()
         {
-            var toWait = new List<WaitHandle>();
             int pollingDelay = Settings.Default.PollingDelay;
             try
             {
@@ -484,8 +483,7 @@ namespace MFDExtractor
                     }
                     else
                     {
-                        var toSet = new FlightData();
-                        toSet.hsiBits = Int32.MaxValue;
+                        var toSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(toSet);
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
                             (FlightData) _flightData,
@@ -508,7 +506,7 @@ namespace MFDExtractor
 
                     try
                     {
-                        toWait = new List<WaitHandle>();
+                        var toWait = new List<WaitHandle>();
                         InstrumentFormController.RenderAll();
                         //performance group 0
                         Common.Threading.Util.WaitAllHandlesInListAndClearList(toWait, 1000);
@@ -522,7 +520,7 @@ namespace MFDExtractor
                     }
                     catch (Exception e)
                     {
-                        _log.Error(e.Message, e);
+                        Log.Error(e.Message, e);
                     }
 
                     DateTime thisLoopFinishTime = DateTime.Now;
@@ -538,7 +536,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!_simSupport.IsSimRunning && !(_settingsManager.NetworkMode == NetworkMode.Client)) &&
+                    if ((!_simSupport.IsSimRunning && _settingsManager.NetworkMode != NetworkMode.Client) &&
                         !_settingsManager.TestMode)
                     {
                         Application.DoEvents();
@@ -578,10 +576,12 @@ namespace MFDExtractor
         private void SetupCaptureOrchestrationThread()
         {
             Common.Threading.Util.AbortThread(ref _captureOrchestrationThread);
-            _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork);
-            _captureOrchestrationThread.Priority = _settingsManager.ThreadPriority;
-            _captureOrchestrationThread.IsBackground = true;
-            _captureOrchestrationThread.Name = "CaptureOrchestrationThread";
+            _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork)
+                                              {
+                                                  Priority = _settingsManager.ThreadPriority,
+                                                  IsBackground = true,
+                                                  Name = "CaptureOrchestrationThread"
+                                              };
         }
 
         #endregion
@@ -596,7 +596,7 @@ namespace MFDExtractor
                 baroPressureInchesOfMercury = baroPressure/Constants.INCHES_MERCURY_TO_HECTOPASCALS;
             }
             float baroDifference = baroPressureInchesOfMercury - 29.92f;
-            float baroChangePerThousandFeet = 1.08f;
+            const float baroChangePerThousandFeet = 1.08f;
             float altitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
             return altitudeCorrection + trueAltitude;
         }
@@ -627,6 +627,10 @@ namespace MFDExtractor
                 if (disposing)
                 {
                     Stop();
+                    _keepRunning = false;
+                   
+                    Common.Threading.Util.AbortThread(ref _captureOrchestrationThread);
+                    _captureOrchestrationThread = null;
 
                     Common.Util.DisposeObject(_simSupport);
                     _simSupport = null;
@@ -637,21 +641,24 @@ namespace MFDExtractor
                     Common.Util.DisposeObject(_networkManager);
                     _simSupport = null;
 
-                    Common.Threading.Util.AbortThread(ref _captureOrchestrationThread);
-                    _captureOrchestrationThread = null;
                     Common.Util.DisposeObject(_settingsManager);
+                    _settingsManager = null;
+
+                    Common.Util.DisposeObject(_messageManager);
+                    _messageManager = null;
+
+                    Common.Util.DisposeObject(_renderers);
+                    _renderers = null;
+
+                    Common.Util.DisposeObject(_formManager);
+                    _formManager = null;
+
+                    Common.Util.DisposeObject(_extractor);
+                    _extractor = null;
+
                 }
             }
             _disposed = true;
-        }
-
-        internal static void DisposeInstance()
-        {
-            if (_extractor != null)
-            {
-                Common.Util.DisposeObject(_extractor);
-                _extractor = null;
-            }
         }
 
         #endregion

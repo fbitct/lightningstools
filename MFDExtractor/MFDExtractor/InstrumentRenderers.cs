@@ -4,6 +4,7 @@ using Common.SimSupport;
 using Common.UI;
 using LightningGauges.Renderers;
 using MFDExtractor.UI;
+using MFDExtractor.UI.Options;
 
 namespace MFDExtractor
 {

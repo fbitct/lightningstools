@@ -7,6 +7,7 @@ using log4net;
 using MFDExtractor.Properties;
 using MFDExtractor.Runtime;
 using Microsoft.DirectX.DirectInput;
+using MFDExtractor.UI.Options;
 
 namespace MFDExtractor.UI
 {
@@ -44,7 +45,7 @@ namespace MFDExtractor.UI
         /// <summary>
         /// Reference to an instance of the Options form 
         /// </summary>
-        private frmOptions _optionsForm;
+        private OptionsForm _optionsFormForm;
 
         /// <summary>
         /// DirectInput Key code representing hotkey which switches the MFD Extractor to 3D mode
@@ -441,8 +442,10 @@ namespace MFDExtractor.UI
         private void Quit()
         {
             //Stop the Extractor engine
-            Extractor.GetInstance().Stop();
-            Extractor.DisposeInstance();
+            Extractor instance = Extractor.GetInstance();
+            instance.Stop();
+            Common.Util.DisposeObject(instance);
+
             //remove the applicaton's tray icon from the tray
             nfyTrayIcon.Visible = false;
             //Close the application's main form
@@ -475,15 +478,15 @@ namespace MFDExtractor.UI
         /// </summary>
         private void ShowOptionsDialog()
         {
-            if (_optionsForm == null)
+            if (_optionsFormForm == null)
             {
                 Extractor extractor = Extractor.GetInstance(); //get a reference to the main Extractor engine
                 mnuCtxExit.Enabled = false; //disable the Exit action on the system tray icon's menu
 
 
                 //display the application's Options form to the user
-                _optionsForm = new frmOptions();
-                _optionsForm.ShowDialog(this);
+                _optionsFormForm = new OptionsForm();
+                _optionsFormForm.ShowDialog(this);
 
                 SetupHotkeys(); //reconfigure any global mode-switching hotkeys per any new user settings
                 extractor.LoadSettings();
@@ -493,12 +496,12 @@ namespace MFDExtractor.UI
                 mnuCtxExit.Enabled = true;
 
                 //free the memory used by the reference to the Options form
-                _optionsForm = null;
+                _optionsFormForm = null;
             }
             else
             {
                 //if the Options form is already being displayed, just bring it to the front
-                _optionsForm.BringToFront();
+                _optionsFormForm.BringToFront();
             }
         }
 

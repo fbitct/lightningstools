@@ -109,22 +109,22 @@ namespace MFDExtractor.Runtime.Settings
 
         private void RegisterBackgroundWorkerFunctions()
         {
-            _settingsSaverAsyncWorker.DoWork += _settingsSaverAsyncWorker_DoWork;
-            _settingsLoaderAsyncWorker.DoWork += _settingsLoaderAsyncWorker_DoWork;
+            _settingsSaverAsyncWorker.DoWork += SettingsSaverAsyncWorkerDoWork;
+            _settingsLoaderAsyncWorker.DoWork += SettingsLoaderAsyncWorkerDoWork;
         }
 
         private void UnregisterBackgroundWorkerFunctions()
         {
-            _settingsSaverAsyncWorker.DoWork -= _settingsSaverAsyncWorker_DoWork;
-            _settingsLoaderAsyncWorker.DoWork -= _settingsLoaderAsyncWorker_DoWork;
+            _settingsSaverAsyncWorker.DoWork -= SettingsSaverAsyncWorkerDoWork;
+            _settingsLoaderAsyncWorker.DoWork -= SettingsLoaderAsyncWorkerDoWork;
         }
 
-        private void _settingsLoaderAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void SettingsLoaderAsyncWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             LoadSettings();
         }
 
-        private void _settingsSaverAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
+        private static void SettingsSaverAsyncWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             Properties.Settings.Default.Save();
             Properties.Settings.Default.Reload();
@@ -149,12 +149,14 @@ namespace MFDExtractor.Runtime.Settings
 
         private void LoadGDIPlusSettings()
         {
-            _gdiPlusOptions = new GDIPlusOptions();
-            _gdiPlusOptions.CompositingQuality = Properties.Settings.Default.CompositingQuality;
-            _gdiPlusOptions.InterpolationMode = Properties.Settings.Default.InterpolationMode;
-            _gdiPlusOptions.PixelOffsetMode = Properties.Settings.Default.PixelOffsetMode;
-            _gdiPlusOptions.SmoothingMode = Properties.Settings.Default.SmoothingMode;
-            _gdiPlusOptions.TextRenderingHint = Properties.Settings.Default.TextRenderingHint;
+            _gdiPlusOptions = new GDIPlusOptions
+                                  {
+                                      CompositingQuality = Properties.Settings.Default.CompositingQuality,
+                                      InterpolationMode = Properties.Settings.Default.InterpolationMode,
+                                      PixelOffsetMode = Properties.Settings.Default.PixelOffsetMode,
+                                      SmoothingMode = Properties.Settings.Default.SmoothingMode,
+                                      TextRenderingHint = Properties.Settings.Default.TextRenderingHint
+                                  };
         }
 
         private void LoadKeySettings()
@@ -175,17 +177,18 @@ namespace MFDExtractor.Runtime.Settings
         public void LoadSettings()
         {
             LoadKeySettings();
-            Properties.Settings settings = Properties.Settings.Default;
+            var settings = Properties.Settings.Default;
             LoadGDIPlusSettings();
             _networkMode = (NetworkMode) settings.NetworkingMode;
-            if (_networkMode == NetworkMode.Server)
+            switch (_networkMode)
             {
-                _serverEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
-            }
-            else if (_networkMode == NetworkMode.Client)
-            {
-                _serverEndpoint = new IPEndPoint(IPAddress.Parse(settings.ClientUseServerIpAddress),
-                                                 settings.ClientUseServerPortNum);
+                case NetworkMode.Server:
+                    _serverEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
+                    break;
+                case NetworkMode.Client:
+                    _serverEndpoint = new IPEndPoint(IPAddress.Parse(settings.ClientUseServerIpAddress),
+                                                     settings.ClientUseServerPortNum);
+                    break;
             }
             if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
             {
@@ -285,6 +288,7 @@ namespace MFDExtractor.Runtime.Settings
             {
                 if (disposing)
                 {
+                    UnregisterBackgroundWorkerFunctions();
                 }
             }
             _disposed = true;

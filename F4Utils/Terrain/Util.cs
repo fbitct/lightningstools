@@ -328,5 +328,10 @@ namespace F4Utils.Terrain
             GC.Collect();
             return toReturn;
         }
+
+        public static List<string> Tokenize(string thisLine)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
