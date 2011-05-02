@@ -1146,7 +1146,7 @@ namespace F16CPD.SimSupport.Falcon4
                             var useIncrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                KeyBinding incByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiCrsIncBy1");
+                                KeyBinding incByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiCrsIncBy1");
                                 if (incByOneCallback != null &&
                                     incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
@@ -1162,7 +1162,7 @@ namespace F16CPD.SimSupport.Falcon4
                             var useDecrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                KeyBinding decByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiCrsDecBy1");
+                                KeyBinding decByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
                                 if (decByOneCallback != null &&
                                     decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
@@ -1178,7 +1178,7 @@ namespace F16CPD.SimSupport.Falcon4
                             var useIncrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                KeyBinding incByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiHdgIncBy1");
+                                KeyBinding incByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiHdgIncBy1");
                                 if (incByOneCallback != null &&
                                     incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
@@ -1195,7 +1195,7 @@ namespace F16CPD.SimSupport.Falcon4
                             var useDecrementByOne = false;
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                             {
-                                KeyBinding decByOneCallback = F4Utils.Process.Util.FindKeyBinding("SimHsiHdgDecBy1");
+                                var decByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiHdgDecBy1");
                                 if (decByOneCallback != null &&
                                     decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                                 {
@@ -1454,7 +1454,7 @@ namespace F16CPD.SimSupport.Falcon4
 
         private static KeyBinding FindKeyBindingLocal(string callback)
         {
-            return F4Utils.Process.Util.FindKeyBinding(callback);
+            return F4Utils.Process.KeyFileUtils.FindKeyBinding(callback);
         }
 
 
@@ -1481,7 +1481,7 @@ namespace F16CPD.SimSupport.Falcon4
         private void SendCallbackToFalconLocal(string callback)
         {
             _isSendingInput = true;
-            F4Utils.Process.Util.SendCallbackToFalcon(callback);
+            F4Utils.Process.KeyFileUtils.SendCallbackToFalcon(callback);
             _isSendingInput = false;
         }
 
@@ -1513,7 +1513,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (!Settings.Default.RunAsClient)
             {
-                _keyFile = F4Utils.Process.Util.GetCurrentKeyFile();
+                _keyFile = F4Utils.Process.KeyFileUtils.GetCurrentKeyFile();
             }
         }
 
