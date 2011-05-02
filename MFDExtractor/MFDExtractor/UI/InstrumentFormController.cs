@@ -316,142 +316,19 @@ namespace MFDExtractor.UI
         private void Render()
         {
             DateTime startTime = DateTime.Now;
+
             if (Renderer == null || InstrumentForm == null) return;
             if (DateTime.Now.Subtract(LastRenderedOn).TotalMilliseconds < PollingDelay) return;
 
             Bitmap image = null;
             if (InstrumentForm.ClientRectangle != Rectangle.Empty)
             {
-                try
-                {
-                    if (InstrumentForm.Rotation.ToString().Contains("90") ||
-                        InstrumentForm.Rotation.ToString().Contains("270"))
-                    {
-                        image = new Bitmap(InstrumentForm.ClientRectangle.Height, InstrumentForm.ClientRectangle.Width,
-                                           PixelFormat.Format32bppPArgb);
-                    }
-                    else
-                    {
-                        image = new Bitmap(InstrumentForm.ClientRectangle.Width, InstrumentForm.ClientRectangle.Height,
-                                           PixelFormat.Format32bppPArgb);
-                    }
-                    using (Graphics g = Graphics.FromImage(image))
-                    {
-                        try
-                        {
-                            Renderer.Render(g, new Rectangle(0, 0, image.Width, image.Height));
-                            LastRenderedOn = DateTime.Now;
-                            if (ShouldHighlightingBorderBeDisplayedOnTargetForm(InstrumentForm))
-                            {
-                                Color scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
-                                var scopeGreenPen = new Pen(scopeGreenColor);
-                                scopeGreenPen.Width = 5;
-                                g.DrawRectangle(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
-                                RenderImmediately = true;
-                            }
-                        }
-                        catch (ThreadAbortException)
-                        {
-                            Thread.ResetAbort();
-                        }
-                        catch (ThreadInterruptedException)
-                        {
-                        }
-                        catch (Exception e)
-                        {
-                            try
-                            {
-                                _log.Error("An error occurred while rendering " + Renderer.GetType(), e);
-                            }
-                            catch (NullReferenceException)
-                            {
-                            }
-                        }
-                    }
-                    if (InstrumentForm.Rotation != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        image.RotateFlip(InstrumentForm.Rotation);
-                    }
-                    using (Graphics graphics = InstrumentForm.CreateGraphics())
-                    {
-                        if (NightMode)
-                        {
-                            var nvisImageAttribs = new ImageAttributes();
-                            ColorMatrix cm = Common.Imaging.Util.GetNVISColorMatrix(255, 255);
-                            nvisImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
-                            graphics.DrawImage(image, InstrumentForm.ClientRectangle, 0, 0, image.Width, image.Height,
-                                               GraphicsUnit.Pixel, nvisImageAttribs);
-                        }
-                        else if (InstrumentForm.Monochrome)
-                        {
-                            var monochromeImageAttribs = new ImageAttributes();
-                            ColorMatrix cm = Common.Imaging.Util.GetGreyscaleColorMatrix();
-                            monochromeImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
-                            graphics.DrawImage(image, InstrumentForm.ClientRectangle, 0, 0, image.Width, image.Height,
-                                               GraphicsUnit.Pixel, monochromeImageAttribs);
-                        }
-                        else
-                        {
-                            graphics.DrawImageUnscaled(image, 0, 0, image.Width, image.Height);
-                        }
-                    }
-                }
-                catch (ExternalException)
-                {
-                    //GDI+ error message we don't care about
-                }
-                catch (ObjectDisposedException)
-                {
-                    //GDI+ error message thrown on operations on disposed images -- can happen when one thread disposes while shutting-down thread tries to render
-                }
-                catch (ArgumentException)
-                {
-                    //GDI+ error message we don't care about
-                }
-                catch (OutOfMemoryException)
-                {
-                    //bullshit OOM messages from GDI+
-                }
-                catch (InvalidOperationException)
-                {
-                    //GDI+ error message we don't care about
-                }
-                finally
-                {
-                    Util.DisposeObject(image);
-                }
+                RenderImageAndDrawToInstrumentForm(image);
             }
 
 
-            if (
-                TestMode
-                ||
-                (!RenderOnStateChangesOnly)
-                ||
-                (RenderOnStateChangesOnly && IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(Renderer))
-                ||
-                (RenderImmediately)
-                )
-            {
-                int renderEveryN = PropertyInvokers.RenderEveryN.GetProperty();
-                    //render every N times through the render loop (for example, once every 5 times)
-                if (renderEveryN == 0) renderEveryN = 1; //can't be zero
-                int renderOnN = PropertyInvokers.RenderOnN.GetProperty();
-                    //specifically, on the Nth time (for example, on the 4th time through)
-
-                if (
-                    (_renderCycleNum%renderEveryN == (renderOnN - 1))
-                    ||
-                    RenderImmediately
-                    )
-                {
-                    RenderImmediately = false;
-                }
-            }
-            if (PerfCounter != null)
-            {
-                PerfCounter.Increment();
-            }
+            UpdateRenderImmediatelyFlag();
+            UpdatePerfCounter();
 
             DateTime endTime = DateTime.Now;
             TimeSpan elapsed = endTime.Subtract(startTime);
@@ -464,6 +341,182 @@ namespace MFDExtractor.UI
                     toWait = new TimeSpan(0, 0, 0, 0, MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER);
                 }
                 Thread.Sleep(toWait);
+            }
+        }
+
+        private void UpdatePerfCounter()
+        {
+            if (PerfCounter != null)
+            {
+                PerfCounter.Increment();
+            }
+        }
+
+        private void UpdateRenderImmediatelyFlag()
+        {
+            if (
+                TestMode
+                ||
+                (!RenderOnStateChangesOnly)
+                ||
+                (RenderOnStateChangesOnly && IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(Renderer))
+                ||
+                (RenderImmediately)
+                )
+            {
+                int renderEveryN = PropertyInvokers.RenderEveryN.GetProperty();
+                //render every N times through the render loop (for example, once every 5 times)
+                if (renderEveryN == 0) renderEveryN = 1; //can't be zero
+                int renderOnN = PropertyInvokers.RenderOnN.GetProperty();
+                //specifically, on the Nth time (for example, on the 4th time through)
+
+                if (
+                    (_renderCycleNum%renderEveryN == (renderOnN - 1))
+                    ||
+                    RenderImmediately
+                    )
+                {
+                    RenderImmediately = false;
+                }
+            }
+        }
+
+        private void RenderImageAndDrawToInstrumentForm(Bitmap image)
+        {
+            try
+            {
+                image = CreateEmptyBitmapToServeAsCanvas();
+                RenderToCanvas(image);
+                if (InstrumentForm.Rotation != RotateFlipType.RotateNoneFlipNone)
+                {
+                    image.RotateFlip(InstrumentForm.Rotation);
+                }
+                DrawImageToInstrumentForm(image);
+            }
+            catch (ExternalException)
+            {
+                //GDI+ error message we don't care about
+            }
+            catch (ObjectDisposedException)
+            {
+                //GDI+ error message thrown on operations on disposed images -- can happen when one thread disposes while shutting-down thread tries to render
+            }
+            catch (ArgumentException)
+            {
+                //GDI+ error message we don't care about
+            }
+            catch (OutOfMemoryException)
+            {
+                //bullshit OOM messages from GDI+
+            }
+            catch (InvalidOperationException)
+            {
+                //GDI+ error message we don't care about
+            }
+            finally
+            {
+                Util.DisposeObject(image);
+            }
+        }
+
+        private void DrawImageToInstrumentForm(Bitmap image)
+        {
+            using (Graphics graphics = InstrumentForm.CreateGraphics())
+            {
+                if (NightMode)
+                {
+                    DrawImageToInstrumentFormAsNVIS(image, graphics);
+                }
+                else if (InstrumentForm.Monochrome)
+                {
+                    DrawImageToInstrumentFormAsMonochrome(image, graphics);
+                }
+                else
+                {
+                    DrawImageToInstrumentFormAsNormal(image, graphics);
+                }
+            }
+        }
+
+        private void DrawImageToInstrumentFormAsNormal(Bitmap image, Graphics graphics)
+        {
+            graphics.DrawImageUnscaled(image, 0, 0, image.Width, image.Height);
+        }
+
+        private void DrawImageToInstrumentFormAsMonochrome(Bitmap image, Graphics graphics)
+        {
+            var monochromeImageAttribs = new ImageAttributes();
+            ColorMatrix cm = Common.Imaging.Util.GetGreyscaleColorMatrix();
+            monochromeImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
+            graphics.DrawImage(image, InstrumentForm.ClientRectangle, 0, 0, image.Width, image.Height,
+                               GraphicsUnit.Pixel, monochromeImageAttribs);
+        }
+
+        private void DrawImageToInstrumentFormAsNVIS(Bitmap image, Graphics graphics)
+        {
+            var nvisImageAttribs = new ImageAttributes();
+            ColorMatrix cm = Common.Imaging.Util.GetNVISColorMatrix(255, 255);
+            nvisImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
+            graphics.DrawImage(image, InstrumentForm.ClientRectangle, 0, 0, image.Width, image.Height,
+                               GraphicsUnit.Pixel, nvisImageAttribs);
+        }
+
+        private void RenderToCanvas(Bitmap image)
+        {
+            using (Graphics g = Graphics.FromImage(image))
+            {
+                try
+                {
+                    Renderer.Render(g, new Rectangle(0, 0, image.Width, image.Height));
+                    LastRenderedOn = DateTime.Now;
+                    RenderBorderHighlightIfNeeded(image, g);
+                }
+                catch (ThreadAbortException)
+                {
+                    Thread.ResetAbort();
+                }
+                catch (ThreadInterruptedException)
+                {
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        _log.Error("An error occurred while rendering " + Renderer.GetType(), e);
+                    }
+                    catch (NullReferenceException)
+                    {
+                    }
+                }
+            }
+        }
+
+        private Bitmap CreateEmptyBitmapToServeAsCanvas()
+        {
+            Bitmap image;
+            if (InstrumentForm.Rotation.ToString().Contains("90") ||
+                InstrumentForm.Rotation.ToString().Contains("270"))
+            {
+                image = new Bitmap(InstrumentForm.ClientRectangle.Height, InstrumentForm.ClientRectangle.Width,
+                                   PixelFormat.Format32bppPArgb);
+            }
+            else
+            {
+                image = new Bitmap(InstrumentForm.ClientRectangle.Width, InstrumentForm.ClientRectangle.Height,
+                                   PixelFormat.Format32bppPArgb);
+            }
+            return image;
+        }
+
+        private void RenderBorderHighlightIfNeeded(Bitmap image, Graphics g)
+        {
+            if (ShouldHighlightingBorderBeDisplayedOnTargetForm(InstrumentForm))
+            {
+                Color scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
+                var scopeGreenPen = new Pen(scopeGreenColor);
+                scopeGreenPen.Width = 5;
+                g.DrawRectangle(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
+                RenderImmediately = true;
             }
         }
 
