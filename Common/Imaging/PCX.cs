@@ -52,7 +52,7 @@ namespace Common.Imaging
             header.VRes = BitConverter.ToInt16(pcxBytes, curByte);
             curByte += 2;
             header.ClrMap = new byte[16*3];
-            for (int i = 0; i < (16*3); i++)
+            for (var i = 0; i < (16*3); i++)
             {
                 header.ClrMap[i] = pcxBytes[curByte];
                 curByte++;
@@ -66,15 +66,15 @@ namespace Common.Imaging
             header.Pal_t = BitConverter.ToInt16(pcxBytes, curByte);
             curByte += 2;
             header.Filler = new byte[58];
-            for (int i = 0; i < 58; i++)
+            for (var i = 0; i < 58; i++)
             {
                 header.Filler[i] = pcxBytes[curByte];
                 curByte++;
             }
 
             // Each scan line MUST have a size that can be divided by a 'long' data type
-            int scanLineSize = header.NumPlanes*header.BPL;
-            int divResult = scanLineSize%4;
+            var scanLineSize = header.NumPlanes*header.BPL;
+            var divResult = scanLineSize%4;
             if (divResult > 0) scanLineSize = ((scanLineSize/4) + 1)*4;
 
             // Set the bitmap size data member
@@ -88,9 +88,9 @@ namespace Common.Imaging
             long dataPos = 0;
             long pos = 128; // That's where the data begins
 
-            for (int y = 0; y < bitmapSize.Height; y++)
+            for (var y = 0; y < bitmapSize.Height; y++)
             {
-                int x = 0;
+                var x = 0;
                 // Decompress the scan line
                 for (; x < header.BPL;)
                 {
@@ -99,7 +99,7 @@ namespace Common.Imaging
                     {
                         // Two high bits are set = Repeat
                         value -= 192; // Repeat how many times?
-                        byte color = pcxBytes[pos++]; // What color?
+                        var color = pcxBytes[pos++]; // What color?
 
                         if (x <= bitmapSize.Width)
                         {
@@ -135,15 +135,15 @@ namespace Common.Imaging
             {
                 pos = pcxBytes.Length - 769;
                 // Get the palette
-                ColorPalette toReturnPalette = toReturn.Palette;
+                var toReturnPalette = toReturn.Palette;
                 if (pcxBytes[pos++] == 12)
                 {
-                    for (int index = 0; index < 256; index++)
+                    for (var index = 0; index < 256; index++)
                     {
                         int r = pcxBytes[pos++];
                         int g = pcxBytes[pos++];
                         int b = pcxBytes[pos++];
-                        Color thisEntry = Color.FromArgb(r, g, b);
+                        var thisEntry = Color.FromArgb(r, g, b);
                         toReturnPalette.Entries[index] = thisEntry;
                     }
                 }
@@ -155,13 +155,13 @@ namespace Common.Imaging
                 toReturn.Palette = toReturnPalette;
             }
 
-            BitmapData lockData = toReturn.LockBits(new Rectangle(0, 0, toReturn.Width, toReturn.Height),
-                                                    ImageLockMode.WriteOnly, toReturn.PixelFormat);
-            IntPtr start = lockData.Scan0;
-            void* startPointer = start.ToPointer();
-            for (int i = 0; i < rawBitmap.Length; i++)
+            var lockData = toReturn.LockBits(new Rectangle(0, 0, toReturn.Width, toReturn.Height),
+                                             ImageLockMode.WriteOnly, toReturn.PixelFormat);
+            var start = lockData.Scan0;
+            var startPointer = start.ToPointer();
+            for (var i = 0; i < rawBitmap.Length; i++)
             {
-                byte thisPixelPalleteEntry = rawBitmap[i];
+                var thisPixelPalleteEntry = rawBitmap[i];
                 *((byte*) startPointer + i) = thisPixelPalleteEntry;
             }
             toReturn.UnlockBits(lockData);

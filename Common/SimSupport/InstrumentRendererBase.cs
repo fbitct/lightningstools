@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Reflection;
 
 namespace Common.SimSupport
 {
@@ -13,9 +12,9 @@ namespace Common.SimSupport
 
         public InstrumentStateBase GetState()
         {
-            PropertyInfo[] props = GetType().GetProperties();
+            var props = GetType().GetProperties();
             InstrumentStateBase state = null;
-            foreach (PropertyInfo prop in props)
+            foreach (var prop in props)
             {
                 if (prop.Name == "InstrumentState")
                 {

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace Common.UI.UserControls
 {
     /// <summary>
-    /// Represents the "dot" in an IP Address composite user control
+    ///   Represents the "dot" in an IP Address composite user control
     /// </summary>
     public class DotControl : Control
     {
@@ -77,7 +77,7 @@ namespace Common.UI.UserControls
         {
             base.OnPaint(e);
 
-            Color backColor = BackColor;
+            var backColor = BackColor;
 
             if (!_backColorChanged)
             {
@@ -87,7 +87,7 @@ namespace Common.UI.UserControls
                 }
             }
 
-            Color textColor = ForeColor;
+            var textColor = ForeColor;
 
             if (!Enabled)
             {
@@ -133,11 +133,11 @@ namespace Common.UI.UserControls
 
         #region Private Data
 
+        private const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix |
+                                                          TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
+
         private bool _backColorChanged;
         private bool _readOnly;
-
-        private const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPrefix |
-                                                   TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
 
         #endregion // Private Data
     }

@@ -49,7 +49,7 @@ namespace Common.MacroProgramming
                 return;
             }
 
-            int numInputs = 0;
+            var numInputs = 0;
             if (press && release)
             {
                 numInputs = 2;
@@ -59,7 +59,7 @@ namespace Common.MacroProgramming
                 numInputs = 1;
             }
             var inputs = new INPUT[numInputs];
-            int curInput = 0;
+            var curInput = 0;
             if (press)
             {
                 var input = new INPUT();

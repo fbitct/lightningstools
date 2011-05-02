@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -93,7 +92,7 @@ namespace LightningGauges.Renderers
                 get { return _verticalVelocityFeet; }
                 set
                 {
-                    float vv = value;
+                    var vv = value;
                     if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
                     if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
                     _verticalVelocityFeet = vv;
@@ -124,22 +123,22 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.Width;
-                int height = _background.Height - 29;
+                var width = _background.Width;
+                var height = _background.Height - 29;
                 width -= 154;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
 
                 g.TranslateTransform(-76, 0);
                 g.TranslateTransform(0, -15);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
 
                 //draw the background image
@@ -158,11 +157,11 @@ namespace LightningGauges.Renderers
 
 
                 //draw the needle
-                float centerX = 156.0f;
-                float centerY = 130.0f;
-                float vv = InstrumentState.VerticalVelocityFeet;
+                var centerX = 156.0f;
+                var centerY = 130.0f;
+                var vv = InstrumentState.VerticalVelocityFeet;
                 if (Math.Abs(vv) > 6000.0) vv = Math.Sign(vv)*6000.0f;
-                float vviInThousands = vv/1000.0f;
+                var vviInThousands = vv/1000.0f;
                 float angle;
                 if (Math.Abs(vviInThousands) > 1.0f)
                 {

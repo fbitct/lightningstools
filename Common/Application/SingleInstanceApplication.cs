@@ -10,16 +10,15 @@ using Microsoft.VisualBasic.ApplicationServices;
 namespace Common.Application
 {
     /// <summary>
-    /// This class ensures that only a single instance of this application is 
-    /// ever created.
+    ///   This class ensures that only a single instance of this application is 
+    ///   ever created.
     /// </summary>
-    /// 
     public sealed class SingleInstanceApplication : WindowsFormsApplicationBase
     {
         /// <summary>
-        /// Constructor that intializes the authentication mode for this app.
+        ///   Constructor that intializes the authentication mode for this app.
         /// </summary>
-        /// <param name="mode">Mode in which to run app.</param>
+        /// <param name = "mode">Mode in which to run app.</param>
         public SingleInstanceApplication(AuthenticationMode mode)
             : base(mode)
         {
@@ -27,7 +26,7 @@ namespace Common.Application
         }
 
         /// <summary>
-        /// Default constructor.
+        ///   Default constructor.
         /// </summary>
         public SingleInstanceApplication()
         {
@@ -36,7 +35,7 @@ namespace Common.Application
 
 
         /// <summary>
-        /// Initializes this application with the appropriate settings.
+        ///   Initializes this application with the appropriate settings.
         /// </summary>
         private void InitializeAppProperties()
         {
@@ -45,9 +44,9 @@ namespace Common.Application
         }
 
         /// <summary>
-        /// Runs the specified mainForm in this application context.
+        ///   Runs the specified mainForm in this application context.
         /// </summary>
-        /// <param name="mainForm">Form that is run.</param>
+        /// <param name = "mainForm">Form that is run.</param>
         public void Run(Form mainForm)
         {
             // set up the main form.
@@ -57,10 +56,10 @@ namespace Common.Application
         }
 
         /// <summary>
-        /// Runs this.MainForm in this application context. Converts the command
-        /// line arguments correctly for the base this.Run method.
+        ///   Runs this.MainForm in this application context. Converts the command
+        ///   line arguments correctly for the base this.Run method.
         /// </summary>
-        /// <param name="commandLineArgs">Command line collection.</param>
+        /// <param name = "commandLineArgs">Command line collection.</param>
         private void Run(ReadOnlyCollection<string> commandLineArgs)
         {
             // convert the Collection<string> to string[], so that it can be used

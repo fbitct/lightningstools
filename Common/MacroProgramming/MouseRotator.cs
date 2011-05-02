@@ -58,7 +58,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _in_SignalChanged;
+                value.SignalChanged += InSignalChanged;
                 _in = value;
             }
         }
@@ -105,7 +105,7 @@ namespace Common.MacroProgramming
             set { _stepDelay = value; }
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -118,22 +118,22 @@ namespace Common.MacroProgramming
                 {
                     degStartAngle -= 360;
                 }
-                double radiansPerDegree = (2*System.Math.PI/360);
-                double radStartAngle = (degStartAngle*radiansPerDegree);
-                double radDesiredRotation = (_degreesRotation*radiansPerDegree);
-                double radiansPerStep = ((2*System.Math.PI)/_numSteps);
+                const double radiansPerDegree = (2*System.Math.PI/360);
+                var radStartAngle = (degStartAngle*radiansPerDegree);
+                var radDesiredRotation = (_degreesRotation*radiansPerDegree);
+                var radiansPerStep = ((2*System.Math.PI)/_numSteps);
                 if (_degreesRotation < 0)
                 {
                     radiansPerStep = 0 - radiansPerStep;
                 }
-                bool firstStep = true;
-                for (double radAngle = radStartAngle;
+                var firstStep = true;
+                for (var radAngle = radStartAngle;
                      System.Math.Abs(radAngle - radStartAngle) <
                      System.Math.Abs(radDesiredRotation);
                      radAngle += radiansPerStep)
                 {
-                    int x = _xCenter + (int) (_radius*System.Math.Sin(System.Math.PI - radAngle));
-                    int y = _yCenter + (int) (_radius*System.Math.Cos(System.Math.PI - radAngle));
+                    var x = _xCenter + (int) (_radius*System.Math.Sin(System.Math.PI - radAngle));
+                    var y = _yCenter + (int) (_radius*System.Math.Cos(System.Math.PI - radAngle));
                     if (_macro != null && !firstStep)
                     {
                         _macro.In.State = true;

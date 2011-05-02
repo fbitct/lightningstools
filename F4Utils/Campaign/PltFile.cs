@@ -29,11 +29,11 @@ namespace F4Utils.Campaign
             {
                 return;
             }
-            int offset = 0;
+            var offset = 0;
             NumPilots = BitConverter.ToInt16(bytes, offset);
             offset += 2;
             PilotInfo = new PilotInfoClass[NumPilots];
-            for (int j = 0; j < PilotInfo.Length; j++)
+            for (var j = 0; j < PilotInfo.Length; j++)
             {
                 var thisPilot = new PilotInfoClass();
                 thisPilot.usage = BitConverter.ToInt16(bytes, offset);
@@ -47,7 +47,7 @@ namespace F4Utils.Campaign
             NumCallsigns = BitConverter.ToInt16(bytes, offset);
             offset += 2;
             CallsignData = new byte[NumCallsigns];
-            for (int j = 0; j < NumCallsigns; j++)
+            for (var j = 0; j < NumCallsigns; j++)
             {
                 CallsignData[j] = bytes[offset];
                 offset++;

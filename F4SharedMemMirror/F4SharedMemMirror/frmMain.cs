@@ -33,7 +33,7 @@ namespace F4SharedMemMirror
                 try
                 {
                     using (
-                        RegistryKey startupKey =
+                        var startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
@@ -51,7 +51,7 @@ namespace F4SharedMemMirror
                 try
                 {
                     using (
-                        RegistryKey startupKey =
+                        var startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.DeleteValue(Application.ProductName, false);
@@ -82,7 +82,7 @@ namespace F4SharedMemMirror
         {
             lblVersion.Text = "Version: " + Application.ProductVersion;
             nfyTrayIcon.Icon = Icon;
-            foreach (string priority in Enum.GetNames(typeof (ThreadPriority)))
+            foreach (var priority in Enum.GetNames(typeof (ThreadPriority)))
             {
                 if (priority.ToLowerInvariant() != "highest")
                 {
@@ -185,7 +185,7 @@ namespace F4SharedMemMirror
             IPAddress address = null;
             if (rdoClientMode.Checked)
             {
-                bool validIpAddress = false;
+                var validIpAddress = false;
                 validIpAddress = IPAddress.TryParse(txtServerIPAddress.Text, out address);
                 if (String.IsNullOrEmpty(txtServerIPAddress.Text.Trim()) || !validIpAddress)
                 {
@@ -216,7 +216,7 @@ namespace F4SharedMemMirror
                     return;
                 }
             }
-            int portNum = 21142;
+            var portNum = 21142;
             Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
             btnStart.Enabled = false;
             mnuNfyStartMirroring.Enabled = false;
@@ -330,8 +330,8 @@ namespace F4SharedMemMirror
 
         private void txtServerPortNum_Leave(object sender, EventArgs e)
         {
-            int serverPortNum = -1;
-            bool parsed = Int32.TryParse(txtServerPortNum.Text, out serverPortNum);
+            var serverPortNum = -1;
+            var parsed = Int32.TryParse(txtServerPortNum.Text, out serverPortNum);
             if (!parsed || serverPortNum < 0 || serverPortNum > 65535)
             {
                 MessageBox.Show("Invalid port number.  Port number must be between 0 and 65535", Application.ProductName,

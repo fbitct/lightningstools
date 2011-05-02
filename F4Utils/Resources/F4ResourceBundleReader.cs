@@ -17,7 +17,9 @@ namespace F4Utils.Resources
 
     public class F4ResourceBundleReader
     {
+        private const string RESOURCE_FILE_EXTENSION = ".rsc";
         private F4ResourceBundleIndex _resourceIndex;
+
 
         public int NumResources
         {
@@ -43,27 +45,27 @@ namespace F4Utils.Resources
                     fs.Read(bytes, 0, (int) resourceIndexFileInfo.Length);
                 }
                 _resourceIndex = new F4ResourceBundleIndex();
-                int curByte = 0;
+                var curByte = 0;
                 _resourceIndex.Size = BitConverter.ToUInt32(bytes, curByte);
                 curByte += 4;
                 _resourceIndex.ResourceIndexVersion = BitConverter.ToUInt32(bytes, curByte);
                 curByte += 4;
-                uint size = _resourceIndex.Size;
+                var size = _resourceIndex.Size;
                 var headers = new List<F4ResourceHeader>();
 
                 while (size > 0)
                 {
                     _resourceIndex.NumResources++;
-                    uint resourceType = BitConverter.ToUInt32(bytes, curByte);
+                    var resourceType = BitConverter.ToUInt32(bytes, curByte);
                     curByte += 4;
                     var resourceId = new byte[32];
-                    for (int j = 0; j < 32; j++)
+                    for (var j = 0; j < 32; j++)
                     {
                         resourceId[j] = bytes[curByte];
                         curByte++;
                     }
-                    string resourceName = Encoding.ASCII.GetString(resourceId);
-                    int nullLoc = resourceName.IndexOf('\0');
+                    var resourceName = Encoding.ASCII.GetString(resourceId);
+                    var nullLoc = resourceName.IndexOf('\0');
                     resourceName = nullLoc > 0 ? resourceName.Substring(0, nullLoc) : null;
                     if (resourceType == (uint) (F4ResourceType.ImageResource))
                     {
@@ -130,7 +132,7 @@ namespace F4Utils.Resources
 
                 var resourceDataFileInfo = new FileInfo(
                     Path.GetDirectoryName(resourceIndexFileInfo.FullName) + Path.DirectorySeparatorChar +
-                    Path.GetFileNameWithoutExtension(resourceIndexFileInfo.FullName) + ".rsc");
+                    Path.GetFileNameWithoutExtension(resourceIndexFileInfo.FullName) + RESOURCE_FILE_EXTENSION);
                 if (resourceDataFileInfo.Exists)
                 {
                     bytes = new byte[resourceDataFileInfo.Length];
@@ -147,7 +149,7 @@ namespace F4Utils.Resources
                     rawDataPackage.Version = BitConverter.ToUInt32(bytes, curByte);
                     curByte += 4;
                     rawDataPackage.Data = new byte[rawDataPackage.Size];
-                    int numBytesToCopy = Math.Min(rawDataPackage.Data.Length, bytes.Length - curByte);
+                    var numBytesToCopy = Math.Min(rawDataPackage.Data.Length, bytes.Length - curByte);
                     Array.Copy(bytes, curByte, rawDataPackage.Data, 0, numBytesToCopy);
                     curByte += numBytesToCopy;
                     _resourceIndex.ResourceData = rawDataPackage;
@@ -203,7 +205,7 @@ namespace F4Utils.Resources
             if (resourceHeader == null) return null;
             var curByte = (int) resourceHeader.Offset;
             curByte += 4;
-            uint dataSize = BitConverter.ToUInt32(_resourceIndex.ResourceData.Data, curByte);
+            var dataSize = BitConverter.ToUInt32(_resourceIndex.ResourceData.Data, curByte);
             curByte += 4;
             var toReturn = new byte[dataSize + 8];
             Array.Copy(_resourceIndex.ResourceData.Data, curByte - 8, toReturn, 0, dataSize + 8);
@@ -231,7 +233,7 @@ namespace F4Utils.Resources
         {
             if (resourceHeader == null) return null;
             var bytes = new byte[resourceHeader.Size];
-            for (int i = 0; i < resourceHeader.Size; i++)
+            for (var i = 0; i < resourceHeader.Size; i++)
             {
                 bytes[i] = _resourceIndex.ResourceData.Data[resourceHeader.Offset + i];
             }
@@ -262,25 +264,25 @@ namespace F4Utils.Resources
             var palette = new ushort[imageHeader.PaletteSize];
             if ((imageHeader.Flags & (uint) F4ResourceFlags.EightBit) == (uint) F4ResourceFlags.EightBit)
             {
-                for (int i = 0; i < palette.Length; i++)
+                for (var i = 0; i < palette.Length; i++)
                 {
                     palette[i] = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
                                                        (int) imageHeader.PaletteOffset + (i*2));
                 }
             }
-            int curByte = 0;
-            for (int y = 0; y < imageHeader.Height; y++)
+            var curByte = 0;
+            for (var y = 0; y < imageHeader.Height; y++)
             {
-                for (int x = 0; x < imageHeader.Width; x++)
+                for (var x = 0; x < imageHeader.Width; x++)
                 {
-                    int A = 0;
-                    int R = 0;
-                    int G = 0;
-                    int B = 0;
+                    var A = 0;
+                    var R = 0;
+                    var G = 0;
+                    var B = 0;
                     if ((imageHeader.Flags & (uint) F4ResourceFlags.EightBit) == (uint) F4ResourceFlags.EightBit)
                     {
-                        byte thisPixelPaletteIndex = _resourceIndex.ResourceData.Data[imageHeader.ImageOffset + curByte];
-                        ushort thisPixelPaletteEntry = palette[thisPixelPaletteIndex];
+                        var thisPixelPaletteIndex = _resourceIndex.ResourceData.Data[imageHeader.ImageOffset + curByte];
+                        var thisPixelPaletteEntry = palette[thisPixelPaletteIndex];
                         A = 255;
                         R = ((thisPixelPaletteEntry & 0x7C00) >> 10) << 3;
                         G = ((thisPixelPaletteEntry & 0x3E0) >> 5) << 3;
@@ -289,9 +291,9 @@ namespace F4Utils.Resources
                     }
                     else if ((imageHeader.Flags & (uint) F4ResourceFlags.SixteenBit) == (uint) F4ResourceFlags.SixteenBit)
                     {
-                        ushort thisPixelPaletteEntry = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
-                                                                             (int)
-                                                                             (imageHeader.ImageOffset + curByte));
+                        var thisPixelPaletteEntry = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
+                                                                          (int)
+                                                                          (imageHeader.ImageOffset + curByte));
                         A = 255;
                         R = ((thisPixelPaletteEntry & 0x7C00) >> 10) << 3;
                         G = ((thisPixelPaletteEntry & 0x3E0) >> 5) << 3;

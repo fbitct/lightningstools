@@ -19,23 +19,23 @@ namespace UrlToImage
             OptionSet options = null;
 
             Uri url = null;
-            int timeout = Timeout.Infinite;
+            var timeout = Timeout.Infinite;
             byte[] postData = null;
             string additionalHeaders = null;
-            bool showHelp = false;
-            bool hide = false;
+            var showHelp = false;
+            var hide = false;
             string errorMessage = null;
             string fileName = null;
-            int delayAfterLoad = 0;
-            int browserWidth = 0;
-            int browserHeight = 0;
+            var delayAfterLoad = 0;
+            var browserWidth = 0;
+            var browserHeight = 0;
             List<String> extraOptions = null;
 
             //preparse command line options using NDesk.Options
-            bool successfullyParsed = ParseCommandLineOptions(out options, args, out url, out timeout, out postData,
-                                                              out additionalHeaders, out fileName, out showHelp,
-                                                              out hide, out delayAfterLoad, out browserWidth,
-                                                              out browserHeight, out extraOptions, out errorMessage);
+            var successfullyParsed = ParseCommandLineOptions(out options, args, out url, out timeout, out postData,
+                                                             out additionalHeaders, out fileName, out showHelp,
+                                                             out hide, out delayAfterLoad, out browserWidth,
+                                                             out browserHeight, out extraOptions, out errorMessage);
 
             if (successfullyParsed)
             {
@@ -67,7 +67,7 @@ namespace UrlToImage
 
         private static void HideConsoleWindow()
         {
-            IntPtr hWnd = NativeMethods.FindWindow(null, Console.Title);
+            var hWnd = NativeMethods.FindWindow(null, Console.Title);
 
             if (hWnd != IntPtr.Zero)
             {
@@ -104,8 +104,8 @@ namespace UrlToImage
             string postData__Base64 = null;
             string additionalHeadersInternal = null;
             string fileNameInternal = null;
-            bool showHelpInternal = false;
-            bool hideInternal = false;
+            var showHelpInternal = false;
+            var hideInternal = false;
             string delayAfterLoadInternal = null;
             string browserWidthInternal = null;
             string browserHeightInternal = null;
@@ -143,7 +143,7 @@ namespace UrlToImage
 
             if (!string.IsNullOrEmpty(delayAfterLoadInternal))
             {
-                bool delayParsedSuccessfully = Int32.TryParse(delayAfterLoadInternal, out delayAfterLoad);
+                var delayParsedSuccessfully = Int32.TryParse(delayAfterLoadInternal, out delayAfterLoad);
                 if (!delayParsedSuccessfully)
                 {
                     errorMessage = string.Format("Invalid delay parameter value: {0}", delayAfterLoadInternal);
@@ -152,7 +152,7 @@ namespace UrlToImage
             }
             //now, perform additional post-processing command line args
 
-            bool fileNameValid = !string.IsNullOrEmpty(fileName);
+            var fileNameValid = !string.IsNullOrEmpty(fileName);
 
             if (!fileNameValid)
             {
@@ -162,7 +162,7 @@ namespace UrlToImage
 
 
             //verify that the URL parameter actually parses to a legitimately formatted URI
-            bool urlParsedSuccessfully = Uri.TryCreate(urlString, UriKind.Absolute, out url);
+            var urlParsedSuccessfully = Uri.TryCreate(urlString, UriKind.Absolute, out url);
             if (!urlParsedSuccessfully)
             {
                 errorMessage = string.Format("Invalid URL: {0}", urlString);
@@ -173,7 +173,7 @@ namespace UrlToImage
             //verify that the supplied timeout, if any, is valid
             if (!string.IsNullOrEmpty(timeoutString))
             {
-                bool timeoutParsedSuccessfully = Int32.TryParse(timeoutString, out timeout);
+                var timeoutParsedSuccessfully = Int32.TryParse(timeoutString, out timeout);
                 if (
                     !timeoutParsedSuccessfully
                     ||
@@ -188,7 +188,7 @@ namespace UrlToImage
 
             if (!string.IsNullOrEmpty(browserWidthInternal))
             {
-                bool browserWidthParsedSuccessfully = Int32.TryParse(browserWidthInternal, out browserWidth);
+                var browserWidthParsedSuccessfully = Int32.TryParse(browserWidthInternal, out browserWidth);
                 if (!browserWidthParsedSuccessfully || browserWidth < 0)
                 {
                     errorMessage = string.Format("Invalid browser width: {0}", browserWidth);
@@ -198,7 +198,7 @@ namespace UrlToImage
 
             if (!string.IsNullOrEmpty(browserHeightInternal))
             {
-                bool browserHeightParsedSuccessfully = Int32.TryParse(browserHeightInternal, out browserHeight);
+                var browserHeightParsedSuccessfully = Int32.TryParse(browserHeightInternal, out browserHeight);
                 if (!browserHeightParsedSuccessfully || browserHeight < 0)
                 {
                     errorMessage = string.Format("Invalid browser height: {0}", browserHeight);
@@ -227,7 +227,7 @@ namespace UrlToImage
 
         private static void WriteErrorAndShowUsage(string errorMessage, OptionSet options)
         {
-            TextWriter errWriter = Console.Out;
+            var errWriter = Console.Out;
             errWriter.WriteLine(errorMessage);
             errWriter.WriteLine();
             ShowUsage(options, errWriter);
@@ -235,7 +235,7 @@ namespace UrlToImage
 
         private static void ShowUsage(OptionSet options, TextWriter o)
         {
-            string appName = new FileInfo(Application.ExecutablePath).Name;
+            var appName = new FileInfo(Application.ExecutablePath).Name;
             Console.WriteLine("Usage:");
             Console.WriteLine();
             Console.WriteLine(appName);

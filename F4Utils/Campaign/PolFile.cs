@@ -24,13 +24,13 @@ namespace F4Utils.Campaign
 
         protected void Decode(byte[] bytes, int version)
         {
-            int offset = 0;
+            var offset = 0;
             teammask = bytes[offset];
             offset++;
             numPrimaryObjectives = BitConverter.ToInt16(bytes, offset);
             offset += 2;
             primaryObjectives = new PrimaryObjective[numPrimaryObjectives];
-            for (int i = 0; i < numPrimaryObjectives; i++)
+            for (var i = 0; i < numPrimaryObjectives; i++)
             {
                 var thisObjective = new PrimaryObjective();
                 thisObjective.id = new VU_ID();
@@ -39,7 +39,7 @@ namespace F4Utils.Campaign
                 thisObjective.id.creator_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
                 thisObjective.priority = new short[8];
-                for (int j = 0; j < 8; j++)
+                for (var j = 0; j < 8; j++)
                 {
                     if ((teammask & (1 << j)) > 0)
                     {

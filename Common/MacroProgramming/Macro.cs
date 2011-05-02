@@ -30,7 +30,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _in_SignalChanged;
+                value.SignalChanged += InSignalChanged;
                 _in = value;
             }
         }
@@ -70,7 +70,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _waitFor_SignalChanged;
+                value.SignalChanged += WaitForSignalChanged;
                 _waitFor = value;
             }
         }
@@ -86,7 +86,7 @@ namespace Common.MacroProgramming
             {
                 Thread.Sleep(20);
             }
-            _toStart.State = false;
+            if (_toStart != null) _toStart.State = false;
         }
 
         private void Start()
@@ -113,7 +113,7 @@ namespace Common.MacroProgramming
             _toStart.State = false;
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -125,7 +125,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _waitFor_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void WaitForSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {

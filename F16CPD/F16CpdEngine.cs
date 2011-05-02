@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -12,14 +13,12 @@ using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using Common.Win32;
 using F16CPD.Mfd.Controls;
-using F16CPD.Mfd.Menus;
 using F16CPD.Properties;
 using F16CPD.SimSupport;
 using F16CPD.SimSupport.Falcon4;
 using F16CPD.UI.Forms;
 using log4net;
 using Microsoft.DirectX.DirectInput;
-using System.Diagnostics;
 
 namespace F16CPD
 {
@@ -33,14 +32,14 @@ namespace F16CPD
         private const int WMSZ_BOTTOM = 6;
 
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof(F16CpdEngine));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (F16CpdEngine));
         private readonly Bitmap _bezel = Resources.cpdbezel;
+        private readonly FlightDataValuesSimulator _flightDataValuesSimulator = new FlightDataValuesSimulator();
 
         private SerializableDictionary<CpdInputControls, ControlBinding> _controlBindings =
             new SerializableDictionary<CpdInputControls, ControlBinding>();
 
         private bool _disposing;
-        private readonly FlightDataValuesSimulator _flightDataValuesSimulator = new FlightDataValuesSimulator();
         private double _heightFactor = 4;
         private bool _isDisposed;
 
@@ -65,7 +64,7 @@ namespace F16CPD
 
         private Bitmap CreateRenderTarget()
         {
-            RotateFlipType rotation = Settings.Default.Rotation;
+            var rotation = Settings.Default.Rotation;
             if (rotation == RotateFlipType.Rotate180FlipNone || rotation == RotateFlipType.RotateNoneFlipNone)
             {
                 return new Bitmap(ClientRectangle.Width, ClientRectangle.Height, PixelFormat.Format16bppRgb565);
@@ -156,10 +155,10 @@ namespace F16CPD
                     resetEvent.WaitOne();
                     try
                     {
-                        KeyboardState curState = device.GetCurrentKeyboardState();
-                        Array possibleKeys = Enum.GetValues(typeof (Key));
+                        var curState = device.GetCurrentKeyboardState();
+                        var possibleKeys = Enum.GetValues(typeof (Key));
 
-                        int i = 0;
+                        var i = 0;
                         foreach (Key thisKey in possibleKeys)
                         {
                             currentKeyboardState[i] = curState[thisKey];
@@ -169,8 +168,8 @@ namespace F16CPD
                         i = 0;
                         foreach (Key thisKey in possibleKeys)
                         {
-                            bool isPressedNow = currentKeyboardState[i];
-                            bool wasPressedBefore = lastKeyboardState[i];
+                            var isPressedNow = currentKeyboardState[i];
+                            var wasPressedBefore = lastKeyboardState[i];
                             if (isPressedNow && !wasPressedBefore)
                             {
                                 var winFormsKey =
@@ -217,7 +216,7 @@ namespace F16CPD
             {
                 return;
             }
-            Keys keyDown = e.KeyCode;
+            var keyDown = e.KeyCode;
 
 
             if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
@@ -236,7 +235,7 @@ namespace F16CPD
                 //ALT is pressed
             }
 
-            foreach (ControlBinding binding in _controlBindings.Values)
+            foreach (var binding in _controlBindings.Values)
             {
                 if (binding != null && binding.BindingType == BindingType.Keybinding)
                 {
@@ -248,7 +247,7 @@ namespace F16CPD
                             ((keyDown & Keys.Modifiers) == (binding.Keys & Keys.Modifiers))
                             )
                         {
-                            CpdInputControls controlType = binding.CpdInputControl;
+                            var controlType = binding.CpdInputControl;
                             if (controlType != CpdInputControls.Unknown)
                             {
                                 {
@@ -268,7 +267,7 @@ namespace F16CPD
             if (e.Control.ControlType == ControlType.Axis || e.Control.ControlType == ControlType.Unknown) return;
             if (_controlBindings != null)
             {
-                foreach (ControlBinding binding in _controlBindings.Values)
+                foreach (var binding in _controlBindings.Values)
                 {
                     if (binding.BindingType == BindingType.Unknown || binding.BindingType == BindingType.Keybinding)
                         continue;
@@ -293,7 +292,7 @@ namespace F16CPD
                             if (binding.BindingType == BindingType.DirectInputPovBinding &&
                                 control.ControlType == ControlType.Pov)
                             {
-                                float currentDegrees = e.CurrentState/100.0f;
+                                var currentDegrees = e.CurrentState/100.0f;
                                 if (e.CurrentState == -1) currentDegrees = -1;
                                 /*  POV directions in degrees
                                           0
@@ -367,23 +366,23 @@ namespace F16CPD
                 _controlBindings.Add(val, new ControlBinding());
             }
 
-            string bindings = Settings.Default.ControlBindings;
+            var bindings = Settings.Default.ControlBindings;
             if (!String.IsNullOrEmpty(bindings))
             {
-                object deserialized = Common.Serialization.Util.DeserializeFromXml(bindings, _controlBindings.GetType());
+                var deserialized = Common.Serialization.Util.DeserializeFromXml(bindings, _controlBindings.GetType());
                 if (deserialized != null)
                 {
                     var asBindings = (SerializableDictionary<CpdInputControls, ControlBinding>) deserialized;
                     foreach (var entry in asBindings)
                     {
-                        ControlBinding thisEntry = entry.Value;
+                        var thisEntry = entry.Value;
                         if (thisEntry.BindingType == BindingType.DirectInputAxisBinding ||
                             thisEntry.BindingType == BindingType.DirectInputButtonBinding ||
                             thisEntry.BindingType == BindingType.DirectInputPovBinding)
                         {
                             if (_mediator.DeviceMonitors.ContainsKey(thisEntry.DirectInputDevice.Guid))
                             {
-                                ControlBinding thisBinding = _controlBindings[entry.Key];
+                                var thisBinding = _controlBindings[entry.Key];
                                 thisBinding.BindingType = thisEntry.BindingType;
                                 thisBinding.ControlName = thisEntry.ControlName;
                                 thisBinding.Keys = thisEntry.Keys;
@@ -391,7 +390,7 @@ namespace F16CPD
                                 thisBinding.CpdInputControl = thisEntry.CpdInputControl;
                                 thisBinding.DirectInputDevice =
                                     _mediator.DeviceMonitors[thisEntry.DirectInputDevice.Guid].DeviceInfo;
-                                foreach (PhysicalControlInfo control in thisBinding.DirectInputDevice.Controls)
+                                foreach (var control in thisBinding.DirectInputDevice.Controls)
                                 {
                                     if (control.ControlNum == thisEntry.DirectInputControl.ControlNum &&
                                         control.ControlType == thisEntry.DirectInputControl.ControlType)
@@ -404,7 +403,7 @@ namespace F16CPD
                         }
                         else if (thisEntry.BindingType == BindingType.Keybinding)
                         {
-                            ControlBinding thisBinding = _controlBindings[entry.Key];
+                            var thisBinding = _controlBindings[entry.Key];
                             thisBinding.CpdInputControl = thisEntry.CpdInputControl;
                             thisBinding.BindingType = thisEntry.BindingType;
                             thisBinding.ControlName = thisEntry.ControlName;
@@ -452,7 +451,7 @@ namespace F16CPD
             {
                 Hide();
             }
-            int pollingFrequencyMillis = Settings.Default.PollingFrequencyMillis;
+            var pollingFrequencyMillis = Settings.Default.PollingFrequencyMillis;
             if (pollingFrequencyMillis < 15) pollingFrequencyMillis = 15;
             while (_keepRunning)
             {
@@ -470,13 +469,13 @@ namespace F16CPD
         private void RenderOnce(int pollingFrequencyMillis)
         {
             if (_isDisposed || !_keepRunning) return;
-            DateTime loopStartTime = DateTime.Now;
+            var loopStartTime = DateTime.Now;
             UpdateManagerSize();
             Render();
             Application.DoEvents();
             //System.GC.Collect();
-            DateTime loopEndTime = DateTime.Now;
-            TimeSpan elapsed = loopEndTime.Subtract(loopStartTime);
+            var loopEndTime = DateTime.Now;
+            var elapsed = loopEndTime.Subtract(loopStartTime);
             var wait = (int) (pollingFrequencyMillis - elapsed.TotalMilliseconds);
             if (wait < 1) wait = 1;
             Thread.Sleep(wait);
@@ -487,7 +486,7 @@ namespace F16CPD
             if (m.Msg == WM_SIZING)
             {
                 var rc = (RECT) Marshal.PtrToStructure(m.LParam, typeof (RECT));
-                int res = m.WParam.ToInt32();
+                var res = m.WParam.ToInt32();
                 if (res == WMSZ_LEFT)
                 {
                     //Left or right resize -> adjust height (bottom)
@@ -543,7 +542,7 @@ namespace F16CPD
 
         protected void UpdateRotationSpecificSettings()
         {
-            RotateFlipType rotation = Settings.Default.Rotation;
+            var rotation = Settings.Default.Rotation;
             if (rotation == RotateFlipType.Rotate180FlipNone || rotation == RotateFlipType.RotateNoneFlipNone)
             {
                 _widthFactor = 3;
@@ -559,9 +558,9 @@ namespace F16CPD
         protected void UpdateManagerSize()
         {
             UpdateRotationSpecificSettings();
-            RotateFlipType rotation = Settings.Default.Rotation;
-            int oldWidth = DesktopBounds.Width;
-            int oldHeight = DesktopBounds.Height;
+            var rotation = Settings.Default.Rotation;
+            var oldWidth = DesktopBounds.Width;
+            var oldHeight = DesktopBounds.Height;
 
             int newWidth;
             int newHeight;
@@ -649,22 +648,22 @@ namespace F16CPD
                     return; //no rendering needed in server mode
                 }
                 if (_disposing) return;
-                using (Graphics h = Graphics.FromImage(_renderTarget))
+                using (var h = Graphics.FromImage(_renderTarget))
                 {
                     h.Clear(Color.Black);
                     //h.CompositingQuality = CompositingQuality.HighQuality;
                     h.SmoothingMode = SmoothingMode.AntiAlias;
                     h.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
                     h.TextContrast = 10;
-                    Matrix origTransform = h.Transform;
+                    var origTransform = h.Transform;
                     //h.SetClip(this.DisplayRectangle);
                     _manager.Render(h);
                     h.Transform = origTransform;
 
-                    Rectangle outerBounds = DesktopBounds;
-                    Rectangle innerBounds = DesktopBounds;
+                    var outerBounds = DesktopBounds;
+                    var innerBounds = DesktopBounds;
                     innerBounds.Inflate(-7, -7);
-                    Point curPos = Cursor.Position;
+                    var curPos = Cursor.Position;
 
                     if ((outerBounds.Contains(curPos) && !innerBounds.Contains(curPos)) ||
                         (Cursor == Cursors.SizeAll && Drag))
@@ -712,7 +711,7 @@ namespace F16CPD
                     }
                     attrs.SetColorMatrix(cm, ColorMatrixFlag.Default);
 
-                    using (Graphics formGraphics = CreateGraphics())
+                    using (var formGraphics = CreateGraphics())
                     {
                         formGraphics.CompositingQuality = CompositingQuality.HighQuality;
                         formGraphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -720,7 +719,7 @@ namespace F16CPD
                         formGraphics.SmoothingMode = SmoothingMode.HighQuality;
                         formGraphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
-                        RotateFlipType rotation = Settings.Default.Rotation;
+                        var rotation = Settings.Default.Rotation;
                         if (rotation == RotateFlipType.RotateNoneFlipNone)
                         {
                             formGraphics.DrawImage(_renderTarget, DisplayRectangle, 0, 0, _renderTarget.Width,
@@ -756,15 +755,15 @@ namespace F16CPD
                 if (e.Clicks == 1)
                 {
                     //get the current menu page
-                    MfdMenuPage currentPage = _manager.ActiveMenuPage;
+                    var currentPage = _manager.ActiveMenuPage;
                     //ask the current page which button was clicked
-                    int x = e.Location.X - Location.X;
-                    int y = e.Location.Y - Location.Y;
+                    var x = e.Location.X - Location.X;
+                    var y = e.Location.Y - Location.Y;
 
-                    int xPrime = x;
-                    int yPrime = y;
+                    var xPrime = x;
+                    var yPrime = y;
 
-                    RotateFlipType rotation = Settings.Default.Rotation;
+                    var rotation = Settings.Default.Rotation;
                     if (rotation == RotateFlipType.Rotate270FlipNone)
                     {
                         xPrime = DisplayRectangle.Height - y;
@@ -782,10 +781,10 @@ namespace F16CPD
                     }
 
                     //OptionSelectButton clickedButton = currentPage.GetOptionSelectButtonByLocation(x, y);
-                    OptionSelectButton clickedButton = currentPage.GetOptionSelectButtonByLocation(xPrime, yPrime);
+                    var clickedButton = currentPage.GetOptionSelectButtonByLocation(xPrime, yPrime);
                     if (clickedButton != null) //if a button was clicked
                     {
-                        DateTime whenPressed = _mouseDownTime.HasValue ? _mouseDownTime.Value : DateTime.Now;
+                        var whenPressed = _mouseDownTime.HasValue ? _mouseDownTime.Value : DateTime.Now;
                         clickedButton.Press(whenPressed); //fire the button's press  event
                     }
                 }
@@ -796,7 +795,7 @@ namespace F16CPD
         {
             _mouseDown = true;
             _mouseDownTime = DateTime.Now;
-            int pollingFrequencyMillis = Settings.Default.PollingFrequencyMillis;
+            var pollingFrequencyMillis = Settings.Default.PollingFrequencyMillis;
             while (_mouseDown && ((MouseButtons & MouseButtons.Left) == MouseButtons.Left))
             {
                 HandleMouseClick(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
@@ -840,8 +839,8 @@ namespace F16CPD
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public new void Dispose()
         {
@@ -858,8 +857,8 @@ namespace F16CPD
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~F16CpdEngine()
         {
@@ -867,9 +866,9 @@ namespace F16CPD
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         protected override void Dispose(bool disposing)
         {
             if (!_isDisposed)

@@ -24,7 +24,7 @@ namespace F4KeyFileEditor
         private static string GetKeyDescription(KeyWithModifiers keys)
         {
             if (keys == null) throw new ArgumentNullException("keys");
-            string keyScanCodeName = ((ScanCodes) keys.ScanCode).ToString();
+            var keyScanCodeName = ((ScanCodes) keys.ScanCode).ToString();
             switch ((ScanCodes) keys.ScanCode)
             {
                 case ScanCodes.NotAssigned:
@@ -267,7 +267,7 @@ namespace F4KeyFileEditor
                 default:
                     break;
             }
-            string keyModifierNames = "";
+            var keyModifierNames = "";
             switch (keys.Modifiers)
             {
                 case KeyModifiers.None:
@@ -328,15 +328,15 @@ namespace F4KeyFileEditor
 
             if (_editorState.KeyFile.Bindings != null)
             {
-                foreach (IBinding binding in _editorState.KeyFile.Bindings)
+                foreach (var binding in _editorState.KeyFile.Bindings)
                 {
                     if (binding is DirectInputBinding)
                     {
                         var diBinding = binding as DirectInputBinding;
-                        int newRowIndex = gridDirectInputBindings.Rows.Add();
-                        DataGridViewRow row = gridDirectInputBindings.Rows[newRowIndex];
+                        var newRowIndex = gridDirectInputBindings.Rows.Add();
+                        var row = gridDirectInputBindings.Rows[newRowIndex];
                         row.Cells["diCallback"].Value = diBinding.Callback;
-                        string diBindingType = "DirectInput";
+                        var diBindingType = "DirectInput";
                         if (diBinding.BindingType == DirectInputBindingType.POVDirection)
                         {
                             diBindingType = "POV";
@@ -362,8 +362,8 @@ namespace F4KeyFileEditor
                     else if (binding is KeyBinding)
                     {
                         var keyBinding = binding as KeyBinding;
-                        int newRowIndex = gridKeyBindings.Rows.Add();
-                        DataGridViewRow row = gridKeyBindings.Rows[newRowIndex];
+                        var newRowIndex = gridKeyBindings.Rows.Add();
+                        var row = gridKeyBindings.Rows[newRowIndex];
                         row.Cells["kbUIAccessibility"].Value = GetUIAccessibilityDescription(keyBinding.Accessibility);
                         row.Cells["kbCallback"].Value = keyBinding.Callback;
                         row.Cells["kbCockpitItemId"].Value = keyBinding.CockpitItemId >= 0
@@ -403,7 +403,7 @@ namespace F4KeyFileEditor
 
         private static string RemoveLeadingAndTrailingQuotes(string toRemove)
         {
-            string toReturn = toRemove;
+            var toReturn = toRemove;
             if (toReturn.StartsWith("\""))
             {
                 toReturn = toReturn.Substring(1, toReturn.Length - 1);
@@ -437,7 +437,7 @@ namespace F4KeyFileEditor
                                   ValidateNames = true
                               };
             //dlgOpen.InitialDirectory = new FileInfo(Application.ExecutablePath).DirectoryName;
-            DialogResult result = dlgOpen.ShowDialog(this);
+            var result = dlgOpen.ShowDialog(this);
             if (result == DialogResult.Cancel)
             {
                 return;
@@ -514,7 +514,7 @@ namespace F4KeyFileEditor
                                       ValidateNames = true
                                   };
                 //dlgSave.InitialDirectory = new FileInfo(Application.ExecutablePath).DirectoryName;
-                DialogResult result = dlgSave.ShowDialog(this);
+                var result = dlgSave.ShowDialog(this);
                 if (result == DialogResult.Cancel)
                 {
                     return;
@@ -536,7 +536,7 @@ namespace F4KeyFileEditor
         {
             if (_editorState.ChangesMade)
             {
-                DialogResult res =
+                var res =
                     MessageBox.Show("There are unsaved changes. Would you like to save them before proceeding?",
                                     Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
                                     MessageBoxDefaultButton.Button3);

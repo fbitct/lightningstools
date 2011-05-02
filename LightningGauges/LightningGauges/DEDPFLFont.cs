@@ -36,19 +36,19 @@ namespace LightningGauges
         {
             if (someByte >= 32) someByte -= 32;
 
-            Bitmap[] glyphCache = _charBitmaps;
+            var glyphCache = _charBitmaps;
             if (invert) glyphCache = _invertCharBitmaps;
 
             if (glyphCache[someByte] == null)
             {
-                int glyphWidth = _font.Width/16;
-                int glyphHeight = _font.Height/16;
+                var glyphWidth = _font.Width/16;
+                var glyphHeight = _font.Height/16;
                 var thisCharBitmap = new Bitmap(glyphWidth, glyphHeight, PixelFormat.Format16bppRgb555);
-                int leftX = ((someByte)%16)*glyphWidth;
-                int topY = ((someByte)/16)*(glyphHeight);
+                var leftX = ((someByte)%16)*glyphWidth;
+                var topY = ((someByte)/16)*(glyphHeight);
                 if (invert) topY += _font.Height/2;
                 var toCut = new Rectangle(new Point(leftX, topY), new Size(glyphWidth, glyphHeight));
-                using (Graphics g = Graphics.FromImage(thisCharBitmap))
+                using (var g = Graphics.FromImage(thisCharBitmap))
                 {
                     g.FillRectangle(Brushes.Black, new Rectangle(0, 0, glyphWidth, glyphHeight));
                     g.DrawImage(_font, new Rectangle(0, 0, glyphWidth, glyphHeight), toCut, GraphicsUnit.Pixel);
@@ -60,7 +60,7 @@ namespace LightningGauges
 
         public Bitmap GetCharImage(char someChar, bool invert)
         {
-            byte thisCharByte = Encoding.ASCII.GetBytes(new[] {someChar})[0];
+            var thisCharByte = Encoding.ASCII.GetBytes(new[] {someChar})[0];
             return GetCharImage(thisCharByte, invert);
         }
 
@@ -78,14 +78,14 @@ namespace LightningGauges
                     Common.Util.DisposeObject(_font);
                     if (_charBitmaps != null)
                     {
-                        for (int i = 0; i < _charBitmaps.Length; i++)
+                        for (var i = 0; i < _charBitmaps.Length; i++)
                         {
                             Common.Util.DisposeObject(_charBitmaps[i]);
                         }
                     }
                     if (_invertCharBitmaps != null)
                     {
-                        for (int i = 0; i < _invertCharBitmaps.Length; i++)
+                        for (var i = 0; i < _invertCharBitmaps.Length; i++)
                         {
                             Common.Util.DisposeObject(_invertCharBitmaps[i]);
                         }

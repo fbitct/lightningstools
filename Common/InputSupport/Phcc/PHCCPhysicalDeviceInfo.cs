@@ -7,7 +7,7 @@ using System;
 namespace Common.InputSupport.Phcc
 {
     /// <summary>
-    /// Represents a specific physical PHCC device 
+    ///   Represents a specific physical PHCC device
     /// </summary>
     [Serializable]
     public sealed class PHCCPhysicalDeviceInfo : PhysicalDeviceInfo
@@ -19,21 +19,20 @@ namespace Common.InputSupport.Phcc
         #region Constructors
 
         /// <summary>
-        /// 
         /// </summary>
         public PHCCPhysicalDeviceInfo()
         {
         }
 
         /// <summary>
-        /// Constructs a PHCCPhysicalDeviceInfo, given a COM Port name
-        /// and an (optional) alias ("Friendly name") 
-        /// to use for the device
+        ///   Constructs a PHCCPhysicalDeviceInfo, given a COM Port name
+        ///   and an (optional) alias ("Friendly name") 
+        ///   to use for the device
         /// </summary>
-        /// <param name="portName">the COM port name (i.e "COM1", "COM2", etc.) 
-        /// of the PHCC device to be represented by the newly-created object</param>
-        /// <param name="alias">a string containing a "friendly name" (alias)
-        /// to associate with the device being represented</param>
+        /// <param name = "portName">the COM port name (i.e "COM1", "COM2", etc.) 
+        ///   of the PHCC device to be represented by the newly-created object</param>
+        /// <param name = "alias">a string containing a "friendly name" (alias)
+        ///   to associate with the device being represented</param>
         public PHCCPhysicalDeviceInfo(string portName, string alias)
             : base(portName, alias)
         {
@@ -44,13 +43,13 @@ namespace Common.InputSupport.Phcc
         #region Private methods
 
         /// <summary>
-        /// Discovers the physical controls that appear on this device,
-        /// as reported by the PHCC Interface Library, and stores them as an array 
-        /// of PhysicalControlInfo objects at the instance level.
-        /// NOT guaranteed to be successful -- if the calls to 
-        /// the PHCC Interface Library fail or if the device
-        /// is not currently communicating, then the controls list will remain
-        /// unpopulated.
+        ///   Discovers the physical controls that appear on this device,
+        ///   as reported by the PHCC Interface Library, and stores them as an array 
+        ///   of PhysicalControlInfo objects at the instance level.
+        ///   NOT guaranteed to be successful -- if the calls to 
+        ///   the PHCC Interface Library fail or if the device
+        ///   is not currently communicating, then the controls list will remain
+        ///   unpopulated.
         /// </summary>
         internal override void LoadControls()
         {
@@ -58,7 +57,7 @@ namespace Common.InputSupport.Phcc
             {
                 return;
             }
-            PHCCDeviceManager manager = PHCCDeviceManager.GetInstance();
+            var manager = PHCCDeviceManager.GetInstance();
             if (!manager.IsDeviceAttached(this, false))
             {
                 return;

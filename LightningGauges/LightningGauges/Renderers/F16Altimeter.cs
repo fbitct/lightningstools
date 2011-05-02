@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
@@ -215,11 +214,11 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
-                float absIndicatedAltitude = Math.Abs(InstrumentState.IndicatedAltitudeFeetMSL);
+                var initialState = g.Save();
+                var absIndicatedAltitude = Math.Abs(InstrumentState.IndicatedAltitudeFeetMSL);
                 //set up the canvas scale and clipping region
-                int width = 0;
-                int height = 0;
+                var width = 0;
+                var height = 0;
                 if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electromechanical)
                 {
                     width = _backgroundElectroMechanical.Image.Width - 40;
@@ -237,21 +236,21 @@ namespace LightningGauges.Renderers
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-20, -8);
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //calculate digits
                 float tenThousands = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/10000.0f)%10);
                 float thousands = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/1000.0f)%10);
-                float hundreds = (Math.Abs(absIndicatedAltitude)/100.0f)%10;
+                var hundreds = (Math.Abs(absIndicatedAltitude)/100.0f)%10;
 
                 if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electromechanical)
                 {
                     //draw the altitude digits
-                    float digitHeights = 26.5f; //pixels
+                    var digitHeights = 26.5f; //pixels
                     float translateX = -130;
                     float translateY = -272;
 
@@ -305,18 +304,18 @@ namespace LightningGauges.Renderers
                     digitsFormat.FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap;
                     digitsFormat.LineAlignment = StringAlignment.Far;
                     digitsFormat.Trimming = StringTrimming.None;
-                    Color digitColor = Color.FromArgb(255, 252, 205);
+                    var digitColor = Color.FromArgb(255, 252, 205);
                     Brush digitsBrush = new SolidBrush(digitColor);
                     float thousandscombined = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/1000.0f));
-                    string thousandsString = string.Format("{0:#0}", thousandscombined);
+                    var thousandsString = string.Format("{0:#0}", thousandscombined);
                     if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
                     g.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
-                    string allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
-                    string hundredsString = allHundredsString.Substring(0, 1);
+                    var allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
+                    var hundredsString = allHundredsString.Substring(0, 1);
 
-                    string tensString = string.Format("{0:0}",
-                                                      (int) Math.Floor(((Math.Abs(absIndicatedAltitude)/10.0f)%10.0f)));
-                    string onesString = "0";
+                    var tensString = string.Format("{0:0}",
+                                                   (int) Math.Floor(((Math.Abs(absIndicatedAltitude)/10.0f)%10.0f)));
+                    var onesString = "0";
 
                     g.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
                     g.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
@@ -351,7 +350,7 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the altitude hand
-                float degrees = hundreds*36;
+                var degrees = hundreds*36;
                 float centerX = 128;
                 float centerY = 117;
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);

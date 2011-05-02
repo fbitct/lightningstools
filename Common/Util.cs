@@ -9,13 +9,13 @@ namespace Common
 
         public static bool EnumTryParse<T>(string strType, out T result)
         {
-            string strTypeFixed = strType.Replace(' ', '_');
+            var strTypeFixed = strType.Replace(' ', '_');
             if (Enum.IsDefined(typeof (T), strTypeFixed))
             {
                 result = (T) Enum.Parse(typeof (T), strTypeFixed, true);
                 return true;
             }
-            foreach (string value in Enum.GetNames(typeof (T)))
+            foreach (var value in Enum.GetNames(typeof (T)))
             {
                 if (value.Equals(strTypeFixed, StringComparison.OrdinalIgnoreCase))
                 {
@@ -29,7 +29,7 @@ namespace Common
 
         public static byte SetBit(byte bits, int index, bool newVal)
         {
-            byte toReturn = bits;
+            var toReturn = bits;
             if (newVal)
             {
                 toReturn |= (byte) ((int) System.Math.Pow(2, index));

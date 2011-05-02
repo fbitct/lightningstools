@@ -8,43 +8,43 @@ namespace Common.HardwareSupport.TextOutput
     public enum SevenSegmentBits : byte
     {
         /// <summary>
-        /// Bitmask for all segments off
+        ///   Bitmask for all segments off
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// Bitmask for segment A
+        ///   Bitmask for segment A
         /// </summary>
         SegmentA = 0x80,
         /// <summary>
-        /// Bitmask for segment B
+        ///   Bitmask for segment B
         /// </summary>
         SegmentB = 0x40,
         /// <summary>
-        /// Bitmask for segment C
+        ///   Bitmask for segment C
         /// </summary>
         SegmentC = 0x20,
         /// <summary>
-        /// Bitmask for segment D
+        ///   Bitmask for segment D
         /// </summary>
         SegmentD = 0x08,
         /// <summary>
-        /// Bitmask for segment E
+        ///   Bitmask for segment E
         /// </summary>
         SegmentE = 0x04,
         /// <summary>
-        /// Bitmask for segment F
+        ///   Bitmask for segment F
         /// </summary>
         SegmentF = 0x02,
         /// <summary>
-        /// Bitmask for segment G
+        ///   Bitmask for segment G
         /// </summary>
         SegmentG = 0x01,
         /// <summary>
-        /// Bitmask for decimal point segment
+        ///   Bitmask for decimal point segment
         /// </summary>
         SegmentDP = 0x10,
         /// <summary>
-        /// Bitmask for all segments on
+        ///   Bitmask for all segments on
         /// </summary>
         All = 0xFF,
     }
@@ -114,8 +114,8 @@ namespace Common.HardwareSupport.TextOutput
         {
             if (base.DisplayText != null && !string.IsNullOrEmpty(base.DisplayText.State))
             {
-                char toSend = base.DisplayText.State[0];
-                SevenSegmentBits toSet = CharTo7Seg(toSend);
+                var toSend = base.DisplayText.State[0];
+                var toSet = CharTo7Seg(toSend);
                 SegmentA.State = ((toSet & SevenSegmentBits.SegmentA) == SevenSegmentBits.SegmentA && (SegmentA != null));
                 SegmentB.State = ((toSet & SevenSegmentBits.SegmentB) == SevenSegmentBits.SegmentB && (SegmentB != null));
                 SegmentC.State = ((toSet & SevenSegmentBits.SegmentC) == SevenSegmentBits.SegmentC && (SegmentC != null));
@@ -140,10 +140,10 @@ namespace Common.HardwareSupport.TextOutput
         }
 
         /// <summary>
-        /// Produces a 7-segment bitmask with the appropriate bits set, to represent a specific Latin character 
+        ///   Produces a 7-segment bitmask with the appropriate bits set, to represent a specific Latin character
         /// </summary>
-        /// <param name="charToConvert">a Latin character to produce a seven-segment display bitmask from</param>
-        /// <returns>a <see cref="SevenSegmentBits"/> flags value whose bits are set appropriately for sending to a seven-segment display</returns>
+        /// <param name = "charToConvert">a Latin character to produce a seven-segment display bitmask from</param>
+        /// <returns>a <see cref = "SevenSegmentBits" /> flags value whose bits are set appropriately for sending to a seven-segment display</returns>
         public static SevenSegmentBits CharTo7Seg(char charToConvert)
         {
             switch (charToConvert)

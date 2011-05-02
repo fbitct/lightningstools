@@ -187,7 +187,7 @@ namespace F16CPD.Networking
         public static void ClearPendingServerMessagesOfType(string messageType)
         {
             var messagesToRemove = _serverMessages.Where(message => message.MessageType == messageType).ToList();
-            foreach (Message message in messagesToRemove)
+            foreach (var message in messagesToRemove)
             {
                 _serverMessages.Remove(message);
             }
@@ -208,7 +208,7 @@ namespace F16CPD.Networking
                 if (_clientMessages.Count >= 1000)
                 {
                     _clientMessages.RemoveRange(999, _clientMessages.Count - 1000);
-                        //limit the message queue size to 1000 messages
+                    //limit the message queue size to 1000 messages
                 }
                 _clientMessages.Add(message);
             }

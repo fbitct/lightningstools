@@ -54,7 +54,7 @@ namespace F4Utils.SimSupport
 
         private void TryCreateSharedMemReader()
         {
-            FalconDataFormats? dataFormat = Util.DetectFalconFormat();
+            var dataFormat = Util.DetectFalconFormat();
             if (dataFormat.HasValue)
             {
                 if (_smReader != null && _smReader.DataFormat != dataFormat.Value)
@@ -145,7 +145,8 @@ namespace F4Utils.SimSupport
             toReturn.hsiBits = (int) (rnd.NextDouble()*0xFFFFFFFF);
             toReturn.DEDLines = new[]
                                     {
-                                        new string('x', 25), new string('x', 25), new string('x', 25), new string('x', 25),
+                                        new string('x', 25), new string('x', 25), new string('x', 25),
+                                        new string('x', 25),
                                         new string('x', 25)
                                     };
             toReturn.Invert = new[]
@@ -165,7 +166,7 @@ namespace F4Utils.SimSupport
             toReturn.selected = new int[40];
             toReturn.lethality = new float[40];
             toReturn.newDetection = new int[40];
-            for (int i = 0; i < toReturn.RwrObjectCount; i++)
+            for (var i = 0; i < toReturn.RwrObjectCount; i++)
             {
                 toReturn.bearing[i] = (float) (rnd.NextDouble()*360);
                 toReturn.missileActivity[i] = rnd.NextDouble() > 0.5 ? 0 : 1;
@@ -187,17 +188,17 @@ namespace F4Utils.SimSupport
             if (_simOutputs == null) return;
             GetNextFlightDataFromSharedMem();
             if (_lastFlightData == null) return;
-            foreach (ISimOutput output in _simOutputs.Values)
+            foreach (var output in _simOutputs.Values)
             {
                 F4SimOutputs? simOutputEnumMatch = null;
                 F4SimOutputs triedParse;
-                string key = ((Signal) output).Id;
-                int firstBracketLocation = key.IndexOf("[");
+                var key = ((Signal) output).Id;
+                var firstBracketLocation = key.IndexOf("[");
                 if (firstBracketLocation > 0)
                 {
                     key = key.Substring(0, firstBracketLocation);
                 }
-                bool success = Common.Util.EnumTryParse(key.Substring(3, key.Length - 3), out triedParse);
+                var success = Common.Util.EnumTryParse(key.Substring(3, key.Length - 3), out triedParse);
                 if (success) simOutputEnumMatch = triedParse;
                 if (!simOutputEnumMatch.HasValue) continue;
                 switch (simOutputEnumMatch.Value)
@@ -296,8 +297,8 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.oilPressure2;
                         break;
                     case F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL:
-                        bool pressurization = ((_lastFlightData.lightBits & (int) LightBits.CabinPress) ==
-                                               (int) LightBits.CabinPress);
+                        var pressurization = ((_lastFlightData.lightBits & (int) LightBits.CabinPress) ==
+                                              (int) LightBits.CabinPress);
                         ((AnalogSignal) output).State = NonImplementedGaugeCalculations.CabinAlt((float) _origCabinAlt,
                                                                                                  _lastFlightData.z,
                                                                                                  pressurization);
@@ -421,7 +422,7 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.HSI__TO_FLAG:
                         {
-                            float myCourseDeviationDecimalDegrees =
+                            var myCourseDeviationDecimalDegrees =
                                 Common.Math.Util.AngleDelta(_lastFlightData.desiredCourse,
                                                             _lastFlightData.bearingToBeacon);
                             ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) <= 90;
@@ -429,7 +430,7 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.HSI__FROM_FLAG:
                         {
-                            float myCourseDeviationDecimalDegrees =
+                            var myCourseDeviationDecimalDegrees =
                                 Common.Math.Util.AngleDelta(_lastFlightData.desiredCourse,
                                                             _lastFlightData.bearingToBeacon);
                             ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) > 90;
@@ -534,7 +535,7 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.LMFD__OSB_INVERTED_FLAGS:
                         {
-                            bool thisLine = false;
+                            var thisLine = false;
                             if (_lastFlightData.leftMFD != null)
                                 thisLine = _lastFlightData.leftMFD[((Signal) output).Index.Value].Inverted;
                             ((DigitalSignal) output).State = thisLine;
@@ -558,7 +559,7 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.RMFD__OSB_INVERTED_FLAGS:
                         {
-                            bool thisLine = false;
+                            var thisLine = false;
                             if (_lastFlightData.rightMFD != null)
                                 thisLine = _lastFlightData.rightMFD[((Signal) output).Index.Value].Inverted;
                             ((DigitalSignal) output).State = thisLine;
@@ -952,10 +953,14 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.RwrObjectCount;
                         break;
                     case F4SimOutputs.RWR__SYMBOL_ID:
-                        ((AnalogSignal) output).State = _lastFlightData.RWRsymbol.Length > ((Signal) output).Index ? _lastFlightData.RWRsymbol[((Signal) output).Index.Value] : 0;
+                        ((AnalogSignal) output).State = _lastFlightData.RWRsymbol.Length > ((Signal) output).Index
+                                                            ? _lastFlightData.RWRsymbol[((Signal) output).Index.Value]
+                                                            : 0;
                         break;
                     case F4SimOutputs.RWR__BEARING_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.bearing.Length > ((Signal) output).Index ? _lastFlightData.bearing[((Signal) output).Index.Value] : 0;
+                        ((AnalogSignal) output).State = _lastFlightData.bearing.Length > ((Signal) output).Index
+                                                            ? _lastFlightData.bearing[((Signal) output).Index.Value]
+                                                            : 0;
                         break;
                     case F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG:
                         if (_lastFlightData.missileActivity.Length > ((Signal) output).Index)
@@ -991,7 +996,9 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__LETHALITY:
-                        ((AnalogSignal) output).State = _lastFlightData.lethality.Length > ((Signal) output).Index ? _lastFlightData.lethality[((Signal) output).Index.Value] : 0;
+                        ((AnalogSignal) output).State = _lastFlightData.lethality.Length > ((Signal) output).Index
+                                                            ? _lastFlightData.lethality[((Signal) output).Index.Value]
+                                                            : 0;
                         break;
                     case F4SimOutputs.RWR__NEWDETECTION_FLAG:
                         if (_lastFlightData.newDetection != null)
@@ -1017,7 +1024,7 @@ namespace F4Utils.SimSupport
         private ISimOutput CreateNewF4SimOutput(string collectionName, string friendlyName, int simOutputEnumVal,
                                                 int? index, Type dataType)
         {
-            string indexString = index >= 0 ? "[" + index + "]" : string.Empty;
+            var indexString = index >= 0 ? "[" + index + "]" : string.Empty;
 
             if (dataType.IsAssignableFrom(typeof (string)))
             {
@@ -1758,7 +1765,7 @@ namespace F4Utils.SimSupport
 
             AddF4SimOutput(CreateNewF4SimOutput("RWR", "Object Count", (int) F4SimOutputs.RWR__OBJECT_COUNT,
                                                 typeof (int)));
-            for (int i = 0; i < 64; i++)
+            for (var i = 0; i < 64; i++)
             {
                 AddF4SimOutput(CreateNewF4SimOutput("RWR",
                                                     string.Format("Threat #{0} Symbol ID",

@@ -4,8 +4,8 @@ using System.Windows.Forms;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// An inherited <see cref="InfoContainer"/> that contains a <see cref="Label"/> 
-    /// with the description of the page.
+    ///   An inherited <see cref = "InfoContainer" /> that contains a <see cref = "Label" /> 
+    ///   with the description of the page.
     /// </summary>
     public class InfoPage : InfoContainer
     {
@@ -13,7 +13,7 @@ namespace Common.UI.Wizard
         private Label lblDescription;
 
         /// <summary>
-        /// Default Constructor
+        ///   Default Constructor
         /// </summary>
         public InfoPage()
         {
@@ -24,7 +24,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Gets/Sets the text on the info page
+        ///   Gets/Sets the text on the info page
         /// </summary>
         [Category("Appearance")]
         public string PageText
@@ -34,7 +34,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Clean up any resources being used.
+        ///   Clean up any resources being used.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -51,8 +51,8 @@ namespace Common.UI.Wizard
         #region Designer generated code
 
         /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        ///   Required method for Designer support - do not modify
+        ///   the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {

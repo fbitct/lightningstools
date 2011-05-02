@@ -15,7 +15,7 @@ using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
 namespace F4KeyFileEditor
 {
     /// <summary>
-    /// Main program class.  Contains the startup method for the F4 KeyFile Editor application.
+    ///   Main program class.  Contains the startup method for the F4 KeyFile Editor application.
     /// </summary>
     public static class Program
     {
@@ -61,7 +61,7 @@ namespace F4KeyFileEditor
         }
 
         /// <summary>
-        /// The main entry point for the application.
+        ///   The main entry point for the application.
         /// </summary>
         [STAThread]
         public static void Main()
@@ -112,12 +112,12 @@ namespace F4KeyFileEditor
         }
 
         /// <summary>
-        /// Event handler for processing when the another application instance tries
-        /// to startup. Bring the previous instance of the app to the front and 
-        /// process any command-line that's needed.
+        ///   Event handler for processing when the another application instance tries
+        ///   to startup. Bring the previous instance of the app to the front and 
+        ///   process any command-line that's needed.
         /// </summary>
-        /// <param name="sender">Object sending this message.</param>
-        /// <param name="e">Event argument for this message.</param>
+        /// <param name = "sender">Object sending this message.</param>
+        /// <param name = "e">Event argument for this message.</param>
         private static void OnAppStartupNextInstance(object sender, StartupNextInstanceEventArgs e)
         {
             e.BringToForeground = true;

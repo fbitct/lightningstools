@@ -38,13 +38,13 @@
         }
 
         /// <summary>
-        /// Takes a <see cref="FlightData"/> object containing inital data values to use,
-        /// and returns a new <see cref="FlightData"/> object containing new values overwriting the
-        /// values passed in last time
+        ///   Takes a <see cref = "FlightData" /> object containing inital data values to use,
+        ///   and returns a new <see cref = "FlightData" /> object containing new values overwriting the
+        ///   values passed in last time
         /// </summary>
-        /// <param name="toUpdate">an existing <see cref="FlightData"/> object to update with simulated parameters</param>
-        /// <returns>a new <see cref="FlightData"/> object based on the parameters passed in, but with
-        /// incremented values for most or all variables</returns>
+        /// <param name = "toUpdate">an existing <see cref = "FlightData" /> object to update with simulated parameters</param>
+        /// <returns>a new <see cref = "FlightData" /> object based on the parameters passed in, but with
+        ///   incremented values for most or all variables</returns>
         public FlightData GetNextFlightData(FlightData toUpdate)
         {
             unchecked
@@ -58,7 +58,7 @@
                 _valuesIncreasing = !_valuesIncreasing;
             }
 
-            FlightData toReturn = Common.Serialization.Util.DeepClone(toUpdate);
+            var toReturn = Common.Serialization.Util.DeepClone(toUpdate);
 
             toReturn.CpdPowerOnFlag = true;
 
@@ -170,7 +170,9 @@
             if (_timesCalled%50 == 0)
             {
                 //dual-valued enumerations
-                toReturn.AltimeterMode = toReturn.AltimeterMode == AltimeterMode.Electronic ? AltimeterMode.Pneumatic : AltimeterMode.Electronic;
+                toReturn.AltimeterMode = toReturn.AltimeterMode == AltimeterMode.Electronic
+                                             ? AltimeterMode.Pneumatic
+                                             : AltimeterMode.Electronic;
 
                 //boolean values/flags
                 toReturn.HsiDisplayToFromFlag = !toUpdate.HsiDisplayToFromFlag;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.MacroProgramming
 {
@@ -36,43 +37,26 @@ namespace Common.MacroProgramming
                 {
                     value = new List<DigitalSignal>();
                 }
-                for (int i = 0; i < value.Count; i++)
+                foreach (var t in value.Where(t => t != null))
                 {
-                    if (value[i] != null)
-                    {
-                        value[i].SignalChanged += _in_SignalChanged;
-                    }
+                    t.SignalChanged += InSignalChanged;
                 }
                 _ins = value;
             }
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
-                bool bPulse = true;
+                var bPulse = true;
                 if (_ins != null)
                 {
-                    for (int i = 0; i < _ins.Count; i++)
-                    {
-                        if (!_ins[i].State)
-                        {
-                            bPulse = false;
-                            break;
-                        }
-                    }
+                    bPulse = _ins.All(t => t.State);
                 }
                 if (_out != null)
                 {
-                    if (bPulse)
-                    {
-                        _out.State = true;
-                    }
-                    else
-                    {
-                        _out.State = false;
-                    }
+                    _out.State = bPulse;
                 }
             }
             else

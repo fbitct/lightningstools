@@ -26,13 +26,13 @@ namespace F4Utils.Speech
                 fs.Read(bytes, 0, (int) fi.Length);
             }
 
-            int fileLen = bytes.Length;
-            FragFileHeaderRecord thisHeader = ReadFragHeader(bytes, 0);
-            int numFragHeaders = (int) thisHeader.fragOffset/8;
+            var fileLen = bytes.Length;
+            var thisHeader = ReadFragHeader(bytes, 0);
+            var numFragHeaders = (int) thisHeader.fragOffset/8;
             fragFile.headers = new FragFileHeaderRecord[numFragHeaders];
             fragFile.headers[0] = thisHeader;
 
-            for (int i = 1; i < numFragHeaders; i++)
+            for (var i = 1; i < numFragHeaders; i++)
             {
                 fragFile.headers[i] = ReadFragHeader(bytes, i);
             }
@@ -42,7 +42,7 @@ namespace F4Utils.Speech
 
         private static FragFileHeaderRecord ReadFragHeader(byte[] bytes, int hdrNum)
         {
-            int pFragHeader = hdrNum*8;
+            var pFragHeader = hdrNum*8;
             var thisHeader = new FragFileHeaderRecord();
             thisHeader.fragHdrNbr = BitConverter.ToUInt16(bytes, pFragHeader);
             pFragHeader += 2;
@@ -53,9 +53,9 @@ namespace F4Utils.Speech
 
             thisHeader.data = new FragFileDataRecord[thisHeader.totalSpeakers];
 
-            uint pSpeakerData = thisHeader.fragOffset;
-            int thisDataCount = 0;
-            for (int i = 0; i < thisHeader.totalSpeakers; i++)
+            var pSpeakerData = thisHeader.fragOffset;
+            var thisDataCount = 0;
+            for (var i = 0; i < thisHeader.totalSpeakers; i++)
             {
                 var thisData = new FragFileDataRecord();
                 thisData.speaker = BitConverter.ToUInt16(bytes, (int) pSpeakerData);
@@ -71,11 +71,11 @@ namespace F4Utils.Speech
         public void FixupOffsets()
         {
             if (headers == null) return;
-            uint offset = (uint) headers.Length*8;
+            var offset = (uint) headers.Length*8;
 
             for (ushort i = 0; i < headers.Length; i++)
             {
-                FragFileHeaderRecord thisHeader = headers[i];
+                var thisHeader = headers[i];
                 if (thisHeader.totalSpeakers == 0)
                 {
                     thisHeader.fragOffset = 1000;
@@ -98,23 +98,23 @@ namespace F4Utils.Speech
                 //write headers
                 if (headers != null)
                 {
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < headers.Length; i++)
                     {
-                        FragFileHeaderRecord thisHeader = headers[i];
+                        var thisHeader = headers[i];
                         fs.Write(BitConverter.GetBytes(thisHeader.fragHdrNbr), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.totalSpeakers), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.fragOffset), 0, 4);
                     }
 
                     //write data
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < headers.Length; i++)
                     {
-                        FragFileHeaderRecord thisHeader = headers[i];
+                        var thisHeader = headers[i];
                         if (thisHeader.data != null)
                         {
-                            for (int j = 0; j < thisHeader.data.Length; j++)
+                            for (var j = 0; j < thisHeader.data.Length; j++)
                             {
-                                FragFileDataRecord thisDataRecord = thisHeader.data[j];
+                                var thisDataRecord = thisHeader.data[j];
                                 fs.Write(BitConverter.GetBytes(thisDataRecord.speaker), 0, 2);
                                 fs.Write(BitConverter.GetBytes(thisDataRecord.fileNbr), 0, 2);
                             }
@@ -138,7 +138,7 @@ namespace F4Utils.Speech
             xws.Encoding = Encoding.UTF8;
 
             using (var fs = new FileStream(fragFilePath, FileMode.Create))
-            using (XmlWriter xw = XmlWriter.Create(fs, xws))
+            using (var xw = XmlWriter.Create(fs, xws))
             {
                 xw.WriteStartDocument();
                 xw.WriteStartElement("FragFile");
@@ -147,11 +147,11 @@ namespace F4Utils.Speech
                 //xw.WriteEndAttribute();
                 if (headers != null)
                 {
-                    for (int i = 0; i < headers.Length; i++)
+                    for (var i = 0; i < headers.Length; i++)
                     {
                         xw.WriteStartElement("Frag");
 
-                        FragFileHeaderRecord thisHeader = headers[i];
+                        var thisHeader = headers[i];
                         xw.WriteStartAttribute("id");
                         xw.WriteValue(thisHeader.fragHdrNbr);
                         xw.WriteEndAttribute();
@@ -160,9 +160,9 @@ namespace F4Utils.Speech
                         //xw.WriteEndAttribute();
                         if (thisHeader.data != null)
                         {
-                            for (int j = 0; j < thisHeader.data.Length; j++)
+                            for (var j = 0; j < thisHeader.data.Length; j++)
                             {
-                                FragFileDataRecord thisDataRecord = thisHeader.data[j];
+                                var thisDataRecord = thisHeader.data[j];
                                 xw.WriteStartElement("Speaker");
                                 xw.WriteStartAttribute("voice");
                                 xw.WriteValue(thisDataRecord.speaker);
@@ -189,7 +189,7 @@ namespace F4Utils.Speech
             var toReturn = new FragFile();
             var headers = new FragFileHeaderRecord[0];
             var thisHeader = new FragFileHeaderRecord();
-            bool parsed = false;
+            var parsed = false;
             long val = 0;
             using (var fs = new FileStream(fragXmlFilePath, FileMode.Open))
             using (XmlReader xr = new XmlTextReader(fs))
@@ -214,7 +214,7 @@ namespace F4Utils.Speech
                     {
                         thisHeader = new FragFileHeaderRecord();
 
-                        string fragIdString = xr.GetAttribute("id");
+                        var fragIdString = xr.GetAttribute("id");
                         parsed = Int64.TryParse(fragIdString, out val);
                         if (parsed)
                         {
@@ -243,7 +243,7 @@ namespace F4Utils.Speech
                     else if (xr.NodeType == XmlNodeType.Element && xr.Name == "Speaker")
                     {
                         var data = new FragFileDataRecord();
-                        string voiceNumString = xr.GetAttribute("voice");
+                        var voiceNumString = xr.GetAttribute("voice");
                         parsed = Int64.TryParse(voiceNumString, out val);
                         if (parsed)
                         {
@@ -256,7 +256,7 @@ namespace F4Utils.Speech
                                     "Could not parse {0}, bad or missing @voice attribute in /FragFile/Frag/Speaker element.",
                                     fragXmlFilePath));
                         }
-                        string tlkId = xr.GetAttribute("tlkId");
+                        var tlkId = xr.GetAttribute("tlkId");
                         parsed = Int64.TryParse(tlkId, out val);
                         if (parsed)
                         {

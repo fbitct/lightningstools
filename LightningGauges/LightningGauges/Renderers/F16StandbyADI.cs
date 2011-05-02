@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -117,7 +116,7 @@ namespace LightningGauges.Renderers
                 get { return _pitchDegrees; }
                 set
                 {
-                    float pitch = value;
+                    var pitch = value;
                     if (pitch < MIN_PITCH) pitch = MIN_PITCH;
                     if (pitch > MAX_PITCH) pitch = MAX_PITCH;
                     if (float.IsNaN(pitch) || float.IsInfinity(pitch))
@@ -133,7 +132,7 @@ namespace LightningGauges.Renderers
                 get { return _rollDegrees; }
                 set
                 {
-                    float roll = value;
+                    var roll = value;
                     if (roll < MIN_ROLL) roll = MIN_ROLL;
                     if (roll > MAX_ROLL) roll = MAX_ROLL;
                     if (float.IsInfinity(roll) || float.IsNaN(roll))
@@ -168,28 +167,28 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.Image.Width - 84;
-                int height = _background.Image.Height - 84;
+                var width = _background.Image.Width - 84;
+                var height = _background.Image.Height - 84;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-42, -42);
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the ball
-                float pixelsPerDegreePitch = 2.0f;
-                float pitch = InstrumentState.PitchDegrees;
-                float roll = InstrumentState.RollDegrees;
-                float centerPixelY = (_ball.Height/2.0f) - (pixelsPerDegreePitch*pitch);
-                float topPixelY = centerPixelY - 80;
-                float leftPixelX = (_ball.Width/2.0f) - 73;
+                var pixelsPerDegreePitch = 2.0f;
+                var pitch = InstrumentState.PitchDegrees;
+                var roll = InstrumentState.RollDegrees;
+                var centerPixelY = (_ball.Height/2.0f) - (pixelsPerDegreePitch*pitch);
+                var topPixelY = centerPixelY - 80;
+                var leftPixelX = (_ball.Width/2.0f) - 73;
                 var sourceRect = new RectangleF(leftPixelX, topPixelY, 160, 160);
                 var destRect = new RectangleF(48, 48, sourceRect.Width, sourceRect.Height);
 

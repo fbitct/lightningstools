@@ -7,7 +7,7 @@ using System.Windows.Forms;
 namespace PhccTestTool
 {
     /// <summary>
-    /// Main program class.  Contains the startup method for the application.
+    ///   Main program class.  Contains the startup method for the application.
     /// </summary>
     public static class Program
     {
@@ -43,9 +43,9 @@ namespace PhccTestTool
             // current one, if any; or null if the current process
             // is unique.
         {
-            Process curr = Process.GetCurrentProcess();
-            Process[] procs = Process.GetProcessesByName(curr.ProcessName);
-            foreach (Process p in procs)
+            var curr = Process.GetCurrentProcess();
+            var procs = Process.GetProcessesByName(curr.ProcessName);
+            foreach (var p in procs)
             {
                 if ((p.Id != curr.Id) &&
                     (p.MainModule.FileName == curr.MainModule.FileName))
@@ -55,7 +55,7 @@ namespace PhccTestTool
         }
 
         /// <summary>
-        /// The main entry point for the application.
+        ///   The main entry point for the application.
         /// </summary>
         [STAThread]
         public static void Main()

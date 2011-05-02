@@ -78,13 +78,13 @@ namespace F4Utils.Campaign
             if (version > 2)
             {
                 member = new byte[8];
-                for (int j = 0; j < member.Length; j++)
+                for (var j = 0; j < member.Length; j++)
                 {
                     member[j] = bytes[offset];
                     offset++;
                 }
                 stance = new short[8];
-                for (int j = 0; j < stance.Length; j++)
+                for (var j = 0; j < stance.Length; j++)
                 {
                     stance[j] = BitConverter.ToInt16(bytes, offset);
                     offset += 2;
@@ -93,13 +93,13 @@ namespace F4Utils.Campaign
             else
             {
                 member = new byte[8];
-                for (int j = 0; j < 7; j++)
+                for (var j = 0; j < 7; j++)
                 {
                     member[j] = bytes[offset];
                     offset++;
                 }
                 stance = new short[8];
-                for (int j = 0; j < 7; j++)
+                for (var j = 0; j < 7; j++)
                 {
                     stance[j] = BitConverter.ToInt16(bytes, offset);
                     offset += 2;
@@ -214,7 +214,7 @@ namespace F4Utils.Campaign
             offset += 2;
 
             bonusObjs = new VU_ID[20];
-            for (int j = 0; j < bonusObjs.Length; j++)
+            for (var j = 0; j < bonusObjs.Length; j++)
             {
                 var thisId = new VU_ID();
                 thisId.num_ = BitConverter.ToUInt32(bytes, offset);
@@ -224,19 +224,19 @@ namespace F4Utils.Campaign
                 bonusObjs[j] = thisId;
             }
             bonusTime = new uint[20];
-            for (int j = 0; j < bonusTime.Length; j++)
+            for (var j = 0; j < bonusTime.Length; j++)
             {
                 bonusTime[j] = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
             }
             objtype_priority = new byte[36];
-            for (int j = 0; j < objtype_priority.Length; j++)
+            for (var j = 0; j < objtype_priority.Length; j++)
             {
                 objtype_priority[j] = bytes[offset];
                 offset++;
             }
             unittype_priority = new byte[20];
-            for (int j = 0; j < unittype_priority.Length; j++)
+            for (var j = 0; j < unittype_priority.Length; j++)
             {
                 unittype_priority[j] = bytes[offset];
                 offset++;
@@ -244,7 +244,7 @@ namespace F4Utils.Campaign
             if (version < 30)
             {
                 mission_priority = new byte[40];
-                for (int j = 0; j < mission_priority.Length; j++)
+                for (var j = 0; j < mission_priority.Length; j++)
                 {
                     mission_priority[j] = bytes[offset];
                     offset++;
@@ -253,7 +253,7 @@ namespace F4Utils.Campaign
             else
             {
                 mission_priority = new byte[41];
-                for (int j = 0; j < mission_priority.Length; j++)
+                for (var j = 0; j < mission_priority.Length; j++)
                 {
                     mission_priority[j] = bytes[offset];
                     offset++;
@@ -268,12 +268,12 @@ namespace F4Utils.Campaign
             }
 
             max_vehicle = new byte[4];
-            for (int j = 0; j < max_vehicle.Length; j++)
+            for (var j = 0; j < max_vehicle.Length; j++)
             {
                 max_vehicle[j] = bytes[offset];
                 offset++;
             }
-            int nullLoc = 0;
+            var nullLoc = 0;
             if (version > 4)
             {
                 teamFlag = bytes[offset];

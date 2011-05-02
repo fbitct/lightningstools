@@ -7,8 +7,8 @@ using Microsoft.DirectX.DirectInput;
 namespace Common.InputSupport.DirectInput
 {
     /// <summary>
-    /// Represents a specific physical DirectInput input device (gaming device)
-    /// such as a joystick, gaming wheel, etc.
+    ///   Represents a specific physical DirectInput input device (gaming device)
+    ///   such as a joystick, gaming wheel, etc.
     /// </summary>
     [Serializable]
     public sealed class DIPhysicalDeviceInfo : PhysicalDeviceInfo
@@ -23,22 +23,21 @@ namespace Common.InputSupport.DirectInput
         #region Constructors
 
         /// <summary>
-        /// 
         /// </summary>
         private DIPhysicalDeviceInfo()
         {
         }
 
         /// <summary>
-        /// Constructs a DIPhysicalDeviceInfo, given a DirectInput 
-        /// Device Instance GUID and an (optional) alias ("Friendly name") 
-        /// to use for the device
+        ///   Constructs a DIPhysicalDeviceInfo, given a DirectInput 
+        ///   Device Instance GUID and an (optional) alias ("Friendly name") 
+        ///   to use for the device
         /// </summary>
-        /// <param name="guid">a GUID containing the DirectInput
-        /// Device Instance GUID of the physical input device to be
-        /// represented by the newly-created object</param>
-        /// <param name="alias">a string containing a "friendly name" (alias)
-        /// to associate with the device being represented</param>
+        /// <param name = "guid">a GUID containing the DirectInput
+        ///   Device Instance GUID of the physical input device to be
+        ///   represented by the newly-created object</param>
+        /// <param name = "alias">a string containing a "friendly name" (alias)
+        ///   to associate with the device being represented</param>
         public DIPhysicalDeviceInfo(Guid guid, string alias) : base(guid, alias)
         {
             _guid = guid;
@@ -51,13 +50,13 @@ namespace Common.InputSupport.DirectInput
         #region Private methods
 
         /// <summary>
-        /// Discovers the physical controls that appear on this device,
-        /// as reported by DirectInput, and stores them as an array 
-        /// of PhysicalControlInfo objects at the instance level.
-        /// NOT guaranteed to be successful -- if the calls to 
-        /// DirectInput fail or if the device
-        /// is not currently registered, then the controls list will remain
-        /// unpopulated.
+        ///   Discovers the physical controls that appear on this device,
+        ///   as reported by DirectInput, and stores them as an array 
+        ///   of PhysicalControlInfo objects at the instance level.
+        ///   NOT guaranteed to be successful -- if the calls to 
+        ///   DirectInput fail or if the device
+        ///   is not currently registered, then the controls list will remain
+        ///   unpopulated.
         /// </summary>
         internal override void LoadControls()
         {
@@ -81,15 +80,15 @@ namespace Common.InputSupport.DirectInput
                 return;
             }
             var controls = new List<PhysicalControlInfo>();
-            Device joystick = Util.GetDIDevice(new Guid(Key.ToString()));
+            var joystick = Util.GetDIDevice(new Guid(Key.ToString()));
             if (joystick == null)
             {
                 return;
             }
 
-            DeviceObjectList dol = joystick.GetObjects(DeviceObjectTypeFlags.Axis);
-            int lastSlider = -1;
-            int lastAxis = -1;
+            var dol = joystick.GetObjects(DeviceObjectTypeFlags.Axis);
+            var lastSlider = -1;
+            var lastAxis = -1;
             foreach (DeviceObjectInstance doi in dol)
             {
                 if (doi.ObjectType == ObjectTypeGuid.Slider)
@@ -111,7 +110,7 @@ namespace Common.InputSupport.DirectInput
                         continue;
                     }
                     lastAxis++;
-                    string axisName = "Unknown";
+                    var axisName = "Unknown";
                     if (doi.ObjectType == ObjectTypeGuid.XAxis)
                     {
                         axisName = "X Axis";
@@ -141,7 +140,7 @@ namespace Common.InputSupport.DirectInput
                     controls.Add(control);
                 }
             }
-            int lastButton = -1;
+            var lastButton = -1;
             dol = joystick.GetObjects(DeviceObjectTypeFlags.Button);
             foreach (DeviceObjectInstance doi in dol)
             {
@@ -151,7 +150,7 @@ namespace Common.InputSupport.DirectInput
                 controls.Add(control);
             }
 
-            int lastPov = -1;
+            var lastPov = -1;
             dol = joystick.GetObjects(DeviceObjectTypeFlags.Pov);
             foreach (DeviceObjectInstance doi in dol)
             {
@@ -160,8 +159,8 @@ namespace Common.InputSupport.DirectInput
                 controls.Add(control);
             }
             _controls = new PhysicalControlInfo[controls.Count];
-            int thisControlIndex = 0;
-            foreach (PhysicalControlInfo control in controls)
+            var thisControlIndex = 0;
+            foreach (var control in controls)
             {
                 _controls[thisControlIndex] = control;
                 thisControlIndex++;

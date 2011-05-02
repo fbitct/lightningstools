@@ -17,7 +17,7 @@ using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
 namespace F16CPD
 {
     /// <summary>
-    /// Main program class.  Contains the startup method for the application.
+    ///   Main program class.  Contains the startup method for the application.
     /// </summary>
     public static class Program
     {
@@ -59,13 +59,13 @@ namespace F16CPD
             // current one, if any; or null if the current process
             // is unique.
         {
-            Process curr = Process.GetCurrentProcess();
-            Process[] procs = Process.GetProcessesByName(curr.ProcessName);
+            var curr = Process.GetCurrentProcess();
+            var procs = Process.GetProcessesByName(curr.ProcessName);
             return procs.FirstOrDefault(p => (p.Id != curr.Id) && (p.MainModule.FileName == curr.MainModule.FileName));
         }
 
         /// <summary>
-        /// The main entry point for the application.
+        ///   The main entry point for the application.
         /// </summary>
         [STAThread]
         public static void Main(string[] args)
@@ -101,12 +101,12 @@ namespace F16CPD
         }
 
         /// <summary>
-        /// Event handler for processing when the another application instance tries
-        /// to startup. Bring the previous instance of the app to the front and 
-        /// process any command-line that's needed.
+        ///   Event handler for processing when the another application instance tries
+        ///   to startup. Bring the previous instance of the app to the front and 
+        ///   process any command-line that's needed.
         /// </summary>
-        /// <param name="sender">Object sending this message.</param>
-        /// <param name="e">Event argument for this message.</param>
+        /// <param name = "sender">Object sending this message.</param>
+        /// <param name = "e">Event argument for this message.</param>
         private static void OnAppStartupNextInstance(object sender, StartupNextInstanceEventArgs e)
         {
             // if the window is currently minimized, then restore it.

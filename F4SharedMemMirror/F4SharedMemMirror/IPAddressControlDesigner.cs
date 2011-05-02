@@ -30,7 +30,7 @@ namespace F4SharedMemMirror
             {
                 var control = (IPAddressControl) Control;
 
-                IList snapLines = base.SnapLines;
+                var snapLines = base.SnapLines;
 
                 snapLines.Add(new SnapLine(SnapLineType.Baseline, control.Baseline));
 

@@ -45,7 +45,7 @@ namespace Common.MacroProgramming
         #region Object Overrides (ToString, GetHashCode, Equals)
 
         /// <summary>
-        /// Gets a string representation of this object.
+        ///   Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
@@ -54,7 +54,7 @@ namespace Common.MacroProgramming
         }
 
         /// <summary>
-        /// Gets an integer "hash" representation of this object, for use in hashtables.
+        ///   Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
         /// <returns>an integer containing a numeric hash of this object's variables.  When two objects are Equal, their hashes should be equal as well.</returns>
         public override int GetHashCode()
@@ -63,9 +63,9 @@ namespace Common.MacroProgramming
         }
 
         /// <summary>
-        /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectIn device.
+        ///   Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectIn device.
         /// </summary>
-        /// <param name="obj">An object to compare this object to</param>
+        /// <param name = "obj">An object to compare this object to</param>
         /// <returns>a boolean, set to true, if the this object is equal to the specified object, and set to false, if they are not equal.</returns>
         public override bool Equals(object obj)
         {
@@ -75,9 +75,7 @@ namespace Common.MacroProgramming
             if (GetType() != obj.GetType())
                 return false;
 
-            if (GetHashCode() != obj.GetHashCode()) return false;
-
-            return Serialization.Util.DeepEquals(this, obj);
+            return GetHashCode() == obj.GetHashCode() && Serialization.Util.DeepEquals(this, obj);
         }
 
         #endregion

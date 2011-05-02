@@ -6,7 +6,7 @@ using F4SharedMemMirror.Properties;
 namespace F4SharedMemMirror
 {
     /// <summary>
-    /// Represents the "dot" in an IP Address composite user control
+    ///   Represents the "dot" in an IP Address composite user control
     /// </summary>
     internal class DotControl : Control
     {
@@ -16,8 +16,8 @@ namespace F4SharedMemMirror
         {
             get
             {
-                Size minimumSize = Size.Empty;
-                using (Graphics g = Graphics.FromHwnd(Handle))
+                var minimumSize = Size.Empty;
+                using (var g = Graphics.FromHwnd(Handle))
                 {
                     minimumSize = TextRenderer.MeasureText(g,
                                                            Text, Font, Size,
@@ -78,7 +78,7 @@ namespace F4SharedMemMirror
         {
             base.OnPaint(e);
 
-            Color backColor = BackColor;
+            var backColor = BackColor;
 
             if (!_backColorChanged)
             {
@@ -88,7 +88,7 @@ namespace F4SharedMemMirror
                 }
             }
 
-            Color textColor = ForeColor;
+            var textColor = ForeColor;
 
             if (!Enabled)
             {

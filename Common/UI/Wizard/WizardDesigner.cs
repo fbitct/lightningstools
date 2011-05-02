@@ -7,7 +7,7 @@ using System.Windows.Forms.Design;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// Summary description for WizardDesigner.
+    ///   Summary description for WizardDesigner.
     /// </summary>
     public class WizardDesigner : ParentControlDesigner
     {
@@ -50,7 +50,7 @@ namespace Common.UI.Wizard
         private bool _allowGrid = true;
 
         /// <summary>
-        /// Prevents the grid from being drawn on the Wizard
+        ///   Prevents the grid from being drawn on the Wizard
         /// </summary>
         protected override bool DrawGrid
         {
@@ -79,9 +79,9 @@ namespace Common.UI.Wizard
 
 
         /// <summary>
-        /// Simple way to ensure <see cref="WizardPage"/>s only contained here
+        ///   Simple way to ensure <see cref = "WizardPage" />s only contained here
         /// </summary>
-        /// <param name="control"></param>
+        /// <param name = "control"></param>
         /// <returns></returns>
         public override bool CanParent(Control control)
         {
@@ -125,7 +125,7 @@ namespace Common.UI.Wizard
             var h = (IDesignerHost) GetService(typeof (IDesignerHost));
             var c = (IComponentChangeService) GetService(typeof (IComponentChangeService));
 
-            DesignerTransaction dt = h.CreateTransaction("Add Page");
+            var dt = h.CreateTransaction("Add Page");
             var page = (WizardPage) h.CreateComponent(typeof (WizardPage));
             c.OnComponentChanging(wiz, null);
 

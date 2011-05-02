@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -51,7 +50,7 @@ namespace LightningGauges.Renderers
             }
             if (_needle == null)
             {
-                using (ImageMaskPair needleWithMask = ImageMaskPair.CreateFromFiles(
+                using (var needleWithMask = ImageMaskPair.CreateFromFiles(
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + ROLLTRIM_NEEDLE_IMAGE_FILENAME,
                     IMAGES_FOLDER_NAME + Path.DirectorySeparatorChar + ROLLTRIM_NEEDLE_MASK_FILENAME
                     ))
@@ -85,7 +84,7 @@ namespace LightningGauges.Renderers
                 get { return _rollTrimPercent; }
                 set
                 {
-                    float pct = value;
+                    var pct = value;
                     if (Math.Abs(pct) > 100.0f) pct = Math.Sign(pct)*100.0f;
                     _rollTrimPercent = pct;
                 }
@@ -113,19 +112,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 108;
-                int height = 108;
+                var width = 108;
+                var height = 108;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-64, -70);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -134,8 +133,8 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the needle
-                float rt = -InstrumentState.RollTrimPercent;
-                float angle = (rt/100.0f)*90;
+                var rt = -InstrumentState.RollTrimPercent;
+                var angle = (rt/100.0f)*90;
 
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(128, 93);

@@ -6,13 +6,13 @@ namespace Common.InputSupport.DirectInput
     public static class KeyConverter
     {
         /// <summary>
-        /// Convert the first pressed letter or number in a Keys enum to a Key value
+        ///   Convert the first pressed letter or number in a Keys enum to a Key value
         /// </summary>
-        /// <param name="keys">The System.Windows.Forms.Keys enumerator</param>
+        /// <param name = "keys">The System.Windows.Forms.Keys enumerator</param>
         /// <returns>A Key value</returns>
         /// <remarks>
-        /// Not all keys are supported.  
-        /// Letters, numbers, arrows, Function keys, and many other keys should work
+        ///   Not all keys are supported.  
+        ///   Letters, numbers, arrows, Function keys, and many other keys should work
         /// </remarks>
         public static Key ConvertFrom(Keys keys)
         {

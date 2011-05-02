@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Common.Collections;
-using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using F16CPD.Mfd.Controls;
 using F16CPD.Properties;
@@ -49,8 +48,8 @@ namespace F16CPD.UI.Forms
         {
             var args = (MouseEventArgs) e;
             if (args.Button != MouseButtons.Left) return;
-            Point location = ((MouseEventArgs) e).Location;
-            CpdInputControls control = DetectClickedControl(location);
+            var location = ((MouseEventArgs) e).Location;
+            var control = DetectClickedControl(location);
             if (control != CpdInputControls.Unknown)
             {
                 if (control == CpdInputControls.HsiModeControl || control == CpdInputControls.ExtFuelTransSwitch ||
@@ -84,17 +83,19 @@ namespace F16CPD.UI.Forms
                     }
                     using (var drillDown = new frmInputDrilldown())
                     {
-                        Point formLocation = drillDown.Location;
+                        var formLocation = drillDown.Location;
                         formLocation.X = Location.X;
                         formLocation.Y = Location.Y + (int) (Height/4.0f);
 
                         drillDown.Location = formLocation;
                         drillDown.RadioButtonItems = radioButtonItems;
-                        DialogResult result = drillDown.ShowDialog(this);
+                        var result = drillDown.ShowDialog(this);
                         if (result != DialogResult.Cancel)
                         {
-                            string selectedItem = drillDown.SelectedRadioButtonItem;
-                            control = !String.IsNullOrEmpty(selectedItem) ? GetControlByControlName(selectedItem) : CpdInputControls.Unknown;
+                            var selectedItem = drillDown.SelectedRadioButtonItem;
+                            control = !String.IsNullOrEmpty(selectedItem)
+                                          ? GetControlByControlName(selectedItem)
+                                          : CpdInputControls.Unknown;
                         }
                         else
                         {
@@ -107,7 +108,7 @@ namespace F16CPD.UI.Forms
                 {
                     using (var sourceSelectForm = new frmInputSourceSelect())
                     {
-                        ControlBinding thisControlBinding = ControlBindings[control];
+                        var thisControlBinding = ControlBindings[control];
                         thisControlBinding.CpdInputControl = control;
                         thisControlBinding.ControlName = GetControlName(thisControlBinding.CpdInputControl);
                         sourceSelectForm.Mediator = Mediator;
@@ -123,10 +124,12 @@ namespace F16CPD.UI.Forms
 
         private static CpdInputControls GetControlByControlName(string controlName)
         {
-            CpdInputControls toReturn = CpdInputControls.Unknown;
+            var toReturn = CpdInputControls.Unknown;
             if (!String.IsNullOrEmpty(controlName))
             {
-                toReturn = Enum.GetValues(typeof (CpdInputControls)).Cast<CpdInputControls>().FirstOrDefault(val => GetControlName(val) == controlName);
+                toReturn =
+                    Enum.GetValues(typeof (CpdInputControls)).Cast<CpdInputControls>().FirstOrDefault(
+                        val => GetControlName(val) == controlName);
             }
             return toReturn;
         }
@@ -279,8 +282,8 @@ namespace F16CPD.UI.Forms
 
         private CpdInputControls DetectClickedControl(Point clickedPoint)
         {
-            float scaleX = (pbCpdBezel.Width/345.0f);
-            float scaleY = (pbCpdBezel.Height/557.0f);
+            var scaleX = (pbCpdBezel.Width/345.0f);
+            var scaleY = (pbCpdBezel.Height/557.0f);
             clickedPoint = new Point((int) (clickedPoint.X/scaleX), (int) (clickedPoint.Y/scaleY));
 
             //TOP ROW BUTTONS
@@ -459,23 +462,23 @@ namespace F16CPD.UI.Forms
 
         private void LoadControlBindings()
         {
-            string bindings = Settings.Default.ControlBindings;
+            var bindings = Settings.Default.ControlBindings;
             if (!String.IsNullOrEmpty(bindings))
             {
-                object deserialized = Common.Serialization.Util.DeserializeFromXml(bindings, ControlBindings.GetType());
+                var deserialized = Common.Serialization.Util.DeserializeFromXml(bindings, ControlBindings.GetType());
                 if (deserialized != null)
                 {
                     var asBindings = (SerializableDictionary<CpdInputControls, ControlBinding>) deserialized;
                     foreach (var entry in asBindings)
                     {
-                        ControlBinding thisEntry = entry.Value;
+                        var thisEntry = entry.Value;
                         if (thisEntry.BindingType == BindingType.DirectInputAxisBinding ||
                             thisEntry.BindingType == BindingType.DirectInputButtonBinding ||
                             thisEntry.BindingType == BindingType.DirectInputPovBinding)
                         {
                             if (Mediator.DeviceMonitors.ContainsKey(thisEntry.DirectInputDevice.Guid))
                             {
-                                ControlBinding thisBinding = _controlBindings[entry.Key];
+                                var thisBinding = _controlBindings[entry.Key];
                                 thisBinding.BindingType = thisEntry.BindingType;
                                 thisBinding.ControlName = thisEntry.ControlName;
                                 thisBinding.CpdInputControl = thisEntry.CpdInputControl;
@@ -483,7 +486,7 @@ namespace F16CPD.UI.Forms
                                 thisBinding.PovDirection = thisEntry.PovDirection;
                                 thisBinding.DirectInputDevice =
                                     Mediator.DeviceMonitors[thisEntry.DirectInputDevice.Guid].DeviceInfo;
-                                foreach (PhysicalControlInfo control in thisBinding.DirectInputDevice.Controls)
+                                foreach (var control in thisBinding.DirectInputDevice.Controls)
                                 {
                                     if (control.ControlNum == thisEntry.DirectInputControl.ControlNum &&
                                         control.ControlType == thisEntry.DirectInputControl.ControlType)
@@ -496,7 +499,7 @@ namespace F16CPD.UI.Forms
                         }
                         else if (thisEntry.BindingType == BindingType.Keybinding)
                         {
-                            ControlBinding thisBinding = _controlBindings[entry.Key];
+                            var thisBinding = _controlBindings[entry.Key];
                             thisBinding.CpdInputControl = thisEntry.CpdInputControl;
                             thisBinding.BindingType = thisEntry.BindingType;
                             thisBinding.ControlName = thisEntry.ControlName;
@@ -509,7 +512,7 @@ namespace F16CPD.UI.Forms
 
         private void SaveControlBindings()
         {
-            string bindings = Common.Serialization.Util.SerializeToXml(ControlBindings, ControlBindings.GetType());
+            var bindings = Common.Serialization.Util.SerializeToXml(ControlBindings, ControlBindings.GetType());
             Settings.Default.ControlBindings = bindings;
             F16CPD.Util.SaveCurrentProperties();
         }
@@ -523,10 +526,10 @@ namespace F16CPD.UI.Forms
 
         private void btnClearAllInputAssignments_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(this,
-                                                  "WARNING: This will clear all input assignments.  Do you want to proceed?",
-                                                  Application.ProductName, MessageBoxButtons.OKCancel,
-                                                  MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            var result = MessageBox.Show(this,
+                                         "WARNING: This will clear all input assignments.  Do you want to proceed?",
+                                         Application.ProductName, MessageBoxButtons.OKCancel,
+                                         MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.OK)
             {
                 InitializeControlBindings();

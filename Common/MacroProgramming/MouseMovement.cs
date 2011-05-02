@@ -46,7 +46,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _in_SignalChanged;
+                value.SignalChanged += InSignalChanged;
                 _in = value;
             }
         }
@@ -89,7 +89,7 @@ namespace Common.MacroProgramming
             set { _mode = value; }
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -97,13 +97,14 @@ namespace Common.MacroProgramming
                 {
                     _out.State = false;
                 }
-                if (_mode == MouseMoveMode.Relative)
+                switch (_mode)
                 {
-                    KeyAndMouseFunctions.MouseMoveRelative(_x, _y);
-                }
-                else if (_mode == MouseMoveMode.Absolute)
-                {
-                    KeyAndMouseFunctions.MouseMoveAbsolute(_x, _y);
+                    case MouseMoveMode.Relative:
+                        KeyAndMouseFunctions.MouseMoveRelative(_x, _y);
+                        break;
+                    case MouseMoveMode.Absolute:
+                        KeyAndMouseFunctions.MouseMoveAbsolute(_x, _y);
+                        break;
                 }
                 if (_out != null)
                 {

@@ -35,7 +35,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new List<DigitalSignal>();
-                foreach (object value in Values)
+                foreach (var value in Values)
                 {
                     if (value is DigitalSignal)
                     {
@@ -51,7 +51,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new SignalList<AnalogSignal>();
-                foreach (object value in Values)
+                foreach (var value in Values)
                 {
                     if (value is AnalogSignal)
                     {
@@ -67,7 +67,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new SignalList<TextSignal>();
-                foreach (object value in Values)
+                foreach (var value in Values)
                 {
                     if (value is TextSignal)
                     {
@@ -83,7 +83,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new SignalList<Signal>();
-                foreach (object value in Values)
+                foreach (var value in Values)
                 {
                     if (value is Signal)
                     {
@@ -105,33 +105,33 @@ namespace SimLinkup.Scripting
         {
             if (HardwareSupportModules == null || HardwareSupportModules.Length == 0) return;
 
-            foreach (IHardwareSupportModule hsm in HardwareSupportModules)
+            foreach (var hsm in HardwareSupportModules)
             {
                 if (hsm == null) continue;
                 if (hsm.AnalogInputs != null && hsm.AnalogInputs.Length > 0)
                 {
-                    foreach (AnalogSignal analogInput in hsm.AnalogInputs)
+                    foreach (var analogInput in hsm.AnalogInputs)
                     {
                         this[analogInput.Id] = analogInput;
                     }
                 }
                 if (hsm.AnalogOutputs != null && hsm.AnalogOutputs.Length > 0)
                 {
-                    foreach (AnalogSignal analogOutput in hsm.AnalogOutputs)
+                    foreach (var analogOutput in hsm.AnalogOutputs)
                     {
                         this[analogOutput.Id] = analogOutput;
                     }
                 }
                 if (hsm.DigitalInputs != null && hsm.DigitalInputs.Length > 0)
                 {
-                    foreach (DigitalSignal digitalInput in hsm.DigitalInputs)
+                    foreach (var digitalInput in hsm.DigitalInputs)
                     {
                         this[digitalInput.Id] = digitalInput;
                     }
                 }
                 if (hsm.DigitalOutputs != null && hsm.DigitalOutputs.Length > 0)
                 {
-                    foreach (DigitalSignal digitalOutput in hsm.DigitalOutputs)
+                    foreach (var digitalOutput in hsm.DigitalOutputs)
                     {
                         this[digitalOutput.Id] = digitalOutput;
                     }
@@ -142,19 +142,19 @@ namespace SimLinkup.Scripting
         private void AddSimInputsAndOutputs()
         {
             if (SimSupportModules == null || SimSupportModules.Length == 0) return;
-            foreach (SimSupportModule ssm in SimSupportModules)
+            foreach (var ssm in SimSupportModules)
             {
                 if (ssm == null) continue;
                 if (ssm.SimOutputs != null)
                 {
-                    foreach (ISimOutput output in ssm.SimOutputs.Values)
+                    foreach (var output in ssm.SimOutputs.Values)
                     {
                         this[output.Id] = output;
                     }
                 }
                 if (ssm.SimCommands != null)
                 {
-                    foreach (SimCommand command in ssm.SimCommands.Values)
+                    foreach (var command in ssm.SimCommands.Values)
                     {
                         this[command.Id] = command;
                     }

@@ -109,12 +109,30 @@
     <Compile Include="Campaign\Unit.cs" />
     <Compile Include="Campaign\Waypoint.cs" />
     <Compile Include="Campaign\WthFile.cs" />
+    <Compile Include="PlayerOp\AutoPilotModeType.cs" />
+    <Compile Include="PlayerOp\AvionicsType.cs" />
+    <Compile Include="PlayerOp\FlightModelType.cs" />
+    <Compile Include="PlayerOp\PadlockModeType.cs" />
+    <Compile Include="PlayerOp\Pit3DPanMode.cs" />
+    <Compile Include="PlayerOp\PlayerOp.cs" />
+    <Compile Include="PlayerOp\PoDispFlags.cs" />
+    <Compile Include="PlayerOp\PoGenFlags.cs" />
+    <Compile Include="PlayerOp\PoObjFlags.cs" />
+    <Compile Include="PlayerOp\PoSimFlags.cs" />
+    <Compile Include="PlayerOp\RefuelModeType.cs" />
+    <Compile Include="PlayerOp\SimStartFlags.cs" />
+    <Compile Include="PlayerOp\TrackIRVector.cs" />
+    <Compile Include="PlayerOp\VisualCueType.cs" />
+    <Compile Include="PlayerOp\WeaponEffectType.cs" />
+    <Compile Include="Process\CallsignUtils.cs" />
+    <Compile Include="Process\KeyFileUtils.cs" />
     <Compile Include="Process\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\F4ResourceBundleReader.cs" />
     <Compile Include="SimSupport\F4SimOutputs.cs" />
     <Compile Include="SimSupport\F4SimSupportModule.cs" />
     <Compile Include="SimSupport\NonImplementedGaugeCalculations.cs" />
+    <Compile Include="PlayerOp\SoundGroup.cs" />
     <Compile Include="Terrain\Constants.cs" />
     <Compile Include="Terrain\Structs\FarTilesDotPalFileInfo.cs" />
     <Compile Include="Terrain\Structs\TextureBinAreaRecord.cs" />
@@ -186,6 +204,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

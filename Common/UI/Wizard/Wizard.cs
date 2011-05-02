@@ -8,10 +8,10 @@ using System.Windows.Forms;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// A wizard is the control added to a form to provide a step by step functionality.
-    /// It contains <see cref="WizardPage"/>s in the <see cref="Pages"/> collection, which
-    /// are containers for other controls. Only one wizard page is shown at a time in the client
-    /// are of the wizard.
+    ///   A wizard is the control added to a form to provide a step by step functionality.
+    ///   It contains <see cref = "WizardPage" />s in the <see cref = "Pages" /> collection, which
+    ///   are containers for other controls. Only one wizard page is shown at a time in the client
+    ///   are of the wizard.
     /// </summary>
     [Designer(typeof (WizardDesigner))]
     [ToolboxItem(true)]
@@ -25,13 +25,13 @@ namespace Common.UI.Wizard
         protected internal Button btnNext;
         private Button btnCancel;
 
-        /// <summary> 
-        /// Required designer variable.
+        /// <summary>
+        ///   Required designer variable.
         /// </summary>
         private readonly Container components;
 
         /// <summary>
-        /// Wizard control with designer support
+        ///   Wizard control with designer support
         /// </summary>
         public Wizard()
         {
@@ -48,13 +48,13 @@ namespace Common.UI.Wizard
             ActivatePage(0);
 
             //Can I add my self as default cancel button
-            Form form = FindForm();
+            var form = FindForm();
             if (form != null && DesignMode == false)
                 form.CancelButton = btnCancel;
         }
 
-        /// <summary> 
-        /// Clean up any resources being used.
+        /// <summary>
+        ///   Clean up any resources being used.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -70,9 +70,9 @@ namespace Common.UI.Wizard
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
+        /// <summary>
+        ///   Required method for Designer support - do not modify 
+        ///   the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
@@ -165,7 +165,7 @@ namespace Common.UI.Wizard
         private readonly PageCollection vPages;
 
         /// <summary>
-        /// Returns the collection of Pages in the wizard
+        ///   Returns the collection of Pages in the wizard
         /// </summary>
         [Category("Wizard")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -177,7 +177,7 @@ namespace Common.UI.Wizard
         private WizardPage vActivePage;
 
         /// <summary>
-        /// Gets/Sets the activePage in the wizard
+        ///   Gets/Sets the activePage in the wizard
         /// </summary>
         [Category("Wizard")]
         internal int PageIndex
@@ -207,7 +207,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Alternative way of getting/Setiing  the current page by using wizardPage objects
+        ///   Alternative way of getting/Setiing  the current page by using wizardPage objects
         /// </summary>
         public WizardPage Page
         {
@@ -233,7 +233,7 @@ namespace Common.UI.Wizard
 
 
             //Change to the new Page
-            WizardPage tWizPage = (vPages[index]);
+            var tWizPage = (vPages[index]);
 
             //Really activate the page
             ActivatePage(tWizPage);
@@ -350,7 +350,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Gets/Sets the enabled state of the Next button. 
+        ///   Gets/Sets the enabled state of the Next button.
         /// </summary>
         [Category("Wizard")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -361,7 +361,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Gets/Sets the enabled state of the back button. 
+        ///   Gets/Sets the enabled state of the back button.
         /// </summary>
         [Category("Wizard")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -372,7 +372,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Gets/Sets the enabled state of the cancel button. 
+        ///   Gets/Sets the enabled state of the cancel button.
         /// </summary>
         [Category("Wizard")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -384,21 +384,21 @@ namespace Common.UI.Wizard
 
 
         /// <summary>
-        /// Called when the cancel button is pressed, before the form is closed. Set e.Cancel to true if 
-        /// you do not wish the cancel to close the wizard.
+        ///   Called when the cancel button is pressed, before the form is closed. Set e.Cancel to true if 
+        ///   you do not wish the cancel to close the wizard.
         /// </summary>
         public event CancelEventHandler CloseFromCancel;
 
 
         /// <summary>
-        /// Closes the current page after a <see cref="WizardPage.CloseFromNext"/>, then moves to 
-        /// the Next page and calls <see cref="WizardPage.ShowFromNext"/>
+        ///   Closes the current page after a <see cref = "WizardPage.CloseFromNext" />, then moves to 
+        ///   the Next page and calls <see cref = "WizardPage.ShowFromNext" />
         /// </summary>
         public void Next()
         {
             Debug.Assert(PageIndex >= 0, "Page Index was below 0");
             //Tell the Application I just closed a Page
-            int newPage = vActivePage.OnCloseFromNext(this);
+            var newPage = vActivePage.OnCloseFromNext(this);
 
             //Did I just press Finish instead of Next
             if (PageIndex < vPages.Count - 1
@@ -421,10 +421,12 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Moves to the page given and calls <see cref="WizardPage.ShowFromNext"/>
+        ///   Moves to the page given and calls <see cref = "WizardPage.ShowFromNext" />
         /// </summary>
-        /// <remarks>Does NOT call <see cref="WizardPage.CloseFromNext"/> on the current page</remarks>
-        /// <param name="page"></param>
+        /// <remarks>
+        ///   Does NOT call <see cref = "WizardPage.CloseFromNext" /> on the current page
+        /// </remarks>
+        /// <param name = "page"></param>
         public void NextTo(WizardPage page)
         {
             //Since we have a page to go to, then there is no need to validate most of it
@@ -434,8 +436,8 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Closes the current page after a <see cref="WizardPage.CloseFromBack"/>, then moves to 
-        /// the previous page and calls <see cref="WizardPage.ShowFromBack"/>
+        ///   Closes the current page after a <see cref = "WizardPage.CloseFromBack" />, then moves to 
+        ///   the previous page and calls <see cref = "WizardPage.ShowFromBack" />
         /// </summary>
         public void Back()
         {
@@ -443,7 +445,7 @@ namespace Common.UI.Wizard
             //Can I press back
             Debug.Assert(PageIndex > 0 && PageIndex < vPages.Count, "Attempted to go back to a page that doesn't exist");
             //Tell the application that I closed a page
-            int newPage = vActivePage.OnCloseFromBack(this);
+            var newPage = vActivePage.OnCloseFromBack(this);
 
             ActivatePage(newPage);
             //Tell the application I have shown a page
@@ -451,10 +453,12 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Moves to the page given and calls <see cref="WizardPage.ShowFromBack"/>
+        ///   Moves to the page given and calls <see cref = "WizardPage.ShowFromBack" />
         /// </summary>
-        /// <remarks>Does NOT call <see cref="WizardPage.CloseFromBack"/> on the current page</remarks>
-        /// <param name="page"></param>
+        /// <remarks>
+        ///   Does NOT call <see cref = "WizardPage.CloseFromBack" /> on the current page
+        /// </remarks>
+        /// <param name = "page"></param>
         public void BackTo(WizardPage page)
         {
             //Since we have a page to go to, then there is no need to validate most of it
@@ -473,7 +477,7 @@ namespace Common.UI.Wizard
                 const string noPagesText = "No wizard pages inside the wizard.";
 
 
-                SizeF textSize = e.Graphics.MeasureString(noPagesText, Font);
+                var textSize = e.Graphics.MeasureString(noPagesText, Font);
                 var layout = new RectangleF((Width - textSize.Width)/2,
                                             (pnlButtons.Top - textSize.Height)/2,
                                             textSize.Width, textSize.Height);

@@ -48,7 +48,7 @@ namespace F4Utils.Campaign
 
         protected void Decode(byte[] bytes, int version)
         {
-            int offset = 0;
+            var offset = 0;
             WindHeading = BitConverter.ToSingle(bytes, offset);
             offset += 4;
             WindSpeed = BitConverter.ToSingle(bytes, offset);
@@ -113,7 +113,7 @@ namespace F4Utils.Campaign
             offset += 4;
 
             cellState = new CellState[nh*nw];
-            for (int j = 0; j < nh*nw; j++)
+            for (var j = 0; j < nh*nw; j++)
             {
                 var thisCellState = new CellState();
                 thisCellState.BaseAltitude = bytes[offset];

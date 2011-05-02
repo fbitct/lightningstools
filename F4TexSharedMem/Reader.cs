@@ -10,13 +10,13 @@ namespace F4TexSharedMem
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class Reader : IDisposable
     {
+        private const string SHARED_MEMORY_FILE_NAME = "FalconTexturesSharedMemoryArea";
         private bool _dataAvailable;
         private bool _disposed;
         private PixelFormat _format = PixelFormat.Undefined;
         private bool _formatDetected;
         private IntPtr _hFileMappingObject = IntPtr.Zero;
         private IntPtr _lpStartAddress = IntPtr.Zero;
-        private const string SHARED_MEMORY_FILE_NAME = "FalconTexturesSharedMemoryArea";
         private NativeMethods.DDSURFACEDESC2 _surfaceDesc;
 
         public bool IsDataAvailable
@@ -37,7 +37,7 @@ namespace F4TexSharedMem
                 }
                 else
                 {
-                    int checkFor = 0;
+                    var checkFor = 0;
                     try
                     {
                         checkFor = Marshal.ReadInt32(_lpStartAddress);
@@ -76,7 +76,7 @@ namespace F4TexSharedMem
             _formatDetected = false;
             if (!_dataAvailable)
             {
-                bool dataAvailable = IsDataAvailable;
+                var dataAvailable = IsDataAvailable;
             }
             if (!_dataAvailable)
             {
@@ -107,24 +107,24 @@ namespace F4TexSharedMem
         public IntPtr GetImagePointer(ref Rectangle rect)
         {
             if (!CheckImage()) return IntPtr.Zero;
-            int surfaceWidth = Math.Abs(_surfaceDesc.dwWidth);
-            int surfaceHeight = Math.Abs(_surfaceDesc.dwHeight);
+            var surfaceWidth = Math.Abs(_surfaceDesc.dwWidth);
+            var surfaceHeight = Math.Abs(_surfaceDesc.dwHeight);
 
             if (rect == Rectangle.Empty) rect = new Rectangle(0, 0, surfaceWidth, surfaceHeight);
             rect = ClampRect(rect, surfaceWidth, surfaceHeight);
             if (rect == Rectangle.Empty) rect = new Rectangle(0, 0, surfaceWidth, surfaceHeight);
 
-            int offset = (_surfaceDesc.lPitch*rect.Y) + (rect.X*(_surfaceDesc.ddpfPixelFormat.dwRGBBitCount/8));
+            var offset = (_surfaceDesc.lPitch*rect.Y) + (rect.X*(_surfaceDesc.ddpfPixelFormat.dwRGBBitCount/8));
             return new IntPtr(_lpStartAddress.ToInt64() + offset + 4 + _surfaceDesc.dwSize);
         }
 
         private static Rectangle ClampRect(Rectangle rect, int clampToWidth, int clampToHeight)
         {
             var toReturn = new Rectangle();
-            int x = rect.X;
-            int y = rect.Y;
-            int width = rect.Width;
-            int height = rect.Height;
+            var x = rect.X;
+            var y = rect.Y;
+            var width = rect.Width;
+            var height = rect.Height;
 
             if (clampToWidth < 0) clampToWidth = 0;
             if (clampToHeight < 0) clampToHeight = 0;
@@ -170,7 +170,7 @@ namespace F4TexSharedMem
         public Bitmap GetImage(Rectangle rect)
         {
             if (!CheckImage()) return null;
-            IntPtr start = GetImagePointer(ref rect);
+            var start = GetImagePointer(ref rect);
             var bmp = new Bitmap(rect.Width, rect.Height, _surfaceDesc.lPitch, _format, start);
             return bmp;
         }

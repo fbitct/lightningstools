@@ -11,7 +11,7 @@ namespace Common.MacroProgramming
         public BinaryCodedDecimalDigitEncoder()
         {
             var newOut = new DigitalSignal[4];
-            for (int i = 0; i < newOut.Length; i++)
+            for (var i = 0; i < newOut.Length; i++)
             {
                 newOut[i] = new DigitalSignal();
             }
@@ -29,7 +29,7 @@ namespace Common.MacroProgramming
                 if (value == null)
                 {
                     value = new DigitalSignal[4];
-                    for (int i = 0; i < value.Length; i++)
+                    for (var i = 0; i < value.Length; i++)
                     {
                         value[i] = new DigitalSignal();
                     }
@@ -64,7 +64,7 @@ namespace Common.MacroProgramming
             if (_in == null) return;
             if (_out == null) return;
             long newVal = (int) _in.State;
-            for (int i = 0; i < _out.Length; i++)
+            for (var i = 0; i < _out.Length; i++)
             {
                 var thisMask = (int) (System.Math.Pow(2, i));
                 if (_out[i] != null)

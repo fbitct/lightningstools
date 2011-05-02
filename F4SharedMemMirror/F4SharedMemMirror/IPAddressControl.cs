@@ -30,7 +30,7 @@ namespace F4SharedMemMirror
         {
             get
             {
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     return fc.TabStop;
                 }
@@ -39,7 +39,7 @@ namespace F4SharedMemMirror
             }
             set
             {
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     fc.TabStop = value;
                 }
@@ -51,7 +51,7 @@ namespace F4SharedMemMirror
         {
             get
             {
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     if (fc.Blank)
                     {
@@ -83,9 +83,9 @@ namespace F4SharedMemMirror
         {
             get
             {
-                NativeMethods.TEXTMETRIC textMetric = GetTextMetrics(Handle, Font);
+                var textMetric = GetTextMetrics(Handle, Font);
 
-                int offset = textMetric.tmAscent + 1;
+                var offset = textMetric.tmAscent + 1;
 
                 switch (BorderStyle)
                 {
@@ -106,7 +106,7 @@ namespace F4SharedMemMirror
         {
             get
             {
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     if (!fc.Blank)
                     {
@@ -135,7 +135,7 @@ namespace F4SharedMemMirror
         {
             get
             {
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     if (fc.Focused)
                     {
@@ -161,12 +161,12 @@ namespace F4SharedMemMirror
             {
                 _readOnly = value;
 
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     fc.ReadOnly = _readOnly;
                 }
 
-                foreach (DotControl dc in _dotControls)
+                foreach (var dc in _dotControls)
                 {
                     dc.ReadOnly = _readOnly;
                 }
@@ -185,7 +185,7 @@ namespace F4SharedMemMirror
                 var sb = new StringBuilder();
                 ;
 
-                for (int index = 0; index < _fieldControls.Length; ++index)
+                for (var index = 0; index < _fieldControls.Length; ++index)
                 {
                     sb.Append(_fieldControls[index].Text);
 
@@ -206,7 +206,7 @@ namespace F4SharedMemMirror
 
         public void Clear()
         {
-            foreach (FieldControl fc in _fieldControls)
+            foreach (var fc in _fieldControls)
             {
                 fc.Clear();
             }
@@ -216,7 +216,7 @@ namespace F4SharedMemMirror
         {
             var bytes = new byte[FieldCount];
 
-            for (int index = 0; index < FieldCount; ++index)
+            for (var index = 0; index < FieldCount; ++index)
             {
                 bytes[index] = _fieldControls[index].Value;
             }
@@ -233,9 +233,9 @@ namespace F4SharedMemMirror
                 return;
             }
 
-            int length = Math.Min(FieldCount, bytes.Length);
+            var length = Math.Min(FieldCount, bytes.Length);
 
-            for (int i = 0; i < length; ++i)
+            for (var i = 0; i < length; ++i)
             {
                 _fieldControls[i].Text = bytes[i].ToString(CultureInfo.InvariantCulture);
             }
@@ -262,7 +262,7 @@ namespace F4SharedMemMirror
         {
             var sb = new StringBuilder();
 
-            for (int index = 0; index < FieldCount; ++index)
+            for (var index = 0; index < FieldCount; ++index)
             {
                 sb.Append(_fieldControls[index].ToString());
 
@@ -285,7 +285,7 @@ namespace F4SharedMemMirror
 
             ResetBackColorChanged();
 
-            for (int index = 0; index < _fieldControls.Length; ++index)
+            for (var index = 0; index < _fieldControls.Length; ++index)
             {
                 _fieldControls[index] = new FieldControl();
 
@@ -403,7 +403,7 @@ namespace F4SharedMemMirror
         {
             base.OnPaint(e);
 
-            Color backColor = BackColor;
+            var backColor = BackColor;
 
             if (!_backColorChanged)
             {
@@ -464,7 +464,7 @@ namespace F4SharedMemMirror
 
         private void AdjustSize()
         {
-            Size newSize = MinimumSize;
+            var newSize = MinimumSize;
 
             if (Width > newSize.Width)
             {
@@ -492,13 +492,13 @@ namespace F4SharedMemMirror
         {
             var minimumSize = new Size(0, 0);
 
-            foreach (FieldControl fc in _fieldControls)
+            foreach (var fc in _fieldControls)
             {
                 minimumSize.Width += fc.Width;
                 minimumSize.Height = Math.Max(minimumSize.Height, fc.Height);
             }
 
-            foreach (DotControl dc in _dotControls)
+            foreach (var dc in _dotControls)
             {
                 minimumSize.Width += dc.Width;
                 minimumSize.Height = Math.Max(minimumSize.Height, dc.Height);
@@ -528,14 +528,14 @@ namespace F4SharedMemMirror
 
         private static NativeMethods.TEXTMETRIC GetTextMetrics(IntPtr hwnd, Font font)
         {
-            IntPtr hdc = NativeMethods.GetWindowDC(hwnd);
+            var hdc = NativeMethods.GetWindowDC(hwnd);
 
             NativeMethods.TEXTMETRIC textMetric;
-            IntPtr hFont = font.ToHfont();
+            var hFont = font.ToHfont();
 
             try
             {
-                IntPtr hFontPreviouse = NativeMethods.SelectObject(hdc, hFont);
+                var hFontPreviouse = NativeMethods.SelectObject(hdc, hFont);
                 NativeMethods.GetTextMetrics(hdc, out textMetric);
                 NativeMethods.SelectObject(hdc, hFontPreviouse);
             }
@@ -569,18 +569,18 @@ namespace F4SharedMemMirror
         {
             SuspendLayout();
 
-            int difference = Width - MinimumSize.Width;
+            var difference = Width - MinimumSize.Width;
 
             Debug.Assert(difference >= 0);
 
-            int numOffsets = _fieldControls.Length + _dotControls.Length + 1;
+            var numOffsets = _fieldControls.Length + _dotControls.Length + 1;
 
-            int div = difference/(numOffsets);
-            int mod = difference%(numOffsets);
+            var div = difference/(numOffsets);
+            var mod = difference%(numOffsets);
 
             var offsets = new int[numOffsets];
 
-            for (int index = 0; index < numOffsets; ++index)
+            for (var index = 0; index < numOffsets; ++index)
             {
                 offsets[index] = div;
 
@@ -590,8 +590,8 @@ namespace F4SharedMemMirror
                 }
             }
 
-            int x = 0;
-            int y = 0;
+            var x = 0;
+            var y = 0;
 
             switch (BorderStyle)
             {
@@ -605,11 +605,11 @@ namespace F4SharedMemMirror
                     break;
             }
 
-            int offsetIndex = 0;
+            var offsetIndex = 0;
 
             x += offsets[offsetIndex++];
 
-            for (int i = 0; i < _fieldControls.Length; ++i)
+            for (var i = 0; i < _fieldControls.Length; ++i)
             {
                 _fieldControls[i].Location = new Point(x, y);
 
@@ -658,7 +658,7 @@ namespace F4SharedMemMirror
                 return;
             }
 
-            int fieldIndex = e.FieldIndex;
+            var fieldIndex = e.FieldIndex;
 
             if (e.Direction == Direction.Forward)
             {
@@ -757,13 +757,13 @@ namespace F4SharedMemMirror
                 return;
             }
 
-            int textIndex = 0;
+            var textIndex = 0;
 
-            int index = 0;
+            var index = 0;
 
             for (index = 0; index < _dotControls.Length; ++index)
             {
-                int findIndex = text.IndexOf(_dotControls[index].Text, textIndex, StringComparison.OrdinalIgnoreCase);
+                var findIndex = text.IndexOf(_dotControls[index].Text, textIndex, StringComparison.OrdinalIgnoreCase);
 
                 if (findIndex >= 0)
                 {

@@ -37,30 +37,26 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _in_SignalChanged;
+                value.SignalChanged += InSignalChanged;
                 _in = value;
             }
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
                 if (_outs != null)
                 {
-                    for (int i = 0; i < _outs.Count; i++)
+                    foreach (var t1 in _outs)
                     {
-                        if (_outs[i] != null)
-                        {
-                            //_outs[i].State = true;
-                            var sigVal = new SignalValue();
-                            sigVal.signal = _outs[i];
-                            sigVal.value = true;
-                            var t = new Thread(SendSignal);
-                            t.SetApartmentState(ApartmentState.STA);
-                            t.IsBackground = true;
-                            t.Start(sigVal);
-                        }
+                        if (t1 == null) continue;
+                        //_outs[i].State = true;
+                        var sigVal = new SignalValue {Signal = t1, Value = true};
+                        var t = new Thread(SendSignal);
+                        t.SetApartmentState(ApartmentState.STA);
+                        t.IsBackground = true;
+                        t.Start(sigVal);
                     }
                 }
             }
@@ -68,19 +64,15 @@ namespace Common.MacroProgramming
             {
                 if (_outs != null)
                 {
-                    for (int i = 0; i < _outs.Count; i++)
+                    foreach (var t1 in _outs)
                     {
-                        if (_outs[i] != null)
-                        {
-                            //_outs[i].State = false;
-                            var sigVal = new SignalValue();
-                            sigVal.signal = _outs[i];
-                            sigVal.value = false;
-                            var t = new Thread(SendSignal);
-                            t.SetApartmentState(ApartmentState.STA);
-                            t.IsBackground = true;
-                            t.Start(sigVal);
-                        }
+                        if (t1 == null) continue;
+                        //_outs[i].State = false;
+                        var sigVal = new SignalValue {Signal = t1, Value = false};
+                        var t = new Thread(SendSignal);
+                        t.SetApartmentState(ApartmentState.STA);
+                        t.IsBackground = true;
+                        t.Start(sigVal);
                     }
                 }
             }
@@ -93,18 +85,18 @@ namespace Common.MacroProgramming
             return newSig;
         }
 
-        private void SendSignal(object s)
+        private static void SendSignal(object s)
         {
             var sigVal = (SignalValue) s;
-            sigVal.signal.State = sigVal.value;
+            sigVal.Signal.State = sigVal.Value;
         }
 
         #region Nested type: SignalValue
 
         private struct SignalValue
         {
-            public DigitalSignal signal;
-            public bool value;
+            public DigitalSignal Signal;
+            public bool Value;
         }
 
         #endregion

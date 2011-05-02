@@ -5,17 +5,17 @@ namespace Common.InputSupport
     public abstract class DeviceMonitor
     {
         /// <summary>
-        /// Flag to indicate that this object instance has already been disposed
+        ///   Flag to indicate that this object instance has already been disposed
         /// </summary>
         protected volatile bool _isDisposed;
 
         /// <summary>
-        /// Flag indicating whether this object instance is in the Prepared state (meaning, input has been acquired and instance variables have been initialized
+        ///   Flag indicating whether this object instance is in the Prepared state (meaning, input has been acquired and instance variables have been initialized
         /// </summary>
         protected volatile bool _prepared;
 
         /// <summary>
-        /// Flag to signal that this object is currently running the Prepare() task, so subsequent calls to Prepare() should just wait for the signal to drop
+        ///   Flag to signal that this object is currently running the Prepare() task, so subsequent calls to Prepare() should just wait for the signal to drop
         /// </summary>
         protected volatile bool _preparing;
 
@@ -40,7 +40,7 @@ namespace Common.InputSupport
         #region Object Overrides (ToString, GetHashCode, Equals)
 
         /// <summary>
-        /// Gets a string representation of this object.
+        ///   Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
@@ -49,7 +49,7 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Gets an integer "hash" representation of this object, for use in hashtables.
+        ///   Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
         /// <returns>an integer containing a numeric hash of this object's variables.  When two objects are Equal, their hashes should be equal as well.</returns>
         public override int GetHashCode()
@@ -58,9 +58,9 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
+        ///   Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
         /// </summary>
-        /// <param name="obj">An object to compare this object to</param>
+        /// <param name = "obj">An object to compare this object to</param>
         /// <returns>a boolean, set to true, if the this object is equal to the specified object, and set to false, if they are not equal.</returns>
         public override bool Equals(object obj)
         {
@@ -76,8 +76,8 @@ namespace Common.InputSupport
         #region Destructors
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~DeviceMonitor()
         {
@@ -85,9 +85,9 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)
@@ -102,8 +102,8 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -114,10 +114,10 @@ namespace Common.InputSupport
         #endregion
 
         /// <summary>
-        /// Initializes this object's state and sets up objects
-        /// to monitor the device instance that this object is responsible for.
-        /// During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
-        /// Prepare() will simply wait until the _preparing flag is lowered.
+        ///   Initializes this object's state and sets up objects
+        ///   to monitor the device instance that this object is responsible for.
+        ///   During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
+        ///   Prepare() will simply wait until the _preparing flag is lowered.
         /// </summary>
         protected virtual void Prepare()
         {

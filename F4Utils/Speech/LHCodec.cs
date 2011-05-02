@@ -23,15 +23,15 @@ namespace F4Utils.Speech
         public int Decode(byte[] inputBuffer, int inputBufferOffset, int dataLength, ref byte[] outputBuffer,
                           int outputBufferOffset)
         {
-            int compDecodeSize = 0;
-            int loopCount = dataLength;
+            var compDecodeSize = 0;
+            var loopCount = dataLength;
 
-            short outputCodedSize = PMSIZE;
+            var outputCodedSize = PMSIZE;
 
-            GCHandle pinnedInputBufferHandle = GCHandle.Alloc(inputBuffer, GCHandleType.Pinned);
-            IntPtr inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(inputBuffer, inputBufferOffset);
-            GCHandle pinnedOutputBufferHandle = GCHandle.Alloc(outputBuffer, GCHandleType.Pinned);
-            IntPtr outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(outputBuffer, outputBufferOffset);
+            var pinnedInputBufferHandle = GCHandle.Alloc(inputBuffer, GCHandleType.Pinned);
+            var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(inputBuffer, inputBufferOffset);
+            var pinnedOutputBufferHandle = GCHandle.Alloc(outputBuffer, GCHandleType.Pinned);
+            var outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(outputBuffer, outputBufferOffset);
 
             while (loopCount > 0)
             {
@@ -39,7 +39,7 @@ namespace F4Utils.Speech
                 if (decodeSize > CODESIZE)
                     decodeSize = CODESIZE;
 
-                StreamTalk80.LH_ERRCODE errorCode = StreamTalk80.Decode(
+                var errorCode = StreamTalk80.Decode(
                     _hDecoder,
                     inputPtr,
                     ref decodeSize,
@@ -72,15 +72,15 @@ namespace F4Utils.Speech
         public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer,
                           int outputBufferOffset)
         {
-            int compDecodeSize = 0;
-            int loopCount = dataLength;
+            var compDecodeSize = 0;
+            var loopCount = dataLength;
 
-            short outputCodedSize = CODESIZE;
+            var outputCodedSize = CODESIZE;
 
-            GCHandle pinnedInputBufferHandle = GCHandle.Alloc(inputBuffer, GCHandleType.Pinned);
-            IntPtr inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(inputBuffer, inputBufferOffset);
-            GCHandle pinnedOutputBufferHandle = GCHandle.Alloc(outputBuffer, GCHandleType.Pinned);
-            IntPtr outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(outputBuffer, outputBufferOffset);
+            var pinnedInputBufferHandle = GCHandle.Alloc(inputBuffer, GCHandleType.Pinned);
+            var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(inputBuffer, inputBufferOffset);
+            var pinnedOutputBufferHandle = GCHandle.Alloc(outputBuffer, GCHandleType.Pinned);
+            var outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(outputBuffer, outputBufferOffset);
 
             while (loopCount > 0)
             {
@@ -90,7 +90,7 @@ namespace F4Utils.Speech
                 else if (decodeSize < PMSIZE)
                     break;
 
-                StreamTalk80.LH_ERRCODE errorCode = StreamTalk80.Encode(
+                var errorCode = StreamTalk80.Encode(
                     _hCoder,
                     inputPtr,
                     ref decodeSize,
@@ -125,10 +125,10 @@ namespace F4Utils.Speech
         public int Encode(Stream inputStream, int dataLength, Stream outputStream)
         {
             var inputBytes = new byte[dataLength];
-            int bytesRead = inputStream.Read(inputBytes, 0, dataLength);
+            var bytesRead = inputStream.Read(inputBytes, 0, dataLength);
             if (bytesRead < dataLength) throw new IOException("Unexpected end of stream encountered.");
             var outputBytes = new byte[dataLength*2];
-            int encodedLength = Encode(inputBytes, 0, dataLength, outputBytes, 0);
+            var encodedLength = Encode(inputBytes, 0, dataLength, outputBytes, 0);
             outputStream.Write(outputBytes, 0, encodedLength);
             outputStream.Flush();
             return encodedLength;
@@ -137,14 +137,14 @@ namespace F4Utils.Speech
         public int Decode(Stream inputStream, int dataLength, int uncompressedLength, Stream outputStream)
         {
             var inputBytes = new byte[dataLength];
-            int bytesRead = inputStream.Read(inputBytes, 0, dataLength);
+            var bytesRead = inputStream.Read(inputBytes, 0, dataLength);
             if (bytesRead < dataLength) throw new IOException("Unexpected end of stream encountered.");
             var outputBytes = new byte[uncompressedLength*2];
-            int decodedLength = Decode(inputBytes, 0, dataLength, ref outputBytes, 0);
+            var decodedLength = Decode(inputBytes, 0, dataLength, ref outputBytes, 0);
             outputStream.Write(outputBytes, 0, decodedLength);
             if (decodedLength < uncompressedLength)
             {
-                for (int i = 0; i < uncompressedLength - decodedLength; i++)
+                for (var i = 0; i < uncompressedLength - decodedLength; i++)
                 {
                     outputStream.WriteByte(0); //fill rest of stream with NULLs
                 }
@@ -186,8 +186,8 @@ namespace F4Utils.Speech
 
         private void VerifyST80WDll()
         {
-            string appDirectory = new FileInfo(Process.GetCurrentProcess().MainModule.FileName).DirectoryName;
-            string[] filesFound = Directory.GetFiles(appDirectory, "ST80W.dll", SearchOption.TopDirectoryOnly);
+            var appDirectory = new FileInfo(Process.GetCurrentProcess().MainModule.FileName).DirectoryName;
+            var filesFound = Directory.GetFiles(appDirectory, "ST80W.dll", SearchOption.TopDirectoryOnly);
             if (filesFound == null || filesFound.Length == 0)
             {
                 throw new Exception(

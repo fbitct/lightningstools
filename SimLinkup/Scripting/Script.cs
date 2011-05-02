@@ -33,24 +33,24 @@ namespace SimLinkup.Scripting
 
         public static Script Load(string basePath, string fileName, string language)
         {
-            FileInfo[] foundScripts = new DirectoryInfo(basePath).GetFiles(fileName, SearchOption.AllDirectories);
+            var foundScripts = new DirectoryInfo(basePath).GetFiles(fileName, SearchOption.AllDirectories);
             if (foundScripts == null || foundScripts.Length == 0)
             {
                 throw new FileNotFoundException(fileName);
             }
 
-            using (StreamReader sr = foundScripts[0].OpenText())
+            using (var sr = foundScripts[0].OpenText())
             {
                 //read the contents of the script file
-                string scriptFileContents = sr.ReadToEnd();
-                Assembly assembly = Compile(language, scriptFileContents);
+                var scriptFileContents = sr.ReadToEnd();
+                var assembly = Compile(language, scriptFileContents);
                 return new Script {Assembly = assembly, Language = language, Src = fileName};
             }
         }
 
         private static Assembly Compile(string language, string code)
         {
-            bool useAlternateCompiler = false;
+            var useAlternateCompiler = false;
 
             if (!string.IsNullOrEmpty(language))
             {
@@ -70,12 +70,12 @@ namespace SimLinkup.Scripting
             {
                 //setup CS-Script so it uses the correct alternate compiler
                 previousAlternateCompilerSetting = CSScript.GlobalSettings.UseAlternativeCompiler;
-                string alternateCompilerLocation = Util.ApplicationPath;
+                var alternateCompilerLocation = Util.ApplicationPath;
                 CSScript.GlobalSettings.UseAlternativeCompiler = alternateCompilerLocation;
             }
 
             //compile the code in the script file
-            Assembly assembly = CSScript.LoadCode(code);
+            var assembly = CSScript.LoadCode(code);
 
             if (useAlternateCompiler)
             {

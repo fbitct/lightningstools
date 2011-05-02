@@ -17,12 +17,12 @@ namespace Common.SimSupport
         public List<SimSupportModule> GetInstances()
         {
             List<SimSupportModule> toReturn = null;
-            foreach (string ssmTypeName in SimSupportModuleTypeNames)
+            foreach (var ssmTypeName in SimSupportModuleTypeNames)
             {
                 try
                 {
-                    Type ssmType = Type.GetType(ssmTypeName);
-                    object ssm = Activator.CreateInstance(ssmType);
+                    var ssmType = Type.GetType(ssmTypeName);
+                    var ssm = Activator.CreateInstance(ssmType);
                     if (ssm is SimSupportModule)
                     {
                         if (toReturn == null) toReturn = new List<SimSupportModule>();

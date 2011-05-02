@@ -19,14 +19,12 @@ namespace Common.HardwareSupport.MotorControl
             set
             {
                 _goToPositionSignal = value;
-                if (_goToPositionSignal != null)
+                if (_goToPositionSignal == null) return;
+                if (PhysicalOutput != null)
                 {
-                    if (PhysicalOutput != null)
-                    {
-                        PhysicalOutput.State = 1.0;
-                    }
-                    _goToPositionSignal.SignalChanged += OnGoToPositionSignalChanged;
+                    PhysicalOutput.State = 1.0;
                 }
+                _goToPositionSignal.SignalChanged += OnGoToPositionSignalChanged;
             }
         }
 

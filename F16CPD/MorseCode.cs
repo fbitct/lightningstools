@@ -119,19 +119,19 @@ namespace F16CPD
 
         public void Send()
         {
-            string[] words = PlainText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-            for (int a = 0; a < words.Length; a++)
+            var words = PlainText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+            for (var a = 0; a < words.Length; a++)
             {
-                string thisWord = words[a];
-                for (int i = 0; i < thisWord.Length; i++)
+                var thisWord = words[a];
+                for (var i = 0; i < thisWord.Length; i++)
                 {
-                    char somePlainChar = thisWord[i];
-                    string morsePatternCurrentPlainChar = GetMorsePatternStringForPlainChar(somePlainChar);
-                        //get the Morse code pattern for the current character
-                    for (int j = 0; j < morsePatternCurrentPlainChar.Length; j++)
+                    var somePlainChar = thisWord[i];
+                    var morsePatternCurrentPlainChar = GetMorsePatternStringForPlainChar(somePlainChar);
+                    //get the Morse code pattern for the current character
+                    for (var j = 0; j < morsePatternCurrentPlainChar.Length; j++)
                     {
-                        char someMorseChar = morsePatternCurrentPlainChar[j];
-                        string quinary = GetQuinaryStringForMorsePatternChar(someMorseChar);
+                        var someMorseChar = morsePatternCurrentPlainChar[j];
+                        var quinary = GetQuinaryStringForMorsePatternChar(someMorseChar);
                         SendUnits(quinary);
                         if (j < morsePatternCurrentPlainChar.Length - 1)
                         {
@@ -141,7 +141,7 @@ namespace F16CPD
                     if (i < thisWord.Length - 1)
                     {
                         SendUnits(GetQuinaryStringForMorsePatternChar('_'));
-                            //send short gap (between characters in a plaintext word
+                        //send short gap (between characters in a plaintext word
                     }
                 }
                 if (a < words.Length - 1)
@@ -153,7 +153,7 @@ namespace F16CPD
 
         private static string GetQuinaryStringForMorsePatternChar(char patternChar)
         {
-            string toReturn = "";
+            var toReturn = "";
             switch (patternChar)
             {
                 case '.': //dot
@@ -180,7 +180,7 @@ namespace F16CPD
 
         private static string GetMorsePatternStringForPlainChar(char someChar)
         {
-            string toReturn = "";
+            var toReturn = "";
             switch (Char.ToUpper(someChar))
             {
                 case 'A':

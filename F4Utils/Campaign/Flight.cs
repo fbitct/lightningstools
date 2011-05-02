@@ -90,18 +90,18 @@ namespace F4Utils.Campaign
                     {
                         var junk = new LoadoutArray();
                         junk.Stores = new LoadoutStruct[5];
-                        for (int j = 0; j < 5; j++)
+                        for (var j = 0; j < 5; j++)
                         {
-                            LoadoutStruct thisStore = junk.Stores[j];
+                            var thisStore = junk.Stores[j];
                             thisStore.WeaponID = new ushort[16];
-                            for (int k = 0; k < 16; k++)
+                            for (var k = 0; k < 16; k++)
                             {
                                 thisStore.WeaponID[k] = bytes[offset];
                                 offset++;
                             }
 
                             thisStore.WeaponCount = new byte[16];
-                            for (int k = 0; k < 16; k++)
+                            for (var k = 0; k < 16; k++)
                             {
                                 thisStore.WeaponCount[k] = bytes[offset];
                                 offset++;
@@ -113,14 +113,14 @@ namespace F4Utils.Campaign
                 weapon = new short[16];
                 if (version < 18)
                 {
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
                         weapon[j] = BitConverter.ToInt16(bytes, offset);
                         offset += 2;
                     }
                     if (use_loadout == 0)
                     {
-                        for (int j = 0; j < 16; j++)
+                        for (var j = 0; j < 16; j++)
                         {
                             loadout[0].WeaponID[j] = (byte) weapon[j];
                         }
@@ -128,27 +128,27 @@ namespace F4Utils.Campaign
                 }
                 else
                 {
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
                         weapon[j] = bytes[offset];
                         offset++;
                     }
                     if (use_loadout == 0)
                     {
-                        for (int j = 0; j < 16; j++)
+                        for (var j = 0; j < 16; j++)
                         {
                             loadout[0].WeaponID[j] = (byte) weapon[j];
                         }
                     }
                 }
-                for (int j = 0; j < 16; j++)
+                for (var j = 0; j < 16; j++)
                 {
                     weapons[j] = bytes[offset];
                     offset++;
                 }
                 if (use_loadout == 0)
                 {
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
                         loadout[0].WeaponCount[j] = weapons[j];
                     }
@@ -159,11 +159,11 @@ namespace F4Utils.Campaign
                 loadouts = bytes[offset];
                 offset++;
                 loadout = new LoadoutStruct[loadouts];
-                for (int j = 0; j < loadouts; j++)
+                for (var j = 0; j < loadouts; j++)
                 {
                     var thisLoadout = new LoadoutStruct();
                     thisLoadout.WeaponID = new ushort[16];
-                    for (int k = 0; k < 16; k++)
+                    for (var k = 0; k < 16; k++)
                     {
                         if (version >= WEAPON_IDS_WIDENED_VERSION)
                         {
@@ -177,7 +177,7 @@ namespace F4Utils.Campaign
                         }
                     }
                     thisLoadout.WeaponCount = new byte[16];
-                    for (int k = 0; k < 16; k++)
+                    for (var k = 0; k < 16; k++)
                     {
                         thisLoadout.WeaponCount[k] = bytes[offset];
                         offset++;
@@ -250,28 +250,28 @@ namespace F4Utils.Campaign
             }
 
             slots = new byte[4];
-            for (int j = 0; j < 4; j++)
+            for (var j = 0; j < 4; j++)
             {
                 slots[j] = bytes[offset];
                 offset++;
             }
 
             pilots = new byte[4];
-            for (int j = 0; j < 4; j++)
+            for (var j = 0; j < 4; j++)
             {
                 pilots[j] = bytes[offset];
                 offset++;
             }
 
             plane_stats = new byte[4];
-            for (int j = 0; j < 4; j++)
+            for (var j = 0; j < 4; j++)
             {
                 plane_stats[j] = bytes[offset];
                 offset++;
             }
 
             player_slots = new byte[4];
-            for (int j = 0; j < 4; j++)
+            for (var j = 0; j < 4; j++)
             {
                 player_slots[j] = bytes[offset];
                 offset++;

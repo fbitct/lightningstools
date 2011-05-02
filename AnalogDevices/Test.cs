@@ -4,11 +4,11 @@
     {
         public static void Main(string[] args)
         {
-            DenseDacEvalBoard[] evalBoardsAttachedToThisSystem = DenseDacEvalBoard.Enumerate();
-            foreach (DenseDacEvalBoard thisEvalBoard in evalBoardsAttachedToThisSystem)
+            var evalBoardsAttachedToThisSystem = DenseDacEvalBoard.Enumerate();
+            foreach (var thisEvalBoard in evalBoardsAttachedToThisSystem)
             {
                 thisEvalBoard.DacPrecision = DacPrecision.SixteenBit;
-                float voltage = -9.75f;
+                var voltage = -9.75f;
                 var value = (ushort) (((voltage + 10)/20)*0xFFFF);
 
                 thisEvalBoard.SetDacChannelDataValueA(ChannelAddress.Group0Channel0, value);

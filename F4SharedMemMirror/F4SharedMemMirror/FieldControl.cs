@@ -60,8 +60,8 @@ namespace F4SharedMemMirror
         {
             get
             {
-                Size minimumSize = Size.Empty;
-                using (Graphics g = Graphics.FromHwnd(Handle))
+                var minimumSize = Size.Empty;
+                using (var g = Graphics.FromHwnd(Handle))
                 {
                     minimumSize = TextRenderer.MeasureText(g,
                                                            Resources.FieldMeasureText, Font, Size,
@@ -150,7 +150,7 @@ namespace F4SharedMemMirror
 
                     if (TextLength > 0)
                     {
-                        int newLength = TextLength - 1;
+                        var newLength = TextLength - 1;
                         Text = Text.Substring(0, newLength);
                     }
 
@@ -311,8 +311,8 @@ namespace F4SharedMemMirror
                     }
                     else
                     {
-                        int originalLength = TextLength;
-                        int newSelectionStart = SelectionStart;
+                        var originalLength = TextLength;
+                        var newSelectionStart = SelectionStart;
 
                         base.Text = value.ToString(CultureInfo.InvariantCulture);
 

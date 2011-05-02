@@ -25,7 +25,7 @@ namespace F4Utils.Campaign
             offset += 4;
 
             schedule = new byte[32];
-            for (int j = 0; j < schedule.Length; j++)
+            for (var j = 0; j < schedule.Length; j++)
             {
                 schedule[j] = bytes[offset];
                 offset++;

@@ -14,7 +14,7 @@ namespace Common.Collections
 
         public object Clone()
         {
-            string xml = Serialization.Util.SerializeToXml(this, GetType());
+            var xml = Serialization.Util.SerializeToXml(this, GetType());
             return Serialization.Util.DeserializeFromXml(xml, GetType());
         }
 
@@ -32,7 +32,7 @@ namespace Common.Collections
             var keySerializer = new XmlSerializer(typeof (TKey));
             var valueSerializer = new XmlSerializer(typeof (TValue));
 
-            bool wasEmpty = reader.IsEmptyElement;
+            var wasEmpty = reader.IsEmptyElement;
             reader.Read();
 
             if (wasEmpty)
@@ -63,7 +63,7 @@ namespace Common.Collections
             var keySerializer = new XmlSerializer(typeof (TKey));
             var valueSerializer = new XmlSerializer(typeof (TValue));
 
-            foreach (TKey key in Keys)
+            foreach (var key in Keys)
             {
                 writer.WriteStartElement("item");
 
@@ -72,7 +72,7 @@ namespace Common.Collections
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("value");
-                TValue value = this[key];
+                var value = this[key];
                 valueSerializer.Serialize(writer, value);
                 writer.WriteEndElement();
 

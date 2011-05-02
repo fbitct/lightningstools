@@ -4,8 +4,8 @@ using System.Linq;
 namespace Common.InputSupport
 {
     /// <summary>
-    /// Represents a specific physical input device (gaming device)
-    /// such as a joystick, gaming wheel, etc.
+    ///   Represents a specific physical input device (gaming device)
+    ///   such as a joystick, gaming wheel, etc.
     /// </summary>
     [Serializable]
     public abstract class PhysicalDeviceInfo
@@ -13,25 +13,25 @@ namespace Common.InputSupport
         #region Instance variable declarations
 
         /// <summary>
-        /// Stores a "friendly name" for this device, useful in editors
+        ///   Stores a "friendly name" for this device, useful in editors
         /// </summary>
         private string _alias;
 
         /// <summary>
-        /// An array of PhysicalControlInfo objects, where each
-        /// element in the array represents a distinct physical control
-        /// (button, axis, or Pov control) appearing on this device
+        ///   An array of PhysicalControlInfo objects, where each
+        ///   element in the array represents a distinct physical control
+        ///   (button, axis, or Pov control) appearing on this device
         /// </summary>
         protected PhysicalControlInfo[] _controls;
 
         /// <summary>
-        /// signal flag to determine if the _controls array has been populated
-        /// yet, either from a call to LoadControls() or via deserialization
+        ///   signal flag to determine if the _controls array has been populated
+        ///   yet, either from a call to LoadControls() or via deserialization
         /// </summary>
         protected bool _controlsLoaded;
 
         /// <summary>
-        /// stores a key that represents this device uniquely on the system
+        ///   stores a key that represents this device uniquely on the system
         /// </summary>
         protected object _key;
 
@@ -40,20 +40,19 @@ namespace Common.InputSupport
         #region Constructors
 
         /// <summary>
-        /// 
         /// </summary>
         public PhysicalDeviceInfo()
         {
         }
 
         /// <summary>
-        /// Constructs a PhysicalDeviceInfo, given a unique key and an (optional) alias ("Friendly name") 
-        /// to use for the device
+        ///   Constructs a PhysicalDeviceInfo, given a unique key and an (optional) alias ("Friendly name") 
+        ///   to use for the device
         /// </summary>
-        /// <param name="key">a key that will uniquely identify this physical 
-        /// input device</param>
-        /// <param name="alias">a string containing a "friendly name" (alias)
-        /// to associate with the device being represented</param>
+        /// <param name = "key">a key that will uniquely identify this physical 
+        ///   input device</param>
+        /// <param name = "alias">a string containing a "friendly name" (alias)
+        ///   to associate with the device being represented</param>
         public PhysicalDeviceInfo(object key, string alias)
         {
             _key = key;
@@ -65,12 +64,12 @@ namespace Common.InputSupport
         #region Private methods
 
         /// <summary>
-        /// Discovers the physical controls that appear on this device,
-        /// and stores them as an array of PhysicalControlInfo objects at the instance level.
-        /// NOT guaranteed to be successful -- if the calls to 
-        /// the underlying device fail or if the device
-        /// is not currently registered, then the controls list will remain
-        /// unpopulated.
+        ///   Discovers the physical controls that appear on this device,
+        ///   and stores them as an array of PhysicalControlInfo objects at the instance level.
+        ///   NOT guaranteed to be successful -- if the calls to 
+        ///   the underlying device fail or if the device
+        ///   is not currently registered, then the controls list will remain
+        ///   unpopulated.
         /// </summary>
         internal virtual void LoadControls()
         {
@@ -92,12 +91,12 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Gets an array of PhysicalControlInfo objects representing
-        /// the Axes appearing on this device.  If the physical controls
-        /// cannot be detected because the calls to the underlying device fail
-        /// or if the device is not attached to the system and its controls
-        /// have not previously been deserialized from an earlier detection,
-        /// then this method returns a null array.
+        ///   Gets an array of PhysicalControlInfo objects representing
+        ///   the Axes appearing on this device.  If the physical controls
+        ///   cannot be detected because the calls to the underlying device fail
+        ///   or if the device is not attached to the system and its controls
+        ///   have not previously been deserialized from an earlier detection,
+        ///   then this method returns a null array.
         /// </summary>
         public PhysicalControlInfo[] Axes
         {
@@ -113,12 +112,12 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Returns an array of PhysicalControlInfo objects representing
-        /// the Buttons appearing on this device.  If the physical controls
-        /// cannot be detected because the calls to the underlying device fail
-        /// or if the device is not attached to the system and its controls
-        /// have not previously been deserialized from an earlier detection,
-        /// then this method returns a null array.
+        ///   Returns an array of PhysicalControlInfo objects representing
+        ///   the Buttons appearing on this device.  If the physical controls
+        ///   cannot be detected because the calls to the underlying device fail
+        ///   or if the device is not attached to the system and its controls
+        ///   have not previously been deserialized from an earlier detection,
+        ///   then this method returns a null array.
         /// </summary>
         public PhysicalControlInfo[] Buttons
         {
@@ -134,13 +133,13 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Returns an array of PhysicalControlInfo objects representing
-        /// the point-of-view controls appearing on this device.  
-        /// If the physical controls cannot be detected because the 
-        /// calls to the underlying device fail or if the device is not 
-        /// attached to the system and its controls
-        /// have not previously been deserialized from an earlier detection,
-        /// then this method returns a null array.
+        ///   Returns an array of PhysicalControlInfo objects representing
+        ///   the point-of-view controls appearing on this device.  
+        ///   If the physical controls cannot be detected because the 
+        ///   calls to the underlying device fail or if the device is not 
+        ///   attached to the system and its controls
+        ///   have not previously been deserialized from an earlier detection,
+        ///   then this method returns a null array.
         /// </summary>
         public PhysicalControlInfo[] Povs
         {
@@ -156,13 +155,13 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Returns an array of PhysicalControlInfo objects representing
-        /// all of the input controls appearing on this device.  
-        /// If the physical controls cannot be detected because the 
-        /// calls to the underlying device fail or if the device is not 
-        /// attached to the system and its controls
-        /// have not previously been deserialized from an earlier detection,
-        /// then this method returns a null array.
+        ///   Returns an array of PhysicalControlInfo objects representing
+        ///   all of the input controls appearing on this device.  
+        ///   If the physical controls cannot be detected because the 
+        ///   calls to the underlying device fail or if the device is not 
+        ///   attached to the system and its controls
+        ///   have not previously been deserialized from an earlier detection,
+        ///   then this method returns a null array.
         /// </summary>
         public PhysicalControlInfo[] Controls
         {
@@ -177,7 +176,7 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Gets/sets the "friendly name" (alias) to associate with this device.
+        ///   Gets/sets the "friendly name" (alias) to associate with this device.
         /// </summary>
         public string Alias
         {
@@ -186,7 +185,7 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Gets/sets the key that uniquely identifies this device
+        ///   Gets/sets the key that uniquely identifies this device
         /// </summary>
         public object Key
         {
@@ -199,7 +198,7 @@ namespace Common.InputSupport
         #region Object Overrides (ToString, GetHashCode, Equals)
 
         /// <summary>
-        /// Gets a textual representation of this object.
+        ///   Gets a textual representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
@@ -208,9 +207,9 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Gets an integer (hash) representation of this object, 
-        /// for use in hashtables.  If two objects are equal, 
-        /// then their hashcodes should be equal as well.
+        ///   Gets an integer (hash) representation of this object, 
+        ///   for use in hashtables.  If two objects are equal, 
+        ///   then their hashcodes should be equal as well.
         /// </summary>
         /// <returns>an integer containing a hashed representation of this object</returns>
         public override int GetHashCode()
@@ -219,12 +218,12 @@ namespace Common.InputSupport
         }
 
         /// <summary>
-        /// Compares two objects to determine if they are equal to each other.
+        ///   Compares two objects to determine if they are equal to each other.
         /// </summary>
-        /// <param name="obj">An object to compare this instance to</param>
+        /// <param name = "obj">An object to compare this instance to</param>
         /// <returns>a boolean, set to true if the specified object is 
-        /// equal to this instance, or false if the specified object
-        /// is not equal.</returns>
+        ///   equal to this instance, or false if the specified object
+        ///   is not equal.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null) return false;

@@ -13,12 +13,8 @@ namespace Common.MacroProgramming
         public AnalogSignalNormalizer()
         {
             In = new AnalogSignal();
-            InputRange = new Range();
-            InputRange.LowerInclusiveBound = 0.0;
-            InputRange.UpperInclusiveBound = 1.0;
-            OutputRange = new Range();
-            OutputRange.LowerInclusiveBound = 0.0;
-            OutputRange.UpperInclusiveBound = 1.0;
+            InputRange = new Range {LowerInclusiveBound = 0.0, UpperInclusiveBound = 1.0};
+            OutputRange = new Range {LowerInclusiveBound = 0.0, UpperInclusiveBound = 1.0};
             Out = new AnalogSignal();
         }
 
@@ -31,12 +27,9 @@ namespace Common.MacroProgramming
                 {
                     value = new AnalogSignal();
                 }
-                value.SignalChanged += _in_SignalChanged;
+                value.SignalChanged += InSignalChanged;
                 _in = value;
-                if (_in != null)
-                {
-                    Evaluate(_in.State);
-                }
+                Evaluate(_in.State);
             }
         }
 
@@ -83,7 +76,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _in_SignalChanged(object sender, AnalogSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, AnalogSignalChangedEventArgs e)
         {
             Evaluate(e.CurrentState);
         }
@@ -94,8 +87,8 @@ namespace Common.MacroProgramming
             {
                 if (_out != null)
                 {
-                    double newValAsPercentageOfInputRange = ((newVal - _inputRange.LowerInclusiveBound)/
-                                                             _inputRange.Width);
+                    var newValAsPercentageOfInputRange = ((newVal - _inputRange.LowerInclusiveBound)/
+                                                          _inputRange.Width);
                     _out.State = (newValAsPercentageOfInputRange*(_outputRange.Width)) +
                                  _outputRange.LowerInclusiveBound;
                 }

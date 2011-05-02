@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -438,19 +437,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 283;
-                int height = 217;
+                var width = 283;
+                var height = 217;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-115, -147);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
 
                 //draw the background image

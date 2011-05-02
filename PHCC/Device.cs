@@ -12,7 +12,7 @@ namespace Phcc
     //Add GuidAttribute to the source interface to supply an explicit System.Guid.
     //Add InterfaceTypeAttribute to indicate that interface is IDispatch interface.
     /// <summary>
-    /// COM Event Source Interface
+    ///   COM Event Source Interface
     /// </summary>
     [Guid("8709CA5D-79FA-4a63-ACF4-C99475990BC3")]
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
@@ -20,27 +20,27 @@ namespace Phcc
     public interface PhccEvents
     {
         /// <summary>
-        /// The <see cref="DigitalInputChanged"/> event is raised when 
-        /// the PHCC motherboard detects that one of the digital inputs
-        /// has changed (i.e. whenever a button that is wired 
-        /// into the digital input key matrix is pressed or released). 
+        ///   The <see cref = "DigitalInputChanged" /> event is raised when 
+        ///   the PHCC motherboard detects that one of the digital inputs
+        ///   has changed (i.e. whenever a button that is wired 
+        ///   into the digital input key matrix is pressed or released).
         /// </summary>
         [DispId(1)]
         void DigitalInputChanged(object sender, DigitalInputChangedEventArgs e);
 
         /// <summary>
-        /// The <see cref="AnalogInputChanged"/> event is raised when
-        /// the PHCC motherboard detects that one of the analog inputs 
-        /// has changed values (i.e. whenever an analog input signal 
-        /// changes state). 
+        ///   The <see cref = "AnalogInputChanged" /> event is raised when
+        ///   the PHCC motherboard detects that one of the analog inputs 
+        ///   has changed values (i.e. whenever an analog input signal 
+        ///   changes state).
         /// </summary>
         [DispId(2)]
         void AnalogInputChanged(object sender, AnalogInputChangedEventArgs e);
 
         /// <summary>
-        /// The <see cref="I2CDataReceived"/> event is raised when
-        /// the PHCC motherboard receives data from one of the attached 
-        /// I2C peripherals (if any).
+        ///   The <see cref = "I2CDataReceived" /> event is raised when
+        ///   the PHCC motherboard receives data from one of the attached 
+        ///   I2C peripherals (if any).
         /// </summary>
         [DispId(3)]
         void I2CDataReceived(object sender, I2CDataReceivedEventArgs e);
@@ -48,166 +48,166 @@ namespace Phcc
 
 
     /// <summary>
-    /// Enumeration of PHCC command codes
+    ///   Enumeration of PHCC command codes
     /// </summary>
     internal enum Host2PhccCommands : byte
     {
         /// <summary>
-        /// Set the PHCC to IDLE mode.
+        ///   Set the PHCC to IDLE mode.
         /// </summary>
         Idle = 0x00,
         /// <summary>
-        /// Command the PHCC to perform a software reset on itself.
+        ///   Command the PHCC to perform a software reset on itself.
         /// </summary>
         Reset = 0x01,
         /// <summary>
-        /// Command the PHCC to start sending automatic digital input and 
-        /// analog input change notifications.
+        ///   Command the PHCC to start sending automatic digital input and 
+        ///   analog input change notifications.
         /// </summary>
         StartTalking = 0x02,
         /// <summary>
-        /// Command the PHCC to stop sending automatic digital input and 
-        /// analog input change notifications
+        ///   Command the PHCC to stop sending automatic digital input and 
+        ///   analog input change notifications
         /// </summary>
         StopTalking = 0x03,
         /// <summary>
-        /// Command the PHCC to send a full list of the current values 
-        /// of all digital inputs.
+        ///   Command the PHCC to send a full list of the current values 
+        ///   of all digital inputs.
         /// </summary>
         GetCurrentDigitalInputValues = 0x04,
         /// <summary>
-        /// Command the PHCC to send a full list of the current values 
-        /// of all prioritized and non-prioritized analog inputs.
+        ///   Command the PHCC to send a full list of the current values 
+        ///   of all prioritized and non-prioritized analog inputs.
         /// </summary>
         GetCurrentAnalogInputValues = 0x05,
         /// <summary>
-        /// Command the PHCC to send data to an attached I2C peripheral.
+        ///   Command the PHCC to send data to an attached I2C peripheral.
         /// </summary>
         I2CSend = 0x06,
         /// <summary>
-        /// Command the PHCC to send data to an attached
-        /// Digital Output Type A (DOA) peripheral.
+        ///   Command the PHCC to send data to an attached
+        ///   Digital Output Type A (DOA) peripheral.
         /// </summary>
         DoaSend = 0x07,
         /// <summary>
-        /// Command the PHCC to send data to an attached 
-        /// Digital Output Type B (DOB) peripheral.
+        ///   Command the PHCC to send data to an attached 
+        ///   Digital Output Type B (DOB) peripheral.
         /// </summary>
         DobSend = 0x08
     }
 
     /// <summary>
-    /// Enumeration of stepper motor directions.
+    ///   Enumeration of stepper motor directions.
     /// </summary>
     public enum MotorDirections : byte
     {
         /// <summary>
-        /// Specifies clockwise stepper motor movement.
+        ///   Specifies clockwise stepper motor movement.
         /// </summary>
         Clockwise = 0x00,
         /// <summary>
-        /// Specifies counterclockwise stepper motor movement.
+        ///   Specifies counterclockwise stepper motor movement.
         /// </summary>
         Counterclockwise = 0x80
     }
 
     /// <summary>
-    /// Enumeration of possible stepper motor step types.
+    ///   Enumeration of possible stepper motor step types.
     /// </summary>
     public enum MotorStepTypes : byte
     {
         /// <summary>
-        /// Indicates that the step count refers to the number of full steps that the stepper motor should move.
+        ///   Indicates that the step count refers to the number of full steps that the stepper motor should move.
         /// </summary>
         FullStep = 0x00,
         /// <summary>
-        /// Indicates that the step count refers to the number of half steps that the stepper motor should move.
+        ///   Indicates that the step count refers to the number of half steps that the stepper motor should move.
         /// </summary>
         HalfStep = 0x01
     }
 
     /// <summary>
-    /// Enumeration of LCD data modes.
+    ///   Enumeration of LCD data modes.
     /// </summary>
     public enum LcdDataModes : byte
     {
         /// <summary>
-        /// Specifies that the data being sent to the LCD is to be considered as Display Data 
+        ///   Specifies that the data being sent to the LCD is to be considered as Display Data
         /// </summary>
         DisplayData = 0x07,
         /// <summary>
-        /// Specifies that the data being sent to the LCD is to be considered as Control Data 
+        ///   Specifies that the data being sent to the LCD is to be considered as Control Data
         /// </summary>
         ControlData = 0x0F
     }
 
     /// <summary>
-    /// Enumeration of packet types that PHCC returns over the serial 
-    /// interface
+    ///   Enumeration of packet types that PHCC returns over the serial 
+    ///   interface
     /// </summary>
     internal enum Phcc2HostPacketTypes : byte
     {
         /// <summary>
-        /// Packet terminator containing all zeros
+        ///   Packet terminator containing all zeros
         /// </summary>
         AllBitsZero = 0x00,
         /// <summary>
-        /// Packet header indicating a digital input change notification 
-        /// packet
+        ///   Packet header indicating a digital input change notification 
+        ///   packet
         /// </summary>
         DigitalInputUpdatePacket = 0x20,
         /// <summary>
-        /// Packet header indicating an analog input change notification 
-        /// packet
+        ///   Packet header indicating an analog input change notification 
+        ///   packet
         /// </summary>
         AnalogInputUpdatePacket = 0x40,
         /// <summary>
-        /// Packet header indicating data received from an attached 
-        /// I2C peripheral
+        ///   Packet header indicating data received from an attached 
+        ///   I2C peripheral
         /// </summary>
         I2CDataReceivedPacket = 0x60,
         /// <summary>
-        /// Packet header indicating a packet containing the values of all 
-        /// digital inputs
+        ///   Packet header indicating a packet containing the values of all 
+        ///   digital inputs
         /// </summary>
         DigitalInputsFullDumpPacket = 0x80,
         /// <summary>
-        /// Packet header indicating a packet containing the values of all 
-        /// prioritized and non-prioritized analog inputs
+        ///   Packet header indicating a packet containing the values of all 
+        ///   prioritized and non-prioritized analog inputs
         /// </summary>
         AnalogInputsFullDumpPacket = 0xA0,
         /// <summary>
-        /// Packet terminator containing all ones
+        ///   Packet terminator containing all ones
         /// </summary>
         AllBitsOne = 0xFF,
         /// <summary>
-        /// Bitmask for determining the packet type from the
-        /// 3 most-significant bits of the first byte of a data packet
+        ///   Bitmask for determining the packet type from the
+        ///   3 most-significant bits of the first byte of a data packet
         /// </summary>
         PacketTypeMask = 0xE0,
     }
 
     /// <summary>
-    /// Event handler delegate for the <see cref="Device.DigitalInputChanged"/> event.
+    ///   Event handler delegate for the <see cref = "Device.DigitalInputChanged" /> event.
     /// </summary>
-    /// <param name="sender">the object raising the event.</param>
-    /// <param name="e">a <see cref="DigitalInputChangedEventArgs"/> object containing detailed information about the event.</param>
+    /// <param name = "sender">the object raising the event.</param>
+    /// <param name = "e">a <see cref = "DigitalInputChangedEventArgs" /> object containing detailed information about the event.</param>
     [ComVisible(false)]
     public delegate void DigitalInputChangedEventHandler(object sender, DigitalInputChangedEventArgs e);
 
     /// <summary>
-    /// Event handler delegate for the <see cref="Device.AnalogInputChanged"/> event.
+    ///   Event handler delegate for the <see cref = "Device.AnalogInputChanged" /> event.
     /// </summary>
-    /// <param name="sender">the object raising the event.</param>
-    /// <param name="e">a <see cref="AnalogInputChangedEventArgs"/> object containing detailed information about the event.</param>
+    /// <param name = "sender">the object raising the event.</param>
+    /// <param name = "e">a <see cref = "AnalogInputChangedEventArgs" /> object containing detailed information about the event.</param>
     [ComVisible(false)]
     public delegate void AnalogInputChangedEventHandler(object sender, AnalogInputChangedEventArgs e);
 
     /// <summary>
-    /// Event handler delegate for the <see cref="Device.I2CDataReceived"/> event.
+    ///   Event handler delegate for the <see cref = "Device.I2CDataReceived" /> event.
     /// </summary>
-    /// <param name="sender">the object raising the event.</param>
-    /// <param name="e">an <see cref="I2CDataReceivedEventArgs "/> object containing detailed information about the event.</param>
+    /// <param name = "sender">the object raising the event.</param>
+    /// <param name = "e">an <see cref = "I2CDataReceivedEventArgs " /> object containing detailed information about the event.</param>
     [ComVisible(false)]
     public delegate void I2CDataReceivedEventHandler(object sender, I2CDataReceivedEventArgs e);
 
@@ -217,54 +217,54 @@ namespace Phcc
     public enum SevenSegmentBits : byte
     {
         /// <summary>
-        /// Bitmask for all segments off
+        ///   Bitmask for all segments off
         /// </summary>
         None = 0x00,
         /// <summary>
-        /// Bitmask for segment A
+        ///   Bitmask for segment A
         /// </summary>
         SegmentA = 0x80,
         /// <summary>
-        /// Bitmask for segment B
+        ///   Bitmask for segment B
         /// </summary>
         SegmentB = 0x40,
         /// <summary>
-        /// Bitmask for segment C
+        ///   Bitmask for segment C
         /// </summary>
         SegmentC = 0x20,
         /// <summary>
-        /// Bitmask for segment D
+        ///   Bitmask for segment D
         /// </summary>
         SegmentD = 0x08,
         /// <summary>
-        /// Bitmask for segment E
+        ///   Bitmask for segment E
         /// </summary>
         SegmentE = 0x04,
         /// <summary>
-        /// Bitmask for segment F
+        ///   Bitmask for segment F
         /// </summary>
         SegmentF = 0x02,
         /// <summary>
-        /// Bitmask for segment G
+        ///   Bitmask for segment G
         /// </summary>
         SegmentG = 0x01,
         /// <summary>
-        /// Bitmask for decimal point segment
+        ///   Bitmask for decimal point segment
         /// </summary>
         SegmentDP = 0x10,
         /// <summary>
-        /// Bitmask for all segments on
+        ///   Bitmask for all segments on
         /// </summary>
         All = 0xFF,
     }
 
 
     /// <summary>
-    /// The <see cref="Device"/> class provides methods for
-    /// communicating with the PHCC motherboard and 
-    /// any attached peripherals, via RS232.  
-    /// The PHCC USB interface also appears to Windows as 
-    /// a standard RS232 COM port.
+    ///   The <see cref = "Device" /> class provides methods for
+    ///   communicating with the PHCC motherboard and 
+    ///   any attached peripherals, via RS232.  
+    ///   The PHCC USB interface also appears to Windows as 
+    ///   a standard RS232 COM port.
     /// </summary>
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [ComSourceInterfaces(typeof (PhccEvents))]
@@ -272,54 +272,54 @@ namespace Phcc
     public sealed class Device : ContextBoundObject, IDisposable
     {
         /// <summary>
-        /// Bitmask for determining the index of the digital 
-        /// input whose value has changed.  
-        /// This is useful when interpreting PHCC update data packets 
-        /// that are received when the PHCC is in "talking" mode.
+        ///   Bitmask for determining the index of the digital 
+        ///   input whose value has changed.  
+        ///   This is useful when interpreting PHCC update data packets 
+        ///   that are received when the PHCC is in "talking" mode.
         /// </summary>
         private const ushort DigitalInputUpdatedIndexMask = 0x07FE;
 
         /// <summary>
-        /// Bitmask for determining the new value of the digital 
-        /// input whose value has 
-        /// changed.  This is useful when interpreting PHCC update 
-        /// data packets that are received when the PHCC is in "talking" 
-        /// mode.  
+        ///   Bitmask for determining the new value of the digital 
+        ///   input whose value has 
+        ///   changed.  This is useful when interpreting PHCC update 
+        ///   data packets that are received when the PHCC is in "talking" 
+        ///   mode.
         /// </summary>
         private const ushort DigitalInputNewValueMask = 0x0001;
 
         /// <summary>
-        /// Bitmask for determining the index of the analog input 
-        /// whose value has changed.  This is useful when 
-        /// interpreting PHCC update data packets
-        /// that are received when the PHCC is in "talking" mode.
+        ///   Bitmask for determining the index of the analog input 
+        ///   whose value has changed.  This is useful when 
+        ///   interpreting PHCC update data packets
+        ///   that are received when the PHCC is in "talking" mode.
         /// </summary>
         private const ushort AnalogInputUpdatedIndexMask = 0xFC00;
 
         /// <summary>
-        /// Bitmask for determining the new value of the analog 
-        /// input whose value has changed.  This is useful when 
-        /// interpreting PHCC update data packets that are received 
-        /// when the PHCC is in "talking" mode.  
+        ///   Bitmask for determining the new value of the analog 
+        ///   input whose value has changed.  This is useful when 
+        ///   interpreting PHCC update data packets that are received 
+        ///   when the PHCC is in "talking" mode.
         /// </summary>
         private const ushort AnalogInputNewValueMask = 0x03FF;
 
         /// <summary>
-        /// Bitmask for determining the high-order bits of the address of the I2C peripheral which is sending data.  
+        ///   Bitmask for determining the high-order bits of the address of the I2C peripheral which is sending data.
         /// </summary>
         private const ushort I2CDataReceivedAddressHighOrderBitsMask = 0x03;
 
         private readonly object _rs232lock = new object();
 
         /// <summary>
-        /// A byte buffer to store the parsed values of the 
-        /// current analog input values list.
+        ///   A byte buffer to store the parsed values of the 
+        ///   current analog input values list.
         /// </summary>
         private volatile short[] _currentAnalogInputsParsed = new short[35];
 
         /// <summary>
-        /// A byte buffer to store the un-parsed values of the 
-        /// current analog input values list.
+        ///   A byte buffer to store the un-parsed values of the 
+        ///   current analog input values list.
         /// </summary>
         /* Commenting out this declaration, which matches the implementation in PHCC2HostProtocol, but which does not match the actual implementation in Firmware14 *?
         //private volatile byte[] _currentAnalogInputsRaw = new byte[45];
@@ -327,75 +327,75 @@ namespace Phcc
         private volatile byte[] _currentAnalogInputsRaw = new byte[70]; //this matches the implementation in Firmware18
 
         /// <summary>
-        /// A byte buffer to store the current values of the 
-        /// digital inputs.
+        ///   A byte buffer to store the current values of the 
+        ///   digital inputs.
         /// </summary>
         private volatile byte[] _currentDigitalInputValues = new byte[128];
 
         /// <summary>
-        /// Flag for preventing the read buffer from being read 
-        /// during certain operations
+        ///   Flag for preventing the read buffer from being read 
+        ///   during certain operations
         /// </summary>
         private volatile bool _dontRead;
 
         /// <summary>
-        /// Boolean flag indicating whether this object instance has 
-        /// been <see cref="IDisposable.Dispose()"/>d.
+        ///   Boolean flag indicating whether this object instance has 
+        ///   been <see cref = "IDisposable.Dispose()" />d.
         /// </summary>
         private bool _isDisposed;
 
         /// <summary>
-        /// The name of the COM port to communicate over 
-        /// (i.e. "COM1", "COM2", etc.)
+        ///   The name of the COM port to communicate over 
+        ///   (i.e. "COM1", "COM2", etc.)
         /// </summary>
         private volatile string _portName;
 
         /// <summary>
-        /// A byte buffer to use when reading data from the PHCC.
+        ///   A byte buffer to use when reading data from the PHCC.
         /// </summary>
         private volatile byte[] _readBuffer = new byte[20];
 
         /// <summary>
-        /// A <see cref="System.IO.Ports.SerialPort"/> object that
-        /// hides the details of communicating via RS232 over a COM port.
+        ///   A <see cref = "System.IO.Ports.SerialPort" /> object that
+        ///   hides the details of communicating via RS232 over a COM port.
         /// </summary>
         private volatile SerialPort _serialPort;
 
         /// <summary>
-        /// Flag to keep track of whether the PHCC motherboard is sending automatic change
-        /// notifications or not
+        ///   Flag to keep track of whether the PHCC motherboard is sending automatic change
+        ///   notifications or not
         /// </summary>
         private volatile bool _talking;
 
         /// <summary>
-        /// A byte buffer to use when writing data to the PHCC.
+        ///   A byte buffer to use when writing data to the PHCC.
         /// </summary>
         private volatile byte[] _writeBuffer = new byte[4];
 
         /// <summary>
-        /// Creates an instance of the <see cref="Device"/> class.
+        ///   Creates an instance of the <see cref = "Device" /> class.
         /// </summary>
         public Device()
         {
         }
 
         /// <summary>
-        /// Creates an instance of the <see cref="Device"/> class.
+        ///   Creates an instance of the <see cref = "Device" /> class.
         /// </summary>
-        /// <param name="portName">The name of the COM port to use for 
-        /// communicating with the PHCC motherboard (i.e. "COM1", "COM2",
-        /// etc.)</param>
+        /// <param name = "portName">The name of the COM port to use for 
+        ///   communicating with the PHCC motherboard (i.e. "COM1", "COM2",
+        ///   etc.)</param>
         public Device(string portName) : this(portName, true)
         {
         }
 
         /// <summary>
-        /// Creates an instance of the <see cref="Device"/> class.
+        ///   Creates an instance of the <see cref = "Device" /> class.
         /// </summary>
-        /// <param name="portName">The name of the COM port to use for 
-        /// communicating with the PHCC motherboard (i.e. "COM1", "COM2",
-        /// etc.)</param>
-        /// <param name="openPort">Specifies whether to open the COM port immediately or wait till the first operation that requires doing so.</param>
+        /// <param name = "portName">The name of the COM port to use for 
+        ///   communicating with the PHCC motherboard (i.e. "COM1", "COM2",
+        ///   etc.)</param>
+        /// <param name = "openPort">Specifies whether to open the COM port immediately or wait till the first operation that requires doing so.</param>
         public Device(string portName, bool openPort)
             : this()
         {
@@ -407,9 +407,9 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Gets the underlying <see cref="System.IO.Ports.SerialPort"/> object,
-        /// which allows direct communication with the PHCC motherboard via
-        /// RS232.
+        ///   Gets the underlying <see cref = "System.IO.Ports.SerialPort" /> object,
+        ///   which allows direct communication with the PHCC motherboard via
+        ///   RS232.
         /// </summary>
         public SerialPort SerialPort
         {
@@ -417,9 +417,9 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Gets/sets the name of the COM port to use for 
-        /// communicating with the PHCC motherboard (i.e. "COM1", "COM2", 
-        /// etc.)
+        ///   Gets/sets the name of the COM port to use for 
+        ///   communicating with the PHCC motherboard (i.e. "COM1", "COM2", 
+        ///   etc.)
         /// </summary>
         public string PortName
         {
@@ -438,22 +438,22 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Gets a bool array containing the current values of 
-        /// all digital inputs.
+        ///   Gets a bool array containing the current values of 
+        ///   all digital inputs.
         /// </summary>
         /// <returns>A bool array containing the current values of 
-        /// all digital inputs.  Each value in the array represents
-        /// a single discrete digital input, out of a total of 
-        /// 1024 inputs.</returns>
+        ///   all digital inputs.  Each value in the array represents
+        ///   a single discrete digital input, out of a total of 
+        ///   1024 inputs.</returns>
         public bool[] DigitalInputs
         {
             get
             {
                 var toReturn = new bool[1024];
                 PollDigitalInputs();
-                for (int i = 0; i < toReturn.Length; i++)
+                for (var i = 0; i < toReturn.Length; i++)
                 {
-                    byte relevantByte = _currentDigitalInputValues[((i)/8)];
+                    var relevantByte = _currentDigitalInputValues[((i)/8)];
                     toReturn[i] = ((relevantByte & (byte) (Math.Pow(2, (i%8)))) != 0);
                 }
                 return toReturn;
@@ -461,17 +461,17 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Gets an array of 16-bit signed integers containing the current values 
-        /// of all analog inputs.  Only the low 10 bits contain information; 
-        /// the high 6 bits are always zero because the precision of the 
-        /// analog inputs is currently limited to 10 bits.
+        ///   Gets an array of 16-bit signed integers containing the current values 
+        ///   of all analog inputs.  Only the low 10 bits contain information; 
+        ///   the high 6 bits are always zero because the precision of the 
+        ///   analog inputs is currently limited to 10 bits.
         /// </summary>
         /// <returns>An array of 16-bit signed integers containing the current
-        /// values of all analog inputs.  Only the low 10 bits 
-        /// in each array element contain useful information; 
-        /// the high 6 bits are always zero because the 
-        /// precision of the PHCC analog inputs is currently 
-        /// limited to 10 bits.</returns>
+        ///   values of all analog inputs.  Only the low 10 bits 
+        ///   in each array element contain useful information; 
+        ///   the high 6 bits are always zero because the 
+        ///   precision of the PHCC analog inputs is currently 
+        ///   limited to 10 bits.</returns>
         public short[] AnalogInputs
         {
             get
@@ -482,18 +482,18 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Gets a string containing the PHCC motherboard's firmware 
-        /// version.
+        ///   Gets a string containing the PHCC motherboard's firmware 
+        ///   version.
         /// </summary>
-        /// <returns>A <see cref="string"/> containing the PHCC motherboard's
-        /// firmware version.</returns>
+        /// <returns>A <see cref = "string" /> containing the PHCC motherboard's
+        ///   firmware version.</returns>
         public string FirmwareVersion
         {
             get
             {
                 string toReturn = null;
-                bool wasTalking = _talking;
-                bool oldDontRead = _dontRead;
+                var wasTalking = _talking;
+                var oldDontRead = _dontRead;
                 try
                 {
                     EnsurePortIsReady();
@@ -521,30 +521,30 @@ namespace Phcc
         }
 
         /// <summary>
-        /// The <see cref="DigitalInputChanged"/> event is raised when 
-        /// the PHCC motherboard detects that one of the digital inputs
-        /// has changed (i.e. whenever a button that is wired 
-        /// into the digital input key matrix is pressed or released). 
+        ///   The <see cref = "DigitalInputChanged" /> event is raised when 
+        ///   the PHCC motherboard detects that one of the digital inputs
+        ///   has changed (i.e. whenever a button that is wired 
+        ///   into the digital input key matrix is pressed or released).
         /// </summary>
         public event DigitalInputChangedEventHandler DigitalInputChanged;
 
         /// <summary>
-        /// The <see cref="AnalogInputChanged"/> event is raised when
-        /// the PHCC motherboard detects that one of the analog inputs 
-        /// has changed values (i.e. whenever an analog input signal 
-        /// changes state). 
+        ///   The <see cref = "AnalogInputChanged" /> event is raised when
+        ///   the PHCC motherboard detects that one of the analog inputs 
+        ///   has changed values (i.e. whenever an analog input signal 
+        ///   changes state).
         /// </summary>
         public event AnalogInputChangedEventHandler AnalogInputChanged;
 
         /// <summary>
-        /// The <see cref="I2CDataReceived"/> event is raised when
-        /// the PHCC motherboard receives data from one of the attached 
-        /// I2C peripherals (if any).
+        ///   The <see cref = "I2CDataReceived" /> event is raised when
+        ///   the PHCC motherboard receives data from one of the attached 
+        ///   I2C peripherals (if any).
         /// </summary>
         public event I2CDataReceivedEventHandler I2CDataReceived;
 
         /// <summary>
-        /// Closes the serial port connection.
+        ///   Closes the serial port connection.
         /// </summary>
         private void ClosePort()
         {
@@ -571,7 +571,7 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Establishes a serial port connection to the PHCC motherboard.
+        ///   Establishes a serial port connection to the PHCC motherboard.
         /// </summary>
         private void InitializeSerialPort()
         {
@@ -605,8 +605,8 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Instructs the PHCC motherboard to perform a software reset 
-        /// on itself.
+        ///   Instructs the PHCC motherboard to perform a software reset 
+        ///   on itself.
         /// </summary>
         public void Reset()
         {
@@ -618,22 +618,22 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to an individual HD44780-compatible character LCD 
-        /// display wired to a PHCC DOA_char_lcd character LCD driver 
-        /// daughtercard.
+        ///   Sends data to an individual HD44780-compatible character LCD 
+        ///   display wired to a PHCC DOA_char_lcd character LCD driver 
+        ///   daughtercard.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_char_lcd character LCD driver daughtercard to send data to.</param>
-        /// <param name="displayNum">The display number of the individual
-        /// HD44780-compatible character LCD wired to the indicated 
-        /// DOA_char_lcd character LCD driver daughtercard, to which, 
-        /// the specified <paramref name="data"/> will be sent. </param>
-        /// <param name="mode">A value from the <see cref="LcdDataModes"/> 
-        /// enumeration, specifying whether the value contained in 
-        /// the <paramref name="data"/> parameter is to be considered 
-        /// Display Data or Control Data.</param>
-        /// <param name="data">The actual data value to send to the 
-        /// indicated  HD44780-compatible character LCD display.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_char_lcd character LCD driver daughtercard to send data to.</param>
+        /// <param name = "displayNum">The display number of the individual
+        ///   HD44780-compatible character LCD wired to the indicated 
+        ///   DOA_char_lcd character LCD driver daughtercard, to which, 
+        ///   the specified <paramref name = "data" /> will be sent. </param>
+        /// <param name = "mode">A value from the <see cref = "LcdDataModes" /> 
+        ///   enumeration, specifying whether the value contained in 
+        ///   the <paramref name = "data" /> parameter is to be considered 
+        ///   Display Data or Control Data.</param>
+        /// <param name = "data">The actual data value to send to the 
+        ///   indicated  HD44780-compatible character LCD display.</param>
         public void DoaSendCharLcd(byte deviceAddr, byte displayNum, LcdDataModes mode, byte data)
         {
             if (displayNum == 0 || displayNum > 8)
@@ -644,32 +644,32 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_AnOut1 analog output daughtercard, to
-        /// control the gain parameter which is in effect for all 
-        /// channels simultaneously.
+        ///   Sends data to a DOA_AnOut1 analog output daughtercard, to
+        ///   control the gain parameter which is in effect for all 
+        ///   channels simultaneously.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_AnOut1 daughtercard to send data to.</param>
-        /// <param name="gain">A byte whose integer value specifies the new
-        /// value to set for the all-channels gain parameter.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_AnOut1 daughtercard to send data to.</param>
+        /// <param name = "gain">A byte whose integer value specifies the new
+        ///   value to set for the all-channels gain parameter.</param>
         public void DoaSendAnOut1GainAllChannels(byte deviceAddr, byte gain)
         {
             DoaSendRaw(deviceAddr, 0x10, gain);
         }
 
         /// <summary>
-        /// Sends data to a DOA_AnOut1 analog output daughtercard, to 
-        /// control the RMS voltage (using PWM) being supplied by 
-        /// that channel.
+        ///   Sends data to a DOA_AnOut1 analog output daughtercard, to 
+        ///   control the RMS voltage (using PWM) being supplied by 
+        ///   that channel.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_AnOut1 daughtercard to send data to.</param>
-        /// <param name="channelNum">The channel number of the channel 
-        /// on the DOA_AnOut1 daughtercard whose PWM output voltage is 
-        /// to be set.</param>
-        /// <param name="value">A byte whose integer value controls the PWM pulse width (
-        /// delay time), which, in turn, dictates the RMS (average) voltage between
-        /// the control pins on the specified channel.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_AnOut1 daughtercard to send data to.</param>
+        /// <param name = "channelNum">The channel number of the channel 
+        ///   on the DOA_AnOut1 daughtercard whose PWM output voltage is 
+        ///   to be set.</param>
+        /// <param name = "value">A byte whose integer value controls the PWM pulse width (
+        ///   delay time), which, in turn, dictates the RMS (average) voltage between
+        ///   the control pins on the specified channel.</param>
         public void DoaSendAnOut1(byte deviceAddr, byte channelNum, byte value)
         {
             if (channelNum == 0 || channelNum > 16)
@@ -680,15 +680,15 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_servo daughtercard to control the gain 
-        /// parameter of an individual servo wired to the card.
+        ///   Sends data to a DOA_servo daughtercard to control the gain 
+        ///   parameter of an individual servo wired to the card.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_servo daughtercard to send data to.</param>
-        /// <param name="servoNum">The number of the specific servo on the
-        /// DOA_servo daughtercard, to which this gain parameter value will be applied.</param>
-        /// <param name="gain">The new gain value to use for the specified 
-        /// servo.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_servo daughtercard to send data to.</param>
+        /// <param name = "servoNum">The number of the specific servo on the
+        ///   DOA_servo daughtercard, to which this gain parameter value will be applied.</param>
+        /// <param name = "gain">The new gain value to use for the specified 
+        ///   servo.</param>
         public void DoaSend8ServoGain(byte deviceAddr, byte servoNum, byte gain)
         {
             if (servoNum == 0 || servoNum > 8)
@@ -699,23 +699,23 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_servo daughtercard to control the 
-        /// calibration of an individual servo wired to the card.
+        ///   Sends data to a DOA_servo daughtercard to control the 
+        ///   calibration of an individual servo wired to the card.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_servo daughtercard to send data to.</param>
-        /// <param name="servoNum">The number of the specific servo on the
-        /// DOA_servo daughtercard, to which this calibration data will 
-        /// apply.</param>
-        /// <param name="calibrationOffset">The new 16-bit calibration 
-        /// offset value to use with this specific servo.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_servo daughtercard to send data to.</param>
+        /// <param name = "servoNum">The number of the specific servo on the
+        ///   DOA_servo daughtercard, to which this calibration data will 
+        ///   apply.</param>
+        /// <param name = "calibrationOffset">The new 16-bit calibration 
+        ///   offset value to use with this specific servo.</param>
         public void DoaSend8ServoCalibration(byte deviceAddr, byte servoNum, Int16 calibrationOffset)
         {
             if (servoNum == 0 || servoNum > 8)
             {
                 throw new ArgumentOutOfRangeException("servoNum", "must be between 1 and 8");
             }
-            byte[] calibrationBytes = BitConverter.GetBytes(calibrationOffset);
+            var calibrationBytes = BitConverter.GetBytes(calibrationOffset);
             if (BitConverter.IsLittleEndian)
             {
                 Array.Reverse(calibrationBytes);
@@ -725,16 +725,16 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_servo daughtercard to control the position 
-        /// of an individual servo wired to the card.
+        ///   Sends data to a DOA_servo daughtercard to control the position 
+        ///   of an individual servo wired to the card.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_servo daughtercard to send data to.</param>
-        /// <param name="servoNum">The number of the specific servo on the
-        /// DOA_servo daughtercard, to which this position update will 
-        /// be sent.</param>
-        /// <param name="position">The position value to set this servo 
-        /// to.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_servo daughtercard to send data to.</param>
+        /// <param name = "servoNum">The number of the specific servo on the
+        ///   DOA_servo daughtercard, to which this position update will 
+        ///   be sent.</param>
+        /// <param name = "position">The position value to set this servo 
+        ///   to.</param>
         public void DoaSend8ServoPosition(byte deviceAddr, byte servoNum, byte position)
         {
             if (servoNum == 0 || servoNum > 8)
@@ -746,20 +746,20 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_877_4067 daughtercard to control the 
-        /// 7-segment LCDs (or individual LEDs) wired to the card.
+        ///   Sends data to a DOA_877_4067 daughtercard to control the 
+        ///   7-segment LCDs (or individual LEDs) wired to the card.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_877_4067 daughtercard to send data to.</param>
-        /// <param name="displayNum">The number of the 7-segment display 
-        /// (1-48), on the specified daughtercard, that 
-        /// the <paramref name="bits"/> parameter will control.</param>
-        /// <param name="bits">A byte, whose bits correspond to individual 
-        /// segments of the specified 7-segment display 
-        /// (including the decimal point).  
-        /// Each bit in this byte that is set to <see langref="true"/> will 
-        /// result in a logic HIGH being sent to the 
-        /// corresponding segment (or LED).</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_877_4067 daughtercard to send data to.</param>
+        /// <param name = "displayNum">The number of the 7-segment display 
+        ///   (1-48), on the specified daughtercard, that 
+        ///   the <paramref name = "bits" /> parameter will control.</param>
+        /// <param name = "bits">A byte, whose bits correspond to individual 
+        ///   segments of the specified 7-segment display 
+        ///   (including the decimal point).  
+        ///   Each bit in this byte that is set to <see langref = "true" /> will 
+        ///   result in a logic HIGH being sent to the 
+        ///   corresponding segment (or LED).</param>
         public void DoaSend7Seg8774067(byte deviceAddr, byte displayNum, byte bits)
         {
             if (displayNum == 0 || displayNum > 48)
@@ -770,19 +770,19 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_7Seg daughtercard to control the 7-segment 
-        /// LCDs (or individual LEDs) wired to the card.
+        ///   Sends data to a DOA_7Seg daughtercard to control the 7-segment 
+        ///   LCDs (or individual LEDs) wired to the card.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific
-        /// DOA_7Seg daughtercard to send data to.</param>
-        /// <param name="displayNum">The number of the 7-segment display 
-        /// (1-32), on the specified daughtercard, that 
-        /// the <paramref name="bits"/> parameter will control.</param>
-        /// <param name="bits">A byte, whose bits correspond to individual 
-        /// segments of the specified 7-segment display (including the 
-        /// decimal point).  Each bit in this byte that is set 
-        /// to <see langref="true"/> will result in a logic HIGH 
-        /// being sent to the corresponding segment (or LED).</param>
+        /// <param name = "deviceAddr">The device address of the specific
+        ///   DOA_7Seg daughtercard to send data to.</param>
+        /// <param name = "displayNum">The number of the 7-segment display 
+        ///   (1-32), on the specified daughtercard, that 
+        ///   the <paramref name = "bits" /> parameter will control.</param>
+        /// <param name = "bits">A byte, whose bits correspond to individual 
+        ///   segments of the specified 7-segment display (including the 
+        ///   decimal point).  Each bit in this byte that is set 
+        ///   to <see langref = "true" /> will result in a logic HIGH 
+        ///   being sent to the corresponding segment (or LED).</param>
         public void DoaSend7Seg(byte deviceAddr, byte displayNum, byte bits)
         {
             if (displayNum == 0 || displayNum > 32)
@@ -793,9 +793,9 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Produces a 7-segment bitmask with the appropriate bits set, to represent a specific Latin character 
+        ///   Produces a 7-segment bitmask with the appropriate bits set, to represent a specific Latin character
         /// </summary>
-        /// <param name="charToConvert">a Latin character to produce a seven-segment display bitmask from</param>
+        /// <param name = "charToConvert">a Latin character to produce a seven-segment display bitmask from</param>
         /// <returns>a byte whose bits are set appropriately for sending to a seven-segment display</returns>
         public byte CharTo7Seg(char charToConvert)
         {
@@ -1170,16 +1170,16 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a DOA_40DO digital output daughtercard.
+        ///   Sends data to a DOA_40DO digital output daughtercard.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// DOA_40DO daughtercard to send data to.</param>
-        /// <param name="connectorNum">The output connector number to 
-        /// send data to (3=CON3, 4=CON4, 5=CON5, 6=CON6, 7=CON7)</param>
-        /// <param name="bits">A byte, whose bits correspond to the pins on 
-        /// the specified connector.  Each bit in this byte that is set to 
-        /// TRUE will result in a logic HIGH on the corresponding output 
-        /// pin on the specified connector.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   DOA_40DO daughtercard to send data to.</param>
+        /// <param name = "connectorNum">The output connector number to 
+        ///   send data to (3=CON3, 4=CON4, 5=CON5, 6=CON6, 7=CON7)</param>
+        /// <param name = "bits">A byte, whose bits correspond to the pins on 
+        ///   the specified connector.  Each bit in this byte that is set to 
+        ///   TRUE will result in a logic HIGH on the corresponding output 
+        ///   pin on the specified connector.</param>
         public void DoaSend40DO(byte deviceAddr, byte connectorNum, byte bits)
         {
             if (connectorNum < 3 || connectorNum > 7)
@@ -1190,12 +1190,12 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to an air core motor daughtercard.
+        ///   Sends data to an air core motor daughtercard.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// air core motor daughtercard to send data to.</param>
-        /// <param name="motorNum">The motor number (1-4) of the motor to control.</param>
-        /// <param name="position">A value from 0-1023 indicating the position to move the motor to.  Zero is straight north and the scale proceeds clockwise.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   air core motor daughtercard to send data to.</param>
+        /// <param name = "motorNum">The motor number (1-4) of the motor to control.</param>
+        /// <param name = "position">A value from 0-1023 indicating the position to move the motor to.  Zero is straight north and the scale proceeds clockwise.</param>
         public void DoaSendAirCoreMotor(byte deviceAddr, byte motorNum, int position)
         {
             if (motorNum < 1 || motorNum > 4)
@@ -1236,14 +1236,14 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a stepper motor daughtercard.
+        ///   Sends data to a stepper motor daughtercard.
         /// </summary>
-        /// <param name="deviceAddr">The device address of the specific 
-        /// stepper motor daughtercard to send data to.</param>
-        /// <param name="motorNum">The motor number (1-4) of the motor to control.</param>
-        /// <param name="direction">A value from the <see cref="MotorDirections"/> enumeration, indicating the direction (clockwise or counterclockwise) to move the motor (this ultimately depends on how the motor is wired to the card).</param>
-        /// <param name="numSteps">A byte, whose value (0-127) represents the number of discrete steps to command the stepper motor to move, in the indicated direction.</param>
-        /// <param name="stepType">A value from the <see cref="MotorStepTypes"/> enumeration, indicating whether to move the motor in full-steps or in half-steps.</param>
+        /// <param name = "deviceAddr">The device address of the specific 
+        ///   stepper motor daughtercard to send data to.</param>
+        /// <param name = "motorNum">The motor number (1-4) of the motor to control.</param>
+        /// <param name = "direction">A value from the <see cref = "MotorDirections" /> enumeration, indicating the direction (clockwise or counterclockwise) to move the motor (this ultimately depends on how the motor is wired to the card).</param>
+        /// <param name = "numSteps">A byte, whose value (0-127) represents the number of discrete steps to command the stepper motor to move, in the indicated direction.</param>
+        /// <param name = "stepType">A value from the <see cref = "MotorStepTypes" /> enumeration, indicating whether to move the motor in full-steps or in half-steps.</param>
         public void DoaSendStepperMotor(byte deviceAddr, byte motorNum, MotorDirections direction, byte numSteps,
                                         MotorStepTypes stepType)
         {
@@ -1264,16 +1264,16 @@ namespace Phcc
 
 
         /// <summary>
-        /// Sends data to a Digital Output Type A (DOA) peripheral attached to
-        /// the PHCC motherboard.
+        ///   Sends data to a Digital Output Type A (DOA) peripheral attached to
+        ///   the PHCC motherboard.
         /// </summary>
-        /// <param name="addr">The device address of the specific 
-        /// Digital Output Type A (DOA)
-        /// peripheral to send data to.</param>
-        /// <param name="subAddr">The sub-address of the 
-        /// Digital Output Type A (DOA) peripheral to send data to.</param>
-        /// <param name="data">The data to send to the specified 
-        /// Output Type A (DOA) peripheral.</param>
+        /// <param name = "addr">The device address of the specific 
+        ///   Digital Output Type A (DOA)
+        ///   peripheral to send data to.</param>
+        /// <param name = "subAddr">The sub-address of the 
+        ///   Digital Output Type A (DOA) peripheral to send data to.</param>
+        /// <param name = "data">The data to send to the specified 
+        ///   Output Type A (DOA) peripheral.</param>
         public void DoaSendRaw(byte addr, byte subAddr, byte data)
         {
             EnsurePortIsReady();
@@ -1285,13 +1285,13 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to a Digital Output Type B (DOB) peripheral attached 
-        /// to the PHCC motherboard.
+        ///   Sends data to a Digital Output Type B (DOB) peripheral attached 
+        ///   to the PHCC motherboard.
         /// </summary>
-        /// <param name="addr">The address of the 
-        /// Digital Output Type B (DOB) peripheral to send data to.</param>
-        /// <param name="data">The data to send to the specified 
-        /// Digital Output Type B (DOB) peripheral.</param>
+        /// <param name = "addr">The address of the 
+        ///   Digital Output Type B (DOB) peripheral to send data to.</param>
+        /// <param name = "data">The data to send to the specified 
+        ///   Digital Output Type B (DOB) peripheral.</param>
         public void DobSendRaw(byte addr, byte data)
         {
             EnsurePortIsReady();
@@ -1302,15 +1302,15 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Sends data to an I2C peripheral attached to the 
-        /// PHCC motherboard.
+        ///   Sends data to an I2C peripheral attached to the 
+        ///   PHCC motherboard.
         /// </summary>
-        /// <param name="addr">The address of the I2C peripheral 
-        /// to send data to.</param>
-        /// <param name="subAddr">The sub-address of the I2C 
-        /// peripheral to send data to.</param>
-        /// <param name="data">The data to send to the specified 
-        /// I2C peripheral.</param>
+        /// <param name = "addr">The address of the I2C peripheral 
+        ///   to send data to.</param>
+        /// <param name = "subAddr">The sub-address of the I2C 
+        ///   peripheral to send data to.</param>
+        /// <param name = "data">The data to send to the specified 
+        ///   I2C peripheral.</param>
         public void I2CSend(byte addr, byte subAddr, byte data)
         {
             EnsurePortIsReady();
@@ -1322,7 +1322,7 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Informs the PHCC motherboard to stop sending change notification events
+        ///   Informs the PHCC motherboard to stop sending change notification events
         /// </summary>
         public void StopTalking()
         {
@@ -1333,7 +1333,7 @@ namespace Phcc
             }
              */
             EnsurePortIsReady();
-            bool oldDontRead = _dontRead;
+            var oldDontRead = _dontRead;
             try
             {
                 WaitForInputBufferQuiesce();
@@ -1359,10 +1359,10 @@ namespace Phcc
         private void WaitForInputBufferQuiesce()
         {
             EnsurePortIsReady();
-            bool oldDontRead = _dontRead;
+            var oldDontRead = _dontRead;
             try
             {
-                bool done = false;
+                var done = false;
                 while (!done)
                 {
                     Rs232DiscardInBuffer(); //now discard whatever's in the buffer
@@ -1382,13 +1382,13 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Reads a packet from the RS232 serial port containing a report on 
-        /// a single byte of data received from an attached I2C peripheral
+        ///   Reads a packet from the RS232 serial port containing a report on 
+        ///   a single byte of data received from an attached I2C peripheral
         /// </summary>
         private void ReadI2CDataReceivedPacket()
         {
             Rs232Read(_readBuffer, 1, 2);
-            byte addressLowOrderBits = _readBuffer[1];
+            var addressLowOrderBits = _readBuffer[1];
             var addressHighOrderBits = (byte) (_readBuffer[0] | I2CDataReceivedAddressHighOrderBitsMask);
 
             ushort address = 0;
@@ -1401,7 +1401,7 @@ namespace Phcc
                 address = BitConverter.ToUInt16(new[] {addressHighOrderBits, addressLowOrderBits}, 0);
             }
 
-            byte data = _readBuffer[2];
+            var data = _readBuffer[2];
             if (I2CDataReceived != null)
             {
                 I2CDataReceived(this,
@@ -1410,8 +1410,8 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Reads a packet from the RS232 serial port containing a report on 
-        /// a single analog input value change event
+        ///   Reads a packet from the RS232 serial port containing a report on 
+        ///   a single analog input value change event
         /// </summary>
         private void ReadAnalogInputUpdatePacket()
         {
@@ -1430,15 +1430,15 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Reads a packet from the RS232 serial port containing a report on 
-        /// a single digital input value change event
+        ///   Reads a packet from the RS232 serial port containing a report on 
+        ///   a single digital input value change event
         /// </summary>
         private void ReadDigitalInputUpdatePacket()
         {
             Rs232Read(_readBuffer, 1, 1);
-            ushort bits = ConvertBytesToUShort(_readBuffer, 0);
+            var bits = ConvertBytesToUShort(_readBuffer, 0);
             var index = (ushort) ((bits & DigitalInputUpdatedIndexMask) >> 1);
-            bool newVal = ((bits & DigitalInputNewValueMask) != 0);
+            var newVal = ((bits & DigitalInputNewValueMask) != 0);
             if (DigitalInputChanged != null)
             {
                 DigitalInputChanged(this,
@@ -1446,13 +1446,13 @@ namespace Phcc
             }
         }
 
-        /// <summary>
-        ///Reads a packet from the RS232 serial port containing a full update of
-        /// all digital input values.
-        /// </summary>
+        ///<summary>
+        ///  Reads a packet from the RS232 serial port containing a full update of
+        ///  all digital input values.
+        ///</summary>
         private void ReadDigitalInputFullDumpPacket()
         {
-            bool oldDontRead = _dontRead;
+            var oldDontRead = _dontRead;
             try
             {
                 _dontRead = true;
@@ -1465,12 +1465,12 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Reads a packet from the RS232 serial port containing a full update of
-        /// all analog input values.
+        ///   Reads a packet from the RS232 serial port containing a full update of
+        ///   all analog input values.
         /// </summary>
         private void ReadAnalogInputFullDumpPacket()
         {
-            bool oldDontRead = _dontRead;
+            var oldDontRead = _dontRead;
             try
             {
                 _dontRead = true;
@@ -1488,7 +1488,7 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Informs the PHCC motherboard to start sending automatic change notification events.
+        ///   Informs the PHCC motherboard to start sending automatic change notification events.
         /// </summary>
         public void StartTalking()
         {
@@ -1499,7 +1499,7 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Event handler responsible for reading data from the serial port when it arrives
+        ///   Event handler responsible for reading data from the serial port when it arrives
         /// </summary>
         private void _serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -1516,7 +1516,7 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Processes the contents of the UART buffer.
+        ///   Processes the contents of the UART buffer.
         /// </summary>
         private void ProcessBufferContents()
         {
@@ -1565,12 +1565,12 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Commands the PHCC motherboard to send a full report of the current
-        /// digital input values.
+        ///   Commands the PHCC motherboard to send a full report of the current
+        ///   digital input values.
         /// </summary>
         private void PollDigitalInputs()
         {
-            bool wasTalking = _talking;
+            var wasTalking = _talking;
             EnsurePortIsReady();
             if (_talking)
             {
@@ -1586,12 +1586,12 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Commands the PHCC motherboard to send a full report of the current
-        /// analog input values
+        ///   Commands the PHCC motherboard to send a full report of the current
+        ///   analog input values
         /// </summary>
         private void PollAnalogInputs()
         {
-            bool wasTalking = _talking;
+            var wasTalking = _talking;
             EnsurePortIsReady();
             if (_talking)
             {
@@ -1625,16 +1625,16 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Parses the raw analog input values list that the P
-        /// HCC motherboard provides, by combining the low and 
-        /// high bytes into a single 16-bit value for 
-        /// each analog input value in the "raw" analog values list.
+        ///   Parses the raw analog input values list that the P
+        ///   HCC motherboard provides, by combining the low and 
+        ///   high bytes into a single 16-bit value for 
+        ///   each analog input value in the "raw" analog values list.
         /// </summary>
-        /// <param name="raw">A byte array containing 2 bytes for each 
-        /// analog input.</param>
-        /// <param name="processed">An array of 16-bit signed integers to 
-        /// hold the result of combining corresponding pairs of bytes
-        /// from the "raw" analog input values list.</param>
+        /// <param name = "raw">A byte array containing 2 bytes for each 
+        ///   analog input.</param>
+        /// <param name = "processed">An array of 16-bit signed integers to 
+        ///   hold the result of combining corresponding pairs of bytes
+        ///   from the "raw" analog input values list.</param>
         private static void ParseRawAnalogInputs(byte[] raw, out short[] processed)
         {
             /* This is the algorithm for processing the analog inputs per the current PHCC documentation, which DOES NOT match the actual implementation in Firmware18
@@ -1678,14 +1678,14 @@ namespace Phcc
             }*/
             //this is the implementation for firmware18
             processed = new short[35];
-            for (int i = 0; i < raw.Length; i += 2)
+            for (var i = 0; i < raw.Length; i += 2)
             {
                 processed[i/2] = (short) ConvertBytesToUShort(raw, i);
             }
         }
 
         /// <summary>
-        /// Establishes a connection to the PHCC motherboard via RS232.
+        ///   Establishes a connection to the PHCC motherboard via RS232.
         /// </summary>
         private void EnsurePortIsReady()
         {
@@ -1699,7 +1699,7 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Instructs the PHCC motherboard to enter the IDLE state.
+        ///   Instructs the PHCC motherboard to enter the IDLE state.
         /// </summary>
         public void SetIdle()
         {
@@ -1724,34 +1724,34 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Reads the speficied number of bytes synchronously, from the 
-        /// RS232 COM port interface, into the specified buffer, 
-        /// filling the buffer starting at the specified index.
+        ///   Reads the speficied number of bytes synchronously, from the 
+        ///   RS232 COM port interface, into the specified buffer, 
+        ///   filling the buffer starting at the specified index.
         /// </summary>
-        /// <param name="buffer">a byte array that will store the 
-        /// results of the read operation.</param>
-        /// <param name="index">the index in 
-        /// the <paramref name="buffer"/> where the bytes which are 
-        /// being read from the serial port, will be written.</param>
-        /// <param name="count">the number of bytes to read
-        /// from the serial port.</param>
+        /// <param name = "buffer">a byte array that will store the 
+        ///   results of the read operation.</param>
+        /// <param name = "index">the index in 
+        ///   the <paramref name = "buffer" /> where the bytes which are 
+        ///   being read from the serial port, will be written.</param>
+        /// <param name = "count">the number of bytes to read
+        ///   from the serial port.</param>
         private void Rs232Read(byte[] buffer, int index, int count)
         {
-            bool oldDontRead = _dontRead;
+            var oldDontRead = _dontRead;
             EnsurePortIsReady();
             lock (_rs232lock)
             {
                 try
                 {
                     _dontRead = true;
-                    DateTime startTime = DateTime.Now;
-                    int timeOut = 0;
+                    var startTime = DateTime.Now;
+                    var timeOut = 0;
                     lock (_rs232lock)
                     {
                         timeOut = _serialPort.ReadTimeout;
                     }
 
-                    int bytesAvailable = Rs232BytesAvailable();
+                    var bytesAvailable = Rs232BytesAvailable();
                     while (bytesAvailable < count)
                     {
                         bytesAvailable = Rs232BytesAvailable();
@@ -1774,11 +1774,11 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Converts a pair of bytes to a 16-bit, unsigned integer
+        ///   Converts a pair of bytes to a 16-bit, unsigned integer
         /// </summary>
-        /// <param name="value">a byte array containing bytes to combine.</param>
-        /// <param name="startIndex">the index within the byte array 
-        /// indicating the first byte of the pair to combine.</param>
+        /// <param name = "value">a byte array containing bytes to combine.</param>
+        /// <param name = "startIndex">the index within the byte array 
+        ///   indicating the first byte of the pair to combine.</param>
         /// <returns></returns>
         private static ushort ConvertBytesToUShort(byte[] value, int startIndex)
         {
@@ -1801,9 +1801,9 @@ namespace Phcc
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -1812,9 +1812,9 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~Device()
         {
@@ -1822,11 +1822,11 @@ namespace Phcc
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

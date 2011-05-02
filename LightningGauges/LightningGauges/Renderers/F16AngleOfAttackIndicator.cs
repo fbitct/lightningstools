@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -103,7 +102,7 @@ namespace LightningGauges.Renderers
                 get { return _angleOfAttackDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0F;
                     if (degrees < MIN_AOA) degrees = MIN_AOA;
                     if (degrees > MAX_AOA) degrees = MAX_AOA;
@@ -135,31 +134,31 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.Image.Width;
+                var width = _background.Image.Width;
                 width -= 153;
-                int height = _background.Image.Height - 28;
+                var height = _background.Image.Height - 28;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
 
                 g.TranslateTransform(0, -12);
                 g.TranslateTransform(-75, 0);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 if (!InstrumentState.OffFlag)
                 {
                     //draw the number tape
-                    float aoaDegrees = InstrumentState.AngleOfAttackDegrees;
+                    var aoaDegrees = InstrumentState.AngleOfAttackDegrees;
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     float translateX = 105;
                     float translateY = 253;
-                    float pixelsPerDegreeAoa = 10f;
+                    var pixelsPerDegreeAoa = 10f;
                     translateY -= (-pixelsPerDegreeAoa*aoaDegrees);
                     translateY -= _numberTape.Height/2.0f;
                     g.TranslateTransform(translateX, translateY);

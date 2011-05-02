@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using Common.MacroProgramming;
 using Common.UI;
 using SimLinkup.Scripting;
 
@@ -32,21 +30,21 @@ namespace SimLinkup.UI
             tvSignalCategories.Nodes.Clear();
             if (ScriptingContext != null)
             {
-                List<string> distinctSignalSources = ScriptingContext.AllSignals.GetDistinctSignalSourceNames();
+                var distinctSignalSources = ScriptingContext.AllSignals.GetDistinctSignalSourceNames();
                 if (distinctSignalSources != null && distinctSignalSources.Count > 0)
                 {
-                    foreach (string signalSource in distinctSignalSources)
+                    foreach (var signalSource in distinctSignalSources)
                     {
                         var tn = new TreeNode(signalSource);
                         tn.Tag = signalSource;
                         tvSignalCategories.Nodes.Add(tn);
 
-                        SignalList<Signal> signalsThisSource =
+                        var signalsThisSource =
                             ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
-                        List<string> signalCollections = signalsThisSource.GetDistinctSignalCollectionNames();
+                        var signalCollections = signalsThisSource.GetDistinctSignalCollectionNames();
                         if (signalCollections != null)
                         {
-                            foreach (string signalCollectionName in signalCollections)
+                            foreach (var signalCollectionName in signalCollections)
                             {
                                 var tn2 = new TreeNode(signalCollectionName);
                                 tn2.Tag = signalCollectionName;
@@ -63,8 +61,8 @@ namespace SimLinkup.UI
         private void UpdateListView()
         {
             var signalCollectionName = tvSignalCategories.SelectedNode.Tag as string;
-            object signalSource = tvSignalCategories.SelectedNode.Parent.Tag;
-            SignalList<Signal> signalsThisSource = ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
+            var signalSource = tvSignalCategories.SelectedNode.Parent.Tag;
+            var signalsThisSource = ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
             lvSignals.SuspendLayout();
             lvSignals.BeginUpdate();
             lvSignals.Clear();
@@ -74,21 +72,21 @@ namespace SimLinkup.UI
             lvSignals.Columns.Add("Signal");
             lvSignals.Columns.Add("Signal Type");
 
-            SignalList<Signal> signalsThisCollection = signalsThisSource.GetSignalsByCollection(signalCollectionName);
+            var signalsThisCollection = signalsThisSource.GetSignalsByCollection(signalCollectionName);
 
             if (signalsThisCollection != null)
             {
-                List<string> subSources = signalsThisCollection.GetUniqueSubSources();
+                var subSources = signalsThisCollection.GetUniqueSubSources();
 
                 if (subSources != null && subSources.Count > 0)
                 {
-                    foreach (string subSource in subSources)
+                    foreach (var subSource in subSources)
                     {
                         var lvg = new ListViewGroup(subSource, HorizontalAlignment.Left);
                         lvSignals.Groups.Add(lvg);
-                        SignalList<Signal> signalsThisSubsource =
+                        var signalsThisSubsource =
                             signalsThisCollection.GetSignalsBySubSourceFriendlyName(subSource);
-                        foreach (Signal signal in signalsThisSubsource)
+                        foreach (var signal in signalsThisSubsource)
                         {
                             var lvi = new ListViewItem();
                             lvi.Text = signal.FriendlyName;
@@ -102,7 +100,7 @@ namespace SimLinkup.UI
                 }
                 else
                 {
-                    foreach (Signal signal in signalsThisCollection)
+                    foreach (var signal in signalsThisCollection)
                     {
                         var lvi = new ListViewItem();
                         lvi.Text = signal.FriendlyName;
@@ -114,7 +112,7 @@ namespace SimLinkup.UI
                 }
             }
 
-            for (int i = 0; i < lvSignals.Columns.Count; i++)
+            for (var i = 0; i < lvSignals.Columns.Count; i++)
             {
                 lvSignals.Columns[i].TextAlign = HorizontalAlignment.Left;
                 lvSignals.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);

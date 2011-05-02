@@ -94,25 +94,25 @@ namespace Common.Strings
 
             ScanNumEnd(s1, i1, ref end1, ref nzStart1);
             ScanNumEnd(s2, i2, ref end2, ref nzStart2);
-            int start1 = i1;
+            var start1 = i1;
             i1 = end1 - 1;
-            int start2 = i2;
+            var start2 = i2;
             i2 = end2 - 1;
 
-            int nzLength1 = end1 - nzStart1;
-            int nzLength2 = end2 - nzStart2;
+            var nzLength1 = end1 - nzStart1;
+            var nzLength2 = end2 - nzStart2;
 
             if (nzLength1 < nzLength2) return -1;
             if (nzLength1 > nzLength2) return 1;
 
             for (int j1 = nzStart1, j2 = nzStart2; j1 <= i1; j1++, j2++)
             {
-                int r = s1[j1].CompareTo(s2[j2]);
+                var r = s1[j1].CompareTo(s2[j2]);
                 if (r != 0) return r;
             }
             // the nz parts are equal
-            int length1 = end1 - start1;
-            int length2 = end2 - start2;
+            var length1 = end1 - start1;
+            var length2 = end2 - start2;
             if (length1 == length2) return 0;
             if (length1 > length2) return -1;
             return 1;
@@ -123,7 +123,7 @@ namespace Common.Strings
         {
             nzStart = start;
             end = start;
-            bool countZeros = true;
+            var countZeros = true;
             while (Char.IsDigit(s, end))
             {
                 if (countZeros && s[end].Equals('0'))

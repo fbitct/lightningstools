@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Reflection;
@@ -92,7 +91,7 @@ namespace LightningGauges.Renderers
                 get { return _chaffCount; }
                 set
                 {
-                    int chaff = value;
+                    var chaff = value;
                     if (chaff < 0) chaff = 0;
                     if (chaff > MAX_CHAFF) chaff = MAX_CHAFF;
                     _chaffCount = chaff;
@@ -104,7 +103,7 @@ namespace LightningGauges.Renderers
                 get { return _flareCount; }
                 set
                 {
-                    int flare = value;
+                    var flare = value;
                     if (flare < 0) flare = 0;
                     if (flare > MAX_FLARE) flare = MAX_FLARE;
                     _flareCount = flare;
@@ -116,7 +115,7 @@ namespace LightningGauges.Renderers
                 get { return _other1Count; }
                 set
                 {
-                    int other1 = value;
+                    var other1 = value;
                     if (other1 < 0) other1 = 0;
                     if (other1 > MAX_OTHER1) other1 = MAX_OTHER1;
                     _other1Count = other1;
@@ -128,7 +127,7 @@ namespace LightningGauges.Renderers
                 get { return _other2Count; }
                 set
                 {
-                    int other2 = value;
+                    var other2 = value;
                     if (other2 < 0) other2 = 0;
                     if (other2 > MAX_OTHER2) other2 = MAX_OTHER2;
                     _other2Count = other2;
@@ -166,19 +165,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 336;
-                int height = 88;
+                var width = 336;
+                var height = 88;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-90, -29);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
 
                 //draw the background image
@@ -194,7 +193,7 @@ namespace LightningGauges.Renderers
                 float digitBoxHeight = 35;
                 //draw the Other1 count
                 {
-                    string countString = string.Format("{0:00}", InstrumentState.Other1Count);
+                    var countString = string.Format("{0:00}", InstrumentState.Other1Count);
                     if (InstrumentState.Other1Low) countString = "Lo" + countString;
                     if (InstrumentState.Degraded)
                     {
@@ -207,7 +206,7 @@ namespace LightningGauges.Renderers
                 //draw the Other2 count
                 {
                     translateX += digitBoxWidth;
-                    string countString = string.Format("{0:00}", InstrumentState.Other2Count);
+                    var countString = string.Format("{0:00}", InstrumentState.Other2Count);
                     if (InstrumentState.Other2Low) countString = "Lo" + countString;
                     if (InstrumentState.Degraded)
                     {
@@ -220,7 +219,7 @@ namespace LightningGauges.Renderers
                 //draw the Chaff count
                 {
                     translateX += digitBoxWidth;
-                    string countString = string.Format("{0:00}", InstrumentState.ChaffCount);
+                    var countString = string.Format("{0:00}", InstrumentState.ChaffCount);
                     if (InstrumentState.ChaffLow) countString = "Lo" + countString;
                     if (InstrumentState.Degraded)
                     {
@@ -233,7 +232,7 @@ namespace LightningGauges.Renderers
                 //draw the Flare count
                 {
                     translateX += digitBoxWidth;
-                    string countString = string.Format("{0:00}", InstrumentState.Other2Count);
+                    var countString = string.Format("{0:00}", InstrumentState.Other2Count);
                     if (InstrumentState.FlareLow) countString = "Lo" + countString;
                     if (InstrumentState.Degraded)
                     {

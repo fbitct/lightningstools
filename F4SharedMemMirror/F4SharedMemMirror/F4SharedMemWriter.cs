@@ -37,7 +37,7 @@ namespace F4SharedMemMirror
             {
                 return;
             }
-            for (int i = 0; i < primaryFlightData.Length; i++)
+            for (var i = 0; i < primaryFlightData.Length; i++)
             {
                 Marshal.WriteByte(_lpPrimarySharedMemoryAreaBaseAddress, i, primaryFlightData[i]);
             }
@@ -56,7 +56,7 @@ namespace F4SharedMemMirror
             }
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                for (int i = 0; i < osbData.Length; i++)
+                for (var i = 0; i < osbData.Length; i++)
                 {
                     Marshal.WriteByte(_lpOsbSharedMemoryAreaBaseAddress, i, osbData[i]);
                 }
@@ -76,7 +76,7 @@ namespace F4SharedMemMirror
             }
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                for (int i = 0; i < flightData2.Length; i++)
+                for (var i = 0; i < flightData2.Length; i++)
                 {
                     Marshal.WriteByte(_lpSecondarySharedMemoryAreaBaseAddress, i, flightData2[i]);
                 }

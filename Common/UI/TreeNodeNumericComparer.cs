@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Windows.Forms;
 using Common.Strings;
+
 // required for TreeNodeNumericComparer : IComparer only
 
 #endregion

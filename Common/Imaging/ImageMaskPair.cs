@@ -37,17 +37,17 @@ namespace Common.Imaging
             {
                 if (_maskedImage == null)
                 {
-                    int width = Image.Width;
-                    int height = Image.Height;
+                    var width = Image.Width;
+                    var height = Image.Height;
 
-                    BitmapData imageLock = Image.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly,
-                                                          Image.PixelFormat);
+                    var imageLock = Image.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly,
+                                                   Image.PixelFormat);
                     var imageContents = new byte[width*height*4];
                     Marshal.Copy(imageLock.Scan0, imageContents, 0, imageContents.Length);
                     Image.UnlockBits(imageLock);
 
-                    BitmapData maskLock = Mask.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly,
-                                                        Mask.PixelFormat);
+                    var maskLock = Mask.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly,
+                                                 Mask.PixelFormat);
                     var maskContents = new byte[width*height*4];
                     Marshal.Copy(maskLock.Scan0, maskContents, 0, maskContents.Length);
                     Mask.UnlockBits(maskLock);
@@ -55,11 +55,11 @@ namespace Common.Imaging
                     var newMaskedImageContents = new byte[width*height*4];
                     Array.Copy(imageContents, newMaskedImageContents, imageContents.Length);
 
-                    for (int y = 0; y < height; y++)
+                    for (var y = 0; y < height; y++)
                     {
-                        for (int x = 0; x < width; x++)
+                        for (var x = 0; x < width; x++)
                         {
-                            int thisBaseOffset = (y*width*4) + (x*4);
+                            var thisBaseOffset = (y*width*4) + (x*4);
                             byte alpha;
                             if (Use1BitAlpha)
                             {
@@ -76,14 +76,7 @@ namespace Common.Imaging
                                                          +
                                                          (0.333f*maskContents[thisBaseOffset]))
                                                );
-                                if (alpha > 127)
-                                {
-                                    alpha = 255;
-                                }
-                                else
-                                {
-                                    alpha = 0;
-                                }
+                                alpha = alpha > 127 ? (byte) 255 : (byte) 0;
                             }
                             else
                             {
@@ -106,9 +99,9 @@ namespace Common.Imaging
                     }
 
                     var newMaskedImage = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
-                    BitmapData newMaskedImageLock = newMaskedImage.LockBits(new Rectangle(0, 0, width, height),
-                                                                            ImageLockMode.WriteOnly,
-                                                                            newMaskedImage.PixelFormat);
+                    var newMaskedImageLock = newMaskedImage.LockBits(new Rectangle(0, 0, width, height),
+                                                                     ImageLockMode.WriteOnly,
+                                                                     newMaskedImage.PixelFormat);
                     Marshal.Copy(newMaskedImageContents, 0, newMaskedImageLock.Scan0, newMaskedImageContents.Length);
                     newMaskedImage.UnlockBits(newMaskedImageLock);
                     _maskedImage = newMaskedImage;
@@ -130,8 +123,8 @@ namespace Common.Imaging
 
         public static ImageMaskPair CreateFromFiles(string imagePath, string maskPath)
         {
-            Image image = System.Drawing.Image.FromFile(imagePath);
-            Image mask = System.Drawing.Image.FromFile(maskPath);
+            var image = System.Drawing.Image.FromFile(imagePath);
+            var mask = System.Drawing.Image.FromFile(maskPath);
             Util.ConvertPixelFormat(ref image, PixelFormat.Format32bppArgb);
             Util.ConvertPixelFormat(ref mask, PixelFormat.Format32bppArgb);
             return new ImageMaskPair((Bitmap) image, (Bitmap) mask, true);

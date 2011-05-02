@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace Common.UI.UserControls
 {
     /// <summary>
-    /// User control that allows selecting a hotkey and (optional) modifier keys such as SHIFT-, ALT-, and CTRL-.
+    ///   User control that allows selecting a hotkey and (optional) modifier keys such as SHIFT-, ALT-, and CTRL-.
     /// </summary>
     public class ShortcutInput : UserControl
     {
@@ -17,7 +17,7 @@ namespace Common.UI.UserControls
             get { return (byte) ((string) _ddnChars.SelectedItem)[1]; }
             set
             {
-                foreach (object item in _ddnChars.Items)
+                foreach (var item in _ddnChars.Items)
                 {
                     if (item.ToString() == " " + (char) value)
                     {
@@ -60,7 +60,7 @@ namespace Common.UI.UserControls
             }
             set
             {
-                Keys k = value;
+                var k = value;
                 if (((int) k & (int) Keys.Shift) != 0)
                     Shift = true;
                 if (((int) k & (int) Keys.Control) != 0)
@@ -112,8 +112,8 @@ namespace Common.UI.UserControls
 
         private const byte MOD_ALT = 1, MOD_CONTROL = 2, MOD_SHIFT = 4;
 
-        /// <summary> 
-        /// Required designer variable.
+        /// <summary>
+        ///   Required designer variable.
         /// </summary>
         private readonly Container components;
 
@@ -128,10 +128,10 @@ namespace Common.UI.UserControls
             // This call is required by the Windows.Forms Form Designer.
             InitializeComponent();
 
-            for (int i = 65; i < 91; i++)
+            for (var i = 65; i < 91; i++)
                 _ddnChars.Items.Add(" " + (char) i);
 
-            for (int i = 48; i < 58; i++)
+            for (var i = 48; i < 58; i++)
                 _ddnChars.Items.Add(" " + (char) i);
 
             _ddnChars.SelectedIndex = 0;
@@ -139,9 +139,9 @@ namespace Common.UI.UserControls
 
 
         /// <summary>
-        /// Calculates the Win32 Modifiers total for a Keys enum
+        ///   Calculates the Win32 Modifiers total for a Keys enum
         /// </summary>
-        /// <param name="k">An instance of the Keys enumaration</param>
+        /// <param name = "k">An instance of the Keys enumaration</param>
         /// <returns>The Win32 Modifiers total as required by RegisterHotKey</returns>
         public static byte Win32ModifiersFromKeys(Keys k)
         {
@@ -150,9 +150,9 @@ namespace Common.UI.UserControls
 
 
         /// <summary>
-        /// Calculates the character code of alphanumeric key of the Keys enum instance
+        ///   Calculates the character code of alphanumeric key of the Keys enum instance
         /// </summary>
-        /// <param name="k">An instance of the Keys enumaration</param>
+        /// <param name = "k">An instance of the Keys enumaration</param>
         /// <returns>The character code of the alphanumeric key</returns>
         public static byte CharCodeFromKeys(Keys k)
         {
@@ -160,8 +160,8 @@ namespace Common.UI.UserControls
         }
 
 
-        /// <summary> 
-        /// Clean up any resources being used.
+        /// <summary>
+        ///   Clean up any resources being used.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -174,9 +174,9 @@ namespace Common.UI.UserControls
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
+        /// <summary>
+        ///   Required method for Designer support - do not modify 
+        ///   the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {

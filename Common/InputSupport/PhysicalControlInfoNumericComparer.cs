@@ -6,7 +6,7 @@ using Common.Strings;
 namespace Common.InputSupport
 {
     /// <summary>
-    /// Compares two PhysicalControlInfo objects by their Aliases (useful in editors)
+    ///   Compares two PhysicalControlInfo objects by their Aliases (useful in editors)
     /// </summary>
     internal sealed class PhysicalControlInfoNumericComparer : IComparer
     {

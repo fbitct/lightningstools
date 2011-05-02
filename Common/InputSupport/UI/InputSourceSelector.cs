@@ -51,7 +51,7 @@ namespace Common.InputSupport.UI
                 cboJoystickControl.SelectedItem = control;
                 if (control.ControlType == ControlType.Pov)
                 {
-                    float currentDegrees = e.CurrentState/100;
+                    var currentDegrees = e.CurrentState/100.0f;
                     if (e.CurrentState == -1) currentDegrees = -1;
                     /*  POV directions in degrees
                               0
@@ -270,9 +270,9 @@ namespace Common.InputSupport.UI
             var knownDevices = new List<DIPhysicalDeviceInfo>();
             if (Mediator != null)
             {
-                foreach (Guid key in Mediator.DeviceMonitors.Keys)
+                foreach (var key in Mediator.DeviceMonitors.Keys)
                 {
-                    DIDeviceMonitor monitor = Mediator.DeviceMonitors[key];
+                    var monitor = Mediator.DeviceMonitors[key];
                     knownDevices.Add(monitor.DeviceInfo);
                 }
             }
@@ -281,7 +281,7 @@ namespace Common.InputSupport.UI
 
         private void cmdOk_Click(object sender, EventArgs e)
         {
-            bool valid = ValidateSelections();
+            var valid = ValidateSelections();
             if (valid)
             {
                 StoreSelectedControlInfo();
@@ -291,7 +291,7 @@ namespace Common.InputSupport.UI
 
         private bool ValidateSelections()
         {
-            bool valid = true;
+            var valid = true;
             if (rdoJoystick.Checked)
             {
                 var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
@@ -391,7 +391,7 @@ namespace Common.InputSupport.UI
 
         private void LoadSelectedControlInfo()
         {
-            InputControlSelection thisControlSelection = SelectedControl;
+            var thisControlSelection = SelectedControl;
             lblPromptText.Text = PromptText;
             switch (thisControlSelection.ControlType)
             {
@@ -480,7 +480,7 @@ namespace Common.InputSupport.UI
 
         private void PopulateJoystickControlsComboBox()
         {
-            DIPhysicalDeviceInfo thisDevice = SelectedControl.DirectInputDevice;
+            var thisDevice = SelectedControl.DirectInputDevice;
             cboJoystickControl.Items.Clear();
             if (thisDevice != null && thisDevice.Controls != null)
             {
@@ -497,7 +497,7 @@ namespace Common.InputSupport.UI
 
         private void SelectCurrentJoystickControl()
         {
-            DIPhysicalControlInfo curControl = SelectedControl.DirectInputControl;
+            var curControl = SelectedControl.DirectInputControl;
             if (curControl != null)
             {
                 cboJoystickControl.SelectedItem = curControl;
@@ -511,7 +511,7 @@ namespace Common.InputSupport.UI
 
         private void SelectCurrentJoystick()
         {
-            DIPhysicalDeviceInfo thisDevice = SelectedControl.DirectInputDevice;
+            var thisDevice = SelectedControl.DirectInputDevice;
             if (thisDevice != null)
             {
                 cbJoysticks.SelectedItem = thisDevice;

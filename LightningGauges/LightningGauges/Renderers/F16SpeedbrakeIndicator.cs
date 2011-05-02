@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -96,7 +95,7 @@ namespace LightningGauges.Renderers
                 get { return _percentOpen; }
                 set
                 {
-                    float pct = value;
+                    var pct = value;
                     if (pct < 0) pct = 0;
                     if (pct > 100) pct = 100;
                     _percentOpen = pct;
@@ -127,23 +126,23 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.MaskedImage.Width - 110;
-                int height = _background.MaskedImage.Height - 110 - 4;
+                var width = _background.MaskedImage.Width - 110;
+                var height = _background.MaskedImage.Height - 110 - 4;
                 width -= 59;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-55, -55);
                 g.TranslateTransform(-29, 0);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
-                float percentOpen = InstrumentState.PercentOpen;
+                var percentOpen = InstrumentState.PercentOpen;
                 if (!InstrumentState.PowerLoss)
                 {
                     if (percentOpen < 2.0f)

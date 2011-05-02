@@ -104,7 +104,7 @@ namespace F4Utils.Campaign
             }
             if (numWaypoints > 500) return;
             waypoints = new Waypoint[numWaypoints];
-            for (int i = 0; i < numWaypoints; i++)
+            for (var i = 0; i < numWaypoints; i++)
             {
                 waypoints[i] = new Waypoint(bytes, ref offset, version);
             }

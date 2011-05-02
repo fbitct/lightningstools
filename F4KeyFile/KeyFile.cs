@@ -38,7 +38,11 @@ namespace F4KeyFile
 
         public IBinding FindBindingForCallback(string callback)
         {
-            return Bindings.FirstOrDefault(thisBinding => thisBinding.Callback != null && callback != null && thisBinding.Callback.ToLowerInvariant().Trim() == callback.ToLowerInvariant().Trim());
+            return
+                Bindings.FirstOrDefault(
+                    thisBinding =>
+                    thisBinding.Callback != null && callback != null &&
+                    thisBinding.Callback.ToLowerInvariant().Trim() == callback.ToLowerInvariant().Trim());
         }
 
         public void Load()
@@ -52,16 +56,16 @@ namespace F4KeyFile
             {
                 throw new ArgumentNullException("file");
             }
-            using (StreamReader sr = file.OpenText())
+            using (var sr = file.OpenText())
             {
-                int lineNum = 0;
+                var lineNum = 0;
                 while (!sr.EndOfStream)
                 {
                     lineNum++;
                     var currentLine = sr.ReadLine();
                     if (currentLine != null)
                     {
-                        string currentLineTrim = currentLine.Trim();
+                        var currentLineTrim = currentLine.Trim();
                         if (currentLineTrim.StartsWith("/"))
                         {
                             _bindings.Add(new CommentLine(currentLine) {LineNum = lineNum});
@@ -69,7 +73,7 @@ namespace F4KeyFile
                         }
                     }
 
-                    List<string> tokenList = Util.Tokenize(currentLine);
+                    var tokenList = Util.Tokenize(currentLine);
                     if (tokenList == null || tokenList.Count == 0)
                     {
                         continue;
@@ -82,7 +86,7 @@ namespace F4KeyFile
                     DirectInputBinding directInputBinding = null;
                     try
                     {
-                        int token2 = Int32.Parse(tokenList[1]);
+                        var token2 = Int32.Parse(tokenList[1]);
                         if (token2 >= 0 && token2 < 1000)
                         {
                             directInputBinding = new DirectInputBinding().Parse(currentLine);
@@ -122,10 +126,10 @@ namespace F4KeyFile
                 throw new ArgumentNullException("file");
             }
             file.Delete();
-            using (FileStream fs = file.OpenWrite())
+            using (var fs = file.OpenWrite())
             using (var sw = new StreamWriter(fs))
             {
-                foreach (IBinding binding in _bindings)
+                foreach (var binding in _bindings)
                 {
                     sw.WriteLine(binding.ToString());
                 }

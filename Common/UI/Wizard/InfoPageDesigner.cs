@@ -7,12 +7,11 @@ using System.Windows.Forms.Design;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// 
     /// </summary>
     public class InfoPageDesigner : ParentControlDesigner
     {
         /// <summary>
-        /// Prevents the grid from being drawn on the Wizard
+        ///   Prevents the grid from being drawn on the Wizard
         /// </summary>
         protected override bool DrawGrid
         {
@@ -20,9 +19,9 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Drops the BackgroundImage property
+        ///   Drops the BackgroundImage property
         /// </summary>
-        /// <param name="properties">properties to remove BackGroundImage from</param>
+        /// <param name = "properties">properties to remove BackGroundImage from</param>
         protected override void PreFilterProperties(IDictionary properties)
         {
             base.PreFilterProperties(properties);

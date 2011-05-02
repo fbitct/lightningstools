@@ -50,9 +50,9 @@ namespace SimLinkup.HardwareSupport.Simtek
             toReturn.Add(new Simtek101081HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                        "Simtek101081HardwareSupportModuleConfig.config");
-                Simtek101081HardwareSupportModuleConfig hsmConfig =
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                     "Simtek101081HardwareSupportModuleConfig.config");
+                var hsmConfig =
                     Simtek101081HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
@@ -207,13 +207,13 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_altitudeInputSignal != null)
             {
-                double altitudeInput = _altitudeInputSignal.State;
+                var altitudeInput = _altitudeInputSignal.State;
                 double altitudeFineSinOutputValue = 0;
                 double altitudeFineCosOutputValue = 0;
                 double altitudeCoarseOutputValue = 0;
 
-                double numRevolutionsOfFineResolver = altitudeInput/1000.0000;
-                double fineResolverDegrees = numRevolutionsOfFineResolver*360.0000;
+                var numRevolutionsOfFineResolver = altitudeInput/1000.0000;
+                var fineResolverDegrees = numRevolutionsOfFineResolver*360.0000;
                 altitudeFineSinOutputValue = 10.0000*Math.Sin(fineResolverDegrees*Constants.RADIANS_PER_DEGREE);
                 altitudeFineCosOutputValue = 10.0000*Math.Cos(fineResolverDegrees*Constants.RADIANS_PER_DEGREE);
 
@@ -285,9 +285,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -296,9 +296,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~Simtek101081HardwareSupportModule()
         {
@@ -306,11 +306,11 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

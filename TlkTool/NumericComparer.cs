@@ -2,17 +2,18 @@
 
 using System.Collections;
 using System.Collections.Generic;
+
 // required for NumericComparer : IComparer only
 
 #endregion
 
-namespace Common.Strings
+namespace TlkTool
 {
     /// <summary>
-    /// Provides a Comparer that can properly sort numeric-containing strings.  
-    /// The default sorting is "1,110, 112, 2, 20,..."; 
-    /// this comparer provides for number-line sorting 
-    /// (1,2, 10, 20, 110, 120, ...);
+    ///   Provides a Comparer that can properly sort numeric-containing strings.  
+    ///   The default sorting is "1,110, 112, 2, 20,..."; 
+    ///   this comparer provides for number-line sorting 
+    ///   (1,2, 10, 20, 110, 120, ...);
     /// </summary>
     public sealed class NumericComparer : IComparer, IComparer<string>
     {

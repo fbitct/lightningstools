@@ -60,7 +60,7 @@ namespace Common.InputSupport.Phcc
         private static readonly ILog _log = LogManager.GetLogger(typeof (PHCCDeviceMonitor));
 
         /// <summary>
-        /// Class variable to hold all references to all instantiated device monitors of this type
+        ///   Class variable to hold all references to all instantiated device monitors of this type
         /// </summary>
         private static readonly Dictionary<PHCCPhysicalDeviceInfo, PHCCDeviceMonitor> _monitors =
             new Dictionary<PHCCPhysicalDeviceInfo, PHCCDeviceMonitor>();
@@ -80,12 +80,12 @@ namespace Common.InputSupport.Phcc
         #region Constructors
 
         /// <summary>
-        /// Hidden constructor -- forces callers to use one of the static factory methods 
-        /// on this class.
-        /// Creates a new PHCCDeviceMonitor object
-        /// <param name="deviceInfo">a PHCCPhysicalDeviceInfo object representing the device to monitor.</param>
-        /// <param name="axisRangeMin">an integer specifying the value that should be reported when an axis is at its minimum value</param>
-        /// <param name="axisRangeMax">an integer specifying the value that should be reported when an axis is at its maximum value</param>
+        ///   Hidden constructor -- forces callers to use one of the static factory methods 
+        ///   on this class.
+        ///   Creates a new PHCCDeviceMonitor object
+        ///   <param name = "deviceInfo">a PHCCPhysicalDeviceInfo object representing the device to monitor.</param>
+        ///   <param name = "axisRangeMin">an integer specifying the value that should be reported when an axis is at its minimum value</param>
+        ///   <param name = "axisRangeMax">an integer specifying the value that should be reported when an axis is at its maximum value</param>
         /// </summary>
         private PHCCDeviceMonitor(PHCCPhysicalDeviceInfo deviceInfo, int axisRangeMin, int axisRangeMax)
         {
@@ -105,7 +105,7 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Returns a <see cref="PHCCInputState"/> object containing the previous input state of the device being monitored by this object
+        ///   Returns a <see cref = "PHCCInputState" /> object containing the previous input state of the device being monitored by this object
         /// </summary>
         public PHCCInputState? PreviousState
         {
@@ -113,7 +113,7 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Returns a <see cref="PHCCInputState"/> object containing the most-recently-polled input state of the device being monitored by this object
+        ///   Returns a <see cref = "PHCCInputState" /> object containing the most-recently-polled input state of the device being monitored by this object
         /// </summary>
         public PHCCInputState? CurrentState
         {
@@ -147,14 +147,14 @@ namespace Common.InputSupport.Phcc
                     {
                         if (_deviceInterface != null)
                         {
-                            short[] rawAnalogInputs = _deviceInterface.AnalogInputs;
-                            bool[] rawDigitalInputs = _deviceInterface.DigitalInputs;
+                            var rawAnalogInputs = _deviceInterface.AnalogInputs;
+                            var rawDigitalInputs = _deviceInterface.DigitalInputs;
                             var thisState = new PHCCInputState
                                                 {
                                                     AnalogInputs = new short[35],
                                                     DigitalInputs = new bool[1024]
                                                 };
-                            for (int i = 0; i < rawAnalogInputs.Length; i++)
+                            for (var i = 0; i < rawAnalogInputs.Length; i++)
                             {
                                 thisState.AnalogInputs[i] = ScaleRawValue(rawAnalogInputs[i]);
                             }
@@ -188,16 +188,16 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Factory method to create instances of this class.  Stands in place of a constructor,
-        /// in order to re-use instances 
-        /// when relevant constructor parameters are the same
+        ///   Factory method to create instances of this class.  Stands in place of a constructor,
+        ///   in order to re-use instances 
+        ///   when relevant constructor parameters are the same
         /// </summary>
-        /// <param name="deviceInfo">a PHCCPhysicalDeviceInfo object representing the PHCC device to monitor</param>
-        /// <param name="axisRangeMin">an integer specifying the value that should be reported when an axis is at its minimum value</param>
-        /// <param name="axisRangeMax">an integer specifying the value that should be reported when an axis is at its maximum value</param>
+        /// <param name = "deviceInfo">a PHCCPhysicalDeviceInfo object representing the PHCC device to monitor</param>
+        /// <param name = "axisRangeMin">an integer specifying the value that should be reported when an axis is at its minimum value</param>
+        /// <param name = "axisRangeMax">an integer specifying the value that should be reported when an axis is at its maximum value</param>
         /// <returns>a PHCCDeviceMonitor object representing the PHCC device 
-        /// being monitored, either created newly from-scratch, or returned from 
-        /// this class's internal object pool if a monitor instance already exists</returns>
+        ///   being monitored, either created newly from-scratch, or returned from 
+        ///   this class's internal object pool if a monitor instance already exists</returns>
         public static PHCCDeviceMonitor GetInstance(PHCCPhysicalDeviceInfo deviceInfo, int axisRangeMin,
                                                     int axisRangeMax)
         {
@@ -251,7 +251,7 @@ namespace Common.InputSupport.Phcc
                     if (throwOnFail) throw;
                 }
             }
-            bool toReturn = false;
+            var toReturn = false;
             if (firmwareVersion != null && firmwareVersion.ToLowerInvariant().Contains("phcc"))
             {
                 toReturn = true;
@@ -260,15 +260,15 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Initializes this object's state and sets up PHCC Device objects
-        /// to monitor the PHCC device instance that this object 
-        /// is responsible for.
-        /// During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
-        /// Prepare() will simply wait until the _preparing flag is lowered.
+        ///   Initializes this object's state and sets up PHCC Device objects
+        ///   to monitor the PHCC device instance that this object 
+        ///   is responsible for.
+        ///   During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
+        ///   Prepare() will simply wait until the _preparing flag is lowered.
         /// </summary>
         protected override void Prepare()
         {
-            int elapsed = 0;
+            var elapsed = 0;
             const int timeout = 3000;
 
             while (_preparing && elapsed <= timeout)
@@ -308,7 +308,7 @@ namespace Common.InputSupport.Phcc
                             _log.Debug(ex.Message, ex);
                         }
                         //check if device is attached
-                        bool attached = IsDeviceAttached(false);
+                        var attached = IsDeviceAttached(false);
                         if (!attached)
                         {
                             _preparing = false;
@@ -420,9 +420,9 @@ namespace Common.InputSupport.Phcc
         {
             long outputRange = System.Math.Abs(_axisRangeMax - _axisRangeMin); //size of output range
             const long maxRawValue = 1023;
-            double pct = (rawValue/(double) maxRawValue);
-                //percentage-wise, how large is our raw value compared to the maximum raw value?
-            int convertedVal = (int) System.Math.Round(outputRange*pct, 0) + _axisRangeMin;
+            var pct = (rawValue/(double) maxRawValue);
+            //percentage-wise, how large is our raw value compared to the maximum raw value?
+            var convertedVal = (int) System.Math.Round(outputRange*pct, 0) + _axisRangeMin;
             return (short) convertedVal;
         }
 
@@ -431,7 +431,7 @@ namespace Common.InputSupport.Phcc
         #region Object Overrides (ToString, GetHashCode, Equals)
 
         /// <summary>
-        /// Gets a string representation of this object.
+        ///   Gets a string representation of this object.
         /// </summary>
         /// <returns>a String containing a textual representation of this object.</returns>
         public override string ToString()
@@ -440,7 +440,7 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Gets an integer "hash" representation of this object, for use in hashtables.
+        ///   Gets an integer "hash" representation of this object, for use in hashtables.
         /// </summary>
         /// <returns>an integer containing a numeric hash of this object's variables.  When two objects are Equal, their hashes should be equal as well.</returns>
         public override int GetHashCode()
@@ -449,9 +449,9 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
+        ///   Compares this object to another one to determine if they are equal.  Equality for this type of object simply means that the other object must be of the same type and must be monitoring the same DirectInput device.
         /// </summary>
-        /// <param name="obj">An object to compare this object to</param>
+        /// <param name = "obj">An object to compare this object to</param>
         /// <returns>a boolean, set to true, if the this object is equal to the specified object, and set to false, if they are not equal.</returns>
         public override bool Equals(object obj)
         {
@@ -476,8 +476,8 @@ namespace Common.InputSupport.Phcc
         #region Destructors
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~PHCCDeviceMonitor()
         {
@@ -485,9 +485,9 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)
@@ -512,8 +512,8 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public new void Dispose()
         {

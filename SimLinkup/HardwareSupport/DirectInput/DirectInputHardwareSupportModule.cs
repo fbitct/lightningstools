@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.HardwareSupport;
-using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using Common.MacroProgramming;
 using log4net;
@@ -102,7 +101,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
             var analogSignalsToReturn = new List<AnalogSignal>();
             var digitalSignalsToReturn = new List<DigitalSignal>();
 
-            foreach (PhysicalControlInfo button in device.Buttons)
+            foreach (var button in device.Buttons)
             {
                 var thisSignal = new DigitalSignal();
                 thisSignal.CollectionName = "Digital Inputs";
@@ -120,7 +119,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 digitalSignalsToReturn.Add(thisSignal);
             }
 
-            foreach (PhysicalControlInfo axis in device.Axes)
+            foreach (var axis in device.Axes)
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "Analog Inputs";
@@ -138,7 +137,7 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 analogSignalsToReturn.Add(thisSignal);
             }
 
-            foreach (PhysicalControlInfo axis in device.Povs)
+            foreach (var axis in device.Povs)
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "Analog Inputs";
@@ -166,9 +165,9 @@ namespace SimLinkup.HardwareSupport.DirectInput
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -177,9 +176,9 @@ namespace SimLinkup.HardwareSupport.DirectInput
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~DirectInputHardwareSupportModule()
         {
@@ -187,11 +186,11 @@ namespace SimLinkup.HardwareSupport.DirectInput
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

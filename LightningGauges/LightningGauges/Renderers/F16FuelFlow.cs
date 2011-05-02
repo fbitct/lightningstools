@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -102,7 +101,7 @@ namespace LightningGauges.Renderers
                 get { return _fuelFlowPoundsPerHour; }
                 set
                 {
-                    float flow = value;
+                    var flow = value;
                     if (flow < 0) flow = 0;
                     if (flow > MAX_FLOW) flow = MAX_FLOW;
                     _fuelFlowPoundsPerHour = flow;
@@ -131,34 +130,34 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 174;
-                int height = 145;
+                var width = 174;
+                var height = 145;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-50, -60);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
-                float hundredsDigit = (InstrumentState.FuelFlowPoundsPerHour/100.0f)%10.0f;
+                var hundredsDigit = (InstrumentState.FuelFlowPoundsPerHour/100.0f)%10.0f;
                 var thousandsDigit = (float) Math.Truncate((InstrumentState.FuelFlowPoundsPerHour/1000.0f)%10.0f);
                 var tenThousandsDigit = (float) Math.Truncate((InstrumentState.FuelFlowPoundsPerHour/10000.0f)%10.0f);
 
                 if (thousandsDigit > 9) tenThousandsDigit += (thousandsDigit - 9);
                 if (hundredsDigit > 9) thousandsDigit += (hundredsDigit - 9);
 
-                float pixelsPerDigit = 29.5f;
+                var pixelsPerDigit = 29.5f;
                 float xOffset = -130;
                 float yOffsetToZero = -270;
 
                 //draw the hundreds digit
                 {
-                    float yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
+                    var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_hundredsDigits, new Point(0, 0));
@@ -167,7 +166,7 @@ namespace LightningGauges.Renderers
 
                 //draw the thousands digit
                 {
-                    float yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
+                    var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_thousandsDigits, new Point(0, 0));
@@ -176,7 +175,7 @@ namespace LightningGauges.Renderers
 
                 //draw the ten-thousands digit
                 {
-                    float yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
+                    var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_tenThousandsDigits, new Point(0, 0));

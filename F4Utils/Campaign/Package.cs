@@ -50,7 +50,7 @@ namespace F4Utils.Campaign
             offset++;
             element = new VU_ID[elements];
             if (elements < 5) element = new VU_ID[5];
-            for (int i = 0; i < elements; i++)
+            for (var i = 0; i < elements; i++)
             {
                 var thisElement = new VU_ID();
                 thisElement.num_ = BitConverter.ToUInt32(bytes, offset);
@@ -209,7 +209,7 @@ namespace F4Utils.Campaign
                 offset++;
 
                 ingress_waypoints = new Waypoint[num_ingress_waypoints];
-                for (int j = 0; j < num_ingress_waypoints; j++)
+                for (var j = 0; j < num_ingress_waypoints; j++)
                 {
                     ingress_waypoints[j] = new Waypoint(bytes, ref offset, version);
                 }
@@ -217,7 +217,7 @@ namespace F4Utils.Campaign
                 num_egress_waypoints = bytes[offset];
                 offset++;
                 egress_waypoints = new Waypoint[num_egress_waypoints];
-                for (int j = 0; j < num_egress_waypoints; j++)
+                for (var j = 0; j < num_egress_waypoints; j++)
                 {
                     egress_waypoints[j] = new Waypoint(bytes, ref offset, version);
                 }
@@ -313,7 +313,7 @@ namespace F4Utils.Campaign
                     offset++;
 
                     mis_request.slots = new byte[4];
-                    for (int k = 0; k < 4; k++)
+                    for (var k = 0; k < 4; k++)
                     {
                         mis_request.slots[k] = bytes[offset];
                         offset++;

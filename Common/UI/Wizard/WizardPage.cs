@@ -5,7 +5,6 @@ using System.Windows.Forms;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// 
     /// </summary>
     [Designer(typeof (WizardPageDesigner))]
     public class WizardPage : Panel
@@ -14,31 +13,31 @@ namespace Common.UI.Wizard
         public bool IsFinishPage { get; set; }
 
         /// <summary>
-        /// Event called before this page is closed when the back button is pressed. If you don't want to show pageIndex -1 then
-        /// set page to be the new page that you wish to show
+        ///   Event called before this page is closed when the back button is pressed. If you don't want to show pageIndex -1 then
+        ///   set page to be the new page that you wish to show
         /// </summary>
         public event PageEventHandler CloseFromBack;
 
         /// <summary>
-        /// Event called before this page is closed when the next button is pressed. If you don't want to show pageIndex -1 then
-        /// set page to be the new page that you wish to show 
+        ///   Event called before this page is closed when the next button is pressed. If you don't want to show pageIndex -1 then
+        ///   set page to be the new page that you wish to show
         /// </summary>
         public event PageEventHandler CloseFromNext;
 
         /// <summary>
-        /// Event called after this page is shown when the back button is pressed.
+        ///   Event called after this page is shown when the back button is pressed.
         /// </summary>
         public event EventHandler ShowFromBack;
 
         /// <summary>
-        /// Event called after this page is shown when the next button is pressed. 
+        ///   Event called after this page is shown when the next button is pressed.
         /// </summary>
         public event EventHandler ShowFromNext;
 
         /// <summary>
-        /// Fires the CloseFromBack Event
+        ///   Fires the CloseFromBack Event
         /// </summary>
-        /// <param name="wiz">Wizard to pass into the sender argument</param>
+        /// <param name = "wiz">Wizard to pass into the sender argument</param>
         /// <returns>Index of Page that the event handlers would like to see next</returns>
         public int OnCloseFromBack(Wizard wiz)
         {
@@ -52,9 +51,9 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Fires the CloseFromNextEvent
+        ///   Fires the CloseFromNextEvent
         /// </summary>
-        /// <param name="wiz">Sender</param>
+        /// <param name = "wiz">Sender</param>
         public int OnCloseFromNext(Wizard wiz)
         {
             //Event args thinks that the next pgae will be the one before this one
@@ -67,9 +66,9 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Fires the showFromBack event
+        ///   Fires the showFromBack event
         /// </summary>
-        /// <param name="wiz">sender</param>
+        /// <param name = "wiz">sender</param>
         public void OnShowFromBack(Wizard wiz)
         {
             if (ShowFromBack != null)
@@ -77,9 +76,9 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Fires the showFromNext event
+        ///   Fires the showFromNext event
         /// </summary>
-        /// <param name="wiz">Sender</param>
+        /// <param name = "wiz">Sender</param>
         public void OnShowFromNext(Wizard wiz)
         {
             if (ShowFromNext != null)
@@ -88,9 +87,9 @@ namespace Common.UI.Wizard
 
 
         /// <summary>
-        /// Clean up any resources being used.
+        ///   Clean up any resources being used.
         /// </summary>
-        /// <param name="disposing"></param>
+        /// <param name = "disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -102,7 +101,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Set the focus to the contained control with a lowest tabIndex
+        ///   Set the focus to the contained control with a lowest tabIndex
         /// </summary>
         public void FocusFirstTabIndex()
         {

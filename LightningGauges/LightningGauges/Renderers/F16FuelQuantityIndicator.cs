@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -130,7 +129,7 @@ namespace LightningGauges.Renderers
                 get { return _foreRightFuelQuantityPounds; }
                 set
                 {
-                    float qty = value;
+                    var qty = value;
                     if (qty < 0) qty = 0;
                     if (qty > MAX_FUEL) qty = MAX_FUEL;
                     _foreRightFuelQuantityPounds = qty;
@@ -142,7 +141,7 @@ namespace LightningGauges.Renderers
                 get { return _aftLeftFuelQuantityPounds; }
                 set
                 {
-                    float qty = value;
+                    var qty = value;
                     if (qty < 0) qty = 0;
                     if (qty > MAX_FUEL) qty = MAX_FUEL;
                     _aftLeftFuelQuantityPounds = qty;
@@ -154,7 +153,7 @@ namespace LightningGauges.Renderers
                 get { return _totalFuelQuantityPounds; }
                 set
                 {
-                    float qty = value;
+                    var qty = value;
                     if (qty < 0) qty = 0;
                     if (qty > MAX_FUEL) qty = MAX_FUEL;
                     _totalFuelQuantityPounds = qty;
@@ -202,31 +201,31 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 176;
-                int height = 176;
+                var width = 176;
+                var height = 176;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-40, -40);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
-                float hundredsDigit = (InstrumentState.TotalFuelQuantityPounds/100.0f)%10.0f;
-                float thousandsDigit = (float) Math.Truncate((InstrumentState.TotalFuelQuantityPounds/1000.0f))%10.0f;
+                var hundredsDigit = (InstrumentState.TotalFuelQuantityPounds/100.0f)%10.0f;
+                var thousandsDigit = (float) Math.Truncate((InstrumentState.TotalFuelQuantityPounds/1000.0f))%10.0f;
                 var tenThousandsDigit = (float) Math.Truncate((InstrumentState.TotalFuelQuantityPounds/10000.0f)%10.0f);
 
-                float pixelsPerDigit = 29.40f;
+                var pixelsPerDigit = 29.40f;
                 float yOffsetToZero = -234;
                 float xOffset = -130;
                 //draw the ones digit
                 {
                     xOffset = -100;
-                    float yOffsetToActual = yOffsetToZero;
+                    var yOffsetToActual = yOffsetToZero;
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_digits, new Point(0, 0));
@@ -236,7 +235,7 @@ namespace LightningGauges.Renderers
                 //draw the tens digit
                 {
                     xOffset = -116;
-                    float yOffsetToActual = yOffsetToZero;
+                    var yOffsetToActual = yOffsetToZero;
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_digits, new Point(0, 0));
@@ -246,7 +245,7 @@ namespace LightningGauges.Renderers
                 //draw the hundreds digit
                 {
                     xOffset = -132;
-                    float yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
+                    var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_digits, new Point(0, 0));
@@ -256,7 +255,7 @@ namespace LightningGauges.Renderers
                 //draw the thousands digit
                 {
                     xOffset = -148;
-                    float yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
+                    var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_digits, new Point(0, 0));
@@ -266,7 +265,7 @@ namespace LightningGauges.Renderers
                 //draw the ten-thousands digit
                 {
                     xOffset = -164;
-                    float yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
+                    var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.TranslateTransform(xOffset, yOffsetToActual);
                     g.DrawImage(_digits, new Point(0, 0));
@@ -281,9 +280,9 @@ namespace LightningGauges.Renderers
                             GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
-                float baseAngle = 0.0f;
+                var baseAngle = 0.0f;
                 //draw the aft/left needle
-                float aftLeftNeedleAngle = baseAngle + GetAngle(InstrumentState.AftLeftFuelQuantityPounds);
+                var aftLeftNeedleAngle = baseAngle + GetAngle(InstrumentState.AftLeftFuelQuantityPounds);
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(_background.MaskedImage.Width/2.0f, _background.MaskedImage.Height/2.0f);
                 g.RotateTransform(aftLeftNeedleAngle);
@@ -299,7 +298,7 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the fore/right needle
-                float foreRightNeedleAngle = baseAngle + GetAngle(InstrumentState.ForeRightFuelQuantityPounds);
+                var foreRightNeedleAngle = baseAngle + GetAngle(InstrumentState.ForeRightFuelQuantityPounds);
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(_background.MaskedImage.Width/2.0f, _background.MaskedImage.Height/2.0f);
                 g.RotateTransform(foreRightNeedleAngle);

@@ -12,14 +12,14 @@ internal class Loop
     {
         _logger.Debug(MethodBase.GetCurrentMethod().Name + " called");
 
-        Signal adiPitchValueFromSim = context.AllSignals["F4_STBY_ADI__PITCH_DEGREES"];
-        Signal adiPitchSignalInputIntoSimtek = context.AllSignals["10033501_Pitch_From_Sim"];
-        Signal adiPitchSinSignalOutputFromSimtek = context.AllSignals["10033501_Pitch_SIN_To_Instrument"];
-        Signal adiPitchCosSignalOutputFromSimtek = context.AllSignals["10033501_Pitch_COS_To_Instrument"];
-        Signal analogDevicesInput0 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][0]"];
-        Signal analogDevicesInput1 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][1]"];
-        Signal analogDevicesInput2 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][2]"];
-        Signal analogDevicesInput3 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][3]"];
+        var adiPitchValueFromSim = context.AllSignals["F4_STBY_ADI__PITCH_DEGREES"];
+        var adiPitchSignalInputIntoSimtek = context.AllSignals["10033501_Pitch_From_Sim"];
+        var adiPitchSinSignalOutputFromSimtek = context.AllSignals["10033501_Pitch_SIN_To_Instrument"];
+        var adiPitchCosSignalOutputFromSimtek = context.AllSignals["10033501_Pitch_COS_To_Instrument"];
+        var analogDevicesInput0 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][0]"];
+        var analogDevicesInput1 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][1]"];
+        var analogDevicesInput2 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][2]"];
+        var analogDevicesInput3 = context.AllSignals["AnalogDevices_AD536x/537x__DAC_OUTPUT[0][3]"];
         MessageBox.Show("ADI pitch val from sim:" + ((AnalogSignal) adiPitchValueFromSim).State);
         MessageBox.Show("ADI pitch val into Simtek:" + ((AnalogSignal) adiPitchSignalInputIntoSimtek).State);
         MessageBox.Show("ADI pitch SIN val from Simtek:" + ((AnalogSignal) adiPitchSinSignalOutputFromSimtek).State);

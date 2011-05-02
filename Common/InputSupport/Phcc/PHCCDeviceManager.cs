@@ -55,18 +55,18 @@ namespace Common.InputSupport.Phcc
                 throw new ArgumentNullException("device");
             }
             var controls = new List<PHCCPhysicalControlInfo>();
-            for (int i = 0; i < 1024; i++)
+            for (var i = 0; i < 1024; i++)
             {
                 var thisControl = new PHCCPhysicalControlInfo(device, i, ControlType.Button, "Button " + (i + 1));
                 controls.Add(thisControl);
             }
-            for (int i = 0; i < 35; i++)
+            for (var i = 0; i < 35; i++)
             {
                 var thisControl = new PHCCPhysicalControlInfo(device, i, ControlType.Axis, "Axis " + (i + 1));
                 controls.Add(thisControl);
             }
 
-            PHCCPhysicalControlInfo[] toReturn = controls.ToArray();
+            var toReturn = controls.ToArray();
             return toReturn;
         }
 
@@ -80,7 +80,7 @@ namespace Common.InputSupport.Phcc
             var devices = new List<PHCCPhysicalDeviceInfo>();
             var ports = new Ports();
 
-            foreach (string portName in ports.SerialPortNames)
+            foreach (var portName in ports.SerialPortNames)
             {
                 var deviceInfo = new PHCCPhysicalDeviceInfo(portName, "PHCC device on " + portName);
                 try
@@ -97,15 +97,15 @@ namespace Common.InputSupport.Phcc
                     _log.Debug(ex.Message, ex);
                 }
             }
-            PHCCPhysicalDeviceInfo[] toReturn = devices.ToArray();
+            var toReturn = devices.ToArray();
             return toReturn;
         }
 
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -114,8 +114,8 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~PHCCDeviceManager()
         {
@@ -123,9 +123,9 @@ namespace Common.InputSupport.Phcc
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

@@ -26,7 +26,7 @@ namespace Common.Threading
             {
                 try
                 {
-                    WaitHandle[] handles = toWait.ToArray();
+                    var handles = toWait.ToArray();
                     if (handles.Length > 0)
                     {
                         WaitHandle.WaitAll(handles, millisecondsTimeout);

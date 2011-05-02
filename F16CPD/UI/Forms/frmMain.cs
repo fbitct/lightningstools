@@ -41,7 +41,7 @@ namespace F16CPD.UI.Forms
                 try
                 {
                     using (
-                        RegistryKey startupKey =
+                        var startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         if (startupKey != null)
@@ -60,7 +60,7 @@ namespace F16CPD.UI.Forms
                 try
                 {
                     using (
-                        RegistryKey startupKey =
+                        var startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         if (startupKey != null) startupKey.DeleteValue(Application.ProductName, false);
@@ -86,7 +86,7 @@ namespace F16CPD.UI.Forms
             MinimizeToSystemTray();
             lblVersion.Text = "Version: " + Application.ProductVersion;
             nfyTrayIcon.Icon = Icon;
-            foreach (string priority in Enum.GetNames(typeof (ThreadPriority)))
+            foreach (var priority in Enum.GetNames(typeof (ThreadPriority)))
             {
                 if (priority.ToLowerInvariant() != "highest")
                 {
@@ -122,7 +122,7 @@ namespace F16CPD.UI.Forms
             cbPriority.SelectedItem = Enum.GetName(typeof (ThreadPriority), Settings.Default.Priority);
             rdoNorth360.Checked = Settings.Default.DisplayNorthAsThreeSixZero;
             rdoNorth000.Checked = !Settings.Default.DisplayNorthAsThreeSixZero;
-            RotateFlipType rotation = Settings.Default.Rotation;
+            var rotation = Settings.Default.Rotation;
             if (rotation == RotateFlipType.RotateNoneFlipNone)
             {
                 cbOutputRotation.SelectedItem = "No rotation";
@@ -237,7 +237,7 @@ namespace F16CPD.UI.Forms
             Thread.CurrentThread.Priority = Settings.Default.Priority;
             if (rdoClientMode.Checked)
             {
-                bool validIpAddress = false;
+                var validIpAddress = false;
                 IPAddress address = null;
                 validIpAddress = IPAddress.TryParse(txtServerIPAddress.Text, out address);
                 if (String.IsNullOrEmpty(txtServerIPAddress.Text.Trim()) || !validIpAddress)
@@ -270,7 +270,7 @@ namespace F16CPD.UI.Forms
                 }
             }
 
-            int portNum = 21153;
+            var portNum = 21153;
             Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
             btnStart.Enabled = false;
             mnuNfyStart.Enabled = false;
@@ -284,7 +284,9 @@ namespace F16CPD.UI.Forms
             _cpdEngine = new F16CpdEngine();
             if (CommandLineSwitches != null)
             {
-                if (CommandLineSwitches.Where(thisSwitch => !String.IsNullOrEmpty(thisSwitch)).Any(thisSwitch => thisSwitch.ToLowerInvariant() == "testmode"))
+                if (
+                    CommandLineSwitches.Where(thisSwitch => !String.IsNullOrEmpty(thisSwitch)).Any(
+                        thisSwitch => thisSwitch.ToLowerInvariant() == "testmode"))
                 {
                     _cpdEngine.TestMode = true;
                 }
@@ -408,8 +410,8 @@ namespace F16CPD.UI.Forms
 
         private void txtServerPortNum_Leave(object sender, EventArgs e)
         {
-            int serverPortNum = -1;
-            bool parsed = Int32.TryParse(txtServerPortNum.Text, out serverPortNum);
+            var serverPortNum = -1;
+            var parsed = Int32.TryParse(txtServerPortNum.Text, out serverPortNum);
             if (!parsed || serverPortNum < 0 || serverPortNum > 65535)
             {
                 MessageBox.Show("Invalid port number.  Port number must be between 0 and 65535", Application.ProductName,
@@ -478,13 +480,13 @@ namespace F16CPD.UI.Forms
 
         private void cmdRescueOutputWindow_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(this,
-                                                  "This will move the output window to the upper left corner of the current monitor, and will reset the window size to the default size.  Would you like to continue?",
-                                                  Application.ProductName, MessageBoxButtons.OKCancel,
-                                                  MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
+            var result = MessageBox.Show(this,
+                                         "This will move the output window to the upper left corner of the current monitor, and will reset the window size to the default size.  Would you like to continue?",
+                                         Application.ProductName, MessageBoxButtons.OKCancel,
+                                         MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.OK)
             {
-                RotateFlipType rotation = Settings.Default.Rotation;
+                var rotation = Settings.Default.Rotation;
                 Size newSize;
                 if (rotation == RotateFlipType.RotateNoneFlipNone || rotation == RotateFlipType.Rotate180FlipNone)
                 {
@@ -494,7 +496,7 @@ namespace F16CPD.UI.Forms
                 {
                     newSize = new Size(600, 800);
                 }
-                Screen thisScreen = Screen.FromPoint(Location);
+                var thisScreen = Screen.FromPoint(Location);
                 _cpdEngine.Location = thisScreen.WorkingArea.Location;
                 _cpdEngine.Size = newSize;
 
@@ -504,7 +506,7 @@ namespace F16CPD.UI.Forms
 
         private void cbOutputRotation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RotateFlipType newRotation = RotateFlipType.RotateNoneFlipNone;
+            var newRotation = RotateFlipType.RotateNoneFlipNone;
             if ((string) cbOutputRotation.SelectedItem == "No rotation")
             {
                 newRotation = RotateFlipType.RotateNoneFlipNone;
@@ -523,10 +525,10 @@ namespace F16CPD.UI.Forms
             }
             Settings.Default.Rotation = newRotation;
 
-            int oldWidth = Settings.Default.CpdWindowWidth;
-            int oldHeight = Settings.Default.CpdWindowHeight;
-            int newWidth = oldWidth;
-            int newHeight = oldHeight;
+            var oldWidth = Settings.Default.CpdWindowWidth;
+            var oldHeight = Settings.Default.CpdWindowHeight;
+            var newWidth = oldWidth;
+            var newHeight = oldHeight;
 
             if (newRotation == RotateFlipType.RotateNoneFlipNone || newRotation == RotateFlipType.Rotate180FlipNone)
             {
@@ -565,8 +567,8 @@ namespace F16CPD.UI.Forms
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public new void Dispose()
         {
@@ -575,8 +577,8 @@ namespace F16CPD.UI.Forms
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~frmMain()
         {
@@ -588,9 +590,9 @@ namespace F16CPD.UI.Forms
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         private void Dispose(bool disposing)
             //bool myDispose is there to differentiate this method from another that it would otherwise hide
         {

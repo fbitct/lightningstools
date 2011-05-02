@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -86,7 +85,7 @@ namespace LightningGauges.Renderers
                 get { return _CabinPressureAltitudeFeet; }
                 set
                 {
-                    float pressureAltitude = value;
+                    var pressureAltitude = value;
                     if (pressureAltitude < 0) pressureAltitude = 0;
                     if (pressureAltitude > 50000) pressureAltitude = 50000;
                     _CabinPressureAltitudeFeet = pressureAltitude;
@@ -123,19 +122,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.Width - 12;
-                int height = _background.Height - 12;
+                var width = _background.Width - 12;
+                var height = _background.Height - 12;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-6, -5);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);

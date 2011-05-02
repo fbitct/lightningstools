@@ -6,11 +6,11 @@ public class CSSCodeProvider
 {
     public static ICodeCompiler CreateCompiler(string sourceFile)
     {
-        string sourceFileExtension = Path.GetExtension(sourceFile);
+        var sourceFileExtension = Path.GetExtension(sourceFile);
         if (CodeDomProvider.IsDefinedExtension(sourceFileExtension))
         {
-            string language = CodeDomProvider.GetLanguageFromExtension(sourceFileExtension);
-            CodeDomProvider provider = CodeDomProvider.CreateProvider(language);
+            var language = CodeDomProvider.GetLanguageFromExtension(sourceFileExtension);
+            var provider = CodeDomProvider.CreateProvider(language);
             return provider.CreateCompiler();
         }
         else

@@ -14,10 +14,10 @@ namespace AnalogDevices
             {
                 int b, len, cs, addr;
                 var buf = new byte[255];
-                bool eof = false;
-                int line = 0;
+                var eof = false;
+                var line = 0;
 
-                for (int i = 0; i < _ihxData.Length; i++)
+                for (var i = 0; i < _ihxData.Length; i++)
                 {
                     _ihxData[i] = -1;
                 }
@@ -48,7 +48,7 @@ namespace AnalogDevices
                     b = ReadHexByte(stream); // record type field
                     cs += b;
 
-                    for (int i = 0; i < len; i++)
+                    for (var i = 0; i < len; i++)
                     {
                         // data
                         buf[i] = (byte) ReadHexByte(stream);
@@ -63,7 +63,7 @@ namespace AnalogDevices
 
                     if (b == 0) // data record 
                     {
-                        for (int i = 0; i < len; i++)
+                        for (var i = 0; i < len; i++)
                         {
                             if (_ihxData[addr + i] >= 0)
                             {
@@ -93,7 +93,7 @@ namespace AnalogDevices
 
         private static int ReadHexDigit(Stream stream)
         {
-            int b = stream.ReadByte();
+            var b = stream.ReadByte();
             if (b >= (byte) '0' && b <= (byte) '9') return b - (byte) '0';
             if (b >= (byte) 'a' && b <= (byte) 'f') return 10 + b - (byte) 'a';
             if (b >= (byte) 'A' && b <= (byte) 'F') return 10 + b - (byte) 'A';

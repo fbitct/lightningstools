@@ -18,8 +18,8 @@ namespace F16CPD.UI.Forms
         {
             pnlFlow.Margin = new Padding(0);
             pnlFlow.Padding = new Padding(0);
-            int i = 0;
-            foreach (string radioItem in RadioButtonItems)
+            var i = 0;
+            foreach (var radioItem in RadioButtonItems)
             {
                 var button = new RadioButton
                                  {

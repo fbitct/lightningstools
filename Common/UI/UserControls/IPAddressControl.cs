@@ -30,11 +30,10 @@ namespace Common.UI.UserControls
         [Browsable(true)]
         public bool AllowInternalTab
         {
-            get
-            { return _fieldControls.Select(fc => fc.TabStop).FirstOrDefault(); }
+            get { return _fieldControls.Select(fc => fc.TabStop).FirstOrDefault(); }
             set
             {
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     fc.TabStop = value;
                 }
@@ -44,8 +43,7 @@ namespace Common.UI.UserControls
         [Browsable(true)]
         public bool AnyBlank
         {
-            get
-            { return _fieldControls.Any(fc => fc.Blank); }
+            get { return _fieldControls.Any(fc => fc.Blank); }
         }
 
         [Browsable(true)]
@@ -68,9 +66,9 @@ namespace Common.UI.UserControls
         {
             get
             {
-                NativeMethods.TEXTMETRIC textMetric = GetTextMetrics(Handle, Font);
+                var textMetric = GetTextMetrics(Handle, Font);
 
-                int offset = textMetric.tmAscent + 1;
+                var offset = textMetric.tmAscent + 1;
 
                 switch (BorderStyle)
                 {
@@ -89,8 +87,7 @@ namespace Common.UI.UserControls
         [Browsable(true)]
         public bool Blank
         {
-            get
-            { return _fieldControls.All(fc => fc.Blank); }
+            get { return _fieldControls.All(fc => fc.Blank); }
         }
 
         [Browsable(true)]
@@ -108,8 +105,7 @@ namespace Common.UI.UserControls
         [Browsable(false)]
         public override bool Focused
         {
-            get
-            { return _fieldControls.Any(fc => fc.Focused); }
+            get { return _fieldControls.Any(fc => fc.Focused); }
         }
 
         [Browsable(true)]
@@ -126,12 +122,12 @@ namespace Common.UI.UserControls
             {
                 _readOnly = value;
 
-                foreach (FieldControl fc in _fieldControls)
+                foreach (var fc in _fieldControls)
                 {
                     fc.ReadOnly = _readOnly;
                 }
 
-                foreach (DotControl dc in _dotControls)
+                foreach (var dc in _dotControls)
                 {
                     dc.ReadOnly = _readOnly;
                 }
@@ -149,7 +145,7 @@ namespace Common.UI.UserControls
             {
                 var sb = new StringBuilder();
 
-                for (int index = 0; index < _fieldControls.Length; ++index)
+                for (var index = 0; index < _fieldControls.Length; ++index)
                 {
                     sb.Append(_fieldControls[index].Text);
 
@@ -170,7 +166,7 @@ namespace Common.UI.UserControls
 
         public void Clear()
         {
-            foreach (FieldControl fc in _fieldControls)
+            foreach (var fc in _fieldControls)
             {
                 fc.Clear();
             }
@@ -180,7 +176,7 @@ namespace Common.UI.UserControls
         {
             var bytes = new byte[FIELD_COUNT];
 
-            for (int index = 0; index < FIELD_COUNT; ++index)
+            for (var index = 0; index < FIELD_COUNT; ++index)
             {
                 bytes[index] = _fieldControls[index].Value;
             }
@@ -197,9 +193,9 @@ namespace Common.UI.UserControls
                 return;
             }
 
-            int length = System.Math.Min(FIELD_COUNT, bytes.Length);
+            var length = System.Math.Min(FIELD_COUNT, bytes.Length);
 
-            for (int i = 0; i < length; ++i)
+            for (var i = 0; i < length; ++i)
             {
                 _fieldControls[i].Text = bytes[i].ToString(CultureInfo.InvariantCulture);
             }
@@ -226,7 +222,7 @@ namespace Common.UI.UserControls
         {
             var sb = new StringBuilder();
 
-            for (int index = 0; index < FIELD_COUNT; ++index)
+            for (var index = 0; index < FIELD_COUNT; ++index)
             {
                 sb.Append(_fieldControls[index].ToString());
 
@@ -249,7 +245,7 @@ namespace Common.UI.UserControls
 
             ResetBackColorChanged();
 
-            for (int index = 0; index < _fieldControls.Length; ++index)
+            for (var index = 0; index < _fieldControls.Length; ++index)
             {
                 _fieldControls[index] = new FieldControl();
 
@@ -367,7 +363,7 @@ namespace Common.UI.UserControls
         {
             base.OnPaint(e);
 
-            Color backColor = BackColor;
+            var backColor = BackColor;
 
             if (!_backColorChanged)
             {
@@ -428,7 +424,7 @@ namespace Common.UI.UserControls
 
         private void AdjustSize()
         {
-            Size newSize = MinimumSize;
+            var newSize = MinimumSize;
 
             if (Width > newSize.Width)
             {
@@ -449,13 +445,13 @@ namespace Common.UI.UserControls
         {
             var minimumSize = new Size(0, 0);
 
-            foreach (FieldControl fc in _fieldControls)
+            foreach (var fc in _fieldControls)
             {
                 minimumSize.Width += fc.Width;
                 minimumSize.Height = System.Math.Max(minimumSize.Height, fc.Height);
             }
 
-            foreach (DotControl dc in _dotControls)
+            foreach (var dc in _dotControls)
             {
                 minimumSize.Width += dc.Width;
                 minimumSize.Height = System.Math.Max(minimumSize.Height, dc.Height);
@@ -485,14 +481,14 @@ namespace Common.UI.UserControls
 
         private static NativeMethods.TEXTMETRIC GetTextMetrics(IntPtr hwnd, Font font)
         {
-            IntPtr hdc = NativeMethods.GetWindowDC(hwnd);
+            var hdc = NativeMethods.GetWindowDC(hwnd);
 
             NativeMethods.TEXTMETRIC textMetric;
-            IntPtr hFont = font.ToHfont();
+            var hFont = font.ToHfont();
 
             try
             {
-                IntPtr hFontPreviouse = NativeMethods.SelectObject(hdc, hFont);
+                var hFontPreviouse = NativeMethods.SelectObject(hdc, hFont);
                 NativeMethods.GetTextMetrics(hdc, out textMetric);
                 NativeMethods.SelectObject(hdc, hFontPreviouse);
             }
@@ -519,18 +515,18 @@ namespace Common.UI.UserControls
         {
             SuspendLayout();
 
-            int difference = Width - MinimumSize.Width;
+            var difference = Width - MinimumSize.Width;
 
             Debug.Assert(difference >= 0);
 
-            int numOffsets = _fieldControls.Length + _dotControls.Length + 1;
+            var numOffsets = _fieldControls.Length + _dotControls.Length + 1;
 
-            int div = difference/(numOffsets);
-            int mod = difference%(numOffsets);
+            var div = difference/(numOffsets);
+            var mod = difference%(numOffsets);
 
             var offsets = new int[numOffsets];
 
-            for (int index = 0; index < numOffsets; ++index)
+            for (var index = 0; index < numOffsets; ++index)
             {
                 offsets[index] = div;
 
@@ -540,8 +536,8 @@ namespace Common.UI.UserControls
                 }
             }
 
-            int x = 0;
-            int y = 0;
+            var x = 0;
+            var y = 0;
 
             switch (BorderStyle)
             {
@@ -555,11 +551,11 @@ namespace Common.UI.UserControls
                     break;
             }
 
-            int offsetIndex = 0;
+            var offsetIndex = 0;
 
             x += offsets[offsetIndex++];
 
-            for (int i = 0; i < _fieldControls.Length; ++i)
+            for (var i = 0; i < _fieldControls.Length; ++i)
             {
                 _fieldControls[i].Location = new Point(x, y);
 
@@ -608,7 +604,7 @@ namespace Common.UI.UserControls
                 return;
             }
 
-            int fieldIndex = e.FieldIndex;
+            var fieldIndex = e.FieldIndex;
 
             if (e.Direction == Direction.Forward)
             {
@@ -711,7 +707,7 @@ namespace Common.UI.UserControls
 
             for (index = 0; index < _dotControls.Length; ++index)
             {
-                int findIndex = text.IndexOf(_dotControls[index].Text, textIndex, StringComparison.OrdinalIgnoreCase);
+                var findIndex = text.IndexOf(_dotControls[index].Text, textIndex, StringComparison.OrdinalIgnoreCase);
 
                 if (findIndex >= 0)
                 {
@@ -740,11 +736,11 @@ namespace Common.UI.UserControls
         private readonly DotControl[] _dotControls = new DotControl[FIELD_COUNT - 1];
         private readonly FieldControl[] _fieldControls = new FieldControl[FIELD_COUNT];
         private readonly TextBox _referenceTextBox = new TextBox();
-        private Size _fixed3DOffset = new Size(3, 3);
-        private Size _fixedSingleOffset = new Size(2, 2);
         private bool _autoHeight = true;
         private bool _backColorChanged;
         private BorderStyle _borderStyle = BorderStyle.Fixed3D;
+        private Size _fixed3DOffset = new Size(3, 3);
+        private Size _fixedSingleOffset = new Size(2, 2);
         private bool _focused;
         private bool _hasMouse;
         private bool _readOnly;

@@ -17,7 +17,7 @@ namespace Phcc.DeviceManager.UI
 
         private void cmdOK_Click(object sender, EventArgs e)
         {
-            bool wasValid = ValidateBaseAddress();
+            var wasValid = ValidateBaseAddress();
             if (wasValid)
             {
                 DialogResult = DialogResult.OK;
@@ -28,9 +28,9 @@ namespace Phcc.DeviceManager.UI
         private bool ValidateBaseAddress()
         {
             errorProvider1.Clear();
-            string baseAddressAsEntered = txtBaseAddress.Text;
+            var baseAddressAsEntered = txtBaseAddress.Text;
             byte val = 0;
-            bool valid = TryParseBaseAddress(baseAddressAsEntered, out val);
+            var valid = TryParseBaseAddress(baseAddressAsEntered, out val);
             if (!valid)
             {
                 errorProvider1.SetError(txtBaseAddress,
@@ -40,7 +40,7 @@ namespace Phcc.DeviceManager.UI
             {
                 if (ProhibitedBaseAddresses != null)
                 {
-                    foreach (byte prohibitedAddress in ProhibitedBaseAddresses)
+                    foreach (var prohibitedAddress in ProhibitedBaseAddresses)
                     {
                         if (prohibitedAddress == val)
                         {
@@ -61,7 +61,7 @@ namespace Phcc.DeviceManager.UI
 
         private bool TryParseBaseAddress(string baseAddress, out byte val)
         {
-            bool valid = true;
+            var valid = true;
             val = 0;
             if (!String.IsNullOrEmpty(baseAddress))
             {

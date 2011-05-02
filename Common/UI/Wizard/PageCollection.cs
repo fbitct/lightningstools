@@ -3,23 +3,23 @@ using System.Collections;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// Summary description for PanelCollection.
+    ///   Summary description for PanelCollection.
     /// </summary>
     public class PageCollection : CollectionBase
     {
         private readonly Wizard vParent;
 
         /// <summary>
-        /// Constructor requires the  wizard that owns this collection
+        ///   Constructor requires the  wizard that owns this collection
         /// </summary>
-        /// <param name="parent">Wizard</param>
+        /// <param name = "parent">Wizard</param>
         public PageCollection(Wizard parent)
         {
             vParent = parent;
         }
 
         /// <summary>
-        /// Returns the wizard that owns this collection
+        ///   Returns the wizard that owns this collection
         /// </summary>
         public Wizard Parent
         {
@@ -27,7 +27,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Finds the Page in the collection
+        ///   Finds the Page in the collection
         /// </summary>
         public WizardPage this[int index]
         {
@@ -37,34 +37,34 @@ namespace Common.UI.Wizard
 
 
         /// <summary>
-        /// Adds a WizardPage into the Collection
+        ///   Adds a WizardPage into the Collection
         /// </summary>
-        /// <param name="value">The page to add</param>
+        /// <param name = "value">The page to add</param>
         /// <returns></returns>
         public int Add(WizardPage value)
         {
-            int result = List.Add(value);
+            var result = List.Add(value);
             return result;
         }
 
 
         /// <summary>
-        /// Adds an array of pages into the collection. Used by the Studio Designer generated coed
+        ///   Adds an array of pages into the collection. Used by the Studio Designer generated coed
         /// </summary>
-        /// <param name="pages">Array of pages to add</param>
+        /// <param name = "pages">Array of pages to add</param>
         public void AddRange(WizardPage[] pages)
         {
             // Use external to validate and add each entry
-            foreach (WizardPage page in pages)
+            foreach (var page in pages)
             {
                 Add(page);
             }
         }
 
         /// <summary>
-        /// Finds the position of the page in the colleciton
+        ///   Finds the position of the page in the colleciton
         /// </summary>
-        /// <param name="value">Page to find position of</param>
+        /// <param name = "value">Page to find position of</param>
         /// <returns>Index of Page in collection</returns>
         public int IndexOf(WizardPage value)
         {
@@ -72,10 +72,10 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Adds a new page at a particular position in the Collection
+        ///   Adds a new page at a particular position in the Collection
         /// </summary>
-        /// <param name="index">Position</param>
-        /// <param name="value">Page to be added</param>
+        /// <param name = "index">Position</param>
+        /// <param name = "value">Page to be added</param>
         public void Insert(int index, WizardPage value)
         {
             List.Insert(index, value);
@@ -83,9 +83,9 @@ namespace Common.UI.Wizard
 
 
         /// <summary>
-        /// Removes the given page from the collection
+        ///   Removes the given page from the collection
         /// </summary>
-        /// <param name="value">Page to remove</param>
+        /// <param name = "value">Page to remove</param>
         public void Remove(WizardPage value)
         {
             //Remove the item
@@ -93,9 +93,9 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Detects if a given Page is in the Collection
+        ///   Detects if a given Page is in the Collection
         /// </summary>
-        /// <param name="value">Page to find</param>
+        /// <param name = "value">Page to find</param>
         /// <returns></returns>
         public bool Contains(WizardPage value)
         {
@@ -104,10 +104,10 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Propgate when a external designer modifies the pages
+        ///   Propgate when a external designer modifies the pages
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
+        /// <param name = "index"></param>
+        /// <param name = "value"></param>
         protected override void OnInsertComplete(int index, object value)
         {
             base.OnInsertComplete(index, value);
@@ -116,10 +116,10 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Propogates when external designers remove items from page
+        ///   Propogates when external designers remove items from page
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="value"></param>
+        /// <param name = "index"></param>
+        /// <param name = "value"></param>
         protected override void OnRemoveComplete(int index, object value)
         {
             base.OnRemoveComplete(index, value);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -96,7 +95,7 @@ namespace LightningGauges.Renderers
                 get { return _nozzlePositionPercent; }
                 set
                 {
-                    float pct = value;
+                    var pct = value;
                     if (pct < 0) pct = 0;
                     if (pct > 102) pct = 102;
                     _nozzlePositionPercent = pct;
@@ -134,19 +133,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 178;
-                int height = 178;
+                var width = 178;
+                var height = 178;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-39, -39);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -164,7 +163,7 @@ namespace LightningGauges.Renderers
 
                 //draw the needle 
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                float angle = 55.0f + (2.5f*InstrumentState.NozzlePositionPercent);
+                var angle = 55.0f + (2.5f*InstrumentState.NozzlePositionPercent);
 
                 g.TranslateTransform(_background.Width/2.0f, _background.Width/2.0f);
                 g.RotateTransform(angle);

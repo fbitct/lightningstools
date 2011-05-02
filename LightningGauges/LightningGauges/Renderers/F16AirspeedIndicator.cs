@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -113,7 +112,7 @@ namespace LightningGauges.Renderers
                 get { return _airspeedKnots; }
                 set
                 {
-                    float knots = value;
+                    var knots = value;
                     if (knots < 0) knots = 0;
                     if (knots > MAX_AIRSPEED) knots = MAX_AIRSPEED;
                     _airspeedKnots = knots;
@@ -125,7 +124,7 @@ namespace LightningGauges.Renderers
                 get { return _machNumber; }
                 set
                 {
-                    float mach = value;
+                    var mach = value;
                     if (mach < 0) mach = 0;
                     if (mach > MAX_MACH) mach = MAX_MACH;
                     _machNumber = mach;
@@ -137,7 +136,7 @@ namespace LightningGauges.Renderers
                 get { return _airspeedIndexKnots; }
                 set
                 {
-                    float knots = value;
+                    var knots = value;
                     if (knots < MIN_AIRSPEED_INDEX_KNOTS) knots = MIN_AIRSPEED_INDEX_KNOTS;
                     if (knots > MAX_AIRSPEED_INDEX_KNOTS) knots = MAX_AIRSPEED_INDEX_KNOTS;
                     _airspeedIndexKnots = knots;
@@ -149,7 +148,7 @@ namespace LightningGauges.Renderers
                 get { return _neverExceedSpeedKnots; }
                 set
                 {
-                    float vne = value;
+                    var vne = value;
                     if (vne < 0) vne = 0;
                     if (vne > MAX_AIRSPEED) vne = MAX_AIRSPEED;
                     _neverExceedSpeedKnots = vne;
@@ -178,19 +177,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 191;
-                int height = 191;
+                var width = 191;
+                var height = 191;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-31, -34);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
 
                 //draw the background image
@@ -199,16 +198,16 @@ namespace LightningGauges.Renderers
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
-                float airspeed = InstrumentState.AirspeedKnots;
-                float airspeedIndex = InstrumentState.AirspeedIndexKnots;
-                float mach = InstrumentState.MachNumber;
+                var airspeed = InstrumentState.AirspeedKnots;
+                var airspeedIndex = InstrumentState.AirspeedIndexKnots;
+                var mach = InstrumentState.MachNumber;
                 //calculate airspeed and mach wheel angles
-                float airspeedAngle = GetPointerAngle(airspeed);
-                float airspeedIndexAngle = GetPointerAngle(airspeedIndex);
-                float machAngle = -GetMachAngle(mach);
+                var airspeedAngle = GetPointerAngle(airspeed);
+                var airspeedIndexAngle = GetPointerAngle(airspeedIndex);
+                var machAngle = -GetMachAngle(mach);
                 machAngle = (machAngle + 240.5f + airspeedAngle)%360.0f;
                 airspeedAngle = (airspeedAngle + 128.0f)%360.0f;
-                    //compensate for pointer image not being oriented with zero up
+                //compensate for pointer image not being oriented with zero up
 
                 //draw the mach wheel
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);

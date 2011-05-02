@@ -22,7 +22,7 @@ namespace F4Utils.Campaign
             offset++;
             element = new VU_ID[elements];
             if (elements < 5) element = new VU_ID[5];
-            for (int i = 0; i < elements; i++)
+            for (var i = 0; i < elements; i++)
             {
                 var thisElement = new VU_ID();
                 thisElement.num_ = BitConverter.ToUInt32(bytes, offset);

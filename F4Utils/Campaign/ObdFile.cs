@@ -22,16 +22,16 @@ namespace F4Utils.Campaign
         {
             _version = version;
             short numObjectiveDeltas = 0;
-            byte[] expanded = Expand(compressed, out numObjectiveDeltas);
+            var expanded = Expand(compressed, out numObjectiveDeltas);
             if (expanded != null) Decode(expanded, version, numObjectiveDeltas);
         }
 
         protected void Decode(byte[] bytes, int version, short numObjectiveDeltas)
         {
-            int curByte = 0;
+            var curByte = 0;
             deltas = new ObjectiveDelta[numObjectiveDeltas];
 
-            for (int i = 0; i < numObjectiveDeltas; i++)
+            for (var i = 0; i < numObjectiveDeltas; i++)
             {
                 var thisObjectiveDelta = new ObjectiveDelta();
 
@@ -52,7 +52,7 @@ namespace F4Utils.Campaign
                 curByte++;
                 thisObjectiveDelta.losses = bytes[curByte];
                 curByte++;
-                byte numFstatus = bytes[curByte];
+                var numFstatus = bytes[curByte];
                 curByte++;
                 thisObjectiveDelta.fStatus = new byte[numFstatus];
                 if (version < 64)
@@ -62,7 +62,7 @@ namespace F4Utils.Campaign
                 }
                 else
                 {
-                    for (int j = 0; j < numFstatus; j++)
+                    for (var j = 0; j < numFstatus; j++)
                     {
                         thisObjectiveDelta.fStatus[j] = bytes[curByte];
                         curByte++;
@@ -74,12 +74,12 @@ namespace F4Utils.Campaign
 
         protected static byte[] Expand(byte[] compressed, out short numObjectiveDeltas)
         {
-            int curByte = 0;
-            int cSize = BitConverter.ToInt32(compressed, curByte);
+            var curByte = 0;
+            var cSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             numObjectiveDeltas = BitConverter.ToInt16(compressed, curByte);
             curByte += 2;
-            int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
+            var uncompressedSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             if (uncompressedSize == 0) return null;
             var actualCompressed = new byte[compressed.Length - 10];

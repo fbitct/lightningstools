@@ -7,11 +7,11 @@ namespace PPJoy
     #region Internal enums
 
     /// <summary>
-    /// Enumeration of map prefixes for specific device capabilities/control types.
-    /// These byte values are used as signals within raw mapping data 
-    /// sent to/received from PPJoy.  They declare the presence of a control
-    /// of the specified type and are followed by a second byte that describes
-    /// further details of the control declaration.
+    ///   Enumeration of map prefixes for specific device capabilities/control types.
+    ///   These byte values are used as signals within raw mapping data 
+    ///   sent to/received from PPJoy.  They declare the presence of a control
+    ///   of the specified type and are followed by a second byte that describes
+    ///   further details of the control declaration.
     /// </summary>
     internal enum DeviceCapabilitiesPrefixes : byte
     {
@@ -21,8 +21,8 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// Enumeration of file device types (subset of NativeMethods.EFileDevice) that
-    /// can be referenced by native IOCTL calls.
+    ///   Enumeration of file device types (subset of NativeMethods.EFileDevice) that
+    ///   can be referenced by native IOCTL calls.
     /// </summary>
     internal enum FileDevices : uint
     {
@@ -31,7 +31,7 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// Enumeration of message version signatures used by PPJoy in various message types
+    ///   Enumeration of message version signatures used by PPJoy in various message types
     /// </summary>
     internal enum MessageVersions : uint
     {
@@ -44,9 +44,9 @@ namespace PPJoy
     #region Internal Struct Declarations
 
     /// <summary>
-    /// Structure that gets passed over IOCTL interface to PPJOY to update the state
-    /// of analog and digital data sources that PPJoy virtual devices get their
-    /// data from.  Can also be returned by PPJoy in response to a GetState command.
+    ///   Structure that gets passed over IOCTL interface to PPJOY to update the state
+    ///   of analog and digital data sources that PPJoy virtual devices get their
+    ///   data from.  Can also be returned by PPJoy in response to a GetState command.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct JoystickState
@@ -55,16 +55,16 @@ namespace PPJoy
         internal Byte NumAnalog; // Num of analog values we pass 
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = VirtualJoystick.MaxAnalogDataSources)] internal Int32[] Analog;
-                                                                                                                 // Analog input values
+        // Analog input values
 
         internal Byte NumDigital; // Number of digital values we pass
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = VirtualJoystick.MaxDigitalDataSources)] internal Byte[] Digital;
-                                                                                                                 // Digital input values
+        // Digital input values
     } ;
 
     /// <summary>
-    /// PPJoy IOCTL header that describes a specific PPJoy device.
+    ///   PPJoy IOCTL header that describes a specific PPJoy device.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct DeviceInfo
@@ -80,9 +80,9 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// PPJoy IOCTL Header that is used to add a device to the system. 
-    /// Callers should fill all the fields of AddDeviceMessage 
-    /// except the PortAddress field. 
+    ///   PPJoy IOCTL Header that is used to add a device to the system. 
+    ///   Callers should fill all the fields of AddDeviceMessage 
+    ///   except the PortAddress field.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct AddDeviceMessage
@@ -92,10 +92,10 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// PPJoy IOCTL header that specifies a joystick to delete. 
-    /// Callers should fill in the Size, JoyType, 
-    /// UnitNumber and LPTNumber fields in the JoyData DeviceInfo structure. 
-    /// Set all other fields to 0.
+    ///   PPJoy IOCTL header that specifies a joystick to delete. 
+    ///   Callers should fill in the Size, JoyType, 
+    ///   UnitNumber and LPTNumber fields in the JoyData DeviceInfo structure. 
+    ///   Set all other fields to 0.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct RemoveDeviceMessage
@@ -104,8 +104,8 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// PPJoy IOCTL header that will enumerate all the joysticks currently defined
-    /// within PPJoy.
+    ///   PPJoy IOCTL header that will enumerate all the joysticks currently defined
+    ///   within PPJoy.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct EnumerateDevicesMessage
@@ -118,7 +118,7 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// PPJoy IOCTL structure that contains a payload for a map definition message.
+    ///   PPJoy IOCTL structure that contains a payload for a map definition message.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct JoystickMapPayload
@@ -129,11 +129,11 @@ namespace PPJoy
         internal Byte NumMaps; //the number of maps declared in the map data (always =1)
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = (int) Headers.MaxMappingPayloadLength)] internal Byte[] Data;
-                                                                                                                 //the raw map data
+        //the raw map data
     }
 
     /// <summary>
-    /// PPJoy IOCTL header that indicates a virtual joystick map data packet.
+    ///   PPJoy IOCTL header that indicates a virtual joystick map data packet.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct JoystickMapHeader
@@ -150,7 +150,7 @@ namespace PPJoy
     #endregion
 
     /// <summary>
-    /// Contains enums, structs, and methods for communicating with PPJoy's device drivers at a low level via P/Invoke.
+    ///   Contains enums, structs, and methods for communicating with PPJoy's device drivers at a low level via P/Invoke.
     /// </summary>
     internal class Headers
     {
@@ -161,7 +161,7 @@ namespace PPJoy
         #region Dynamic Declarations
 
         internal const UInt32 MaxMappingPayloadLength = 250;
-                              //(uint)(4 * VirtualJoystick.MaxVisibleAxes) + (3 * VirtualJoystick.MaxVisibleButtons) + (6 * VirtualJoystick.MaxVisiblePovs);
+        //(uint)(4 * VirtualJoystick.MaxVisibleAxes) + (3 * VirtualJoystick.MaxVisibleButtons) + (6 * VirtualJoystick.MaxVisiblePovs);
 
         internal static UInt32 IoCtlCreatePPJoyDevice = GetPPJoyBusIoCtlCode(0x3);
         internal static UInt32 IoCtlDeletePPJoyDevice = GetPPJoyBusIoCtlCode(0x4);
@@ -172,9 +172,9 @@ namespace PPJoy
         internal static UInt32 IoCtlDeletePPJoyDeviceMappings = GetPPJoyDeviceIoCtlCode(0x4);
 
         /// <summary>
-        /// Looks up the PPJOY IOCTL code for a given opcode (e.g. write)
+        ///   Looks up the PPJOY IOCTL code for a given opcode (e.g. write)
         /// </summary>
-        /// <param name="_index_">PPJOY opcode</param>
+        /// <param name = "_index_">PPJOY opcode</param>
         /// <returns>IOCTL code for PPJOY device type, using the buffered write method and ANY file access</returns>
         internal static UInt32 GetPPJoyDeviceIoCtlCode(UInt32 _index_)
         {
@@ -183,9 +183,9 @@ namespace PPJoy
         }
 
         /// <summary>
-        /// Looks up the PPJOY BUS IOCTL code for a given opcode (e.g. write)
+        ///   Looks up the PPJOY BUS IOCTL code for a given opcode (e.g. write)
         /// </summary>
-        /// <param name="_index_">PPJOY bus opcode</param>
+        /// <param name = "_index_">PPJOY bus opcode</param>
         /// <returns>IOCTL code for PPJOY bus device type, using the buffered write method and ANY file access</returns>
         internal static UInt32 GetPPJoyBusIoCtlCode(UInt32 _index_)
         {

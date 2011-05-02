@@ -17,11 +17,11 @@ namespace F4Utils.Campaign
                 fs.Read(bytes, 0, (int) ctFileInfo.Length);
                 fs.Close();
             }
-            int curByte = 0;
-            short numEntities = BitConverter.ToInt16(bytes, curByte);
+            var curByte = 0;
+            var numEntities = BitConverter.ToInt16(bytes, curByte);
             curByte += 2;
             var classTable = new Falcon4EntityClassType[numEntities];
-            for (int i = 0; i < numEntities; i++)
+            for (var i = 0; i < numEntities; i++)
             {
                 var thisClass = new Falcon4EntityClassType();
                 thisClass.vuClassData = new VuEntityType();
@@ -32,7 +32,7 @@ namespace F4Utils.Campaign
                 thisClass.vuClassData.collisionRadius_ = BitConverter.ToSingle(bytes, curByte);
                 curByte += 4;
                 thisClass.vuClassData.classInfo_ = new byte[8];
-                for (int j = 0; j < 8; j++)
+                for (var j = 0; j < 8; j++)
                 {
                     thisClass.vuClassData.classInfo_[j] = bytes[curByte];
                     curByte++;
@@ -75,7 +75,7 @@ namespace F4Utils.Campaign
 
 
                 thisClass.visType = new short[7];
-                for (int j = 0; j < 7; j++)
+                for (var j = 0; j < 7; j++)
                 {
                     thisClass.visType[j] = BitConverter.ToInt16(bytes, curByte);
                     curByte += 2;

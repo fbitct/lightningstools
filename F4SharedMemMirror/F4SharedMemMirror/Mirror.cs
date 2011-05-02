@@ -68,11 +68,11 @@ namespace F4SharedMemMirror
             SharedMemoryMirrorClient client;
             try
             {
-                string serverIPAddress = Settings.Default.ServerIPAddress;
-                string serverPortNum = Settings.Default.ServerPortNum;
-                int portNum = 21142;
+                var serverIPAddress = Settings.Default.ServerIPAddress;
+                var serverPortNum = Settings.Default.ServerPortNum;
+                var portNum = 21142;
                 Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
-                IPAddress serverAddress = IPAddress.Parse(serverIPAddress);
+                var serverAddress = IPAddress.Parse(serverIPAddress);
                 var endpoint = new IPEndPoint(serverAddress, portNum);
                 client = new SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
             }
@@ -89,11 +89,11 @@ namespace F4SharedMemMirror
                     {
                         try
                         {
-                            string serverIPAddress = Settings.Default.ServerIPAddress;
-                            string serverPortNum = Settings.Default.ServerPortNum;
-                            int portNum = 21142;
+                            var serverIPAddress = Settings.Default.ServerIPAddress;
+                            var serverPortNum = Settings.Default.ServerPortNum;
+                            var portNum = 21142;
                             Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
-                            IPAddress serverAddress = IPAddress.Parse(serverIPAddress);
+                            var serverAddress = IPAddress.Parse(serverIPAddress);
                             var endpoint = new IPEndPoint(serverAddress, portNum);
                             client = new SharedMemoryMirrorClient(endpoint, "F4SharedMemoryMirrorService");
                         }
@@ -138,8 +138,8 @@ namespace F4SharedMemMirror
             _running = true;
             _smReader = new Reader();
 
-            string serverPortNum = Settings.Default.ServerPortNum;
-            int portNum = 21142;
+            var serverPortNum = Settings.Default.ServerPortNum;
+            var portNum = 21142;
             Int32.TryParse(Settings.Default.ServerPortNum, out portNum);
 
             try
@@ -162,9 +162,9 @@ namespace F4SharedMemMirror
             {
                 try
                 {
-                    byte[] primaryFlightData = _smReader.GetRawPrimaryFlightData();
-                    byte[] flightData2 = _smReader.GetRawFlightData2();
-                    byte[] osbData = _smReader.GetRawOSBData();
+                    var primaryFlightData = _smReader.GetRawPrimaryFlightData();
+                    var flightData2 = _smReader.GetRawFlightData2();
+                    var osbData = _smReader.GetRawOSBData();
                     SharedMemoryMirrorServer.SetPrimaryFlightData(primaryFlightData);
                     SharedMemoryMirrorServer.SetFlightData2(flightData2);
                     SharedMemoryMirrorServer.SetOSBData(osbData);

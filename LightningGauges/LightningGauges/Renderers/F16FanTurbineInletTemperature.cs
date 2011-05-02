@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -90,7 +89,7 @@ namespace LightningGauges.Renderers
                 get { return _inletTemperatureDegreesCelcius; }
                 set
                 {
-                    float temp = value;
+                    var temp = value;
                     if (temp < MIN_TEMP_CELCIUS) temp = MIN_TEMP_CELCIUS;
                     _inletTemperatureDegreesCelcius = temp;
                 }
@@ -132,19 +131,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 178;
-                int height = 178;
+                var width = 178;
+                var height = 178;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-39, -39);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -162,7 +161,7 @@ namespace LightningGauges.Renderers
 
                 //draw the needle 
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                float angle = 116f + GetAngle(InstrumentState.InletTemperatureDegreesCelcius);
+                var angle = 116f + GetAngle(InstrumentState.InletTemperatureDegreesCelcius);
 
                 g.TranslateTransform(_background.Width/2.0f, _background.Width/2.0f);
                 g.RotateTransform(angle);
@@ -185,17 +184,17 @@ namespace LightningGauges.Renderers
             else if (inletTemperature > 200.0f && inletTemperature <= 700.0f)
             {
                 angle = ((inletTemperature - 200.0f)/50.0f)*10.5f;
-                    //10.5 degrees of space for 50 degrees Celcius of readout
+                //10.5 degrees of space for 50 degrees Celcius of readout
             }
             else if (inletTemperature > 700.0f && inletTemperature <= 1000.0f)
             {
                 angle = 105 + ((inletTemperature - 700.0f)/10.0f)*5.4f;
-                    //5.5 degrees of space for 10 degrees Celcius of readout
+                //5.5 degrees of space for 10 degrees Celcius of readout
             }
             else if (inletTemperature > 1000.0f && inletTemperature <= 1200.0f)
             {
                 angle = 266 + ((inletTemperature - 1000.0f)/50.0f)*10.5f;
-                    //10.5 degrees of space for 50 degrees Celcius of readout
+                //10.5 degrees of space for 50 degrees Celcius of readout
             }
 
             return angle;

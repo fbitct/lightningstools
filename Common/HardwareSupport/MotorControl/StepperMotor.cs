@@ -25,7 +25,7 @@ namespace Common.HardwareSupport.MotorControl
             {
                 return;
             }
-            double changeInValue = args.CurrentState - args.PreviousState;
+            var changeInValue = args.CurrentState - args.PreviousState;
             PhysicalOutput.State = changeInValue*NumStepsInRangeOfTravel;
             base.OnGoToPositionSignalChanged(sender, args);
         }

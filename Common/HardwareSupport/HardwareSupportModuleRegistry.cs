@@ -18,12 +18,12 @@ namespace Common.HardwareSupport
         public List<IHardwareSupportModule> GetInstances()
         {
             List<IHardwareSupportModule> toReturn = null;
-            foreach (string hsmTypeName in HardwareSupportModuleTypeNames)
+            foreach (var hsmTypeName in HardwareSupportModuleTypeNames)
             {
                 try
                 {
-                    Type hsmType = Type.GetType(hsmTypeName);
-                    MethodInfo method = hsmType.GetMethod
+                    var hsmType = Type.GetType(hsmTypeName);
+                    var method = hsmType.GetMethod
                         (
                             "GetInstances",
                             BindingFlags.Public
@@ -37,7 +37,7 @@ namespace Common.HardwareSupport
                         );
                     if (method != null)
                     {
-                        object hsmArray = method.Invoke(null, null);
+                        var hsmArray = method.Invoke(null, null);
                         if (hsmArray is IHardwareSupportModule[])
                         {
                             if (toReturn == null)

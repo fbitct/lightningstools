@@ -11,7 +11,7 @@ namespace Common.MacroProgramming
         public BinaryCodedDecimalDigitDecoder()
         {
             var newIn = new DigitalSignal[4];
-            for (int i = 0; i < newIn.Length; i++)
+            for (var i = 0; i < newIn.Length; i++)
             {
                 newIn[i] = new DigitalSignal();
             }
@@ -28,16 +28,16 @@ namespace Common.MacroProgramming
                 if (value == null)
                 {
                     value = new DigitalSignal[4];
-                    for (int i = 0; i < value.Length; i++)
+                    for (var i = 0; i < value.Length; i++)
                     {
                         value[i] = new DigitalSignal();
                     }
                 }
-                for (int i = 0; i < value.Length; i++)
+                foreach (var t in value)
                 {
-                    if (value[i] != null)
+                    if (t != null)
                     {
-                        value[i].SignalChanged += _in_SignalChanged;
+                        t.SignalChanged += InSignalChanged;
                     }
                 }
                 _in = value;
@@ -59,7 +59,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             Evaluate();
         }
@@ -68,9 +68,9 @@ namespace Common.MacroProgramming
         {
             if (_in == null) return;
             if (_out == null) return;
-            int newVal = 0;
+            var newVal = 0;
 
-            for (int i = 0; i < _in.Length; i++)
+            for (var i = 0; i < _in.Length; i++)
             {
                 if (_in[i].State)
                 {

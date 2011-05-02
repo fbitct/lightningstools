@@ -50,7 +50,7 @@ namespace F4Utils.Campaign
             offset++;
 
             airbases = new ATMAirbase[numAirbases];
-            for (int j = 0; j < numAirbases; j++)
+            for (var j = 0; j < numAirbases; j++)
             {
                 airbases[j] = new ATMAirbase(bytes, ref offset, version);
             }
@@ -64,14 +64,14 @@ namespace F4Utils.Campaign
             missionRequests = new MissionRequest[numMissionRequests];
             if (version < 35)
             {
-                for (int j = 0; j < numMissionRequests; j++)
+                for (var j = 0; j < numMissionRequests; j++)
                 {
                     offset += 64;
                 }
             }
             else
             {
-                for (int j = 0; j < numMissionRequests; j++)
+                for (var j = 0; j < numMissionRequests; j++)
                 {
                     var mis_request = new MissionRequest();
 
@@ -163,7 +163,7 @@ namespace F4Utils.Campaign
                     offset++;
 
                     mis_request.slots = new byte[4];
-                    for (int k = 0; k < 4; k++)
+                    for (var k = 0; k < 4; k++)
                     {
                         mis_request.slots[k] = bytes[offset];
                         offset++;

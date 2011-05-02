@@ -31,7 +31,7 @@ namespace Phcc.DeviceManager.UI
 
         private void SelectSuppliedComPortInList()
         {
-            foreach (object item in cbComPort.Items)
+            foreach (var item in cbComPort.Items)
             {
                 if (item.ToString() == _comPort)
                 {
@@ -57,7 +57,7 @@ namespace Phcc.DeviceManager.UI
             IComparer<string> comparer = new NumericComparer();
             _comPorts.Sort(comparer);
             cbComPort.Items.Clear();
-            foreach (string portName in _comPorts)
+            foreach (var portName in _comPorts)
             {
                 cbComPort.Items.Add(portName);
             }
@@ -68,7 +68,7 @@ namespace Phcc.DeviceManager.UI
         {
             var ports = new Ports();
             var toReturn = new List<string>();
-            foreach (string portName in ports.SerialPortNames)
+            foreach (var portName in ports.SerialPortNames)
             {
                 toReturn.Add(portName);
             }
@@ -95,7 +95,7 @@ namespace Phcc.DeviceManager.UI
 
         private void EnableDisableOKButton()
         {
-            string selectedText = cbComPort.SelectedItem != null ? cbComPort.SelectedItem.ToString() : null;
+            var selectedText = cbComPort.SelectedItem != null ? cbComPort.SelectedItem.ToString() : null;
             cmdOk.Enabled = !(string.IsNullOrEmpty(selectedText));
         }
     }

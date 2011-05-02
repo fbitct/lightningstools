@@ -36,8 +36,8 @@ namespace F16CPD.Mfd.Controls
     public class ToggleSwitchMfdInputControl : MfdInputControl
     {
         protected int CurPosition = -1;
-        protected List<ToggleSwitchPositionMfdInputControl> _positions = new List<ToggleSwitchPositionMfdInputControl>();
         protected int PrevPosition = -1;
+        protected List<ToggleSwitchPositionMfdInputControl> _positions = new List<ToggleSwitchPositionMfdInputControl>();
 
         public List<ToggleSwitchPositionMfdInputControl> Positions
         {
@@ -50,7 +50,7 @@ namespace F16CPD.Mfd.Controls
             get { return CurPosition; }
             set
             {
-                int curPosition = CurPosition;
+                var curPosition = CurPosition;
                 if (value < 0) throw new ArgumentOutOfRangeException();
                 CurPosition = value <= _positions.Count - 1 ? value : 0;
                 if (curPosition != CurPosition)
@@ -67,9 +67,9 @@ namespace F16CPD.Mfd.Controls
             set
             {
                 if (value == null) throw new ArgumentNullException();
-                int curPosition = CurPosition;
-                int i = 0;
-                foreach (ToggleSwitchPositionMfdInputControl position in _positions)
+                var curPosition = CurPosition;
+                var i = 0;
+                foreach (var position in _positions)
                 {
                     if (position.PositionName == value.PositionName)
                     {
@@ -100,7 +100,7 @@ namespace F16CPD.Mfd.Controls
 
         public void Toggle()
         {
-            int curPosition = CurPosition;
+            var curPosition = CurPosition;
             CurPosition++;
             if (CurPosition > _positions.Count - 1)
             {

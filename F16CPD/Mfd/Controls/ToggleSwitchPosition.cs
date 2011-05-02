@@ -19,7 +19,7 @@ namespace F16CPD.Mfd.Controls
 
         public void Activate()
         {
-            ToggleSwitchMfdInputControl parent = Parent;
+            var parent = Parent;
             if (parent != null)
             {
                 parent.CurrentPosition = this;

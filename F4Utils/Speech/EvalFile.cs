@@ -26,12 +26,12 @@ namespace F4Utils.Speech
                 fs.Read(bytes, 0, (int) fi.Length);
             }
 
-            int fileLen = bytes.Length;
-            EvalFileHeaderRecord thisHeader = ReadHeader(bytes, 0);
-            uint numEvals = thisHeader.evalOffset/8;
+            var fileLen = bytes.Length;
+            var thisHeader = ReadHeader(bytes, 0);
+            var numEvals = thisHeader.evalOffset/8;
             evalFile.Headers = new EvalFileHeaderRecord[numEvals];
             evalFile.Headers[0] = thisHeader;
-            for (int i = 1; i < numEvals; i++)
+            for (var i = 1; i < numEvals; i++)
             {
                 evalFile.Headers[i] = ReadHeader(bytes, i);
             }
@@ -41,7 +41,7 @@ namespace F4Utils.Speech
 
         private static EvalFileHeaderRecord ReadHeader(byte[] bytes, int recordNum)
         {
-            int pEvalHeader = recordNum*8;
+            var pEvalHeader = recordNum*8;
 
             var thisHeader = new EvalFileHeaderRecord
                                  {
@@ -55,7 +55,7 @@ namespace F4Utils.Speech
 
             thisHeader.data = new EvalFileDataRecord[thisHeader.numEvals];
             var pEvalData = (int) thisHeader.evalOffset;
-            for (int i = 0; i < thisHeader.numEvals; i++)
+            for (var i = 0; i < thisHeader.numEvals; i++)
             {
                 var thisData = new EvalFileDataRecord
                                    {
@@ -71,10 +71,10 @@ namespace F4Utils.Speech
 
         public void FixupOffsets()
         {
-            uint offset = (uint) Headers.Length*8;
+            var offset = (uint) Headers.Length*8;
             for (ushort i = 0; i < Headers.Length; i++)
             {
-                EvalFileHeaderRecord thisHeader = Headers[i];
+                var thisHeader = Headers[i];
                 thisHeader.numEvals = (ushort) (thisHeader.data != null ? thisHeader.data.Length : 0);
                 thisHeader.evalOffset = offset;
                 Headers[i] = thisHeader;
@@ -93,7 +93,7 @@ namespace F4Utils.Speech
                 {
                     for (var i = 0; i < Headers.Length; i++)
                     {
-                        EvalFileHeaderRecord thisHeader = Headers[i];
+                        var thisHeader = Headers[i];
                         fs.Write(BitConverter.GetBytes(thisHeader.evalHdrNbr), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.numEvals), 0, 2);
                         fs.Write(BitConverter.GetBytes(thisHeader.evalOffset), 0, 4);
@@ -102,12 +102,12 @@ namespace F4Utils.Speech
                     //write data
                     for (var i = 0; i < Headers.Length; i++)
                     {
-                        EvalFileHeaderRecord thisHeader = Headers[i];
+                        var thisHeader = Headers[i];
                         if (thisHeader.data != null)
                         {
                             for (var j = 0; j < thisHeader.data.Length; j++)
                             {
-                                EvalFileDataRecord thisDataRecord = thisHeader.data[j];
+                                var thisDataRecord = thisHeader.data[j];
                                 fs.Write(BitConverter.GetBytes(thisDataRecord.evalElem), 0, 2);
                                 fs.Write(BitConverter.GetBytes(thisDataRecord.fragNbr), 0, 2);
                             }
@@ -133,7 +133,7 @@ namespace F4Utils.Speech
                           };
 
             using (var fs = new FileStream(evalXmlFilePath, FileMode.Create))
-            using (XmlWriter xw = XmlWriter.Create(fs, xws))
+            using (var xw = XmlWriter.Create(fs, xws))
             {
                 xw.WriteStartDocument();
                 xw.WriteStartElement("EvalFile");
@@ -144,7 +144,7 @@ namespace F4Utils.Speech
                 {
                     for (var i = 0; i < Headers.Length; i++)
                     {
-                        EvalFileHeaderRecord thisHeader = Headers[i];
+                        var thisHeader = Headers[i];
                         if (thisHeader.data != null)
                         {
                             xw.WriteStartElement("Eval"); //<Eval>
@@ -158,7 +158,7 @@ namespace F4Utils.Speech
 
                             for (var j = 0; j < thisHeader.data.Length; j++)
                             {
-                                EvalFileDataRecord thisDataRecord = thisHeader.data[j];
+                                var thisDataRecord = thisHeader.data[j];
                                 xw.WriteStartElement("Element"); //<Element>
                                 xw.WriteStartAttribute("evalElem");
                                 xw.WriteValue(thisDataRecord.evalElem);
@@ -212,7 +212,7 @@ namespace F4Utils.Speech
                     if (xr.NodeType == XmlNodeType.Element && xr.Name == "Eval")
                     {
                         thisHeader = new EvalFileHeaderRecord();
-                        string evalIdString = xr.GetAttribute("id");
+                        var evalIdString = xr.GetAttribute("id");
                         parsed = Int64.TryParse(evalIdString, out val);
                         if (parsed)
                         {
@@ -243,7 +243,7 @@ namespace F4Utils.Speech
                     else if (xr.NodeType == XmlNodeType.Element && xr.Name == "Element")
                     {
                         var thisDataRecord = new EvalFileDataRecord();
-                        string evalElem = xr.GetAttribute("evalElem");
+                        var evalElem = xr.GetAttribute("evalElem");
                         parsed = Int64.TryParse(evalElem, out val);
                         if (parsed)
                         {
@@ -257,7 +257,7 @@ namespace F4Utils.Speech
                                     evalXmlFilePath));
                         }
 
-                        string fragNbr = xr.GetAttribute("fragId");
+                        var fragNbr = xr.GetAttribute("fragId");
                         parsed = Int64.TryParse(fragNbr, out val);
                         if (parsed)
                         {

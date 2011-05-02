@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -195,7 +194,7 @@ namespace LightningGauges.Renderers
                 get { return _pitchDegrees; }
                 set
                 {
-                    float pitch = value;
+                    var pitch = value;
                     if (pitch < MIN_PITCH) pitch = MIN_PITCH;
                     if (pitch > MAX_PITCH) pitch = MAX_PITCH;
                     if (float.IsNaN(pitch) || float.IsInfinity(pitch))
@@ -211,7 +210,7 @@ namespace LightningGauges.Renderers
                 get { return _rollDegrees; }
                 set
                 {
-                    float roll = value;
+                    var roll = value;
                     if (roll < MIN_ROLL) roll = MIN_ROLL;
                     if (roll > MAX_ROLL) roll = MAX_ROLL;
                     if (float.IsInfinity(roll) || float.IsNaN(roll))
@@ -227,7 +226,7 @@ namespace LightningGauges.Renderers
                 get { return _localizerDeviationDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsNaN(degrees) || float.IsInfinity(degrees))
                     {
@@ -242,7 +241,7 @@ namespace LightningGauges.Renderers
                 get { return _localizerDeviationLimitDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsInfinity(degrees) || float.IsNaN(degrees) || degrees == 0)
                     {
@@ -257,7 +256,7 @@ namespace LightningGauges.Renderers
                 get { return _glideslopeDeviationLimitDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsNaN(degrees) || float.IsInfinity(degrees) || degrees == 0)
                     {
@@ -272,7 +271,7 @@ namespace LightningGauges.Renderers
                 get { return _glideslopeDeviationDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsInfinity(degrees) || float.IsNaN(degrees))
                     {
@@ -310,28 +309,28 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.Image.Width - 66;
-                int height = _background.Image.Height - 55;
+                var width = _background.Image.Width - 66;
+                var height = _background.Image.Height - 55;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-32, -31);
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the ball
-                float pixelsPerDegreePitch = 2.0f;
-                float pitchDegrees = InstrumentState.PitchDegrees;
-                float rollDegrees = InstrumentState.RollDegrees;
-                float centerPixelY = (_ball.Height/2.0f) - (pixelsPerDegreePitch*pitchDegrees);
-                float topPixelY = centerPixelY - 80;
-                float leftPixelX = (_ball.Width/2.0f) - 80;
+                var pixelsPerDegreePitch = 2.0f;
+                var pitchDegrees = InstrumentState.PitchDegrees;
+                var rollDegrees = InstrumentState.RollDegrees;
+                var centerPixelY = (_ball.Height/2.0f) - (pixelsPerDegreePitch*pitchDegrees);
+                var topPixelY = centerPixelY - 80;
+                var leftPixelX = (_ball.Width/2.0f) - 80;
                 var sourceRect = new RectangleF(leftPixelX, topPixelY, 160, 160);
                 var destRect = new RectangleF(48, 40, sourceRect.Width, sourceRect.Height);
 
@@ -366,12 +365,12 @@ namespace LightningGauges.Renderers
                 {
                     //draw the localizer bar
                     {
-                        float positionPct = InstrumentState.LocalizerDeviationDegrees/
-                                            InstrumentState.LocalizerDeviationLimitDegrees;
+                        var positionPct = InstrumentState.LocalizerDeviationDegrees/
+                                          InstrumentState.LocalizerDeviationLimitDegrees;
                         if (Math.Abs(positionPct) <= 1.0f)
                         {
-                            float canvasRange = 36.0f;
-                            float pos = (canvasRange*positionPct);
+                            var canvasRange = 36.0f;
+                            var pos = (canvasRange*positionPct);
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                             g.TranslateTransform(pos, -10.0f);
                             g.DrawImage(_verticalBar.MaskedImage, new Point(0, 0));
@@ -381,13 +380,13 @@ namespace LightningGauges.Renderers
 
                     //draw the glideslope bar
                     {
-                        float positionPct = InstrumentState.GlideslopeDeviationDegrees/
-                                            InstrumentState.GlideslopeDeviationLimitDegrees;
+                        var positionPct = InstrumentState.GlideslopeDeviationDegrees/
+                                          InstrumentState.GlideslopeDeviationLimitDegrees;
                         if (Math.Abs(positionPct) <= 1.0f)
                         {
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                            float canvasRange = 46.0f;
-                            float pos = (-canvasRange*positionPct);
+                            var canvasRange = 46.0f;
+                            var pos = (-canvasRange*positionPct);
                             g.TranslateTransform(0.0f, pos);
                             g.DrawImage(_horizontalBar.MaskedImage, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);

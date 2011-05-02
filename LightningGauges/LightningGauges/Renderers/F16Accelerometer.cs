@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -94,7 +93,7 @@ namespace LightningGauges.Renderers
                 get { return _accelerationInGs; }
                 set
                 {
-                    float acceleration = value;
+                    var acceleration = value;
                     if (acceleration < MIN_INDICATABLE_GS) acceleration = MIN_INDICATABLE_GS;
                     if (acceleration > MAX_INDICATABLE_GS) acceleration = MAX_INDICATABLE_GS;
                     if (acceleration > _maxGs) _maxGs = acceleration;
@@ -145,18 +144,18 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = _background.Width;
-                int height = _background.Height;
+                var width = _background.Width;
+                var height = _background.Height;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -166,7 +165,7 @@ namespace LightningGauges.Renderers
 
                 //draw the min G needle
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                float angle = -43 + (((InstrumentState.MinGs + 5)/15.0f)*340);
+                var angle = -43 + (((InstrumentState.MinGs + 5)/15.0f)*340);
                 g.TranslateTransform(_background.Width/2.0f, _background.Width/2.0f);
                 g.RotateTransform(angle);
                 g.TranslateTransform(-(float) _background.Width/2.0f, -(float) _background.Width/2.0f);

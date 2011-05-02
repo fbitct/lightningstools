@@ -5,7 +5,7 @@ using System.Windows.Forms.Design;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// Summary description for WizardPageDesigner.
+    ///   Summary description for WizardPageDesigner.
     /// </summary>
     public class WizardPageDesigner : ParentControlDesigner
     {
@@ -27,7 +27,7 @@ namespace Common.UI.Wizard
             var h = (IDesignerHost) GetService(typeof (IDesignerHost));
             var c = (IComponentChangeService) GetService(typeof (IComponentChangeService));
 
-            DesignerTransaction dt = h.CreateTransaction("Remove Page");
+            var dt = h.CreateTransaction("Remove Page");
 
             if (page.Parent is Wizard)
             {

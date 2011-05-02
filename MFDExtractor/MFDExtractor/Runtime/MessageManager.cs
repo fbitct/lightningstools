@@ -21,10 +21,6 @@ namespace MFDExtractor.Runtime
         private DateTime? _ehsiRightKnobLastActivityTime;
         private DateTime? _ehsiRightKnobReleasedTime;
 
-        private MessageManager()
-        {
-        }
-
         public MessageManager(InstrumentRenderers renderers, NetworkManager networkManager,
                               SettingsManager settingsManager, Falcon4SimSupport simSupport)
         {
@@ -248,20 +244,13 @@ namespace MFDExtractor.Runtime
             bool useIncrementByOne = false;
             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
             {
-                KeyBinding incByOneCallback = Util.FindKeyBinding("SimHsiHdgIncBy1");
+                KeyBinding incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgIncBy1");
                 if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                 {
                     useIncrementByOne = true;
                 }
             }
-            if (useIncrementByOne)
-            {
-                Util.SendCallbackToFalcon("SimHsiHdgIncBy1");
-            }
-            else
-            {
-                Util.SendCallbackToFalcon("SimHsiHeadingInc");
-            }
+            KeyFileUtils.SendCallbackToFalcon(useIncrementByOne ? "SimHsiHdgIncBy1" : "SimHsiHeadingInc");
             if (relayToListeners) SendMessage(MessageTypes.EHSILeftKnobIncrease, null);
         }
 
@@ -271,20 +260,13 @@ namespace MFDExtractor.Runtime
             bool useDecrementByOne = false;
             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
             {
-                KeyBinding decByOneCallback = Util.FindKeyBinding("SimHsiHdgDecBy1");
+                KeyBinding decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgDecBy1");
                 if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                 {
                     useDecrementByOne = true;
                 }
             }
-            if (useDecrementByOne)
-            {
-                Util.SendCallbackToFalcon("SimHsiHdgDecBy1");
-            }
-            else
-            {
-                Util.SendCallbackToFalcon("SimHsiHeadingDec");
-            }
+            KeyFileUtils.SendCallbackToFalcon(useDecrementByOne ? "SimHsiHdgDecBy1" : "SimHsiHeadingDec");
 
             if (relayToListeners) SendMessage(MessageTypes.EHSILeftKnobDecrease, null);
         }
@@ -306,20 +288,13 @@ namespace MFDExtractor.Runtime
                 bool useIncrementByOne = false;
                 if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                 {
-                    KeyBinding incByOneCallback = Util.FindKeyBinding("SimHsiCrsIncBy1");
+                    KeyBinding incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsIncBy1");
                     if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                     {
                         useIncrementByOne = true;
                     }
                 }
-                if (useIncrementByOne)
-                {
-                    Util.SendCallbackToFalcon("SimHsiCrsIncBy1");
-                }
-                else
-                {
-                    Util.SendCallbackToFalcon("SimHsiCourseInc");
-                }
+                KeyFileUtils.SendCallbackToFalcon(useIncrementByOne ? "SimHsiCrsIncBy1" : "SimHsiCourseInc");
             }
 
             if (relayToListeners) SendMessage(MessageTypes.EHSIRightKnobIncrease, null);
@@ -342,20 +317,13 @@ namespace MFDExtractor.Runtime
                 bool useDecrementByOne = false;
                 if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                 {
-                    KeyBinding decByOneCallback = Util.FindKeyBinding("SimHsiCrsDecBy1");
+                    KeyBinding decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
                     if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                     {
                         useDecrementByOne = true;
                     }
                 }
-                if (useDecrementByOne)
-                {
-                    Util.SendCallbackToFalcon("SimHsiCrsDecBy1");
-                }
-                else
-                {
-                    Util.SendCallbackToFalcon("SimHsiCourseDec");
-                }
+                KeyFileUtils.SendCallbackToFalcon(useDecrementByOne ? "SimHsiCrsDecBy1" : "SimHsiCourseDec");
             }
 
             if (relayToListeners) SendMessage(MessageTypes.EHSIRightKnobDecrease, null);
@@ -408,7 +376,7 @@ namespace MFDExtractor.Runtime
             if (_settingsManager.NetworkMode == NetworkMode.Standalone ||
                 _settingsManager.NetworkMode == NetworkMode.Server)
             {
-                Util.SendCallbackToFalcon("SimStepHSIMode");
+                KeyFileUtils.SendCallbackToFalcon("SimStepHSIMode");
             }
             if (relayToListeners) SendMessage(MessageTypes.EHSIMenuButtonDepressed, null);
         }

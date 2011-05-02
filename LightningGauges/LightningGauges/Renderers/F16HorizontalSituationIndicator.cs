@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -221,7 +220,7 @@ namespace LightningGauges.Renderers
                 get { return _distanceToBeaconNauticalMiles; }
                 set
                 {
-                    float distance = value;
+                    var distance = value;
                     if (distance < 0) distance = 0;
                     if (distance > MAX_RANGE) distance = MAX_RANGE;
                     if (float.IsNaN(distance) || float.IsNegativeInfinity(distance))
@@ -243,7 +242,7 @@ namespace LightningGauges.Renderers
                 get { return _desiredCourseDegrees; }
                 set
                 {
-                    int desiredCourse = value;
+                    var desiredCourse = value;
                     if (desiredCourse > 360) desiredCourse %= 360;
                     _desiredCourseDegrees = desiredCourse;
                 }
@@ -254,7 +253,7 @@ namespace LightningGauges.Renderers
                 get { return _desiredHeadingDegrees; }
                 set
                 {
-                    int desiredHeading = value;
+                    var desiredHeading = value;
                     desiredHeading %= 360;
                     _desiredHeadingDegrees = desiredHeading;
                 }
@@ -265,7 +264,7 @@ namespace LightningGauges.Renderers
                 get { return _courseDeviationDegrees; }
                 set
                 {
-                    float courseDeviation = value;
+                    var courseDeviation = value;
                     courseDeviation %= 360.0f;
                     if (float.IsInfinity(courseDeviation) || float.IsNaN(courseDeviation))
                     {
@@ -280,7 +279,7 @@ namespace LightningGauges.Renderers
                 get { return _courseDeviationLimitDegrees; }
                 set
                 {
-                    float courseDeviationLimit = value;
+                    var courseDeviationLimit = value;
                     courseDeviationLimit %= 360.0f;
                     if (float.IsInfinity(courseDeviationLimit) || float.IsNaN(courseDeviationLimit) ||
                         courseDeviationLimit == 0)
@@ -296,7 +295,7 @@ namespace LightningGauges.Renderers
                 get { return _magneticHeadingDegrees; }
                 set
                 {
-                    float heading = value;
+                    var heading = value;
                     heading %= 360.0f;
                     if (float.IsNaN(heading) || float.IsInfinity(heading))
                     {
@@ -311,7 +310,7 @@ namespace LightningGauges.Renderers
                 get { return _bearingToBeaconDegrees; }
                 set
                 {
-                    float bearingToBeacon = value;
+                    var bearingToBeacon = value;
                     bearingToBeacon %= 360.0f;
                     if (float.IsInfinity(bearingToBeacon) || float.IsNaN(bearingToBeacon))
                     {
@@ -345,11 +344,11 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 0;
-                int height = 0;
+                var width = 0;
+                var height = 0;
 
                 width = _hsiBackground.Image.Width - 47;
                 height = _hsiBackground.Image.Height - 49;
@@ -358,11 +357,11 @@ namespace LightningGauges.Renderers
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
 
                 g.TranslateTransform(-24, -14);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(0, -11);
@@ -424,21 +423,21 @@ namespace LightningGauges.Renderers
                 //draw the range to the beacon
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    float distanceToBeacon = InstrumentState.DistanceToBeaconNauticalMiles;
+                    var distanceToBeacon = InstrumentState.DistanceToBeaconNauticalMiles;
                     if (distanceToBeacon > 999.9) distanceToBeacon = 999.9f;
-                    string distanceToBeaconString = string.Format("{0:000.0}", distanceToBeacon);
-                    char distanceToBeaconHundreds = distanceToBeaconString[0];
-                    char distanceToBeaconTens = distanceToBeaconString[1];
-                    char distanceToBeaconOnes = distanceToBeaconString[2];
-                    Bitmap distanceToBeaconHundredsImage = _rangeFont.GetCharImage(distanceToBeaconHundreds);
-                    Bitmap distanceToBeaconTensImage = _rangeFont.GetCharImage(distanceToBeaconTens);
-                    Bitmap distanceToBeaconOnesImage = _rangeFont.GetCharImage(distanceToBeaconOnes);
+                    var distanceToBeaconString = string.Format("{0:000.0}", distanceToBeacon);
+                    var distanceToBeaconHundreds = distanceToBeaconString[0];
+                    var distanceToBeaconTens = distanceToBeaconString[1];
+                    var distanceToBeaconOnes = distanceToBeaconString[2];
+                    var distanceToBeaconHundredsImage = _rangeFont.GetCharImage(distanceToBeaconHundreds);
+                    var distanceToBeaconTensImage = _rangeFont.GetCharImage(distanceToBeaconTens);
+                    var distanceToBeaconOnesImage = _rangeFont.GetCharImage(distanceToBeaconOnes);
 
-                    int currentX = 0;
-                    int y = 0;
+                    var currentX = 0;
+                    var y = 0;
                     currentX = 29;
                     y = 45;
-                    int spacingPixels = -5;
+                    var spacingPixels = -5;
                     g.DrawImage(distanceToBeaconHundredsImage, new Point(currentX, y));
                     currentX += distanceToBeaconHundredsImage.Width + spacingPixels;
                     g.DrawImage(distanceToBeaconTensImage, new Point(currentX, y));
@@ -451,19 +450,19 @@ namespace LightningGauges.Renderers
                 //draw desired course
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    string desiredCourseString = string.Format("{0:000}", InstrumentState.DesiredCourseDegrees);
-                    char desiredCourseHundreds = desiredCourseString[0];
-                    char desiredCourseTens = desiredCourseString[1];
-                    char desiredCourseOnes = desiredCourseString[2];
-                    Bitmap desiredCourseHundredsImage = _rangeFont.GetCharImage(desiredCourseHundreds);
-                    Bitmap desiredCourseTensImage = _rangeFont.GetCharImage(desiredCourseTens);
-                    Bitmap desiredCourseOnesImage = _rangeFont.GetCharImage(desiredCourseOnes);
+                    var desiredCourseString = string.Format("{0:000}", InstrumentState.DesiredCourseDegrees);
+                    var desiredCourseHundreds = desiredCourseString[0];
+                    var desiredCourseTens = desiredCourseString[1];
+                    var desiredCourseOnes = desiredCourseString[2];
+                    var desiredCourseHundredsImage = _rangeFont.GetCharImage(desiredCourseHundreds);
+                    var desiredCourseTensImage = _rangeFont.GetCharImage(desiredCourseTens);
+                    var desiredCourseOnesImage = _rangeFont.GetCharImage(desiredCourseOnes);
 
-                    int currentX = 0;
-                    int y = 0;
+                    var currentX = 0;
+                    var y = 0;
                     currentX = 182;
                     y = 45;
-                    int spacingPixels = -5;
+                    var spacingPixels = -5;
                     g.DrawImage(desiredCourseHundredsImage, new Point(currentX, y));
                     currentX += desiredCourseHundredsImage.Width + spacingPixels;
                     g.DrawImage(desiredCourseTensImage, new Point(currentX, y));
@@ -512,9 +511,9 @@ namespace LightningGauges.Renderers
                 g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
                 g.RotateTransform(InstrumentState.DesiredCourseDegrees);
                 g.TranslateTransform(-centerX, -centerY);
-                float cdiPct = InstrumentState.CourseDeviationDegrees/InstrumentState.CourseDeviationLimitDegrees;
-                float cdiRange = 46.0f;
-                float cdiPos = cdiPct*cdiRange;
+                var cdiPct = InstrumentState.CourseDeviationDegrees/InstrumentState.CourseDeviationLimitDegrees;
+                var cdiRange = 46.0f;
+                var cdiPos = cdiPct*cdiRange;
                 g.TranslateTransform(cdiPos, -2);
                 try
                 {

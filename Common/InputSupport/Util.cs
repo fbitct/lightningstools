@@ -10,20 +10,20 @@ namespace Common.InputSupport
         private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
 
         /// <summary>
-        /// Gets the DirectInput Device associated with a specific 
-        /// Device Instance Guid.  Safer than DirectInput's Device
-        /// constructor and allows for retrying within a default
-        /// timeout period.  If the device cannot be obtained
-        /// within 1 second, then a null Device object is returned.
+        ///   Gets the DirectInput Device associated with a specific 
+        ///   Device Instance Guid.  Safer than DirectInput's Device
+        ///   constructor and allows for retrying within a default
+        ///   timeout period.  If the device cannot be obtained
+        ///   within 1 second, then a null Device object is returned.
         /// </summary>
-        /// <param name="instanceGuid">the DirectInput Device Instance GUID
-        /// of the Device to retrieve.</param>
+        /// <param name = "instanceGuid">the DirectInput Device Instance GUID
+        ///   of the Device to retrieve.</param>
         /// <returns></returns>
         public static Device GetDIDevice(Guid instanceGuid)
         {
             Device device = null;
-            DateTime startTime = DateTime.Now;
-            DateTime endTime = startTime.Add(TimeSpan.FromMilliseconds(1000));
+            var startTime = DateTime.Now;
+            var endTime = startTime.Add(TimeSpan.FromMilliseconds(1000));
 
             while (device == null && DateTime.Now.CompareTo(endTime) < 0)
             {
@@ -58,7 +58,7 @@ namespace Common.InputSupport
                 202.5  157.5
                     180
              */
-            PovDirections direction = PovDirections.None;
+            var direction = PovDirections.None;
             if ((currentDegrees > 337.5 && currentDegrees <= 360) || (currentDegrees >= 0 && currentDegrees <= 22.5))
             {
                 direction = PovDirections.Up;

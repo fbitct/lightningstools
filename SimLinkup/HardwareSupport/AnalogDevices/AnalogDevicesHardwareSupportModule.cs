@@ -47,11 +47,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                int index = 0;
-                DenseDacEvalBoard[] boards = DenseDacEvalBoard.Enumerate();
+                var index = 0;
+                var boards = DenseDacEvalBoard.Enumerate();
                 if (boards != null && boards.Length > 0)
                 {
-                    foreach (DenseDacEvalBoard device in boards)
+                    foreach (var device in boards)
                     {
                         if (device == null) continue;
                         device.Reset();
@@ -59,7 +59,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                         device.Group0Offset = 0x2000;
                         device.Group1Offset = 0x2000;
                         //device.Groups2Thru4Offset = 0x2000;
-                        for (int j = 0; j < 40; j++)
+                        for (var j = 0; j < 40; j++)
                         {
                             device.SetDacChannelOffset((ChannelAddress) j + 8, 0x8000);
                             device.SetDacChannelGain((ChannelAddress) j + 8, 0xFFFF);
@@ -122,7 +122,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             //if (device == null) throw new ArgumentNullException("device");
             var analogSignalsToReturn = new List<AnalogSignal>();
-            for (int i = 0; i < 40; i++)
+            for (var i = 0; i < 40; i++)
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "DAC Outputs";
@@ -162,7 +162,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public override void Synchronize()
         {
-            foreach (AnalogSignal signal in _analogOutputSignals)
+            foreach (var signal in _analogOutputSignals)
             {
                 UpdateOutputSignal(signal);
             }
@@ -179,9 +179,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -190,9 +190,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~AnalogDevicesHardwareSupportModule()
         {
@@ -200,11 +200,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

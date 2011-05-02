@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.MacroProgramming
 {
@@ -52,11 +53,11 @@ namespace Common.MacroProgramming
                 {
                     value = new List<AnalogSignal>();
                 }
-                for (int i = 0; i < value.Count; i++)
+                foreach (var t in value)
                 {
-                    if (value[i] != null)
+                    if (t != null)
                     {
-                        value[i].SignalChanged += _in_SignalChanged;
+                        t.SignalChanged += InSignalChanged;
                     }
                 }
                 _ins = value;
@@ -78,7 +79,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _in_SignalChanged(object sender, AnalogSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, AnalogSignalChangedEventArgs e)
         {
             CalculateResult();
         }
@@ -92,11 +93,11 @@ namespace Common.MacroProgramming
                     result = System.Math.Abs(_ins[0].State);
                     break;
                 case MathOperator.Add:
-                    for (int i = 0; i < _ins.Count; i++)
+                    foreach (var t in _ins)
                     {
                         try
                         {
-                            result += _ins[i].State;
+                            result += t.State;
                         }
                         catch (OverflowException)
                         {
@@ -105,7 +106,7 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.Divide:
                     result = _ins[0].State;
-                    for (int i = 1; i < _ins.Count; i++)
+                    for (var i = 1; i < _ins.Count; i++)
                     {
                         try
                         {
@@ -121,12 +122,12 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.DivRem:
                     result = _ins[0].State;
-                    for (int i = 1; i < _ins.Count; i++)
+                    for (var i = 1; i < _ins.Count; i++)
                     {
                         try
                         {
                             var curResult = (int) result;
-                            int outResult = curResult;
+                            var outResult = curResult;
                             System.Math.DivRem(curResult, (int) _ins[i].State, out outResult);
                             result = outResult;
                         }
@@ -140,9 +141,9 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.LeftShift:
                     result = _ins[0].State;
-                    for (int i = 0; i < _ins.Count; i++)
+                    for (var i = 0; i < _ins.Count; i++)
                     {
-                        int numPlaces = 1;
+                        var numPlaces = 1;
                         try
                         {
                             numPlaces = (int) _ins[i].State;
@@ -158,21 +159,18 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.Max:
                     result = _ins[0].State;
-                    for (int i = 0; i < _ins.Count; i++)
+                    for (var i = 0; i < _ins.Count; i++)
                     {
                         result = System.Math.Max(result, _ins[i].State);
                     }
                     break;
                 case MathOperator.Min:
                     result = _ins[0].State;
-                    for (int i = 0; i < _ins.Count; i++)
-                    {
-                        result = System.Math.Max(result, _ins[i].State);
-                    }
+                    result = _ins.Aggregate(result, (current, t) => System.Math.Max((sbyte) current, (sbyte) t.State));
                     break;
                 case MathOperator.Multiply:
                     result = _ins[0].State;
-                    for (int i = 1; i < _ins.Count; i++)
+                    for (var i = 1; i < _ins.Count; i++)
                     {
                         try
                         {
@@ -185,11 +183,11 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.Negate:
                     result = 0;
-                    for (int i = 0; i < _ins.Count; i++)
+                    foreach (var t in _ins)
                     {
                         try
                         {
-                            result -= _ins[i].State;
+                            result -= t.State;
                         }
                         catch (OverflowException)
                         {
@@ -198,7 +196,7 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.Power:
                     result = _ins[0].State;
-                    for (int i = 1; i < _ins.Count; i++)
+                    for (var i = 1; i < _ins.Count; i++)
                     {
                         try
                         {
@@ -211,12 +209,12 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.RightShift:
                     result = _ins[0].State;
-                    for (int i = 0; i < _ins.Count; i++)
+                    foreach (var t in _ins)
                     {
-                        int numPlaces = 1;
+                        var numPlaces = 1;
                         try
                         {
-                            numPlaces = (int) _ins[i].State;
+                            numPlaces = (int) t.State;
                         }
                         catch (InvalidCastException)
                         {
@@ -228,11 +226,11 @@ namespace Common.MacroProgramming
                     }
                     break;
                 case MathOperator.Sign:
-                    for (int i = 0; i < _ins.Count; i++)
+                    foreach (var t in _ins)
                     {
                         try
                         {
-                            result += System.Math.Sign(_ins[i].State);
+                            result += System.Math.Sign(t.State);
                         }
                         catch (OverflowException)
                         {
@@ -242,7 +240,7 @@ namespace Common.MacroProgramming
                     break;
                 case MathOperator.Subtract:
                     result = _ins[0].State;
-                    for (int i = 1; i < _ins.Count; i++)
+                    for (var i = 1; i < _ins.Count; i++)
                     {
                         try
                         {

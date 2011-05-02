@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -180,10 +179,10 @@ namespace F4KeyFile
 
         public DirectInputBinding Parse(string input)
         {
-            List<string> tokenList = Util.Tokenize(input);
-            string callback = tokenList[0];
-            int buttonIndex = Int32.Parse(tokenList[1]);
-            int itemId = Int32.Parse(tokenList[2]);
+            var tokenList = Util.Tokenize(input);
+            var callback = tokenList[0];
+            var buttonIndex = Int32.Parse(tokenList[1]);
+            var itemId = Int32.Parse(tokenList[2]);
             var bindingType = (DirectInputBindingType) Int32.Parse(tokenList[3]);
             var povDirection = (PovDirections) Int32.Parse(tokenList[4]);
             int keycode;
@@ -201,8 +200,8 @@ namespace F4KeyFile
             DirectInputBinding binding;
             if (tokenList.Count == 8)
             {
-                bool isGuid = false;
-                Guid guid = Guid.Empty;
+                var isGuid = false;
+                var guid = Guid.Empty;
                 try
                 {
                     guid = new Guid(tokenList[7]);

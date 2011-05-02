@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.Windows.Forms;
-using Common.HardwareSupport;
-using Common.SimSupport;
 using log4net;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
@@ -32,7 +30,7 @@ namespace SimLinkup.UI
 
         private void cmdOK_Click(object sender, EventArgs e)
         {
-            bool valid = ValidateSettings();
+            var valid = ValidateSettings();
             if (valid)
             {
                 SaveSettings();
@@ -50,11 +48,11 @@ namespace SimLinkup.UI
 
         private void DiscoverPlugins()
         {
-            IHardwareSupportModule[] hsms = Runtime.Runtime.GetRegisteredHardwareSupportModules();
+            var hsms = Runtime.Runtime.GetRegisteredHardwareSupportModules();
             var hsmSb = new StringBuilder();
             if (hsms != null)
             {
-                foreach (IHardwareSupportModule hsm in hsms)
+                foreach (var hsm in hsms)
                 {
                     if (hsm != null)
                     {
@@ -65,11 +63,11 @@ namespace SimLinkup.UI
             lblHardwareSupportModules.Text = hsmSb.ToString();
 
 
-            SimSupportModule[] ssms = Runtime.Runtime.GetRegisteredSimSupportModules();
+            var ssms = Runtime.Runtime.GetRegisteredSimSupportModules();
             var ssmSb = new StringBuilder();
             if (ssms != null)
             {
-                foreach (SimSupportModule ssm in ssms)
+                foreach (var ssm in ssms)
                 {
                     if (ssm != null)
                     {
@@ -107,7 +105,7 @@ namespace SimLinkup.UI
                 try
                 {
                     using (
-                        RegistryKey startupKey =
+                        var startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
@@ -125,7 +123,7 @@ namespace SimLinkup.UI
                 try
                 {
                     using (
-                        RegistryKey startupKey =
+                        var startupKey =
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.DeleteValue(Application.ProductName, false);

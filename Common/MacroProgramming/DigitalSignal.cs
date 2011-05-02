@@ -46,10 +46,7 @@ namespace Common.MacroProgramming
             get
             {
                 if (_inverter == null)
-                {
-                    _inverter = new Inverter();
-                    _inverter.In = this;
-                }
+                    _inverter = new Inverter {In = this};
                 return _inverter.Out;
             }
         }
@@ -65,14 +62,12 @@ namespace Common.MacroProgramming
             get { return _state; }
             set
             {
-                if (_state != value)
+                if (_state == value) return;
+                var previousState = _state;
+                _state = value;
+                if (SignalChanged != null)
                 {
-                    bool previousState = _state;
-                    _state = value;
-                    if (SignalChanged != null)
-                    {
-                        SignalChanged(this, new DigitalSignalChangedEventArgs(value, previousState));
-                    }
+                    SignalChanged(this, new DigitalSignalChangedEventArgs(value, previousState));
                 }
             }
         }

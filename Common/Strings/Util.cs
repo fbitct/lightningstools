@@ -9,37 +9,37 @@ namespace Common.Strings
         public static List<string> Tokenize(string input)
         {
             var r = new Regex(@"[\s]+");
-            string[] tokens = r.Split(input);
+            var tokens = r.Split(input);
             var tokenList = new List<string>();
-            foreach (string token in tokens)
+            foreach (var token in tokens)
             {
                 if (token.Trim().Length == 0)
                     continue;
                 if (token.EndsWith(";"))
                 {
-                    string thisToken = token;
-                    int tokensReplaced = 0;
+                    var thisToken = token;
+                    var tokensReplaced = 0;
                     while (thisToken.EndsWith(";"))
                     {
                         thisToken = thisToken.Substring(0, thisToken.Length - 1);
                         tokensReplaced++;
                     }
                     tokenList.Add(thisToken);
-                    for (int i = 0; i < tokensReplaced; i++)
+                    for (var i = 0; i < tokensReplaced; i++)
                     {
                         tokenList.Add(";");
                     }
                 }
                 else if (token.StartsWith("//"))
                 {
-                    string thisToken = token;
-                    int tokensReplaced = 0;
+                    var thisToken = token;
+                    var tokensReplaced = 0;
                     while (thisToken.StartsWith("//"))
                     {
                         thisToken = thisToken.Substring(2, thisToken.Length - 2);
                         tokensReplaced++;
                     }
-                    for (int i = 0; i < tokensReplaced; i++)
+                    for (var i = 0; i < tokensReplaced; i++)
                     {
                         tokenList.Add("//");
                     }

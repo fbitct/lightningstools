@@ -77,11 +77,11 @@ namespace SimLinkup.HardwareSupport.Phcc
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "PhccHardwareSupportModule.config");
-                PhccHardwareSupportModuleConfig hsmConfig = PhccHardwareSupportModuleConfig.Load(hsmConfigFilePath);
-                string phccDeviceManagerConfigFilePath = hsmConfig.PhccDeviceManagerConfigFilePath;
-                ConfigurationManager phccConfigManager = LoadConfiguration(phccDeviceManagerConfigFilePath);
-                foreach (Motherboard m in phccConfigManager.Motherboards)
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory, "PhccHardwareSupportModule.config");
+                var hsmConfig = PhccHardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                var phccDeviceManagerConfigFilePath = hsmConfig.PhccDeviceManagerConfigFilePath;
+                var phccConfigManager = LoadConfiguration(phccDeviceManagerConfigFilePath);
+                foreach (var m in phccConfigManager.Motherboards)
                 {
                     IHardwareSupportModule thisHsm = new PhccHardwareSupportModule(m);
                     toReturn.Add(thisHsm);
@@ -108,7 +108,7 @@ namespace SimLinkup.HardwareSupport.Phcc
         {
             if (device == null) throw new ArgumentNullException("device");
             if (motherboard == null) throw new ArgumentNullException("motherboard");
-            foreach (Peripheral peripheral in motherboard.Peripherals)
+            foreach (var peripheral in motherboard.Peripherals)
             {
                 if (peripheral is Doa8Servo)
                 {
@@ -142,7 +142,7 @@ namespace SimLinkup.HardwareSupport.Phcc
             if (servoConfig == null) throw new ArgumentNullException("servoConfig");
             if (servoConfig.ServoCalibrations == null)
                 throw new InvalidOperationException("ServoCalibrations not set on servoConfig parameter object");
-            foreach (ServoCalibration calibration in servoConfig.ServoCalibrations)
+            foreach (var calibration in servoConfig.ServoCalibrations)
             {
                 device.DoaSend8ServoCalibration(servoConfig.Address, (byte) calibration.ServoNum,
                                                 calibration.CalibrationOffset);
@@ -250,7 +250,7 @@ namespace SimLinkup.HardwareSupport.Phcc
         {
             if (_digitalInputSignals != null && _digitalInputSignals.Length > e.Index)
             {
-                DigitalSignal signal = _digitalInputSignals[e.Index];
+                var signal = _digitalInputSignals[e.Index];
                 signal.State = e.NewValue;
             }
         }
@@ -259,7 +259,7 @@ namespace SimLinkup.HardwareSupport.Phcc
         {
             if (_analogInputSignals != null && _analogInputSignals.Length > e.Index)
             {
-                AnalogSignal signal = _analogInputSignals[e.Index];
+                var signal = _analogInputSignals[e.Index];
                 signal.State = e.NewValue;
             }
         }
@@ -270,7 +270,7 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         private static ConfigurationManager LoadConfiguration(string phccConfigFile)
         {
-            ConfigurationManager toReturn = ConfigurationManager.Load(phccConfigFile);
+            var toReturn = ConfigurationManager.Load(phccConfigFile);
             return toReturn;
         }
 
@@ -307,7 +307,7 @@ namespace SimLinkup.HardwareSupport.Phcc
         private AnalogSignal[] CreateAnalogInputSignals(Device device, string portName)
         {
             var toReturn = new List<AnalogSignal>();
-            for (int i = 0; i < 35; i++)
+            for (var i = 0; i < 35; i++)
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "Analog Inputs";
@@ -327,7 +327,7 @@ namespace SimLinkup.HardwareSupport.Phcc
         private DigitalSignal[] CreateDigitalInputSignals(Device device, string portName)
         {
             var toReturn = new List<DigitalSignal>();
-            for (int i = 0; i < 1024; i++)
+            for (var i = 0; i < 1024; i++)
             {
                 var thisSignal = new DigitalSignal();
                 thisSignal.CollectionName = "Digital Inputs";
@@ -350,19 +350,19 @@ namespace SimLinkup.HardwareSupport.Phcc
                                          out Dictionary<string, double[]> peripheralFloatStates)
         {
             if (motherboard == null) throw new ArgumentNullException("motherboard");
-            string portName = motherboard.ComPort;
+            var portName = motherboard.ComPort;
             var digitalSignalsToReturn = new List<DigitalSignal>();
             var analogSignalsToReturn = new List<AnalogSignal>();
-            List<Peripheral> attachedPeripherals = motherboard.Peripherals;
+            var attachedPeripherals = motherboard.Peripherals;
             peripheralByteStates = new Dictionary<string, byte[]>();
             peripheralFloatStates = new Dictionary<string, double[]>();
-            foreach (Peripheral peripheral in attachedPeripherals)
+            foreach (var peripheral in attachedPeripherals)
             {
                 if (peripheral is Doa40Do)
                 {
                     var typedPeripheral = peripheral as Doa40Do;
-                    string baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
-                    for (int i = 0; i < 40; i++)
+                    var baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
+                    for (var i = 0; i < 40; i++)
                     {
                         var thisSignal = new DigitalSignal();
                         thisSignal.CollectionName = "Digital Outputs";
@@ -385,10 +385,10 @@ namespace SimLinkup.HardwareSupport.Phcc
                 else if (peripheral is Doa7Seg)
                 {
                     var typedPeripheral = peripheral as Doa7Seg;
-                    string baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
-                    for (int i = 0; i < 32; i++)
+                    var baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
+                    for (var i = 0; i < 32; i++)
                     {
-                        for (int j = 0; j < 8; j++)
+                        for (var j = 0; j < 8; j++)
                         {
                             var thisSignal = new DigitalSignal();
                             thisSignal.CollectionName = "Digital Outputs";
@@ -414,8 +414,8 @@ namespace SimLinkup.HardwareSupport.Phcc
                 else if (peripheral is Doa8Servo)
                 {
                     var typedPeripheral = peripheral as Doa8Servo;
-                    string baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
-                    for (int i = 0; i < 8; i++)
+                    var baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
+                    for (var i = 0; i < 8; i++)
                     {
                         var thisSignal = new AnalogSignal();
                         thisSignal.CollectionName = "Motor Outputs";
@@ -438,8 +438,8 @@ namespace SimLinkup.HardwareSupport.Phcc
                 else if (peripheral is DoaAirCore)
                 {
                     var typedPeripheral = peripheral as DoaAirCore;
-                    string baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
-                    for (int i = 0; i < 4; i++)
+                    var baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
+                    for (var i = 0; i < 4; i++)
                     {
                         var thisSignal = new AnalogSignal();
                         thisSignal.CollectionName = "Motor Outputs";
@@ -461,8 +461,8 @@ namespace SimLinkup.HardwareSupport.Phcc
                 else if (peripheral is DoaAnOut1)
                 {
                     var typedPeripheral = peripheral as DoaAnOut1;
-                    string baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
-                    for (int i = 0; i < 16; i++)
+                    var baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
+                    for (var i = 0; i < 16; i++)
                     {
                         var thisSignal = new AnalogSignal();
                         thisSignal.CollectionName = "Analog Outputs";
@@ -486,8 +486,8 @@ namespace SimLinkup.HardwareSupport.Phcc
                 else if (peripheral is DoaStepper)
                 {
                     var typedPeripheral = peripheral as DoaStepper;
-                    string baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
-                    for (int i = 0; i < 4; i++)
+                    var baseAddress = "0x" + typedPeripheral.Address.ToString("X4");
+                    for (var i = 0; i < 4; i++)
                     {
                         var thisSignal = new AnalogSignal();
                         thisSignal.CollectionName = "Motor Outputs";
@@ -525,17 +525,17 @@ namespace SimLinkup.HardwareSupport.Phcc
             var source = sender as AnalogSignal;
             if (source != null)
             {
-                int motorNumZeroBase = source.Index.Value;
-                string baseAddress = source.SubSourceAddress;
-                byte baseAddressByte = Byte.Parse(baseAddress);
+                var motorNumZeroBase = source.Index.Value;
+                var baseAddress = source.SubSourceAddress;
+                var baseAddressByte = Byte.Parse(baseAddress);
                 var device = source.Source as Device;
                 if (device != null)
                 {
-                    int motorNum = motorNumZeroBase + 1;
-                    double newPosition = args.CurrentState;
-                    double oldPosition = _peripheralFloatStates[baseAddress][motorNumZeroBase];
+                    var motorNum = motorNumZeroBase + 1;
+                    var newPosition = args.CurrentState;
+                    var oldPosition = _peripheralFloatStates[baseAddress][motorNumZeroBase];
                     var numSteps = (int) Math.Abs(newPosition - oldPosition);
-                    MotorDirections direction = MotorDirections.Clockwise;
+                    var direction = MotorDirections.Clockwise;
                     if (oldPosition < newPosition)
                     {
                         direction = MotorDirections.Counterclockwise;
@@ -552,13 +552,13 @@ namespace SimLinkup.HardwareSupport.Phcc
             var source = sender as AnalogSignal;
             if (source != null)
             {
-                int channelNumZeroBase = source.Index.Value;
-                string baseAddress = source.SubSourceAddress;
-                byte baseAddressByte = Byte.Parse(baseAddress);
+                var channelNumZeroBase = source.Index.Value;
+                var baseAddress = source.SubSourceAddress;
+                var baseAddressByte = Byte.Parse(baseAddress);
                 var device = source.Source as Device;
                 if (device != null)
                 {
-                    int channelNum = channelNumZeroBase + 1;
+                    var channelNum = channelNumZeroBase + 1;
                     var newVal = (byte) (Math.Abs(args.CurrentState)*255);
                     device.DoaSendAnOut1(baseAddressByte, (byte) channelNum, newVal);
                     _peripheralFloatStates[baseAddress][channelNum] = newVal;
@@ -571,13 +571,13 @@ namespace SimLinkup.HardwareSupport.Phcc
             var source = sender as AnalogSignal;
             if (source != null)
             {
-                int motorNumZeroBase = source.Index.Value;
-                string baseAddress = source.SubSourceAddress;
-                byte baseAddressByte = Byte.Parse(baseAddress);
+                var motorNumZeroBase = source.Index.Value;
+                var baseAddress = source.SubSourceAddress;
+                var baseAddressByte = Byte.Parse(baseAddress);
                 var device = source.Source as Device;
                 if (device != null)
                 {
-                    int motorNum = motorNumZeroBase + 1;
+                    var motorNum = motorNumZeroBase + 1;
                     var newPosition = (int) (Math.Abs(args.CurrentState)*1023);
                     device.DoaSendAirCoreMotor(baseAddressByte, (byte) motorNum, newPosition);
                     _peripheralFloatStates[baseAddress][motorNum] = newPosition;
@@ -590,13 +590,13 @@ namespace SimLinkup.HardwareSupport.Phcc
             var source = sender as AnalogSignal;
             if (source != null)
             {
-                int servoNumZeroBase = source.Index.Value;
-                string baseAddress = source.SubSourceAddress;
-                byte baseAddressByte = Byte.Parse(baseAddress);
+                var servoNumZeroBase = source.Index.Value;
+                var baseAddress = source.SubSourceAddress;
+                var baseAddressByte = Byte.Parse(baseAddress);
                 var device = source.Source as Device;
                 if (device != null)
                 {
-                    int servoNum = servoNumZeroBase + 1;
+                    var servoNum = servoNumZeroBase + 1;
                     var newPosition = (byte) (Math.Abs(args.CurrentState)*255);
                     device.DoaSend8ServoPosition(baseAddressByte, (byte) servoNum, newPosition);
                     _peripheralFloatStates[baseAddress][servoNum] = newPosition;
@@ -609,19 +609,19 @@ namespace SimLinkup.HardwareSupport.Phcc
             var source = sender as DigitalSignal;
             if (source != null)
             {
-                int outputLineNum = source.Index.Value;
-                string baseAddress = source.SubSourceAddress;
-                byte baseAddressByte = Byte.Parse(baseAddress);
+                var outputLineNum = source.Index.Value;
+                var baseAddress = source.SubSourceAddress;
+                var baseAddressByte = Byte.Parse(baseAddress);
                 var device = source.Source as Device;
                 if (device != null)
                 {
-                    bool newBitVal = args.CurrentState;
-                    byte[] peripheralState = _peripheralByteStates[baseAddress];
-                    int displayNumZeroBase = (outputLineNum/8);
-                    int thisBitIndex = outputLineNum%8;
-                    int displayNum = displayNumZeroBase + 1;
-                    byte currentBitsThisDisplay = peripheralState[displayNumZeroBase];
-                    byte newBits = Common.Util.SetBit(currentBitsThisDisplay, thisBitIndex, newBitVal);
+                    var newBitVal = args.CurrentState;
+                    var peripheralState = _peripheralByteStates[baseAddress];
+                    var displayNumZeroBase = (outputLineNum/8);
+                    var thisBitIndex = outputLineNum%8;
+                    var displayNum = displayNumZeroBase + 1;
+                    var currentBitsThisDisplay = peripheralState[displayNumZeroBase];
+                    var newBits = Common.Util.SetBit(currentBitsThisDisplay, thisBitIndex, newBitVal);
                     device.DoaSend7Seg(baseAddressByte, (byte) displayNum, newBits);
                     peripheralState[displayNumZeroBase] = newBits;
                 }
@@ -633,19 +633,19 @@ namespace SimLinkup.HardwareSupport.Phcc
             var source = sender as DigitalSignal;
             if (source != null)
             {
-                int outputNum = source.Index.Value;
-                string baseAddress = source.SubSourceAddress;
-                byte baseAddressByte = Byte.Parse(baseAddress);
+                var outputNum = source.Index.Value;
+                var baseAddress = source.SubSourceAddress;
+                var baseAddressByte = Byte.Parse(baseAddress);
                 var device = source.Source as Device;
                 if (device != null)
                 {
-                    bool newBitVal = args.CurrentState;
-                    byte[] peripheralState = _peripheralByteStates[baseAddress];
-                    int connectorNumZeroBase = (outputNum/8);
-                    int thisBitIndex = outputNum%8;
-                    int connectorNum = connectorNumZeroBase + 3;
-                    byte currentBitsThisConnector = peripheralState[connectorNumZeroBase];
-                    byte newBits = Common.Util.SetBit(currentBitsThisConnector, thisBitIndex, newBitVal);
+                    var newBitVal = args.CurrentState;
+                    var peripheralState = _peripheralByteStates[baseAddress];
+                    var connectorNumZeroBase = (outputNum/8);
+                    var thisBitIndex = outputNum%8;
+                    var connectorNum = connectorNumZeroBase + 3;
+                    var currentBitsThisConnector = peripheralState[connectorNumZeroBase];
+                    var newBits = Common.Util.SetBit(currentBitsThisConnector, thisBitIndex, newBitVal);
                     device.DoaSend40DO(baseAddressByte, (byte) connectorNum, newBits);
                     peripheralState[connectorNumZeroBase] = newBits;
                 }
@@ -659,9 +659,9 @@ namespace SimLinkup.HardwareSupport.Phcc
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -670,9 +670,9 @@ namespace SimLinkup.HardwareSupport.Phcc
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~PhccHardwareSupportModule()
         {
@@ -680,11 +680,11 @@ namespace SimLinkup.HardwareSupport.Phcc
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

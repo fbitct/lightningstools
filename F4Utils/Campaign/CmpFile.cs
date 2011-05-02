@@ -74,14 +74,14 @@ namespace F4Utils.Campaign
             : this()
         {
             _version = version;
-            byte[] expanded = Expand(compressed);
+            var expanded = Expand(compressed);
             if (expanded != null) Decode(expanded);
         }
 
         protected void Decode(byte[] bytes)
         {
-            int curByte = 0;
-            int nullLoc = 0;
+            var curByte = 0;
+            var nullLoc = 0;
             CurrentTime = BitConverter.ToUInt32(bytes, curByte);
             if (CurrentTime == 0) CurrentTime = 1;
             curByte += 4;
@@ -117,13 +117,13 @@ namespace F4Utils.Campaign
                 TE_number_teams = BitConverter.ToInt32(bytes, curByte);
                 curByte += 4;
 
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     TE_number_aircraft[i] = BitConverter.ToInt32(bytes, curByte);
                     curByte += 4;
                 }
 
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     TE_number_f16s[i] = BitConverter.ToInt32(bytes, curByte);
                     curByte += 4;
@@ -132,7 +132,7 @@ namespace F4Utils.Campaign
                 TE_team = BitConverter.ToInt32(bytes, curByte);
                 curByte += 4;
 
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     TE_team_pts[i] = BitConverter.ToInt32(bytes, curByte);
                     curByte += 4;
@@ -142,7 +142,7 @@ namespace F4Utils.Campaign
                 curByte += 4;
 
                 nullLoc = 0;
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     var info = new TeamBasicInfo();
                     info.teamFlag = bytes[curByte];
@@ -273,7 +273,7 @@ namespace F4Utils.Campaign
             if (NumRecentEventEntries > 0)
             {
                 RecentEventEntries = new EventNode[NumRecentEventEntries];
-                for (int i = 0; i < NumRecentEventEntries; i++)
+                for (var i = 0; i < NumRecentEventEntries; i++)
                 {
                     var thisNode = new EventNode();
                     thisNode.x = BitConverter.ToInt16(bytes, curByte);
@@ -295,9 +295,9 @@ namespace F4Utils.Campaign
                     curByte += 4;
                     //skip UiEventNode pointer
                     curByte += 4;
-                    ushort eventTextSize = BitConverter.ToUInt16(bytes, curByte);
+                    var eventTextSize = BitConverter.ToUInt16(bytes, curByte);
                     curByte += 2;
-                    string eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
+                    var eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
                     curByte += eventTextSize;
                     nullLoc = eventText.IndexOf('\0');
                     if (nullLoc > -1) eventText = eventText.Substring(0, nullLoc);
@@ -312,7 +312,7 @@ namespace F4Utils.Campaign
             if (NumPriorityEventEntries > 0)
             {
                 PriorityEventEntries = new EventNode[NumPriorityEventEntries];
-                for (int i = 0; i < NumPriorityEventEntries; i++)
+                for (var i = 0; i < NumPriorityEventEntries; i++)
                 {
                     var thisNode = new EventNode();
                     thisNode.x = BitConverter.ToInt16(bytes, curByte);
@@ -335,9 +335,9 @@ namespace F4Utils.Campaign
                     //skip UiEventNode pointer
                     curByte += 4;
 
-                    ushort eventTextSize = BitConverter.ToUInt16(bytes, curByte);
+                    var eventTextSize = BitConverter.ToUInt16(bytes, curByte);
                     curByte += 2;
-                    string eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
+                    var eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
                     curByte += eventTextSize;
                     nullLoc = eventText.IndexOf('\0');
                     if (nullLoc > -1) eventText = eventText.Substring(0, nullLoc);
@@ -361,7 +361,7 @@ namespace F4Utils.Campaign
             if (NumAvailableSquadrons > 0)
             {
                 SquadInfo = new SquadInfo[NumAvailableSquadrons];
-                for (int i = 0; i < NumAvailableSquadrons; i++)
+                for (var i = 0; i < NumAvailableSquadrons; i++)
                 {
                     var thisSquadInfo = new SquadInfo();
                     thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
@@ -405,7 +405,7 @@ namespace F4Utils.Campaign
                     if (_version < 42)
                     {
                         curByte += 40;
-                            //skip additional string length for squad name in older versions that had 80 bytes
+                        //skip additional string length for squad name in older versions that had 80 bytes
                     }
 
                     curByte++; //align on int32 boundary
@@ -432,8 +432,8 @@ namespace F4Utils.Campaign
 
         protected static byte[] Expand(byte[] compressed)
         {
-            int compressedSize = BitConverter.ToInt32(compressed, 0);
-            int uncompressedSize = BitConverter.ToInt32(compressed, 4);
+            var compressedSize = BitConverter.ToInt32(compressed, 0);
+            var uncompressedSize = BitConverter.ToInt32(compressed, 4);
             if (uncompressedSize == 0) return null;
             var actualCompressed = new byte[compressed.Length - 8];
             Array.Copy(compressed, 8, actualCompressed, 0, actualCompressed.Length);

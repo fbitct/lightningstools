@@ -29,17 +29,17 @@ namespace F16CPD
 
         public static int NumPagesInPdf(string fileName)
         {
-            int result = 0;
+            var result = 0;
             try
             {
                 using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 using (var r = new StreamReader(fs))
                 {
-                    string pdfText = r.ReadToEnd();
+                    var pdfText = r.ReadToEnd();
                     r.Close();
                     fs.Close();
                     var regx = new Regex(@"/Type\s*/Page[^s]");
-                    MatchCollection matches = regx.Matches(pdfText);
+                    var matches = regx.Matches(pdfText);
                     result = matches.Count;
                 }
             }
@@ -95,17 +95,17 @@ namespace F16CPD
             }
 
             if (key == null) return false;
-            object val = key.GetValue("GS_DLL");
+            var val = key.GetValue("GS_DLL");
             if (val == null) return false;
-            string valString = val.ToString();
+            var valString = val.ToString();
             if (String.IsNullOrEmpty(valString)) return false;
             var fi = new FileInfo(valString);
             if (!fi.Directory.Exists) return false;
             if (!fi.Exists) return false;
-            string oldPath = Environment.GetEnvironmentVariable("PATH") ?? "";
+            var oldPath = Environment.GetEnvironmentVariable("PATH") ?? "";
             if (!oldPath.Contains(fi.DirectoryName))
             {
-                string newPath = oldPath + Path.PathSeparator + fi.DirectoryName;
+                var newPath = oldPath + Path.PathSeparator + fi.DirectoryName;
                 Environment.SetEnvironmentVariable("PATH", newPath);
             }
             _loaded = true;
@@ -122,13 +122,13 @@ namespace F16CPD
             // Create a handle for each of the arguments after 
             // they've been converted to an ANSI null terminated
             // string. Then store the pointers for each of the handles
-            for (int i = 0; i < args.Length; i++)
+            for (var i = 0; i < args.Length; i++)
             {
                 argStrHandles[i] = GCHandle.Alloc(StringToAnsi(args[i]), GCHandleType.Pinned);
                 argPtrs[i] = argStrHandles[i].AddrOfPinnedObject();
             }
             // Get a new handle for the array of argument pointers
-            GCHandle argPtrsHandle = GCHandle.Alloc(argPtrs, GCHandleType.Pinned);
+            var argPtrsHandle = GCHandle.Alloc(argPtrs, GCHandleType.Pinned);
             // Get a pointer to an instance of the GhostScript API 
             // and run the API with the current arguments
             IntPtr gsInstancePtr;
@@ -139,7 +139,7 @@ namespace F16CPD
 
         private static void Cleanup(GCHandle[] argStrHandles, GCHandle argPtrsHandle, IntPtr gsInstancePtr)
         {
-            for (int i = 0; i < argStrHandles.Length; i++)
+            for (var i = 0; i < argStrHandles.Length; i++)
             {
                 argStrHandles[i].Free();
             }
@@ -151,7 +151,7 @@ namespace F16CPD
         public static byte[] StringToAnsi(string original)
         {
             var strBytes = new byte[original.Length + 1];
-            for (int i = 0; i < original.Length; i++)
+            for (var i = 0; i < original.Length; i++)
             {
                 strBytes[i] = (byte) original[i];
             }
@@ -174,9 +174,9 @@ namespace F16CPD
 
         public static Bitmap GeneratePageBitmap(string pdfPath, int page, Size size)
         {
-            string outputFileName = Path.GetTempFileName();
-            string outputPath = Common.Win32.Paths.Util.GetShortPathName(outputFileName);
-            string inputPath = Common.Win32.Paths.Util.GetShortPathName(pdfPath);
+            var outputFileName = Path.GetTempFileName();
+            var outputPath = Common.Win32.Paths.Util.GetShortPathName(outputFileName);
+            var inputPath = Common.Win32.Paths.Util.GetShortPathName(pdfPath);
             var fi = new FileInfo(outputPath);
 
             Bitmap toReturn = null;

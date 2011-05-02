@@ -12,21 +12,21 @@ namespace Common.Imaging
 {
     public static class Util
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Util));
 
         /// <summary>
-        /// Given an Image object, returns a greyscale equivalent Image object
+        ///   Given an Image object, returns a greyscale equivalent Image object
         /// </summary>
-        /// <param name="source">a Bitmap object to conver to greyscale</param>
+        /// <param name = "source">a Bitmap object to conver to greyscale</param>
         /// <returns>an Image object based on the input Bitmap, but converted to greyscale</returns>
         public static Image ConvertImageToGreyscale(Bitmap source)
         {
             var bitmap = new Bitmap(source.Width, source.Height);
-            for (int y = 0; y < bitmap.Height; y++)
+            for (var y = 0; y < bitmap.Height; y++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (var x = 0; x < bitmap.Width; x++)
                 {
-                    Color c = source.GetPixel(x, y);
+                    var c = source.GetPixel(x, y);
                     var luma = (int) (c.R*0.3 + c.G*0.59 + c.B*0.11);
                     bitmap.SetPixel(x, y, Color.FromArgb(luma, luma, luma));
                 }
@@ -36,7 +36,7 @@ namespace Common.Imaging
 
         public static Image LoadBitmapFromFile(string filename)
         {
-            Image temp = Image.FromFile(filename);
+            var temp = Image.FromFile(filename);
             ConvertPixelFormat(ref temp, PixelFormat.Format32bppPArgb);
             return temp;
         }
@@ -61,14 +61,14 @@ namespace Common.Imaging
         }
 
         /// <summary>
-        /// Convert's a <see cref="Bitmap"/> to a different pixel format
+        ///   Convert's a <see cref = "Bitmap" /> to a different pixel format
         /// </summary>
-        /// <param name="img">a <see cref="Bitmap"/> Bitmap to convert</param>
-        /// <param name="format"></param>
+        /// <param name = "img">a <see cref = "Bitmap" /> Bitmap to convert</param>
+        /// <param name = "format"></param>
         public static void ConvertPixelFormat(ref Image img, PixelFormat format)
         {
             if (img == null) return;
-            bool areSame = false;
+            var areSame = false;
             try
             {
                 if (format == img.PixelFormat)
@@ -78,14 +78,14 @@ namespace Common.Imaging
             }
             catch (Exception e)
             {
-                _log.Debug(e.Message, e);
+                Log.Debug(e.Message, e);
             }
             if (areSame) return;
 
-            Image originalImg = img;
+            var originalImg = img;
             Image converted = null;
             Graphics graphics;
-            bool success = false;
+            var success = false;
             try
             {
                 converted = new Bitmap(img.Width, img.Height, format);
@@ -99,16 +99,14 @@ namespace Common.Imaging
             }
             catch (Exception e)
             {
-                _log.Debug(e.Message, e);
+                Log.Debug(e.Message, e);
                 Common.Util.DisposeObject(converted);
-                converted = null;
             }
             finally
             {
                 if (success)
                 {
                     Common.Util.DisposeObject(originalImg);
-                    originalImg = null;
                 }
             }
         }
@@ -137,13 +135,13 @@ namespace Common.Imaging
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e);
+                    Log.Debug(e.Message, e);
                     return null;
                 }
                 using (var ms = new MemoryStream())
                 {
-                    int encoderValue = -1;
-                    string codecMimeType = "image/tiff";
+                    var encoderValue = -1;
+                    var codecMimeType = "image/tiff";
                     switch (compressionType)
                     {
                         case "LZW":
@@ -175,11 +173,11 @@ namespace Common.Imaging
                             break;
                     }
 
-                    Encoder encoder = Encoder.Compression;
+                    var encoder = Encoder.Compression;
                     var codecParams = new EncoderParameters(1);
-                    ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+                    var codecs = ImageCodecInfo.GetImageEncoders();
                     codecParams.Param[0] = new EncoderParameter(encoder, encoderValue);
-                    ImageCodecInfo codecToUse = codecs.FirstOrDefault(codec => codec.MimeType == codecMimeType);
+                    var codecToUse = codecs.FirstOrDefault(codec => codec.MimeType == codecMimeType);
                     try
                     {
                         image.Save(ms, codecToUse, codecParams);
@@ -187,7 +185,7 @@ namespace Common.Imaging
                     }
                     catch (Exception e)
                     {
-                        _log.Debug(e.Message, e);
+                        Log.Debug(e.Message, e);
                     }
                 }
             }
@@ -201,7 +199,7 @@ namespace Common.Imaging
             Image returnBitmap = new Bitmap(System.Math.Max(image.Width, image.Height),
                                             System.Math.Max(image.Width, image.Height), image.PixelFormat);
             //make a graphics object from the empty bitmap
-            Graphics g = Graphics.FromImage(returnBitmap);
+            var g = Graphics.FromImage(returnBitmap);
             //move rotation point to center of Bitmap
             g.TranslateTransform((float) image.Width/2, (float) image.Height/2);
             //rotate
@@ -222,19 +220,19 @@ namespace Common.Imaging
 
         public static Image ResizeBitmap(Image imgToResize, Size size)
         {
-            int sourceWidth = imgToResize.Width;
-            int sourceHeight = imgToResize.Height;
+            var sourceWidth = imgToResize.Width;
+            var sourceHeight = imgToResize.Height;
 
-            float nPercentW = (size.Width/(float) sourceWidth);
-            float nPercentH = (size.Height/(float) sourceHeight);
+            var nPercentW = (size.Width/(float) sourceWidth);
+            var nPercentH = (size.Height/(float) sourceHeight);
 
-            float nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
+            var nPercent = nPercentH < nPercentW ? nPercentH : nPercentW;
 
             var destWidth = (int) (sourceWidth*nPercent);
             var destHeight = (int) (sourceHeight*nPercent);
 
             var bitmap = new Bitmap(destWidth, destHeight, imgToResize.PixelFormat);
-            Graphics g = Graphics.FromImage(bitmap);
+            var g = Graphics.FromImage(bitmap);
 
             g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
             g.Dispose();
@@ -246,7 +244,7 @@ namespace Common.Imaging
         {
             if (toCopy == null) return null;
             Image toReturn = new Bitmap(toCopy.Width, toCopy.Height, toCopy.PixelFormat);
-            using (Graphics g = Graphics.FromImage(toReturn))
+            using (var g = Graphics.FromImage(toReturn))
             {
                 g.DrawImageUnscaled(toCopy, 0, 0, toCopy.Width, toCopy.Height);
             }
@@ -266,7 +264,7 @@ namespace Common.Imaging
             }
             catch (Exception e)
             {
-                _log.Debug(e.Message, e);
+                Log.Debug(e.Message, e);
                 toReturn = null;
             }
             return toReturn;
@@ -277,10 +275,10 @@ namespace Common.Imaging
             if (toProcess == null) return null;
             Image toReturn = new Bitmap(toProcess.Width, toProcess.Height);
             var ia = new ImageAttributes();
-            ColorMatrix cm = GetDimmingColorMatrix(percentLuminanceRetained);
+            var cm = GetDimmingColorMatrix(percentLuminanceRetained);
             ia.SetColorMatrix(cm);
 
-            using (Graphics g = Graphics.FromImage(toReturn))
+            using (var g = Graphics.FromImage(toReturn))
             {
                 g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
                             toProcess.Height, GraphicsUnit.Pixel, ia);
@@ -300,9 +298,9 @@ namespace Common.Imaging
             if (toProcess == null) return null;
             Image toReturn = new Bitmap(toProcess.Width, toProcess.Height);
             var ia = new ImageAttributes();
-            ColorMatrix cm = GetDimmingColorMatrix(0.8f);
+            var cm = GetDimmingColorMatrix(0.8f);
             ia.SetColorMatrix(cm);
-            using (Graphics g = Graphics.FromImage(toReturn))
+            using (var g = Graphics.FromImage(toReturn))
             {
                 g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
                             toProcess.Height, GraphicsUnit.Pixel, ia);
@@ -318,7 +316,7 @@ namespace Common.Imaging
             var cm = new ColorMatrix();
             cm.Matrix00 = cm.Matrix11 = cm.Matrix22 = -1;
             ia.SetColorMatrix(cm);
-            using (Graphics g = Graphics.FromImage(toReturn))
+            using (var g = Graphics.FromImage(toReturn))
             {
                 g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
                             toProcess.Height, GraphicsUnit.Pixel, ia);
@@ -369,7 +367,7 @@ namespace Common.Imaging
 
         public static void CropToContentAndDisposeOriginal(ref Bitmap image)
         {
-            Bitmap croppped = CropToContent(image);
+            var croppped = CropToContent(image);
             Common.Util.DisposeObject(image);
             image = croppped;
         }
@@ -380,10 +378,10 @@ namespace Common.Imaging
             ConvertPixelFormat(ref asImage, PixelFormat.Format32bppPArgb);
             bitmap = (Bitmap) asImage;
 
-            int minXNonBlackPixel = 0;
-            int maxXNonBlackPixel = 0;
-            int minYNonBlackPixel = 0;
-            int maxYNonBlackPixel = 0;
+            var minXNonBlackPixel = 0;
+            var maxXNonBlackPixel = 0;
+            var minYNonBlackPixel = 0;
+            var maxYNonBlackPixel = 0;
             BitmapData sourceImageLock = null;
             try
             {
@@ -391,9 +389,9 @@ namespace Common.Imaging
                                                   ImageLockMode.ReadOnly, bitmap.PixelFormat);
                 var bytes = new byte[bitmap.Width*bitmap.Height*4];
                 Marshal.Copy(sourceImageLock.Scan0, bytes, 0, bytes.Length);
-                for (int y = 0; y < bitmap.Height; y++)
+                for (var y = 0; y < bitmap.Height; y++)
                 {
-                    for (int x = 0; x < bitmap.Width; x++)
+                    for (var x = 0; x < bitmap.Width; x++)
                     {
                         if
                             (
@@ -419,10 +417,11 @@ namespace Common.Imaging
                     bitmap.UnlockBits(sourceImageLock);
                 }
             }
-            var cropRectangle = new Rectangle(minXNonBlackPixel, minYNonBlackPixel, maxXNonBlackPixel - minXNonBlackPixel,
-                                                    maxYNonBlackPixel - minYNonBlackPixel);
+            var cropRectangle = new Rectangle(minXNonBlackPixel, minYNonBlackPixel,
+                                              maxXNonBlackPixel - minXNonBlackPixel,
+                                              maxYNonBlackPixel - minYNonBlackPixel);
             var toReturn = new Bitmap(cropRectangle.Width, cropRectangle.Height, bitmap.PixelFormat);
-            using (Graphics g = Graphics.FromImage(toReturn))
+            using (var g = Graphics.FromImage(toReturn))
             {
                 g.DrawImage(bitmap, new Rectangle(0, 0, cropRectangle.Width, cropRectangle.Height), cropRectangle,
                             GraphicsUnit.Pixel);
@@ -432,22 +431,22 @@ namespace Common.Imaging
 
         public static void InvertImage(ref Image bitmap)
         {
-            Image inverted = GetNegativeImage(bitmap);
+            var inverted = GetNegativeImage(bitmap);
             Common.Util.DisposeObject(bitmap);
             bitmap = inverted;
         }
 
         /// <summary>
-        /// Copies a bitmap into a 1bpp/8bpp bitmap of the same dimensions, fast
+        ///   Copies a bitmap into a 1bpp/8bpp bitmap of the same dimensions, fast
         /// </summary>
-        /// <param name="b">original bitmap</param>
-        /// <param name="bpp">1 or 8, target bpp</param>
+        /// <param name = "b">original bitmap</param>
+        /// <param name = "bpp">1 or 8, target bpp</param>
         /// <returns>a 1bpp copy of the bitmap</returns>
         public static Image CopyToBpp(Bitmap b, int bpp)
         {
             if (bpp != 1 && bpp != 8) throw new ArgumentException("1 or 8", "bpp");
             int w = b.Width, h = b.Height;
-            IntPtr hbm = b.GetHbitmap();
+            var hbm = b.GetHbitmap();
             var bmi = new NativeMethods.BITMAPINFO
                           {
                               biSize = 40,
@@ -460,7 +459,7 @@ namespace Common.Imaging
                               biXPelsPerMeter = 1000000,
                               biYPelsPerMeter = 1000000
                           };
-            uint ncols = (uint) 1 << bpp;
+            var ncols = (uint) 1 << bpp;
             bmi.biClrUsed = ncols;
             bmi.biClrImportant = ncols;
             bmi.cols = new uint[256];
@@ -471,18 +470,18 @@ namespace Common.Imaging
             }
             else
             {
-                for (int i = 0; i < ncols; i++) bmi.cols[i] = MAKERGB(i, i, i);
+                for (var i = 0; i < ncols; i++) bmi.cols[i] = MAKERGB(i, i, i);
             }
             IntPtr bits0;
-            IntPtr hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out bits0,
-                                                         IntPtr.Zero, 0);
-            IntPtr sdc = NativeMethods.GetDC(IntPtr.Zero);
-            IntPtr hdc = NativeMethods.CreateCompatibleDC(sdc);
+            var hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out bits0,
+                                                      IntPtr.Zero, 0);
+            var sdc = NativeMethods.GetDC(IntPtr.Zero);
+            var hdc = NativeMethods.CreateCompatibleDC(sdc);
             NativeMethods.SelectObject(hdc, hbm);
-            IntPtr hdc0 = NativeMethods.CreateCompatibleDC(sdc);
+            var hdc0 = NativeMethods.CreateCompatibleDC(sdc);
             NativeMethods.SelectObject(hdc0, hbm0);
             NativeMethods.BitBlt(hdc0, 0, 0, w, h, hdc, 0, 0, NativeMethods.SRCCOPY);
-            Bitmap b0 = Image.FromHbitmap(hbm0);
+            var b0 = Image.FromHbitmap(hbm0);
             NativeMethods.DeleteDC(hdc);
             NativeMethods.DeleteDC(hdc0);
             NativeMethods.ReleaseDC(IntPtr.Zero, sdc);

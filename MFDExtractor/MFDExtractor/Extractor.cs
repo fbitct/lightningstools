@@ -70,7 +70,7 @@ namespace MFDExtractor
             {
                 return;
             }
-            Util.ResetCurrentKeyFile();
+            F4Utils.Process.KeyFileUtils.ResetCurrentKeyFile();
 
             DateTime beginStartingEventTime = DateTime.Now;
             //Fire the Starting event to all listeners
@@ -95,21 +95,11 @@ namespace MFDExtractor
         /// </summary>
         public void Stop()
         {
-            _log.DebugFormat("Stopping the extractor at : {0}", DateTime.Now);
-
-            DateTime beginStoppingTime = DateTime.Now;
-
-            DateTime beginStoppingEventInvokeTime = DateTime.Now;
             //Raise the Stopping event to signal listeners that the Extractor engine is stopping.
             if (Stopping != null) //verify that event listeners exist for the Stopping event
             {
                 Stopping.Invoke(this, new EventArgs()); //fire the Stopping event to all listeners
             }
-            DateTime endStoppingEventInvokeTime = DateTime.Now;
-            TimeSpan stoppingEventTimeElapsed = endStoppingEventInvokeTime.Subtract(beginStoppingEventInvokeTime);
-            _log.DebugFormat("Total time taken to invoke the Stopping event on the extractor: {0}",
-                             stoppingEventTimeElapsed.TotalMilliseconds);
-
 
             //clear global flag that worker threads use to determine if their work loops should continue
             _keepRunning = false;
@@ -119,23 +109,12 @@ namespace MFDExtractor
             //set the Running flag to false
             _running = false;
 
-            DateTime beginStoppedEventTime = DateTime.Now;
             //fire the Stopped event to all listeners
             if (Stopped != null)
             {
                 Stopped.Invoke(this, new EventArgs());
             }
-            DateTime endStoppedEventTime = DateTime.Now;
-            TimeSpan stoppedEventElapsedTime = endStoppedEventTime.Subtract(beginStoppedEventTime);
-            _log.DebugFormat("Total time taken to invoke the Stopped event on the extractor: {0}",
-                             stoppedEventElapsedTime.TotalMilliseconds);
 
-
-            DateTime endStoppingTime = DateTime.Now;
-            TimeSpan totalElapsed = endStoppingTime.Subtract(beginStoppingTime);
-            _log.DebugFormat("Extractor engine stopped at : {0}", DateTime.Now);
-            _log.DebugFormat("Total time taken to stop the extractor engine (in milliseconds): {0}",
-                             totalElapsed.TotalMilliseconds);
         }
 
         /// <summary>
@@ -412,17 +391,10 @@ namespace MFDExtractor
                 SetupThreads();
                 StartThreads();
 
-                DateTime startingEventStartTime = DateTime.Now;
-                _log.DebugFormat("About to invoke the Starting event at {0}", startingEventStartTime);
                 if (Started != null)
                 {
                     Started.Invoke(this, new EventArgs());
                 }
-                DateTime startingEventFinishTime = DateTime.Now;
-                _log.DebugFormat("Finished invoking the Starting event at {0}", startingEventFinishTime);
-                TimeSpan startingEventTimeTaken = startingEventFinishTime.Subtract(startingEventStartTime);
-                _log.DebugFormat("Time taken to invoke the Starting event: {0}",
-                                 startingEventTimeTaken.TotalMilliseconds);
             }
         }
 
@@ -599,14 +571,7 @@ namespace MFDExtractor
 
         private void SetupThreads()
         {
-            DateTime startTime = DateTime.Now;
-            _log.DebugFormat("Starting setting up threads at: {0}", startTime);
             SetupCaptureOrchestrationThread();
-
-            DateTime endTime = DateTime.Now;
-            _log.DebugFormat("Finished setting up threads at: {0}", endTime);
-            TimeSpan elapsed = endTime.Subtract(startTime);
-            _log.DebugFormat("Time taken setting up threads: {0}", elapsed.TotalMilliseconds);
         }
 
 

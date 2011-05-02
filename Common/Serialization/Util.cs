@@ -12,15 +12,15 @@ namespace Common.Serialization
         private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
 
         /// <summary>
-        /// Compares two objects to determine their equality by 
-        /// serializing both objects and comparing the serializations, 
-        /// on the principal that two objects that serialize to the same
-        /// image must be identical as far as their serializable properties
-        /// are concerned.  This method uses MemoryStreams and BinaryFormatters
-        /// to do serialization in-memory and is not suited for huge object graphs.
+        ///   Compares two objects to determine their equality by 
+        ///   serializing both objects and comparing the serializations, 
+        ///   on the principal that two objects that serialize to the same
+        ///   image must be identical as far as their serializable properties
+        ///   are concerned.  This method uses MemoryStreams and BinaryFormatters
+        ///   to do serialization in-memory and is not suited for huge object graphs.
         /// </summary>
-        /// <param name="x">An object</param>
-        /// <param name="y">An object to compare to "x"</param>
+        /// <param name = "x">An object</param>
+        /// <param name = "y">An object to compare to "x"</param>
         /// <returns>true if both x and y are identical, or false if they are not</returns>
         public static bool DeepEquals(Object x, Object y)
         {
@@ -38,12 +38,12 @@ namespace Common.Serialization
         }
 
         /// <summary>
-        /// Creates a deep clone of an object graph using a MemoryStream and a BinaryFormatter
-        /// to serialize an object graph to memory and then deserialize it back to an object.
-        /// Only serializable objects are supported, and only their serializable variables will
-        /// be cloned.
+        ///   Creates a deep clone of an object graph using a MemoryStream and a BinaryFormatter
+        ///   to serialize an object graph to memory and then deserialize it back to an object.
+        ///   Only serializable objects are supported, and only their serializable variables will
+        ///   be cloned.
         /// </summary>
-        /// <param name="toClone">an object which is the root of the object graph to clone</param>
+        /// <param name = "toClone">an object which is the root of the object graph to clone</param>
         /// <returns>an object which is the root of the cloned object graph</returns>
         public static T DeepClone<T>(T toClone)
         {
@@ -60,16 +60,16 @@ namespace Common.Serialization
         }
 
         /// <summary>
-        /// Deserializes an object from a string.
+        ///   Deserializes an object from a string.
         /// </summary>
-        /// <param name="x">a String containing the raw bytes of the object to deserialize.</param>
+        /// <param name = "x">a String containing the raw bytes of the object to deserialize.</param>
         /// <returns>the deserialized object.</returns>
         public static object FromRawBytes(String x)
         {
             object toReturn = null;
             if (!String.IsNullOrEmpty(x))
             {
-                byte[] bytes = Convert.FromBase64String(x);
+                var bytes = Convert.FromBase64String(x);
                 using (var ms = new MemoryStream(1000))
                 {
                     ms.Write(bytes, 0, bytes.Length);
@@ -84,9 +84,9 @@ namespace Common.Serialization
         }
 
         /// <summary>
-        /// Serializes an object to a string.
+        ///   Serializes an object to a string.
         /// </summary>
-        /// <param name="toSerialize">The object to serialize.</param>
+        /// <param name = "toSerialize">The object to serialize.</param>
         /// <returns>a String containing the raw bytes of the supplied object.</returns>
         public static String ToRawBytes(Object toSerialize)
         {

@@ -52,11 +52,11 @@ namespace F4Utils.Campaign
             losses = bytes[offset];
             offset++;
 
-            byte numStatuses = bytes[offset];
+            var numStatuses = bytes[offset];
             offset++;
 
             fstatus = new byte[numStatuses];
-            for (int i = 0; i < numStatuses; i++)
+            for (var i = 0; i < numStatuses; i++)
             {
                 fstatus[i] = bytes[offset];
                 offset++;
@@ -87,11 +87,11 @@ namespace F4Utils.Campaign
             {
                 link_data = null;
             }
-            for (int i = 0; i < links; i++)
+            for (var i = 0; i < links; i++)
             {
                 var thisLink = new CampObjectiveLinkDataType();
                 thisLink.costs = new byte[(int) MoveType.MOVEMENT_TYPES];
-                for (int j = 0; j < (int) MoveType.MOVEMENT_TYPES; j++)
+                for (var j = 0; j < (int) MoveType.MOVEMENT_TYPES; j++)
                 {
                     thisLink.costs[j] = bytes[offset];
                     offset++;
@@ -107,13 +107,13 @@ namespace F4Utils.Campaign
 
             if (version >= 20)
             {
-                byte hasRadarData = bytes[offset];
+                var hasRadarData = bytes[offset];
                 offset++;
 
                 if (hasRadarData > 0)
                 {
                     detect_ratio = new float[8];
-                    for (int i = 0; i < 8; i++)
+                    for (var i = 0; i < 8; i++)
                     {
                         detect_ratio[i] = BitConverter.ToSingle(bytes, offset);
                         offset += 4;

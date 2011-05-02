@@ -14,16 +14,16 @@ using System.Windows.Forms;
 namespace F4SharedMemMirror
 {
     /// <summary>
-    /// An version of a <see cref="System.Windows.Forms.Control"/> 
-    /// which can be shown floating, like a tooltip.  If you
-    /// want to use this control in conjunction with mouse events
-    /// then you must ensure that the mouse is never in any part of the 
-    /// control when it is shown (like a tooltip). Otherwise, 
-    /// <see cref="System.Windows.Forms.MouseEnter"/> and 
-    /// <see cref="System.Windows.Forms.MouseLeave"/> events
-    /// are broken, and the Forms Message Filter
-    /// goes into a continuous loop when attempting to show
-    /// the control.
+    ///   An version of a <see cref = "System.Windows.Forms.Control" /> 
+    ///   which can be shown floating, like a tooltip.  If you
+    ///   want to use this control in conjunction with mouse events
+    ///   then you must ensure that the mouse is never in any part of the 
+    ///   control when it is shown (like a tooltip). Otherwise, 
+    ///   <see cref = "System.Windows.Forms.MouseEnter" /> and 
+    ///   <see cref = "System.Windows.Forms.MouseLeave" /> events
+    ///   are broken, and the Forms Message Filter
+    ///   goes into a continuous loop when attempting to show
+    ///   the control.
     /// </summary>
     public class FloatControl : Control
     {
@@ -36,17 +36,17 @@ namespace F4SharedMemMirror
 
 
         /// <summary>
-        /// Get the <see cref="System.Windows.Forms.CreateParams"/>
-        /// used to create the control.  This override adds the
-        /// <code>WS_EX_NOACTIVATE</code>, <code>WS_EX_TOOLWINDOW</code>
-        /// and <code>WS_EX_TOPMOST</code> extended styles to make
-        /// the Window float on top.
+        ///   Get the <see cref = "System.Windows.Forms.CreateParams" />
+        ///   used to create the control.  This override adds the
+        ///   <code>WS_EX_NOACTIVATE</code>, <code>WS_EX_TOOLWINDOW</code>
+        ///   and <code>WS_EX_TOPMOST</code> extended styles to make
+        ///   the Window float on top.
         /// </summary>
         protected override CreateParams CreateParams
         {
             get
             {
-                CreateParams p = base.CreateParams;
+                var p = base.CreateParams;
                 p.ExStyle |= (WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
                 p.Parent = IntPtr.Zero;
                 return p;
@@ -68,9 +68,9 @@ namespace F4SharedMemMirror
             int nCmdShow);
 
         /// <summary>
-        /// Shows the control as a floating Window child 
-        /// of the desktop.  To hide the control again,
-        /// use the <see cref="Visible"/> property.
+        ///   Shows the control as a floating Window child 
+        ///   of the desktop.  To hide the control again,
+        ///   use the <see cref = "Visible" /> property.
         /// </summary>
         public void ShowFloating()
         {
@@ -85,10 +85,10 @@ namespace F4SharedMemMirror
 
 
         /// <summary>
-        /// Overrides the standard Window Procedure to ensure the
-        /// window is transparent to all mouse events.
+        ///   Overrides the standard Window Procedure to ensure the
+        ///   window is transparent to all mouse events.
         /// </summary>
-        /// <param name="m">Windows message to process.</param>
+        /// <param name = "m">Windows message to process.</param>
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == WM_NCHITTEST)
@@ -103,10 +103,10 @@ namespace F4SharedMemMirror
 
 
         /// <summary>
-        /// Overrides the standard painting procedure to render
-        /// the text associated with the control.
+        ///   Overrides the standard painting procedure to render
+        ///   the text associated with the control.
         /// </summary>
-        /// <param name="e">PaintEvent Arguments</param>
+        /// <param name = "e">PaintEvent Arguments</param>
         protected override void OnPaint(PaintEventArgs e)
         {
             if (base.Text.Length > 0)

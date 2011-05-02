@@ -4,11 +4,11 @@ namespace PPJoy
     #region Public Enums
 
     /// <summary>
-    /// <see cref="JoystickTypes"/> defines an enumeration of all possible PPJoy joystick types.  
-    /// A joystick type is a combination of controller type and interface type, as shown in the 
-    /// PPJoy Control Panel.
+    ///   <see cref = "JoystickTypes" /> defines an enumeration of all possible PPJoy joystick types.  
+    ///   A joystick type is a combination of controller type and interface type, as shown in the 
+    ///   PPJoy Control Panel.
     /// </summary>
-    /// <seealso cref="Device"/>
+    /// <seealso cref = "Device" />
     public enum JoystickTypes
     {
         Joystick_TheMaze = 1,
@@ -46,7 +46,7 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="JoystickSubTypes"/> defines an enumeration of all possible PPJoy joystick sub-types.
+    ///   <see cref = "JoystickSubTypes" /> defines an enumeration of all possible PPJoy joystick sub-types.
     /// </summary>
     public enum JoystickSubTypes
     {
@@ -58,10 +58,10 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="ButtonDataSources"/> defines an enumeration of PPJoy data sources
-    /// that can be used with <see cref="ButtonMapping"/> objects.  
+    ///   <see cref = "ButtonDataSources" /> defines an enumeration of PPJoy data sources
+    ///   that can be used with <see cref = "ButtonMapping" /> objects.
     /// </summary>
-    /// <seealso cref="ButtonMapping"/>
+    /// <seealso cref = "ButtonMapping" />
     public enum ButtonDataSources
     {
         Digital0 = 0,
@@ -323,11 +323,11 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="DirectionalPovDataSources"/> defines an enumeration
-    /// of PPJoy data sources that can be used with <see cref="DirectionalPovMapping"/> 
-    /// objects.
+    ///   <see cref = "DirectionalPovDataSources" /> defines an enumeration
+    ///   of PPJoy data sources that can be used with <see cref = "DirectionalPovMapping" /> 
+    ///   objects.
     /// </summary>
-    /// <seealso cref="DirectionalPovMapping"/> 
+    /// <seealso cref = "DirectionalPovMapping" />
     public enum DirectionalPovDataSources
     {
         Digital0 = 0,
@@ -589,11 +589,11 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="ContinuousPovDataSources"/> defines an enumeration of 
-    /// PPJoy data sources that can be used with <see cref="ContinuousPovMapping"/> 
-    /// objects.
+    ///   <see cref = "ContinuousPovDataSources" /> defines an enumeration of 
+    ///   PPJoy data sources that can be used with <see cref = "ContinuousPovMapping" /> 
+    ///   objects.
     /// </summary>
-    /// <seealso cref="ContinuousPovMapping"/> 
+    /// <seealso cref = "ContinuousPovMapping" />
     public enum ContinuousPovDataSources
     {
         Analog0 = 128,
@@ -727,11 +727,11 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="AxisDataSources"/> defines an enumeration of PPJoy 
-    /// data sources that can be used with <see cref="AxisMapping"/>
-    /// objects.
+    ///   <see cref = "AxisDataSources" /> defines an enumeration of PPJoy 
+    ///   data sources that can be used with <see cref = "AxisMapping" />
+    ///   objects.
     /// </summary>
-    /// <seealso cref="AxisMapping"/>
+    /// <seealso cref = "AxisMapping" />
     public enum AxisDataSources
     {
         Digital0 = 0,
@@ -993,16 +993,16 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="AxisTypes"/> defines an enumeration of 
-    /// Windows axis types that can be reported to 
-    /// Windows by an <see cref="AxisMapping"/> defined on a PPJoy device.  The
-    /// <see cref="AxisTypes">AxisType</see> associated with an <see cref="AxisMapping"/> 
-    /// defines how the axis will be labelled by Windows.
+    ///   <see cref = "AxisTypes" /> defines an enumeration of 
+    ///   Windows axis types that can be reported to 
+    ///   Windows by an <see cref = "AxisMapping" /> defined on a PPJoy device.  The
+    ///   <see cref = "AxisTypes">AxisType</see> associated with an <see cref = "AxisMapping" /> 
+    ///   defines how the axis will be labelled by Windows.
     /// </summary>
-    /// <seealso cref="AxisMapping"/>
-    /// <seealso cref="PovMapping"/>
-    /// <seealso cref="ContinuousPovMapping"/>
-    /// <seealso cref="DirectionalPovMapping"/>
+    /// <seealso cref = "AxisMapping" />
+    /// <seealso cref = "PovMapping" />
+    /// <seealso cref = "ContinuousPovMapping" />
+    /// <seealso cref = "DirectionalPovMapping" />
     public enum AxisTypes
     {
         Unknown = 0,
@@ -1027,25 +1027,25 @@ namespace PPJoy
     }
 
     /// <summary>
-    /// <see cref="JoystickMapScope"/> defines an enumeration of scopes 
-    /// to which a <see cref="MappingCollection"/> can be applied.
+    ///   <see cref = "JoystickMapScope" /> defines an enumeration of scopes 
+    ///   to which a <see cref = "MappingCollection" /> can be applied.
     /// </summary>
     public enum JoystickMapScope
     {
         /// <summary>
-        /// The <see cref="MappingCollection"/> applies to all 
-        /// devices on the same LPT number (i.e. all virtual
-        /// devices or all physical parallel-port devices on the same
-        /// LPT port).
+        ///   The <see cref = "MappingCollection" /> applies to all 
+        ///   devices on the same LPT number (i.e. all virtual
+        ///   devices or all physical parallel-port devices on the same
+        ///   LPT port).
         /// </summary>
         Interface = 1,
         /// <summary>
-        /// The <see cref="MappingCollection"/> applies only to the 
-        /// specific device it is assigned to.  All other
-        /// devices will either inherit their mappings 
-        /// from their interface (parent),
-        /// or will have their own mappings assigned to them,
-        /// or will use a default set of mappings.
+        ///   The <see cref = "MappingCollection" /> applies only to the 
+        ///   specific device it is assigned to.  All other
+        ///   devices will either inherit their mappings 
+        ///   from their interface (parent),
+        ///   or will have their own mappings assigned to them,
+        ///   or will use a default set of mappings.
         /// </summary>
         Device = 2
     }

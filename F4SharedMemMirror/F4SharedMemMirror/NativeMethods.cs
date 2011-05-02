@@ -287,7 +287,7 @@ namespace F4SharedMemMirror
         #region Nested type: HT
 
         /// <summary>
-        /// HT is just a placeholder for HT (HitTest) definitions
+        ///   HT is just a placeholder for HT (HitTest) definitions
         /// </summary>
         public class HT
         {
@@ -357,7 +357,7 @@ namespace F4SharedMemMirror
         #region Nested type: WM
 
         /// <summary>
-        /// WM is just a placeholder class for WM (WindowMessage) definitions
+        ///   WM is just a placeholder class for WM (WindowMessage) definitions
         /// </summary>
         public class WM
         {

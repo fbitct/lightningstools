@@ -130,7 +130,7 @@ namespace LightningGauges.Renderers
                 get { return _distanceToBeaconNauticalMiles; }
                 set
                 {
-                    float distance = value;
+                    var distance = value;
                     if (distance < 0) distance = 0;
                     if (distance > MAX_RANGE) distance = MAX_RANGE;
                     if (float.IsNaN(distance) || float.IsNegativeInfinity(distance))
@@ -152,7 +152,7 @@ namespace LightningGauges.Renderers
                 get { return _desiredCourseDegrees; }
                 set
                 {
-                    int desiredCourse = value;
+                    var desiredCourse = value;
                     if (desiredCourse > 360) desiredCourse %= 360;
                     _desiredCourseDegrees = desiredCourse;
                 }
@@ -163,7 +163,7 @@ namespace LightningGauges.Renderers
                 get { return _desiredHeadingDegrees; }
                 set
                 {
-                    int desiredHeading = value;
+                    var desiredHeading = value;
                     desiredHeading %= 360;
                     _desiredHeadingDegrees = desiredHeading;
                 }
@@ -174,7 +174,7 @@ namespace LightningGauges.Renderers
                 get { return _courseDeviationDegrees; }
                 set
                 {
-                    float courseDeviation = value;
+                    var courseDeviation = value;
                     courseDeviation %= 360.0f;
                     if (float.IsInfinity(courseDeviation) || float.IsNaN(courseDeviation))
                     {
@@ -189,7 +189,7 @@ namespace LightningGauges.Renderers
                 get { return _courseDeviationLimitDegrees; }
                 set
                 {
-                    float courseDeviationLimit = value;
+                    var courseDeviationLimit = value;
                     courseDeviationLimit %= 360.0f;
                     if (float.IsInfinity(courseDeviationLimit) || float.IsNaN(courseDeviationLimit) ||
                         courseDeviationLimit == 0)
@@ -205,7 +205,7 @@ namespace LightningGauges.Renderers
                 get { return _magneticHeadingDegrees; }
                 set
                 {
-                    float heading = value;
+                    var heading = value;
                     heading %= 360.0f;
                     if (float.IsNaN(heading) || float.IsInfinity(heading))
                     {
@@ -220,7 +220,7 @@ namespace LightningGauges.Renderers
                 get { return _bearingToBeaconDegrees; }
                 set
                 {
-                    float bearingToBeacon = value;
+                    var bearingToBeacon = value;
                     bearingToBeacon %= 360.0f;
                     if (float.IsInfinity(bearingToBeacon) || float.IsNaN(bearingToBeacon))
                     {
@@ -239,7 +239,7 @@ namespace LightningGauges.Renderers
                 get { return _instrumentMode; }
                 set
                 {
-                    InstrumentModes currentMode = _instrumentMode;
+                    var currentMode = _instrumentMode;
                     if (currentMode != value)
                     {
                         _instrumentMode = value;
@@ -258,7 +258,7 @@ namespace LightningGauges.Renderers
                 get { return _brightness; }
                 set
                 {
-                    int brightness = value;
+                    var brightness = value;
                     if (brightness < 0) brightness = 0;
                     if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
                     _brightness = brightness;
@@ -291,7 +291,7 @@ namespace LightningGauges.Renderers
             {
                 LoadImageResources();
             }
-            Graphics gfx = g;
+            var gfx = g;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
@@ -301,14 +301,14 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = gfx.Save();
+                var initialState = gfx.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 512;
-                int height = 512;
+                var width = 512;
+                var height = 512;
 
-                int scaleWidth = bounds.Width;
-                int scaleHeight = bounds.Height;
+                var scaleWidth = bounds.Width;
+                var scaleHeight = bounds.Height;
 
                 if (scaleHeight > scaleWidth) scaleHeight = scaleWidth;
                 if (scaleWidth > scaleHeight) scaleWidth = scaleHeight;
@@ -316,7 +316,7 @@ namespace LightningGauges.Renderers
 
                 gfx.ResetTransform(); //clear any existing transforms
                 gfx.SetClip(bounds);
-                    //set the clipping region on the graphics object to our render rectangle's boundaries
+                //set the clipping region on the graphics object to our render rectangle's boundaries
                 gfx.FillRectangle(Brushes.Black, bounds);
 
                 float translateX = 0;
@@ -331,7 +331,7 @@ namespace LightningGauges.Renderers
                 }
                 gfx.TranslateTransform(translateX, translateY);
                 gfx.ScaleTransform(scaleWidth/(float) width, scaleHeight/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
 
                 gfx.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
                 gfx.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
@@ -339,7 +339,7 @@ namespace LightningGauges.Renderers
                 gfx.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = gfx.Save();
+                var basicState = gfx.Save();
 
                 var outerRect = new RectangleF(0, 0, width, height);
 
@@ -376,14 +376,14 @@ namespace LightningGauges.Renderers
                     //draw INU invalid flag if needed
                     if (InstrumentState.INUInvalidFlag)
                     {
-                        Color redFlagColor = Color.FromArgb(224, 43, 48);
+                        var redFlagColor = Color.FromArgb(224, 43, 48);
                         DrawTextWarningFlag(gfx, outerRect, "I\nN\nU", redFlagColor, Color.White);
                     }
 
                     //draw ATT invalid flag
                     if (InstrumentState.AttitudeFailureFlag)
                     {
-                        Color yellowFlagColor = Color.FromArgb(244, 240, 55);
+                        var yellowFlagColor = Color.FromArgb(244, 240, 55);
                         DrawTextWarningFlag(gfx, outerRect, "A\nT\nT", yellowFlagColor, Color.Black);
                     }
 
@@ -401,7 +401,7 @@ namespace LightningGauges.Renderers
             if (fullBright != null)
             {
                 var ia = new ImageAttributes();
-                ColorMatrix dimmingMatrix =
+                var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
                 g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
@@ -417,7 +417,7 @@ namespace LightningGauges.Renderers
 
         private void DrawCenterLabel(Graphics g, RectangleF outerBounds, string label)
         {
-            FontFamily fontFamily = _fonts.Families[0];
+            var fontFamily = _fonts.Families[0];
             var labelFont = new Font(fontFamily, 25, FontStyle.Bold, GraphicsUnit.Point);
 
             var labelStringFormat = new StringFormat();
@@ -426,7 +426,7 @@ namespace LightningGauges.Renderers
                                             StringFormatFlags.NoWrap;
             labelStringFormat.LineAlignment = StringAlignment.Center;
             labelStringFormat.Trimming = StringTrimming.None;
-            SizeF charSize = g.MeasureString("A", labelFont);
+            var charSize = g.MeasureString("A", labelFont);
             var labelRect = new RectangleF(
                 new PointF(
                     0,
@@ -448,7 +448,7 @@ namespace LightningGauges.Renderers
             float airplaneFuselageLength = 45;
             float airplaneTailWidth = 23;
             float airplaneWingWidth = 45;
-            float gap = airplaneFuselageLength/2.0f;
+            var gap = airplaneFuselageLength/2.0f;
 
             var symbolPen = new Pen(Color.White);
             symbolPen.Width = 3;
@@ -471,11 +471,11 @@ namespace LightningGauges.Renderers
 
         private void DrawBearingToBeaconIndicator(Graphics g, RectangleF outerBounds)
         {
-            Color needleColor = Color.FromArgb(102, 190, 157);
+            var needleColor = Color.FromArgb(102, 190, 157);
             Brush needleBrush = new SolidBrush(needleColor);
             var needlePen = new Pen(needleColor);
             needlePen.Width = 4;
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
 
             g.TranslateTransform(outerBounds.Width/2.0f, outerBounds.Height/2.0f);
             g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
@@ -514,7 +514,7 @@ namespace LightningGauges.Renderers
                                          Color textColor)
         {
             Brush flagBrush = new SolidBrush(flagColor);
-            FontFamily fontFamily = _fonts.Families[0];
+            var fontFamily = _fonts.Families[0];
             var inuFlagFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
 
             var inuFlagStringFormat = new StringFormat();
@@ -534,9 +534,9 @@ namespace LightningGauges.Renderers
 
         private void DrawCourseDeviationNeedles(Graphics g, RectangleF outerBounds)
         {
-            GraphicsState initialState = g.Save();
-            Color redFlagColor = Color.FromArgb(224, 43, 48);
-            Color needleColor = Color.FromArgb(102, 190, 157);
+            var initialState = g.Save();
+            var redFlagColor = Color.FromArgb(224, 43, 48);
+            var needleColor = Color.FromArgb(102, 190, 157);
             Brush redFlagBrush = new SolidBrush(redFlagColor);
             Brush needleBrush = new SolidBrush(needleColor);
             var needlePen = new Pen(needleColor);
@@ -545,19 +545,19 @@ namespace LightningGauges.Renderers
             float pointerNeedleThinWidth = 3;
             float maxDeviationX = 110;
             float dotHeight = 15;
-            float dotY = (outerBounds.Height - dotHeight)/2.0f;
-            float leftInnerDotX = (-maxDeviationX/2.0f) - (dotHeight/2.0f);
-            float leftOuterDotX = -maxDeviationX - (dotHeight/2.0f);
-            float rightInnerDotX = (maxDeviationX/2.0f) - (dotHeight/2.0f);
-            float rightOuterDotX = maxDeviationX - (dotHeight/2.0f);
+            var dotY = (outerBounds.Height - dotHeight)/2.0f;
+            var leftInnerDotX = (-maxDeviationX/2.0f) - (dotHeight/2.0f);
+            var leftOuterDotX = -maxDeviationX - (dotHeight/2.0f);
+            var rightInnerDotX = (maxDeviationX/2.0f) - (dotHeight/2.0f);
+            var rightOuterDotX = maxDeviationX - (dotHeight/2.0f);
             float topIndicatorLineHeight = 50;
             float coursePointerTriangleWidth = 30;
             float coursePointerTriangleHeight = 20;
             float pointerNeedleThickHeightTop = 40;
             float cdiNeedleHeight = 198;
-            float deviationTranslateX = maxDeviationX*Math.Sign(InstrumentState.CourseDeviationDegrees)*
-                                        (Math.Abs(InstrumentState.CourseDeviationDegrees)/
-                                         Math.Abs(InstrumentState.CourseDeviationLimitDegrees));
+            var deviationTranslateX = maxDeviationX*Math.Sign(InstrumentState.CourseDeviationDegrees)*
+                                      (Math.Abs(InstrumentState.CourseDeviationDegrees)/
+                                       Math.Abs(InstrumentState.CourseDeviationLimitDegrees));
             float pointerNeedleThickHeightBottom = 60;
             float bottomIndicatorLineHeight = 50;
             var courseNeedleTopLineTop = new PointF(0, 43);
@@ -571,8 +571,8 @@ namespace LightningGauges.Renderers
             var pointerNeedleThickTopBottom = new PointF(0, pointerNeedleThickTopTop.Y + pointerNeedleThickHeightTop);
             var deviationInvalidFlagRect = new RectangleF(new PointF(-80, pointerNeedleThickTopBottom.Y),
                                                           new SizeF(60, 30));
-            float toFromFlagHeight = deviationInvalidFlagRect.Height;
-            float toFromFlagWidth = deviationInvalidFlagRect.Height;
+            var toFromFlagHeight = deviationInvalidFlagRect.Height;
+            var toFromFlagWidth = deviationInvalidFlagRect.Height;
             var cdiLineTop = new PointF(0, pointerNeedleThickTopBottom.Y + 2);
             var cdiLineBottom = new PointF(0, cdiLineTop.Y + cdiNeedleHeight);
             var pointerNeedleThickBottomTop = new PointF(0, cdiLineBottom.Y + 2);
@@ -658,7 +658,7 @@ namespace LightningGauges.Renderers
 
         private void DrawDesiredHeadingBug(Graphics g, RectangleF outerBounds)
         {
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
             g.TranslateTransform(outerBounds.Width/2.0f, outerBounds.Height/2.0f);
             g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
             g.RotateTransform(InstrumentState.DesiredHeadingDegrees);
@@ -667,7 +667,7 @@ namespace LightningGauges.Renderers
             float headingBugSquareSize = 20;
             float headingBugGapBetweenSquares = 5;
             float headingBugSquareTop = 18;
-            float centerX = outerBounds.X + (outerBounds.Width/2.0f);
+            var centerX = outerBounds.X + (outerBounds.Width/2.0f);
             var leftHeadingBugSquareLocation =
                 new PointF(centerX - headingBugSquareSize - (headingBugGapBetweenSquares/2.0f), headingBugSquareTop);
             var rightHeadingBugSquareLocation = new PointF(centerX + (headingBugGapBetweenSquares/2.0f),
@@ -676,7 +676,7 @@ namespace LightningGauges.Renderers
                                                       new SizeF(headingBugSquareSize, headingBugSquareSize));
             var headingBugRightSquare = new RectangleF(rightHeadingBugSquareLocation,
                                                        new SizeF(headingBugSquareSize, headingBugSquareSize));
-            Color headingBugColor = Color.FromArgb(248, 238, 153);
+            var headingBugColor = Color.FromArgb(248, 238, 153);
             Brush headingBugBrush = new SolidBrush(headingBugColor);
             g.FillRectangle(headingBugBrush, headingBugLeftSquare);
             g.FillRectangle(headingBugBrush, headingBugRightSquare);
@@ -702,7 +702,7 @@ namespace LightningGauges.Renderers
 
         private void DrawInstrumentMode(Graphics g, RectangleF outerBounds)
         {
-            FontFamily fontFamily = _fonts.Families[0];
+            var fontFamily = _fonts.Families[0];
             var labelFont = new Font(fontFamily, 25, FontStyle.Bold, GraphicsUnit.Point);
 
             var labelStringFormat = new StringFormat();
@@ -716,11 +716,11 @@ namespace LightningGauges.Renderers
             float margin = 8;
             float labelWidth = 50;
 
-            TimeSpan howLongSinceInstrumentModeChanged =
+            var howLongSinceInstrumentModeChanged =
                 DateTime.Now.Subtract(InstrumentState.WhenInstrumentModeLastChanged);
             if (howLongSinceInstrumentModeChanged.TotalMilliseconds <= 2000)
             {
-                string toDisplay = string.Empty;
+                var toDisplay = string.Empty;
                 switch (InstrumentState.InstrumentMode)
                 {
                     case F16EHSIInstrumentState.InstrumentModes.Unknown:
@@ -783,7 +783,7 @@ namespace LightningGauges.Renderers
 
         private void DrawHeadingAndCourseAdjustLabels(Graphics g, RectangleF outerBounds)
         {
-            FontFamily fontFamily = _fonts.Families[0];
+            var fontFamily = _fonts.Families[0];
             var labelFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
 
             var labelStringFormat = new StringFormat();
@@ -825,7 +825,7 @@ namespace LightningGauges.Renderers
 
         private void DrawDesiredCourse(Graphics g, RectangleF outerBounds)
         {
-            FontFamily fontFamily = _fonts.Families[0];
+            var fontFamily = _fonts.Families[0];
             var digitsFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
             var crsFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
 
@@ -844,19 +844,19 @@ namespace LightningGauges.Renderers
             crsStringFormat.Trimming = StringTrimming.None;
 
 
-            GraphicsState initialState = g.Save();
+            var initialState = g.Save();
             g.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
             g.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
             g.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
             g.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
 
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
 
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-            string desiredCourse = string.Format("{0:000.0}", InstrumentState.DesiredCourseDegrees);
-            string hundredsDigit = desiredCourse.Substring(0, 1);
-            string tensDigit = desiredCourse.Substring(1, 1);
-            string onesDigit = desiredCourse.Substring(2, 1);
+            var desiredCourse = string.Format("{0:000.0}", InstrumentState.DesiredCourseDegrees);
+            var hundredsDigit = desiredCourse.Substring(0, 1);
+            var tensDigit = desiredCourse.Substring(1, 1);
+            var onesDigit = desiredCourse.Substring(2, 1);
 
             float digitWidth = 22;
             float digitHeight = 32;
@@ -882,7 +882,7 @@ namespace LightningGauges.Renderers
 
         private void DrawDistanceToBeacon(Graphics g, RectangleF outerBounds)
         {
-            FontFamily fontFamily = _fonts.Families[0];
+            var fontFamily = _fonts.Families[0];
             var digitsFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
             var nmFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
 
@@ -900,19 +900,19 @@ namespace LightningGauges.Renderers
             nmStringFormat.LineAlignment = StringAlignment.Center;
             nmStringFormat.Trimming = StringTrimming.None;
 
-            GraphicsState initialState = g.Save();
+            var initialState = g.Save();
             g.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
             g.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
             g.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
             g.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
 
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-            string distanceToBeaconString = string.Format("{0:000.0}", InstrumentState.DistanceToBeaconNauticalMiles);
-            string hundredsDigit = distanceToBeaconString.Substring(0, 1);
-            string tensDigit = distanceToBeaconString.Substring(1, 1);
-            string onesDigit = distanceToBeaconString.Substring(2, 1);
-            string tenthsDigit = distanceToBeaconString.Substring(4, 1);
+            var distanceToBeaconString = string.Format("{0:000.0}", InstrumentState.DistanceToBeaconNauticalMiles);
+            var hundredsDigit = distanceToBeaconString.Substring(0, 1);
+            var tensDigit = distanceToBeaconString.Substring(1, 1);
+            var onesDigit = distanceToBeaconString.Substring(2, 1);
+            var tenthsDigit = distanceToBeaconString.Substring(4, 1);
 
             float digitWidth = 22;
             float digitHeight = 32;
@@ -937,7 +937,7 @@ namespace LightningGauges.Renderers
                 var dmeInvalidFlagUpperLeft = new PointF(hundredsRect.X, hundredsRect.Y + 8);
                 var dmeInvalidFlagSize = new SizeF((tenthsRect.X + tenthsRect.Width) - hundredsRect.X, 16);
                 var dmeInvalidFlagRect = new RectangleF(dmeInvalidFlagUpperLeft, dmeInvalidFlagSize);
-                Color redFlagColor = Color.FromArgb(224, 43, 48);
+                var redFlagColor = Color.FromArgb(224, 43, 48);
                 Brush redFlagBrush = new SolidBrush(redFlagColor);
                 g.FillRectangle(redFlagBrush, dmeInvalidFlagRect);
             }
@@ -950,12 +950,12 @@ namespace LightningGauges.Renderers
 
         private void DrawCompassRose(Graphics g, RectangleF outerBounds)
         {
-            GraphicsState initialState = g.Save();
+            var initialState = g.Save();
             g.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
             g.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
             g.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
             g.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
 
             var majorHeadingDigitStringFormat = new StringFormat();
             majorHeadingDigitStringFormat.Alignment = StringAlignment.Center;
@@ -964,7 +964,7 @@ namespace LightningGauges.Renderers
             majorHeadingDigitStringFormat.LineAlignment = StringAlignment.Center;
             majorHeadingDigitStringFormat.Trimming = StringTrimming.None;
 
-            FontFamily fontFamily = _fonts.Families[1];
+            var fontFamily = _fonts.Families[1];
 
             var majorHeadingDigitFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
 
@@ -972,16 +972,16 @@ namespace LightningGauges.Renderers
             linePen.Width = 3;
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
             float majorHeadingLineLength = 28;
-            float minorHeadingLineLength = majorHeadingLineLength/2.0f;
+            var minorHeadingLineLength = majorHeadingLineLength/2.0f;
             float majorHeadingLegendLayoutRectangleHeight = 30;
             float majorHeadingLegendLayoutRectangleWidth = 30;
             Brush majorHeadingBrush = new SolidBrush(Color.White);
 
             var innerBounds = new RectangleF(outerBounds.X, outerBounds.Y, outerBounds.Width, outerBounds.Height);
-            float marginWidth = 30f;
+            var marginWidth = 30f;
             innerBounds.Inflate(-marginWidth, -marginWidth);
 
-            for (int i = 0; i < 360; i += 45)
+            for (var i = 0; i < 360; i += 45)
             {
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(marginWidth, marginWidth);
@@ -1005,7 +1005,7 @@ namespace LightningGauges.Renderers
             }
 
 
-            for (int i = 0; i < 360; i++)
+            for (var i = 0; i < 360; i++)
             {
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
@@ -1029,7 +1029,7 @@ namespace LightningGauges.Renderers
                 }
                 if (i%30 == 0)
                 {
-                    string majorHeadingLegendText = string.Format("{0:##}", i/10);
+                    var majorHeadingLegendText = string.Format("{0:##}", i/10);
                     if (i == 90)
                     {
                         majorHeadingLegendText = "E";

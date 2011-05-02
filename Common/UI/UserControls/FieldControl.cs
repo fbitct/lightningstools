@@ -59,8 +59,8 @@ namespace Common.UI.UserControls
         {
             get
             {
-                Size minimumSize = Size.Empty;
-                using (Graphics g = Graphics.FromHwnd(Handle))
+                Size minimumSize;
+                using (var g = Graphics.FromHwnd(Handle))
                 {
                     minimumSize = TextRenderer.MeasureText(g,
                                                            "222", Font, Size,
@@ -149,7 +149,7 @@ namespace Common.UI.UserControls
 
                     if (TextLength > 0)
                     {
-                        int newLength = TextLength - 1;
+                        var newLength = TextLength - 1;
                         Text = Text.Substring(0, newLength);
                     }
 
@@ -310,8 +310,8 @@ namespace Common.UI.UserControls
                     }
                     else
                     {
-                        int originalLength = TextLength;
-                        int newSelectionStart = SelectionStart;
+                        var originalLength = TextLength;
+                        var newSelectionStart = SelectionStart;
 
                         base.Text = value.ToString(CultureInfo.InvariantCulture);
 
@@ -479,12 +479,12 @@ namespace Common.UI.UserControls
 
         #region Private Data
 
+        private const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.HorizontalCenter |
+                                                          TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
+
         private int _fieldIndex = -1;
         private byte _rangeLower; // = MinimumValue;  // this is removed for FxCop approval
         private byte _rangeUpper = MAXIMUM_VALUE;
-
-        private const TextFormatFlags TEXT_FORMAT_FLAGS = TextFormatFlags.HorizontalCenter |
-                                                   TextFormatFlags.SingleLine | TextFormatFlags.NoPadding;
 
         #endregion // Private Data
     }

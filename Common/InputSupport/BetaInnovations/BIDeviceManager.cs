@@ -54,10 +54,10 @@ namespace Common.InputSupport.BetaInnovations
 
         public bool IsDeviceAttached(string devicePath, bool throwOnFail)
         {
-            BIPhysicalDeviceInfo[] devices = GetDevices(throwOnFail);
-            foreach (BIPhysicalDeviceInfo thisDevice in devices)
+            var devices = GetDevices(throwOnFail);
+            foreach (var thisDevice in devices)
             {
-                string key = thisDevice.Key != null ? thisDevice.Key.ToString() : string.Empty;
+                var key = thisDevice.Key != null ? thisDevice.Key.ToString() : string.Empty;
                 if (key.Equals(devicePath, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return true;
@@ -77,23 +77,23 @@ namespace Common.InputSupport.BetaInnovations
             {
                 throw new ArgumentNullException("device");
             }
-            string devicePath = device.Key.ToString();
+            var devicePath = device.Key.ToString();
             if (!_devicesOpen)
             {
                 GetDevices(throwOnFail);
             }
             var controls = new List<BIPhysicalControlInfo>();
-            for (int i = 0; i < _numDevices; i++)
+            for (var i = 0; i < _numDevices; i++)
             {
-                DeviceParam thisDevice = _deviceList[i];
-                string thisDevicePath = (Encoding.Default.GetString(thisDevice.DevicePath)).Substring(0,
-                                                                                                      (int)
-                                                                                                      thisDevice.
-                                                                                                          PathLength);
+                var thisDevice = _deviceList[i];
+                var thisDevicePath = (Encoding.Default.GetString(thisDevice.DevicePath)).Substring(0,
+                                                                                                   (int)
+                                                                                                   thisDevice.
+                                                                                                       PathLength);
                 if (thisDevicePath != null &&
                     thisDevicePath.Equals(devicePath, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    ushort numInputs = thisDevice.NumberInputIndices;
+                    var numInputs = thisDevice.NumberInputIndices;
                     for (ushort j = 0; j < numInputs; j++)
                     {
                         var thisControl = new BIPhysicalControlInfo(device, j, "Button " + (j + 1));
@@ -102,9 +102,7 @@ namespace Common.InputSupport.BetaInnovations
                     break;
                 }
             }
-            var toReturn = new BIPhysicalControlInfo[controls.Count];
-            toReturn = controls.ToArray();
-            return toReturn;
+            return controls.ToArray();
         }
 
         public BIPhysicalDeviceInfo[] GetDevices()
@@ -116,64 +114,58 @@ namespace Common.InputSupport.BetaInnovations
         {
             DetectHIDDevices(throwOnFail);
             var devices = new List<BIPhysicalDeviceInfo>();
-            for (int i = 0; i < _numDevices; i++)
+            for (var i = 0; i < _numDevices; i++)
             {
-                string devName = Encoding.Default.GetString(_deviceList[i].DeviceName);
+                var devName = Encoding.Default.GetString(_deviceList[i].DeviceName);
                 devName = devName.Substring(0, (int) _deviceList[i].DeviceNameLength);
-                string serial = (Encoding.Default.GetString(_deviceList[i].SerialNum)).Substring(0,
-                                                                                                 (int)
-                                                                                                 _deviceList[i].
-                                                                                                     SerialNumLength);
+                var serial = (Encoding.Default.GetString(_deviceList[i].SerialNum)).Substring(0,
+                                                                                              (int)
+                                                                                              _deviceList[i].
+                                                                                                  SerialNumLength);
                 if (!string.IsNullOrEmpty(serial))
                 {
                     devName += " (Serial #:";
                     devName += serial;
                     devName += ")";
                 }
-                string devicePath = (Encoding.Default.GetString(_deviceList[i].DevicePath)).Substring(0,
-                                                                                                      (int)
-                                                                                                      _deviceList[i].
-                                                                                                          PathLength);
+                var devicePath = (Encoding.Default.GetString(_deviceList[i].DevicePath)).Substring(0,
+                                                                                                   (int)
+                                                                                                   _deviceList[i].
+                                                                                                       PathLength);
                 var deviceInfo = new BIPhysicalDeviceInfo(devicePath, devName);
                 devices.Add(deviceInfo);
             }
-            var toReturn = new BIPhysicalDeviceInfo[devices.Count];
-            toReturn = devices.ToArray();
-            return toReturn;
+            return devices.ToArray();
         }
 
         public bool[] Poll(BIPhysicalDeviceInfo device, bool throwOnFail)
         {
-            bool deviceFound = false;
-            for (int i = 0; i < _numDevices; i++)
+            var deviceFound = false;
+            for (var i = 0; i < _numDevices; i++)
             {
-                DeviceParam thisDevice = _deviceList[i];
-                string thisDevicePath = (Encoding.Default.GetString(thisDevice.DevicePath)).Substring(0,
-                                                                                                      (int)
-                                                                                                      thisDevice.
-                                                                                                          PathLength);
+                var thisDevice = _deviceList[i];
+                var thisDevicePath = (Encoding.Default.GetString(thisDevice.DevicePath)).Substring(0,
+                                                                                                   (int)
+                                                                                                   thisDevice.
+                                                                                                       PathLength);
                 if (thisDevicePath != null && device.Key != null &&
                     thisDevicePath.Equals(device.Key.ToString(), StringComparison.InvariantCultureIgnoreCase))
                 {
-                    deviceFound = true;
                     byte[] outbuffer;
-                    int result = ReadInputData(ref thisDevice, out outbuffer, throwOnFail);
+                    var result = ReadInputData(ref thisDevice, out outbuffer, throwOnFail);
                     //if (result == BIUSB.DEV_INPUT || result == BIUSB.DEV_WAIT)
                     {
                         var state = new bool[thisDevice.NumberInputIndices];
-                        for (int j = 0; j < System.Math.Min(outbuffer.Length, thisDevice.NumberInputIndices); j++)
+                        for (var j = 0; j < System.Math.Min(outbuffer.Length, thisDevice.NumberInputIndices); j++)
                         {
                             state[j] = (outbuffer[j] == 1);
                         }
                         return state;
                     }
-                    break;
                 }
             }
             if (throwOnFail && !deviceFound)
-            {
                 throw new OperationFailedException("Device not found.");
-            }
             return null;
         }
 
@@ -185,10 +177,10 @@ namespace Common.InputSupport.BetaInnovations
         private int ReadInputData(ref DeviceParam device, out byte[] databuffer, bool throwOnFail)
         {
             databuffer = new byte[BIUSB.MAX_INPUTS];
-            int result = BIUSB.ReadInputData(ref device, databuffer, 0);
+            var result = BIUSB.ReadInputData(ref device, databuffer, 0);
             if (throwOnFail)
             {
-                int lastError = Marshal.GetLastWin32Error();
+                var lastError = Marshal.GetLastWin32Error();
                 //check to see if a Win32 error was returned as a result of 
                 //the previous calls
                 if (lastError != 0)
@@ -197,13 +189,12 @@ namespace Common.InputSupport.BetaInnovations
                     Exception e = new Win32Exception(lastError);
                     throw new OperationFailedException(e.Message, e);
                 }
-                if (result == BIUSB.DEV_TIMEOUT)
+                switch (result)
                 {
-                    throw new TimeoutException("Device did not respond within 1 second.");
-                }
-                else if (result == BIUSB.DEV_FAILED)
-                {
-                    throw new OperationFailedException("Failure reading from device.");
+                    case BIUSB.DEV_TIMEOUT:
+                        throw new TimeoutException("Device did not respond within 1 second.");
+                    case BIUSB.DEV_FAILED:
+                        throw new OperationFailedException("Failure reading from device.");
                 }
             }
             return result;
@@ -216,10 +207,10 @@ namespace Common.InputSupport.BetaInnovations
 
         private bool CloseDevices(bool throwOnFail)
         {
-            bool success = BIUSB.CloseDevices(_numDevices, _deviceList);
+            var success = BIUSB.CloseDevices(_numDevices, _deviceList);
             if (throwOnFail)
             {
-                int lastError = Marshal.GetLastWin32Error();
+                var lastError = Marshal.GetLastWin32Error();
                 //check to see if a Win32 error was returned as a result of 
                 //the previous calls
                 if (lastError != 0)
@@ -251,11 +242,11 @@ namespace Common.InputSupport.BetaInnovations
             {
                 CloseDevices(false);
             }
-            bool success = false;
+            var success = false;
             success = BIUSB.DetectHID(out _numDevices, _deviceList, BIUSB.DT_HID);
             if (throwOnFail)
             {
-                int lastError = Marshal.GetLastWin32Error();
+                var lastError = Marshal.GetLastWin32Error();
                 //check to see if a Win32 error was returned as a result of 
                 //the previous calls
                 if (lastError != 0)
@@ -275,8 +266,8 @@ namespace Common.InputSupport.BetaInnovations
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -285,8 +276,8 @@ namespace Common.InputSupport.BetaInnovations
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~BIDeviceManager()
         {
@@ -294,9 +285,9 @@ namespace Common.InputSupport.BetaInnovations
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

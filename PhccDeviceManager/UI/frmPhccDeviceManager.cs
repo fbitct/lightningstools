@@ -35,11 +35,11 @@ namespace Phcc.DeviceManager.UI
 
         private Motherboard GetSelectedMotherboard()
         {
-            TreeNode currentNode = tvDevicesAndPeripherals.SelectedNode;
+            var currentNode = tvDevicesAndPeripherals.SelectedNode;
 
             while (currentNode != null)
             {
-                object currentNodeData = currentNode.Tag;
+                var currentNodeData = currentNode.Tag;
                 if (currentNodeData is Motherboard)
                 {
                     return (Motherboard) currentNodeData;
@@ -54,7 +54,7 @@ namespace Phcc.DeviceManager.UI
 
         private void RemoveSelectedNode()
         {
-            object currentNodeData = tvDevicesAndPeripherals.SelectedNode.Tag;
+            var currentNodeData = tvDevicesAndPeripherals.SelectedNode.Tag;
             if (currentNodeData is Motherboard)
             {
                 _configMgr.Motherboards.Remove((Motherboard) currentNodeData);
@@ -62,7 +62,7 @@ namespace Phcc.DeviceManager.UI
             }
             if (currentNodeData is Peripheral)
             {
-                Motherboard selectedMotherboard = GetSelectedMotherboard();
+                var selectedMotherboard = GetSelectedMotherboard();
                 if (selectedMotherboard != null)
                 {
                     selectedMotherboard.Peripherals.Remove((Peripheral) currentNodeData);
@@ -83,7 +83,7 @@ namespace Phcc.DeviceManager.UI
             if (e == null) return null;
             foreach (TreeNode node in tvDevicesAndPeripherals.Nodes)
             {
-                object nodeData = node.Tag;
+                var nodeData = node.Tag;
                 if (nodeData != null && nodeData == e)
                 {
                     return node;
@@ -94,7 +94,7 @@ namespace Phcc.DeviceManager.UI
 
         private static string GetHexRepresentation(byte someByte)
         {
-            string basicHexRep = someByte.ToString("X2").ToUpper();
+            var basicHexRep = someByte.ToString("X2").ToUpper();
             if (basicHexRep.Length < 2) basicHexRep = "0" + basicHexRep;
             basicHexRep = "0x" + basicHexRep;
             return basicHexRep;
@@ -106,9 +106,9 @@ namespace Phcc.DeviceManager.UI
             tvDevicesAndPeripherals.Nodes.Clear();
             if (_configMgr.Motherboards != null && _configMgr.Motherboards.Count != 0)
             {
-                foreach (Motherboard motherboard in _configMgr.Motherboards)
+                foreach (var motherboard in _configMgr.Motherboards)
                 {
-                    string comPort = "Unknown COM port";
+                    var comPort = "Unknown COM port";
                     if (motherboard != null && !string.IsNullOrEmpty(motherboard.ComPort))
                     {
                         comPort = motherboard.ComPort;
@@ -119,11 +119,11 @@ namespace Phcc.DeviceManager.UI
                     tvDevicesAndPeripherals.Nodes.Add(tn);
                     if (motherboard.Peripherals != null)
                     {
-                        foreach (Peripheral p in motherboard.Peripherals)
+                        foreach (var p in motherboard.Peripherals)
                         {
                             tn = new TreeNode();
                             tn.Tag = p;
-                            string deviceAddress = GetHexRepresentation(p.Address);
+                            var deviceAddress = GetHexRepresentation(p.Address);
                             if (p is Doa40Do)
                             {
                                 tn.Text = "DOA_40DO - Digital Output card @ " + deviceAddress;
@@ -148,7 +148,7 @@ namespace Phcc.DeviceManager.UI
                             {
                                 tn.Text = "DOA_AnOut1 - Analog output card @ " + deviceAddress;
                             }
-                            TreeNode motherboardNode = FindNodeForConfigElement(motherboard);
+                            var motherboardNode = FindNodeForConfigElement(motherboard);
                             if (motherboardNode != null)
                             {
                                 motherboardNode.Nodes.Add(tn);
@@ -181,7 +181,7 @@ namespace Phcc.DeviceManager.UI
 
         private void AddPeripheralToTree(Peripheral p)
         {
-            Motherboard selectedMotherboard = GetSelectedMotherboard();
+            var selectedMotherboard = GetSelectedMotherboard();
             if (selectedMotherboard != null)
             {
                 selectedMotherboard.Peripherals.Add(p);
@@ -193,7 +193,7 @@ namespace Phcc.DeviceManager.UI
         private void SelectNodeInTreeForConfigElement(PhccConfigElement e)
         {
             if (e == null) return;
-            TreeNode node = FindNodeForConfigElement(e);
+            var node = FindNodeForConfigElement(e);
             if (node != null)
             {
                 tvDevicesAndPeripherals.SelectedNode = node;
@@ -204,18 +204,18 @@ namespace Phcc.DeviceManager.UI
         private void AddNewPeripheral<T>() where T : Peripheral, new()
         {
             var prompt = new frmPromptForPeripheralAddress();
-            Motherboard m = GetSelectedMotherboard();
+            var m = GetSelectedMotherboard();
             if (m != null && m.Peripherals != null)
             {
-                foreach (Peripheral p in m.Peripherals)
+                foreach (var p in m.Peripherals)
                 {
                     if (prompt.ProhibitedBaseAddresses == null) prompt.ProhibitedBaseAddresses = new List<byte>();
                     prompt.ProhibitedBaseAddresses.Add(p.Address);
                 }
             }
-            DialogResult result = prompt.ShowDialog(this);
+            var result = prompt.ShowDialog(this);
             if (result == DialogResult.Cancel) return;
-            byte baseAddress = prompt.BaseAddress;
+            var baseAddress = prompt.BaseAddress;
             var newDevice = new T {Address = baseAddress};
             AddPeripheralToTree(newDevice);
             _configIsModified = true;
@@ -227,9 +227,9 @@ namespace Phcc.DeviceManager.UI
             if (servoNode != null)
             {
                 var selectServoDialog = new frmSelectServo();
-                DialogResult result = selectServoDialog.ShowDialog(this);
+                var result = selectServoDialog.ShowDialog(this);
                 if (result == DialogResult.Cancel) return;
-                int selectedServo = selectServoDialog.SelectedServo;
+                var selectedServo = selectServoDialog.SelectedServo;
 
                 if (servoNode.ServoCalibrations == null)
                 {
@@ -245,7 +245,7 @@ namespace Phcc.DeviceManager.UI
 
                 if (result != DialogResult.Cancel)
                 {
-                    ServoCalibration thisServoCalibration = servoNode.ServoCalibrations[selectedServo - 1];
+                    var thisServoCalibration = servoNode.ServoCalibrations[selectedServo - 1];
                     if (thisServoCalibration == null)
                     {
                         thisServoCalibration = new ServoCalibration();
@@ -262,7 +262,7 @@ namespace Phcc.DeviceManager.UI
         private static List<ServoCalibration> CreateDefaultServoCalibrations()
         {
             var toReturn = new List<ServoCalibration>(8);
-            for (int i = 0; i < 8; i++)
+            for (var i = 0; i < 8; i++)
             {
                 unchecked
                 {
@@ -301,11 +301,11 @@ namespace Phcc.DeviceManager.UI
             mnuContextSetCOMPort.Enabled = false;
             mnuDevicesAddPeripheral.Enabled = false;
             mnuContextAddPeripheral.Enabled = false;
-            TreeNode selectedNode = tvDevicesAndPeripherals.SelectedNode;
-            Motherboard selectedMotherboard = GetSelectedMotherboard();
+            var selectedNode = tvDevicesAndPeripherals.SelectedNode;
+            var selectedMotherboard = GetSelectedMotherboard();
             if (selectedNode != null)
             {
-                object selectedNodeData = selectedNode.Tag;
+                var selectedNodeData = selectedNode.Tag;
                 if (selectedNodeData != null)
                 {
                     if (selectedNodeData is Doa8Servo)
@@ -347,7 +347,7 @@ namespace Phcc.DeviceManager.UI
             dialog.SupportMultiDottedExtensions = true;
             dialog.Title = "Save Configuration File";
             dialog.ValidateNames = true;
-            DialogResult result = dialog.ShowDialog(this);
+            var result = dialog.ShowDialog(this);
             if (result == DialogResult.OK)
             {
                 SaveConfiguration(dialog.FileName);
@@ -373,7 +373,7 @@ namespace Phcc.DeviceManager.UI
             dialog.SupportMultiDottedExtensions = true;
             dialog.Title = "Open Configuration File";
             dialog.ValidateNames = true;
-            DialogResult result = dialog.ShowDialog(this);
+            var result = dialog.ShowDialog(this);
             if (result == DialogResult.OK)
             {
                 _currentConfigurationFilePath = dialog.FileName;
@@ -385,7 +385,7 @@ namespace Phcc.DeviceManager.UI
         {
             if (_configIsModified)
             {
-                DialogResult result =
+                var result =
                     MessageBox.Show("There are unsaved changes.  Would you like to save changes before continuing?",
                                     Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
                                     MessageBoxDefaultButton.Button3);
@@ -422,9 +422,9 @@ namespace Phcc.DeviceManager.UI
 
         private DialogResult SetComPort()
         {
-            Motherboard selectedMotherboard = GetSelectedMotherboard();
+            var selectedMotherboard = GetSelectedMotherboard();
             if (selectedMotherboard == null) return DialogResult.Cancel;
-            DialogResult result = SetComPort(selectedMotherboard);
+            var result = SetComPort(selectedMotherboard);
             if (result == DialogResult.OK)
             {
                 _configIsModified = true;
@@ -437,7 +437,7 @@ namespace Phcc.DeviceManager.UI
         {
             if (motherboard == null) throw new ArgumentNullException("motherboard");
             var dialog = new frmSelectCOMPort();
-            foreach (Motherboard m in _configMgr.Motherboards)
+            foreach (var m in _configMgr.Motherboards)
             {
                 if (m == motherboard) continue;
                 if (!string.IsNullOrEmpty(m.ComPort))
@@ -450,7 +450,7 @@ namespace Phcc.DeviceManager.UI
             }
 
             dialog.COMPort = motherboard.ComPort;
-            DialogResult result = dialog.ShowDialog();
+            var result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
                 motherboard.ComPort = dialog.COMPort;
@@ -461,7 +461,7 @@ namespace Phcc.DeviceManager.UI
         private void AddMotherboard()
         {
             var newMotherBoard = new Motherboard();
-            DialogResult result = SetComPort(newMotherBoard);
+            var result = SetComPort(newMotherBoard);
             if (result == DialogResult.OK)
             {
                 _configMgr.Motherboards.Add(newMotherBoard);
@@ -472,10 +472,10 @@ namespace Phcc.DeviceManager.UI
 
         private void Calibrate()
         {
-            TreeNode selectedNode = tvDevicesAndPeripherals.SelectedNode;
+            var selectedNode = tvDevicesAndPeripherals.SelectedNode;
             if (selectedNode != null)
             {
-                object selectedNodeData = selectedNode.Tag;
+                var selectedNodeData = selectedNode.Tag;
                 if (selectedNodeData != null)
                 {
                     if (selectedNodeData is Doa8Servo)
@@ -502,8 +502,8 @@ namespace Phcc.DeviceManager.UI
 
         private void mnuFileOpen_Click(object sender, EventArgs e)
         {
-            bool success = false;
-            bool keepTrying = true;
+            var success = false;
+            var keepTrying = true;
             while (!success && keepTrying)
             {
                 try
@@ -513,12 +513,12 @@ namespace Phcc.DeviceManager.UI
                 }
                 catch (Exception ex)
                 {
-                    string errorMessage = string.Format("The selected file could not be loaded.\n\n  Reason: {0}",
-                                                        ex.Message);
+                    var errorMessage = string.Format("The selected file could not be loaded.\n\n  Reason: {0}",
+                                                     ex.Message);
                     _log.Error(errorMessage, ex);
-                    DialogResult result = MessageBox.Show(errorMessage, Application.ProductName,
-                                                          MessageBoxButtons.RetryCancel, MessageBoxIcon.Error,
-                                                          MessageBoxDefaultButton.Button2);
+                    var result = MessageBox.Show(errorMessage, Application.ProductName,
+                                                 MessageBoxButtons.RetryCancel, MessageBoxIcon.Error,
+                                                 MessageBoxDefaultButton.Button2);
                     if (result == DialogResult.Cancel) keepTrying = false;
                 }
             }
@@ -680,8 +680,8 @@ namespace Phcc.DeviceManager.UI
 
         private void SaveConfiguration(string configurationFilePath)
         {
-            bool success = false;
-            bool keepTrying = true;
+            var success = false;
+            var keepTrying = true;
             while (!success && keepTrying)
             {
                 try
@@ -694,12 +694,12 @@ namespace Phcc.DeviceManager.UI
                 }
                 catch (Exception ex)
                 {
-                    string errorMessage = string.Format("The selected file could not be saved.\n\n  Reason: {0}",
-                                                        ex.Message);
+                    var errorMessage = string.Format("The selected file could not be saved.\n\n  Reason: {0}",
+                                                     ex.Message);
                     _log.Error(errorMessage, ex);
-                    DialogResult result = MessageBox.Show(errorMessage, Application.ProductName,
-                                                          MessageBoxButtons.RetryCancel, MessageBoxIcon.Error,
-                                                          MessageBoxDefaultButton.Button2);
+                    var result = MessageBox.Show(errorMessage, Application.ProductName,
+                                                 MessageBoxButtons.RetryCancel, MessageBoxIcon.Error,
+                                                 MessageBoxDefaultButton.Button2);
                     if (result == DialogResult.Cancel) keepTrying = false;
                 }
             }

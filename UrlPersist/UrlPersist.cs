@@ -11,7 +11,7 @@ namespace UrlPersist
 
         public static bool SaveToFile(string url, string fileName)
         {
-            bool toReturn = false;
+            var toReturn = false;
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 toReturn = SaveToStream(url, fs);
@@ -23,7 +23,7 @@ namespace UrlPersist
 
         public static bool SaveToStream(string url, Stream outputStream)
         {
-            bool result = false;
+            var result = false;
             Message msg = new MessageClass();
             ADODB.Stream stm = null;
             try

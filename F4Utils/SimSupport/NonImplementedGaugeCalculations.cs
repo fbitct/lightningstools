@@ -9,7 +9,7 @@ namespace F4Utils.SimSupport
         public static float NOZ(float RPM, float Alt, float FF)
         {
             float NewNoz = 0;
-            float AC_Alt = Math.Abs(Alt);
+            var AC_Alt = Math.Abs(Alt);
 
             if (RPM < 58)
             {
@@ -35,9 +35,9 @@ namespace F4Utils.SimSupport
             else if (RPM >= 83)
             {
                 //Get MilFuelFlow
-                int Mil = MilFF(AC_Alt);
-                int AB = AbFF(AC_Alt);
-                int Spread = AB - Mil;
+                var Mil = MilFF(AC_Alt);
+                var AB = AbFF(AC_Alt);
+                var Spread = AB - Mil;
 
                 if (FF < Mil)
                 {
@@ -61,7 +61,7 @@ namespace F4Utils.SimSupport
 
         private static int MilFF(float Alt)
         {
-            int MilFF = 0;
+            var MilFF = 0;
 
             if (Alt >= 0 && Alt < 5000)
             {
@@ -110,7 +110,7 @@ namespace F4Utils.SimSupport
 
         private static int AbFF(float Alt)
         {
-            int AbFF = 0;
+            var AbFF = 0;
 
             if (Alt >= 0 && Alt < 5000)
             {
@@ -160,7 +160,7 @@ namespace F4Utils.SimSupport
         public static float Ftit(float FTIT, float RPM)
         {
             float NewFtit = 0;
-            int DampingValue = 5;
+            var DampingValue = 5;
 
             if (RPM > 25 && RPM <= 65)
             {
@@ -205,10 +205,10 @@ namespace F4Utils.SimSupport
         {
             //Create a value for the cabin alt, depending on the aircraft alt and
             //the cabin presss warning bit.
-            float AircraftAlt = Math.Abs(z);
+            var AircraftAlt = Math.Abs(z);
             double CabinAlt = 0;
             double Temp = 0;
-            int DampingValue = 33;
+            var DampingValue = 33;
 
             if (!Pressurization)
             {
@@ -284,9 +284,9 @@ namespace F4Utils.SimSupport
             //That means that the power is supplied when the Main GEN comes online.
             //To simulate that let the Hyd A rise when the RPM is between 55 and 65
             float HydA = 0;
-            int HydA_High = 2900;
+            var HydA_High = 2900;
             float RPM_Hyd = 0;
-            bool Elec = false;
+            var Elec = false;
 
             //First check if we have elec power for the instrument.
             //Elec and Hyd power can come from EPU so check if the EPU is running by EPUon Lightbit and
@@ -367,9 +367,9 @@ namespace F4Utils.SimSupport
             //That means that the power is supplied when the Main GEN comes online.
             //To simulate that let the Hyd B rise when the RPM is between 55 and 65
             float HydB = 0;
-            int HydB_High = 3100;
+            var HydB_High = 3100;
             float RPM_Hyd = 0;
-            bool Elec = false;
+            var Elec = false;
 
             //Check if we have elec power.
             //First check if we have elec power for the instrument.

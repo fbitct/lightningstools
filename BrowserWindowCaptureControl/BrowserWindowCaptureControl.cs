@@ -148,12 +148,12 @@ namespace BrowserWindowCaptureControl
                 NativeMethods.GetClientRect(Handle, out clientRect);
 
                 //get the window handle of the control that owns this screen real estate
-                IntPtr containerHwnd =
+                var containerHwnd =
                     NativeMethods.WindowFromPoint(new NativeMethods.POINT {x = clientRect.x, y = clientRect.y});
-                int lastError = Marshal.GetLastWin32Error();
+                var lastError = Marshal.GetLastWin32Error();
 
                 //get the window handle of the rootmost window that owns this control's container control
-                IntPtr rootWindowHwnd = NativeMethods.GetAncestor(Handle, NativeMethods.GA_ROOT);
+                var rootWindowHwnd = NativeMethods.GetAncestor(Handle, NativeMethods.GA_ROOT);
 
                 //get the rectangle representing this control's parent window's client area, relative to the entire desktop window's upper left edge
                 var rootWindowClientRect = new NativeMethods.RECT();
@@ -163,7 +163,7 @@ namespace BrowserWindowCaptureControl
                 byte[] imageBytes = null;
                 using (var bmp = new Bitmap(rootWindowClientRect.width, rootWindowClientRect.height))
                 using (var ms = new MemoryStream())
-                using (Graphics g = Graphics.FromImage(bmp))
+                using (var g = Graphics.FromImage(bmp))
                 {
                     //screen-capture this control's parent window's entire client area
                     g.CopyFromScreen(new Point(rootWindowClientRect.x, rootWindowClientRect.y), new Point(0, 0),

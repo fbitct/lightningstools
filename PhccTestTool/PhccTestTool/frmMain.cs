@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.Devices;
@@ -87,21 +86,21 @@ namespace PhccTestTool
         private void txtCharLcdDeviceAddress_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtCharLcdDeviceAddress, out val);
+            var valid = ValidateHexTextControl(txtCharLcdDeviceAddress, out val);
         }
 
         private bool ValidateHexTextControl(TextBox textControl, out byte val)
         {
             // First create an instance of the call stack   
             var callStack = new StackTrace();
-            StackFrame[] frames = callStack.GetFrames();
-            for (int i = 1; i < frames.Length; i++)
+            var frames = callStack.GetFrames();
+            for (var i = 1; i < frames.Length; i++)
             {
-                StackFrame frame = frames[i];
-                MethodBase method = frame.GetMethod();
+                var frame = frames[i];
+                var method = frame.GetMethod();
                 // Get the declaring type and method names    
-                string declaringType = method.DeclaringType.Name;
-                string methodName = method.Name;
+                var declaringType = method.DeclaringType.Name;
+                var methodName = method.Name;
                 if (methodName != null && methodName.Contains("ValidateHex"))
                 {
                     val = 0x00;
@@ -110,9 +109,9 @@ namespace PhccTestTool
             }
 
             ResetErrors();
-            string text = textControl.Text.Trim().ToUpperInvariant();
+            var text = textControl.Text.Trim().ToUpperInvariant();
             textControl.Text = text;
-            bool parsed = false;
+            var parsed = false;
             if (text.StartsWith("0X"))
             {
                 text = text.Substring(2, text.Length - 2);
@@ -134,21 +133,21 @@ namespace PhccTestTool
         private void txtLcdDataByte_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtCharLcdDataByte, out val);
+            var valid = ValidateHexTextControl(txtCharLcdDataByte, out val);
         }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
             byte devAddr = 0;
             byte dataByte = 0;
-            bool valid = true;
+            var valid = true;
             valid = ValidateHexTextControl(txtCharLcdDeviceAddress, out devAddr);
             if (!valid) return;
             valid = ValidateHexTextControl(txtCharLcdDataByte, out dataByte);
             if (!valid) return;
 
             var displayNum = (int) nudCharLcdDisplayNumber.Value;
-            LcdDataModes dataMode = LcdDataModes.DisplayData;
+            var dataMode = LcdDataModes.DisplayData;
 
             if (cbCharLcdDataMode.SelectedText.ToLowerInvariant().Contains("control"))
             {
@@ -191,7 +190,7 @@ namespace PhccTestTool
             digitalInputsOuterFlowLayoutPanel.AutoScroll = true;
             keyMatrixCardTabs.TabPages["tabDigitalInputs"].Controls.Add(digitalInputsOuterFlowLayoutPanel);
 
-            for (int i = 1; i <= 16; i++)
+            for (var i = 1; i <= 16; i++)
             {
                 var gbDigitalInputs = new GroupBox();
                 gbDigitalInputs.Name = "gbDigitalInputs" + i;
@@ -207,10 +206,10 @@ namespace PhccTestTool
                 gbDigitalInputs.Controls.Add(panel);
             }
 
-            for (int i = 1; i <= 1024; i++)
+            for (var i = 1; i <= 1024; i++)
             {
-                string flowPanelName = "digitalInputsKey" + (((i - 1)/64) + 1) + "FlowLayoutPanel";
-                string groupBoxName = "gbDigitalInputs" + (((i - 1)/64) + 1);
+                var flowPanelName = "digitalInputsKey" + (((i - 1)/64) + 1) + "FlowLayoutPanel";
+                var groupBoxName = "gbDigitalInputs" + (((i - 1)/64) + 1);
                 var button = new RadioButton();
                 button.Name = "rdoDigitalInput" + i;
                 button.Checked = false;
@@ -285,7 +284,7 @@ namespace PhccTestTool
                 doa40doFlowPanel.SetFlowBreak(cmdDoa40doTurnAllOutputsOff, true);
 
 
-                for (int i = 1; i <= 40; i++)
+                for (var i = 1; i <= 40; i++)
                 {
                     var doa40doOutputButton = new RadioButton();
                     doa40doOutputButton.Name = "rdoDoa40DoDigitalOutput" + i;
@@ -344,7 +343,7 @@ namespace PhccTestTool
                 dob74595tFlowPanel.Controls.Add(txtDob74595tDevAddr);
                 dob74595tFlowPanel.SetFlowBreak(txtDob74595tDevAddr, true);
 
-                for (int i = 1; i <= 16; i++)
+                for (var i = 1; i <= 16; i++)
                 {
                     var dob74595tOutputButton = new RadioButton();
                     dob74595tOutputButton.Name = "rdodob74595tDigitalOutput" + i;
@@ -387,7 +386,7 @@ namespace PhccTestTool
 
             EnumerateSerialPorts();
             cbSerialPort.Sorted = true;
-            foreach (string port in _serialPorts)
+            foreach (var port in _serialPorts)
             {
                 cbSerialPort.Items.Add(port);
                 cbSerialPort.Text = port;
@@ -411,7 +410,7 @@ namespace PhccTestTool
 
         private void cmdDoa40doTurnAllOutputsOff_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 40; i++)
+            for (var i = 0; i < 40; i++)
             {
                 var button = (RadioButton) Controls.Find("rdoDoa40DoDigitalOutput" + (i + 1), true)[0];
 
@@ -421,7 +420,7 @@ namespace PhccTestTool
 
         private void cmdDoa40doTurnAllOutputsOn_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < 40; i++)
+            for (var i = 0; i < 40; i++)
             {
                 var button = (RadioButton) Controls.Find("rdoDoa40DoDigitalOutput" + (i + 1), true)[0];
                 button.Checked = true;
@@ -473,27 +472,27 @@ namespace PhccTestTool
         private void txtDob74595tDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl((TextBox) sender, out val);
+            var valid = ValidateHexTextControl((TextBox) sender, out val);
         }
 
         private void txtDoa40doDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl((TextBox) sender, out val);
+            var valid = ValidateHexTextControl((TextBox) sender, out val);
             if (valid) SendDoa40DOOutputs();
         }
 
         private void dob74595tOutputButton_CheckedChanged(object sender, EventArgs e)
         {
             var digitalOutputButton = ((RadioButton) sender);
-            int buttonNumber = Int32.Parse(digitalOutputButton.Tag.ToString());
+            var buttonNumber = Int32.Parse(digitalOutputButton.Tag.ToString());
             _DOB74595TdigitalOutputs[buttonNumber] = digitalOutputButton.Checked;
         }
 
         private void doa40doOutputButton_CheckChanged(object sender, EventArgs e)
         {
             var digitalOutputButton = ((RadioButton) sender);
-            int buttonNumber = Int32.Parse(digitalOutputButton.Tag.ToString()) - 1;
+            var buttonNumber = Int32.Parse(digitalOutputButton.Tag.ToString()) - 1;
             _DOA40DOdigitalOutputs[buttonNumber] = digitalOutputButton.Checked;
             SendDoa40DOOutputs();
         }
@@ -501,13 +500,13 @@ namespace PhccTestTool
         private void SendDoa40DOOutputs()
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(_txtDoa40doDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(_txtDoa40doDevAddr, out devAddr);
             if (valid)
             {
-                for (int i = 3; i <= 7; i++)
+                for (var i = 3; i <= 7; i++)
                 {
                     byte toSend = 0;
-                    for (int j = 0; j < 8; j++)
+                    for (var j = 0; j < 8; j++)
                     {
                         if (_DOA40DOdigitalOutputs[((i - 3)*8) + j])
                         {
@@ -583,9 +582,9 @@ namespace PhccTestTool
 
         private bool ChangeSerialPort()
         {
-            bool isPhcc = false;
+            var isPhcc = false;
 
-            string selectedPort = cbSerialPort.Text;
+            var selectedPort = cbSerialPort.Text;
             if (String.IsNullOrEmpty(selectedPort)) return false;
             try
             {
@@ -600,7 +599,7 @@ namespace PhccTestTool
             {
                 _phccDevice = new Device(selectedPort);
                 GC.SuppressFinalize(_phccDevice.SerialPort.BaseStream);
-                string firmwareVersion = _phccDevice.FirmwareVersion;
+                var firmwareVersion = _phccDevice.FirmwareVersion;
                 if (firmwareVersion != null && firmwareVersion.ToLowerInvariant().Trim().StartsWith("phcc"))
                 {
                     isPhcc = true;
@@ -630,9 +629,9 @@ namespace PhccTestTool
             }
             if (_analogInputs != null)
             {
-                for (int i = 0; i <= 2; i++)
+                for (var i = 0; i <= 2; i++)
                 {
-                    Control[] controls = Controls.Find(string.Format("pbPrioAnalogInput{0:0}", i + 1), true);
+                    var controls = Controls.Find(string.Format("pbPrioAnalogInput{0:0}", i + 1), true);
                     if (controls != null)
                     {
                         var control = ((ProgressBar) controls[0]);
@@ -642,9 +641,9 @@ namespace PhccTestTool
                         }
                     }
                 }
-                for (int i = 3; i < _analogInputs.Length; i++)
+                for (var i = 3; i < _analogInputs.Length; i++)
                 {
-                    Control[] controls = Controls.Find(string.Format("pbAnalogInput{0:0}", i - 2), true);
+                    var controls = Controls.Find(string.Format("pbAnalogInput{0:0}", i - 2), true);
                     if (controls != null)
                     {
                         var control = ((ProgressBar) controls[0]);
@@ -657,9 +656,9 @@ namespace PhccTestTool
             }
             if (_digitalInputs != null)
             {
-                for (int i = 0; i < _digitalInputs.Length; i++)
+                for (var i = 0; i < _digitalInputs.Length; i++)
                 {
-                    Control[] controls = Controls.Find("rdoDigitalInput" + ((i + 1)), true);
+                    var controls = Controls.Find("rdoDigitalInput" + ((i + 1)), true);
                     if (controls != null)
                     {
                         var control = (RadioButton) controls[0];
@@ -690,8 +689,8 @@ namespace PhccTestTool
 
         private void _phccDevice_I2CDataReceived(object sender, I2CDataReceivedEventArgs e)
         {
-            string address = e.Address.ToString("X").PadLeft(4, '0');
-            string data = e.Data.ToString("X").PadLeft(4, '0');
+            var address = e.Address.ToString("X").PadLeft(4, '0');
+            var data = e.Data.ToString("X").PadLeft(4, '0');
             txtI2CDataReceived.AppendText(Environment.NewLine);
             txtI2CDataReceived.AppendText("Address:" + address);
             txtI2CDataReceived.AppendText(Environment.NewLine);
@@ -703,7 +702,7 @@ namespace PhccTestTool
             if (_digitalInputs != null)
             {
                 _digitalInputs[e.Index] = e.NewValue;
-                Control[] controls = Controls.Find("rdoDigitalInput" + ((e.Index + 1)), true);
+                var controls = Controls.Find("rdoDigitalInput" + ((e.Index + 1)), true);
                 if (controls != null)
                 {
                     var control = (RadioButton) controls[0];
@@ -766,7 +765,7 @@ namespace PhccTestTool
         private void SendAirCore()
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txtAirCoreDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtAirCoreDevAddr, out devAddr);
             if (!valid) return;
             if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
             {
@@ -787,15 +786,15 @@ namespace PhccTestTool
         private void RenderNeedleGauge(PictureBox pb, int value, int scaleMin, int scaleMax, int degrees)
         {
             if (pb.Image == null) pb.Image = new Bitmap(pb.Width, pb.Height);
-            using (Graphics g = Graphics.FromImage(pb.Image))
+            using (var g = Graphics.FromImage(pb.Image))
             {
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.Clear(Color.Transparent);
 
                 var blackPen = new Pen(Color.Black);
-                for (int i = 0; i <= degrees; i += 5)
+                for (var i = 0; i <= degrees; i += 5)
                 {
-                    int lineLength = 0;
+                    var lineLength = 0;
                     if (i%15 == 0)
                     {
                         blackPen.Width = 1;
@@ -813,8 +812,8 @@ namespace PhccTestTool
                     g.DrawLine(blackPen, new Point(pb.Width/2, 0), new Point(pb.Width/2, lineLength));
                 }
 
-                float pct = (value/(float) scaleMax);
-                float angle = pct*degrees;
+                var pct = (value/(float) scaleMax);
+                var angle = pct*degrees;
                 g.ResetTransform();
                 g.TranslateTransform(pb.Width/2, pb.Height/2);
                 g.RotateTransform(angle);
@@ -828,14 +827,14 @@ namespace PhccTestTool
         private void txtAirCoreDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtAirCoreDevAddr, out val);
+            var valid = ValidateHexTextControl(txtAirCoreDevAddr, out val);
             SendAirCore();
         }
 
         private void render7Seg(PictureBox pb, byte bits)
         {
             if (pb.Image == null) pb.Image = new Bitmap(pb.Width, pb.Height);
-            using (Graphics g = Graphics.FromImage(pb.Image))
+            using (var g = Graphics.FromImage(pb.Image))
             {
                 var greenPen = new Pen(Color.FromArgb(0, 255, 0));
                 Brush greenBrush = new SolidBrush(greenPen.Color);
@@ -897,7 +896,7 @@ namespace PhccTestTool
 
         private void Evaluate7SegPicBoxClick(PictureBox pb, Point clickLocation, int displayNum)
         {
-            byte currentBits = _sevenSegBits[displayNum - 1];
+            var currentBits = _sevenSegBits[displayNum - 1];
             var bits = new BitArray(new[] {currentBits});
             if (PolygonContainsPoint(_segmentGPoints, clickLocation))
             {
@@ -932,7 +931,7 @@ namespace PhccTestTool
                 bits[4] = !bits[4];
             }
             byte newBits = 0;
-            for (int i = 0; i < 8; i++)
+            for (var i = 0; i < 8; i++)
             {
                 if (bits[i]) newBits |= (byte) (1 << i);
             }
@@ -944,10 +943,10 @@ namespace PhccTestTool
         private void SendDoaSevenSegOutputs()
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txt7SegDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txt7SegDevAddr, out devAddr);
             if (valid)
             {
-                for (int i = 0; i < 32; i++)
+                for (var i = 0; i < 32; i++)
                 {
                     if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
                     {
@@ -982,7 +981,7 @@ namespace PhccTestTool
         private bool PolygonContainsPoint(Point[] polygon, Point point)
         {
             int i, j;
-            bool c = false;
+            var c = false;
             for (i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
             {
                 if (((polygon[i].Y > point.Y) != (polygon[j].Y > point.Y)) &&
@@ -1182,11 +1181,11 @@ namespace PhccTestTool
         private void cmdMoveStepper1_Click(object sender, EventArgs e)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
             if (!valid) return;
-            MotorDirections direction = MotorDirections.Clockwise;
+            var direction = MotorDirections.Clockwise;
             if (rdoStepper1DirectionCounterClockwise.Checked) direction = MotorDirections.Counterclockwise;
-            MotorStepTypes stepType = MotorStepTypes.FullStep;
+            var stepType = MotorStepTypes.FullStep;
             if (rdoStepper1StepTypeHalfStep.Checked) stepType = MotorStepTypes.HalfStep;
             if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
             {
@@ -1205,11 +1204,11 @@ namespace PhccTestTool
         private void cmdMoveStepper2_Click(object sender, EventArgs e)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
             if (!valid) return;
-            MotorDirections direction = MotorDirections.Clockwise;
+            var direction = MotorDirections.Clockwise;
             if (rdoStepper2DirectionCounterClockwise.Checked) direction = MotorDirections.Counterclockwise;
-            MotorStepTypes stepType = MotorStepTypes.FullStep;
+            var stepType = MotorStepTypes.FullStep;
             if (rdoStepper2StepTypeHalfStep.Checked) stepType = MotorStepTypes.HalfStep;
             if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
             {
@@ -1228,11 +1227,11 @@ namespace PhccTestTool
         private void cmdMoveStepper3_Click(object sender, EventArgs e)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
             if (!valid) return;
-            MotorDirections direction = MotorDirections.Clockwise;
+            var direction = MotorDirections.Clockwise;
             if (rdoStepper3DirectionCounterClockwise.Checked) direction = MotorDirections.Counterclockwise;
-            MotorStepTypes stepType = MotorStepTypes.FullStep;
+            var stepType = MotorStepTypes.FullStep;
             if (rdoStepper3StepTypeHalfStep.Checked) stepType = MotorStepTypes.HalfStep;
             if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
             {
@@ -1251,11 +1250,11 @@ namespace PhccTestTool
         private void cmdMoveStepper4_Click(object sender, EventArgs e)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
             if (!valid) return;
-            MotorDirections direction = MotorDirections.Clockwise;
+            var direction = MotorDirections.Clockwise;
             if (rdoStepper4DirectionCounterClockwise.Checked) direction = MotorDirections.Counterclockwise;
-            MotorStepTypes stepType = MotorStepTypes.FullStep;
+            var stepType = MotorStepTypes.FullStep;
             if (rdoStepper4StepTypeHalfStep.Checked) stepType = MotorStepTypes.HalfStep;
             if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
             {
@@ -1274,7 +1273,7 @@ namespace PhccTestTool
         private void txtStepperDevAddr_Leave(object sender, EventArgs e)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtStepperDevAddr, out devAddr);
         }
 
         private void tbAnOut1Chan1PulseWidth_Scroll(object sender, EventArgs e)
@@ -1365,7 +1364,7 @@ namespace PhccTestTool
         private void SendAnOut1ChannelValue(byte channel, byte value)
         {
             byte devAddr = 0;
-            bool valid = true;
+            var valid = true;
             valid = ValidateHexTextControl(txtAnOut1DevAddr, out devAddr);
             if (!valid) return;
             if (!_allowAnOut1Sending) return;
@@ -1385,7 +1384,7 @@ namespace PhccTestTool
         private void SendAnOut1Gain()
         {
             byte devAddr = 0;
-            bool valid = true;
+            var valid = true;
             valid = ValidateHexTextControl(txtAnOut1DevAddr, out devAddr);
             if (!valid) return;
             if (!_allowAnOut1Sending) return;
@@ -1515,11 +1514,11 @@ namespace PhccTestTool
 
         private void txt7Seg1thru8String_TextChanged(object sender, EventArgs e)
         {
-            string contents = txt7Seg1thru8String.Text;
+            var contents = txt7Seg1thru8String.Text;
             var bits = new byte[8];
             if (contents != null)
             {
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     if (contents.Length >= (i + 1))
                     {
@@ -1544,11 +1543,11 @@ namespace PhccTestTool
 
         private void txt7Seg9thru16String_TextChanged(object sender, EventArgs e)
         {
-            string contents = txt7Seg9thru16String.Text;
+            var contents = txt7Seg9thru16String.Text;
             var bits = new byte[8];
             if (contents != null)
             {
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     if (contents.Length >= (i + 1))
                     {
@@ -1573,11 +1572,11 @@ namespace PhccTestTool
 
         private void txt7Seg17thru24String_TextChanged(object sender, EventArgs e)
         {
-            string contents = txt7Seg17thru24String.Text;
+            var contents = txt7Seg17thru24String.Text;
             var bits = new byte[8];
             if (contents != null)
             {
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     if (contents.Length >= (i + 1))
                     {
@@ -1602,11 +1601,11 @@ namespace PhccTestTool
 
         private void txt7Seg25thru32String_TextChanged(object sender, EventArgs e)
         {
-            string contents = txt7Seg25thru32String.Text;
+            var contents = txt7Seg25thru32String.Text;
             var bits = new byte[8];
             if (contents != null)
             {
-                for (int i = 0; i < 8; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     if (contents.Length >= (i + 1))
                     {
@@ -1763,7 +1762,7 @@ namespace PhccTestTool
         private void SendDoa8ServoGain(byte channel, byte value)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txt8ServoDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txt8ServoDevAddr, out devAddr);
             if (valid)
             {
                 if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
@@ -1783,7 +1782,7 @@ namespace PhccTestTool
         private void SendDoa8ServoCalibration(byte channel, ushort value)
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txt8ServoDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txt8ServoDevAddr, out devAddr);
             if (valid)
             {
                 if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
@@ -1807,7 +1806,7 @@ namespace PhccTestTool
         private void SendDoa8ServoValues()
         {
             byte devAddr = 0;
-            bool valid = ValidateHexTextControl(txt8ServoDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txt8ServoDevAddr, out devAddr);
             if (valid)
             {
                 if (_phccDevice != null && !String.IsNullOrEmpty(_phccDevice.PortName))
@@ -2022,7 +2021,7 @@ namespace PhccTestTool
             byte devAddr = 0;
             byte subAddr = 0;
             byte data = 0;
-            bool valid = ValidateHexTextControl(txtDoaDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtDoaDevAddr, out devAddr);
             if (!valid) return;
             valid = ValidateHexTextControl(txtDoaSubAddr, out subAddr);
             if (!valid) return;
@@ -2051,31 +2050,31 @@ namespace PhccTestTool
         private void txtDoaDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtDoaDevAddr, out val);
+            var valid = ValidateHexTextControl(txtDoaDevAddr, out val);
         }
 
         private void txtDoaSubAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtDoaSubAddr, out val);
+            var valid = ValidateHexTextControl(txtDoaSubAddr, out val);
         }
 
         private void txtDoaDataByte_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtDoaDataByte, out val);
+            var valid = ValidateHexTextControl(txtDoaDataByte, out val);
         }
 
         private void txtDobDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtDobDevAddr, out val);
+            var valid = ValidateHexTextControl(txtDobDevAddr, out val);
         }
 
         private void txtDobDataByte_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtDobDataByte, out val);
+            var valid = ValidateHexTextControl(txtDobDataByte, out val);
         }
 
         private void cmdSendDob_Click(object sender, EventArgs e)
@@ -2087,7 +2086,7 @@ namespace PhccTestTool
         {
             byte devAddr = 0;
             byte data = 0;
-            bool valid = ValidateHexTextControl(txtDobDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtDobDevAddr, out devAddr);
             if (!valid) return;
             valid = ValidateHexTextControl(txtDobDataByte, out data);
             if (valid)
@@ -2112,7 +2111,7 @@ namespace PhccTestTool
             txt7Seg9thru16String.Text = "";
             txt7Seg17thru24String.Text = "";
             txt7Seg25thru32String.Text = "";
-            for (int i = 0; i < _sevenSegBits.Length; i++)
+            for (var i = 0; i < _sevenSegBits.Length; i++)
             {
                 _sevenSegBits[i] = 0xFF;
             }
@@ -2126,7 +2125,7 @@ namespace PhccTestTool
             txt7Seg9thru16String.Text = "";
             txt7Seg17thru24String.Text = "";
             txt7Seg25thru32String.Text = "";
-            for (int i = 0; i < _sevenSegBits.Length; i++)
+            for (var i = 0; i < _sevenSegBits.Length; i++)
             {
                 _sevenSegBits[i] = 0x00;
             }
@@ -2157,19 +2156,19 @@ namespace PhccTestTool
         private void txtI2CDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtI2CDevAddr, out val);
+            var valid = ValidateHexTextControl(txtI2CDevAddr, out val);
         }
 
         private void txtI2CSubAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtI2CSubAddr, out val);
+            var valid = ValidateHexTextControl(txtI2CSubAddr, out val);
         }
 
         private void txtI2CDataByte_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtI2CDataByte, out val);
+            var valid = ValidateHexTextControl(txtI2CDataByte, out val);
         }
 
         private void SendI2C()
@@ -2177,7 +2176,7 @@ namespace PhccTestTool
             byte devAddr = 0;
             byte subAddr = 0;
             byte data = 0;
-            bool valid = ValidateHexTextControl(txtI2CDevAddr, out devAddr);
+            var valid = ValidateHexTextControl(txtI2CDevAddr, out devAddr);
             if (!valid) return;
             valid = ValidateHexTextControl(txtI2CSubAddr, out subAddr);
             if (!valid) return;
@@ -2206,14 +2205,14 @@ namespace PhccTestTool
         private void txtAnOut1DevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txtAnOut1DevAddr, out val);
+            var valid = ValidateHexTextControl(txtAnOut1DevAddr, out val);
             SendAnOut1Updates();
         }
 
         private void txt7SegDevAddr_Leave(object sender, EventArgs e)
         {
             byte val = 0;
-            bool valid = ValidateHexTextControl(txt7SegDevAddr, out val);
+            var valid = ValidateHexTextControl(txt7SegDevAddr, out val);
             SendDoaSevenSegOutputs();
         }
 

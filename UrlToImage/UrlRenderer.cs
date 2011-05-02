@@ -26,44 +26,44 @@ namespace UrlToImage
 //within the (outer) UrlRenderer class].
 //************************************************************************************************************************    #region UrlRenderer Class
     /// <summary>
-    /// Static utility class for rendering HTML URLs to Bitmaps.
+    ///   Static utility class for rendering HTML URLs to Bitmaps.
     /// </summary>
     public static class UrlRenderer
     {
         /// <summary>
-        /// Renders a URL to a bitmap file.
+        ///   Renders a URL to a bitmap file.
         /// </summary>
-        /// <param name="url">the URL to render</param>
-        /// <param name="fileName">the destination filename</param>
-        /// <param name="millisecondsTimeout">maximum time to spend loading/rendering before timing out</param>
-        /// <param name="postData">raw data that needs to be sent in the POST request</param>
-        /// <param name="additionalHeaders">any additional headers that need to go in the request</param>
-        /// <param name="delayAfterLoad">time (in millis) to delay, after the WebBrowser says the document has loaded, before rendering its contents to the bitmap (allows for AJAX controls to finish loading)</param>
+        /// <param name = "url">the URL to render</param>
+        /// <param name = "fileName">the destination filename</param>
+        /// <param name = "millisecondsTimeout">maximum time to spend loading/rendering before timing out</param>
+        /// <param name = "postData">raw data that needs to be sent in the POST request</param>
+        /// <param name = "additionalHeaders">any additional headers that need to go in the request</param>
+        /// <param name = "delayAfterLoad">time (in millis) to delay, after the WebBrowser says the document has loaded, before rendering its contents to the bitmap (allows for AJAX controls to finish loading)</param>
         public static void Render(Uri url, string fileName, int millisecondsTimeout, byte[] postData,
                                   string additionalHeaders, int delayAfterLoad, int browserWidth, int browserHeight)
         {
-            DateTime startTime = DateTime.Now;
+            var startTime = DateTime.Now;
             using (
-                Bitmap rendered = Render(url, millisecondsTimeout, postData, additionalHeaders, delayAfterLoad,
-                                         browserWidth, browserHeight))
+                var rendered = Render(url, millisecondsTimeout, postData, additionalHeaders, delayAfterLoad,
+                                      browserWidth, browserHeight))
             {
                 Console.WriteLine(string.Format("Saving rendered image to {0}...", fileName));
                 SaveBitmapUsingFileTypeDerivedFromFileName(rendered, fileName);
                 Console.WriteLine(string.Format("Finished!", fileName));
             }
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime.Subtract(startTime);
+            var endTime = DateTime.Now;
+            var elapsed = endTime.Subtract(startTime);
             Console.WriteLine(string.Format("Total time spent: {0} ms", (int) elapsed.TotalMilliseconds));
         }
 
         /// <summary>
-        /// Renders a URL to a Bitmap using the IE WebBrowser control
+        ///   Renders a URL to a Bitmap using the IE WebBrowser control
         /// </summary>
-        /// <param name="url">the URL to render</param>
-        /// <param name="millisecondsTimeout">maximum time to spend loading/rendering before timing out</param>
-        /// <param name="postData">raw data that needs to be sent in the POST request</param>
-        /// <param name="additionalHeaders">any additional headers that need to go in the request</param>
-        /// <param name="delayAfterLoad">time (in millis) to delay, after the WebBrowser says the document has loaded, before rendering its contents to the bitmap (allows for AJAX controls to finish loading)</param>
+        /// <param name = "url">the URL to render</param>
+        /// <param name = "millisecondsTimeout">maximum time to spend loading/rendering before timing out</param>
+        /// <param name = "postData">raw data that needs to be sent in the POST request</param>
+        /// <param name = "additionalHeaders">any additional headers that need to go in the request</param>
+        /// <param name = "delayAfterLoad">time (in millis) to delay, after the WebBrowser says the document has loaded, before rendering its contents to the bitmap (allows for AJAX controls to finish loading)</param>
         /// <returns></returns>
         public static Bitmap Render(Uri url, int millisecondsTimeout, byte[] postData, string additionalHeaders,
                                     int delayAfterLoad, int browserWidth, int browserHeight)
@@ -94,13 +94,13 @@ namespace UrlToImage
         {
             using (var fs = new FileStream(filename, FileMode.Create))
             {
-                int encoderValue = -1;
-                string codecMimeType = "image/png";
-                ImageFormat format = ImageFormat.Png;
+                var encoderValue = -1;
+                var codecMimeType = "image/png";
+                var format = ImageFormat.Png;
                 string compressionType = null;
                 string imageFormat = null;
                 var fi = new FileInfo(filename);
-                string extension = fi.Extension;
+                var extension = fi.Extension;
                 if (!string.IsNullOrEmpty(extension))
                 {
                     extension = extension.Replace(".", "").ToUpperInvariant();
@@ -155,12 +155,12 @@ namespace UrlToImage
                         break;
                 }
 
-                Encoder encoder = Encoder.Compression;
+                var encoder = Encoder.Compression;
                 var codecParams = new EncoderParameters(1);
-                ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+                var codecs = ImageCodecInfo.GetImageEncoders();
                 ImageCodecInfo codecToUse = null;
                 codecParams.Param[0] = new EncoderParameter(encoder, encoderValue);
-                foreach (ImageCodecInfo codec in codecs)
+                foreach (var codec in codecs)
                 {
                     if (codec.MimeType == codecMimeType)
                     {
@@ -213,7 +213,7 @@ namespace UrlToImage
             {
                 Url = url;
                 _browserControl.ScrollBarsEnabled = false;
-                    //turn off rendering of scroll bars in the WebBrowsere control
+                //turn off rendering of scroll bars in the WebBrowsere control
                 _browserControl.ScriptErrorsSuppressed = true;
 
                 //register for the DocumentCompleted event on the WebBrowser control
@@ -283,7 +283,7 @@ namespace UrlToImage
             #region Private Methods
 
             /// <summary>
-            /// Renders the URL to a bitmap
+            ///   Renders the URL to a bitmap
             /// </summary>
             /// <returns>a Bitmap containing the rendered web page</returns>
             private Bitmap RenderToBitmap()
@@ -311,14 +311,14 @@ namespace UrlToImage
                     if (PostData == null && string.IsNullOrEmpty(AdditionalHeaders))
                     {
                         _browserControl.Navigate(Url);
-                            //this will fire the browserControl_DocumentCompleted() method on completion
+                        //this will fire the browserControl_DocumentCompleted() method on completion
                         //_browserControl.Url = this.Url;
                     }
                     else
                     {
                         //"_new"
                         _browserControl.Navigate(Url, null, PostData, AdditionalHeaders);
-                            //this will fire the browserControl_DocumentCompleted() method on completion
+                        //this will fire the browserControl_DocumentCompleted() method on completion
                     }
                 }
                 catch (Exception e)
@@ -331,18 +331,18 @@ namespace UrlToImage
             {
                 if (_browserControl == null) return false;
                 if (_browserControl.Document == null) return false;
-                bool browserIsReady = _browserControl.ReadyState == WebBrowserReadyState.Complete;
-                bool browserIs100Percent = _currentProgress == _maxProgress;
-                bool browserIsNotBusy = !_browserControl.IsBusy;
-                bool browserFinishedMainDocument = _lastCompletedUrl == _browserControl.Document.Url;
+                var browserIsReady = _browserControl.ReadyState == WebBrowserReadyState.Complete;
+                var browserIs100Percent = _currentProgress == _maxProgress;
+                var browserIsNotBusy = !_browserControl.IsBusy;
+                var browserFinishedMainDocument = _lastCompletedUrl == _browserControl.Document.Url;
                 return browserIsReady && browserIs100Percent && browserIsNotBusy && browserFinishedMainDocument;
-                    // && browserStatusReadsDone;
+                // && browserStatusReadsDone;
             }
 
             private void WaitForRenderFinishOrTimeout(int millisecondsTimeout)
             {
-                DateTime _lastProgressTime = DateTime.Now;
-                int millisRemaining = millisecondsTimeout;
+                var _lastProgressTime = DateTime.Now;
+                var millisRemaining = millisecondsTimeout;
                 while (!BrowserIsDoneRetrieving())
                 {
                     Thread.Sleep(1);
@@ -364,8 +364,8 @@ namespace UrlToImage
                     while (millisRemaining > 0)
                     {
                         //if a timeout period was set
-                        bool waitedSuccessfully = _allFinished.WaitOne(5);
-                            //wait for rendering to be complete or timeout to expire
+                        var waitedSuccessfully = _allFinished.WaitOne(5);
+                        //wait for rendering to be complete or timeout to expire
                         Application.DoEvents();
                         if (waitedSuccessfully) break;
                         millisRemaining -= 5;
@@ -374,7 +374,7 @@ namespace UrlToImage
                 }
                 else //no timeout was set, so we're ok to block forever and wait for rendering to complete
                 {
-                    bool waitedSuccessfully = false;
+                    var waitedSuccessfully = false;
                     while (!waitedSuccessfully)
                     {
                         waitedSuccessfully = _allFinished.WaitOne(5); //wait for rendering to complete
@@ -401,12 +401,12 @@ namespace UrlToImage
                 IHTMLElement2 pBodyElem = null;
                 IHTMLStyle pStyle = null;
                 string strStyle;
-                int bodyHeight = 0;
-                int bodyWidth = 0;
-                int rootHeight = 0;
-                int rootWidth = 0;
-                int height = 0;
-                int width = 0;
+                var bodyHeight = 0;
+                var bodyWidth = 0;
+                var rootHeight = 0;
+                var rootWidth = 0;
+                var height = 0;
+                var width = 0;
 
                 //get the IHtmlelement
                 pElem = pDoc2.body;
@@ -462,10 +462,10 @@ namespace UrlToImage
                 //draw
 
                 var hr = (int) HRESULTS.S_FALSE;
-                using (Graphics gr = Graphics.FromImage(bmp))
+                using (var gr = Graphics.FromImage(bmp))
                 {
                     //get hdc
-                    IntPtr hdc = gr.GetHdc();
+                    var hdc = gr.GetHdc();
                     hr = pViewObject.Draw(
                         DVASPECT.DVASPECT_CONTENT,
                         -1, IntPtr.Zero, IntPtr.Zero,
@@ -492,10 +492,10 @@ namespace UrlToImage
             #region Event Handlers
 
             /// <summary>
-            /// This event fires when the browser control's loading/rendering progress has changed.
+            ///   This event fires when the browser control's loading/rendering progress has changed.
             /// </summary>
-            /// <param name="sender"></param>
-            /// <param name="e"></param>
+            /// <param name = "sender"></param>
+            /// <param name = "e"></param>
             private void _browserControl_ProgressChanged(object sender, WebBrowserProgressChangedEventArgs e)
             {
                 _lastProgressTime = DateTime.Now;
@@ -509,17 +509,17 @@ namespace UrlToImage
 
 
             /// <summary>
-            /// This event fires when the browser control has finished navigating to the requested URL and has finished loading the page
+            ///   This event fires when the browser control has finished navigating to the requested URL and has finished loading the page
             /// </summary>
-            /// <param name="sender"></param>
-            /// <param name="e"></param>
+            /// <param name = "sender"></param>
+            /// <param name = "e"></param>
             private void browserControl_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
             {
                 _lastCompletedUrl = e.Url;
                 if (!BrowserIsDoneRetrieving()) return;
                 //delay after loading the page to allow AJAX stuff to load
-                int millisRemaining = DelayAfterLoad;
-                DateTime startTime = DateTime.Now;
+                var millisRemaining = DelayAfterLoad;
+                var startTime = DateTime.Now;
                 while (millisRemaining > 0)
                 {
                     Thread.Sleep(1);
@@ -545,10 +545,10 @@ namespace UrlToImage
             }
 
             /// <summary>
-            /// This is the Form_Load event for the UrlRenderer class.  
+            ///   This is the Form_Load event for the UrlRenderer class.
             /// </summary>
-            /// <param name="sender"></param>
-            /// <param name="e"></param>
+            /// <param name = "sender"></param>
+            /// <param name = "e"></param>
             private void UrlRenderer_Load(object sender, EventArgs e)
             {
                 RenderToBitmap(); //start the rendering procecss
@@ -560,7 +560,7 @@ namespace UrlToImage
             #region Object Disposal
 
             /// <summary>
-            /// Public implementation of IDisposable.Dispose()
+            ///   Public implementation of IDisposable.Dispose()
             /// </summary>
             public void Dispose()
             {
@@ -572,9 +572,9 @@ namespace UrlToImage
             }
 
             /// <summary>
-            /// Internal implementation of IDisposable.Dispose
+            ///   Internal implementation of IDisposable.Dispose
             /// </summary>
-            /// <param name="disposing">true, if called from the public Dispose() method, or false if called from the finalizer</param>
+            /// <param name = "disposing">true, if called from the public Dispose() method, or false if called from the finalizer</param>
             protected new virtual void Dispose(bool disposing)
             {
                 if (!Disposed)
@@ -641,7 +641,7 @@ namespace UrlToImage
 
                         //null out any potentially long-held object references 
                         RenderTarget = null;
-                            //just null our reference to the render target, but don't actually dispose it, 
+                        //just null our reference to the render target, but don't actually dispose it, 
                         //since it could be still in use by the consumer 
                         //of this object, who will be responsible for discarding it 
                         //when they are done with it
@@ -654,7 +654,7 @@ namespace UrlToImage
             }
 
             /// <summary>
-            /// Deterministic finalizer
+            ///   Deterministic finalizer
             /// </summary>
             ~UrlRendererUtil()
             {

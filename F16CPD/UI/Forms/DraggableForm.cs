@@ -6,21 +6,22 @@ using System.Windows.Forms;
 namespace F16CPD.UI.Forms
 {
     /// <summary>
-    /// Extension of the basic Windows Form, allowing forms that do not posess a titlebar area to be draggable/moveable
+    ///   Extension of the basic Windows Form, allowing forms that do not posess a titlebar area to be draggable/moveable
     /// </summary>
     public class DraggableForm : Form
     {
         #region Declarations
 
+        protected bool Drag;
+        protected Point StartPoint = new Point(0, 0);
+
         /// <SUMMARY>
-        /// Required designer variable.
+        ///   Required designer variable.
         /// </SUMMARY>
         protected IContainer components;
 
-        protected bool Drag;
         protected bool draggable = true;
         protected string exclude_list = "";
-        protected Point StartPoint = new Point(0, 0);
 
         #endregion
 
@@ -32,7 +33,7 @@ namespace F16CPD.UI.Forms
         }
 
         /// <SUMMARY>
-        /// Clean up any resources being used.
+        ///   Clean up any resources being used.
         /// </SUMMARY>
         /// true if managed resources should be disposed; otherwise, false.
         protected override void Dispose(bool disposing)
@@ -49,8 +50,8 @@ namespace F16CPD.UI.Forms
         #region Windows Form Designer generated code
 
         /// <SUMMARY>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        ///   Required method for Designer support - do not modify
+        ///   the contents of this method with the code editor.
         /// </SUMMARY>
         protected void InitializeComponent()
         {
@@ -146,7 +147,7 @@ namespace F16CPD.UI.Forms
             if (Drag && draggable)
             {
                 var p1 = new Point(e.X, e.Y);
-                Point p2 = PointToScreen(p1);
+                var p2 = PointToScreen(p1);
                 var p3 = new Point(p2.X - StartPoint.X,
                                    p2.Y - StartPoint.Y);
                 DesktopLocation = p3;

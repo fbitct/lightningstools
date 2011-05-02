@@ -9,8 +9,8 @@ using Microsoft.Win32.SafeHandles;
 namespace PPJoy
 {
     /// <summary>
-    /// This class stores all "native" (Win32 API) methods that are called by
-    /// PPJoy, as well as relevant enums and structs required by those methods.
+    ///   This class stores all "native" (Win32 API) methods that are called by
+    ///   PPJoy, as well as relevant enums and structs required by those methods.
     /// </summary>
     [
         ComVisible(false),
@@ -37,27 +37,27 @@ namespace PPJoy
         internal enum ECreationDisposition : uint
         {
             /// <summary>
-            /// Creates a new file. The function fails if a specified file exists.
+            ///   Creates a new file. The function fails if a specified file exists.
             /// </summary>
             New = 1,
             /// <summary>
-            /// Creates a new file, always. 
-            /// If a file exists, the function overwrites the file, clears the existing attributes, combines the specified file attributes, 
-            /// and flags with FILE_ATTRIBUTE_ARCHIVE, but does not set the security descriptor that the SECURITY_ATTRIBUTES structure specifies.
+            ///   Creates a new file, always. 
+            ///   If a file exists, the function overwrites the file, clears the existing attributes, combines the specified file attributes, 
+            ///   and flags with FILE_ATTRIBUTE_ARCHIVE, but does not set the security descriptor that the SECURITY_ATTRIBUTES structure specifies.
             /// </summary>
             CreateAlways = 2,
             /// <summary>
-            /// Opens a file. The function fails if the file does not exist. 
+            ///   Opens a file. The function fails if the file does not exist.
             /// </summary>
             OpenExisting = 3,
             /// <summary>
-            /// Opens a file, always. 
-            /// If a file does not exist, the function creates a file as if dwCreationDisposition is CREATE_NEW.
+            ///   Opens a file, always. 
+            ///   If a file does not exist, the function creates a file as if dwCreationDisposition is CREATE_NEW.
             /// </summary>
             OpenAlways = 4,
             /// <summary>
-            /// Opens a file and truncates it so that its size is 0 (zero) bytes. The function fails if the file does not exist.
-            /// The calling process must open the file with the GENERIC_WRITE access right. 
+            ///   Opens a file and truncates it so that its size is 0 (zero) bytes. The function fails if the file does not exist.
+            ///   The calling process must open the file with the GENERIC_WRITE access right.
             /// </summary>
             TruncateExisting = 5
         }
@@ -70,19 +70,15 @@ namespace PPJoy
         internal enum EFileAccess : uint
         {
             /// <summary>
-            /// 
             /// </summary>
             GenericRead = 0x80000000,
             /// <summary>
-            /// 
             /// </summary>
             GenericWrite = 0x40000000,
             /// <summary>
-            /// 
             /// </summary>
             GenericExecute = 0x20000000,
             /// <summary>
-            /// 
             /// </summary>
             GenericAll = 0x10000000
         }
@@ -195,25 +191,24 @@ namespace PPJoy
         internal enum EFileShare : uint
         {
             /// <summary>
-            /// 
             /// </summary>
             None = 0x00000000,
             /// <summary>
-            /// Enables subsequent open operations on an object to request read access. 
-            /// Otherwise, other processes cannot open the object if they request read access. 
-            /// If this flag is not specified, but the object has been opened for read access, the function fails.
+            ///   Enables subsequent open operations on an object to request read access. 
+            ///   Otherwise, other processes cannot open the object if they request read access. 
+            ///   If this flag is not specified, but the object has been opened for read access, the function fails.
             /// </summary>
             Read = 0x00000001,
             /// <summary>
-            /// Enables subsequent open operations on an object to request write access. 
-            /// Otherwise, other processes cannot open the object if they request write access. 
-            /// If this flag is not specified, but the object has been opened for write access, the function fails.
+            ///   Enables subsequent open operations on an object to request write access. 
+            ///   Otherwise, other processes cannot open the object if they request write access. 
+            ///   If this flag is not specified, but the object has been opened for write access, the function fails.
             /// </summary>
             Write = 0x00000002,
             /// <summary>
-            /// Enables subsequent open operations on an object to request delete access. 
-            /// Otherwise, other processes cannot open the object if they request delete access.
-            /// If this flag is not specified, but the object has been opened for delete access, the function fails.
+            ///   Enables subsequent open operations on an object to request delete access. 
+            ///   Otherwise, other processes cannot open the object if they request delete access.
+            ///   If this flag is not specified, but the object has been opened for delete access, the function fails.
             /// </summary>
             Delete = 0x00000004
         }
@@ -452,9 +447,9 @@ namespace PPJoy
             lock (_deviceSynchronizationObject)
             {
                 var overlapped = new Overlapped();
-                NativeOverlapped* nativeOverlapped = overlapped.Pack(DeviceIOControlCompletionCallback, null);
-                bool rc = DeviceIoControlNative(hDevice, IoControlCode, InBuffer, nInBufferSize, OutBuffer,
-                                                nOutBufferSize, out pBytesReturned, nativeOverlapped);
+                var nativeOverlapped = overlapped.Pack(DeviceIOControlCompletionCallback, null);
+                var rc = DeviceIoControlNative(hDevice, IoControlCode, InBuffer, nInBufferSize, OutBuffer,
+                                               nOutBufferSize, out pBytesReturned, nativeOverlapped);
                 if (rc)
                 {
                     //the operation completed synchronously
@@ -462,7 +457,7 @@ namespace PPJoy
                 }
                 else
                 {
-                    int lastErr = Marshal.GetLastWin32Error();
+                    var lastErr = Marshal.GetLastWin32Error();
                     if (lastErr != ERROR_IO_PENDING)
                     {
                         // failed to execute DeviceIoControl using overlapped I/O ...  

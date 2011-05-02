@@ -5,11 +5,11 @@ using Common.Win32;
 namespace F16CPD.UI.Util
 {
     /// <summary>
-    /// Contains helper code to assist in intercepting window messages associated with form events
-    /// to determine if a resizable border should be presented on the form or not, depending
-    /// on the cursor's location relative to the form's (invisible) border.  Also provides
-    /// the behavior for actually resizing the form if these conditions are true and the user
-    /// does a drag-type operation within the form's border area
+    ///   Contains helper code to assist in intercepting window messages associated with form events
+    ///   to determine if a resizable border should be presented on the form or not, depending
+    ///   on the cursor's location relative to the form's (invisible) border.  Also provides
+    ///   the behavior for actually resizing the form if these conditions are true and the user
+    ///   does a drag-type operation within the form's border area
     /// </summary>
     internal class ResizeHelper : IMessageFilter
     {
@@ -35,8 +35,8 @@ namespace F16CPD.UI.Util
         {
             if (!_theWindow.IsDisposed && _theWindow.Visible && 0 == _theWindow.OwnedForms.Length)
             {
-                Point pt = Cursor.Position;
-                Rectangle formBounds = _theWindow.DesktopBounds;
+                var pt = Cursor.Position;
+                var formBounds = _theWindow.DesktopBounds;
                 if (formBounds.Contains(pt))
                 {
                     // Create a rectangular area which is 7 pix smaller than windows's size
@@ -44,7 +44,7 @@ namespace F16CPD.UI.Util
                     var bounds = new Rectangle(formBounds.X, formBounds.Y, formBounds.Width, formBounds.Height);
                     bounds.Inflate(-7, -7);
 
-                    int htValue = NativeMethods.HT.HTNOWHERE;
+                    var htValue = NativeMethods.HT.HTNOWHERE;
 
                     // If the cursor is outside this inner rectangle, we need to
                     // check for resize

@@ -36,16 +36,16 @@ namespace F4Utils.Campaign
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.Read(_rawBytes, 0, (int) fi.Length);
             }
-            uint directoryStartOffset = BitConverter.ToUInt32(_rawBytes, 0);
-            uint numEmbeddedFiles = BitConverter.ToUInt32(_rawBytes, (int) directoryStartOffset);
+            var directoryStartOffset = BitConverter.ToUInt32(_rawBytes, 0);
+            var numEmbeddedFiles = BitConverter.ToUInt32(_rawBytes, (int) directoryStartOffset);
             _embeddedFileDirectory = new EmbeddedFileInfo[numEmbeddedFiles];
-            int curLoc = (int) directoryStartOffset + 4;
-            for (int i = 0; i < numEmbeddedFiles; i++)
+            var curLoc = (int) directoryStartOffset + 4;
+            for (var i = 0; i < numEmbeddedFiles; i++)
             {
                 var thisFileResourceInfo = new EmbeddedFileInfo();
                 var thisFileNameLength = (byte) (_rawBytes[curLoc] & 0xFF);
                 curLoc++;
-                string thisFileName = Encoding.ASCII.GetString(_rawBytes, curLoc, thisFileNameLength);
+                var thisFileName = Encoding.ASCII.GetString(_rawBytes, curLoc, thisFileNameLength);
                 thisFileResourceInfo.FileName = thisFileName;
                 curLoc += thisFileNameLength;
                 thisFileResourceInfo.FileOffset = BitConverter.ToUInt32(_rawBytes, curLoc);
@@ -67,9 +67,9 @@ namespace F4Utils.Campaign
         {
             if (_embeddedFileDirectory == null || _rawBytes == null || _rawBytes.Length == 0)
                 throw new InvalidOperationException("Campaign bundle file not loaded yet.");
-            for (int i = 0; i < _embeddedFileDirectory.Length; i++)
+            for (var i = 0; i < _embeddedFileDirectory.Length; i++)
             {
-                EmbeddedFileInfo thisFile = _embeddedFileDirectory[i];
+                var thisFile = _embeddedFileDirectory[i];
                 if (thisFile.FileName.ToLowerInvariant() == embeddedFileName.ToLowerInvariant())
                 {
                     var toReturn = new byte[thisFile.FileSizeBytes];

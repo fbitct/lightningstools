@@ -78,7 +78,7 @@ namespace Common.MacroProgramming
                 {
                     _out.State = false;
                 }
-                for (int i = 0; i < NumRepetitions; i++)
+                for (var i = 0; i < NumRepetitions; i++)
                 {
                     if (_macro != null)
                     {

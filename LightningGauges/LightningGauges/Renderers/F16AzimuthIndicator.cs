@@ -206,7 +206,7 @@ namespace LightningGauges.Renderers
             {
                 LoadImageResources();
             }
-            Graphics gfx = g;
+            var gfx = g;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
@@ -215,45 +215,45 @@ namespace LightningGauges.Renderers
             }
             lock (_imagesLock)
             {
-                Matrix initialTransform = gfx.Transform;
+                var initialTransform = gfx.Transform;
                 gfx.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
                 gfx.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
                 gfx.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
                 gfx.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = gfx.Save();
+                var initialState = gfx.Save();
 
                 //set up the canvas scale and clipping region
                 gfx.ResetTransform(); //clear any existing transforms
                 gfx.SetClip(bounds);
-                    //set the clipping region on the graphics object to our render rectangle's boundaries
+                //set the clipping region on the graphics object to our render rectangle's boundaries
                 gfx.FillRectangle(Brushes.Black, bounds);
 
 
-                Color okColor = _scopeGreenColor; //Color.FromArgb(255, 94, 184, 96);
-                Color warnColor = Color.FromArgb(255, 230, 238, 152);
+                var okColor = _scopeGreenColor; //Color.FromArgb(255, 94, 184, 96);
+                var warnColor = Color.FromArgb(255, 230, 238, 152);
                 //Color severeColor = Color.FromArgb(255, 196, 34, 58);
-                Color severeColor = Color.FromArgb(196, 43, 48);
+                var severeColor = Color.FromArgb(196, 43, 48);
 
-                Color missileColor = severeColor;
+                var missileColor = severeColor;
                 //Color navalThreatColor = Color.LightSeaGreen;
                 //Color airborneThreatColor = Color.Yellow;
                 //Color searchThreatColor = _scopeGreenColor;
                 //Color unknownThreatColor = Color.Purple;
                 //Color groundThreatColor = Color.Orange;
 
-                Color navalThreatColor = _scopeGreenColor;
-                Color airborneThreatColor = _scopeGreenColor;
-                Color searchThreatColor = _scopeGreenColor;
-                Color unknownThreatColor = _scopeGreenColor;
-                Color groundThreatColor = _scopeGreenColor;
+                var navalThreatColor = _scopeGreenColor;
+                var airborneThreatColor = _scopeGreenColor;
+                var searchThreatColor = _scopeGreenColor;
+                var unknownThreatColor = _scopeGreenColor;
+                var groundThreatColor = _scopeGreenColor;
 
 
                 Bitmap background = null;
-                int width = 0;
-                int height = 0;
-                int backgroundWidth = 0;
-                int backgroundHeight = 0;
+                var width = 0;
+                var height = 0;
+                var backgroundWidth = 0;
+                var backgroundHeight = 0;
                 if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR ||
                     Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.HAF)
                 {
@@ -283,8 +283,8 @@ namespace LightningGauges.Renderers
                     backgroundWidth = 256;
                     backgroundHeight = 256;
                 }
-                float scaleX = bounds.Width/(float) width;
-                float scaleY = bounds.Height/(float) height;
+                var scaleX = bounds.Width/(float) width;
+                var scaleY = bounds.Height/(float) height;
                 gfx.ScaleTransform(scaleX, scaleY); //set the initial scale transformation 
 
                 if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR ||
@@ -293,7 +293,7 @@ namespace LightningGauges.Renderers
                     gfx.TranslateTransform(-14, -14);
                 }
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = gfx.Save();
+                var basicState = gfx.Save();
 
 
                 float atdRingScale = 0;
@@ -329,8 +329,8 @@ namespace LightningGauges.Renderers
                 rwrOffTextStringFormat.Trimming = StringTrimming.None;
                 rwrOffTextStringFormat.FormatFlags = StringFormatFlags.NoWrap;
 
-                int countLabelHeight = 15;
-                int countLabelSpacing = 22;
+                var countLabelHeight = 15;
+                var countLabelSpacing = 22;
                 float countLabelCharWidth = 7;
                 var chaffCountRectangle = new RectangleF(45, 5, countLabelCharWidth*4, countLabelHeight*2.5F);
                 var flareCountRectangle = new RectangleF(chaffCountRectangle.Right + countLabelSpacing,
@@ -350,21 +350,21 @@ namespace LightningGauges.Renderers
                                                        pflRectangle.Top, pflRectangle.Width, pflRectangle.Height);
 
 
-                float atdOuterRingDiameter = 200.0f;
-                float outerRingLeft = ((width - atdOuterRingDiameter)/2.0f);
-                float outerRingTop = ((height - atdOuterRingDiameter)/2.0f);
-                float atdRingOffsetTranslateX = ((bounds.Width - (atdOuterRingDiameter*atdRingScale))/2.0f) -
-                                                (outerRingLeft*atdRingScale);
-                float atdRingOffsetTranslateY = ((bounds.Height - (atdOuterRingDiameter*atdRingScale))/2.0f) -
-                                                (outerRingTop*atdRingScale) + (chaffCountRectangle.Y*atdRingScale);
+                var atdOuterRingDiameter = 200.0f;
+                var outerRingLeft = ((width - atdOuterRingDiameter)/2.0f);
+                var outerRingTop = ((height - atdOuterRingDiameter)/2.0f);
+                var atdRingOffsetTranslateX = ((bounds.Width - (atdOuterRingDiameter*atdRingScale))/2.0f) -
+                                              (outerRingLeft*atdRingScale);
+                var atdRingOffsetTranslateY = ((bounds.Height - (atdOuterRingDiameter*atdRingScale))/2.0f) -
+                                              (outerRingTop*atdRingScale) + (chaffCountRectangle.Y*atdRingScale);
 
-                float atdMiddleRingDiameter = atdOuterRingDiameter/2.0f;
-                float middleRingLeft = ((width - atdMiddleRingDiameter)/2.0f);
-                float middleRingTop = ((height - atdMiddleRingDiameter)/2.0f);
+                var atdMiddleRingDiameter = atdOuterRingDiameter/2.0f;
+                var middleRingLeft = ((width - atdMiddleRingDiameter)/2.0f);
+                var middleRingTop = ((height - atdMiddleRingDiameter)/2.0f);
 
                 float atdInnerRingDiameter = RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS;
-                float innerRingLeft = ((width - atdInnerRingDiameter)/2.0f);
-                float innerRingTop = ((height - atdInnerRingDiameter)/2.0f);
+                var innerRingLeft = ((width - atdInnerRingDiameter)/2.0f);
+                var innerRingTop = ((height - atdInnerRingDiameter)/2.0f);
 
                 //draw the background image
                 if (
@@ -395,8 +395,8 @@ namespace LightningGauges.Renderers
                     verticalOsbLegendRHSFormat.Alignment = StringAlignment.Near;
                     verticalOsbLegendRHSFormat.LineAlignment = StringAlignment.Center;
 
-                    int verticalOsbLegendWidth = 15;
-                    int verticalOsbLegendHeight = 50;
+                    var verticalOsbLegendWidth = 15;
+                    var verticalOsbLegendHeight = 50;
 
                     var leftLegend1Rectangle = new Rectangle(0, 7, verticalOsbLegendWidth, verticalOsbLegendHeight);
                     var leftLegend2Rectangle = new Rectangle(0, 68, verticalOsbLegendWidth, verticalOsbLegendHeight + 10);
@@ -607,19 +607,19 @@ namespace LightningGauges.Renderers
 
                     if (InstrumentState.EWSGo)
                     {
-                        Color legendColor = _scopeGreenColor;
+                        var legendColor = _scopeGreenColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "GO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
                     }
                     else if (InstrumentState.EWSNoGo)
                     {
-                        Color legendColor = warnColor;
+                        var legendColor = warnColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "NOGO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
                     }
                     else if (InstrumentState.EWSDispenseReady)
                     {
-                        Color legendColor = _scopeGreenColor;
+                        var legendColor = _scopeGreenColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "DISP", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
                     }
@@ -627,14 +627,14 @@ namespace LightningGauges.Renderers
 
                     if (InstrumentState.EWSDispenseReady)
                     {
-                        Color legendColor = okColor;
+                        var legendColor = okColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "RDY", _otherLegendFont, legendBrush, rdyRectangle, miscTextStringFormat);
                     }
 
                     if (InstrumentState.EWSDegraded) //draw PFL legend 
                     {
-                        Color legendColor = warnColor;
+                        var legendColor = warnColor;
                         Brush legendBrush = new SolidBrush(legendColor);
                         DrawString(gfx, "PFL", _otherLegendFont, legendBrush, pflRectangle, miscTextStringFormat);
                     }
@@ -643,7 +643,7 @@ namespace LightningGauges.Renderers
                     {
                         case EWMSMode.Off:
                             {
-                                Color legendColor = severeColor;
+                                var legendColor = severeColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
                                 DrawString(gfx, "OFF", _otherLegendFont, legendBrush, ewmsModeRectangle,
                                            miscTextStringFormat);
@@ -651,7 +651,7 @@ namespace LightningGauges.Renderers
                             break;
                         case EWMSMode.Standby:
                             {
-                                Color legendColor = warnColor;
+                                var legendColor = warnColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
                                 DrawString(gfx, "SBY", _otherLegendFont, legendBrush, ewmsModeRectangle,
                                            miscTextStringFormat);
@@ -659,7 +659,7 @@ namespace LightningGauges.Renderers
                             break;
                         case EWMSMode.Manual:
                             {
-                                Color legendColor = okColor;
+                                var legendColor = okColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
                                 DrawString(gfx, "MAN", _otherLegendFont, legendBrush, ewmsModeRectangle,
                                            miscTextStringFormat);
@@ -667,7 +667,7 @@ namespace LightningGauges.Renderers
                             break;
                         case EWMSMode.Semiautomatic:
                             {
-                                Color legendColor = okColor;
+                                var legendColor = okColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
                                 DrawString(gfx, "SEM", _otherLegendFont, legendBrush, ewmsModeRectangle,
                                            miscTextStringFormat);
@@ -675,7 +675,7 @@ namespace LightningGauges.Renderers
                             break;
                         case EWMSMode.Automatic:
                             {
-                                Color legendColor = okColor;
+                                var legendColor = okColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
                                 DrawString(gfx, "AUT", _otherLegendFont, legendBrush, ewmsModeRectangle,
                                            miscTextStringFormat);
@@ -683,7 +683,7 @@ namespace LightningGauges.Renderers
                             break;
                         case EWMSMode.Bypass:
                             {
-                                Color legendColor = severeColor;
+                                var legendColor = severeColor;
                                 Brush legendBrush = new SolidBrush(legendColor);
                                 DrawString(gfx, "BYP", _otherLegendFont, legendBrush, ewmsModeRectangle,
                                            miscTextStringFormat);
@@ -700,9 +700,9 @@ namespace LightningGauges.Renderers
                     pageLegendStringFormat.Trimming = StringTrimming.None;
                     pageLegendStringFormat.FormatFlags = StringFormatFlags.NoWrap;
 
-                    int pageLegendHeight = 15;
-                    int pageLegendWidth = 35;
-                    int pageLegendSeparation = 15;
+                    var pageLegendHeight = 15;
+                    var pageLegendWidth = 35;
+                    var pageLegendSeparation = 15;
                     var tacLegendRectangle = new Rectangle(57, backgroundHeight - pageLegendHeight - 5, pageLegendWidth,
                                                            pageLegendHeight);
                     var sysLegendRectangle = new Rectangle(tacLegendRectangle.Right + pageLegendSeparation,
@@ -755,17 +755,17 @@ namespace LightningGauges.Renderers
                     gfx.Transform = initialTransform;
                     gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
                     gfx.ScaleTransform(atdRingScale, atdRingScale);
-                    Pen grayPen = Pens.Gray;
-                    int lineLength = 10;
+                    var grayPen = Pens.Gray;
+                    var lineLength = 10;
                     //draw the outer lethality ring
                     {
-                        Matrix toRestore = gfx.Transform;
+                        var toRestore = gfx.Transform;
                         gfx.TranslateTransform(outerRingLeft, outerRingTop);
                         gfx.DrawEllipse(grayPen, 0, 0, atdOuterRingDiameter, atdOuterRingDiameter);
 
-                        for (int i = 0; i <= 180; i += 30)
+                        for (var i = 0; i <= 180; i += 30)
                         {
-                            Matrix previousTransform = gfx.Transform;
+                            var previousTransform = gfx.Transform;
                             gfx.TranslateTransform(atdOuterRingDiameter/2.0f, atdOuterRingDiameter/2.0f);
                             gfx.RotateTransform(i);
                             gfx.TranslateTransform(-atdOuterRingDiameter/2.0f, -atdOuterRingDiameter/2.0f);
@@ -790,11 +790,11 @@ namespace LightningGauges.Renderers
 
                     //draw the middle lethality ring 
                     {
-                        Matrix toRestore = gfx.Transform;
+                        var toRestore = gfx.Transform;
                         gfx.TranslateTransform(middleRingLeft, middleRingTop);
                         gfx.DrawEllipse(grayPen, 0, 0, atdMiddleRingDiameter, atdMiddleRingDiameter);
 
-                        Matrix previousTransform = gfx.Transform;
+                        var previousTransform = gfx.Transform;
                         gfx.TranslateTransform(atdMiddleRingDiameter/2.0f, atdMiddleRingDiameter/2.0f);
                         gfx.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
                         gfx.TranslateTransform(-atdMiddleRingDiameter/2.0f, -atdMiddleRingDiameter/2.0f);
@@ -828,13 +828,13 @@ namespace LightningGauges.Renderers
 
                     if (!InstrumentState.RWRPowerOn) //draw RWR POWER OFF flag
                     {
-                        float rwrOffTextHeight = atdInnerRingDiameter;
-                        float rwrOffTextWidth = atdInnerRingDiameter;
+                        var rwrOffTextHeight = atdInnerRingDiameter;
+                        var rwrOffTextWidth = atdInnerRingDiameter;
                         var rwrRectangle = new RectangleF((backgroundWidth/2.0f) - (rwrOffTextWidth/2.0f),
                                                           ((backgroundHeight/2.0f) - (rwrOffTextHeight/2.0f)),
                                                           rwrOffTextWidth, rwrOffTextHeight);
                         rwrRectangle.Inflate(-5, -5);
-                        Color legendColor = severeColor;
+                        var legendColor = severeColor;
                         var legendPen = new Pen(legendColor);
                         Brush legendBrush = new SolidBrush(legendColor);
                         //g.FillEllipse(legendBrush, rwrRectangle);
@@ -918,7 +918,7 @@ namespace LightningGauges.Renderers
 
                 if (InstrumentState.Blips != null && InstrumentState.RWRPowerOn)
                 {
-                    foreach (F16AzimuthIndicatorInstrumentState.Blip blip in InstrumentState.Blips)
+                    foreach (var blip in InstrumentState.Blips)
                     {
                         if (blip == null) continue;
                         if (!blip.Visible) continue;
@@ -932,8 +932,8 @@ namespace LightningGauges.Renderers
                             gfx.ScaleTransform(atdRingScale, atdRingScale);
                         }
                         //calculate position of symbols
-                        float lethality = blip.Lethality;
-                        float translateY = 0.0f;
+                        var lethality = blip.Lethality;
+                        var translateY = 0.0f;
                         if (lethality > 1)
                         {
                             translateY = -((2.0f - lethality)*100.0f)*0.95f;
@@ -949,7 +949,7 @@ namespace LightningGauges.Renderers
                             translateY *= 0.92f;
                         }
                         //rotate and translate symbol into place
-                        float angle = -InstrumentState.MagneticHeadingDegrees + blip.BearingDegrees;
+                        var angle = -InstrumentState.MagneticHeadingDegrees + blip.BearingDegrees;
                         if (InstrumentState.Inverted)
                         {
                             angle = -angle;
@@ -973,7 +973,7 @@ namespace LightningGauges.Renderers
                         if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                         {
                             var endPoint = new PointF(center.X, outerRingTop);
-                                // + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f));
+                            // + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f));
                             if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
                             {
                                 gfx.DrawLine(launchLinePen, center.X, innerRingTop, endPoint.X, endPoint.Y);
@@ -981,19 +981,19 @@ namespace LightningGauges.Renderers
 
                             if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
                             {
-                                float angleToDisplay = angle%360;
+                                var angleToDisplay = angle%360;
                                 if (angleToDisplay < 0) angleToDisplay = 360 - Math.Abs(angleToDisplay);
                                 if (angleToDisplay == 0) angleToDisplay = 360;
-                                string angleString = string.Format("{0:000}", angleToDisplay);
+                                var angleString = string.Format("{0:000}", angleToDisplay);
 
-                                float textWidth = gfx.MeasureString(angleString, _missileWarningFont).Width;
+                                var textWidth = gfx.MeasureString(angleString, _missileWarningFont).Width;
                                 var missileWarningTextLocation = new PointF(
                                     //endPoint.X - ((endPoint.X - center.X) / 2.0f),
                                     endPoint.X,
                                     //endPoint.Y - ((endPoint.Y - center.Y) / 2.0f)
                                     endPoint.Y - ((endPoint.Y - innerRingTop)/2.0f) - (textWidth/2.0f)
                                     );
-                                Matrix oldTransform = gfx.Transform;
+                                var oldTransform = gfx.Transform;
                                 gfx.TranslateTransform(missileWarningTextLocation.X, missileWarningTextLocation.Y);
                                 gfx.RotateTransform(-angle);
                                 gfx.TranslateTransform(-missileWarningTextLocation.X, -missileWarningTextLocation.Y);
@@ -1017,13 +1017,13 @@ namespace LightningGauges.Renderers
                         gfx.TranslateTransform(-backgroundWidth/2.0f, -backgroundHeight/2.0f);
 
                         //draw the emitter symbol
-                        bool usePrimarySymbol = DateTime.Now.Millisecond < 500;
-                        bool useLargeSymbol = DateTime.Now.Millisecond < 500 && blip.NewDetection > 0;
+                        var usePrimarySymbol = DateTime.Now.Millisecond < 500;
+                        var useLargeSymbol = DateTime.Now.Millisecond < 500 && blip.NewDetection > 0;
 
-                        Color emitterColor = _scopeGreenColor;
+                        var emitterColor = _scopeGreenColor;
                         if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                         {
-                            EmitterCategory category = GetEmitterCategory(blip.SymbolID);
+                            var category = GetEmitterCategory(blip.SymbolID);
                             switch (category)
                             {
                                 case EmitterCategory.AirborneThreat:
@@ -1111,7 +1111,7 @@ namespace LightningGauges.Renderers
             if (fullBright != null)
             {
                 var ia = new ImageAttributes();
-                ColorMatrix dimmingMatrix =
+                var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
                 g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
@@ -1126,11 +1126,11 @@ namespace LightningGauges.Renderers
 
             if (InstrumentState.PriorityMode)
             {
-                int trackingOwnshipCount = 0;
-                int visibleCount = 0;
-                for (int i = 0; i < InstrumentState.Blips.Length; i++)
+                var trackingOwnshipCount = 0;
+                var visibleCount = 0;
+                for (var i = 0; i < InstrumentState.Blips.Length; i++)
                 {
-                    F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
+                    var thisBlip = InstrumentState.Blips[i];
                     if (thisBlip == null) continue;
                     if (thisBlip.Lethality == 0) continue;
                     trackingOwnshipCount++;
@@ -1148,13 +1148,13 @@ namespace LightningGauges.Renderers
         private bool AreNonVisibleNavalThreatsDetected()
         {
             if (InstrumentState == null || InstrumentState.Blips == null) return false;
-            for (int i = 0; i < InstrumentState.Blips.Length; i++)
+            for (var i = 0; i < InstrumentState.Blips.Length; i++)
             {
-                F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
+                var thisBlip = InstrumentState.Blips[i];
                 if (thisBlip == null) continue;
                 if (thisBlip.Lethality == 0) continue;
                 if (thisBlip.Visible) continue;
-                int symbolId = thisBlip.SymbolID;
+                var symbolId = thisBlip.SymbolID;
                 if (symbolId == 18)
                 {
                     return true;
@@ -1167,13 +1167,13 @@ namespace LightningGauges.Renderers
         {
             if (InstrumentState == null || InstrumentState.Blips == null) return false;
             if (InstrumentState.SearchMode) return false;
-            for (int i = 0; i < InstrumentState.Blips.Length; i++)
+            for (var i = 0; i < InstrumentState.Blips.Length; i++)
             {
-                F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
+                var thisBlip = InstrumentState.Blips[i];
                 if (thisBlip == null) continue;
                 if (thisBlip.Lethality == 0) continue;
                 if (thisBlip.Visible) continue;
-                int symbolId = thisBlip.SymbolID;
+                var symbolId = thisBlip.SymbolID;
                 if (
                     (
                         (symbolId >= 5 && symbolId <= 17)
@@ -1195,13 +1195,13 @@ namespace LightningGauges.Renderers
         private bool AreNonVisibleUnknownThreatsDetected()
         {
             if (InstrumentState == null || InstrumentState.Blips == null) return false;
-            for (int i = 0; i < InstrumentState.Blips.Length; i++)
+            for (var i = 0; i < InstrumentState.Blips.Length; i++)
             {
-                F16AzimuthIndicatorInstrumentState.Blip thisBlip = InstrumentState.Blips[i];
+                var thisBlip = InstrumentState.Blips[i];
                 if (thisBlip == null) continue;
                 if (thisBlip.Visible) continue;
                 if (thisBlip.Lethality == 0) continue;
-                int symbolId = thisBlip.SymbolID;
+                var symbolId = thisBlip.SymbolID;
                 if (symbolId < 0 || symbolId == 1 || symbolId == 27 || symbolId == 28 || symbolId == 29)
                 {
                     return true;
@@ -1214,7 +1214,7 @@ namespace LightningGauges.Renderers
         {
             var symbol = new Bitmap(RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS,
                                     PixelFormat.Format16bppRgb565);
-            using (Graphics g = Graphics.FromImage(symbol))
+            using (var g = Graphics.FromImage(symbol))
             {
                 DrawEmitterSymbol(symbolId, g, new Rectangle(0, 0, symbol.Width, symbol.Height), largeSize,
                                   primarySymbol, color);
@@ -1225,12 +1225,12 @@ namespace LightningGauges.Renderers
         private void DrawEmitterSymbol(int symbolId, Graphics g, RectangleF bounds, bool largeSize, bool primarySymbol,
                                        Color color)
         {
-            Matrix originalTransform = g.Transform;
-            Font symbolFont = largeSize ? _symbolTextFontLarge : _symbolTextFontSmall;
-            int fontSize = largeSize ? 10 : 8;
+            var originalTransform = g.Transform;
+            var symbolFont = largeSize ? _symbolTextFontLarge : _symbolTextFontSmall;
+            var fontSize = largeSize ? 10 : 8;
 
-            float x = bounds.X;
-            float y = bounds.Y;
+            var x = bounds.X;
+            var y = bounds.Y;
 
             var basicInterceptorPoints = new[]
                                              {
@@ -1241,9 +1241,9 @@ namespace LightningGauges.Renderers
                                                  new PointF(x + 15, y + 8), //right of center on bottom
                                                  new PointF(x + 17, y + 8) //right bottom
                                              };
-            for (int i = 0; i < basicInterceptorPoints.Length; i++)
+            for (var i = 0; i < basicInterceptorPoints.Length; i++)
             {
-                PointF p = basicInterceptorPoints[i];
+                var p = basicInterceptorPoints[i];
                 var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 basicInterceptorPoints[i] = p2;
             }
@@ -1256,17 +1256,17 @@ namespace LightningGauges.Renderers
                                                     new PointF(x + 11, y + 8), //right of center on bottom
                                                     new PointF(x + 17, y + 8) //right bottom
                                                 };
-            for (int i = 0; i < advancedInterceptorPoints.Length; i++)
+            for (var i = 0; i < advancedInterceptorPoints.Length; i++)
             {
-                PointF p = advancedInterceptorPoints[i];
+                var p = advancedInterceptorPoints[i];
                 var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 advancedInterceptorPoints[i] = p2;
             }
             var airborneThreatSymbolPoints = new[]
                                                  {new PointF(x + 4, y), new PointF(x + 8, y - 4), new PointF(x + 12, y)};
-            for (int i = 0; i < airborneThreatSymbolPoints.Length; i++)
+            for (var i = 0; i < airborneThreatSymbolPoints.Length; i++)
             {
-                PointF p = airborneThreatSymbolPoints[i];
+                var p = airborneThreatSymbolPoints[i];
                 var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 airborneThreatSymbolPoints[i] = p2;
             }
@@ -1274,17 +1274,19 @@ namespace LightningGauges.Renderers
             var shipSymbolPoints = new[]
                                        {
                                            new PointF(x + 6.5f, -3 + y + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
-                                           new PointF(x + 6.5f, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 6.5f, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f))
+                                           ,
                                            new PointF(x, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
-                                           new PointF(x + 3.5f, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
+                                           new PointF(x + 3.5f, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f))
+                                           ,
                                            new PointF(x + 15, -3 + y + 4.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
                                            new PointF(x + 15, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
                                            new PointF(x + 11, -3 + y + 1.5f + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f)),
                                            new PointF(x + 11, -3 + y + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/4.0f))
                                        };
-            for (int i = 0; i < shipSymbolPoints.Length; i++)
+            for (var i = 0; i < shipSymbolPoints.Length; i++)
             {
-                PointF p = shipSymbolPoints[i];
+                var p = shipSymbolPoints[i];
                 var p2 = new PointF(p.X + (bounds.Width/4.0f), p.Y + (bounds.Height/4.0f));
                 shipSymbolPoints[i] = p2;
             }
@@ -1294,7 +1296,7 @@ namespace LightningGauges.Renderers
             var sf = new StringFormat(StringFormatFlags.NoWrap);
             sf.Alignment = StringAlignment.Center;
             sf.LineAlignment = StringAlignment.Center;
-            int lineSpacing = 4;
+            var lineSpacing = 4;
             using (Brush brush = new SolidBrush(color))
             using (var pen = new Pen(color))
             {
@@ -1606,12 +1608,12 @@ namespace LightningGauges.Renderers
                     default:
                         if (symbolId >= 100)
                         {
-                            string symbolString = (symbolId - 100).ToString();
+                            var symbolString = (symbolId - 100).ToString();
                             DrawString(g, symbolString, symbolFont, brush, bounds, sf);
                         }
                         else if (symbolId >= 65)
                         {
-                            string symbolString = Encoding.ASCII.GetString(new[] {(byte) symbolId});
+                            var symbolString = Encoding.ASCII.GetString(new[] {(byte) symbolId});
                             DrawString(g, symbolString, symbolFont, brush, bounds, sf);
                         }
                         else if (symbolId < 0)
@@ -1626,7 +1628,7 @@ namespace LightningGauges.Renderers
 
         private EmitterCategory GetEmitterCategory(int symbolId)
         {
-            EmitterCategory category = EmitterCategory.Unknown;
+            var category = EmitterCategory.Unknown;
             switch (symbolId)
             {
                 case (int) ThreatSymbols.RWRSYM_ADVANCED_INTERCEPTOR:
@@ -1864,7 +1866,7 @@ namespace LightningGauges.Renderers
                     get { return _bearingDegrees; }
                     set
                     {
-                        float bearing = value;
+                        var bearing = value;
                         bearing %= 360.0f;
                         _bearingDegrees = bearing;
                     }
@@ -1951,7 +1953,7 @@ namespace LightningGauges.Renderers
                 get { return _chaffCount; }
                 set
                 {
-                    int chaff = value;
+                    var chaff = value;
                     if (chaff < 0) chaff = 0;
                     if (chaff > MAX_CHAFF) chaff = MAX_CHAFF;
                     _chaffCount = chaff;
@@ -1963,7 +1965,7 @@ namespace LightningGauges.Renderers
                 get { return _flareCount; }
                 set
                 {
-                    int flare = value;
+                    var flare = value;
                     if (flare < 0) flare = 0;
                     if (flare > MAX_FLARE) flare = MAX_FLARE;
                     _flareCount = flare;
@@ -1975,7 +1977,7 @@ namespace LightningGauges.Renderers
                 get { return _other1Count; }
                 set
                 {
-                    int other1 = value;
+                    var other1 = value;
                     if (other1 < 0) other1 = 0;
                     if (other1 > MAX_OTHER1) other1 = MAX_OTHER1;
                     _other1Count = other1;
@@ -1987,7 +1989,7 @@ namespace LightningGauges.Renderers
                 get { return _other2Count; }
                 set
                 {
-                    int other2 = value;
+                    var other2 = value;
                     if (other2 < 0) other2 = 0;
                     if (other2 > MAX_OTHER2) other2 = MAX_OTHER2;
                     _other2Count = other2;
@@ -2015,7 +2017,7 @@ namespace LightningGauges.Renderers
                 get { return _magneticHeadingDegrees; }
                 set
                 {
-                    float heading = value;
+                    var heading = value;
                     heading %= 360.0f;
                     _magneticHeadingDegrees = heading;
                 }
@@ -2026,7 +2028,7 @@ namespace LightningGauges.Renderers
                 get { return _brightness; }
                 set
                 {
-                    int brightness = value;
+                    var brightness = value;
                     if (brightness < 0) brightness = 0;
                     if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
                     _brightness = brightness;

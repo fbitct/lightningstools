@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using F16CPD.Mfd.Menus;
 
@@ -64,14 +63,14 @@ namespace F16CPD.Mfd.Controls
 
         public void DrawLabel(Graphics g)
         {
-            Matrix origTransform = g.Transform;
+            var origTransform = g.Transform;
             g.TranslateTransform(LabelLocation.X, LabelLocation.Y);
-            string text = LabelText;
-            Size labelSize = LabelSize;
-            Font font = TextFont;
+            var text = LabelText;
+            var labelSize = LabelSize;
+            var font = TextFont;
 
-            Color foreColor = InvertLabelText ? BackColor : ForeColor;
-            Color backColor = InvertLabelText ? ForeColor : BackColor;
+            var foreColor = InvertLabelText ? BackColor : ForeColor;
+            var backColor = InvertLabelText ? ForeColor : BackColor;
 
             if (foreColor == Color.Transparent) foreColor = Color.Black;
             var forecolorBrush = new SolidBrush(foreColor);
@@ -79,8 +78,8 @@ namespace F16CPD.Mfd.Controls
 
             var backgroundRectangle = new Rectangle(new Point(0, 0), labelSize);
 
-            int maxTextAreaWidth = backgroundRectangle.Width;
-            int numLinesOfText = 1 + text.Count(thisChar => thisChar == '\n');
+            var maxTextAreaWidth = backgroundRectangle.Width;
+            var numLinesOfText = 1 + text.Count(thisChar => thisChar == '\n');
             var textSize = new Size(maxTextAreaWidth, (font.Height*numLinesOfText));
 
             var textFormat = new StringFormat
@@ -90,8 +89,8 @@ namespace F16CPD.Mfd.Controls
                                      Alignment = StringAlignment.Center
                                  };
 
-            int textX = 0;
-            int textY = 0;
+            var textX = 0;
+            var textY = 0;
             if (TextVAlignment == VAlignment.Top)
             {
                 textFormat.LineAlignment = StringAlignment.Near;
@@ -130,8 +129,8 @@ namespace F16CPD.Mfd.Controls
                 g.FillRectangle(backcolorBrush, textBoundingRectangle);
                 if (text.Trim() == "^" || text.Trim() == @"\/")
                 {
-                    int xCoordinate = 0;
-                    int yCoordinate = 0;
+                    var xCoordinate = 0;
+                    var yCoordinate = 0;
 
                     if (TextHAlignment == HAlignment.Left)
                     {
@@ -166,25 +165,25 @@ namespace F16CPD.Mfd.Controls
                     {
                         points[0] = new Point(boundingRectangle.Left + boundingRectangle.Width/2,
                                               ((boundingRectangle.Height - TriangleLegLength)/2));
-                            //top point of triangle
+                        //top point of triangle
                         points[1] = new Point(((boundingRectangle.Width - TriangleLegLength)/2),
                                               ((boundingRectangle.Height - TriangleLegLength)/2) + TriangleLegLength);
-                            //lower left point of triangle
+                        //lower left point of triangle
                         points[2] = new Point(((boundingRectangle.Width - TriangleLegLength)/2) + TriangleLegLength,
                                               ((boundingRectangle.Height - TriangleLegLength)/2) + TriangleLegLength);
-                            //lower right point of triangle
+                        //lower right point of triangle
                     }
                     if (text.Trim() == @"\/")
                     {
                         points[0] = new Point(boundingRectangle.Left + boundingRectangle.Width/2,
                                               ((boundingRectangle.Height - TriangleLegLength)/2) + TriangleLegLength);
-                            //bottom point of triangle
+                        //bottom point of triangle
                         points[1] = new Point(((boundingRectangle.Width - TriangleLegLength)/2),
                                               ((boundingRectangle.Height - TriangleLegLength)/2));
-                            //upper left point of triangle
+                        //upper left point of triangle
                         points[2] = new Point(((boundingRectangle.Width - TriangleLegLength)/2) + TriangleLegLength,
                                               ((boundingRectangle.Height - TriangleLegLength)/2));
-                            //upper right point of triangle
+                        //upper right point of triangle
                     }
                     g.TranslateTransform(xCoordinate, yCoordinate);
                     g.FillPolygon(forecolorBrush, points);

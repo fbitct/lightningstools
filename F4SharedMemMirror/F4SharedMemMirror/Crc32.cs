@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 namespace F4SharedMemMirror
 {
     /// <summary>
-    /// 
     /// </summary>
     public class CRC32 : HashAlgorithm
     {
@@ -17,7 +16,7 @@ namespace F4SharedMemMirror
         private uint m_crc;
 
         /// <summary>
-        /// Initialize the cache
+        ///   Initialize the cache
         /// </summary>
         static CRC32()
         {
@@ -27,7 +26,7 @@ namespace F4SharedMemMirror
 
 
         /// <summary>
-        /// Creates a CRC32 object using the DefaultPolynomial
+        ///   Creates a CRC32 object using the DefaultPolynomial
         /// </summary>
         public CRC32()
             : this(DefaultPolynomial)
@@ -35,7 +34,7 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Creates a CRC32 object using the specified Creates a CRC32 object 
+        ///   Creates a CRC32 object using the specified Creates a CRC32 object
         /// </summary>
         public CRC32(uint aPolynomial)
             : this(aPolynomial, AutoCache)
@@ -43,7 +42,7 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Construct the 
+        ///   Construct the
         /// </summary>
         public CRC32(uint aPolynomial, bool cacheTable)
         {
@@ -60,7 +59,7 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Returns the default polynomial (used in WinZip, Ethernet, etc)
+        ///   Returns the default polynomial (used in WinZip, Ethernet, etc)
         /// </summary>
         public static uint DefaultPolynomial
         {
@@ -68,7 +67,7 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Gets or sets the auto-cache setting of this class.
+        ///   Gets or sets the auto-cache setting of this class.
         /// </summary>
         public static bool AutoCache
         {
@@ -83,9 +82,9 @@ namespace F4SharedMemMirror
 
 
         /// <summary>
-        /// Builds a crc32 table given a polynomial
+        ///   Builds a crc32 table given a polynomial
         /// </summary>
-        /// <param name="ulPolynomial"></param>
+        /// <param name = "ulPolynomial"></param>
         /// <returns></returns>
         protected static uint[] BuildCRC32Table(uint ulPolynomial)
         {
@@ -93,10 +92,10 @@ namespace F4SharedMemMirror
             var table = new uint[256];
 
             // 256 values representing ASCII character codes. 
-            for (int i = 0; i < 256; i++)
+            for (var i = 0; i < 256; i++)
             {
                 dwCrc = (uint) i;
-                for (int j = 8; j > 0; j--)
+                for (var j = 8; j > 0; j--)
                 {
                     if ((dwCrc & 1) == 1)
                         dwCrc = (dwCrc >> 1) ^ ulPolynomial;
@@ -110,7 +109,7 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Initializes an implementation of HashAlgorithm.
+        ///   Initializes an implementation of HashAlgorithm.
         /// </summary>
         public override void Initialize()
         {
@@ -118,15 +117,14 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
+        /// <param name = "buffer"></param>
+        /// <param name = "offset"></param>
+        /// <param name = "count"></param>
         protected override void HashCore(byte[] buffer, int offset, int count)
         {
             // Save the text in the buffer. 
-            for (int i = offset; i < count; i++)
+            for (var i = offset; i < count; i++)
             {
                 ulong tabPtr = (m_crc & 0xFF) ^ buffer[i];
                 m_crc >>= 8;
@@ -135,7 +133,6 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <returns></returns>
         protected override byte[] HashFinal()
@@ -152,7 +149,7 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Computes the hash value for the specified Stream.
+        ///   Computes the hash value for the specified Stream.
         /// </summary>
         public new byte[] ComputeHash(Stream inputStream)
         {
@@ -167,7 +164,7 @@ namespace F4SharedMemMirror
 
 
         /// <summary>
-        /// Overloaded. Computes the hash value for the input data.
+        ///   Overloaded. Computes the hash value for the input data.
         /// </summary>
         public new byte[] ComputeHash(byte[] buffer)
         {
@@ -175,11 +172,11 @@ namespace F4SharedMemMirror
         }
 
         /// <summary>
-        /// Overloaded. Computes the hash value for the input data.
+        ///   Overloaded. Computes the hash value for the input data.
         /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
+        /// <param name = "buffer"></param>
+        /// <param name = "offset"></param>
+        /// <param name = "count"></param>
         /// <returns></returns>
         public new byte[] ComputeHash(byte[] buffer, int offset, int count)
         {

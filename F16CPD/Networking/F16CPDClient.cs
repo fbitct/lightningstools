@@ -36,7 +36,7 @@ namespace F16CPD.Networking
         {
             get
             {
-                bool toReturn = false;
+                var toReturn = false;
                 var secondsSinceLastCheck = (int) DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
                 if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
                 {

@@ -36,13 +36,13 @@ namespace LightningGauges
             someByte -= 32;
             if (_charBitmaps[someByte] == null)
             {
-                int glyphWidth = _font.Width/16;
-                int glyphHeight = _font.Height/16;
+                var glyphWidth = _font.Width/16;
+                var glyphHeight = _font.Height/16;
                 var thisCharBitmap = new Bitmap(glyphWidth, glyphHeight, PixelFormat.Format16bppRgb565);
-                int leftX = ((someByte)%16)*glyphWidth;
-                int topY = ((someByte)/16)*glyphHeight;
+                var leftX = ((someByte)%16)*glyphWidth;
+                var topY = ((someByte)/16)*glyphHeight;
                 var toCut = new Rectangle(new Point(leftX, topY), new Size(glyphWidth, glyphHeight));
-                using (Graphics g = Graphics.FromImage(thisCharBitmap))
+                using (var g = Graphics.FromImage(thisCharBitmap))
                 {
                     g.FillRectangle(Brushes.Black, new Rectangle(0, 0, glyphWidth, glyphHeight));
                     g.DrawImage(_font, new Rectangle(0, 0, glyphWidth, glyphHeight), toCut, GraphicsUnit.Pixel);
@@ -55,7 +55,7 @@ namespace LightningGauges
 
         public Bitmap GetCharImage(char someChar)
         {
-            byte thisCharByte = Encoding.ASCII.GetBytes(new[] {someChar})[0];
+            var thisCharByte = Encoding.ASCII.GetBytes(new[] {someChar})[0];
             return GetCharImage(thisCharByte);
         }
 
@@ -73,7 +73,7 @@ namespace LightningGauges
                     Common.Util.DisposeObject(_font);
                     if (_charBitmaps != null)
                     {
-                        for (int i = 0; i < _charBitmaps.Length; i++)
+                        for (var i = 0; i < _charBitmaps.Length; i++)
                         {
                             Common.Util.DisposeObject(_charBitmaps[i]);
                         }

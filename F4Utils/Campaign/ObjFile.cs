@@ -22,7 +22,7 @@ namespace F4Utils.Campaign
         {
             _version = version;
             short numObjectives = 0;
-            byte[] expanded = Expand(compressed, out numObjectives);
+            var expanded = Expand(compressed, out numObjectives);
             if (expanded != null) Decode(expanded, version, numObjectives);
         }
 
@@ -30,11 +30,11 @@ namespace F4Utils.Campaign
         {
             objectives = new Objective[numObjectives];
 
-            int curByte = 0;
+            var curByte = 0;
             curByte = 0;
-            for (int i = 0; i < numObjectives; i++)
+            for (var i = 0; i < numObjectives; i++)
             {
-                short thisObjectiveType = BitConverter.ToInt16(bytes, curByte);
+                var thisObjectiveType = BitConverter.ToInt16(bytes, curByte);
                 curByte += 2;
                 var thisObjective = new Objective(bytes, ref curByte, version);
                 objectives[i] = thisObjective;
@@ -43,12 +43,12 @@ namespace F4Utils.Campaign
 
         protected static byte[] Expand(byte[] compressed, out short numObjectives)
         {
-            int curByte = 0;
+            var curByte = 0;
             numObjectives = BitConverter.ToInt16(compressed, curByte);
             curByte += 2;
-            int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
+            var uncompressedSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
-            int newSize = BitConverter.ToInt32(compressed, curByte);
+            var newSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             if (uncompressedSize == 0) return null;
 

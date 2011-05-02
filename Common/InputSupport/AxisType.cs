@@ -3,7 +3,7 @@
 namespace Common.InputSupport
 {
     /// <summary>
-    /// Enumeration of the various types of possible axes that can be defined on a device
+    ///   Enumeration of the various types of possible axes that can be defined on a device
     /// </summary>
     [Serializable]
     public enum AxisType

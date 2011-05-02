@@ -25,7 +25,7 @@ namespace Common.MacroProgramming
             {
                 if (_lowerInclusiveBound > _upperInclusiveBound)
                 {
-                    double oldUpperBound = _upperInclusiveBound;
+                    var oldUpperBound = _upperInclusiveBound;
                     _upperInclusiveBound = value;
                     _lowerInclusiveBound = oldUpperBound;
                 }
@@ -43,7 +43,7 @@ namespace Common.MacroProgramming
             {
                 if (UpperInclusiveBound < LowerInclusiveBound)
                 {
-                    double oldLowerBound = _lowerInclusiveBound;
+                    var oldLowerBound = _lowerInclusiveBound;
                     _lowerInclusiveBound = value;
                     _upperInclusiveBound = oldLowerBound;
                 }

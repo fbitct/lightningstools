@@ -60,7 +60,7 @@ namespace F16CPD.UI.Forms
                 cboJoystickControl.SelectedItem = control;
                 if (control.ControlType == ControlType.Pov)
                 {
-                    float currentDegrees = e.CurrentState/100.0f;
+                    var currentDegrees = e.CurrentState/100.0f;
                     if (e.CurrentState == -1) currentDegrees = -  1;
                     /*  POV directions in degrees
                               0
@@ -217,12 +217,14 @@ namespace F16CPD.UI.Forms
 
         private List<DIPhysicalDeviceInfo> GetKnownDirectInputDevices()
         {
-            return Mediator.DeviceMonitors.Keys.Select(key => Mediator.DeviceMonitors[key]).Select(monitor => monitor.DeviceInfo).ToList();
+            return
+                Mediator.DeviceMonitors.Keys.Select(key => Mediator.DeviceMonitors[key]).Select(
+                    monitor => monitor.DeviceInfo).ToList();
         }
 
         private void cmdOk_Click(object sender, EventArgs e)
         {
-            bool valid = ValidateSelections();
+            var valid = ValidateSelections();
             if (valid)
             {
                 StoreControlBinding();
@@ -232,7 +234,7 @@ namespace F16CPD.UI.Forms
 
         private bool ValidateSelections()
         {
-            bool valid = true;
+            var valid = true;
             if (rdoJoystick.Checked)
             {
                 var control = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
@@ -256,11 +258,11 @@ namespace F16CPD.UI.Forms
                     rdoNotAssigned.Checked = true;
                 }
             }
-            ControlBinding thisBinding = GetThisControlBinding();
+            var thisBinding = GetThisControlBinding();
             foreach (CpdInputControls inputControl in Enum.GetValues(typeof (CpdInputControls)))
             {
                 if (inputControl == thisBinding.CpdInputControl || inputControl == CpdInputControls.Unknown) continue;
-                ControlBinding thatControlBinding = ControlBindings[inputControl];
+                var thatControlBinding = ControlBindings[inputControl];
 
                 if (thatControlBinding != null && thatControlBinding.CpdInputControl != CpdInputControls.Unknown &&
                     thatControlBinding.BindingType != BindingType.Unknown &&
@@ -272,7 +274,7 @@ namespace F16CPD.UI.Forms
                         && thisBinding.Keys == thatControlBinding.Keys
                         && thisBinding.PovDirection == thatControlBinding.PovDirection)
                     {
-                        string conflictingControl = thatControlBinding.ControlName;
+                        var conflictingControl = thatControlBinding.ControlName;
                         MessageBox.Show(this,
                                         "Another control (" + conflictingControl +
                                         ") is already bound to the input that you selected.", Application.ProductName,
@@ -287,13 +289,13 @@ namespace F16CPD.UI.Forms
 
         private void StoreControlBinding()
         {
-            ControlBinding thisControlBinding = GetThisControlBinding();
+            var thisControlBinding = GetThisControlBinding();
             ControlBindings[thisControlBinding.CpdInputControl] = thisControlBinding;
         }
 
         private ControlBinding GetThisControlBinding()
         {
-            string controlName = ControlBindings[CpdInputControl].ControlName;
+            var controlName = ControlBindings[CpdInputControl].ControlName;
             var thisControlBinding = new ControlBinding {CpdInputControl = CpdInputControl, ControlName = controlName};
             if (rdoJoystick.Checked)
             {
@@ -358,7 +360,7 @@ namespace F16CPD.UI.Forms
 
         private void LoadControlBinding()
         {
-            ControlBinding thisControlBinding = ControlBindings[CpdInputControl];
+            var thisControlBinding = ControlBindings[CpdInputControl];
             lblControlName.Text = "Control: " + thisControlBinding.ControlName;
             switch (thisControlBinding.BindingType)
             {
@@ -444,7 +446,7 @@ namespace F16CPD.UI.Forms
 
         private void PopulateJoystickControlsComboBox()
         {
-            DIPhysicalDeviceInfo thisDevice = ControlBindings[CpdInputControl].DirectInputDevice;
+            var thisDevice = ControlBindings[CpdInputControl].DirectInputDevice;
             cboJoystickControl.Items.Clear();
             if (thisDevice != null)
             {
@@ -461,7 +463,7 @@ namespace F16CPD.UI.Forms
 
         private void SelectCurrentJoystickControl()
         {
-            DIPhysicalControlInfo curControl = ControlBindings[CpdInputControl].DirectInputControl;
+            var curControl = ControlBindings[CpdInputControl].DirectInputControl;
             if (curControl != null)
             {
                 cboJoystickControl.SelectedItem = curControl;
@@ -475,7 +477,7 @@ namespace F16CPD.UI.Forms
 
         private void SelectCurrentJoystick()
         {
-            DIPhysicalDeviceInfo thisDevice = ControlBindings[CpdInputControl].DirectInputDevice;
+            var thisDevice = ControlBindings[CpdInputControl].DirectInputDevice;
             if (thisDevice != null)
             {
                 cbJoysticks.SelectedItem = thisDevice;
@@ -504,7 +506,7 @@ namespace F16CPD.UI.Forms
 
         private void cbJoysticks_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ControlBinding thisControlBinding = ControlBindings[CpdInputControl];
+            var thisControlBinding = ControlBindings[CpdInputControl];
             thisControlBinding.DirectInputDevice = (DIPhysicalDeviceInfo) cbJoysticks.SelectedItem;
             PopulateJoystickControlsComboBox();
             SelectCurrentJoystickControl();
@@ -512,7 +514,7 @@ namespace F16CPD.UI.Forms
 
         private void cboJoystickControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ControlBinding thisControlBinding = ControlBindings[CpdInputControl];
+            var thisControlBinding = ControlBindings[CpdInputControl];
             thisControlBinding.DirectInputControl = (DIPhysicalControlInfo) cboJoystickControl.SelectedItem;
             EnableDisableControls();
         }
@@ -525,7 +527,7 @@ namespace F16CPD.UI.Forms
 
         private void UpdateKeyAssignmentData(KeyEventArgs e)
         {
-            Keys key = e.KeyCode;
+            var key = e.KeyCode;
 
             if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
             {

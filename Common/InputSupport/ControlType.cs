@@ -3,7 +3,7 @@
 namespace Common.InputSupport
 {
     /// <summary>
-    /// Enumeration of the various types of supported controls that can appear on a device
+    ///   Enumeration of the various types of supported controls that can appear on a device
     /// </summary>
     [Serializable]
     public enum ControlType

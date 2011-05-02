@@ -86,7 +86,7 @@ namespace LightningGauges.Renderers
             {
                 LoadImageResources();
             }
-            Graphics gfx = g;
+            var gfx = g;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
@@ -96,16 +96,16 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = gfx.Save();
+                var initialState = gfx.Save();
                 //set up the canvas scale and clipping region
-                int width = 256;
-                int height = 256;
+                var width = 256;
+                var height = 256;
                 gfx.ResetTransform(); //clear any existing transforms
                 gfx.SetClip(bounds);
-                    //set the clipping region on the graphics object to our render rectangle's boundaries
+                //set the clipping region on the graphics object to our render rectangle's boundaries
                 gfx.FillRectangle(Brushes.Black, bounds);
                 gfx.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 //g.TranslateTransform(0, 0);
                 gfx.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
                 gfx.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
@@ -113,7 +113,7 @@ namespace LightningGauges.Renderers
                 gfx.TextRenderingHint = Options.GDIPlusOptions.TextRenderingHint;
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = gfx.Save();
+                var basicState = gfx.Save();
 
 
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
@@ -125,7 +125,7 @@ namespace LightningGauges.Renderers
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 var headingTapeSize = new SizeF(width - 96, 25);
                 gfx.TranslateTransform(40, height - headingTapeSize.Height);
-                float heading = InstrumentState.MagneticHeadingDegrees;
+                var heading = InstrumentState.MagneticHeadingDegrees;
                 DrawHeadingTape(gfx, headingTapeSize, heading);
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
 
@@ -143,14 +143,14 @@ namespace LightningGauges.Renderers
 
                 //draw airspeed tape
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                float airspeedKnots = InstrumentState.AirspeedKnots;
+                var airspeedKnots = InstrumentState.AirspeedKnots;
                 float airspeedTapeWidth = 42;
                 DrawAirspeedTape(gfx, new SizeF(airspeedTapeWidth, height), airspeedKnots);
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
 
                 //draw altitude tape
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                float altitudeMsl = InstrumentState.IndicatedAltitudeFeetMSL;
+                var altitudeMsl = InstrumentState.IndicatedAltitudeFeetMSL;
                 float altitudeTapeWidth = 55;
                 gfx.TranslateTransform(width - altitudeTapeWidth, 0);
                 DrawAltitudeTape(gfx, new SizeF(altitudeTapeWidth, height), altitudeMsl);
@@ -176,9 +176,9 @@ namespace LightningGauges.Renderers
                                                      StringFormatFlags.NoWrap;
                 machNumberStringFormat.LineAlignment = StringAlignment.Center;
                 machNumberStringFormat.Trimming = StringTrimming.None;
-                float machNumber = InstrumentState.MachNumber;
-                string machNumberString = string.Format("{0:0.00}", machNumber);
-                Matrix normalTransform = gfx.Transform;
+                var machNumber = InstrumentState.MachNumber;
+                var machNumberString = string.Format("{0:0.00}", machNumber);
+                var normalTransform = gfx.Transform;
                 var machNumberRectangle = new RectangleF(machRectangle.X, machRectangle.Y - 2, machRectangle.Width,
                                                          machRectangle.Height);
                 machNumberRectangle.Offset(0, -7.5f);
@@ -205,7 +205,7 @@ namespace LightningGauges.Renderers
                 float raltRectangleWidth = 80;
                 var raltRectangle = new RectangleF((topRectangle.Width/2.0f) - (raltRectangleWidth/2.0f), 10,
                                                    raltRectangleWidth, topRectangle.Height - 10);
-                Pen raltRectanglePen = Pens.White;
+                var raltRectanglePen = Pens.White;
                 raltRectangle.Offset(-5, 0);
                 gfx.DrawRectangle(raltRectanglePen, raltRectangle.X, raltRectangle.Y, raltRectangle.Width,
                                   raltRectangle.Height);
@@ -216,9 +216,9 @@ namespace LightningGauges.Renderers
                                                StringFormatFlags.NoWrap;
                 raltStringFormat.LineAlignment = StringAlignment.Center;
                 raltStringFormat.Trimming = StringTrimming.None;
-                float ralt = InstrumentState.RadarAltitudeAGL;
-                string raltString = string.Format("{0:#####0}", ralt);
-                Color raltColor = Color.FromArgb(183, 243, 244);
+                var ralt = InstrumentState.RadarAltitudeAGL;
+                var raltString = string.Format("{0:#####0}", ralt);
+                var raltColor = Color.FromArgb(183, 243, 244);
                 Brush raltBrush = new SolidBrush(raltColor);
                 float fontSize = 20;
 
@@ -262,12 +262,12 @@ namespace LightningGauges.Renderers
                 barometricPressureStringFormat.LineAlignment = StringAlignment.Far;
                 barometricPressureStringFormat.Trimming = StringTrimming.None;
 
-                float pressure = InstrumentState.BarometricPressure;
+                var pressure = InstrumentState.BarometricPressure;
 
                 var barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 15,
                                                                  20, barometricPressureAreaWidth,
                                                                  topRectangle.Height - 20);
-                Brush barometricPressureBrush = Brushes.White;
+                var barometricPressureBrush = Brushes.White;
 
                 string baroString = null;
                 string units = null;
@@ -298,7 +298,7 @@ namespace LightningGauges.Renderers
             if (fullBright != null)
             {
                 var ia = new ImageAttributes();
-                ColorMatrix dimmingMatrix =
+                var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
                 g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
@@ -310,7 +310,7 @@ namespace LightningGauges.Renderers
         private void DrawIlsBars(Graphics g, int width, int height)
         {
             //prepare to draw glideslope and localizer stuff
-            float distanceBetweenDots = 19.5f;
+            var distanceBetweenDots = 19.5f;
             float farLeftLocalizerMarkerX = 82;
             float farLeftLocalizerMarkerY = height - 55;
             var farLeftLocalizerMarkerCenterPoint = new PointF(farLeftLocalizerMarkerX, farLeftLocalizerMarkerY);
@@ -346,17 +346,17 @@ namespace LightningGauges.Renderers
 
             //prepare draw localizer indicator line
 
-            float minIlsHorizontalPositionVal = -InstrumentState.LocalizerDeviationLimitDegrees;
-            float maxIlsHorizontalPositionVal = InstrumentState.LocalizerDeviationLimitDegrees;
-            float IlsHorizontalPositionRange = maxIlsHorizontalPositionVal - minIlsHorizontalPositionVal;
-            float currentIlsHorizontalPositionVal = InstrumentState.LocalizerDeviationDegrees +
-                                                    Math.Abs(minIlsHorizontalPositionVal);
+            var minIlsHorizontalPositionVal = -InstrumentState.LocalizerDeviationLimitDegrees;
+            var maxIlsHorizontalPositionVal = InstrumentState.LocalizerDeviationLimitDegrees;
+            var IlsHorizontalPositionRange = maxIlsHorizontalPositionVal - minIlsHorizontalPositionVal;
+            var currentIlsHorizontalPositionVal = InstrumentState.LocalizerDeviationDegrees +
+                                                  Math.Abs(minIlsHorizontalPositionVal);
             if (currentIlsHorizontalPositionVal < 0) currentIlsHorizontalPositionVal = 0;
             if (currentIlsHorizontalPositionVal > IlsHorizontalPositionRange)
                 currentIlsHorizontalPositionVal = IlsHorizontalPositionRange;
 
-            float minIlsBarX = farLeftLocalizerMarkerCenterPoint.X;
-            float maxIlsBarX = farRightLocalizerMarkerCenterPoint.X;
+            var minIlsBarX = farLeftLocalizerMarkerCenterPoint.X;
+            var maxIlsBarX = farRightLocalizerMarkerCenterPoint.X;
             float ilsBarXRange = (int) (maxIlsBarX - minIlsBarX) + 1;
 
             float currentIlsBarX =
@@ -383,19 +383,19 @@ namespace LightningGauges.Renderers
             }
 
             //prepare to draw glideslope bar
-            float minIlsVerticalPositionVal = -InstrumentState.GlideslopeDeviationLimitDegrees;
-            float maxIlsVerticalPositionVal = InstrumentState.GlideslopeDeviationLimitDegrees;
-            float IlsVerticalPositionRange = maxIlsVerticalPositionVal - minIlsVerticalPositionVal;
+            var minIlsVerticalPositionVal = -InstrumentState.GlideslopeDeviationLimitDegrees;
+            var maxIlsVerticalPositionVal = InstrumentState.GlideslopeDeviationLimitDegrees;
+            var IlsVerticalPositionRange = maxIlsVerticalPositionVal - minIlsVerticalPositionVal;
 
-            float currentIlsVerticalPositionVal = (-InstrumentState.GlideslopeDeviationDegrees) +
-                                                  Math.Abs(minIlsVerticalPositionVal);
+            var currentIlsVerticalPositionVal = (-InstrumentState.GlideslopeDeviationDegrees) +
+                                                Math.Abs(minIlsVerticalPositionVal);
             if (currentIlsVerticalPositionVal < 0) currentIlsVerticalPositionVal = 0;
             if (currentIlsVerticalPositionVal > IlsVerticalPositionRange)
                 currentIlsVerticalPositionVal = IlsVerticalPositionRange;
 
 
-            float minIlsBarY = topGlideSlopeMarkerCenterPoint.Y;
-            float maxIlsBarY = bottomGlideSlopeMarkerCenterPoint.Y;
+            var minIlsBarY = topGlideSlopeMarkerCenterPoint.Y;
+            var maxIlsBarY = bottomGlideSlopeMarkerCenterPoint.Y;
             float ilsBarYRange = (int) (maxIlsBarY - minIlsBarY) + 1;
 
             var currentIlsBarY =
@@ -534,15 +534,15 @@ namespace LightningGauges.Renderers
 
         private void DrawAttitude(Graphics g, int width, int height)
         {
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
             //draw the pitch ladder
             float pitchLadderHeight = width*4;
             float pitchLadderWidth = height*4;
-            float pixelsPerDegreePitch = pitchLadderHeight/(180.0f + 90);
-            float translateX = (width/2.0f) - (pitchLadderWidth/2.0f);
-            float pitchDegrees = InstrumentState.PitchDegrees;
-            float rollDegrees = InstrumentState.RollDegrees;
-            float translateY = ((pixelsPerDegreePitch*pitchDegrees) - (pitchLadderHeight/2.0f)) + (height/2.0f);
+            var pixelsPerDegreePitch = pitchLadderHeight/(180.0f + 90);
+            var translateX = (width/2.0f) - (pitchLadderWidth/2.0f);
+            var pitchDegrees = InstrumentState.PitchDegrees;
+            var rollDegrees = InstrumentState.RollDegrees;
+            var translateY = ((pixelsPerDegreePitch*pitchDegrees) - (pitchLadderHeight/2.0f)) + (height/2.0f);
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
             g.TranslateTransform(width/2.0f, (height)/2.0f);
             g.RotateTransform(-rollDegrees);
@@ -555,41 +555,41 @@ namespace LightningGauges.Renderers
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
             float airplaneSymbolBarThickness = 6;
             float airplaneSymbolWidthEdgeToEdge = 80;
-            float centerX = width/2.0f;
-            float centerY = height/2.0f;
-            float sidebarSpaceFromCenter = 10.0f;
+            var centerX = width/2.0f;
+            var centerY = height/2.0f;
+            var sidebarSpaceFromCenter = 10.0f;
 
-            float lhsTopLeftX = centerX - (airplaneSymbolWidthEdgeToEdge/2.0f) - sidebarSpaceFromCenter;
-            float lhsTopLeftY = centerY - (airplaneSymbolBarThickness/2.0f);
-            float lhsTopRightX = centerX - sidebarSpaceFromCenter;
-            float lhsTopRightY = lhsTopLeftY;
-            float lhsBottomRightX = lhsTopRightX;
-            float lhsBottomRightY = lhsTopRightY + (airplaneSymbolBarThickness*2);
-            float lhsBottomCenterX = lhsBottomRightX - airplaneSymbolBarThickness;
-            float lhsBottomCenterY = lhsBottomRightY;
-            float lhsMiddleCenterX = lhsBottomCenterX;
-            float lhsMiddleCenterY = lhsBottomCenterY - airplaneSymbolBarThickness;
-            float lhsMiddleLeftX = lhsTopLeftX;
-            float lhsMiddleLeftY = lhsMiddleCenterY;
+            var lhsTopLeftX = centerX - (airplaneSymbolWidthEdgeToEdge/2.0f) - sidebarSpaceFromCenter;
+            var lhsTopLeftY = centerY - (airplaneSymbolBarThickness/2.0f);
+            var lhsTopRightX = centerX - sidebarSpaceFromCenter;
+            var lhsTopRightY = lhsTopLeftY;
+            var lhsBottomRightX = lhsTopRightX;
+            var lhsBottomRightY = lhsTopRightY + (airplaneSymbolBarThickness*2);
+            var lhsBottomCenterX = lhsBottomRightX - airplaneSymbolBarThickness;
+            var lhsBottomCenterY = lhsBottomRightY;
+            var lhsMiddleCenterX = lhsBottomCenterX;
+            var lhsMiddleCenterY = lhsBottomCenterY - airplaneSymbolBarThickness;
+            var lhsMiddleLeftX = lhsTopLeftX;
+            var lhsMiddleLeftY = lhsMiddleCenterY;
 
-            float rhsTopLeftX = centerX + sidebarSpaceFromCenter;
-            float rhsTopLeftY = centerY - (airplaneSymbolBarThickness/2.0f);
-            float rhsTopRightX = centerX + sidebarSpaceFromCenter + (airplaneSymbolWidthEdgeToEdge/2.0f);
-            float rhsTopRightY = rhsTopLeftY;
-            float rhsMiddleRightX = rhsTopRightX;
-            float rhsMiddleRightY = rhsTopRightY + airplaneSymbolBarThickness;
-            float rhsMiddleCenterX = rhsTopLeftX + airplaneSymbolBarThickness;
-            float rhsMiddleCenterY = rhsMiddleRightY;
-            float rhsBottomCenterX = rhsMiddleCenterX;
-            float rhsBottomCenterY = rhsTopLeftY + (airplaneSymbolBarThickness*2);
-            float rhsBottomLeftX = rhsTopLeftX;
-            float rhsBottomLeftY = rhsBottomCenterY;
+            var rhsTopLeftX = centerX + sidebarSpaceFromCenter;
+            var rhsTopLeftY = centerY - (airplaneSymbolBarThickness/2.0f);
+            var rhsTopRightX = centerX + sidebarSpaceFromCenter + (airplaneSymbolWidthEdgeToEdge/2.0f);
+            var rhsTopRightY = rhsTopLeftY;
+            var rhsMiddleRightX = rhsTopRightX;
+            var rhsMiddleRightY = rhsTopRightY + airplaneSymbolBarThickness;
+            var rhsMiddleCenterX = rhsTopLeftX + airplaneSymbolBarThickness;
+            var rhsMiddleCenterY = rhsMiddleRightY;
+            var rhsBottomCenterX = rhsMiddleCenterX;
+            var rhsBottomCenterY = rhsTopLeftY + (airplaneSymbolBarThickness*2);
+            var rhsBottomLeftX = rhsTopLeftX;
+            var rhsBottomLeftY = rhsBottomCenterY;
 
 
-            Color airplaneSymbolOutlineColor = Color.White;
+            var airplaneSymbolOutlineColor = Color.White;
             var airplaneSymbolOutlinePen = new Pen(airplaneSymbolOutlineColor);
             airplaneSymbolOutlinePen.Width = 2;
-            Brush airplaneSymbolInsideBrush = Brushes.Black;
+            var airplaneSymbolInsideBrush = Brushes.Black;
             var airplaneSymbolLhsPoints = new[]
                                               {
                                                   new PointF(lhsTopLeftX, lhsTopLeftY), //LHS top-left
@@ -629,15 +629,15 @@ namespace LightningGauges.Renderers
             //draw the roll angle index marks
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
             float majorIndexLineLength = 15;
-            float minorIndexLineLength = majorIndexLineLength/2.0f;
-            float radiusFromCenterToBottomOfIndexLine = pixelsPerDegreePitch*20.0f;
-            Matrix startingTransform = g.Transform;
+            var minorIndexLineLength = majorIndexLineLength/2.0f;
+            var radiusFromCenterToBottomOfIndexLine = pixelsPerDegreePitch*20.0f;
+            var startingTransform = g.Transform;
             var rollIndexPen = new Pen(Color.White);
             rollIndexPen.Width = 2;
-            for (int i = -60; i <= 60; i += 5)
+            for (var i = -60; i <= 60; i += 5)
             {
-                bool drawLine = false;
-                float lineLength = minorIndexLineLength;
+                var drawLine = false;
+                var lineLength = minorIndexLineLength;
                 if (Math.Abs(i) == 60 || Math.Abs(i) == 30)
                 {
                     drawLine = true;
@@ -663,7 +663,7 @@ namespace LightningGauges.Renderers
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
             //draw zero degree triangle
-            float rollTriangleWidthAtBase = centerY - radiusFromCenterToBottomOfIndexLine;
+            var rollTriangleWidthAtBase = centerY - radiusFromCenterToBottomOfIndexLine;
             var center = new PointF(centerX, centerY - radiusFromCenterToBottomOfIndexLine);
             var topLeft = new PointF(centerX - (rollTriangleWidthAtBase/8.0f), center.Y - 6);
             var topRight = new PointF(centerX + (rollTriangleWidthAtBase/8.0f), center.Y - 6);
@@ -702,37 +702,37 @@ namespace LightningGauges.Renderers
             headingDigitFormat.FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap;
             headingDigitFormat.LineAlignment = StringAlignment.Center;
             headingDigitFormat.Trimming = StringTrimming.None;
-            Color headingDigitColor = Color.White;
+            var headingDigitColor = Color.White;
             Brush headingDigitBrush = new SolidBrush(headingDigitColor);
             var headingDigitPen = new Pen(headingDigitColor);
             headingDigitPen.Width = 2;
-            float headingTapeWidth = size.Width;
-            float headingTapeHeight = size.Height;
-            Matrix startingTransform = g.Transform;
-            Region startingClip = g.Clip;
+            var headingTapeWidth = size.Width;
+            var headingTapeHeight = size.Height;
+            var startingTransform = g.Transform;
+            var startingClip = g.Clip;
 
 
             //draw the background
             g.FillRectangle(Brushes.Black, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
-            float pixelsPerDegree = (size.Width/30.0f);
+            var pixelsPerDegree = (size.Width/30.0f);
             g.TranslateTransform(-pixelsPerDegree*magneticHeadingDegrees, 0);
-            for (int i = -30; i <= 400; i += 5)
+            for (var i = -30; i <= 400; i += 5)
             {
                 float angle = i;
                 if (i < 0) angle = 360 + i;
                 if (Math.Abs(angle)%10 == 0)
                 {
-                    string toDisplay = string.Format("{0:000}", Math.Abs(angle)%360);
+                    var toDisplay = string.Format("{0:000}", Math.Abs(angle)%360);
 
-                    SizeF toDisplaySize = g.MeasureString(toDisplay, headingDigitFont);
-                    float x = (i*pixelsPerDegree) + (size.Width/2.0f) - (toDisplaySize.Width/2.0f);
-                    float y = (size.Height/2.0f) - (toDisplaySize.Height/2.0f);
+                    var toDisplaySize = g.MeasureString(toDisplay, headingDigitFont);
+                    var x = (i*pixelsPerDegree) + (size.Width/2.0f) - (toDisplaySize.Width/2.0f);
+                    var y = (size.Height/2.0f) - (toDisplaySize.Height/2.0f);
                     var layoutRect = new RectangleF(x, y, toDisplaySize.Width, toDisplaySize.Height);
                     g.DrawString(toDisplay, headingDigitFont, headingDigitBrush, layoutRect, headingDigitFormat);
 
                     //draw point above text
                     {
-                        float xprime = (i*pixelsPerDegree) + (size.Width/2.0f);
+                        var xprime = (i*pixelsPerDegree) + (size.Width/2.0f);
                         float yprime = 2;
                         float yprimeprime = 4;
                         g.DrawLine(headingDigitPen, new PointF(xprime, yprime), new PointF(xprime, yprimeprime));
@@ -741,7 +741,7 @@ namespace LightningGauges.Renderers
                 else if (Math.Abs(i)%5 == 0)
                 {
                     //draw point indicating 5 degree mark
-                    float x = (i*pixelsPerDegree) + (size.Width/2.0f);
+                    var x = (i*pixelsPerDegree) + (size.Width/2.0f);
                     float y = 2;
                     float yPrime = 3;
                     g.DrawLine(headingDigitPen, new PointF(x, y), new PointF(x, yPrime));
@@ -751,8 +751,8 @@ namespace LightningGauges.Renderers
 
         private void DrawAltitudeTape(Graphics g, SizeF size, float altitudeFeetMSL)
         {
-            float absAltitudeFeetMSL = Math.Abs(altitudeFeetMSL);
-            Matrix originalTransform = g.Transform;
+            var absAltitudeFeetMSL = Math.Abs(altitudeFeetMSL);
+            var originalTransform = g.Transform;
             var altitudeDigitFontSmall = new Font(_fonts.Families[0], 16, FontStyle.Regular, GraphicsUnit.Point);
             var altitudeDigitFontLarge = new Font(_fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point);
             var altitudeDigitFormat = new StringFormat();
@@ -760,16 +760,16 @@ namespace LightningGauges.Renderers
             altitudeDigitFormat.FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap;
             altitudeDigitFormat.LineAlignment = StringAlignment.Center;
             altitudeDigitFormat.Trimming = StringTrimming.None;
-            Color altitudeDigitColor = Color.White;
+            var altitudeDigitColor = Color.White;
             Brush altitudeDigitBrush = new SolidBrush(altitudeDigitColor);
             var altitudeDigitPen = new Pen(altitudeDigitColor);
             altitudeDigitPen.Width = 2;
-            float altitudeTapeWidth = size.Width;
-            float altitudeTapeHeight = size.Height;
-            Matrix startingTransform = g.Transform;
-            Region startingClip = g.Clip;
+            var altitudeTapeWidth = size.Width;
+            var altitudeTapeHeight = size.Height;
+            var startingTransform = g.Transform;
+            var startingClip = g.Clip;
 
-            Color backgroundColor = Color.FromArgb(117, 123, 121);
+            var backgroundColor = Color.FromArgb(117, 123, 121);
             Brush backgroundBrush = new SolidBrush(backgroundColor);
 
 
@@ -777,35 +777,35 @@ namespace LightningGauges.Renderers
             g.FillRectangle(backgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
             g.DrawLine(altitudeDigitPen, new PointF(0, 43), new PointF(size.Width, 43));
             g.DrawLine(altitudeDigitPen, new PointF(0, 0), new PointF(0, size.Height));
-            float pixelsPerFoot = (size.Height/2.0f)/550.0f;
+            var pixelsPerFoot = (size.Height/2.0f)/550.0f;
             g.TranslateTransform(0, pixelsPerFoot*altitudeFeetMSL);
-            for (int i = -10000; i < 100000; i += 100)
+            for (var i = -10000; i < 100000; i += 100)
             {
                 if (Math.Abs(i) < (absAltitudeFeetMSL - 550) || Math.Abs(i) > (absAltitudeFeetMSL + 550)) continue;
                 if (Math.Abs(i)%200 == 0)
                 {
-                    string altitudeString = string.Format("{0:00000}", Math.Abs(i));
-                    string hundredsString = altitudeString.Substring(2, 3);
-                    string thousandsString = altitudeString.Substring(0, 2);
+                    var altitudeString = string.Format("{0:00000}", Math.Abs(i));
+                    var hundredsString = altitudeString.Substring(2, 3);
+                    var thousandsString = altitudeString.Substring(0, 2);
                     while (thousandsString.StartsWith("0"))
                     {
                         thousandsString = thousandsString.Substring(1, thousandsString.Length - 1);
                     }
                     if (i < 0) thousandsString = "-" + thousandsString;
 
-                    SizeF hundredsDisplaySize = g.MeasureString(hundredsString, altitudeDigitFontSmall, size,
-                                                                altitudeDigitFormat);
+                    var hundredsDisplaySize = g.MeasureString(hundredsString, altitudeDigitFontSmall, size,
+                                                              altitudeDigitFormat);
                     float offsetBoth = 20;
                     float offsetHundreds = 2;
                     float offsetThousands = -6;
-                    float x = offsetBoth + offsetHundreds;
-                    float y = (-i*pixelsPerFoot) - (hundredsDisplaySize.Height/2.0f) + (size.Height/2.0f);
+                    var x = offsetBoth + offsetHundreds;
+                    var y = (-i*pixelsPerFoot) - (hundredsDisplaySize.Height/2.0f) + (size.Height/2.0f);
                     var layoutRect = new RectangleF(x, y, hundredsDisplaySize.Width, hundredsDisplaySize.Height);
                     g.DrawString(hundredsString, altitudeDigitFontSmall, altitudeDigitBrush, layoutRect,
                                  altitudeDigitFormat);
 
-                    SizeF thousandsDisplaySize = g.MeasureString(thousandsString, altitudeDigitFontLarge, size,
-                                                                 altitudeDigitFormat);
+                    var thousandsDisplaySize = g.MeasureString(thousandsString, altitudeDigitFontLarge, size,
+                                                               altitudeDigitFormat);
                     y = (-i*pixelsPerFoot) - (thousandsDisplaySize.Height/2.0f) + (size.Height/2.0f);
                     var layoutRect2 =
                         new RectangleF(
@@ -816,8 +816,8 @@ namespace LightningGauges.Renderers
                 }
                 else if (Math.Abs(i)%100 == 0)
                 {
-                    int lineWidth = 15;
-                    float y = (-i*pixelsPerFoot) + (size.Height/2.0f);
+                    var lineWidth = 15;
+                    var y = (-i*pixelsPerFoot) + (size.Height/2.0f);
                     g.DrawLine(altitudeDigitPen, new PointF(0, y), new PointF(lineWidth, y));
                 }
             }
@@ -828,13 +828,13 @@ namespace LightningGauges.Renderers
             float tenThousands = (int) Math.Floor((absAltitudeFeetMSL/10000.0f)%10);
             float thousands = (int) Math.Floor((absAltitudeFeetMSL/1000.0f)%10);
             float hundreds = (int) Math.Floor(absAltitudeFeetMSL/100.0f)%10;
-            float twenties = (absAltitudeFeetMSL/20.0f)%5;
+            var twenties = (absAltitudeFeetMSL/20.0f)%5;
             if (twenties > 4) hundreds += (twenties - 4);
             if (hundreds > 9) thousands += (hundreds - 9);
             if (thousands > 9) tenThousands += (thousands - 9);
 
             float altitudeBoxHeight = 35;
-            float altitudeBoxWidth = size.Width + 5;
+            var altitudeBoxWidth = size.Width + 5;
             float altitudeDigitFontSize = 22;
             float altitudeDigitFontSizeSmall = 16;
             var outerRectangle = new RectangleF(
@@ -906,16 +906,16 @@ namespace LightningGauges.Renderers
             airspeedDigitFormat.FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap;
             airspeedDigitFormat.LineAlignment = StringAlignment.Center;
             airspeedDigitFormat.Trimming = StringTrimming.None;
-            Color airspeedDigitColor = Color.White;
+            var airspeedDigitColor = Color.White;
             Brush airspeedDigitBrush = new SolidBrush(airspeedDigitColor);
             var airspeedDigitPen = new Pen(airspeedDigitColor);
             airspeedDigitPen.Width = 2;
-            float airspeedTapeWidth = size.Width;
-            float airspeedTapeHeight = size.Height;
-            Matrix startingTransform = g.Transform;
-            Region startingClip = g.Clip;
+            var airspeedTapeWidth = size.Width;
+            var airspeedTapeHeight = size.Height;
+            var startingTransform = g.Transform;
+            var startingClip = g.Clip;
 
-            Color backgroundColor = Color.FromArgb(117, 123, 121);
+            var backgroundColor = Color.FromArgb(117, 123, 121);
             Brush backgroundBrush = new SolidBrush(backgroundColor);
 
 
@@ -923,26 +923,26 @@ namespace LightningGauges.Renderers
             g.FillRectangle(backgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
             g.DrawLine(airspeedDigitPen, new PointF(size.Width, 0), new PointF(size.Width, size.Height));
 
-            Matrix originalTransform = g.Transform;
-            float pixelsPerKnot = (size.Height/2.0f)/70.0f;
+            var originalTransform = g.Transform;
+            var pixelsPerKnot = (size.Height/2.0f)/70.0f;
             g.TranslateTransform(0, pixelsPerKnot*airspeedKnots);
-            for (int i = 0; i < 2000; i += 10)
+            for (var i = 0; i < 2000; i += 10)
             {
                 if (i < (airspeedKnots - 100) || i > (airspeedKnots + 50)) continue;
                 if (i%20 == 0)
                 {
-                    string toDisplay = string.Format("{0:####0}", i);
-                    SizeF toDisplaySize = g.MeasureString(toDisplay, airspeedDigitFont);
+                    var toDisplay = string.Format("{0:####0}", i);
+                    var toDisplaySize = g.MeasureString(toDisplay, airspeedDigitFont);
                     float x = 3;
-                    float y = (-i*pixelsPerKnot) - (toDisplaySize.Height/2.0f) + (size.Height/2.0f);
+                    var y = (-i*pixelsPerKnot) - (toDisplaySize.Height/2.0f) + (size.Height/2.0f);
                     var layoutRect = new RectangleF(x, y, size.Width, toDisplaySize.Height);
                     g.DrawString(toDisplay, airspeedDigitFont, airspeedDigitBrush, layoutRect, airspeedDigitFormat);
                 }
                 else if (i%10 == 0)
                 {
-                    int lineWidth = 15;
-                    float x = size.Width - lineWidth;
-                    float y = (-i*pixelsPerKnot) + (size.Height/2.0f);
+                    var lineWidth = 15;
+                    var x = size.Width - lineWidth;
+                    var y = (-i*pixelsPerKnot) + (size.Height/2.0f);
                     g.DrawLine(airspeedDigitPen, new PointF(x, y), new PointF(size.Width, y));
                 }
             }
@@ -951,14 +951,14 @@ namespace LightningGauges.Renderers
             float thousands = (int) Math.Floor((airspeedKnots/1000.0f)%10);
             float hundreds = (int) Math.Floor((airspeedKnots/100.0f)%10);
             float tens = (int) Math.Floor((airspeedKnots/10.0f)%10);
-            float ones = (airspeedKnots%10);
+            var ones = (airspeedKnots%10);
 
             if (ones > 9) tens += (ones - 9);
             if (tens > 9) hundreds += (tens - 9);
             if (hundreds > 9) thousands += (hundreds - 9);
 
             float airspeedBoxHeight = 35;
-            float airspeedBoxWidth = size.Width + 5;
+            var airspeedBoxWidth = size.Width + 5;
             float airspeedDigitFontSize = 22;
             var outerRectangle = new RectangleF(
                 0,
@@ -1015,20 +1015,20 @@ namespace LightningGauges.Renderers
             digitSF.LineAlignment = StringAlignment.Center;
             digitSF.Trimming = StringTrimming.None;
 
-            Brush digitBrush = Brushes.White;
-            Region initialClip = g.Clip;
-            GraphicsState initialState = g.Save();
+            var digitBrush = Brushes.White;
+            var initialClip = g.Clip;
+            var initialState = g.Save();
 
             g.SetClip(clipRectangle);
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
             float digitSpacing = 0;
             if (cyclical)
             {
-                for (int i = -1; i <= 11; i++)
+                for (var i = -1; i <= 11; i++)
                 {
-                    int thisDigit = 0;
+                    var thisDigit = 0;
                     if (i >= 0)
                     {
                         thisDigit = i%10;
@@ -1038,13 +1038,13 @@ namespace LightningGauges.Renderers
                         thisDigit = (10 - (Math.Abs(i)%10));
                     }
 
-                    string toDraw = string.Format("{0:#0}", thisDigit);
+                    var toDraw = string.Format("{0:#0}", thisDigit);
                     if (goByTwenty)
                     {
                         toDraw = string.Format("{0:00}", (thisDigit*20)%100);
                         if (toDraw == "100") toDraw = "00";
                     }
-                    SizeF digitSize = g.MeasureString(toDraw, digitFont);
+                    var digitSize = g.MeasureString(toDraw, digitFont);
                     var layoutRectangle2 = new RectangleF(
                         layoutRectangle.X,
                         layoutRectangle.Y - (i*(digitSize.Height + digitSpacing)),
@@ -1057,13 +1057,13 @@ namespace LightningGauges.Renderers
             else
             {
                 var thisDigit = (int) Math.Floor(digit);
-                string toDraw = string.Format("{0:0}", thisDigit);
+                var toDraw = string.Format("{0:0}", thisDigit);
                 if (toDraw.Length > 1) toDraw = toDraw.Substring(0, 1);
                 if (goByTwenty)
                 {
                     toDraw = string.Format("{0:00}", thisDigit*20);
                 }
-                SizeF digitSize = g.MeasureString(toDraw, digitFont);
+                var digitSize = g.MeasureString(toDraw, digitFont);
                 var layoutRectangle2 = new RectangleF(
                     layoutRectangle.X,
                     layoutRectangle.Y - (digit*(digitSize.Height + digitSpacing)),
@@ -1086,12 +1086,12 @@ namespace LightningGauges.Renderers
             digitSF.LineAlignment = StringAlignment.Center;
             digitSF.Trimming = StringTrimming.None;
 
-            Brush digitBrush = Brushes.White;
-            Region initialClip = g.Clip;
-            GraphicsState initialState = g.Save();
+            var digitBrush = Brushes.White;
+            var initialClip = g.Clip;
+            var initialState = g.Save();
 
             g.SetClip(clipRectangle);
-            GraphicsState basicState = g.Save();
+            var basicState = g.Save();
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
             float digitSpacing = 0;
@@ -1102,7 +1102,7 @@ namespace LightningGauges.Renderers
                 start = digit;
                 end = digit;
             }
-            for (float i = start; i <= end; i++)
+            for (var i = start; i <= end; i++)
             {
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 float thisDigit = 0;
@@ -1115,8 +1115,8 @@ namespace LightningGauges.Renderers
                     thisDigit = (10 - (Math.Abs(i)%10));
                 }
 
-                string toDraw = string.Format("{0:0}", thisDigit);
-                SizeF digitSize = g.MeasureString(toDraw, digitFont);
+                var toDraw = string.Format("{0:0}", thisDigit);
+                var digitSize = g.MeasureString(toDraw, digitFont);
                 g.TranslateTransform(0,
                                      ((digitSize.Height + digitSpacing)*digit) + (layoutRectangle.Height/4.0f) +
                                      (digitSpacing/2.0f));
@@ -1142,23 +1142,23 @@ namespace LightningGauges.Renderers
             pitchDigitFormat.Trimming = StringTrimming.None;
 
 
-            float pitchLadderWidth = bounds.Width;
-            float pitchLadderHeight = bounds.Height;
-            Matrix startingTransform = g.Transform;
-            Region startingClip = g.Clip;
+            var pitchLadderWidth = bounds.Width;
+            var pitchLadderHeight = bounds.Height;
+            var startingTransform = g.Transform;
+            var startingClip = g.Clip;
 
-            int minorLineWidth = 15;
-            Color groundColor = Color.FromArgb(111, 72, 31);
+            var minorLineWidth = 15;
+            var groundColor = Color.FromArgb(111, 72, 31);
             Brush groundBrush = new SolidBrush(groundColor);
-            Color skyColor = Color.FromArgb(3, 174, 252);
+            var skyColor = Color.FromArgb(3, 174, 252);
             Brush skyBrush = new SolidBrush(skyColor);
-            Color pitchBarColor = Color.White;
-            Color pitchDigitColor = Color.White;
+            var pitchBarColor = Color.White;
+            var pitchDigitColor = Color.White;
             Brush pitchDigitBrush = new SolidBrush(pitchDigitColor);
             var pitchBarPen = new Pen(pitchBarColor);
-            int pitchBarPenWidth = 2;
+            var pitchBarPenWidth = 2;
             pitchBarPen.Width = pitchBarPenWidth;
-            float pixelsPerDegree = pitchLadderHeight/(180.0f + 90);
+            var pixelsPerDegree = pitchLadderHeight/(180.0f + 90);
 
             //draw the ground
             g.FillRectangle(groundBrush,
@@ -1174,14 +1174,14 @@ namespace LightningGauges.Renderers
             //draw zenith/nadir symbol
             float zenithNadirSymbolWidth = minorLineWidth;
             {
-                float y = (pitchLadderHeight/2.0f) - (90*pixelsPerDegree);
+                var y = (pitchLadderHeight/2.0f) - (90*pixelsPerDegree);
                 var zenithOrNadirRectangle = new RectangleF((pitchLadderWidth/2.0f) - (zenithNadirSymbolWidth/2.0f),
                                                             y - (zenithNadirSymbolWidth/2.0f), zenithNadirSymbolWidth,
                                                             zenithNadirSymbolWidth);
                 g.DrawEllipse(pitchBarPen, zenithOrNadirRectangle);
             }
             {
-                float y = (pitchLadderHeight/2.0f) - (-90*pixelsPerDegree);
+                var y = (pitchLadderHeight/2.0f) - (-90*pixelsPerDegree);
                 var zenithOrNadirRectangle = new RectangleF((pitchLadderWidth/2.0f) - (zenithNadirSymbolWidth/2.0f),
                                                             y - (zenithNadirSymbolWidth/2.0f), zenithNadirSymbolWidth,
                                                             zenithNadirSymbolWidth);
@@ -1199,7 +1199,7 @@ namespace LightningGauges.Renderers
                 if (i%5 == 0) lineWidth *= 2;
                 if (i%10 == 0) lineWidth *= 2;
                 if (i == 0) lineWidth = pitchLadderWidth;
-                float y = (pitchLadderHeight/2.0f) - (i*pixelsPerDegree);
+                var y = (pitchLadderHeight/2.0f) - (i*pixelsPerDegree);
 
                 //draw this line
                 g.DrawLine(pitchBarPen, new PointF((pitchLadderWidth/2.0f) - (lineWidth/2.0f), y),
@@ -1209,9 +1209,9 @@ namespace LightningGauges.Renderers
                 if (i%10 == 0)
                 {
                     var toDisplayVal = (int) Math.Abs(i);
-                    string toDisplayString = string.Format("{0:##}", toDisplayVal);
+                    var toDisplayString = string.Format("{0:##}", toDisplayVal);
 
-                    SizeF digitSize = g.MeasureString(toDisplayString, pitchDigitFont);
+                    var digitSize = g.MeasureString(toDisplayString, pitchDigitFont);
                     var lhsRect = new RectangleF(
                         new PointF((pitchLadderWidth/2.0f) - (lineWidth/2.0f) - digitSize.Width,
                                    y - (digitSize.Height/2.0f)),
@@ -1350,7 +1350,7 @@ namespace LightningGauges.Renderers
                 get { return _verticalVelocityFeetPerMinute; }
                 set
                 {
-                    float vv = value;
+                    var vv = value;
                     if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
                     if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
                     _verticalVelocityFeetPerMinute = vv;
@@ -1362,7 +1362,7 @@ namespace LightningGauges.Renderers
                 get { return _magneticHeadingDegrees; }
                 set
                 {
-                    float heading = value;
+                    var heading = value;
                     heading %= 360.0f;
                     _magneticHeadingDegrees = heading;
                 }
@@ -1376,7 +1376,7 @@ namespace LightningGauges.Renderers
                 get { return _airspeedKnots; }
                 set
                 {
-                    float knots = value;
+                    var knots = value;
                     if (knots < 0) knots = 0;
                     if (knots > MAX_AIRSPEED) knots = MAX_AIRSPEED;
                     _airspeedKnots = knots;
@@ -1388,7 +1388,7 @@ namespace LightningGauges.Renderers
                 get { return _machNumber; }
                 set
                 {
-                    float mach = value;
+                    var mach = value;
                     if (mach < 0) mach = 0;
                     if (mach > MAX_MACH) mach = MAX_MACH;
                     _machNumber = mach;
@@ -1400,7 +1400,7 @@ namespace LightningGauges.Renderers
                 get { return _neverExceedSpeedKnots; }
                 set
                 {
-                    float vne = value;
+                    var vne = value;
                     if (vne < 0) vne = 0;
                     if (vne > MAX_AIRSPEED) vne = MAX_AIRSPEED;
                     _neverExceedSpeedKnots = vne;
@@ -1412,7 +1412,7 @@ namespace LightningGauges.Renderers
                 get { return _pitchDegrees; }
                 set
                 {
-                    float pitch = value;
+                    var pitch = value;
                     if (pitch < MIN_PITCH) pitch = MIN_PITCH;
                     if (pitch > MAX_PITCH) pitch = MAX_PITCH;
                     if (float.IsNaN(pitch) || float.IsInfinity(pitch))
@@ -1428,7 +1428,7 @@ namespace LightningGauges.Renderers
                 get { return _rollDegrees; }
                 set
                 {
-                    float roll = value;
+                    var roll = value;
                     if (roll < MIN_ROLL) roll = MIN_ROLL;
                     if (roll > MAX_ROLL) roll = MAX_ROLL;
                     if (float.IsInfinity(roll) || float.IsNaN(roll))
@@ -1444,7 +1444,7 @@ namespace LightningGauges.Renderers
                 get { return _brightness; }
                 set
                 {
-                    int brightness = value;
+                    var brightness = value;
                     if (brightness < 0) brightness = 0;
                     if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
                     _brightness = brightness;
@@ -1461,7 +1461,7 @@ namespace LightningGauges.Renderers
                 get { return _localizerDeviationDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsNaN(degrees) || float.IsInfinity(degrees))
                     {
@@ -1476,7 +1476,7 @@ namespace LightningGauges.Renderers
                 get { return _localizerDeviationLimitDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsInfinity(degrees) || float.IsNaN(degrees) || degrees == 0)
                     {
@@ -1491,7 +1491,7 @@ namespace LightningGauges.Renderers
                 get { return _glideslopeDeviationLimitDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsNaN(degrees) || float.IsInfinity(degrees) || degrees == 0)
                     {
@@ -1506,7 +1506,7 @@ namespace LightningGauges.Renderers
                 get { return _glideslopeDeviationDegrees; }
                 set
                 {
-                    float degrees = value;
+                    var degrees = value;
                     degrees %= 360.0f;
                     if (float.IsInfinity(degrees) || float.IsNaN(degrees))
                     {

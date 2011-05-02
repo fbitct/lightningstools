@@ -47,9 +47,9 @@ namespace SimLinkup.HardwareSupport.Simtek
             toReturn.Add(new Simtek100216HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                        "Simtek100216HardwareSupportModule.config");
-                Simtek100216HardwareSupportModuleConfig hsmConfig =
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                     "Simtek100216HardwareSupportModule.config");
+                var hsmConfig =
                     Simtek100216HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
@@ -174,7 +174,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_ftitInputSignal != null)
             {
-                double ftitInput = _ftitInputSignal.State;
+                var ftitInput = _ftitInputSignal.State;
                 double ftitOutputValue = 0;
                 if (_ftitOutputSignal != null)
                 {
@@ -221,9 +221,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -232,9 +232,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~Simtek100216HardwareSupportModule()
         {
@@ -242,11 +242,11 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

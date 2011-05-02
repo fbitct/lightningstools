@@ -23,23 +23,23 @@ namespace F4Utils.Campaign
         {
             _version = version;
             short numUnits = 0;
-            byte[] expanded = Expand(compressed, out numUnits);
+            var expanded = Expand(compressed, out numUnits);
             if (expanded != null) Decode(expanded, version, numUnits, classTable);
         }
 
         protected void Decode(byte[] bytes, int version, short numUnits, Falcon4EntityClassType[] classTable)
         {
-            int curByte = 0;
+            var curByte = 0;
             units = new Unit[numUnits];
-            int i = 0;
+            var i = 0;
             while (i < numUnits)
             {
                 Unit thisUnit = null;
-                short thisUnitType = BitConverter.ToInt16(bytes, curByte);
+                var thisUnitType = BitConverter.ToInt16(bytes, curByte);
                 curByte += 2;
                 if (thisUnitType > 0)
                 {
-                    Falcon4EntityClassType classTableEntry = classTable[thisUnitType - 100];
+                    var classTableEntry = classTable[thisUnitType - 100];
                     if (classTableEntry.vuClassData.classInfo_[(int) VuClassHierarchy.VU_DOMAIN] ==
                         (byte) Classtable_Domains.DOMAIN_AIR)
                     {
@@ -118,12 +118,12 @@ namespace F4Utils.Campaign
 
         protected static byte[] Expand(byte[] compressed, out short numUnits)
         {
-            int curByte = 0;
-            int cSize = BitConverter.ToInt32(compressed, curByte);
+            var curByte = 0;
+            var cSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             numUnits = BitConverter.ToInt16(compressed, curByte);
             curByte += 2;
-            int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
+            var uncompressedSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             if (uncompressedSize == 0) return null;
             var actualCompressed = new byte[compressed.Length - 10];

@@ -16,14 +16,14 @@ namespace F4Utils.Speech
     {
         private const int TLK_HEADER_SIZE = 12;
         private const int WAV_HEADER_SIZE = 44;
-        private static byte[] TLK_HEADER_FIELD1 = new byte[] {0x68, 0x0a, 0x00, 0x00};
-        private static byte[] TLK_HEADER_FIELD2 = new byte[] {0xb4, 0x19, 0x00, 0x00};
-        private static byte[] TLK_HEADER_FIELD3 = new byte[] {0x00, 0x00, 0x00, 0x00};
+        private static readonly byte[] TLK_HEADER_FIELD1 = new byte[] {0x68, 0x0a, 0x00, 0x00};
+        private static readonly byte[] TLK_HEADER_FIELD2 = new byte[] {0xb4, 0x19, 0x00, 0x00};
+        private static readonly byte[] TLK_HEADER_FIELD3 = new byte[] {0x00, 0x00, 0x00, 0x00};
         [ThreadStatic] private static readonly byte[] _compressedAudioBuffer = new byte[8*1024*1024];
         [ThreadStatic] private static readonly byte[] _uncompressedAudioBuffer = new byte[16*1024*1024];
 
-        private string _tlkFilePath;
         public TlkFileDirectory Directory;
+        private string _tlkFilePath;
 
         private TlkFile()
         {
@@ -56,14 +56,14 @@ namespace F4Utils.Speech
                                             field3 = br.ReadUInt32()
                                         };
 
-                uint firstFileDescriptorOffset = br.ReadUInt32();
-                uint numRecords = (firstFileDescriptorOffset - TLK_HEADER_SIZE)/4;
+                var firstFileDescriptorOffset = br.ReadUInt32();
+                var numRecords = (firstFileDescriptorOffset - TLK_HEADER_SIZE)/4;
                 fs.Seek(-4, SeekOrigin.Current);
                 tlkFile.Directory.records = new TlkFileRecord[numRecords];
-                for (int i = 0; i < numRecords; i++)
+                for (var i = 0; i < numRecords; i++)
                 {
                     var thisRecord = new TlkFileRecord {tlkId = (uint) i, offset = br.ReadUInt32()};
-                    long curPos = fs.Position;
+                    var curPos = fs.Position;
                     fs.Seek(thisRecord.offset, SeekOrigin.Begin);
                     thisRecord.uncompressedDataLength = br.ReadUInt32();
                     thisRecord.compressedDataLength = br.ReadUInt32();
@@ -95,7 +95,7 @@ namespace F4Utils.Speech
                                                int compressedBufferOffset, int compressedDataLength, byte[] outputBuffer,
                                                int outputBufferOffset)
         {
-            IAudioCodec codec = GetCodec(codecType);
+            var codec = GetCodec(codecType);
 
             using (codec)
             {
@@ -108,7 +108,7 @@ namespace F4Utils.Speech
                                                         int compressedDataLength, int uncompressedLength,
                                                         Stream uncompressedDataStream)
         {
-            IAudioCodec codec = GetCodec(codecType);
+            var codec = GetCodec(codecType);
 
             using (codec)
             {
@@ -120,7 +120,7 @@ namespace F4Utils.Speech
         public static int CompressAudioToStream(CodecType codecType, Stream uncompressedDataStream,
                                                 int uncompressedDataLength, Stream compressedDataStream)
         {
-            IAudioCodec codec = GetCodec(codecType);
+            var codec = GetCodec(codecType);
 
             using (codec)
             {
@@ -132,8 +132,8 @@ namespace F4Utils.Speech
         {
             if (Records != null && Records.Length > 0)
             {
-                TlkFileRecord firstRecord = Records[0];
-                bool isLh = false;
+                var firstRecord = Records[0];
+                var isLh = false;
                 try
                 {
                     using (var ms = new MemoryStream())
@@ -147,7 +147,7 @@ namespace F4Utils.Speech
                 }
                 if (isLh) return CodecType.LH;
 
-                bool isSpx = false;
+                var isSpx = false;
                 try
                 {
                     using (var ms = new MemoryStream())
@@ -230,7 +230,7 @@ namespace F4Utils.Speech
                                                              int compressedAudioBufferOffset, int compressedDataLength,
                                                              Stream stream)
         {
-            int uncompressedSize = DecompressAudioData(codecType, compressedAudioBuffer, compressedAudioBufferOffset,
+            var uncompressedSize = DecompressAudioData(codecType, compressedAudioBuffer, compressedAudioBufferOffset,
                                                        compressedDataLength, _uncompressedAudioBuffer, 0);
             WritePCMBitsAsWAVToStream(_uncompressedAudioBuffer, 0, uncompressedSize, stream);
         }
@@ -260,7 +260,7 @@ namespace F4Utils.Speech
         private static CodecType GetCodecTypeFromFileExtension(string fileName)
         {
             if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(fileName.Trim())) return CodecType.Unknown;
-            string extension = new FileInfo(fileName).Extension;
+            var extension = new FileInfo(fileName).Extension;
             if (string.IsNullOrEmpty(extension)) return CodecType.Unknown;
             switch (extension.ToUpper())
             {
@@ -288,19 +288,19 @@ namespace F4Utils.Speech
                 }
 
                 //write out compressed data to data section
-                int index = 0;
-                foreach (string file in compressedAudioFileNames)
+                var index = 0;
+                foreach (var file in compressedAudioFileNames)
                 {
                     if (outputWriter != null)
                     {
                         outputWriter.Write("Adding " + file + "...");
                     }
                     //and write this file to the data section
-                    long recordStartPosition = fs.Position;
+                    var recordStartPosition = fs.Position;
                     uint uncompressedSize;
                     uint compresssedSize;
                     LoadCompressedFileAndWriteToStream(fs, file, out uncompressedSize, out compresssedSize);
-                    long recordEndPosition = fs.Position;
+                    var recordEndPosition = fs.Position;
 
                     //now write the directory entry for this file
                     fs.Seek(((index*4) + TLK_HEADER_SIZE), SeekOrigin.Begin);
@@ -320,7 +320,7 @@ namespace F4Utils.Speech
         private static void LoadCompressedFileAndWriteToStream(Stream stream, string file, out uint uncompressedSize,
                                                                out uint compressedSize)
         {
-            byte[] rawBuffer = File.ReadAllBytes(file); //read in compressed audio file
+            var rawBuffer = File.ReadAllBytes(file); //read in compressed audio file
             if (rawBuffer == null || rawBuffer.Length < 8)
             {
                 throw new IOException(string.Format("Corrupt input file:{0}", file));
@@ -348,9 +348,9 @@ namespace F4Utils.Speech
         {
             PopulateCompressedDataFieldInAllRecords();
             var recordList = new List<TlkFileRecord>(Records);
-            foreach (TlkFileRecord updatedRecord in updatedRecords)
+            foreach (var updatedRecord in updatedRecords)
             {
-                int recordIndex = GetRecordIndex(recordList, updatedRecord.tlkId);
+                var recordIndex = GetRecordIndex(recordList, updatedRecord.tlkId);
                 if (recordIndex >= 0)
                 {
                     recordList[recordIndex] = updatedRecord;
@@ -366,9 +366,9 @@ namespace F4Utils.Speech
 
         private static int GetRecordIndex(List<TlkFileRecord> records, uint tlkId)
         {
-            for (int i = 0; i < records.Count; i++)
+            for (var i = 0; i < records.Count; i++)
             {
-                TlkFileRecord thisRecord = records[i];
+                var thisRecord = records[i];
                 if (thisRecord.tlkId == tlkId) return i;
             }
             return -1;
@@ -388,9 +388,9 @@ namespace F4Utils.Speech
 
         private void PopulateCompressedDataFieldInAllRecords()
         {
-            for (int i = 0; i < Directory.records.Length; i++)
+            for (var i = 0; i < Directory.records.Length; i++)
             {
-                TlkFileRecord record = Directory.records[i];
+                var record = Directory.records[i];
                 var outputBuffer = new byte[record.compressedDataLength];
                 GetCompressedAudioDataFromRecord(record, outputBuffer, 0);
                 record.compressedData = outputBuffer;
@@ -401,14 +401,14 @@ namespace F4Utils.Speech
         public static void ImportWAVFiles(CodecType codecType, Dictionary<uint, string> files, string tlkFileName,
                                           TextWriter outputWriter)
         {
-            TlkFile tlkFile = Load(tlkFileName);
-            using (IAudioCodec codec = GetCodec(codecType))
+            var tlkFile = Load(tlkFileName);
+            using (var codec = GetCodec(codecType))
             {
                 var recordsToInsert = new List<TlkFileRecord>();
                 foreach (var dictionaryEntry in files)
                 {
-                    string wavFileName = dictionaryEntry.Value;
-                    uint tlkFileId = dictionaryEntry.Key;
+                    var wavFileName = dictionaryEntry.Value;
+                    var tlkFileId = dictionaryEntry.Key;
                     if (outputWriter != null)
                     {
                         outputWriter.Write("Importing " + wavFileName + "...");
@@ -449,8 +449,8 @@ namespace F4Utils.Speech
         public static void ImportCompressedFiles(Dictionary<uint, string> files, string tlkFileName, CodecType codecType,
                                                  TextWriter outputWriter)
         {
-            TlkFile tlkFile = Load(tlkFileName);
-            CodecType tlkFileCodec = tlkFile.DetectTlkFileCodecType();
+            var tlkFile = Load(tlkFileName);
+            var tlkFileCodec = tlkFile.DetectTlkFileCodecType();
             if (tlkFileCodec != CodecType.Unknown && tlkFileCodec != codecType)
             {
                 throw new InvalidOperationException(
@@ -461,8 +461,8 @@ namespace F4Utils.Speech
             var recordsToInsert = new List<TlkFileRecord>();
             foreach (var dictionaryEntry in files)
             {
-                string compressedFileName = dictionaryEntry.Value;
-                uint tlkFileId = dictionaryEntry.Key;
+                var compressedFileName = dictionaryEntry.Value;
+                var tlkFileId = dictionaryEntry.Key;
                 if (outputWriter != null)
                 {
                     outputWriter.Write("Importing " + compressedFileName + "...");
@@ -479,7 +479,7 @@ namespace F4Utils.Speech
                                                      tlkId = tlkFileId,
                                                      uncompressedDataLength = uncompressedSize
                                                  };
-                    byte[] compressedFileBytes = ms.ToArray();
+                    var compressedFileBytes = ms.ToArray();
                     thisRecordToInsert.compressedData = new byte[compressedFileBytes.Length - 8];
                     Array.Copy(compressedFileBytes, 8, thisRecordToInsert.compressedData, 0,
                                compressedFileBytes.Length - 8);
@@ -523,16 +523,16 @@ namespace F4Utils.Speech
                 }
                 fs.Flush();
                 //write out compressed data to data section
-                int index = 0;
-                foreach (TlkFileRecord record in Directory.records)
+                var index = 0;
+                foreach (var record in Directory.records)
                 {
                     //compress and write this file to the data section
-                    long recordStartPosition = fs.Position;
+                    var recordStartPosition = fs.Position;
                     fs.Write(BitConverter.GetBytes(record.uncompressedDataLength), 0, 4);
                     fs.Write(BitConverter.GetBytes(record.compressedDataLength), 0, 4);
                     fs.Write(record.compressedData, 0, (int) record.compressedDataLength);
                     fs.Flush();
-                    long recordEndPosition = fs.Position;
+                    var recordEndPosition = fs.Position;
                     //now write the directory entry for this file
                     fs.Seek(((index*4) + TLK_HEADER_SIZE), SeekOrigin.Begin);
                     fs.Write(BitConverter.GetBytes(recordStartPosition), 0, 4);
@@ -561,20 +561,20 @@ namespace F4Utils.Speech
                 fs.Flush();
                 //compress each file and write out compressed data to data section
                 Array.Clear(_compressedAudioBuffer, 0, _compressedAudioBuffer.Length);
-                using (IAudioCodec codec = GetCodec(codecType))
+                using (var codec = GetCodec(codecType))
                 {
-                    int index = 0;
-                    foreach (string file in wavFileNames)
+                    var index = 0;
+                    foreach (var file in wavFileNames)
                     {
                         if (outputWriter != null)
                         {
                             outputWriter.Write("Adding " + file + "...");
                         }
                         //compress and write this file to the data section
-                        long recordStartPosition = fs.Position;
+                        var recordStartPosition = fs.Position;
                         CompressWAVFileAndWriteToStream(file, fs, codec);
                         fs.Flush();
-                        long recordEndPosition = fs.Position;
+                        var recordEndPosition = fs.Position;
 
                         //now write the directory entry for this file
                         fs.Seek(((index*4) + TLK_HEADER_SIZE), SeekOrigin.Begin);
@@ -609,7 +609,7 @@ namespace F4Utils.Speech
         private static int CompressWAVFile(string wavFileName, IAudioCodec codec, byte[] compressedBuffer,
                                            int compressedBufferOffset, out int pcmSize)
         {
-            byte[] wavFileBuffer = File.ReadAllBytes(wavFileName); //read in WAV file
+            var wavFileBuffer = File.ReadAllBytes(wavFileName); //read in WAV file
             return CompressWAVBits(wavFileBuffer, 0, wavFileBuffer.Length, compressedBuffer, 0, codec, out pcmSize);
         }
 

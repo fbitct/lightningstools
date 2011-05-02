@@ -51,9 +51,9 @@ namespace SimLinkup.HardwareSupport.Simtek
             toReturn.Add(new Simtek100285HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                        "Simtek100285HardwareSupportModuleConfig.config");
-                Simtek100285HardwareSupportModuleConfig hsmConfig =
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                     "Simtek100285HardwareSupportModuleConfig.config");
+                var hsmConfig =
                     Simtek100285HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
@@ -83,7 +83,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             {
                 return new[]
                            {
-                               _altitudeFineSinOutputSignal, _altitudeFineCosOutputSignal, _altitudeCoarseSinOutputSignal,
+                               _altitudeFineSinOutputSignal, _altitudeFineCosOutputSignal,
+                               _altitudeCoarseSinOutputSignal,
                                _altitudeCoarseCosOutputSignal
                            };
             }
@@ -229,17 +230,17 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_altitudeInputSignal != null)
             {
-                double altitudeInput = _altitudeInputSignal.State;
+                var altitudeInput = _altitudeInputSignal.State;
                 double altitudeFineSinOutputValue = 0;
                 double altitudeFineCosOutputValue = 0;
                 double altitudeCoarseSinOutputValue = 0;
                 double altitudeCoarseCosOutputValue = 0;
 
-                double numRevolutionsOfFineResolver = altitudeInput/4000;
-                double numRevolutionsOfCoarseResolver = altitudeInput/100000;
+                var numRevolutionsOfFineResolver = altitudeInput/4000;
+                var numRevolutionsOfCoarseResolver = altitudeInput/100000;
 
-                double fineResolverDegrees = numRevolutionsOfFineResolver*360;
-                double coarseResolverDegrees = numRevolutionsOfCoarseResolver*360;
+                var fineResolverDegrees = numRevolutionsOfFineResolver*360;
+                var coarseResolverDegrees = numRevolutionsOfCoarseResolver*360;
 
                 altitudeFineSinOutputValue = 10.0000*Math.Sin(fineResolverDegrees*Constants.RADIANS_PER_DEGREE);
                 altitudeFineCosOutputValue = 10.0000*Math.Cos(fineResolverDegrees*Constants.RADIANS_PER_DEGREE);
@@ -313,9 +314,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -324,9 +325,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~Simtek100285HardwareSupportModule()
         {
@@ -334,11 +335,11 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

@@ -42,7 +42,7 @@ namespace F4Utils.Campaign
             if (version < 69)
             {
                 stores = new byte[200];
-                for (int i = 0; i < 200; i++)
+                for (var i = 0; i < 200; i++)
                 {
                     stores[i] = bytes[offset];
                     offset++;
@@ -53,7 +53,7 @@ namespace F4Utils.Campaign
                 if (version >= 72)
                 {
                     stores = new byte[600];
-                    for (int i = 0; i < 600; i++)
+                    for (var i = 0; i < 600; i++)
                     {
                         stores[i] = bytes[offset];
                         offset++;
@@ -62,7 +62,7 @@ namespace F4Utils.Campaign
                 else
                 {
                     stores = new byte[220];
-                    for (int i = 0; i < 220; i++)
+                    for (var i = 0; i < 220; i++)
                     {
                         stores[i] = bytes[offset];
                         offset++;
@@ -75,7 +75,7 @@ namespace F4Utils.Campaign
                 if (version >= 29)
                 {
                     pilots = new Pilot[48];
-                    for (int j = 0; j < pilots.Length; j++)
+                    for (var j = 0; j < pilots.Length; j++)
                     {
                         var thisPilot = new Pilot();
                         thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
@@ -102,7 +102,7 @@ namespace F4Utils.Campaign
                 else
                 {
                     pilots = new Pilot[36];
-                    for (int j = 0; j < pilots.Length; j++)
+                    for (var j = 0; j < pilots.Length; j++)
                     {
                         var thisPilot = new Pilot();
                         thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
@@ -130,7 +130,7 @@ namespace F4Utils.Campaign
             else
             {
                 pilots = new Pilot[48];
-                for (int j = 0; j < pilots.Length; j++)
+                for (var j = 0; j < pilots.Length; j++)
                 {
                     var thisPilot = new Pilot();
                     thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
@@ -153,7 +153,7 @@ namespace F4Utils.Campaign
                 }
             }
             schedule = new int[16];
-            for (int j = 0; j < schedule.Length; j++)
+            for (var j = 0; j < schedule.Length; j++)
             {
                 schedule[j] = BitConverter.ToInt32(bytes, offset);
                 offset += 4;
@@ -179,7 +179,7 @@ namespace F4Utils.Campaign
                 offset += 4;
             }
             rating = new byte[16];
-            for (int j = 0; j < rating.Length; j++)
+            for (var j = 0; j < rating.Length; j++)
             {
                 rating[j] = bytes[offset];
                 offset++;

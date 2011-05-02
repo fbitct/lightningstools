@@ -27,25 +27,33 @@ namespace F16CPD.Mfd.Menus
         }
 
         /// <summary>
-        /// Checks a set of x/y coordinates to see if that corresponds 
-        /// to a screen position occupied by an Option Select Buttonlabel.  If so, 
-        /// returns the corresponding <see cref="OptionSelectButton"/> object.  
-        /// If not, returns <see langword="null"/>.
+        ///   Checks a set of x/y coordinates to see if that corresponds 
+        ///   to a screen position occupied by an Option Select Buttonlabel.  If so, 
+        ///   returns the corresponding <see cref = "OptionSelectButton" /> object.  
+        ///   If not, returns <see langword = "null" />.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name = "x"></param>
+        /// <param name = "y"></param>
         /// <returns></returns>
         public OptionSelectButton GetOptionSelectButtonByLocation(int x, int y)
         {
             return (from button in OptionSelectButtons
                     where button.Visible
                     let origLabelRectangle = new Rectangle(button.LabelLocation, button.LabelSize)
-                    let labelX = (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.X)
-                    let labelY = (int) (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Y)
-                    let labelWidth = (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.Width)
-                    let labelHeight = (int) (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Height)
+                    let labelX =
+                        (int) (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.X)
+                    let labelY =
+                        (int) (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Y)
+                    let labelWidth =
+                        (int)
+                        (((Manager.ScreenBoundsPixels.Width)/Constants.F_NATIVE_RES_WIDTH)*origLabelRectangle.Width)
+                    let labelHeight =
+                        (int)
+                        (((Manager.ScreenBoundsPixels.Height)/Constants.F_NATIVE_RES_HEIGHT)*origLabelRectangle.Height)
                     let labelRectangle = new Rectangle(labelX, labelY, labelWidth, labelHeight)
-                    where x >= labelRectangle.X && y >= labelRectangle.Y && x <= (labelRectangle.X + labelRectangle.Width) && y <= (labelRectangle.Y + labelRectangle.Height)
+                    where
+                        x >= labelRectangle.X && y >= labelRectangle.Y && x <= (labelRectangle.X + labelRectangle.Width) &&
+                        y <= (labelRectangle.Y + labelRectangle.Height)
                     select button).FirstOrDefault();
         }
 

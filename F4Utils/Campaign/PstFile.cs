@@ -23,7 +23,7 @@ namespace F4Utils.Campaign
 
         protected void Decode(byte[] bytes, int version)
         {
-            int offset = 0;
+            var offset = 0;
             numPersistantObjects = 0;
 
             if (version < 69)
@@ -33,7 +33,7 @@ namespace F4Utils.Campaign
             numPersistantObjects = BitConverter.ToInt32(bytes, offset);
             offset += 4;
             persistantObjects = new PersistantObject[numPersistantObjects];
-            for (int i = 0; i < numPersistantObjects; i++)
+            for (var i = 0; i < numPersistantObjects; i++)
             {
                 var thisObject = new PersistantObject();
                 thisObject.x = BitConverter.ToSingle(bytes, offset);

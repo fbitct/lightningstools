@@ -14,7 +14,7 @@ using SimLinkup.UI;
 namespace SimLinkup
 {
     /// <summary>
-    /// Main program class.  Contains the startup method for the application.
+    ///   Main program class.  Contains the startup method for the application.
     /// </summary>
     public static class Program
     {
@@ -52,9 +52,9 @@ namespace SimLinkup
             // current one, if any; or null if the current process
             // is unique.
         {
-            Process curr = Process.GetCurrentProcess();
-            Process[] procs = Process.GetProcessesByName(curr.ProcessName);
-            foreach (Process p in procs)
+            var curr = Process.GetCurrentProcess();
+            var procs = Process.GetProcessesByName(curr.ProcessName);
+            foreach (var p in procs)
             {
                 if ((p.Id != curr.Id) &&
                     (p.MainModule.FileName == curr.MainModule.FileName))
@@ -64,7 +64,7 @@ namespace SimLinkup
         }
 
         /// <summary>
-        /// The main entry point for the application.
+        ///   The main entry point for the application.
         /// </summary>
         [STAThread]
         public static void Main()

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -184,10 +183,10 @@ namespace F4KeyFile
 
         public KeyBinding Parse(string input)
         {
-            List<string> tokenList = Util.Tokenize(input);
-            string callback = tokenList[0];
-            int itemId = Int32.Parse(tokenList[1]);
-            bool mouseClickableOnly = false;
+            var tokenList = Util.Tokenize(input);
+            var callback = tokenList[0];
+            var itemId = Int32.Parse(tokenList[1]);
+            var mouseClickableOnly = false;
             if (tokenList[2] == "1")
             {
                 mouseClickableOnly = true;
@@ -220,7 +219,7 @@ namespace F4KeyFile
             var comboKey = new KeyWithModifiers(keycode2, modifiers2);
             if (tokenList[7].Contains("\""))
             {
-                int quoteLocation = tokenList[7].IndexOf('"');
+                var quoteLocation = tokenList[7].IndexOf('"');
                 tokenList.Insert(8, tokenList[7].Substring(quoteLocation, tokenList[7].Length - quoteLocation));
                 tokenList[7] = tokenList[7].Substring(0, quoteLocation);
             }
@@ -228,7 +227,7 @@ namespace F4KeyFile
             var description = new StringBuilder();
             if (tokenList.Count >= 9)
             {
-                for (int i = 8; i < tokenList.Count; i++)
+                for (var i = 8; i < tokenList.Count; i++)
                 {
                     description.Append(tokenList[i]);
                     if (i + 1 != tokenList.Count)

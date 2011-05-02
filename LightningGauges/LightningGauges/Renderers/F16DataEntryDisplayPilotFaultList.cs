@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -107,19 +106,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 239;
-                int height = 87;
+                var width = 239;
+                var height = 87;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-8, -84);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -133,7 +132,7 @@ namespace LightningGauges.Renderers
                 {
                     //draw the text
                     using (var textImage = new Bitmap(400, 80))
-                    using (Graphics d = Graphics.FromImage(textImage))
+                    using (var d = Graphics.FromImage(textImage))
                     {
                         var location = new Point(0, 0);
                         DrawDEDPFLLineOfText(d, location, InstrumentState.Line1, InstrumentState.Line1Invert);
@@ -170,17 +169,17 @@ namespace LightningGauges.Renderers
                         Array.Copy(line, 0, lineReplacement, 0, line.Length);
                         line = lineReplacement;
                     }
-                    for (int i = 0; i < line.Length; i++)
+                    for (var i = 0; i < line.Length; i++)
                     {
-                        byte thisByte = line[i];
+                        var thisByte = line[i];
                         if (thisByte == 0x04) thisByte = 0x02;
-                        byte thisByteInvert = invertLine.Length > i ? invertLine[i] : (byte) 0;
-                        bool inverted = false;
+                        var thisByteInvert = invertLine.Length > i ? invertLine[i] : (byte) 0;
+                        var inverted = false;
                         if (thisByteInvert > 0 && thisByteInvert != 32)
                         {
                             inverted = true;
                         }
-                        Bitmap thisCharImage = _font.GetCharImage(thisByte, inverted);
+                        var thisCharImage = _font.GetCharImage(thisByte, inverted);
 
                         float xPos = location.X + (i*thisCharImage.Width);
                         float yPos = location.Y;

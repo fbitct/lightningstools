@@ -18,7 +18,7 @@ namespace F4ResourceFileEditor
 
         public frmMain()
         {
-            IntPtr SaveFilter = SetUnhandledExceptionFilter(IntPtr.Zero);
+            var SaveFilter = SetUnhandledExceptionFilter(IntPtr.Zero);
             InitializeComponent();
             SetUnhandledExceptionFilter(SaveFilter);
         }
@@ -55,10 +55,10 @@ namespace F4ResourceFileEditor
             tvResources.Nodes.Clear();
             foreach (var thisStateRecord in _editorState.Resources)
             {
-                string thisResourceID = thisStateRecord.Key;
-                EditorState.F4Resource thisResource = thisStateRecord.Value;
-                string thisResourceType = thisResource.ResourceType.ToString();
-                TreeNode newNode = tvResources.Nodes.Add(thisResourceID, thisResourceID + "(" + thisResourceType + ")");
+                var thisResourceID = thisStateRecord.Key;
+                var thisResource = thisStateRecord.Value;
+                var thisResourceType = thisResource.ResourceType.ToString();
+                var newNode = tvResources.Nodes.Add(thisResourceID, thisResourceID + "(" + thisResourceType + ")");
                 newNode.Tag = thisResource;
             }
             Text = Application.ProductName + " - ";
@@ -92,7 +92,7 @@ namespace F4ResourceFileEditor
             dlgOpen.SupportMultiDottedExtensions = true;
             dlgOpen.Title = "Open Resource File";
             dlgOpen.ValidateNames = true;
-            DialogResult result = dlgOpen.ShowDialog(this);
+            var result = dlgOpen.ShowDialog(this);
             if (result == DialogResult.Cancel)
             {
                 return;
@@ -105,7 +105,7 @@ namespace F4ResourceFileEditor
 
         private string GetFileNameWithoutExtension(string fileName)
         {
-            string toReturn = fileName.Substring(0, fileName.Length - new FileInfo(fileName).Extension.Length);
+            var toReturn = fileName.Substring(0, fileName.Length - new FileInfo(fileName).Extension.Length);
             return toReturn;
         }
 
@@ -126,9 +126,9 @@ namespace F4ResourceFileEditor
                 _editorState.FilePath = resourceFilePath;
                 _reader = new F4ResourceBundleReader();
                 _reader.Load(resourceIndexFileFI.FullName);
-                for (int i = 0; i < _reader.NumResources; i++)
+                for (var i = 0; i < _reader.NumResources; i++)
                 {
-                    F4ResourceType thisResourceType = _reader.GetResourceType(i);
+                    var thisResourceType = _reader.GetResourceType(i);
                     var thisResourceStateRecord = new EditorState.F4Resource();
                     thisResourceStateRecord.ResourceType = thisResourceType;
                     thisResourceStateRecord.ID = _reader.GetResourceID(i);
@@ -137,7 +137,7 @@ namespace F4ResourceFileEditor
                         case F4ResourceType.Unknown:
                             break;
                         case F4ResourceType.ImageResource:
-                            Bitmap resourceData = _reader.GetImageResource(i);
+                            var resourceData = _reader.GetImageResource(i);
                             using (var ms = new MemoryStream())
                             {
                                 resourceData.Save(ms, ImageFormat.Bmp);
@@ -171,7 +171,7 @@ namespace F4ResourceFileEditor
 
         private void tvResources_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            TreeNode selectedNode = e.Node;
+            var selectedNode = e.Node;
             var thisResource = (EditorState.F4Resource) e.Node.Tag;
             splitContainer1.Panel2.Controls.Clear();
 
@@ -250,7 +250,7 @@ namespace F4ResourceFileEditor
         private void BackgroundPlay(object soundBytes)
         {
             var soundData = (byte[]) soundBytes;
-            string tempFile = Path.GetTempFileName();
+            var tempFile = Path.GetTempFileName();
             try
             {
                 using (var fs = new FileStream(tempFile, FileMode.Create))

@@ -187,33 +187,33 @@ namespace F4SharedMem
 
         internal void PopulateFromStruct(object data)
         {
-            Type thisType = GetType();
-            Type dataType = data.GetType();
-            FieldInfo[] fields = dataType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var thisType = GetType();
+            var dataType = data.GetType();
+            var fields = dataType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             for (var i = 0; i < fields.Length; i++)
             {
-                FieldInfo currentField = fields[i];
-                FieldInfo thisField = thisType.GetField(currentField.Name);
+                var currentField = fields[i];
+                var thisField = thisType.GetField(currentField.Name);
                 if (thisField == null) continue;
-                Type currentFieldType = currentField.FieldType;
+                var currentFieldType = currentField.FieldType;
                 if (currentFieldType.IsArray)
                 {
                     if (currentFieldType == typeof (DED_PFL_LineOfText[]))
                     {
                         var currentValue = (DED_PFL_LineOfText[]) currentField.GetValue(data);
                         var valuesToAssign = new string[currentValue.Length];
-                        for (int j = 0; j < currentValue.Length; j++)
+                        for (var j = 0; j < currentValue.Length; j++)
                         {
-                            DED_PFL_LineOfText currentItem = currentValue[j];
+                            var currentItem = currentValue[j];
                             var sb = new StringBuilder(currentItem.chars.Length);
-                            bool invert = false;
+                            var invert = false;
                             if (currentField.Name.ToLowerInvariant().Contains("invert"))
                             {
                                 invert = true; //this is an inversion line
                             }
                             for (var k = 0; k < currentItem.chars.Length; k++)
                             {
-                                sbyte chr = currentItem.chars[k];
+                                var chr = currentItem.chars[k];
                                 if (invert)
                                 {
                                     if (chr == 0x02)
@@ -241,13 +241,13 @@ namespace F4SharedMem
                     {
                         var currentValue = (OSBLabel[]) currentField.GetValue(data);
                         var valuesToAssign = new OptionSelectButtonLabel[currentValue.Length];
-                        for (int j = 0; j < currentValue.Length; j++)
+                        for (var j = 0; j < currentValue.Length; j++)
                         {
-                            OSBLabel currentItem = currentValue[j];
+                            var currentItem = currentValue[j];
                             var label = new OptionSelectButtonLabel();
                             var lineBuilder = new StringBuilder(currentItem.Line1.Length);
 
-                            foreach (sbyte chr in currentItem.Line1)
+                            foreach (var chr in currentItem.Line1)
                             {
                                 if (chr == 0)
                                 {
@@ -260,7 +260,7 @@ namespace F4SharedMem
                             }
                             label.Line1 = lineBuilder.ToString();
                             lineBuilder = new StringBuilder(currentItem.Line2.Length);
-                            foreach (sbyte chr in currentItem.Line2)
+                            foreach (var chr in currentItem.Line2)
                             {
                                 if (chr == 0)
                                 {

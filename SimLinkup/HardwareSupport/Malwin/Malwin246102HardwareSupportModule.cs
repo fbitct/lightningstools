@@ -50,9 +50,9 @@ namespace SimLinkup.HardwareSupport.Malwin
             toReturn.Add(new Malwin246102HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                        "Malwin246102HardwareSupportModuleConfig.config");
-                Malwin246102HardwareSupportModuleConfig hsmConfig =
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                     "Malwin246102HardwareSupportModuleConfig.config");
+                var hsmConfig =
                     Malwin246102HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
@@ -193,10 +193,10 @@ namespace SimLinkup.HardwareSupport.Malwin
         {
             if (_cabinPressureAltitudeInputSignal != null)
             {
-                double cabinPressureAltitudeInput = _cabinPressureAltitudeInputSignal.State;
-                double cabinPressureAltitudeSinOutputValue = 0.0000;
-                double cabinPressureAltitudeCosOutputValue = 0.0000;
-                double degrees = 0.00;
+                var cabinPressureAltitudeInput = _cabinPressureAltitudeInputSignal.State;
+                var cabinPressureAltitudeSinOutputValue = 0.0000;
+                var cabinPressureAltitudeCosOutputValue = 0.0000;
+                var degrees = 0.00;
 
 
                 if (cabinPressureAltitudeInput < 0.0000)
@@ -255,9 +255,9 @@ namespace SimLinkup.HardwareSupport.Malwin
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -266,9 +266,9 @@ namespace SimLinkup.HardwareSupport.Malwin
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~Malwin246102HardwareSupportModule()
         {
@@ -276,11 +276,11 @@ namespace SimLinkup.HardwareSupport.Malwin
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

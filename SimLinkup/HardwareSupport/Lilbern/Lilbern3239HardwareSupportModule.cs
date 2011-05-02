@@ -47,9 +47,9 @@ namespace SimLinkup.HardwareSupport.Lilbern
             toReturn.Add(new Lilbern3239HardwareSupportModule());
             try
             {
-                string hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                        "Lilbern3239HardwareSupportModuleConfig.config");
-                Lilbern3239HardwareSupportModuleConfig hsmConfig =
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                                                     "Lilbern3239HardwareSupportModuleConfig.config");
+                var hsmConfig =
                     Lilbern3239HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
@@ -173,7 +173,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
         {
             if (_fuelFlowInputSignal != null)
             {
-                double fuelFlowInput = _fuelFlowInputSignal.State;
+                var fuelFlowInput = _fuelFlowInputSignal.State;
                 double fuelFlowOutputValue = 0;
 
                 if (fuelFlowInput <= 0)
@@ -209,9 +209,9 @@ namespace SimLinkup.HardwareSupport.Lilbern
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up 
-        /// managed and unmanaged resources used by this 
-        /// object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up 
+        ///   managed and unmanaged resources used by this 
+        ///   object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -220,9 +220,9 @@ namespace SimLinkup.HardwareSupport.Lilbern
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object 
-        /// is not manually disposed.  Ordinarily called only 
-        /// by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object 
+        ///   is not manually disposed.  Ordinarily called only 
+        ///   by the garbage collector.
         /// </summary>
         ~Lilbern3239HardwareSupportModule()
         {
@@ -230,11 +230,11 @@ namespace SimLinkup.HardwareSupport.Lilbern
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually
-        /// perform disposal.  Distinguishes the private method signature 
-        /// from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually
+        ///   perform disposal.  Distinguishes the private method signature 
+        ///   from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

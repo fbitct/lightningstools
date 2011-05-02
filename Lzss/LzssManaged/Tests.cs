@@ -9,9 +9,9 @@ namespace Lzss
 
         public static void Main(string[] args)
         {
-            int timesToRun = 1;
+            var timesToRun = 1;
             if (TORTURE) timesToRun = 5;
-            for (int i = 0; i < timesToRun; i++)
+            for (var i = 0; i < timesToRun; i++)
             {
                 TestCompressionLowLevelInterface();
                 TestCompressionStreamInterface();
@@ -24,7 +24,7 @@ namespace Lzss
         {
             Console.WriteLine("Testing low-level compression interface...");
             //create a 5MB buffer of random data to attempt compression with (it will actually get bigger after "compression", since random data is not compressible
-            int nonCompressedDataSize = 500*1024*1024;
+            var nonCompressedDataSize = 500*1024*1024;
             var nonCompressedDataBuffer = new byte[nonCompressedDataSize];
             var rnd = new Random();
             Console.WriteLine("Generating " + nonCompressedDataSize + " bytes of random data.");
@@ -34,7 +34,7 @@ namespace Lzss
             var compressedDataBuffer = new byte[nonCompressedDataBuffer.Length*2];
             //compress the original data
             Console.WriteLine("Compressing generated data...");
-            int compressedSize = Codec.Compress(nonCompressedDataBuffer, 0, nonCompressedDataBuffer.Length,
+            var compressedSize = Codec.Compress(nonCompressedDataBuffer, 0, nonCompressedDataBuffer.Length,
                                                 compressedDataBuffer, 0);
             Console.WriteLine("Size after compression: " + compressedSize);
 
@@ -42,17 +42,17 @@ namespace Lzss
             var decompressedDataBuffer = new byte[nonCompressedDataSize];
             //decompress the compressed data
             Console.WriteLine("Decompressing compressed data...");
-            int bytesProcessed = Codec.Decompress(compressedDataBuffer, 0, decompressedDataBuffer, 0,
+            var bytesProcessed = Codec.Decompress(compressedDataBuffer, 0, decompressedDataBuffer, 0,
                                                   nonCompressedDataSize);
             Console.WriteLine("Bytes processed in decompression: " + bytesProcessed);
 
             Console.WriteLine("Comparing decompressed data to original data...");
             //compare our decompressed buffer with the original noncompressed data to ensure it matches
-            bool everythingMatched = true;
-            for (int i = 0; i < nonCompressedDataSize; i++)
+            var everythingMatched = true;
+            for (var i = 0; i < nonCompressedDataSize; i++)
             {
-                byte originalNonCompressedData = nonCompressedDataBuffer[i];
-                byte decompressedData = decompressedDataBuffer[i];
+                var originalNonCompressedData = nonCompressedDataBuffer[i];
+                var decompressedData = decompressedDataBuffer[i];
                 if (originalNonCompressedData != decompressedData)
                 {
                     everythingMatched = false;
@@ -72,7 +72,7 @@ namespace Lzss
         {
             Console.WriteLine("Testing stream-based compression interface...");
             //create a 5MB buffer of random data to attempt compression with (it will actually get bigger after "compression", since random data is not compressible
-            int nonCompressedDataSize = 500*1024*1024;
+            var nonCompressedDataSize = 500*1024*1024;
             var nonCompressedDataBuffer = new byte[nonCompressedDataSize];
             var rnd = new Random();
             Console.WriteLine("Generating " + nonCompressedDataSize + " bytes of random data.");
@@ -82,7 +82,7 @@ namespace Lzss
 
             //compress the data
             Stream compressedDataStream = new MemoryStream();
-            int compressedSize = Codec.Compress(nonCompressedDataStream, nonCompressedDataSize, compressedDataStream);
+            var compressedSize = Codec.Compress(nonCompressedDataStream, nonCompressedDataSize, compressedDataStream);
             Console.WriteLine("Size after compression: " + compressedSize);
 
             //decompress the compressed data
@@ -94,11 +94,11 @@ namespace Lzss
 
             Console.WriteLine("Comparing decompressed data to original data...");
             //compare our decompressed buffer with the original noncompressed data to ensure it matches
-            bool everythingMatched = true;
-            for (int i = 0; i < nonCompressedDataSize; i++)
+            var everythingMatched = true;
+            for (var i = 0; i < nonCompressedDataSize; i++)
             {
-                byte originalNonCompressedData = nonCompressedDataBuffer[i];
-                int nextDecompressedByte = decompressedDataStream.ReadByte();
+                var originalNonCompressedData = nonCompressedDataBuffer[i];
+                var nextDecompressedByte = decompressedDataStream.ReadByte();
                 if (nextDecompressedByte == -1)
                 {
                     everythingMatched = false;

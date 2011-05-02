@@ -18,12 +18,12 @@ namespace F4Utils.Campaign
         public EvtFile(byte[] bytes, int version)
             : this()
         {
-            int offset = 0;
+            var offset = 0;
             numEvents = BitConverter.ToInt16(bytes, offset);
             offset += 2;
 
             campEvents = new CampEvent[numEvents];
-            for (int i = 0; i < numEvents; i++)
+            for (var i = 0; i < numEvents; i++)
             {
                 var thisEvent = new CampEvent();
                 thisEvent.id = BitConverter.ToInt16(bytes, offset);

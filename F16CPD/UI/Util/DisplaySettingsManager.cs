@@ -7,12 +7,12 @@ namespace F16CPD.UI.Util
     internal class DisplaySettingsManager
     {
         private readonly int[] _orientationValues = new[]
-                                                       {
-                                                           NativeMethods.DMDO_DEFAULT,
-                                                           NativeMethods.DMDO_90,
-                                                           NativeMethods.DMDO_180,
-                                                           NativeMethods.DMDO_270
-                                                       };
+                                                        {
+                                                            NativeMethods.DMDO_DEFAULT,
+                                                            NativeMethods.DMDO_90,
+                                                            NativeMethods.DMDO_180,
+                                                            NativeMethods.DMDO_270
+                                                        };
 
         private int GetSettings(ref NativeMethods.DEVMODE dm)
         {
@@ -32,7 +32,7 @@ namespace F16CPD.UI.Util
             if (DialogResult.Yes ==
                 MessageBox.Show("Are you sure you want to change your display setings?", "", MessageBoxButtons.YesNo))
             {
-                int iRet = NativeMethods.ChangeDisplaySettings(ref dm, 0);
+                var iRet = NativeMethods.ChangeDisplaySettings(ref dm, 0);
                 switch (iRet)
                 {
                     case NativeMethods.DISP_CHANGE_SUCCESSFUL:
@@ -66,17 +66,17 @@ namespace F16CPD.UI.Util
         public void RotateScreenClockwise()
         {
             // obtain current settings
-            NativeMethods.DEVMODE dm = NativeMethods.CreateDevmode();
+            var dm = NativeMethods.CreateDevmode();
             GetSettings(ref dm);
 
             //swap height and width
-            int temp = dm.dmPelsHeight;
+            var temp = dm.dmPelsHeight;
             dm.dmPelsHeight = dm.dmPelsWidth;
             dm.dmPelsWidth = temp;
 
             // set the orientation value to what's next clockwise
-            int index = Array.IndexOf(_orientationValues, (object) dm.dmDisplayOrientation);
-            int newIndex = (index == 0) ? 3 : index - 1;
+            var index = Array.IndexOf(_orientationValues, (object) dm.dmDisplayOrientation);
+            var newIndex = (index == 0) ? 3 : index - 1;
             dm.dmDisplayOrientation = _orientationValues[newIndex];
 
             // switch to new settings
@@ -86,17 +86,17 @@ namespace F16CPD.UI.Util
         public void RotateScreenCounterclockwise()
         {
             // obtain current settings
-            NativeMethods.DEVMODE dm = NativeMethods.CreateDevmode();
+            var dm = NativeMethods.CreateDevmode();
             GetSettings(ref dm);
 
             // swap height and width
-            int temp = dm.dmPelsHeight;
+            var temp = dm.dmPelsHeight;
             dm.dmPelsHeight = dm.dmPelsWidth;
             dm.dmPelsWidth = temp;
 
             // set the orientation value to what's next anti-clockwise
-            int index = Array.IndexOf(_orientationValues, (object) dm.dmDisplayOrientation);
-            int newIndex = (index == 3) ? 0 : index + 1;
+            var index = Array.IndexOf(_orientationValues, (object) dm.dmDisplayOrientation);
+            var newIndex = (index == 3) ? 0 : index + 1;
             dm.dmDisplayOrientation = _orientationValues[newIndex];
 
             // switch to new settings

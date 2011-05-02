@@ -19,7 +19,7 @@ namespace F4Utils.Terrain
             var bytesToRead = (int) fileInfo.Length;
             var bytesRead = new byte[bytesToRead];
 
-            using (FileStream stream = File.OpenRead(theaterDotMapFilePath))
+            using (var stream = File.OpenRead(theaterDotMapFilePath))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(bytesRead, 0, bytesToRead);
@@ -34,11 +34,11 @@ namespace F4Utils.Terrain
             mapInfo.LastFarTiledLOD = BitConverter.ToUInt32(bytesRead, 24);
 
             var pallete = new UInt32[256];
-            for (int i = 0; i < pallete.Length; i++)
+            for (var i = 0; i < pallete.Length; i++)
             {
                 pallete[i] = BitConverter.ToUInt32(bytesRead, 28 + (i*4));
             }
-            for (int i = 0; i < mapInfo.Pallete.Length; i++)
+            for (var i = 0; i < mapInfo.Pallete.Length; i++)
             {
                 var cR = (byte) (pallete[i] & 0xFF);
                 var cG = (byte) ((pallete[i] >> 8) & 0xFF);
@@ -56,7 +56,7 @@ namespace F4Utils.Terrain
             }
             mapInfo.LODMapWidths = new UInt32[mapInfo.NumLODs];
             mapInfo.LODMapHeights = new UInt32[mapInfo.NumLODs];
-            for (int i = 0; i < mapInfo.NumLODs; i++)
+            for (var i = 0; i < mapInfo.NumLODs; i++)
             {
                 mapInfo.LODMapWidths[i] = BitConverter.ToUInt32(bytesRead, 1052 + (i*8));
                 mapInfo.LODMapHeights[i] = BitConverter.ToUInt32(bytesRead, 1056 + (i*8));
@@ -88,14 +88,14 @@ namespace F4Utils.Terrain
             var bytesToRead = (int) fileInfo.Length;
             var bytesRead = new byte[bytesToRead];
 
-            using (FileStream stream = File.OpenRead(textureDotBinFilePath))
+            using (var stream = File.OpenRead(textureDotBinFilePath))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(bytesRead, 0, bytesToRead);
                 stream.Close();
             }
             var textureBinFileInfo = new TextureDotBinFileInfo();
-            int curByte = 0;
+            var curByte = 0;
 
             textureBinFileInfo.numSets = BitConverter.ToUInt32(bytesRead, curByte);
             textureBinFileInfo.setRecords = new TextureBinSetRecord[textureBinFileInfo.numSets];
@@ -103,7 +103,7 @@ namespace F4Utils.Terrain
             textureBinFileInfo.totalTiles = BitConverter.ToUInt32(bytesRead, curByte);
             curByte += 4;
 
-            for (int h = 0; h < textureBinFileInfo.numSets; h++)
+            for (var h = 0; h < textureBinFileInfo.numSets; h++)
             {
                 var thisSetRecord = new TextureBinSetRecord
                                         {
@@ -115,13 +115,13 @@ namespace F4Utils.Terrain
                 curByte++;
 
                 thisSetRecord.tileRecords = new TextureBinTileRecord[thisSetRecord.numTiles];
-                for (int i = 0; i < thisSetRecord.numTiles; i++)
+                for (var i = 0; i < thisSetRecord.numTiles; i++)
                 {
                     var tileRecord = new TextureBinTileRecord
                                          {
                                              tileName = Encoding.ASCII.GetString(bytesRead, curByte, 20)
                                          };
-                    int nullLoc = tileRecord.tileName.IndexOf('\0');
+                    var nullLoc = tileRecord.tileName.IndexOf('\0');
                     if (nullLoc > 0) tileRecord.tileName = tileRecord.tileName.Substring(0, nullLoc);
                     curByte += 20;
                     tileRecord.numAreas = BitConverter.ToUInt32(bytesRead, curByte);
@@ -130,7 +130,7 @@ namespace F4Utils.Terrain
                     tileRecord.numPaths = BitConverter.ToUInt32(bytesRead, curByte);
                     tileRecord.pathRecords = new TextureBinPathRecord[tileRecord.numPaths];
                     curByte += 4;
-                    for (int j = 0; j < tileRecord.numAreas; j++)
+                    for (var j = 0; j < tileRecord.numAreas; j++)
                     {
                         var thisAreaRecord = new TextureBinAreaRecord {type = BitConverter.ToInt32(bytesRead, curByte)};
                         curByte += 4;
@@ -142,7 +142,7 @@ namespace F4Utils.Terrain
                         curByte += 4;
                         tileRecord.areaRecords[j] = thisAreaRecord;
                     }
-                    for (int k = 0; k < tileRecord.numPaths; k++)
+                    for (var k = 0; k < tileRecord.numPaths; k++)
                     {
                         var thisPathRecord = new TextureBinPathRecord {type = BitConverter.ToInt32(bytesRead, curByte)};
                         curByte += 4;
@@ -174,17 +174,17 @@ namespace F4Utils.Terrain
             var bytesToRead = (int) fileInfo.Length;
             var bytesRead = new byte[bytesToRead];
 
-            using (FileStream stream = File.OpenRead(farTilesDotPalFilePath))
+            using (var stream = File.OpenRead(farTilesDotPalFilePath))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(bytesRead, 0, bytesToRead);
                 stream.Close();
             }
             var pallete = new Color[256];
-            int curByte = 0;
-            for (int i = 0; i < pallete.Length; i++)
+            var curByte = 0;
+            for (var i = 0; i < pallete.Length; i++)
             {
-                uint thisPalleteEntry = BitConverter.ToUInt32(bytesRead, curByte);
+                var thisPalleteEntry = BitConverter.ToUInt32(bytesRead, curByte);
 
                 var cR = (byte) (thisPalleteEntry & 0xFF);
                 var cG = (byte) ((thisPalleteEntry >> 8) & 0xFF);
@@ -225,21 +225,21 @@ namespace F4Utils.Terrain
                                    LoDLevel = lodLevel
                                };
 
-            long bytesToRead = oFileInfo.Length;
+            var bytesToRead = oFileInfo.Length;
             var bytesRead = new byte[bytesToRead];
-            using (FileStream stream = File.OpenRead(oFileInfo.FullName))
+            using (var stream = File.OpenRead(oFileInfo.FullName))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(bytesRead, 0, (int) bytesToRead);
                 stream.Close();
             }
-            bool isFourByte = true;
+            var isFourByte = true;
 
             var oFileRecords = new List<TheaterDotOxFileRecord>();
-            int curByte = 0;
+            var curByte = 0;
             while (curByte < bytesToRead)
             {
-                UInt32 thisDword = BitConverter.ToUInt32(bytesRead, curByte);
+                var thisDword = BitConverter.ToUInt32(bytesRead, curByte);
                 if (thisDword%2304 != 0)
                 {
                     //not a 4-byte file
@@ -267,14 +267,14 @@ namespace F4Utils.Terrain
             curByte = 0;
             bytesToRead = lFileInfo.Length;
             bytesRead = new byte[bytesToRead];
-            using (FileStream stream = File.OpenRead(lFileInfo.FullName))
+            using (var stream = File.OpenRead(lFileInfo.FullName))
             {
                 stream.Seek(0, SeekOrigin.Begin);
                 stream.Read(bytesRead, 0, (int) bytesToRead);
                 stream.Close();
             }
             uint maxTextureOffset = 0;
-            uint minTextureOffset = uint.MaxValue;
+            var minTextureOffset = uint.MaxValue;
             var lFileRecords = new List<TheaterDotLxFileRecord>();
             if (isFourByte)
             {

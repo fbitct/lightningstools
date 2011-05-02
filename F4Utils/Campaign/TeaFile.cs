@@ -24,7 +24,7 @@ namespace F4Utils.Campaign
             : this()
         {
             _version = version;
-            int offset = 0;
+            var offset = 0;
 
             numTeams = BitConverter.ToInt16(bytes, offset);
             offset += 2;
@@ -36,7 +36,7 @@ namespace F4Utils.Campaign
             groundTaskingManagers = new GroundTaskingManager[numTeams];
             navalTaskingManagers = new NavalTaskingManager[numTeams];
 
-            for (int i = 0; i < numTeams; i++)
+            for (var i = 0; i < numTeams; i++)
             {
                 var thisTeam = new Team(bytes, ref offset, version);
                 teams[i] = thisTeam;

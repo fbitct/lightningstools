@@ -6,13 +6,13 @@ using System.Windows.Forms;
 namespace Common.UI.Wizard
 {
     /// <summary>
-    /// Summary description for WizardHeader.
+    ///   Summary description for WizardHeader.
     /// </summary>
     [Designer(typeof (HeaderDesigner))]
     public class Header : UserControl
     {
-        /// <summary> 
-        /// Required designer variable.
+        /// <summary>
+        ///   Required designer variable.
         /// </summary>
         private readonly Container components;
 
@@ -24,7 +24,7 @@ namespace Common.UI.Wizard
         private Panel pnlDockPadding;
 
         /// <summary>
-        /// Constructor for Header
+        ///   Constructor for Header
         /// </summary>
         public Header()
         {
@@ -33,7 +33,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Get/Set the title for the wizard page
+        ///   Get/Set the title for the wizard page
         /// </summary>
         [Category("Appearance")]
         public string Title
@@ -43,7 +43,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Gets/Sets the
+        ///   Gets/Sets the
         /// </summary>
         [Category("Appearance")]
         public string Description
@@ -53,7 +53,7 @@ namespace Common.UI.Wizard
         }
 
         /// <summary>
-        /// Gets/Sets the Icon
+        ///   Gets/Sets the Icon
         /// </summary>
         [Category("Appearance")]
         public Image Image
@@ -66,8 +66,8 @@ namespace Common.UI.Wizard
             }
         }
 
-        /// <summary> 
-        /// Clean up any resources being used.
+        /// <summary>
+        ///   Clean up any resources being used.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -100,9 +100,9 @@ namespace Common.UI.Wizard
 
         #region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
+        /// <summary>
+        ///   Required method for Designer support - do not modify 
+        ///   the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {

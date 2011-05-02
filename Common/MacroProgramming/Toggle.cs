@@ -50,7 +50,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _reverse_SignalChanged;
+                value.SignalChanged += ReverseSignalChanged;
                 _reverse = value;
             }
         }
@@ -64,7 +64,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _reset_SignalChanged;
+                value.SignalChanged += ResetSignalChanged;
                 _reset = value;
             }
         }
@@ -129,7 +129,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _reverse_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void ReverseSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -137,7 +137,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _reset_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void ResetSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -153,29 +153,30 @@ namespace Common.MacroProgramming
                 {
                     if (_outs != null)
                     {
-                        for (int i = 0; i < _outs.Count; i++)
+                        foreach (var t in _outs)
                         {
-                            if (_outs[i] != null)
+                            if (t != null)
                             {
-                                _outs[i].State = false;
+                                t.State = false;
                             }
                         }
-                        DigitalSignal currentOut = _outs[_toggleIndex];
-                        if (_direction == ToggleDirection.Forward)
+                        var currentOut = _outs[_toggleIndex];
+                        switch (_direction)
                         {
-                            _toggleIndex++;
-                            if (_toggleIndex >= _outs.Count)
-                            {
-                                _toggleIndex = 0;
-                            }
-                        }
-                        else if (_direction == ToggleDirection.Reverse)
-                        {
-                            _toggleIndex--;
-                            if (_toggleIndex < 0)
-                            {
-                                _toggleIndex = _outs.Count - 1;
-                            }
+                            case ToggleDirection.Forward:
+                                _toggleIndex++;
+                                if (_toggleIndex >= _outs.Count)
+                                {
+                                    _toggleIndex = 0;
+                                }
+                                break;
+                            case ToggleDirection.Reverse:
+                                _toggleIndex--;
+                                if (_toggleIndex < 0)
+                                {
+                                    _toggleIndex = _outs.Count - 1;
+                                }
+                                break;
                         }
                         if (currentOut != null)
                         {
@@ -188,11 +189,11 @@ namespace Common.MacroProgramming
             {
                 if (_outs != null)
                 {
-                    for (int i = 0; i < _outs.Count; i++)
+                    foreach (var t in _outs)
                     {
-                        if (_outs[i] != null)
+                        if (t != null)
                         {
-                            _outs[i].State = false;
+                            t.State = false;
                         }
                     }
                 }

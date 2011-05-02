@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -85,7 +84,7 @@ namespace LightningGauges.Renderers
                 get { return _magneticHeadingDegrees; }
                 set
                 {
-                    float heading = value;
+                    var heading = value;
                     heading %= 360.0f;
                     _magneticHeadingDegrees = heading;
                 }
@@ -114,23 +113,23 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                GraphicsState initialState = g.Save();
+                var initialState = g.Save();
 
                 //set up the canvas scale and clipping region
-                int width = 205;
-                int height = 211;
+                var width = 205;
+                var height = 211;
                 g.ResetTransform(); //clear any existing transforms
                 g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
                 g.FillRectangle(Brushes.Black, bounds);
                 g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
-                    //set the initial scale transformation 
+                //set the initial scale transformation 
                 g.TranslateTransform(-25, -23);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                GraphicsState basicState = g.Save();
+                var basicState = g.Save();
                 //draw the tape 
-                float pixelsPerDegree = 2.802f;
-                float heading = InstrumentState.MagneticHeadingDegrees;
-                float offset = (pixelsPerDegree*heading);
+                var pixelsPerDegree = 2.802f;
+                var heading = InstrumentState.MagneticHeadingDegrees;
+                var offset = (pixelsPerDegree*heading);
                 float translateX = -1327;
                 float translateY = 90;
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);

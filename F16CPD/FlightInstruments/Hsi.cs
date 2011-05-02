@@ -39,7 +39,7 @@ namespace F16CPD.FlightInstruments
 
                 var compassRose = (Bitmap) _compassRose.Clone();
                 compassRose.MakeTransparent(Color.Black);
-                float currentHeadingInDecimalDegrees = ((Manager.FlightData.MagneticHeadingInDecimalDegrees))%360;
+                var currentHeadingInDecimalDegrees = ((Manager.FlightData.MagneticHeadingInDecimalDegrees))%360;
 
                 var whitePen = new Pen(Color.White) {Width = 3};
                 Point pointA;
@@ -74,22 +74,22 @@ namespace F16CPD.FlightInstruments
                                                   };
                 //draw airplane symbol
                 var blackPen = new Pen(Color.Black);
-                Point[] airplaneSymbolPoints = airplaneSymbolPointList.ToArray();
+                var airplaneSymbolPoints = airplaneSymbolPointList.ToArray();
                 g.TranslateTransform((renderSize.Width/2) - 24, (renderSize.Height/2) - 9);
                 g.DrawPolygon(blackPen, airplaneSymbolPoints);
                 g.FillPolygon(whiteBrush, airplaneSymbolPoints);
                 g.TranslateTransform(-((renderSize.Width/2) - 24), -((renderSize.Height/2) - 9));
                 //36x40
-                bool toFlag = false;
-                bool fromFlag = false;
+                var toFlag = false;
+                var fromFlag = false;
 
-                using (Graphics crg = Graphics.FromImage(compassRose))
+                using (var crg = Graphics.FromImage(compassRose))
                 {
                     crg.SmoothingMode = SmoothingMode.AntiAlias;
 
                     //compute course deviation and TO/FROM
-                    float deviationLimitDecimalDegrees = Manager.FlightData.HsiCourseDeviationLimitInDecimalDegrees%180;
-                    float courseDeviationDecimalDegrees = Manager.FlightData.HsiCourseDeviationInDecimalDegrees;
+                    var deviationLimitDecimalDegrees = Manager.FlightData.HsiCourseDeviationLimitInDecimalDegrees%180;
+                    var courseDeviationDecimalDegrees = Manager.FlightData.HsiCourseDeviationInDecimalDegrees;
                     if (Math.Abs(courseDeviationDecimalDegrees) <= 90)
                     {
                         toFlag = true;
@@ -140,7 +140,7 @@ namespace F16CPD.FlightInstruments
                     //Brush toFromFlagSolidColorBrush = Brushes.Red;
                     //if (this.Manager.NightMode)
                     //{
-                    Brush toFromFlagSolidColorBrush = Brushes.White;
+                    var toFromFlagSolidColorBrush = Brushes.White;
                     //}
                     whitePen.Width = 1;
 
@@ -168,7 +168,7 @@ namespace F16CPD.FlightInstruments
                     //crg.DrawPolygon(whitePen, points);
 
                     //draw HSI Course Deviation Invalid flag
-                    Brush courseInvalidFlagBrush = Brushes.Red;
+                    var courseInvalidFlagBrush = Brushes.Red;
                     if (Manager.NightMode)
                     {
                         courseInvalidFlagBrush = Brushes.White;
@@ -242,7 +242,7 @@ namespace F16CPD.FlightInstruments
                     var bugG = new Point(16, 13);
                     var bugH = new Point(6, 1);
                     var bugPoints = new[] {bugA, bugB, bugC, bugD, bugE, bugF, bugG, bugH};
-                    Color headingBugColor = Color.FromArgb(0, 255, 0);
+                    var headingBugColor = Color.FromArgb(0, 255, 0);
                     Brush headingBugBrush = new SolidBrush(headingBugColor);
                     crg.FillPolygon(headingBugBrush, bugPoints);
 
@@ -308,7 +308,7 @@ namespace F16CPD.FlightInstruments
                     if (headingBoxNumToDisplay == 360) headingBoxNumToDisplay = 0;
                 }
 
-                string headingBoxText = string.Format("{0:000}", headingBoxNumToDisplay);
+                var headingBoxText = string.Format("{0:000}", headingBoxNumToDisplay);
                 g.DrawString(headingBoxText, headingBoxFont, whiteBrush, headingBoxTextRectangle);
 
                 //draw text labels
@@ -323,7 +323,7 @@ namespace F16CPD.FlightInstruments
                                          LineAlignment = StringAlignment.Far
                                      };
 
-                int selectedCourse = (Manager.FlightData.HsiDesiredCourseInDegrees);
+                var selectedCourse = (Manager.FlightData.HsiDesiredCourseInDegrees);
 
                 if (Settings.Default.DisplayNorthAsThreeSixZero)
                 {
@@ -334,11 +334,11 @@ namespace F16CPD.FlightInstruments
                     if (selectedCourse == 360) selectedCourse = 0;
                 }
 
-                string selectedCourseText = string.Format("{0:000}", selectedCourse);
+                var selectedCourseText = string.Format("{0:000}", selectedCourse);
                 g.DrawString("SEL CRS " + selectedCourseText, textFont, whiteBrush, selectedCourseTextRectangle,
                              textFormat);
 
-                int selectedHeading = (Manager.FlightData.HsiDesiredHeadingInDegrees);
+                var selectedHeading = (Manager.FlightData.HsiDesiredHeadingInDegrees);
 
                 if (Settings.Default.DisplayNorthAsThreeSixZero)
                 {
@@ -348,13 +348,15 @@ namespace F16CPD.FlightInstruments
                 {
                     if (selectedHeading == 360) selectedHeading = 0;
                 }
-                string selectedHeadingText = string.Format("{0:000}", selectedHeading);
+                var selectedHeadingText = string.Format("{0:000}", selectedHeading);
                 g.DrawString("SEL HDG " + selectedHeadingText, textFont, whiteBrush, selectedHeadingTextRectangle,
                              textFormat);
 
                 if (Manager.FlightData.HsiDisplayToFromFlag)
                 {
-                    Pen toFromFrequencyPen = Manager.FlightData.HsiDeviationInvalidFlag ? new Pen(Color.Yellow) : new Pen(Color.White);
+                    var toFromFrequencyPen = Manager.FlightData.HsiDeviationInvalidFlag
+                                                 ? new Pen(Color.Yellow)
+                                                 : new Pen(Color.White);
                     toFromFrequencyPen.Width = 3;
 
                     /*
@@ -386,8 +388,8 @@ namespace F16CPD.FlightInstruments
                     */
                 }
 
-                float dme = (Manager.FlightData.HsiDistanceToBeaconInNauticalMiles);
-                string dmeText = string.Format("{0:000.0}", dme);
+                var dme = (Manager.FlightData.HsiDistanceToBeaconInNauticalMiles);
+                var dmeText = string.Format("{0:000.0}", dme);
                 /*
                 while (dmeText.StartsWith("0") && !dmeText.StartsWith("0.0"))
                 {
@@ -401,15 +403,15 @@ namespace F16CPD.FlightInstruments
                 //draw HSI DME invalid flag if required
                 if (Manager.FlightData.HsiDistanceInvalidFlag)
                 {
-                    Region currentClip = g.Clip;
+                    var currentClip = g.Clip;
                     var clipRectangle = new Rectangle(dmeTextRectangle.X, dmeTextRectangle.Y + 4, dmeTextRectangle.Width,
                                                       7);
                     g.Clip = new Region(clipRectangle);
                     const int strokeWidth = 5;
-                    bool alternate = false;
-                    for (int i = dmeTextRectangle.Left - 20; i <= dmeTextRectangle.Right; i += strokeWidth)
+                    var alternate = false;
+                    for (var i = dmeTextRectangle.Left - 20; i <= dmeTextRectangle.Right; i += strokeWidth)
                     {
-                        Color thisColor = Color.Red;
+                        var thisColor = Color.Red;
                         if (alternate)
                         {
                             thisColor = Color.White;
@@ -427,8 +429,8 @@ namespace F16CPD.FlightInstruments
         #region Destructors
 
         /// <summary>
-        /// Public implementation of IDisposable.Dispose().  Cleans up managed
-        /// and unmanaged resources used by this object before allowing garbage collection
+        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///   and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -437,8 +439,8 @@ namespace F16CPD.FlightInstruments
         }
 
         /// <summary>
-        /// Standard finalizer, which will call Dispose() if this object is not
-        /// manually disposed.  Ordinarily called only by the garbage collector.
+        ///   Standard finalizer, which will call Dispose() if this object is not
+        ///   manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~Hsi()
         {
@@ -446,9 +448,9 @@ namespace F16CPD.FlightInstruments
         }
 
         /// <summary>
-        /// Private implementation of Dispose()
+        ///   Private implementation of Dispose()
         /// </summary>
-        /// <param name="disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

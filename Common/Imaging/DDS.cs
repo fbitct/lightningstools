@@ -77,23 +77,23 @@ namespace Common.Imaging
 
         public static unsafe Bitmap GetBitmapFromDDSFile(DDSFile file)
         {
-            int width = file.GetWidth();
-            int height = file.GetHeight();
-            int stride = file.Header.PitchOrLinearSize;
+            var width = file.GetWidth();
+            var height = file.GetHeight();
+            var stride = file.Header.PitchOrLinearSize;
             var toReturn = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-            int curByte = 0;
-            BitmapData data = toReturn.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-                                                toReturn.PixelFormat);
-            IntPtr scan0 = data.Scan0;
+            var curByte = 0;
+            var data = toReturn.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
+                                         toReturn.PixelFormat);
+            var scan0 = data.Scan0;
             fixed (byte* pixels = file.GetPixelData())
             {
                 unchecked
                 {
                     var scan0ptr = (byte*) scan0.ToPointer();
 
-                    for (int y = 0; y < height; y++)
+                    for (var y = 0; y < height; y++)
                     {
-                        for (int x = 0; x < width; x++)
+                        for (var x = 0; x < width; x++)
                         {
                             *(scan0ptr + curByte) = *(pixels + curByte + 2);
                             *(scan0ptr + curByte + 1) = *(pixels + curByte + 1);

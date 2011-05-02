@@ -31,7 +31,7 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _in_SignalChanged;
+                value.SignalChanged += InSignalChanged;
                 _in = value;
             }
         }
@@ -58,12 +58,12 @@ namespace Common.MacroProgramming
                 {
                     value = new DigitalSignal();
                 }
-                value.SignalChanged += _reset_SignalChanged;
+                value.SignalChanged += ResetSignalChanged;
                 _reset = value;
             }
         }
 
-        private void _reset_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void ResetSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {
@@ -71,7 +71,7 @@ namespace Common.MacroProgramming
             }
         }
 
-        private void _in_SignalChanged(object sender, DigitalSignalChangedEventArgs e)
+        private void InSignalChanged(object sender, DigitalSignalChangedEventArgs e)
         {
             if (e.CurrentState)
             {

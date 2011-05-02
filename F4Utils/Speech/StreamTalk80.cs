@@ -20,7 +20,7 @@ namespace F4Utils.Speech
         #region OPENCODERFLAGS enum
 
         /// <summary>
-        /// Possible flags for the dwFlags parameter of Open_Coder
+        ///   Possible flags for the dwFlags parameter of Open_Coder
         /// </summary>
         [Flags]
         public enum OPENCODERFLAGS
