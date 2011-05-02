@@ -74,7 +74,7 @@ namespace MFDExtractor.UI.Options
             cbTextRenderingHint.SelectedItem = Settings.Default.TextRenderingHint;
             cbCompositingQuality.SelectedItem = Settings.Default.CompositingQuality;
         }
-        private void SaveGDIPlusSettings()
+        private void SaveGDIPlusOptionsToSettings()
         {
             Settings.Default.InterpolationMode = (InterpolationMode)cbInterpolationMode.SelectedItem;
             Settings.Default.SmoothingMode = (SmoothingMode)cbSmoothingMode.SelectedItem;
