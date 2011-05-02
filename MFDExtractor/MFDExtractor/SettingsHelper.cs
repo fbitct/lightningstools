@@ -8,33 +8,33 @@ namespace MFDExtractor
 {
     internal class SettingsHelper
     {
-        private static readonly object _serializationLock = new object();
-        private static readonly ILog _log = LogManager.GetLogger(typeof (SettingsHelper));
+        private static readonly object SerializationLock = new object();
+        private static readonly ILog Log = LogManager.GetLogger(typeof (SettingsHelper));
 
         private static void LogSaveSettings()
         {
-            _log.InfoFormat("Saving settings in method {0} at {1}\nStack Trace:\n({2})",
+            Log.InfoFormat("Saving settings in method {0} at {1}\nStack Trace:\n({2})",
                             MethodBase.GetCurrentMethod().Name, DateTime.Now, new StackTrace().GetFrame(0));
         }
 
         private static void LogLoadSettings()
         {
-            _log.InfoFormat("Loading settings in method {0} at {1}\nStack Trace:\n{2}",
+            Log.InfoFormat("Loading settings in method {0} at {1}\nStack Trace:\n{2}",
                             MethodBase.GetCurrentMethod().Name, DateTime.Now, new StackTrace().GetFrame(0));
         }
 
         public static void SaveSetttings()
         {
-            lock (_serializationLock)
+            lock (SerializationLock)
             {
                 LogSaveSettings();
                 Settings.Default.Save();
             }
         }
 
-        public static void ReloadSettings()
+        public static void LoadSettings()
         {
-            lock (_serializationLock)
+            lock (SerializationLock)
             {
                 LogLoadSettings();
                 Settings.Default.Reload();
@@ -43,10 +43,10 @@ namespace MFDExtractor
 
         public static void SaveAndReloadSettings()
         {
-            lock (_serializationLock)
+            lock (SerializationLock)
             {
                 SaveSetttings();
-                LogLoadSettings();
+                LoadSettings();
             }
         }
     }

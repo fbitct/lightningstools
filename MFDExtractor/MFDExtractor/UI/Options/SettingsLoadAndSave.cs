@@ -219,7 +219,7 @@ namespace MFDExtractor.UI.Options
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
         }
 
@@ -239,7 +239,7 @@ namespace MFDExtractor.UI.Options
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
         }
 

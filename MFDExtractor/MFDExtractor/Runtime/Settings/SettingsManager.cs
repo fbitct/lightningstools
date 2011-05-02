@@ -14,8 +14,6 @@ namespace MFDExtractor.Runtime.Settings
         #region Instance variables
 
         private readonly CaptureCoordinatesSet _captureCoordinatesSet = new CaptureCoordinatesSet();
-        private readonly BackgroundWorker _settingsLoaderAsyncWorker = new BackgroundWorker();
-        private readonly BackgroundWorker _settingsSaverAsyncWorker = new BackgroundWorker();
         private string _compressionType = "None";
         private bool _disposed;
         private GDIPlusOptions _gdiPlusOptions;
@@ -96,56 +94,6 @@ namespace MFDExtractor.Runtime.Settings
 
         #endregion
 
-        #region Constructors
-
-        public SettingsManager()
-        {
-            RegisterBackgroundWorkerFunctions();
-        }
-
-        #endregion
-
-        #region Background worker functions
-
-        private void RegisterBackgroundWorkerFunctions()
-        {
-            _settingsSaverAsyncWorker.DoWork += SettingsSaverAsyncWorkerDoWork;
-            _settingsLoaderAsyncWorker.DoWork += SettingsLoaderAsyncWorkerDoWork;
-        }
-
-        private void UnregisterBackgroundWorkerFunctions()
-        {
-            _settingsSaverAsyncWorker.DoWork -= SettingsSaverAsyncWorkerDoWork;
-            _settingsLoaderAsyncWorker.DoWork -= SettingsLoaderAsyncWorkerDoWork;
-        }
-
-        private void SettingsLoaderAsyncWorkerDoWork(object sender, DoWorkEventArgs e)
-        {
-            LoadSettings();
-        }
-
-        private static void SettingsSaverAsyncWorkerDoWork(object sender, DoWorkEventArgs e)
-        {
-            Properties.Settings.Default.Save();
-            Properties.Settings.Default.Reload();
-        }
-
-        #endregion
-
-        #region Settings Loaders and Savers
-
-        public void LoadSettingsAsync()
-        {
-            _settingsLoaderAsyncWorker.RunWorkerAsync();
-        }
-
-        public void SaveSettingsAsync()
-        {
-            if (!_settingsSaverAsyncWorker.IsBusy)
-            {
-                _settingsSaverAsyncWorker.RunWorkerAsync();
-            }
-        }
 
         private void LoadGDIPlusSettings()
         {
@@ -171,13 +119,10 @@ namespace MFDExtractor.Runtime.Settings
             }
         }
 
-        /// <summary>
-        /// Reads the user settings file from disk or the current in-memory user settings cache
-        /// </summary>
-        public void LoadSettings()
+        public void UpdateStateFromSettings()
         {
-            LoadKeySettings();
             var settings = Properties.Settings.Default;
+            LoadKeySettings();
             LoadGDIPlusSettings();
             _networkMode = (NetworkMode) settings.NetworkingMode;
             switch (_networkMode)
@@ -265,8 +210,10 @@ namespace MFDExtractor.Runtime.Settings
             _imageFormat = settings.NetworkImageFormat;
         }
 
-        #endregion
-
+        public void SaveSettingsAsync()
+        {
+            SettingsHelper.SaveAndReloadSettings();
+        }
         #region Object Disposal & Destructors
 
         /// <summary>
@@ -288,7 +235,7 @@ namespace MFDExtractor.Runtime.Settings
             {
                 if (disposing)
                 {
-                    UnregisterBackgroundWorkerFunctions();
+                    
                 }
             }
             _disposed = true;

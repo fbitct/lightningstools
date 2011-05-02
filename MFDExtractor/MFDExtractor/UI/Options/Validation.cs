@@ -27,7 +27,6 @@ namespace MFDExtractor.UI.Options
                             Extractor.GetInstance().Stop(); //stop the Extractor if it's currently running
                         }
                         Extractor.GetInstance().LoadSettings();
-                        //tell the Extractor to reload its settings (will use the in-
                     }
                 }
                 else
@@ -40,7 +39,7 @@ namespace MFDExtractor.UI.Options
             }
             catch (Exception e) //exceptions will cause the Options form to close
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
             return valid;
         }

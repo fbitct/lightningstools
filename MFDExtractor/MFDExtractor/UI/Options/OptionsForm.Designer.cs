@@ -4314,7 +4314,7 @@ namespace MFDExtractor.UI.Options
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Options";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.frmOptions_Load);
+            this.Load += new System.EventHandler(this.FormLoad);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmOptions_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.errControlErrorProvider)).EndInit();
             this.tabAllTabs.ResumeLayout(false);

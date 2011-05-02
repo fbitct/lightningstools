@@ -96,13 +96,14 @@ namespace MFDExtractor
                 {
                     Settings.Default.Upgrade();
                     Settings.Default.UpgradeNeeded = false;
-                    Settings.Default.Save();
+                    SettingsHelper.SaveAndReloadSettings();
+
                 }
                 catch (Exception e)
                 {
                     Settings.Default.Reset();
                     Settings.Default.UpgradeNeeded = false;
-                    Settings.Default.Save();
+                    SettingsHelper.SaveAndReloadSettings();
                     MessageBox.Show(
                         "Error: Could not import settings from previous installation of " + Application.ProductName +
                         ".\nThis can happen if the configuration file was incorrectly edited by hand.\nDefault settings will be used instead.",
@@ -111,6 +112,9 @@ namespace MFDExtractor
                     _log.Error(e.Message, e);
                 }
             }
+
+            Settings.Default.TestMode = false; //exit out of test mode in case we got stuck there somehow
+            SettingsHelper.SaveAndReloadSettings();
             Application.Run(mainForm);
         }
 

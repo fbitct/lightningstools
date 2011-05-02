@@ -139,7 +139,7 @@ namespace MFDExtractor
         /// </summary>
         public void LoadSettings()
         {
-            _settingsManager.LoadSettings();
+            _settingsManager.UpdateStateFromSettings();
         }
 
         public Mediator Mediator
@@ -440,6 +440,7 @@ namespace MFDExtractor
         private void CaptureOrchestrationThreadWork()
         {
             int pollingDelay = Settings.Default.PollingDelay;
+            bool aborted = false;
             try
             {
                 while (_keepRunning)
@@ -517,6 +518,7 @@ namespace MFDExtractor
                     catch (ThreadAbortException)
                     {
                         Thread.ResetAbort();
+                        break;
                     }
                     catch (Exception e)
                     {

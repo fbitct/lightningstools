@@ -10,7 +10,7 @@ namespace MFDExtractor.UI.Options
 {
     public partial class OptionsForm : Form
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (OptionsForm));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (OptionsForm));
         private bool _extractorRunningStateOnFormOpen;
         private bool _formLoading = true;
 
@@ -20,7 +20,7 @@ namespace MFDExtractor.UI.Options
         }
 
 
-        private void frmOptions_Load(object sender, EventArgs e)
+        private void FormLoad(object sender, EventArgs e)
         {
             _extractorRunningStateOnFormOpen = Extractor.GetInstance().Running; //store current running
             if (Extractor.GetInstance().Running)
@@ -165,7 +165,7 @@ namespace MFDExtractor.UI.Options
         {
             try
             {
-                SettingsHelper.ReloadSettings();
+                SettingsHelper.LoadSettings();
                 if (Extractor.GetInstance().Running)
                 {
                     Extractor.GetInstance().Stop(); //stop the Extractor engine if it's running
@@ -203,9 +203,8 @@ namespace MFDExtractor.UI.Options
             if (_formLoading) return;
             if (Extractor.GetInstance().Running)
             {
-                Extractor.GetInstance().LoadSettings();
                 Extractor.GetInstance().Stop();
-                Extractor.GetInstance().LoadSettings();
+                SettingsHelper.LoadSettings();
                 Extractor.GetInstance().Start();
             }
         }
