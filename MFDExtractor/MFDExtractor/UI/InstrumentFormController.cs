@@ -24,7 +24,7 @@ namespace MFDExtractor.UI
                           //minimum time after each individual instrument render that should be waited 
 
         private static int _renderCycleNum;
-        private static readonly ILog _log = LogManager.GetLogger(typeof (InstrumentFormController));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (InstrumentFormController));
 
         private static readonly Dictionary<string, InstrumentFormController> _instances =
             new Dictionary<string, InstrumentFormController>();
@@ -37,8 +37,8 @@ namespace MFDExtractor.UI
 
         private InstrumentFormController()
         {
-            _onDataChangedEventHandler = new EventHandler((s, e) => { _instrumentForm_DataChanged(s, e); });
-            _onDisposedEventHandler = new EventHandler((s, e) => { _instrumentForm_Disposed(s, e); });
+            _onDataChangedEventHandler = new EventHandler(_instrumentForm_DataChanged);
+            _onDisposedEventHandler = new EventHandler(_instrumentForm_Disposed);
         }
 
         private InstrumentFormController(string instrumentName, object settingsObject, string formTitle,
@@ -46,7 +46,7 @@ namespace MFDExtractor.UI
             : this()
         {
             PropertyInvokers = CreateDefaultPropertyInvokers(instrumentName, settingsObject);
-            FormTitle = FormTitle;
+            FormTitle = formTitle;
             InstrumentName = instrumentName;
             Renderer = renderer;
         }
@@ -97,9 +97,9 @@ namespace MFDExtractor.UI
         {
             lock (_instances)
             {
-                foreach (string instanceKey in _instances.Keys.ToArray())
+                foreach (var instanceKey in _instances.Keys.ToArray())
                 {
-                    InstrumentFormController instance = _instances[instanceKey];
+                    var instance = _instances[instanceKey];
                     if (instance.InstrumentForm != null)
                     {
                         instance.InstrumentForm.Close();
@@ -137,10 +137,12 @@ namespace MFDExtractor.UI
                 {
                     Point location;
                     var size = new Size();
-                    controller.InstrumentForm = new InstrumentForm();
-                    controller.InstrumentForm.ShowInTaskbar = false;
-                    controller.InstrumentForm.ShowIcon = false;
-                    controller.InstrumentForm.Text = formTitle;
+                    controller.InstrumentForm = new InstrumentForm
+                                                    {
+                                                        ShowInTaskbar = false,
+                                                        ShowIcon = false,
+                                                        Text = formTitle
+                                                    };
                     if (controller.PropertyInvokers.StretchToFit.GetProperty())
                     {
                         controller.InstrumentForm.Size = controller.OutputRectangle.Size;
@@ -166,7 +168,7 @@ namespace MFDExtractor.UI
 
                         if (initialImage != null)
                         {
-                            using (Graphics graphics = controller.InstrumentForm.CreateGraphics())
+                            using (var graphics = controller.InstrumentForm.CreateGraphics())
                             {
                                 graphics.DrawImage(initialImage, controller.InstrumentForm.ClientRectangle);
                             }
@@ -186,7 +188,7 @@ namespace MFDExtractor.UI
                 try
                 {
                     var creationDataList = new List<CounterCreationData>();
-                    foreach (InstrumentFormController instance in _instances.Values)
+                    foreach (var instance in _instances.Values)
                     {
                         try
                         {
@@ -202,7 +204,7 @@ namespace MFDExtractor.UI
 
                     // Create a category that contains multiple counters
                     // define the CounterCreationData for the three counters
-                    CounterCreationData[] ccds = creationDataList.ToArray();
+                    var ccds = creationDataList.ToArray();
 
                     // Create a CounterCreationDataCollection from the array
                     var counterCollection =
@@ -217,20 +219,20 @@ namespace MFDExtractor.UI
                     {
                     }
                     // Create the category with the counters
-                    PerformanceCounterCategory category =
+                    var category =
                         PerformanceCounterCategory.Create(Application.ProductName,
                                                           Application.ProductName + " performance counters",
                                                           PerformanceCounterCategoryType.SingleInstance,
                                                           counterCollection);
 
-                    foreach (InstrumentFormController instance in _instances.Values)
+                    foreach (var instance in _instances.Values)
                     {
                         try
                         {
                             instance.PerfCounter = new PerformanceCounter(Application.ProductName,
                                                                           string.Format("{0} FPS",
-                                                                                        instance.InstrumentName));
-                            instance.PerfCounter.ReadOnly = false;
+                                                                                        instance.InstrumentName))
+                                                       {ReadOnly = false};
                         }
                         catch
                         {
@@ -247,14 +249,11 @@ namespace MFDExtractor.UI
         {
             lock (_instances)
             {
-                foreach (InstrumentFormController instance in _instances.Values)
+                foreach (var instance in
+                    _instances.Values.Where(instance => string.Equals(instance.InstrumentName, instrumentName, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    if (string.Equals(instance.InstrumentName, instrumentName,
-                                      StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        instance.Recover(screen);
-                        break;
-                    }
+                    instance.Recover(screen);
+                    break;
                 }
             }
         }
@@ -315,7 +314,7 @@ namespace MFDExtractor.UI
 
         private void Render()
         {
-            DateTime startTime = DateTime.Now;
+            var startTime = DateTime.Now;
 
             if (Renderer == null || InstrumentForm == null) return;
             if (DateTime.Now.Subtract(LastRenderedOn).TotalMilliseconds < PollingDelay) return;
@@ -330,18 +329,16 @@ namespace MFDExtractor.UI
             UpdateRenderImmediatelyFlag();
             UpdatePerfCounter();
 
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime.Subtract(startTime);
-            if (elapsed.TotalMilliseconds < MIN_RENDERER_PASS_TIME_MILLSECONDS)
+            var endTime = DateTime.Now;
+            var elapsed = endTime.Subtract(startTime);
+            if (elapsed.TotalMilliseconds >= MIN_RENDERER_PASS_TIME_MILLSECONDS) return;
+            var toWait = new TimeSpan(0, 0, 0, 0,
+                                      (int) (MIN_RENDERER_PASS_TIME_MILLSECONDS - elapsed.TotalMilliseconds));
+            if (toWait.TotalMilliseconds < MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER)
             {
-                var toWait = new TimeSpan(0, 0, 0, 0,
-                                          (int) (MIN_RENDERER_PASS_TIME_MILLSECONDS - elapsed.TotalMilliseconds));
-                if (toWait.TotalMilliseconds < MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER)
-                {
-                    toWait = new TimeSpan(0, 0, 0, 0, MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER);
-                }
-                Thread.Sleep(toWait);
+                toWait = new TimeSpan(0, 0, 0, 0, MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER);
             }
+            Thread.Sleep(toWait);
         }
 
         private void UpdatePerfCounter()
@@ -354,30 +351,22 @@ namespace MFDExtractor.UI
 
         private void UpdateRenderImmediatelyFlag()
         {
+            if (((!TestMode && (RenderOnStateChangesOnly)) &&
+                 (!RenderOnStateChangesOnly || !IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(Renderer))) &&
+                (!RenderImmediately)) return;
+            var renderEveryN = PropertyInvokers.RenderEveryN.GetProperty();
+            //render every N times through the render loop (for example, once every 5 times)
+            if (renderEveryN == 0) renderEveryN = 1; //can't be zero
+            var renderOnN = PropertyInvokers.RenderOnN.GetProperty();
+            //specifically, on the Nth time (for example, on the 4th time through)
+
             if (
-                TestMode
+                (_renderCycleNum%renderEveryN == (renderOnN - 1))
                 ||
-                (!RenderOnStateChangesOnly)
-                ||
-                (RenderOnStateChangesOnly && IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(Renderer))
-                ||
-                (RenderImmediately)
+                RenderImmediately
                 )
             {
-                int renderEveryN = PropertyInvokers.RenderEveryN.GetProperty();
-                //render every N times through the render loop (for example, once every 5 times)
-                if (renderEveryN == 0) renderEveryN = 1; //can't be zero
-                int renderOnN = PropertyInvokers.RenderOnN.GetProperty();
-                //specifically, on the Nth time (for example, on the 4th time through)
-
-                if (
-                    (_renderCycleNum%renderEveryN == (renderOnN - 1))
-                    ||
-                    RenderImmediately
-                    )
-                {
-                    RenderImmediately = false;
-                }
+                RenderImmediately = false;
             }
         }
 
@@ -421,7 +410,7 @@ namespace MFDExtractor.UI
 
         private void DrawImageToInstrumentForm(Bitmap image)
         {
-            using (Graphics graphics = InstrumentForm.CreateGraphics())
+            using (var graphics = InstrumentForm.CreateGraphics())
             {
                 if (NightMode)
                 {
@@ -438,15 +427,16 @@ namespace MFDExtractor.UI
             }
         }
 
-        private void DrawImageToInstrumentFormAsNormal(Bitmap image, Graphics graphics)
+        private static void DrawImageToInstrumentFormAsNormal(Bitmap image, Graphics graphics)
         {
+            if (image == null) throw new ArgumentNullException("image");
             graphics.DrawImageUnscaled(image, 0, 0, image.Width, image.Height);
         }
 
         private void DrawImageToInstrumentFormAsMonochrome(Bitmap image, Graphics graphics)
         {
             var monochromeImageAttribs = new ImageAttributes();
-            ColorMatrix cm = Common.Imaging.Util.GetGreyscaleColorMatrix();
+            var cm = Common.Imaging.Util.GetGreyscaleColorMatrix();
             monochromeImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
             graphics.DrawImage(image, InstrumentForm.ClientRectangle, 0, 0, image.Width, image.Height,
                                GraphicsUnit.Pixel, monochromeImageAttribs);
@@ -455,7 +445,7 @@ namespace MFDExtractor.UI
         private void DrawImageToInstrumentFormAsNVIS(Bitmap image, Graphics graphics)
         {
             var nvisImageAttribs = new ImageAttributes();
-            ColorMatrix cm = Common.Imaging.Util.GetNVISColorMatrix(255, 255);
+            var cm = Common.Imaging.Util.GetNVISColorMatrix(255, 255);
             nvisImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
             graphics.DrawImage(image, InstrumentForm.ClientRectangle, 0, 0, image.Width, image.Height,
                                GraphicsUnit.Pixel, nvisImageAttribs);
@@ -463,7 +453,7 @@ namespace MFDExtractor.UI
 
         private void RenderToCanvas(Bitmap image)
         {
-            using (Graphics g = Graphics.FromImage(image))
+            using (var g = Graphics.FromImage(image))
             {
                 try
                 {
@@ -482,7 +472,7 @@ namespace MFDExtractor.UI
                 {
                     try
                     {
-                        _log.Error("An error occurred while rendering " + Renderer.GetType(), e);
+                        Log.Error("An error occurred while rendering " + Renderer.GetType(), e);
                     }
                     catch (NullReferenceException)
                     {
@@ -510,26 +500,23 @@ namespace MFDExtractor.UI
 
         private void RenderBorderHighlightIfNeeded(Bitmap image, Graphics g)
         {
-            if (ShouldHighlightingBorderBeDisplayedOnTargetForm(InstrumentForm))
-            {
-                Color scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
-                var scopeGreenPen = new Pen(scopeGreenColor);
-                scopeGreenPen.Width = 5;
-                g.DrawRectangle(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
-                RenderImmediately = true;
-            }
+            if (!ShouldHighlightingBorderBeDisplayedOnTargetForm(InstrumentForm)) return;
+            var scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
+            var scopeGreenPen = new Pen(scopeGreenColor) {Width = 5};
+            g.DrawRectangle(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
+            RenderImmediately = true;
         }
 
         public static bool IsWindowSizingOrMovingBeingAttemptedOnAnyOutputWindow()
         {
             lock (_instances)
             {
-                bool retVal = false;
-                foreach (InstrumentFormController instance in _instances.Values)
+                var retVal = false;
+                foreach (var instance in _instances.Values)
                 {
                     try
                     {
-                        InstrumentForm iForm = instance.InstrumentForm;
+                        var iForm = instance.InstrumentForm;
                         if (
                             iForm != null &&
                             iForm.Visible && iForm.SizingOrMovingCursorsAreDisplayed
@@ -556,30 +543,30 @@ namespace MFDExtractor.UI
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(IInstrumentRenderer renderer)
         {
-            int staleDataTimeout = 500; //Timeout.Infinite;
+            var staleDataTimeout = 500; //Timeout.Infinite;
             var baseRenderer = renderer as InstrumentRendererBase;
             if (baseRenderer == null) return true;
-            int oldStateHash = 0;
-            DateTime oldStateDateTime = DateTime.MinValue;
-            bool oldHashWasFound = false;
+            var oldStateHash = 0;
+            var oldStateDateTime = DateTime.MinValue;
+            var oldHashWasFound = false;
             if (_instrumentStates.ContainsKey(baseRenderer))
             {
                 oldStateHash = _instrumentStates[baseRenderer].HashCode;
                 oldStateDateTime = _instrumentStates[baseRenderer].DateTime;
                 oldHashWasFound = true;
             }
-            InstrumentStateBase newState = baseRenderer.GetState();
-            int newStateHash = newState != null ? newState.GetHashCode() : 0;
-            DateTime newStateDateTime = DateTime.Now;
+            var newState = baseRenderer.GetState();
+            var newStateHash = newState != null ? newState.GetHashCode() : 0;
+            var newStateDateTime = DateTime.Now;
 
-            bool hashesAreDifferent = !oldHashWasFound || (oldStateHash != newStateHash);
+            var hashesAreDifferent = !oldHashWasFound || (oldStateHash != newStateHash);
 
-            int timeSinceHashChanged = Int32.MaxValue;
+            var timeSinceHashChanged = Int32.MaxValue;
             if (oldStateDateTime != DateTime.MinValue)
             {
                 timeSinceHashChanged = (int) Math.Floor(DateTime.Now.Subtract(oldStateDateTime).TotalMilliseconds);
             }
-            bool stateIsStaleOrChanged = (hashesAreDifferent ||
+            var stateIsStaleOrChanged = (hashesAreDifferent ||
                                           (timeSinceHashChanged > staleDataTimeout &&
                                            staleDataTimeout != Timeout.Infinite));
             if (stateIsStaleOrChanged)
@@ -594,9 +581,8 @@ namespace MFDExtractor.UI
                     _instrumentStates.Add(baseRenderer, toStore);
                 }
             }
-            InstrumentForm form = GetFormForRenderer(renderer);
-            if (ShouldHighlightingBorderBeDisplayedOnTargetForm(form)) return true;
-            return stateIsStaleOrChanged;
+            var form = GetFormForRenderer(renderer);
+            return ShouldHighlightingBorderBeDisplayedOnTargetForm(form) || stateIsStaleOrChanged;
         }
 
         private InstrumentForm GetFormForRenderer(IInstrumentRenderer renderer)
@@ -604,9 +590,9 @@ namespace MFDExtractor.UI
             lock (_instances)
             {
                 if (renderer == null) return null;
-                foreach (InstrumentFormController instance in _instances.Values)
+                foreach (var instance in _instances.Values.Where(instance => instance.Renderer == renderer))
                 {
-                    if (instance.Renderer == renderer) return instance.InstrumentForm;
+                    return instance.InstrumentForm;
                 }
             }
             return null;
@@ -622,8 +608,8 @@ namespace MFDExtractor.UI
 
         protected virtual void PersistState()
         {
-            Point location = InstrumentForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(InstrumentForm.DesktopBounds);
+            var location = InstrumentForm.DesktopLocation;
+            var screen = Screen.FromRectangle(InstrumentForm.DesktopBounds);
             PropertyInvokers.OutputDisplayName.SetProperty(Common.Screen.Util.CleanDeviceName(screen.DeviceName));
             if (InstrumentForm.StretchToFill)
             {
@@ -632,7 +618,7 @@ namespace MFDExtractor.UI
             else
             {
                 PropertyInvokers.StretchToFit.SetProperty(false);
-                Size size = InstrumentForm.Size;
+                var size = InstrumentForm.Size;
                 PropertyInvokers.LocationULX.SetProperty(location.X - screen.Bounds.Location.X);
                 PropertyInvokers.LocationULY.SetProperty(location.Y - screen.Bounds.Location.Y);
                 PropertyInvokers.LocationLRX.SetProperty((location.X - screen.Bounds.Location.X) + size.Width);

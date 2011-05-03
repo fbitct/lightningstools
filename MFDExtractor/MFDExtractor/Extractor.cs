@@ -222,16 +222,18 @@ namespace MFDExtractor
                     }
                     else
                     {
-                        if (networkMode == NetworkMode.Server || networkMode == NetworkMode.Standalone)
+                        switch (networkMode)
                         {
-                            toReturn =
-                                Common.Screen.Util.CaptureScreenRectangle(twoDeePrimaryView
-                                                                              ? coordinates.Primary2DModeCoords
-                                                                              : coordinates.Secondary2DModeCoords);
-                        }
-                        else if (networkMode == NetworkMode.Client)
-                        {
-                            toReturn = networkManager.ReadInstrumentImageFromServer(instrumentName);
+                            case NetworkMode.Standalone:
+                            case NetworkMode.Server:
+                                toReturn =
+                                    Common.Screen.Util.CaptureScreenRectangle(twoDeePrimaryView
+                                                                                  ? coordinates.Primary2DModeCoords
+                                                                                  : coordinates.Secondary2DModeCoords);
+                                break;
+                            case NetworkMode.Client:
+                                toReturn = networkManager.ReadInstrumentImageFromServer(instrumentName);
+                                break;
                         }
                     }
                 }
@@ -318,7 +320,10 @@ namespace MFDExtractor
                                         Func<Image> imageDelegate, Func<Image> blankImageDelegate,
                                         PerformanceCounter perfCounter)
         {
-            if (enableOutput || networkMode == NetworkMode.Server)
+            if (!enableOutput && networkMode != NetworkMode.Server)
+            {
+            }
+            else
             {
                 Image image = null;
                 try
@@ -386,7 +391,6 @@ namespace MFDExtractor
                 _networkManager.SetupNetworking();
                 _keepRunning = true;
 
-                SetupInstrumentRenderers();
                 _formManager.SetupOutputForms();
                 SetupThreads();
                 StartThreads();
@@ -439,13 +443,13 @@ namespace MFDExtractor
         /// </summary>
         private void CaptureOrchestrationThreadWork()
         {
-            int pollingDelay = Settings.Default.PollingDelay;
-            bool aborted = false;
+            var pollingDelay = Settings.Default.PollingDelay;
+            var aborted = false;
             try
             {
                 while (_keepRunning)
                 {
-                    bool windowSizingOrMoving =
+                    var windowSizingOrMoving =
                         InstrumentFormController.IsWindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
 
                     Application.DoEvents();
@@ -453,14 +457,14 @@ namespace MFDExtractor
                     {
                         _settingsManager.SaveSettingsAsync();
                     }
-                    DateTime thisLoopStartTime = DateTime.Now;
+                    var thisLoopStartTime = DateTime.Now;
 
                     _messageManager.ProcessPendingMessages();
 
                     if (_simSupport.IsSimRunning || _settingsManager.TestMode ||
                         _settingsManager.NetworkMode == NetworkMode.Client)
                     {
-                        FlightData current = _simSupport.GetFlightData();
+                        var current = _simSupport.GetFlightData();
                         SetFlightData(current);
 
                         FlightDataToRendererStateTranslator.UpdateRendererStatesFromFlightData(
@@ -525,15 +529,15 @@ namespace MFDExtractor
                         Log.Error(e.Message, e);
                     }
 
-                    DateTime thisLoopFinishTime = DateTime.Now;
-                    TimeSpan timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
-                    int millisToSleep = pollingDelay - ((int) timeElapsed.TotalMilliseconds);
+                    var thisLoopFinishTime = DateTime.Now;
+                    var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
+                    var millisToSleep = pollingDelay - ((int) timeElapsed.TotalMilliseconds);
                     if (_settingsManager.TestMode) millisToSleep = 500;
-                    DateTime sleepUntil = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, millisToSleep));
+                    var sleepUntil = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, millisToSleep));
                     while (DateTime.Now < sleepUntil)
                     {
                         var millisRemaining = (int) Math.Floor(DateTime.Now.Subtract(sleepUntil).TotalMilliseconds);
-                        int millisWaited = millisRemaining >= 5 ? 5 : 1;
+                        var millisWaited = millisRemaining >= 5 ? 5 : 1;
                         Thread.Sleep(millisWaited);
                         Application.DoEvents();
                     }
@@ -592,14 +596,14 @@ namespace MFDExtractor
 
         private float GetIndicatedAltitude(float trueAltitude, float baroPressure, bool pressureInInchesOfMercury)
         {
-            float baroPressureInchesOfMercury = baroPressure;
+            var baroPressureInchesOfMercury = baroPressure;
             if (!pressureInInchesOfMercury)
             {
                 baroPressureInchesOfMercury = baroPressure/Constants.INCHES_MERCURY_TO_HECTOPASCALS;
             }
-            float baroDifference = baroPressureInchesOfMercury - 29.92f;
+            var baroDifference = baroPressureInchesOfMercury - 29.92f;
             const float baroChangePerThousandFeet = 1.08f;
-            float altitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
+            var altitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
             return altitudeCorrection + trueAltitude;
         }
 

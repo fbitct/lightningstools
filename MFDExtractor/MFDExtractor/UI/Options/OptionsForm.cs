@@ -23,10 +23,7 @@ namespace MFDExtractor.UI.Options
         private void FormLoad(object sender, EventArgs e)
         {
             _extractorRunningStateOnFormOpen = Extractor.GetInstance().Running; //store current running
-            if (Extractor.GetInstance().Running)
-            {
-                Extractor.GetInstance().Stop();
-            }
+            StopExtractor();
             Extractor.GetInstance().DataChanged += extractor_DataChanged;
             Extractor.GetInstance().TestMode = true;
             Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
@@ -47,7 +44,7 @@ namespace MFDExtractor.UI.Options
             PopulateGDIPlusOptionsCombos();
 
             LoadSettings();
-            Extractor.GetInstance().Start();
+            StartExtractor();
             _formLoading = false;
         }
 
@@ -165,12 +162,7 @@ namespace MFDExtractor.UI.Options
         {
             try
             {
-                SettingsHelper.LoadSettings();
-                if (Extractor.GetInstance().Running)
-                {
-                    Extractor.GetInstance().Stop(); //stop the Extractor engine if it's running
-                }
-                Extractor.GetInstance().LoadSettings(); //tell the Extractor engine to reload its settings
+                StopExtractor();
             }
             catch (Exception ex)
             {
@@ -184,27 +176,26 @@ namespace MFDExtractor.UI.Options
             Extractor.GetInstance().TestMode = false;
             if (_extractorRunningStateOnFormOpen)
             {
-                if (!Extractor.GetInstance().Running)
-                {
-                    Extractor.GetInstance().Start();
-                }
+                StartExtractor();
             }
             else
             {
-                if (Extractor.GetInstance().Running)
-                {
-                    Extractor.GetInstance().Stop();
-                }
+                StopExtractor();
             }
         }
 
         private void StopAndRestartExtractor()
         {
             if (_formLoading) return;
-            if (Extractor.GetInstance().Running)
+            StopExtractor();
+            StartExtractor();
+        }
+
+        private void StartExtractor()
+        {
+            SettingsHelper.LoadSettings();
+            if (!Extractor.GetInstance().Running)
             {
-                Extractor.GetInstance().Stop();
-                SettingsHelper.LoadSettings();
                 Extractor.GetInstance().Start();
             }
         }
@@ -223,18 +214,15 @@ namespace MFDExtractor.UI.Options
             {
                 Settings.Default.Reset();
                 Settings.Default.UpgradeNeeded = false;
-                bool extractorRunning = Extractor.GetInstance().Running;
-                if (extractorRunning)
-                {
-                    Extractor.GetInstance().Stop();
-                    Extractor.GetInstance().LoadSettings();
-                    Extractor.GetInstance().TestMode = true;
-                }
-                if (extractorRunning)
-                {
-                    Extractor.GetInstance().Start();
-                }
+
+                bool extractorWasRunning = Extractor.GetInstance().Running;
+                StopExtractor();
+                Extractor.GetInstance().TestMode = true;
                 LoadSettings();
+                if (extractorWasRunning)
+                {
+                    StartExtractor();
+                }
             }
         }
         private void cmdNV_Click(object sender, EventArgs e)

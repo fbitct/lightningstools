@@ -23,11 +23,11 @@ namespace MFDExtractor.UI
         public InstrumentForm()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, false);
             SetStyle(ControlStyles.ContainerControl, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             SetStyle(ControlStyles.ResizeRedraw, true);
-            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.UserPaint, false);
 
             if (!base.DesignMode)
             {

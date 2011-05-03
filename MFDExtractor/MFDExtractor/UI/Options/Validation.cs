@@ -22,11 +22,7 @@ namespace MFDExtractor.UI.Options
                     }
                     else
                     {
-                        if (Extractor.GetInstance().Running)
-                        {
-                            Extractor.GetInstance().Stop(); //stop the Extractor if it's currently running
-                        }
-                        Extractor.GetInstance().LoadSettings();
+                        StopExtractor();
                     }
                 }
                 else
@@ -43,6 +39,16 @@ namespace MFDExtractor.UI.Options
             }
             return valid;
         }
+
+        private void StopExtractor()
+        {
+            if (Extractor.GetInstance().Running)
+            {
+                Extractor.GetInstance().Stop(); //stop the Extractor if it's currently running
+            }
+            SettingsHelper.LoadSettings();
+        }
+
         /// <summary>
         /// Validate all user input on all tabs
         /// </summary>

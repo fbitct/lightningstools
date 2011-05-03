@@ -111,8 +111,6 @@
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="FlightDataExtension.cs" />
-    <Compile Include="FlightDataToRendererStateTranslator.cs" />
     <Compile Include="Networking\ImageObjectStore.cs" />
     <Compile Include="Networking\ObjectStore.cs" />
     <Compile Include="Runtime\FormManager.cs" />

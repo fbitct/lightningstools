@@ -33,7 +33,7 @@ namespace LightningGauges.Renderers
 
         #region Instance variables
 
-        private static readonly object _imagesLock = new object();
+        private static readonly object ImagesLock = new object();
         private static ImageMaskPair _backgroundElectroMechanical;
         private static ImageMaskPair _backgroundElectroMechanicalNoFlag;
         private static ImageMaskPair _backgroundElectronic;
@@ -51,8 +51,10 @@ namespace LightningGauges.Renderers
         public F16Altimeter()
         {
             InstrumentState = new F16AltimeterInstrumentState();
-            Options = new F16AltimeterOptions();
-            Options.Style = F16AltimeterOptions.F16AltimeterStyle.Electromechanical;
+            Options = new F16AltimeterOptions
+                          {
+                              Style = F16AltimeterOptions.F16AltimeterStyle.Electromechanical
+                          };
             LoadFonts();
         }
 
@@ -133,7 +135,18 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public F16AltimeterInstrumentState InstrumentState { get; set; }
+        private F16AltimeterInstrumentState _instrumentState;
+        public F16AltimeterInstrumentState InstrumentState { 
+            get
+            {
+                return _instrumentState;
+
+            } 
+            set
+            {
+                _instrumentState = value;
+            } 
+        }
         public F16AltimeterOptions Options { get; set; }
 
         #region Options Class
@@ -211,7 +224,7 @@ namespace LightningGauges.Renderers
             {
                 LoadImageResources();
             }
-            lock (_imagesLock)
+            lock (ImagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
                 var initialState = g.Save();
@@ -219,17 +232,18 @@ namespace LightningGauges.Renderers
                 //set up the canvas scale and clipping region
                 var width = 0;
                 var height = 0;
-                if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electromechanical)
+                switch (Options.Style)
                 {
-                    width = _backgroundElectroMechanical.Image.Width - 40;
-                    height = _backgroundElectroMechanical.Image.Height - 40;
-                    if (InstrumentState.IndicatedAltitudeFeetMSL < 0)
-                        absIndicatedAltitude = 99999.99f - absIndicatedAltitude;
-                }
-                else if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electronic)
-                {
-                    width = _backgroundElectronic.Image.Width - 40;
-                    height = _backgroundElectronic.Image.Height - 40;
+                    case F16AltimeterOptions.F16AltimeterStyle.Electromechanical:
+                        width = _backgroundElectroMechanical.Image.Width - 40;
+                        height = _backgroundElectroMechanical.Image.Height - 40;
+                        if (InstrumentState.IndicatedAltitudeFeetMSL < 0)
+                            absIndicatedAltitude = 99999.99f - absIndicatedAltitude;
+                        break;
+                    case F16AltimeterOptions.F16AltimeterStyle.Electronic:
+                        width = _backgroundElectronic.Image.Width - 40;
+                        height = _backgroundElectronic.Image.Height - 40;
+                        break;
                 }
 
                 g.ResetTransform(); //clear any existing transforms
@@ -247,112 +261,112 @@ namespace LightningGauges.Renderers
                 float thousands = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/1000.0f)%10);
                 var hundreds = (Math.Abs(absIndicatedAltitude)/100.0f)%10;
 
-                if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electromechanical)
+                switch (Options.Style)
                 {
-                    //draw the altitude digits
-                    var digitHeights = 26.5f; //pixels
-                    float translateX = -130;
-                    float translateY = -272;
+                    case F16AltimeterOptions.F16AltimeterStyle.Electromechanical:
+                        {
+                            //draw the altitude digits
+                            const float digitHeights = 26.5f;
+                            const float translateX = -130;
+                            const float translateY = -272;
 
-                    //draw ten-thousands digit
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(translateX, translateY);
-                    g.TranslateTransform(0, digitHeights*tenThousands);
-                    g.DrawImage(_tenThousandsDigitsElectroMechanical, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            //draw ten-thousands digit
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            g.TranslateTransform(translateX, translateY);
+                            g.TranslateTransform(0, digitHeights*tenThousands);
+                            g.DrawImage(_tenThousandsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
-                    //draw thousands digit
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(translateX, translateY);
-                    g.TranslateTransform(0, digitHeights*thousands);
-                    g.DrawImage(_thousandsDigitsElectroMechanical, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            //draw thousands digit
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            g.TranslateTransform(translateX, translateY);
+                            g.TranslateTransform(0, digitHeights*thousands);
+                            g.DrawImage(_thousandsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
-                    //draw hundreds digit
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(translateX, translateY);
-                    g.TranslateTransform(0, digitHeights*hundreds);
-                    g.DrawImage(_hundredsDigitsElectroMechanical, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                }
-                else if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electronic)
-                {
-                    float bigDigitsX = 80;
-                    float bigDigitsY = 103;
-                    float bigDigitsWidth = 50;
-                    float bigDigitsHeight = 35;
-                    float littleDigitWidth = 50;
-                    float littleDigitHeight = 30;
-                    var bigDigitsRect = new RectangleF(bigDigitsX, bigDigitsY, bigDigitsWidth, bigDigitsHeight);
-                    var littleDigitsRect = new RectangleF(bigDigitsRect.Right + 7, bigDigitsRect.Y + 4, littleDigitWidth,
-                                                          littleDigitHeight);
-                    var onesRect =
-                        new RectangleF(littleDigitsRect.X + littleDigitsRect.Width - (littleDigitsRect.Width/3.0f),
-                                       littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
-                    var tensRect =
-                        new RectangleF(
-                            littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width/3.0f)*2.0f),
-                            littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
-                    var hundredsRect =
-                        new RectangleF(
-                            littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width/3.0f)*3.0f),
-                            littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
-                    var bigDigitsFont = new Font(_fonts.Families[0], 20, FontStyle.Regular, GraphicsUnit.Point);
-                    var littleDigitsFont = new Font(_fonts.Families[0], 18, FontStyle.Regular, GraphicsUnit.Point);
-                    var digitsFormat = new StringFormat();
-                    digitsFormat.Alignment = StringAlignment.Far;
-                    digitsFormat.FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap;
-                    digitsFormat.LineAlignment = StringAlignment.Far;
-                    digitsFormat.Trimming = StringTrimming.None;
-                    var digitColor = Color.FromArgb(255, 252, 205);
-                    Brush digitsBrush = new SolidBrush(digitColor);
-                    float thousandscombined = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/1000.0f));
-                    var thousandsString = string.Format("{0:#0}", thousandscombined);
-                    if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
-                    g.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
-                    var allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
-                    var hundredsString = allHundredsString.Substring(0, 1);
+                            //draw hundreds digit
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            g.TranslateTransform(translateX, translateY);
+                            g.TranslateTransform(0, digitHeights*hundreds);
+                            g.DrawImage(_hundredsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                        }
+                        break;
+                    case F16AltimeterOptions.F16AltimeterStyle.Electronic:
+                        {
+                            const float bigDigitsX = 80;
+                            const float bigDigitsY = 103;
+                            const float bigDigitsWidth = 50;
+                            const float bigDigitsHeight = 35;
+                            const float littleDigitWidth = 50;
+                            const float littleDigitHeight = 30;
+                            var bigDigitsRect = new RectangleF(bigDigitsX, bigDigitsY, bigDigitsWidth, bigDigitsHeight);
+                            var littleDigitsRect = new RectangleF(bigDigitsRect.Right + 7, bigDigitsRect.Y + 4, littleDigitWidth,
+                                                                  littleDigitHeight);
+                            var onesRect =
+                                new RectangleF(littleDigitsRect.X + littleDigitsRect.Width - (littleDigitsRect.Width/3.0f),
+                                               littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
+                            var tensRect =
+                                new RectangleF(
+                                    littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width/3.0f)*2.0f),
+                                    littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
+                            var hundredsRect =
+                                new RectangleF(
+                                    littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width/3.0f)*3.0f),
+                                    littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
+                            var bigDigitsFont = new Font(_fonts.Families[0], 20, FontStyle.Regular, GraphicsUnit.Point);
+                            var littleDigitsFont = new Font(_fonts.Families[0], 18, FontStyle.Regular, GraphicsUnit.Point);
+                            var digitsFormat = new StringFormat
+                                                   {
+                                                       Alignment = StringAlignment.Far,
+                                                       FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap,
+                                                       LineAlignment = StringAlignment.Far,
+                                                       Trimming = StringTrimming.None
+                                                   };
+                            var digitColor = Color.FromArgb(255, 252, 205);
+                            Brush digitsBrush = new SolidBrush(digitColor);
+                            float thousandscombined = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/1000.0f));
+                            var thousandsString = string.Format("{0:#0}", thousandscombined);
+                            if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
+                            g.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
+                            var allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
+                            var hundredsString = allHundredsString.Substring(0, 1);
 
-                    var tensString = string.Format("{0:0}",
-                                                   (int) Math.Floor(((Math.Abs(absIndicatedAltitude)/10.0f)%10.0f)));
-                    var onesString = "0";
+                            var tensString = string.Format("{0:0}",
+                                                           (int) Math.Floor(((Math.Abs(absIndicatedAltitude)/10.0f)%10.0f)));
+                            const string onesString = "0";
 
-                    g.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
-                    g.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
-                    g.DrawString(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
+                            g.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
+                            g.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
+                            g.DrawString(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
+                        }
+                        break;
                 }
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electromechanical)
+                switch (Options.Style)
                 {
-                    g.TranslateTransform(0, -11);
-                    if (InstrumentState.PneumaticModeFlag)
-                    {
-                        g.DrawImage(_backgroundElectroMechanical.MaskedImage, new Point(0, 0));
-                    }
-                    else
-                    {
-                        g.DrawImage(_backgroundElectroMechanicalNoFlag.MaskedImage, new Point(0, 0));
-                    }
-                }
-                else if (Options.Style == F16AltimeterOptions.F16AltimeterStyle.Electronic)
-                {
-                    g.TranslateTransform(0, -11);
-                    if (InstrumentState.StandbyModeFlag)
-                    {
-                        g.DrawImage(_backgroundElectronic.MaskedImage, new Point(0, 0));
-                    }
-                    else
-                    {
-                        g.DrawImage(_backgroundElectronicNoFlag.MaskedImage, new Point(0, 0));
-                    }
+                    case F16AltimeterOptions.F16AltimeterStyle.Electromechanical:
+                        g.TranslateTransform(0, -11);
+                        g.DrawImage(
+                            InstrumentState.PneumaticModeFlag
+                                ? _backgroundElectroMechanical.MaskedImage
+                                : _backgroundElectroMechanicalNoFlag.MaskedImage, new Point(0, 0));
+                        break;
+                    case F16AltimeterOptions.F16AltimeterStyle.Electronic:
+                        g.TranslateTransform(0, -11);
+                        g.DrawImage(
+                            InstrumentState.StandbyModeFlag
+                                ? _backgroundElectronic.MaskedImage
+                                : _backgroundElectronicNoFlag.MaskedImage, new Point(0, 0));
+                        break;
                 }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
 
                 //draw the altitude hand
                 var degrees = hundreds*36;
-                float centerX = 128;
-                float centerY = 117;
+                const float centerX = 128;
+                const float centerY = 117;
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                 g.TranslateTransform(centerX, centerY);
                 g.RotateTransform(degrees);
@@ -372,21 +386,19 @@ namespace LightningGauges.Renderers
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_backgroundElectromechanical);
-                    //Common.Util.DisposeObject(_backgroundElectromechanicalNoFlag);
-                    //Common.Util.DisposeObject(_backgroundElectronic);
-                    //Common.Util.DisposeObject(_backgroundElectronicNoFlag);
-                    //Common.Util.DisposeObject(_needle);
-                    //Common.Util.DisposeObject(_tenThousandsDigitsElectroMechanical );
-                    //Common.Util.DisposeObject(_thousandsDigitsElectroMechanical);
-                    //Common.Util.DisposeObject(_hundredsDigitsElectroMechanical);
-                }
-                _disposed = true;
+                //Common.Util.DisposeObject(_backgroundElectromechanical);
+                //Common.Util.DisposeObject(_backgroundElectromechanicalNoFlag);
+                //Common.Util.DisposeObject(_backgroundElectronic);
+                //Common.Util.DisposeObject(_backgroundElectronicNoFlag);
+                //Common.Util.DisposeObject(_needle);
+                //Common.Util.DisposeObject(_tenThousandsDigitsElectroMechanical );
+                //Common.Util.DisposeObject(_thousandsDigitsElectroMechanical);
+                //Common.Util.DisposeObject(_hundredsDigitsElectroMechanical);
             }
+            _disposed = true;
         }
     }
 }

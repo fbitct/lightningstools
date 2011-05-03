@@ -18,8 +18,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         {
             if (flightData == null || (networkMode != NetworkMode.Client && !simRunning))
             {
-                flightData = new FlightData();
-                flightData.hsiBits = Int32.MaxValue;
+                flightData = new FlightData {hsiBits = Int32.MaxValue};
             }
 
             FlightData fromFalcon = flightData;
@@ -28,7 +27,6 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             if (simRunning || networkMode == NetworkMode.Client)
             {
                 var hsibits = ((HsiBits) fromFalcon.hsiBits);
-                bool commandBarsOn = false;
 
                 UpdateISIS(renderers, useBMSAdvancedSharedmemValues, fromFalcon, extensionData, hsibits);
                 UpdateVVI(renderers, fromFalcon, hsibits);
@@ -55,7 +53,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                     //The following floating data is also crossed up in the flightData.h File:
                     //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
                     //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
-                    commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
+                    var commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
                     if (
                         (Math.Abs((fromFalcon.AdiIlsVerPos/Constants.RADIANS_PER_DEGREE)) > 1.0f)
                         ||
@@ -778,7 +776,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                 //for (int i = 0; i < rwrObjectCount; i++)
                 if (fromFalcon.RWRsymbol != null)
                 {
-                    for (int i = 0; i < fromFalcon.RWRsymbol.Length; i++)
+                    for (var i = 0; i < fromFalcon.RWRsymbol.Length; i++)
                     {
                         var thisBlip = new F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState.Blip();
                         if (i < rwrObjectCount) thisBlip.Visible = true;
@@ -933,19 +931,19 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         private static void UpdateCourseDeviationAndToFromIndication(InstrumentRenderers renderers)
         {
             //compute course deviation and TO/FROM
-            float deviationLimitDecimalDegrees =
+            var deviationLimitDecimalDegrees =
                 ((F16HorizontalSituationIndicator) renderers.HSIRenderer).InstrumentState.CourseDeviationLimitDegrees%
                 180;
             float desiredCourseInDegrees =
                 ((F16HorizontalSituationIndicator) renderers.HSIRenderer).InstrumentState.DesiredCourseDegrees;
-            float courseDeviationDecimalDegrees =
+            var courseDeviationDecimalDegrees =
                 ((F16HorizontalSituationIndicator) renderers.HSIRenderer).InstrumentState.CourseDeviationDegrees;
-            float bearingToBeaconInDegrees =
+            var bearingToBeaconInDegrees =
                 ((F16HorizontalSituationIndicator) renderers.HSIRenderer).InstrumentState.BearingToBeaconDegrees;
-            float myCourseDeviationDecimalDegrees = Common.Math.Util.AngleDelta(desiredCourseInDegrees,
+            var myCourseDeviationDecimalDegrees = Common.Math.Util.AngleDelta(desiredCourseInDegrees,
                                                                                 bearingToBeaconInDegrees);
-            bool toFlag = false;
-            bool fromFlag = false;
+            var toFlag = false;
+            var fromFlag = false;
             if (Math.Abs(courseDeviationDecimalDegrees) <= 90)
             {
                 toFlag = true;
@@ -1045,8 +1043,6 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         private static void UpdateAOAIndexer(InstrumentRenderers renderers, FlightData fromFalcon)
         {
             //**** UPDATE AOA INDEXER***
-            float aoa =
-                ((F16AngleOfAttackIndicator) renderers.AOAIndicatorRenderer).InstrumentState.AngleOfAttackDegrees;
             ((F16AngleOfAttackIndexer) renderers.AOAIndexerRenderer).InstrumentState.AoaBelow = ((fromFalcon.lightBits &
                                                                                                   (int)
                                                                                                   LightBits.AOABelow) ==
@@ -1117,7 +1113,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         private static void UpdateVVI(InstrumentRenderers renderers, FlightData fromFalcon, HsiBits hsibits)
         {
             // *** UPDATE VVI ***
-            float verticalVelocity = 0;
+            float verticalVelocity;
             if (((hsibits & HsiBits.VVI) == HsiBits.VVI))
             {
                 verticalVelocity = 0;
