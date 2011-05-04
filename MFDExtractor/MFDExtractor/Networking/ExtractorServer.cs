@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -82,35 +83,31 @@ namespace MFDExtractor.Networking
 
         public void SubmitMessageToServerFromClient(Message message)
         {
-            if (_messagesToServerFromClient != null)
+            if (_messagesToServerFromClient == null) return;
+            if (_messagesToServerFromClient.Count >= 1000)
             {
-                if (_messagesToServerFromClient.Count >= 1000)
-                {
-                    _messagesToServerFromClient.RemoveRange(999, _messagesToServerFromClient.Count - 1000);
-                }
-                if (message.MessageType == "RequestNewMapImage")
-                {
-                    //only allow one of these in the queue at a time
-                    ClearPendingMessagesToServerFromClientOfType(message.MessageType);
-                }
-                if (message != null)
-                {
-                    _messagesToServerFromClient.Add(message);
-                }
+                _messagesToServerFromClient.RemoveRange(999, _messagesToServerFromClient.Count - 1000);
+            }
+            if (message.MessageType == "RequestNewMapImage")
+            {
+                //only allow one of these in the queue at a time
+                ClearPendingMessagesToServerFromClientOfType(message.MessageType);
+            }
+            if (message != null)
+            {
+                _messagesToServerFromClient.Add(message);
             }
         }
 
         public void SubmitMessageToClientFromServer(Message message)
         {
-            if (_messagesToClientFromServer != null)
+            if (_messagesToClientFromServer == null) return;
+            if (_messagesToClientFromServer.Count >= 1000)
             {
-                if (_messagesToClientFromServer.Count >= 1000)
-                {
-                    _messagesToClientFromServer.RemoveRange(999, _messagesToClientFromServer.Count - 1000);
-                        //limit the message queue size to 1000 messages
-                }
-                _messagesToClientFromServer.Add(message);
+                _messagesToClientFromServer.RemoveRange(999, _messagesToClientFromServer.Count - 1000);
+                //limit the message queue size to 1000 messages
             }
+            _messagesToClientFromServer.Add(message);
         }
 
 
@@ -231,7 +228,7 @@ namespace MFDExtractor.Networking
             _serviceEstablished = true;
         }
 
-        private void TearDownService(int port)
+        private static void TearDownService(int port)
         {
             IDictionary prop = new Hashtable();
             prop["port"] = port;
@@ -255,15 +252,8 @@ namespace MFDExtractor.Networking
 
         public void ClearPendingMessagesToServerFromClientOfType(string messageType)
         {
-            var messagesToRemove = new List<Message>();
-            foreach (Message message in _messagesToServerFromClient)
-            {
-                if (message.MessageType == messageType)
-                {
-                    messagesToRemove.Add(message);
-                }
-            }
-            foreach (Message message in messagesToRemove)
+            var messagesToRemove = _messagesToServerFromClient.Where(message => message.MessageType == messageType).ToList();
+            foreach (var message in messagesToRemove)
             {
                 _messagesToServerFromClient.Remove(message);
             }

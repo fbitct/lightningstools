@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using log4net;
 
 namespace Common
@@ -15,13 +16,11 @@ namespace Common
                 result = (T) Enum.Parse(typeof (T), strTypeFixed, true);
                 return true;
             }
-            foreach (var value in Enum.GetNames(typeof (T)))
+            foreach (var value in
+                Enum.GetNames(typeof (T)).Where(value => value.Equals(strTypeFixed, StringComparison.OrdinalIgnoreCase)))
             {
-                if (value.Equals(strTypeFixed, StringComparison.OrdinalIgnoreCase))
-                {
-                    result = (T) Enum.Parse(typeof (T), value);
-                    return true;
-                }
+                result = (T) Enum.Parse(typeof (T), value);
+                return true;
             }
             result = default(T);
             return false;
@@ -43,19 +42,17 @@ namespace Common
 
         public static void DisposeObject(object obj)
         {
-            if (obj != null)
+            if (obj == null) return;
+            try
             {
-                try
-                {
-                    var disposable = obj as IDisposable;
-                    if (disposable != null) disposable.Dispose();
-                }
-                catch
-                {
-                }
-
-                obj = null;
+                var disposable = obj as IDisposable;
+                if (disposable != null) disposable.Dispose();
             }
+            catch
+            {
+            }
+
+            obj = null;
         }
     }
 }

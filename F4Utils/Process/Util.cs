@@ -6,6 +6,7 @@ using System.Threading;
 using Common.Win32;
 using F4SharedMem;
 using log4net;
+using System.ComponentModel;
 
 namespace F4Utils.Process
 {
@@ -73,11 +74,18 @@ namespace F4Utils.Process
                 int procId;
                 NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
                 var process = System.Diagnostics.Process.GetProcessById(procId);
-                toReturn = (from ProcessModule module in process.Modules
-                            where
-                                module.ModuleName.Contains(MODULENAME_F4) ||
-                                module.ModuleName.ToUpper().Contains(MODULENAME_FALCON)
-                            select module.FileName).FirstOrDefault();
+                try
+                {
+                    toReturn = (from ProcessModule module in process.Modules
+                                where
+                                    module.ModuleName.Contains(MODULENAME_F4) ||
+                                    module.ModuleName.ToUpper().Contains(MODULENAME_FALCON)
+                                select module.FileName).FirstOrDefault();
+                }
+                catch (Win32Exception)
+                {
+                    
+                }
             }
             return toReturn;
         }
