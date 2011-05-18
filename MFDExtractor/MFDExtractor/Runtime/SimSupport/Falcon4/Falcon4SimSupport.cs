@@ -20,7 +20,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Falcon4SimSupport));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Falcon4SimSupport));
 
         #endregion
 
@@ -136,18 +136,25 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             {
                 if (_simRunning || _settingsManager.NetworkMode == NetworkMode.Client)
                 {
-                    if (_settingsManager.NetworkMode == NetworkMode.Server ||
-                        _settingsManager.NetworkMode == NetworkMode.Standalone)
+                    if (_settingsManager.NetworkMode != NetworkMode.Server &&
+                        _settingsManager.NetworkMode != NetworkMode.Standalone)
                     {
-                        FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
+                        if (_settingsManager.NetworkMode == NetworkMode.Client)
+                        {
+                            toReturn = _networkManager.ReadFlightDataFromServer();
+                        }
+                    }
+                    else
+                    {
+                        var format = F4Utils.Process.Util.DetectFalconFormat();
 #if (ALLIEDFORCE)
                         format = FalconDataFormats.AlliedForce;
 #endif
                         //set automatic 3D mode for BMS
                         if (format.HasValue && format.Value == FalconDataFormats.BMS4) _extractor.ThreeDeeMode = true;
 
-                        bool doMore = true;
-                        bool newReader = false;
+                        var doMore = true;
+                        var newReader = false;
                         if (_falconSmReader == null)
                         {
                             if (format.HasValue)
@@ -182,7 +189,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         }
                         if (newReader)
                         {
-                            string exePath = F4Utils.Process.Util.GetFalconExePath();
+                            var exePath = F4Utils.Process.Util.GetFalconExePath();
                             FileVersionInfo verInfo = null;
                             if (exePath != null) verInfo = FileVersionInfo.GetVersionInfo(exePath);
                             if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null &&
@@ -199,7 +206,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         if (doMore)
                         {
                             toReturn = _falconSmReader.GetCurrentData();
-                            bool computeRalt = false;
+                            var computeRalt = false;
                             if (Properties.Settings.Default.EnableISISOutput)
                             {
                                 computeRalt = true;
@@ -211,11 +218,11 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                                     _terrainBrowser = new TerrainBrowser(false);
                                     _terrainBrowser.LoadCurrentTheaterTerrainDatabase();
                                 }
-                                if (_terrainBrowser != null && toReturn != null)
+                                if (toReturn != null)
                                 {
                                     var extensionData = new FlightDataExtension();
-                                    float terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
-                                    float ralt = -toReturn.z - terrainHeight;
+                                    var terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
+                                    var ralt = -toReturn.z - terrainHeight;
 
                                     //reset AGL altitude to zero if we're on the ground
                                     if (
@@ -242,18 +249,9 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             }
                         }
                     }
-                    else if (_settingsManager.NetworkMode == NetworkMode.Client)
-                    {
-                        toReturn = _networkManager.ReadFlightDataFromServer();
-                    }
                 }
             }
-            if (toReturn == null)
-            {
-                toReturn = new FlightData();
-                toReturn.hsiBits = Int32.MaxValue;
-            }
-            return toReturn;
+            return toReturn ?? (new FlightData {hsiBits = Int32.MaxValue});
         }
 
         private void DisableBMSAdvancedSharedmemValues()
@@ -280,38 +278,40 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
 
         private static void ReadRTTCoords(Dictionary<string, Rectangle> items)
         {
-            FileInfo file = FindBms3DCockpitFile();
+            var file = FindBms3DCockpitFile();
             if (file == null)
             {
                 return;
             }
 
-            using (FileStream stream = file.OpenRead())
+            using (var stream = file.OpenRead())
             using (var reader = new StreamReader(stream))
             {
                 while (!reader.EndOfStream)
                 {
-                    string currentLine = reader.ReadLine();
-                    foreach (string itemName in items.Keys)
+                    var currentLine = reader.ReadLine();
+                    foreach (var itemName in items.Keys)
                     {
-                        if (currentLine.ToLowerInvariant().StartsWith(itemName.ToLowerInvariant()))
+                        if (currentLine != null)
+                            if (!currentLine.ToLowerInvariant().StartsWith(itemName.ToLowerInvariant())) continue;
+                        var thisItemRect = new Rectangle();
+                        var tokens = Common.Strings.Util.Tokenize(currentLine);
+                        if (tokens.Count <= 12)
                         {
-                            var thisItemRect = new Rectangle();
-                            List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
-                            if (tokens.Count > 12)
+                        }
+                        else
+                        {
+                            try
                             {
-                                try
-                                {
-                                    thisItemRect.X = Convert.ToInt32(tokens[10]);
-                                    thisItemRect.Y = Convert.ToInt32(tokens[11]);
-                                    thisItemRect.Width = Math.Abs(Convert.ToInt32(tokens[12]) - thisItemRect.X);
-                                    thisItemRect.Height = Math.Abs(Convert.ToInt32(tokens[13]) - thisItemRect.Y);
-                                    items[itemName] = thisItemRect;
-                                }
-                                catch (Exception e)
-                                {
-                                    _log.Error(e.Message, e);
-                                }
+                                thisItemRect.X = Convert.ToInt32(tokens[10]);
+                                thisItemRect.Y = Convert.ToInt32(tokens[11]);
+                                thisItemRect.Width = Math.Abs(Convert.ToInt32(tokens[12]) - thisItemRect.X);
+                                thisItemRect.Height = Math.Abs(Convert.ToInt32(tokens[13]) - thisItemRect.Y);
+                                items[itemName] = thisItemRect;
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error(e.Message, e);
                             }
                         }
                     }
@@ -321,49 +321,50 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
 
         private static void ReadRTTCoords(CaptureCoordinatesSet captureCoordinatesSet)
         {
-            var items = new Dictionary<string, CaptureCoordinates>();
-            items.Add("LMFD", captureCoordinatesSet.LMFD);
-            items.Add("RMFD", captureCoordinatesSet.RMFD);
-            items.Add("MFD3", captureCoordinatesSet.MFD3);
-            items.Add("MFD4", captureCoordinatesSet.MFD4);
-            items.Add("HUD", captureCoordinatesSet.HUD);
+            var items = new Dictionary<string, CaptureCoordinates>
+                            {
+                                {"LMFD", captureCoordinatesSet.LMFD},
+                                {"RMFD", captureCoordinatesSet.RMFD},
+                                {"MFD3", captureCoordinatesSet.MFD3},
+                                {"MFD4", captureCoordinatesSet.MFD4},
+                                {"HUD", captureCoordinatesSet.HUD}
+                            };
         }
 
         private static string RunningBmsInstanceBasePath()
         {
             string toReturn = null;
-            string exePath = F4Utils.Process.Util.GetFalconExePath();
+            var exePath = F4Utils.Process.Util.GetFalconExePath();
             if (!string.IsNullOrEmpty(exePath))
             {
                 toReturn = new FileInfo(exePath).Directory.FullName;
-            }
-            else
-            {
             }
             return toReturn;
         }
 
         private static FileInfo FindBms3DCockpitFile()
         {
-            string basePath = RunningBmsInstanceBasePath();
-            string path = null;
+            var basePath = RunningBmsInstanceBasePath();
             if (basePath != null)
             {
-                path = basePath + @"\art\ckptartn";
+                var path = basePath + @"\art\ckptartn";
                 var dir = new DirectoryInfo(path);
                 if (dir.Exists)
                 {
-                    DirectoryInfo[] subDirs = dir.GetDirectories();
-                    FileInfo file = null;
-                    foreach (DirectoryInfo thisDir in subDirs)
+                    var subDirs = dir.GetDirectories();
+                    FileInfo file;
+                    foreach (var thisDir in subDirs)
                     {
                         file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
-                        if (file.Exists)
+                        if (!file.Exists)
+                        {
+                        }
+                        else
                         {
                             try
                             {
                                 using (
-                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
+                                    var fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
                                                               FileShare.None))
                                 {
                                     fs.Close();
@@ -382,7 +383,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                         try
                         {
                             using (
-                                FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
+                                var fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
                                                           FileShare.None))
                             {
                                 fs.Close();
@@ -399,17 +400,20 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                 dir = new DirectoryInfo(path);
                 if (dir.Exists)
                 {
-                    DirectoryInfo[] subDirs = dir.GetDirectories();
+                    var subDirs = dir.GetDirectories();
                     FileInfo file = null;
-                    foreach (DirectoryInfo thisDir in subDirs)
+                    foreach (var thisDir in subDirs)
                     {
                         file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
-                        if (file.Exists)
+                        if (!file.Exists)
+                        {
+                        }
+                        else
                         {
                             try
                             {
                                 using (
-                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
+                                    var fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
                                                               FileShare.None))
                                 {
                                     fs.Close();
@@ -444,7 +448,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
             return toReturn;
         }
@@ -456,7 +460,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
         {
             try
             {
-                int count = 0;
+                var count = 0;
 
                 while (!_disposed)
                 {
@@ -464,7 +468,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                     if (_settingsManager.NetworkMode == NetworkMode.Server ||
                         _settingsManager.NetworkMode == NetworkMode.Standalone)
                     {
-                        bool simWasRunning = _simRunning;
+                        var simWasRunning = _simRunning;
 
                         //TODO:make this check optional via the user-config file
                         if (count%1 == 0)
@@ -483,7 +487,7 @@ namespace MFDExtractor.Runtime.SimSupport.Falcon4
                             }
                             catch (Exception ex)
                             {
-                                _log.Error(ex.Message, ex);
+                                Log.Error(ex.Message, ex);
                             }
 #endif
                             _sim3DDataAvailable = _simRunning &&

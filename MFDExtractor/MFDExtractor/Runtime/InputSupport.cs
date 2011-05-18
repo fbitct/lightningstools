@@ -13,7 +13,7 @@ namespace MFDExtractor.Runtime
 {
     internal class InputSupport : IDisposable
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (InputSupport));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (InputSupport));
         private readonly MessageManager _messageManager;
         private readonly SettingsManager _settingsManager;
 
@@ -50,10 +50,11 @@ namespace MFDExtractor.Runtime
         private void CreateMediator()
         {
             _mediatorEventHandler =
-                new Mediator.PhysicalControlStateChangedEventHandler(Mediator_PhysicalControlStateChanged);
+                new Mediator.PhysicalControlStateChangedEventHandler(MediatorPhysicalControlStateChanged);
             if (!Properties.Settings.Default.DisableDirectInputMediator)
             {
                 _mediator = new Mediator(null);
+                RegisterMediatorEventHandler();
             }
         }
 
@@ -73,7 +74,7 @@ namespace MFDExtractor.Runtime
             }
         }
 
-        private void Mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
+        private void MediatorPhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
         {
             _settingsManager.KeySettings.Reload();
 
@@ -158,14 +159,11 @@ namespace MFDExtractor.Runtime
                     {
                         return true;
                     }
-                    else if (!currentVal.HasValue && prevVal.HasValue)
+                    if (!currentVal.HasValue && prevVal.HasValue)
                     {
                         return true;
                     }
-                    else
-                    {
-                        return (currentVal.Value != prevVal.Value);
-                    }
+                    return (currentVal.Value != prevVal.Value);
                 case ControlType.Button:
                     return (currentVal.HasValue && currentVal.Value == 1);
                 case ControlType.Pov:
@@ -173,10 +171,7 @@ namespace MFDExtractor.Runtime
                     {
                         return Util.GetPovDirection(currentVal.Value) == hotkey.PovDirection;
                     }
-                    else
-                    {
-                        return false;
-                    }
+                    return false;
                 case ControlType.Key:
                     return (currentVal.HasValue && currentVal.Value == 1);
                 default:
@@ -416,7 +411,7 @@ namespace MFDExtractor.Runtime
 
         private void KeyboardWatcherThreadWork()
         {
-            AutoResetEvent resetEvent = null;
+            AutoResetEvent resetEvent;
             Device device = null;
             try
             {
@@ -428,10 +423,10 @@ namespace MFDExtractor.Runtime
                     resetEvent.WaitOne();
                     try
                     {
-                        KeyboardState curState = device.GetCurrentKeyboardState();
-                        Array possibleKeys = Enum.GetValues(typeof (Key));
+                        var curState = device.GetCurrentKeyboardState();
+                        var possibleKeys = Enum.GetValues(typeof (Key));
 
-                        int i = 0;
+                        var i = 0;
                         foreach (Key thisKey in possibleKeys)
                         {
                             currentKeyboardState[i] = curState[thisKey];
@@ -441,8 +436,8 @@ namespace MFDExtractor.Runtime
                         i = 0;
                         foreach (Key thisKey in possibleKeys)
                         {
-                            bool isPressedNow = currentKeyboardState[i];
-                            bool wasPressedBefore = lastKeyboardState[i];
+                            var isPressedNow = currentKeyboardState[i];
+                            var wasPressedBefore = lastKeyboardState[i];
                             var winFormsKey =
                                 (Keys) NativeMethods.MapVirtualKey((uint) thisKey, NativeMethods.MAPVK_VSC_TO_VK_EX);
                             if (isPressedNow && !wasPressedBefore)
@@ -459,7 +454,7 @@ namespace MFDExtractor.Runtime
                     }
                     catch (Exception e)
                     {
-                        _log.Debug(e.Message, e);
+                        Log.Debug(e.Message, e);
                     }
                 }
             }
@@ -472,7 +467,7 @@ namespace MFDExtractor.Runtime
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
             finally
             {
@@ -517,6 +512,7 @@ namespace MFDExtractor.Runtime
             {
                 if (disposing)
                 {
+                    UnregisterMediatorEventHandler();
                     Common.Threading.Util.AbortThread(ref _keyboardWatcherThread);
                     _keyboardWatcherThread = null;
                 }

@@ -20,7 +20,7 @@ namespace F4Utils.Process
         private const string EXE_NAME__FREEFALCON = "FFViper.exe";
         private const string EXENAME__BMS3_EARLY_BMS4 = "F4-BMS.exe";
         private const string EXENAME__BMS4 = "Falcon BMS.exe";
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Util));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Util));
 
         public static void ActivateFalconWindow()
         {
@@ -128,7 +128,7 @@ namespace F4Utils.Process
                     }
                     catch (Exception e)
                     {
-                        _log.Error(e.Message, e);
+                        Log.Error(e.Message, e);
                     }
                 }
                 else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS4.ToLowerInvariant()))

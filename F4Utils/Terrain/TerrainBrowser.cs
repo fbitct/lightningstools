@@ -21,7 +21,7 @@ namespace F4Utils.Terrain
 {
     public class TerrainBrowser : IDisposable
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (TerrainBrowser));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (TerrainBrowser));
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -120,14 +120,14 @@ namespace F4Utils.Terrain
             if (_farTileReadingBackgroundWorker == null)
             {
                 _farTileReadingBackgroundWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
-                _farTileReadingBackgroundWorker.DoWork += _farTileReadingBackgroundWorker_DoWork;
+                _farTileReadingBackgroundWorker.DoWork += FarTileReadingBackgroundWorkerDoWork;
             }
             if (_farTileReadingBackgroundWorker.IsBusy) return;
 
             _farTileReadingBackgroundWorker.RunWorkerAsync();
         }
 
-        private void _farTileReadingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void FarTileReadingBackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace F4Utils.Terrain
             }
             catch (Exception ex)
             {
-                _log.Error(ex.Message, ex);
+                Log.Error(ex.Message, ex);
                 if (ex is SystemException) throw;
             }
         }
@@ -304,7 +304,7 @@ namespace F4Utils.Terrain
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e);
+                    Log.Debug(e.Message, e);
                 }
             }
 
@@ -527,18 +527,16 @@ namespace F4Utils.Terrain
                             while (!reader.EndOfStream)
                             {
                                 var line = reader.ReadLine();
-                                if (line != null)
+                                if (line == null) continue;
+                                line = line.Trim();
+                                if (line.StartsWith("gs_curTheater"))
                                 {
-                                    line = line.Trim();
-                                    if (line.StartsWith("gs_curTheater"))
+                                    var equalsLoc = line.IndexOf('=');
+                                    if (equalsLoc >= 13)
                                     {
-                                        var equalsLoc = line.IndexOf('=');
-                                        if (equalsLoc >= 13)
-                                        {
-                                            theaterName = line.Substring(equalsLoc + 1, line.Length - equalsLoc - 1);
-                                            theaterName = theaterName.Trim();
-                                            break;
-                                        }
+                                        theaterName = line.Substring(equalsLoc + 1, line.Length - equalsLoc - 1);
+                                        theaterName = theaterName.Trim();
+                                        break;
                                     }
                                 }
                             }
@@ -547,7 +545,7 @@ namespace F4Utils.Terrain
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex.Message, ex);
+                    Log.Error(ex.Message, ex);
                     theaterName = null;
                 }
             }
@@ -586,7 +584,7 @@ namespace F4Utils.Terrain
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex.Message, ex);
+                    Log.Error(ex.Message, ex);
                     theaterName = null;
                 }
             }
@@ -600,7 +598,7 @@ namespace F4Utils.Terrain
                 }
                 catch (Exception ex)
                 {
-                    _log.Error(ex.Message, ex);
+                    Log.Error(ex.Message, ex);
                     theaterName = null;
                 }
             }
@@ -985,7 +983,7 @@ namespace F4Utils.Terrain
                         }
                         catch (Exception e)
                         {
-                            _log.Debug(e.Message, e);
+                            Log.Debug(e.Message, e);
                         }
                     }
                     _textureZipFile = null;
@@ -1020,13 +1018,13 @@ namespace F4Utils.Terrain
                         }
                         catch (Exception e)
                         {
-                            _log.Debug(e.Message, e);
+                            Log.Debug(e.Message, e);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e);
+                    Log.Debug(e.Message, e);
                 }
                 foreach (var obj in toDispose)
                 {
@@ -1054,13 +1052,13 @@ namespace F4Utils.Terrain
                         }
                         catch (Exception e)
                         {
-                            _log.Debug(e.Message, e);
+                            Log.Debug(e.Message, e);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e);
+                    Log.Debug(e.Message, e);
                 }
                 foreach (var obj in toDispose)
                 {
@@ -1088,13 +1086,13 @@ namespace F4Utils.Terrain
                         }
                         catch (Exception e)
                         {
-                            _log.Debug(e.Message, e);
+                            Log.Debug(e.Message, e);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    _log.Debug(e.Message, e);
+                    Log.Debug(e.Message, e);
                 }
                 foreach (var obj in toDispose)
                 {

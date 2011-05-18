@@ -50,7 +50,7 @@ namespace MFDExtractor.Runtime
         private void ProcessPendingMessagesToServerFromClient()
         {
             if (_settingsManager.NetworkMode != NetworkMode.Server) return;
-            Message pendingMessage = _networkManager.GetNextPendingMessageToServerFromClient();
+            var pendingMessage = _networkManager.GetNextPendingMessageToServerFromClient();
             while (pendingMessage != null)
             {
                 var messageType = (MessageTypes) Enum.Parse(typeof (MessageTypes), pendingMessage.MessageType);
@@ -99,7 +99,7 @@ namespace MFDExtractor.Runtime
         private void ProcessPendingMessagesToClientFromServer()
         {
             if (_settingsManager.NetworkMode != NetworkMode.Client) return;
-            Message pendingMessage = _networkManager.GetNextPendingMessageToClientFromServer();
+            var pendingMessage = _networkManager.GetNextPendingMessageToClientFromServer();
             while (pendingMessage != null)
             {
                 var messageType = (MessageTypes) Enum.Parse(typeof (MessageTypes), pendingMessage.MessageType);
@@ -153,13 +153,13 @@ namespace MFDExtractor.Runtime
 
         public void UpdateEHSIBrightnessLabelVisibility()
         {
-            bool showBrightnessLabel = false;
+            var showBrightnessLabel = false;
             if (EHSIRightKnobIsCurrentlyDepressed)
             {
-                DateTime? whenPressed = _ehsiRightKnobDepressedTime;
+                var whenPressed = _ehsiRightKnobDepressedTime;
                 if (whenPressed.HasValue)
                 {
-                    TimeSpan howLongPressed = DateTime.Now.Subtract(whenPressed.Value);
+                    var howLongPressed = DateTime.Now.Subtract(whenPressed.Value);
                     if (howLongPressed.TotalMilliseconds > 2000)
                     {
                         showBrightnessLabel = true;
@@ -168,12 +168,12 @@ namespace MFDExtractor.Runtime
             }
             else
             {
-                DateTime? whenReleased = _ehsiRightKnobReleasedTime;
-                DateTime? lastActivity = _ehsiRightKnobLastActivityTime;
+                var whenReleased = _ehsiRightKnobReleasedTime;
+                var lastActivity = _ehsiRightKnobLastActivityTime;
                 if (whenReleased.HasValue && lastActivity.HasValue)
                 {
-                    TimeSpan howLongAgoReleased = DateTime.Now.Subtract(whenReleased.Value);
-                    TimeSpan howLongAgoLastActivity = DateTime.Now.Subtract(lastActivity.Value);
+                    var howLongAgoReleased = DateTime.Now.Subtract(whenReleased.Value);
+                    var howLongAgoLastActivity = DateTime.Now.Subtract(lastActivity.Value);
                     if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
                     {
                         showBrightnessLabel = ((F16EHSI) _renderers.EHSIRenderer).InstrumentState.ShowBrightnessLabel;
@@ -224,7 +224,7 @@ namespace MFDExtractor.Runtime
 
         public void NotifyISISBrightButtonDepressed(bool relayToListeners)
         {
-            int newBrightness = ((F16ISIS) _renderers.ISISRenderer).InstrumentState.MaxBrightness;
+            var newBrightness = ((F16ISIS) _renderers.ISISRenderer).InstrumentState.MaxBrightness;
             ((F16ISIS) _renderers.ISISRenderer).InstrumentState.Brightness = newBrightness;
             if (relayToListeners) SendMessage(MessageTypes.ISISBrightButtonDepressed, null);
         }
@@ -240,11 +240,11 @@ namespace MFDExtractor.Runtime
 
         public void NotifyEHSILeftKnobIncreasedByOne(bool relayToListeners)
         {
-            FalconDataFormats? format = Util.DetectFalconFormat();
-            bool useIncrementByOne = false;
+            var format = Util.DetectFalconFormat();
+            var useIncrementByOne = false;
             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
             {
-                KeyBinding incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgIncBy1");
+                var incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgIncBy1");
                 if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                 {
                     useIncrementByOne = true;
@@ -256,11 +256,11 @@ namespace MFDExtractor.Runtime
 
         public void NotifyEHSILeftKnobDecreasedByOne(bool relayToListeners)
         {
-            FalconDataFormats? format = Util.DetectFalconFormat();
-            bool useDecrementByOne = false;
+            var format = Util.DetectFalconFormat();
+            var useDecrementByOne = false;
             if (format.HasValue && format.Value == FalconDataFormats.BMS4)
             {
-                KeyBinding decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgDecBy1");
+                var decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgDecBy1");
                 if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                 {
                     useDecrementByOne = true;
@@ -284,11 +284,11 @@ namespace MFDExtractor.Runtime
             }
             else
             {
-                FalconDataFormats? format = Util.DetectFalconFormat();
-                bool useIncrementByOne = false;
+                var format = Util.DetectFalconFormat();
+                var useIncrementByOne = false;
                 if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                 {
-                    KeyBinding incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsIncBy1");
+                    var incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsIncBy1");
                     if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                     {
                         useIncrementByOne = true;
@@ -313,11 +313,11 @@ namespace MFDExtractor.Runtime
             }
             else
             {
-                FalconDataFormats? format = Util.DetectFalconFormat();
-                bool useDecrementByOne = false;
+                var format = Util.DetectFalconFormat();
+                var useDecrementByOne = false;
                 if (format.HasValue && format.Value == FalconDataFormats.BMS4)
                 {
-                    KeyBinding decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
+                    var decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
                     if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
                     {
                         useDecrementByOne = true;
@@ -347,7 +347,7 @@ namespace MFDExtractor.Runtime
 
         public void NotifyEHSIMenuButtonDepressed(bool relayToListeners)
         {
-            F16EHSI.F16EHSIInstrumentState.InstrumentModes currentMode =
+            var currentMode =
                 ((F16EHSI) _renderers.EHSIRenderer).InstrumentState.InstrumentMode;
             F16EHSI.F16EHSIInstrumentState.InstrumentModes? newMode = null;
             switch (currentMode)

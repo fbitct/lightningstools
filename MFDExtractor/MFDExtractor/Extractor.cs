@@ -410,31 +410,31 @@ namespace MFDExtractor
         private void SetupInstrumentRenderers()
         {
             var instrumentRendererInitializationParms = new InstrumentRenderers.InitializationParams
-                                                            {
-                                                                AltimeterPressureUnitsProperty =
-                                                                    new PropertyInvoker<string>(
-                                                                    "Altimeter_PressureUnits", Settings.Default),
-                                                                AltimeterStyleProperty =
-                                                                    new PropertyInvoker<string>("Altimeter_Style",
-                                                                                                Settings.Default),
-                                                                AzimuthIndicatorTypeProperty =
-                                                                    new PropertyInvoker<string>("AzimuthIndicatorType",
-                                                                                                Settings.Default),
-                                                                FuelQuantityIndicatorNeedleIsCModelProperty =
-                                                                    new PropertyInvoker<bool>(
-                                                                    "FuelQuantityIndicator_NeedleCModel",
-                                                                    Settings.Default),
-                                                                GDIPlusOptions = _settingsManager.GDIPlusOptions,
-                                                                ISISPressureUnitsProperty =
-                                                                    new PropertyInvoker<string>("ISIS_PressureUnits",
-                                                                                                Settings.Default),
-                                                                ShowAzimuthIndicatorBezelProperty =
-                                                                    new PropertyInvoker<bool>(
-                                                                    "AzimuthIndicator_ShowBezel", Settings.Default),
-                                                                VVIStyleProperty =
-                                                                    new PropertyInvoker<string>("VVI_Style",
-                                                                                                Settings.Default)
-                                                            };
+                {
+                    AltimeterPressureUnitsProperty =
+                        new PropertyInvoker<string>(
+                        "Altimeter_PressureUnits", Settings.Default),
+                    AltimeterStyleProperty =
+                        new PropertyInvoker<string>("Altimeter_Style",
+                                                    Settings.Default),
+                    AzimuthIndicatorTypeProperty =
+                        new PropertyInvoker<string>("AzimuthIndicatorType",
+                                                    Settings.Default),
+                    FuelQuantityIndicatorNeedleIsCModelProperty =
+                        new PropertyInvoker<bool>(
+                        "FuelQuantityIndicator_NeedleCModel",
+                        Settings.Default),
+                    GDIPlusOptions = _settingsManager.GDIPlusOptions,
+                    ISISPressureUnitsProperty =
+                        new PropertyInvoker<string>("ISIS_PressureUnits",
+                                                    Settings.Default),
+                    ShowAzimuthIndicatorBezelProperty =
+                        new PropertyInvoker<bool>(
+                        "AzimuthIndicator_ShowBezel", Settings.Default),
+                    VVIStyleProperty =
+                        new PropertyInvoker<string>("VVI_Style",
+                                                    Settings.Default)
+                };
             _renderers = new InstrumentRenderers(instrumentRendererInitializationParms);
         }
 
