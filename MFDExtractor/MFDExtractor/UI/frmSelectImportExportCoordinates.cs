@@ -1,120 +1,214 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace MFDExtractor.UI
 {
     public partial class frmSelectImportExportCoordinates : Form
     {
+        public bool EnableSelectLeftMfdPrimary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectRightMfdPrimary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectMfd3Primary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectMfd4Primary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectHudPrimary
+        {
+            get;
+            set;
+        }
+
+        public bool EnableSelectLeftMfdSecondary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectRightMfdSecondary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectMfd3Secondary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectMfd4Secondary
+        {
+            get;
+            set;
+        }
+        public bool EnableSelectHudSecondary
+        {
+            get;
+            set;
+        }
+
+        public bool ExportLeftMfdPrimary
+        {
+            get
+            {
+                return chkLeftMfdPrimary.Checked;
+            }
+            set
+            {
+                chkLeftMfdPrimary.Checked = value;
+            }
+        }
+        public bool ExportRightMfdPrimary
+        {
+            get
+            {
+                return chkRightMfdPrimary.Checked;
+            }
+            set
+            {
+                chkRightMfdPrimary.Checked = value;
+            }
+        }
+        public bool ExportHudPrimary
+        {
+            get
+            {
+                return chkHudPrimary.Checked;
+            }
+            set
+            {
+                chkHudPrimary.Checked = value;
+            }
+        }
+        public bool ExportMfd3Primary
+        {
+            get
+            {
+                return chkMfd3Primary.Checked;
+            }
+            set
+            {
+                chkMfd3Primary.Checked = value;
+            }
+        }
+        public bool ExportMfd4Primary
+        {
+            get
+            {
+                return chkMfd4Primary.Checked;
+            }
+            set
+            {
+                chkMfd4Primary.Checked = value;
+            }
+        }
+        public bool ExportLeftMfdSecondary
+        {
+            get
+            {
+                return chkLeftMfdSecondary.Checked;
+            }
+            set
+            {
+                chkLeftMfdSecondary.Checked = value;
+            }
+        }
+        public bool ExportRightMfdSecondary
+        {
+            get
+            {
+                return chkRightMfdSecondary.Checked;
+            }
+            set
+            {
+                chkRightMfdSecondary.Checked = value;
+            }
+        }
+        public bool ExportHudSecondary
+        {
+            get
+            {
+                return chkHudSecondary.Checked;
+            }
+            set
+            {
+                chkHudSecondary.Checked = value;
+            }
+        }
+        public bool ExportMfd3Secondary
+        {
+            get
+            {
+                return chkMfd3Secondary.Checked;
+            }
+            set
+            {
+                chkMfd3Secondary.Checked = value;
+            }
+        }
+        public bool ExportMfd4Secondary
+        {
+            get
+            {
+                return chkMfd4Secondary.Checked;
+            }
+            set
+            {
+                chkMfd4Secondary.Checked = value;
+            }
+        }
+
+
         public frmSelectImportExportCoordinates()
         {
             InitializeComponent();
         }
 
-        public bool EnableSelectLeftMfdPrimary { get; set; }
-        public bool EnableSelectRightMfdPrimary { get; set; }
-        public bool EnableSelectMfd3Primary { get; set; }
-        public bool EnableSelectMfd4Primary { get; set; }
-        public bool EnableSelectHudPrimary { get; set; }
-
-        public bool EnableSelectLeftMfdSecondary { get; set; }
-        public bool EnableSelectRightMfdSecondary { get; set; }
-        public bool EnableSelectMfd3Secondary { get; set; }
-        public bool EnableSelectMfd4Secondary { get; set; }
-        public bool EnableSelectHudSecondary { get; set; }
-
-        public bool ExportLeftMfdPrimary
-        {
-            get { return chkLeftMfdPrimary.Checked; }
-            set { chkLeftMfdPrimary.Checked = value; }
-        }
-
-        public bool ExportRightMfdPrimary
-        {
-            get { return chkRightMfdPrimary.Checked; }
-            set { chkRightMfdPrimary.Checked = value; }
-        }
-
-        public bool ExportHudPrimary
-        {
-            get { return chkHudPrimary.Checked; }
-            set { chkHudPrimary.Checked = value; }
-        }
-
-        public bool ExportMfd3Primary
-        {
-            get { return chkMfd3Primary.Checked; }
-            set { chkMfd3Primary.Checked = value; }
-        }
-
-        public bool ExportMfd4Primary
-        {
-            get { return chkMfd4Primary.Checked; }
-            set { chkMfd4Primary.Checked = value; }
-        }
-
-        public bool ExportLeftMfdSecondary
-        {
-            get { return chkLeftMfdSecondary.Checked; }
-            set { chkLeftMfdSecondary.Checked = value; }
-        }
-
-        public bool ExportRightMfdSecondary
-        {
-            get { return chkRightMfdSecondary.Checked; }
-            set { chkRightMfdSecondary.Checked = value; }
-        }
-
-        public bool ExportHudSecondary
-        {
-            get { return chkHudSecondary.Checked; }
-            set { chkHudSecondary.Checked = value; }
-        }
-
-        public bool ExportMfd3Secondary
-        {
-            get { return chkMfd3Secondary.Checked; }
-            set { chkMfd3Secondary.Checked = value; }
-        }
-
-        public bool ExportMfd4Secondary
-        {
-            get { return chkMfd4Secondary.Checked; }
-            set { chkMfd4Secondary.Checked = value; }
-        }
-
-
         private void cmdOk_Click(object sender, EventArgs e)
         {
             int selectedItems = CountSelectedItems();
             int enabledItems = CountEnabledItems();
-            if (selectedItems == 0 && enabledItems > 0)
+            if (selectedItems== 0 && enabledItems>0)
             {
-                MessageBox.Show("Please select at least one coordinate set.", Application.ProductName,
-                                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show("Please select at least one coordinate set.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
             }
             else if (selectedItems == 0 && enabledItems == 0)
             {
-                DialogResult = DialogResult.Cancel;
-                Close();
+                this.DialogResult = DialogResult.Cancel;
+                this.Close();
             }
             else
             {
-                DialogResult = DialogResult.OK;
-                Close();
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
         }
 
         private void cmdCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
-            Close();
+            this.DialogResult = DialogResult.Cancel;
+            this.Close();
         }
 
         private void cmdSelectAll_Click(object sender, EventArgs e)
         {
             SelectAll();
         }
-
         private int CountSelectedItems()
         {
             int count = 0;
@@ -130,7 +224,6 @@ namespace MFDExtractor.UI
             if (chkHudSecondary.Checked) count++;
             return count;
         }
-
         private int CountEnabledItems()
         {
             int count = 0;
@@ -146,7 +239,6 @@ namespace MFDExtractor.UI
             if (chkHudSecondary.Enabled) count++;
             return count;
         }
-
         public void SelectAll()
         {
             UpdateEnableDisableState();
@@ -166,7 +258,6 @@ namespace MFDExtractor.UI
         {
             UnselectAll();
         }
-
         public void UnselectAll()
         {
             chkLeftMfdPrimary.Checked = false;
@@ -181,53 +272,49 @@ namespace MFDExtractor.UI
             chkMfd4Secondary.Checked = false;
             chkHudSecondary.Checked = false;
         }
-
         private void frmSelectImportExportCoordinates_Load(object sender, EventArgs e)
         {
             UpdateEnableDisableState();
         }
-
         private void UpdateEnableDisableState()
         {
-            chkLeftMfdPrimary.Enabled = EnableSelectLeftMfdPrimary;
-            chkRightMfdPrimary.Enabled = EnableSelectRightMfdPrimary;
-            chkMfd3Primary.Enabled = EnableSelectMfd3Primary;
-            chkMfd4Primary.Enabled = EnableSelectMfd4Primary;
-            chkHudPrimary.Enabled = EnableSelectHudPrimary;
-            chkLeftMfdSecondary.Enabled = EnableSelectLeftMfdSecondary;
-            chkRightMfdSecondary.Enabled = EnableSelectRightMfdSecondary;
-            chkMfd3Secondary.Enabled = EnableSelectMfd3Secondary;
-            chkMfd4Secondary.Enabled = EnableSelectMfd4Secondary;
-            chkHudSecondary.Enabled = EnableSelectHudSecondary;
+            chkLeftMfdPrimary.Enabled = this.EnableSelectLeftMfdPrimary;
+            chkRightMfdPrimary.Enabled = this.EnableSelectRightMfdPrimary;
+            chkMfd3Primary.Enabled = this.EnableSelectMfd3Primary;
+            chkMfd4Primary.Enabled = this.EnableSelectMfd4Primary;
+            chkHudPrimary.Enabled = this.EnableSelectHudPrimary;
+            chkLeftMfdSecondary.Enabled = this.EnableSelectLeftMfdSecondary;
+            chkRightMfdSecondary.Enabled = this.EnableSelectRightMfdSecondary;
+            chkMfd3Secondary.Enabled = this.EnableSelectMfd3Secondary;
+            chkMfd4Secondary.Enabled = this.EnableSelectMfd4Secondary;
+            chkHudSecondary.Enabled = this.EnableSelectHudSecondary;
         }
-
         public void EnableAll()
         {
-            EnableSelectLeftMfdPrimary = true;
-            EnableSelectRightMfdPrimary = true;
-            EnableSelectMfd3Primary = true;
-            EnableSelectMfd4Primary = true;
-            EnableSelectHudPrimary = true;
-            EnableSelectLeftMfdSecondary = true;
-            EnableSelectRightMfdSecondary = true;
-            EnableSelectMfd3Secondary = true;
-            EnableSelectMfd4Secondary = true;
-            EnableSelectHudSecondary = true;
+            this.EnableSelectLeftMfdPrimary = true;
+            this.EnableSelectRightMfdPrimary = true;
+            this.EnableSelectMfd3Primary = true;
+            this.EnableSelectMfd4Primary = true;
+            this.EnableSelectHudPrimary = true;
+            this.EnableSelectLeftMfdSecondary = true;
+            this.EnableSelectRightMfdSecondary = true;
+            this.EnableSelectMfd3Secondary = true;
+            this.EnableSelectMfd4Secondary = true;
+            this.EnableSelectHudSecondary = true;
             UpdateEnableDisableState();
         }
-
         public void DisableAll()
         {
-            EnableSelectLeftMfdPrimary = false;
-            EnableSelectRightMfdPrimary = false;
-            EnableSelectMfd3Primary = false;
-            EnableSelectMfd4Primary = false;
-            EnableSelectHudPrimary = false;
-            EnableSelectLeftMfdSecondary = false;
-            EnableSelectRightMfdSecondary = false;
-            EnableSelectMfd3Secondary = false;
-            EnableSelectMfd4Secondary = false;
-            EnableSelectHudSecondary = false;
+            this.EnableSelectLeftMfdPrimary = false;
+            this.EnableSelectRightMfdPrimary = false;
+            this.EnableSelectMfd3Primary = false;
+            this.EnableSelectMfd4Primary = false;
+            this.EnableSelectHudPrimary = false;
+            this.EnableSelectLeftMfdSecondary = false;
+            this.EnableSelectRightMfdSecondary = false;
+            this.EnableSelectMfd3Secondary = false;
+            this.EnableSelectMfd4Secondary = false;
+            this.EnableSelectHudSecondary = false;
             UpdateEnableDisableState();
         }
     }

@@ -1,7 +1,7 @@
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Common.Win32;
+using System;
 
 namespace MFDExtractor
 {
@@ -12,48 +12,52 @@ namespace MFDExtractor
     /// the behavior for actually resizing the form if these conditions are true and the user
     /// does a drag-type operation within the form's border area
     /// </summary>
-    internal class ResizeHelper : IMessageFilter
+    class ResizeHelper : IMessageFilter
     {
-        private readonly Cursor _initialCursor;
         private Form _TheWindow;
+        private Cursor _initialCursor;
+        public Form TheWindow
+        {
+            get
+            {
+                return _TheWindow;
+            }
+            set
+            {
+                _TheWindow = value;
+            }
+        }
 
         public ResizeHelper(Form form)
         {
-            _TheWindow = form;
-            _initialCursor = _TheWindow.Cursor;
+            this._TheWindow = form;
+            _initialCursor = this._TheWindow.Cursor;
             Application.AddMessageFilter(this);
         }
 
-        public Form TheWindow
-        {
-            get { return _TheWindow; }
-            set { _TheWindow = value; }
-        }
-
-        //[System.Diagnostics.DebuggerHidden()]
-
         #region IMessageFilter Members
 
+        //[System.Diagnostics.DebuggerHidden()]
         bool IMessageFilter.PreFilterMessage(ref Message m)
         {
-            if (!_TheWindow.IsDisposed && _TheWindow.Visible && 0 == _TheWindow.OwnedForms.Length)
+            if (!this._TheWindow.IsDisposed && this._TheWindow.Visible && 0 == this._TheWindow.OwnedForms.Length)
             {
                 Point cursorLocation = Control.MousePosition;
-                Point pt = _TheWindow.PointToClient(cursorLocation);
-                Rectangle formBounds = _TheWindow.ClientRectangle;
-                var p = new NativeMethods.POINT(cursorLocation.X, cursorLocation.Y);
+                Point pt = this._TheWindow.PointToClient(cursorLocation);
+                Rectangle formBounds = this._TheWindow.ClientRectangle;
+                Common.Win32.NativeMethods.POINT p = new NativeMethods.POINT(cursorLocation.X, cursorLocation.Y);
                 IntPtr windowFromPoint = NativeMethods.WindowFromPoint(p);
-                IntPtr thisWindowHandle = _TheWindow.Handle;
+                IntPtr thisWindowHandle = this._TheWindow.Handle;
                 Form formToCompare = null;
                 if (windowFromPoint != IntPtr.Zero)
                 {
-                    formToCompare = Control.FromHandle(windowFromPoint) as Form;
+                    formToCompare = Form.FromHandle(windowFromPoint) as Form;
                 }
-                if (formBounds.Contains(pt) && formToCompare != null && formToCompare == _TheWindow)
+                if (formBounds.Contains(pt) && formToCompare  !=null && formToCompare == this._TheWindow)
                 {
                     // Create a rectangular area which is 5 pix smaller than windows's size
                     // This is the area beyond which we need to simulate non client area
-                    Rectangle bounds = _TheWindow.ClientRectangle;
+                    Rectangle bounds = this._TheWindow.ClientRectangle;
                     bounds.Inflate(-7, -7);
 
                     int htValue = NativeMethods.HT.HTNOWHERE;
@@ -130,15 +134,15 @@ namespace MFDExtractor
                         if (m.Msg == NativeMethods.WM.WM_MOUSEMOVE)
                         {
                             // the cursor is already set, we have nothing to do
-                            _TheWindow.Cursor = cursor;
+                            this._TheWindow.Cursor = cursor;
                             return true; // The message is handled
                         }
                         else if (m.Msg == NativeMethods.WM.WM_LBUTTONDOWN)
                         {
                             // Start resizing
                             NativeMethods.ReleaseCapture();
-                            NativeMethods.SendMessage(_TheWindow.Handle, NativeMethods.WM.WM_NCLBUTTONDOWN,
-                                                      htValue, 0);
+                            NativeMethods.SendMessage(this._TheWindow.Handle, NativeMethods.WM.WM_NCLBUTTONDOWN,
+                                htValue, 0);
                             return true; // The message is handled					
                         }
                         else
@@ -149,13 +153,13 @@ namespace MFDExtractor
                     }
                     else // Cursor inside the window
                     {
-                        _TheWindow.Cursor = Cursors.SizeAll;
+                        this._TheWindow.Cursor = Cursors.SizeAll;
                         return false;
                     }
                 }
                 else
                 {
-                    _TheWindow.Cursor = _initialCursor;
+                    this._TheWindow.Cursor = _initialCursor;
                     return false;
                 }
             }

@@ -289,6 +289,30 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableLeftMFDOutput {
+            get {
+                return ((bool)(this["EnableLeftMFDOutput"]));
+            }
+            set {
+                this["EnableLeftMFDOutput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableRightMFDOutput {
+            get {
+                return ((bool)(this["EnableRightMFDOutput"]));
+            }
+            set {
+                this["EnableRightMFDOutput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
         public global::System.Threading.ThreadPriority ThreadPriority {
             get {
@@ -7328,30 +7352,6 @@ namespace MFDExtractor.Properties {
             }
             set {
                 this["DisableDirectInputMediator"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnableLMFDOutput {
-            get {
-                return ((bool)(this["EnableLMFDOutput"]));
-            }
-            set {
-                this["EnableLMFDOutput"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool EnableRMFDOutput {
-            get {
-                return ((bool)(this["EnableRMFDOutput"]));
-            }
-            set {
-                this["EnableRMFDOutput"] = value;
             }
         }
     }

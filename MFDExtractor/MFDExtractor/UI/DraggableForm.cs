@@ -1,8 +1,5 @@
-using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Common;
 
 namespace MFDExtractor.UI
 {
@@ -11,18 +8,17 @@ namespace MFDExtractor.UI
     /// </summary>
     public class DraggableForm : Form
     {
+
         #region Declarations
+        private bool drag = false;
+        private Point start_point = new Point(0, 0);
+        private bool draggable = true;
+        private string exclude_list = "";
 
         /// <SUMMARY>
         /// Required designer variable.
         /// </SUMMARY>
-        private readonly IContainer components;
-
-        private bool drag;
-        private bool draggable = true;
-        private string exclude_list = "";
-        private Point start_point = new Point(0, 0);
-
+        private System.ComponentModel.IContainer components = null;
         #endregion
 
         #region Constructor , Dispose
@@ -30,6 +26,7 @@ namespace MFDExtractor.UI
         public DraggableForm()
         {
             InitializeComponent();
+
         }
 
         /// <SUMMARY>
@@ -40,7 +37,7 @@ namespace MFDExtractor.UI
         {
             if (disposing)
             {
-                Util.DisposeObject(components);
+                Common.Util.DisposeObject(components);
             }
             base.Dispose(disposing);
         }
@@ -70,12 +67,13 @@ namespace MFDExtractor.UI
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "DraggableForm";
             this.ResumeLayout(false);
+
         }
 
         #endregion
 
         #region Overriden Functions
-
+        
         protected override void OnControlAdded(ControlEventArgs e)
         {
             //
@@ -85,11 +83,11 @@ namespace MFDExtractor.UI
             //list of the Controls for which you do not require the mouse handler 
             //to be added. For Example a button.  
             //
-            if (Draggable && (ExcludeList.IndexOf(e.Control.Name, StringComparison.OrdinalIgnoreCase) == -1))
+            if (this.Draggable && (this.ExcludeList.IndexOf(e.Control.Name, System.StringComparison.OrdinalIgnoreCase) == -1))
             {
-                e.Control.MouseDown += Control_MouseDown;
-                e.Control.MouseUp += Control_MouseUp;
-                e.Control.MouseMove += Control_MouseMove;
+                e.Control.MouseDown += new MouseEventHandler(Control_MouseDown);
+                e.Control.MouseUp += new MouseEventHandler(Control_MouseUp);
+                e.Control.MouseMove += new MouseEventHandler(Control_MouseMove);
             }
             base.OnControlAdded(e);
         }
@@ -97,60 +95,53 @@ namespace MFDExtractor.UI
         #endregion
 
         #region Event Handlers
-
-        private void Control_MouseDown(object sender, MouseEventArgs e)
-        {
+        private void Control_MouseDown (object sender, MouseEventArgs e) {
             OnMouseDown(e);
         }
-
         private void Control_MouseUp(object sender, MouseEventArgs e)
         {
             OnMouseUp(e);
         }
-
         private void Control_MouseMove(object sender, MouseEventArgs e)
         {
             OnMouseMove(e);
         }
-
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (draggable)
+            if (this.draggable)
             {
                 //
                 //On Mouse Down set the flag drag=true and 
                 //Store the clicked point to the start_point variable
                 //
-                drag = true;
-                start_point = new Point(e.X, e.Y);
+                this.drag = true;
+                this.start_point = new Point(e.X, e.Y);
             }
             base.OnMouseDown(e);
         }
-
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            if (draggable)
+            if (this.draggable)
             {
                 //
                 //Set the drag flag = false;
                 //
-                drag = false;
+                this.drag = false;
             }
             base.OnMouseUp(e);
         }
-
         protected override void OnMouseMove(MouseEventArgs e)
         {
             //
             //If drag = true, drag the form
             //
-            if (drag && draggable)
+            if (this.drag && this.draggable)
             {
-                var p1 = new Point(e.X, e.Y);
-                Point p2 = PointToScreen(p1);
-                var p3 = new Point(p2.X - start_point.X,
-                                   p2.Y - start_point.Y);
-                DesktopLocation = p3;
+                Point p1 = new Point(e.X, e.Y);
+                Point p2 = this.PointToScreen(p1);
+                Point p3 = new Point(p2.X - this.start_point.X,
+                                     p2.Y - this.start_point.Y);
+                this.DesktopLocation = p3;
             }
             base.OnMouseMove(e);
         }
@@ -161,16 +152,29 @@ namespace MFDExtractor.UI
 
         public string ExcludeList
         {
-            set { exclude_list = value; }
-            get { return exclude_list.Trim(); }
+            set
+            {
+                this.exclude_list = value;
+            }
+            get
+            {
+                return this.exclude_list.Trim();
+            }
         }
 
         public bool Draggable
         {
-            set { draggable = value; }
-            get { return draggable; }
+            set
+            {
+                this.draggable = value;
+            }
+            get
+            {
+                return this.draggable;
+            }
         }
 
         #endregion
+
     }
 }

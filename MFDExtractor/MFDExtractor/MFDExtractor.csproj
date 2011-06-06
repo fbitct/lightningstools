@@ -40,6 +40,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,6 +53,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -62,6 +64,7 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -72,7 +75,8 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -83,21 +87,20 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG</DefineConstants>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Common\ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -106,67 +109,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlankAndTestImages.cs" />
-    <Compile Include="CaptureCoordinatesSet.cs" />
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Networking\ImageObjectStore.cs" />
-    <Compile Include="Networking\ObjectStore.cs" />
-    <Compile Include="Runtime\FormManager.cs" />
-    <Compile Include="Runtime\Settings\SettingsManager.cs" />
-    <Compile Include="Runtime\SimSupport\Falcon4\FlightDataExtension.cs" />
-    <Compile Include="Runtime\SimSupport\Falcon4\FlightDataToRendererStateTranslator.cs" />
-    <Compile Include="Networking\ExtractorClient.cs" />
-    <Compile Include="Runtime\NetworkManager.cs">
-    </Compile>
-    <Compile Include="Networking\ExtractorServer.cs" />
-    <Compile Include="Networking\IExtractorClient.cs" />
-    <Compile Include="Networking\IExtractorServer.cs" />
-    <Compile Include="Networking\Message.cs" />
-    <Compile Include="Networking\MessageTypes.cs" />
+    <Compile Include="FlightDataExtension.cs" />
     <Compile Include="Properties\Settings.cs" />
-    <Compile Include="InstrumentRenderers.cs" />
-    <Compile Include="CaptureCoordinates.cs" />
-    <Compile Include="Runtime\InputSupport.cs" />
-    <Compile Include="Runtime\Settings\GdiPlusSettings.cs" />
-    <Compile Include="Runtime\Settings\KeySettings.cs" />
-    <Compile Include="Runtime\MessageManager.cs" />
-    <Compile Include="Runtime\SimSupport\Falcon4\Falcon4SimSupport.cs" />
-    <Compile Include="SettingsHelper.cs" />
-    <Compile Include="UI\CanvasRenderer.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\frmBMSOptions.Designer.cs">
       <DependentUpon>frmBMSOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Options\AltimeterOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\AzimuthIndicatorOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\BMSOptionsHandlers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\FuelQuantityOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\GDIPlusSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\ImportExportCaptureCoordinates.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\InstrumentEnableHandlers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\KeySelections.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\InstrumentRecoverHandlers.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\frmSelectImportExportCoordinates.cs">
       <SubType>Form</SubType>
@@ -175,6 +127,7 @@
       <DependentUpon>frmSelectImportExportCoordinates.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Networking.cs" />
     <Compile Include="UI\DraggableForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -184,14 +137,11 @@
     <Compile Include="UI\frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Options\NetworkModeOptions.cs">
+    <Compile Include="UI\frmOptions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Options\OptionsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\OptionsForm.Designer.cs">
-      <DependentUpon>OptionsForm.cs</DependentUpon>
+    <Compile Include="UI\frmOptions.Designer.cs">
+      <DependentUpon>frmOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="KeyConverter.cs" />
     <Compile Include="UI\InstrumentForm.cs">
@@ -202,16 +152,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Options\SettingsLoadAndSave.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\Validation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\VVIOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Options\VVIStyles.cs" />
     <EmbeddedResource Include="UI\DraggableForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DraggableForm.cs</DependentUpon>
@@ -224,9 +164,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\Options\OptionsForm.resx">
+    <EmbeddedResource Include="UI\frmOptions.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>OptionsForm.cs</DependentUpon>
+      <DependentUpon>frmOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\frmSelectImportExportCoordinates.resx">
       <DependentUpon>frmSelectImportExportCoordinates.cs</DependentUpon>
@@ -257,7 +197,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ResizeHelper.cs" />
-    <Compile Include="UI\InstrumentFormController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="mfdextractoricon.ICO" />

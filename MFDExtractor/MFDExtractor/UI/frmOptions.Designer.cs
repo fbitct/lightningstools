@@ -1,7 +1,7 @@
 using Common.UI.UserControls;
-namespace MFDExtractor.UI.Options
+namespace MFDExtractor.UI
 {
-    partial class OptionsForm
+    partial class frmOptions
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace MFDExtractor.UI.Options
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmOptions));
             this.cmdOk = new System.Windows.Forms.Button();
             this.cmdCancel = new System.Windows.Forms.Button();
             this.errControlErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
@@ -4308,13 +4308,13 @@ namespace MFDExtractor.UI.Options
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "OptionsForm";
+            this.Name = "frmOptions";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Options";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.FormLoad);
+            this.Load += new System.EventHandler(this.frmOptions_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmOptions_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.errControlErrorProvider)).EndInit();
             this.tabAllTabs.ResumeLayout(false);
