@@ -987,7 +987,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon MFD Extractor"
         "ProductCode" = "8:{8AF4A8FF-0CB7-4651-A656-E17BCFEE86E6}"
-        "PackageCode" = "8:{E181FE78-8D12-42C2-B70D-CE1318CE059A}"
+        "PackageCode" = "8:{E3A63EB3-F8BD-4780-B22E-EB8F677AB912}"
         "UpgradeCode" = "8:{53D32A09-9B77-4C68-AE21-7F8024EEF04F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1550,7 +1550,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AA8BE9BC07A644838AA1B37349C42BB9"
             {
-            "SourcePath" = "8:..\\MFDExtractor\\obj\\x86\\Release\\MFDExtractor.exe"
+            "SourcePath" = "8:..\\MFDExtractor\\obj\\x86\\Debug\\MFDExtractor.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"
