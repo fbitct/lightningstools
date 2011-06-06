@@ -8491,19 +8491,19 @@ namespace MFDExtractor
                 //** UPDATE DED 
                 if (fromFalcon.DEDLines != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line1 = Encoding.Default.GetBytes(fromFalcon.DEDLines[0]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line2 = Encoding.Default.GetBytes(fromFalcon.DEDLines[1]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line3 = Encoding.Default.GetBytes(fromFalcon.DEDLines[2]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line4 = Encoding.Default.GetBytes(fromFalcon.DEDLines[3]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line5 = Encoding.Default.GetBytes(fromFalcon.DEDLines[4]);
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line1 = Encoding.Default.GetBytes(fromFalcon.DEDLines[0] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line2 = Encoding.Default.GetBytes(fromFalcon.DEDLines[1] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line3 = Encoding.Default.GetBytes(fromFalcon.DEDLines[2] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line4 = Encoding.Default.GetBytes(fromFalcon.DEDLines[3] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line5 = Encoding.Default.GetBytes(fromFalcon.DEDLines[4] ?? "");
                 }
                 if (fromFalcon.Invert != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line1Invert = Encoding.Default.GetBytes(fromFalcon.Invert[0]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line2Invert = Encoding.Default.GetBytes(fromFalcon.Invert[1]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line3Invert = Encoding.Default.GetBytes(fromFalcon.Invert[2]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line4Invert = Encoding.Default.GetBytes(fromFalcon.Invert[3]);
-                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line5Invert = Encoding.Default.GetBytes(fromFalcon.Invert[4]);
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line1Invert = Encoding.Default.GetBytes(fromFalcon.Invert[0] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line2Invert = Encoding.Default.GetBytes(fromFalcon.Invert[1] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line3Invert = Encoding.Default.GetBytes(fromFalcon.Invert[2] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line4Invert = Encoding.Default.GetBytes(fromFalcon.Invert[3] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_dedRenderer).InstrumentState.Line5Invert = Encoding.Default.GetBytes(fromFalcon.Invert[4] ?? "");
                 }
                 //*************************
 
@@ -8511,19 +8511,19 @@ namespace MFDExtractor
                 //** UPDATE PFL
                 if (fromFalcon.PFLLines != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line1 = Encoding.Default.GetBytes(fromFalcon.PFLLines[0]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line2 = Encoding.Default.GetBytes(fromFalcon.PFLLines[1]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line3 = Encoding.Default.GetBytes(fromFalcon.PFLLines[2]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line4 = Encoding.Default.GetBytes(fromFalcon.PFLLines[3]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line5 = Encoding.Default.GetBytes(fromFalcon.PFLLines[4]);
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line1 = Encoding.Default.GetBytes(fromFalcon.PFLLines[0] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line2 = Encoding.Default.GetBytes(fromFalcon.PFLLines[1] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line3 = Encoding.Default.GetBytes(fromFalcon.PFLLines[2] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line4 = Encoding.Default.GetBytes(fromFalcon.PFLLines[3] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line5 = Encoding.Default.GetBytes(fromFalcon.PFLLines[4] ?? "");
                 }
                 if (fromFalcon.PFLInvert != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line1Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[0]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line2Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[1]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line3Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[2]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line4Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[3]);
-                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line5Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[4]);
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line1Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[0] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line2Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[1] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line3Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[2] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line4Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[3] ?? "");
+                    ((F16DataEntryDisplayPilotFaultList)_pflRenderer).InstrumentState.Line5Invert = Encoding.Default.GetBytes(fromFalcon.PFLInvert[4] ?? "");
                 }
                 //*************************
 
@@ -11137,7 +11137,12 @@ namespace MFDExtractor
                                     if (_threeDeeMode)
                                     {
                                         if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
-                                        if ((Properties.Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server))
+                                        if ((Properties.Settings.Default.EnableLeftMFDOutput || 
+                                            Properties.Settings.Default.EnableRightMFDOutput ||
+                                            Properties.Settings.Default.EnableMfd3Output ||
+                                            Properties.Settings.Default.EnableMfd4Output || 
+                                            Properties.Settings.Default.EnableHudOutput || 
+                                            NetworkMode == NetworkMode.Server))
                                         {
                                             if ((_hud3DInputRect == Rectangle.Empty) || (_leftMfd3DInputRect == Rectangle.Empty) || (_rightMfd3DInputRect == Rectangle.Empty) || (_mfd3_3DInputRect == Rectangle.Empty) || (_mfd3_3DInputRect == Rectangle.Empty))
                                             {
@@ -11316,6 +11321,7 @@ namespace MFDExtractor
                                 hud3DImageSourceRectangle.X = Convert.ToInt32(tokens[10]);
                                 hud3DImageSourceRectangle.Y = Convert.ToInt32(tokens[11]);
                                 hud3DImageSourceRectangle.Width = Math.Abs(Convert.ToInt32(tokens[12]) - hud3DImageSourceRectangle.X);
+
                                 hud3DImageSourceRectangle.Height = Math.Abs(Convert.ToInt32(tokens[13]) - hud3DImageSourceRectangle.Y);
                             }
                             catch (Exception e)
@@ -11496,6 +11502,76 @@ namespace MFDExtractor
                         return file;
                     }
                 }
+
+
+
+
+
+
+                path = basePath + @"\..\..\Data\art\ckptartn";
+                dir = new DirectoryInfo(path);
+                if (dir.Exists)
+                {
+                    DirectoryInfo[] subDirs = dir.GetDirectories();
+                    FileInfo file = null;
+                    foreach (DirectoryInfo thisDir in subDirs)
+                    {
+                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
+                        if (file.Exists)
+                        {
+                            try
+                            {
+                                using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                                {
+                                    fs.Close();
+                                }
+                            }
+                            catch (System.IO.IOException)
+                            {
+                                return file;
+                            }
+                        }
+                    }
+
+                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
+                    if (file.Exists)
+                    {
+                        return file;
+                    }
+                }
+
+                path = basePath + @"\..\..\Data\art\ckptart";
+                dir = new DirectoryInfo(path);
+                if (dir.Exists)
+                {
+                    DirectoryInfo[] subDirs = dir.GetDirectories();
+                    FileInfo file = null;
+                    foreach (DirectoryInfo thisDir in subDirs)
+                    {
+                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
+                        if (file.Exists)
+                        {
+                            try
+                            {
+                                using (FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+                                {
+                                    fs.Close();
+                                }
+                            }
+                            catch (System.IO.IOException)
+                            {
+                                return file;
+                            }
+                        }
+                    }
+
+                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
+                    if (file.Exists)
+                    {
+                        return file;
+                    }
+                }
+
             }
             return null;
         }
