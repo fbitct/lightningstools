@@ -166,5 +166,15 @@ namespace SimLinkup.UI
             // Perform the sort with these new sort options.
             lvSignals.Sort();
         }
+
+        private void cmdOK_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void cmdCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

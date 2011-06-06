@@ -9,7 +9,6 @@ namespace SimLinkup.Scripting
     {
         private IHardwareSupportModule[] _hsms;
         private SimSupportModule[] _ssms;
-
         public SimSupportModule[] SimSupportModules
         {
             get { return _ssms; }

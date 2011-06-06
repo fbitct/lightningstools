@@ -7,7 +7,7 @@ namespace SimLinkup.UI
 {
     public partial class frmMain : Form
     {
-        private Runtime.Runtime _runtime;
+        public static Runtime.Runtime SharedRuntime;
 
         public frmMain()
         {
@@ -71,20 +71,20 @@ namespace SimLinkup.UI
         private void CreateAndStartRuntime()
         {
             CreateRuntime();
-            _runtime.Start();
+            SharedRuntime.Start();
         }
 
         private void CreateRuntime()
         {
-            if (_runtime != null) StopAndDisposeRuntime();
-            _runtime = new Runtime.Runtime();
+            if (SharedRuntime != null) StopAndDisposeRuntime();
+            SharedRuntime = new Runtime.Runtime();
         }
 
         private void StopAndDisposeRuntime()
         {
-            if (_runtime != null)
+            if (SharedRuntime != null)
             {
-                if (_runtime.IsRunning)
+                if (SharedRuntime.IsRunning)
                 {
                     Stop();
                 }
@@ -94,20 +94,20 @@ namespace SimLinkup.UI
 
         private void DisposeRuntime()
         {
-            if (_runtime != null)
+            if (SharedRuntime != null)
             {
-                Common.Util.DisposeObject(_runtime);
-                _runtime = null;
+                Common.Util.DisposeObject(SharedRuntime);
+                SharedRuntime = null;
             }
         }
 
         private void Stop()
         {
-            if (_runtime != null && _runtime.IsRunning)
+            if (SharedRuntime != null && SharedRuntime.IsRunning)
             {
-                _runtime.Stop();
-                Common.Util.DisposeObject(_runtime);
-                _runtime = null;
+                SharedRuntime.Stop();
+                Common.Util.DisposeObject(SharedRuntime);
+                SharedRuntime = null;
             }
             btnStop.Enabled = false;
             mnuActionsStop.Enabled = false;
@@ -134,7 +134,7 @@ namespace SimLinkup.UI
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (_runtime != null && _runtime.IsRunning)
+            if (SharedRuntime != null && SharedRuntime.IsRunning)
             {
                 Stop();
             }
@@ -236,8 +236,13 @@ namespace SimLinkup.UI
             {
                 CreateRuntime();
                 var chooser = new SignalPicker();
-                chooser.ScriptingContext = _runtime.ScriptingContext;
-                chooser.ShowDialog(this);
+                chooser.ScriptingContext = SharedRuntime.ScriptingContext;
+                DialogResult result = chooser.ShowDialog(this);
+                if ((result & DialogResult.OK) == 0)
+                {
+                    
+                }
+
             }
             finally
             {

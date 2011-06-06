@@ -141,6 +141,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 analogSignalsToReturn.Add(thisSignal);
             }
             analogSignals = analogSignalsToReturn.ToArray();
+            Initialize();
         }
 
         private void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
@@ -156,17 +157,22 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 {
                     _device.SetDacChannelDataValueA((ChannelAddress) outputSignal.Index.Value + 8,
                                                     (ushort) (outputSignal.State*0xFFFF));
+                    Synchronize();
                 }
             }
         }
-
-        public override void Synchronize()
+        private void Initialize()
         {
             foreach (var signal in _analogOutputSignals)
             {
                 UpdateOutputSignal(signal);
             }
-            if (_device != null)
+            Synchronize();
+        }
+        public override void Synchronize()
+        {
+
+            if (_device != null && SimLinkup.UI.frmMain.SharedRuntime !=null && !SimLinkup.UI.frmMain.SharedRuntime.AreOutputModuleUpdatesInhibited)
             {
                 _device.UpdateAllDacOutputs();
             }

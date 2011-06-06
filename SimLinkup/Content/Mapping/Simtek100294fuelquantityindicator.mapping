@@ -3,44 +3,56 @@
   <SignalMappings>
 
     <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM F4 SIM VALUES TO ASTRONAUTICS ADI HARDWARE SUPPORT MODULE INPUTS -->
+    <!-- MAPPINGS FROM F4 SIM VALUES TO SIMTEK HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
-    <!-- PITCH DEGREES -->
-    <SignalMapping>
-      <!-- F4 ADI PITCH DEGREES OUTPUT-->
+    <!-- TOTAL FUEL (LBS) -->
+     <SignalMapping>
+      <!-- F4 TOTAL FUEL OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_ADI__PITCH_DEGREES</Id>
+        <Id>F4_FUEL_QTY__TOTAL_FUEL_LBS</Id>
       </Source>
-      <!-- ASTRONAUTICS ADI PITCH DEGREES INPUT-->
+      <!-- SIMTEK TOTAL FUEL INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>12871_Pitch_From_Sim</Id>
+        <Id>100294_Total_Fuel_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- ROLL DEGREES -->
+    <!-- A/L FUEL (LBS) -->
     <SignalMapping>
-      <!-- F4 ADI ROLL DEGREES OUTPUT -->
+      <!-- F4 A/L FUEL OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_ADI__ROLL_DEGREES</Id>
+        <Id>F4_FUEL_QTY__AFT_QTY_LBS</Id>
       </Source>
-      <!-- ASTRONAUTICS ADI ROLL DEGREES INPUT -->
+      <!-- SIMTEK A/L FUEL INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>12871_Roll_From_Sim</Id>
+        <Id>100294_AftAndLeft_Fuel_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- F/R FUEL (LBS) -->
+    <SignalMapping>
+      <!-- F4 F/R FUEL OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_FUEL_QTY__FOREWARD_QTY_LBS</Id>
+      </Source>
+      <!-- SIMTEK F/R FUEL INPUT-->
+      <Destination xsi:type="AnalogSignal">
+        <Id>100294_ForeAndRight_Fuel_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
 
-
     <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM ASTRONAUTICS HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
+    <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
     <!-- *********************************************************************-->
-    <!-- ROLL (SIN ) -->
+    <!-- TOTAL FUEL COUNTER  -->
     <SignalMapping>
-      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE ROLL (SIN) OUTPUT -->
+      <!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE TOTAL FUEL COUNTER OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>12871_Roll_SIN_To_Instrument</Id>
+        <Id>100294_Counter_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 7 -->
       <Destination xsi:type="AnalogSignal">
@@ -49,11 +61,11 @@
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- ROLL (COS) -->
+    <!-- AFT/LEFT NEEDLE -->
     <SignalMapping>
-      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE ROLL (COS) OUTPUT -->
+      <!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE AFT/LEFT NEEDLE OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>12871_Roll_COS_To_Instrument</Id>
+        <Id>100294_AL_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 8 -->
       <Destination xsi:type="AnalogSignal">
@@ -62,12 +74,11 @@
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-
-    <!-- PITCH (SIN) -->
+    <!-- FORE/RIGHT NEEDLE -->
     <SignalMapping>
-      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE PITCH (SIN) OUTPUT -->
+      <!-- SIMTEK FUEL QUANTITY INDICATOR HARDWARE SUPPORT MODULE FORE/RIGHT NEEDLE OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>12871_Pitch_SIN_To_Instrument</Id>
+        <Id>100294_FR_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 9 -->
       <Destination xsi:type="AnalogSignal">
@@ -75,18 +86,6 @@
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
-
-    <!-- PITCH (COS) -->
-    <SignalMapping>
-      <!-- ASTRONAUTICS ADI HARDWARE SUPPORT MODULE PITCH (COS) OUTPUT -->
-      <Source xsi:type="AnalogSignal">
-        <Id>12871_Pitch_COS_To_Instrument</Id>
-      </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 10 -->
-      <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][10]</Id>
-      </Destination>
-      <MappingType>StraightThrough</MappingType>
-    </SignalMapping>
+    
   </SignalMappings>
 </MappingProfile>

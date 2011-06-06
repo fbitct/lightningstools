@@ -264,14 +264,6 @@ namespace SimLinkup.HardwareSupport.Astronautics
             {
                 var pitchInputDegrees = _pitchInputSignal.State;
 
-                var delta = previousPitchDegrees - pitchInputDegrees;
-                const double maxRate = 0.25;
-                if (Math.Abs(delta) > maxRate)
-                {
-                    pitchInputDegrees = previousPitchDegrees + (Math.Sign(delta)*maxRate);
-                }
-
-
                 double pitchSinOutputValue = 0;
                 double pitchCosOutputValue = 0;
 
@@ -313,18 +305,14 @@ namespace SimLinkup.HardwareSupport.Astronautics
             if (_rollInputSignal != null)
             {
                 var rollInputDegrees = _rollInputSignal.State;
-                var delta = previousRollDegrees - rollInputDegrees;
-                const double maxRate = 0.25;
-                if (Math.Abs(delta) > maxRate)
-                {
-                    rollInputDegrees = previousRollDegrees + (Math.Sign(delta)*maxRate);
-                }
+                
                 double rollSinOutputValue = 0;
                 double rollCosOutputValue = 0;
 
                 rollSinOutputValue = 10.0000*Math.Sin(rollInputDegrees*Constants.RADIANS_PER_DEGREE);
                 rollCosOutputValue = 10.0000*Math.Cos(rollInputDegrees*Constants.RADIANS_PER_DEGREE);
 
+                SimLinkup.UI.frmMain.SharedRuntime.InhibitOutputModuleUpdates();
                 if (_rollSinOutputSignal != null)
                 {
                     if (rollSinOutputValue < -10)
@@ -353,6 +341,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                     _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000)/20.0000);
                 }
+                SimLinkup.UI.frmMain.SharedRuntime.AllowOutputModuleUpdates();
             }
         }
 

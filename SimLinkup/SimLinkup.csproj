@@ -92,6 +92,10 @@
     <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10058101HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10058101HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101091HardwareSupportModuleConfig.cs" />
@@ -160,16 +164,16 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek10058101angleofattack2.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek10058102verticalvelocity2.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek100181altimeter.mapping">
@@ -190,13 +194,7 @@
     <None Include="Content\Mapping\Simtek10058102verticalvelocity1.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\Astronautics128710primaryADI1.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Content\Mapping\Astronautics128710primaryADI2.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek10033501standbyADI2.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\AMI900157501angleofattack.mapping">

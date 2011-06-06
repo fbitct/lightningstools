@@ -5,6 +5,8 @@
 <!--    <Module>SimLinkup.HardwareSupport.DirectInput.DirectInputHardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>-->
     <Module>SimLinkup.HardwareSupport.AnalogDevices.AnalogDevicesHardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100194HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
+    <Module>SimLinkup.HardwareSupport.Simtek.Simtek100294HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
+    <Module>SimLinkup.HardwareSupport.Simtek.Simtek100295HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100207HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100216HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100285HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>

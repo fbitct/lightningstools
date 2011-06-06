@@ -16,6 +16,7 @@ namespace SimLinkup.Runtime
     {
         #region Class variables
 
+        private bool _outputModuleUpdatesInhibited=false;
         private static readonly ILog _log = LogManager.GetLogger(typeof (Runtime));
 
         #endregion
@@ -56,7 +57,7 @@ namespace SimLinkup.Runtime
 
         private void MainLoop()
         {
-            const int MIN_LOOP_TIME = 1; //milliseconds
+            const int MIN_LOOP_TIME = 0; //milliseconds
             _keepRunning = true;
             _isRunning = true;
             var rnd = new Random();
@@ -65,7 +66,7 @@ namespace SimLinkup.Runtime
                 var startTime = DateTime.Now;
                 UpdateSimSignals();
                 Application.DoEvents();
-                Synchronize();
+                AllowOutputModuleUpdates();
                 Application.DoEvents();
                 if (_loopScripts != null && _loopScripts.Length > 0)
                 {
@@ -76,7 +77,7 @@ namespace SimLinkup.Runtime
                 var timedelta = endTime.Subtract(startTime);
                 if (timedelta.Milliseconds < MIN_LOOP_TIME)
                 {
-                    Thread.Sleep(MIN_LOOP_TIME);
+                    //Thread.Sleep(MIN_LOOP_TIME);
                 }
             }
             _isRunning = false;
@@ -201,6 +202,7 @@ namespace SimLinkup.Runtime
 
             LoadScripts();
             InitializeMappings();
+            _outputModuleUpdatesInhibited = false;
             _initialized = true;
         }
 
@@ -392,6 +394,19 @@ namespace SimLinkup.Runtime
                 }
                 _teardownScripts = teardownScripts.ToArray();
             }
+        }
+        public bool AreOutputModuleUpdatesInhibited
+        {
+            get { return _outputModuleUpdatesInhibited; }
+        }
+        public void InhibitOutputModuleUpdates()
+        {
+            _outputModuleUpdatesInhibited = true;
+        }
+        public void AllowOutputModuleUpdates() 
+        {
+            _outputModuleUpdatesInhibited = false;
+            Synchronize();
         }
     }
 }
