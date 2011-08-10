@@ -160,7 +160,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Pitch (Degrees) Value from Simulation";
+            thisSignal.FriendlyName = "Pitch (Degrees)";
             thisSignal.Id = "12871_Pitch_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -174,7 +174,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Roll (Degrees) Value from Simulation";
+            thisSignal.FriendlyName = "Roll (Degrees)";
             thisSignal.Id = "12871_Roll_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -196,7 +196,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Pitch SIN Signal To Instrument";
+            thisSignal.FriendlyName = "Pitch SIN";
             thisSignal.Id = "12871_Pitch_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -210,7 +210,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Pitch COS Signal To Instrument";
+            thisSignal.FriendlyName = "Pitch COS";
             thisSignal.Id = "12871_Pitch_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -224,7 +224,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Roll SIN Signal To Instrument";
+            thisSignal.FriendlyName = "Roll SIN";
             thisSignal.Id = "12871_Roll_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -238,7 +238,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Roll COS Signal To Instrument";
+            thisSignal.FriendlyName = "Roll COS";
             thisSignal.Id = "12871_Roll_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;

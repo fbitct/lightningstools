@@ -184,7 +184,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Total Fuel (Pounds) Value from Simulation";
+            thisSignal.FriendlyName = "Total Fuel (Pounds)";
             thisSignal.Id = "100294_Total_Fuel_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -197,7 +197,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "A/L Fuel Value from Simulation";
+            thisSignal.FriendlyName = "A/L Fuel";
             thisSignal.Id = "100294_AftAndLeft_Fuel_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -210,7 +210,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "F/R Fuel Value from Simulation";
+            thisSignal.FriendlyName = "F/R Fuel";
             thisSignal.Id = "100294_ForeAndRight_Fuel_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -232,7 +232,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "F/R Signal To Instrument";
+            thisSignal.FriendlyName = "F/R";
             thisSignal.Id = "100294_FR_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -246,7 +246,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "A/L Signal To Instrument";
+            thisSignal.FriendlyName = "A/L";
             thisSignal.Id = "100294_AL_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -260,7 +260,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Counter Signal To Instrument";
+            thisSignal.FriendlyName = "Counter";
             thisSignal.Id = "100294_Counter_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;

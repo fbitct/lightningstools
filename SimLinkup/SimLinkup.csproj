@@ -163,6 +163,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\Signals.resx">
+      <DependentUpon>Signals.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -238,6 +241,12 @@
     </Compile>
     <Compile Include="UI\SignalPicker.Designer.cs">
       <DependentUpon>SignalPicker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Signals.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Signals.Designer.cs">
+      <DependentUpon>Signals.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
   </ItemGroup>

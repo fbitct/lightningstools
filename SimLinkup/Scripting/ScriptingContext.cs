@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.SimSupport;
@@ -33,15 +34,7 @@ namespace SimLinkup.Scripting
         {
             get
             {
-                var toReturn = new List<DigitalSignal>();
-                foreach (var value in Values)
-                {
-                    if (value is DigitalSignal)
-                    {
-                        toReturn.Add((DigitalSignal) value);
-                    }
-                }
-                return toReturn.ToArray();
+                return Values.OfType<DigitalSignal>().ToArray();
             }
         }
 
@@ -50,13 +43,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new SignalList<AnalogSignal>();
-                foreach (var value in Values)
-                {
-                    if (value is AnalogSignal)
-                    {
-                        toReturn.Add((AnalogSignal) value);
-                    }
-                }
+                toReturn.AddRange(Values.OfType<AnalogSignal>());
                 return toReturn;
             }
         }
@@ -66,13 +53,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new SignalList<TextSignal>();
-                foreach (var value in Values)
-                {
-                    if (value is TextSignal)
-                    {
-                        toReturn.Add((TextSignal) value);
-                    }
-                }
+                toReturn.AddRange(Values.OfType<TextSignal>());
                 return toReturn;
             }
         }
@@ -82,13 +63,7 @@ namespace SimLinkup.Scripting
             get
             {
                 var toReturn = new SignalList<Signal>();
-                foreach (var value in Values)
-                {
-                    if (value is Signal)
-                    {
-                        toReturn.Add((Signal) value);
-                    }
-                }
+                toReturn.AddRange(Values.OfType<Signal>());
                 return toReturn;
             }
         }
@@ -141,9 +116,8 @@ namespace SimLinkup.Scripting
         private void AddSimInputsAndOutputs()
         {
             if (SimSupportModules == null || SimSupportModules.Length == 0) return;
-            foreach (var ssm in SimSupportModules)
+            foreach (var ssm in SimSupportModules.Where(ssm => ssm != null))
             {
-                if (ssm == null) continue;
                 if (ssm.SimOutputs != null)
                 {
                     foreach (var output in ssm.SimOutputs.Values)

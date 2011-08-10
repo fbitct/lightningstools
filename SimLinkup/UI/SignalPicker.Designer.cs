@@ -148,6 +148,7 @@
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Choose a signal";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.SignalPicker_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);

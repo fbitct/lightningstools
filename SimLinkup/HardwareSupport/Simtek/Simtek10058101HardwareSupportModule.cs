@@ -160,7 +160,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "AOA Signal To Instrument";
+            thisSignal.FriendlyName = "AOA";
             thisSignal.Id = "10058101_AOA_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -174,7 +174,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "AOA Value from Simulation";
+            thisSignal.FriendlyName = "AOA";
             thisSignal.Id = "10058101_AOA_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -188,7 +188,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new DigitalSignal();
             thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "AOA Power Off Flag Value from Simulation";
+            thisSignal.FriendlyName = "AOA Power Off Flag";
             thisSignal.Id = "10058101_AOA_Power_Off_Flag_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;

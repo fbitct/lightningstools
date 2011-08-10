@@ -235,10 +235,9 @@ namespace SimLinkup.UI
             try
             {
                 CreateRuntime();
-                var chooser = new SignalPicker();
-                chooser.ScriptingContext = SharedRuntime.ScriptingContext;
-                DialogResult result = chooser.ShowDialog(this);
-                if ((result & DialogResult.OK) == 0)
+                var form= new Signals {Mappings = SharedRuntime.Mappings};
+                var result = form.ShowDialog(this);
+                if ((result == DialogResult.OK))
                 {
                     
                 }

@@ -126,7 +126,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "DAC Outputs";
-                thisSignal.FriendlyName = string.Format("DAC Output #{0}", i);
+                thisSignal.FriendlyName = string.Format("DAC #{0}", i);
                 thisSignal.Id = string.Format("AnalogDevices_AD536x/537x__DAC_OUTPUT[{0}][{1}]", deviceIndex, i);
                 thisSignal.Index = i;
                 thisSignal.PublisherObject = this;

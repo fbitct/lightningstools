@@ -147,7 +147,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Altitude (Indicated) Value from Simulation";
+            thisSignal.FriendlyName = "Altitude (Indicated)";
             thisSignal.Id = "100285_Altitude_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -169,7 +169,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Fine SIN Signal To Instrument";
+            thisSignal.FriendlyName = "Altitude Fine SIN";
             thisSignal.Id = "100285_Altitude_Fine_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -183,7 +183,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Fine COS Signal To Instrument";
+            thisSignal.FriendlyName = "Altitude Fine COS";
             thisSignal.Id = "100285_Altitude_Fine_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -197,7 +197,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Coarse SIN Signal To Instrument";
+            thisSignal.FriendlyName = "Altitude Coarse SIN";
             thisSignal.Id = "100285_Altitude_Coarse_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -211,7 +211,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Coarse COS Signal To Instrument";
+            thisSignal.FriendlyName = "Altitude Coarse COS";
             thisSignal.Id = "100285_Altitude_Coarse_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Common.HardwareSupport;
@@ -31,7 +32,7 @@ namespace SimLinkup.Runtime
         private ScriptingContext _scriptingContext;
         private Script[] _setupScripts;
         private Script[] _teardownScripts;
-
+        private readonly List<SignalMapping> _mappings = new List<SignalMapping>();
         #endregion
 
         public Runtime()
@@ -48,7 +49,7 @@ namespace SimLinkup.Runtime
         {
             get { return _scriptingContext; }
         }
-
+        public IEnumerable<SignalMapping> Mappings { get { return _mappings; } }
         public void Start()
         {
             RunSetupScripts();
@@ -193,12 +194,11 @@ namespace SimLinkup.Runtime
         private void Initialize()
         {
             if (_initialized) return;
-            _scriptingContext = new ScriptingContext();
-
-            //GetRegisteredHardwareSupportModules();
-
-            _scriptingContext.SimSupportModules = GetRegisteredSimSupportModules();
-            _scriptingContext.HardwareSupportModules = GetRegisteredHardwareSupportModules();
+            _scriptingContext = new ScriptingContext
+                                    {
+                                        SimSupportModules = GetRegisteredSimSupportModules(),
+                                        HardwareSupportModules = GetRegisteredHardwareSupportModules()
+                                    };
 
             LoadScripts();
             InitializeMappings();
@@ -209,24 +209,7 @@ namespace SimLinkup.Runtime
         private Signal ResolveSignal(Signal signalToResolve)
         {
             if (signalToResolve == null) return null;
-            foreach (var signal in ScriptingContext.AllSignals)
-            {
-                if (
-                    signal.Id != null
-                    &&
-                    signalToResolve.Id != null
-                    &&
-                    signal.Id.Trim().Equals
-                        (
-                            signalToResolve.Id.Trim(),
-                            StringComparison.InvariantCultureIgnoreCase
-                        )
-                    )
-                {
-                    return signal;
-                }
-            }
-            return null;
+            return ScriptingContext.AllSignals.FirstOrDefault(signal => signal.Id != null && signalToResolve.Id != null && signal.Id.Trim().Equals(signalToResolve.Id.Trim(), StringComparison.InvariantCultureIgnoreCase));
         }
 
         private void InitializeMappings()
@@ -254,14 +237,14 @@ namespace SimLinkup.Runtime
                                     profileToLoad));
                             continue;
                         }
+                        _mappings.Add(mapping);
+
                         if (mapping.Source is AnalogSignal)
                         {
                             var mappingSource = mapping.Source as AnalogSignal;
                             var mappingDestination = mapping.Destination as AnalogSignal;
 
-                            var passthru = new AnalogPassthrough();
-                            passthru.In = mappingSource;
-                            passthru.Out = mappingDestination;
+                            var passthru = new AnalogPassthrough {In = mappingSource, Out = mappingDestination};
                             passthru.Refresh();
                             _passthroughs.Add(passthru);
                         }
@@ -269,9 +252,7 @@ namespace SimLinkup.Runtime
                         {
                             var mappingSource = mapping.Source as DigitalSignal;
                             var mappingDestination = (DigitalSignal) mapping.Destination;
-                            var passthru = new DigitalPassthrough();
-                            passthru.In = mappingSource;
-                            passthru.Out = mappingDestination;
+                            var passthru = new DigitalPassthrough {In = mappingSource, Out = mappingDestination};
                             passthru.Refresh();
                             _passthroughs.Add(passthru);
                         }
@@ -279,9 +260,7 @@ namespace SimLinkup.Runtime
                         {
                             var mappingSource = mapping.Source as TextSignal;
                             var mappingDestination = (TextSignal) mapping.Destination;
-                            var passthru = new TextPassthrough();
-                            passthru.In = mappingSource;
-                            passthru.Out = mappingDestination;
+                            var passthru = new TextPassthrough {In = mappingSource, Out = mappingDestination};
                             passthru.Refresh();
                             _passthroughs.Add(passthru);
                         }
@@ -324,14 +303,7 @@ namespace SimLinkup.Runtime
                 HardwareSupportModuleRegistry.Load(Path.Combine(appDirectory, "HardwareSupportModule.registry"));
 
             var modules = hsmRegistry.GetInstances();
-            if (modules != null)
-            {
-                return modules.ToArray();
-            }
-            else
-            {
-                return null;
-            }
+            return modules != null ? modules.ToArray() : null;
         }
 
         private void LoadScripts()

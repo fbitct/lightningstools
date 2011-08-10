@@ -80,7 +80,6 @@ namespace SimLinkup
             // Set the unhandled exception mode to force all Windows Forms errors to go through
             // our handler.
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-
             // Add the event handler for handling non-UI thread exceptions to the event. 
             AppDomain.CurrentDomain.UnhandledException +=
                 CurrentDomain_UnhandledException;

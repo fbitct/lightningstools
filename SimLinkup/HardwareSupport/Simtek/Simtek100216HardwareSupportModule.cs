@@ -140,7 +140,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "FTIT Signal To Instrument";
+            thisSignal.FriendlyName = "FTIT";
             thisSignal.Id = "100216_FTIT_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -155,7 +155,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "FTIT Value from Simulation";
+            thisSignal.FriendlyName = "FTIT";
             thisSignal.Id = "100216_FTIT_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;

@@ -141,7 +141,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Oil  Pressure Signal To Instrument";
+            thisSignal.FriendlyName = "Oil  Pressure";
             thisSignal.Id = "101091_Oil_Pressure_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -155,7 +155,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Oil  Pressure Value from Simulation";
+            thisSignal.FriendlyName = "Oil Pressure";
             thisSignal.Id = "101091_Oil_Pressure_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
