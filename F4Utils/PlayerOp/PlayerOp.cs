@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace F4Utils.PlayerOp
 {
@@ -22,7 +23,6 @@ namespace F4Utils.PlayerOp
         public int DispFlags;
         public int DispMaxTerrainLevel;
         public float DispTerrainDist;
-        public int DispTextureLevel;
         public int DynamicHeadSensitivity;
         public int GeneralFlags;
         public float GrassDensity;
@@ -59,7 +59,7 @@ namespace F4Utils.PlayerOp
         public bool TrackIR_VE;
         public float TreeDensity;
         public bool UIComms;
-        public char[] VersionString = new char[32];
+        public byte[] VersionString = new byte[32];
         public int WeatherCondition;
         public bool clickablePitMode;
         public bool enableAxisShaping;
@@ -67,10 +67,10 @@ namespace F4Utils.PlayerOp
         public bool enableMouseLook;
         public bool infoBar;
         public Guid joystick;
-        public char[] keyfile = new char[PL_FNAME_LEN];
+        public byte[] keyfile = new byte[PL_FNAME_LEN];
         public int pit3DPanMode;
         public bool rollLinkedNWS;
-        public char skycol;
+        public byte skycol;
         public bool sticky3dPitSnapViews;
         public bool subTitles;
         public bool userMessages;
@@ -84,7 +84,6 @@ namespace F4Utils.PlayerOp
             using (var br = new BinaryReader(stream))
             {
                 DispFlags = br.ReadInt32();
-                DispTextureLevel = br.ReadInt32();
                 DispTerrainDist = br.ReadSingle();
                 DispMaxTerrainLevel = br.ReadInt32();
                 ObjFlags = br.ReadInt32();
@@ -95,6 +94,7 @@ namespace F4Utils.PlayerOp
                 ACMIFileSize = br.ReadInt32();
                 SfxLevel = br.ReadSingle();
                 PlayerBubble = br.ReadSingle();
+
                 HDRBlur = br.ReadSingle();
                 HDRBloom = br.ReadSingle();
                 TreeDensity = br.ReadSingle();
@@ -122,16 +122,15 @@ namespace F4Utils.PlayerOp
                 {
                     GroupVol[i] = br.ReadInt32();
                 }
-                for (var i = 0; i < (int) SoundGroups.NUM_SOUND_GROUPS; i++)
+                for (var i = 0; i < (int)SoundGroups.NUM_SOUND_GROUPS; i++)
                 {
                     TempVol[i] = br.ReadInt32();
                 }
                 IVCvsAIBalance = br.ReadInt32();
                 Realism = br.ReadSingle();
-                keyfile = br.ReadChars(PL_FNAME_LEN);
+                keyfile = br.ReadBytes(PL_FNAME_LEN);
                 joystick = new Guid(br.ReadBytes(16));
-                skycol = br.ReadChar();
-                br.ReadBytes(3); //align to int32
+                skycol = br.ReadByte();
                 PlayerRadioVoice = br.ReadBoolean();
                 UIComms = br.ReadBoolean();
                 infoBar = br.ReadBoolean();
@@ -152,7 +151,7 @@ namespace F4Utils.PlayerOp
                 pit3DPanMode = br.ReadInt32();
                 sticky3dPitSnapViews = br.ReadBoolean();
                 userMessages = br.ReadBoolean();
-                VersionString = br.ReadChars(32);
+                VersionString = br.ReadBytes(32);
                 SoundFlags = br.ReadInt32();
                 SoundExtAttenuation = br.ReadInt32();
             }

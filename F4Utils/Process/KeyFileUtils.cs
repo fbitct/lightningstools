@@ -145,7 +145,7 @@ namespace F4Utils.Process
             }
             return toReturn;
         }
-
+       
         private static string GetKeyFileNameFromPlayerOptsRaw(FalconDataFormats? currentDataFormat,
                                                               string playerOptionsFilePath)
         {
@@ -156,7 +156,7 @@ namespace F4Utils.Process
                 var startLoc = 159;
                 if (currentDataFormat.HasValue && (currentDataFormat.Value == FalconDataFormats.BMS4))
                 {
-                    startLoc = 167;
+                    startLoc = 231;
                 }
                 else if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.FreeFalcon5)
                 {
