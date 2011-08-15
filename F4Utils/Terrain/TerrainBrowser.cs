@@ -59,17 +59,23 @@ namespace F4Utils.Terrain
         public void LoadCurrentTheaterTerrainDatabase()
         {
             if (_terrainLoaded || _disposing || _isDisposed) return;
-
+            var falconFormat = Process.Util.DetectFalconFormat();
+            if (!falconFormat.HasValue) return;
             //TODO: check these against other theaters, for correct way to read theater installation locations
-            var f4BasePath = Process.Util.GetFalconExePath();
-            if (f4BasePath == null) return;
-            var f4BasePathFI = new FileInfo(f4BasePath);
-            f4BasePath = f4BasePathFI.DirectoryName;
-            var currentTheaterTdf = GetCurrentTheaterDotTdf();
+            var exePath = Process.Util.GetFalconExePath();
+            if (exePath == null) return;
+            var f4BasePathFI = new FileInfo(exePath);
+            exePath = f4BasePathFI.DirectoryName + Path.DirectorySeparatorChar;
+            var currentTheaterTdf = GetCurrentTheaterDotTdf(exePath, falconFormat.Value);
             if (currentTheaterTdf == null) return;
             //string theaterName = currentTheaterTdf.theaterName//DetectCurrentTheaterName();
             //if (theaterName == null) return;
-            var terrainBasePath = f4BasePath + Path.DirectorySeparatorChar + currentTheaterTdf.terrainDir;
+            var dataPath = exePath;
+            if (falconFormat.Value == FalconDataFormats.BMS4)
+            {
+                dataPath = exePath + "..\\..\\data";
+            }
+            var terrainBasePath = dataPath + Path.DirectorySeparatorChar + currentTheaterTdf.terrainDir;
             _currentTheaterTextureBaseFolderPath = terrainBasePath + Path.DirectorySeparatorChar + "texture";
             var theaterDotMapFilePath = terrainBasePath + Path.DirectorySeparatorChar + "terrain" +
                                         Path.DirectorySeparatorChar + "THEATER.MAP";
@@ -203,7 +209,7 @@ namespace F4Utils.Terrain
             {
                 var fileInfo = new FileInfo(_farTilesDotDdsFilePath);
                 var useDDS = true;
-                if (!fileInfo.Exists)
+                if (!fileInfo.Exists) 
                 {
                     useDDS = false;
                     fileInfo = new FileInfo(_farTilesDotRawFilePath);
@@ -211,7 +217,6 @@ namespace F4Utils.Terrain
                 }
 
 
-                var totalBytes = fileInfo.Length;
                 Bitmap bitmap;
                 if (useDDS)
                 {
@@ -344,8 +349,6 @@ namespace F4Utils.Terrain
             var col = postCol;
             var row = postRow;
 
-            var lodInfo = _theaterDotLxFiles[lod];
-
             ClampElevationPostCoordinates(ref col, ref row, lod);
             if (postCol != col || postRow != row)
             {
@@ -383,8 +386,6 @@ namespace F4Utils.Terrain
                     var topY = (int) (bigTexture.Height - (thisChunkYIndex + 1)*(bigTexture.Height/chunksWide));
                     var bottomY = (int) (bigTexture.Height - thisChunkYIndex*(bigTexture.Height/chunksWide)) - 1;
 
-                    var sizeToReturn = new Size(bigTexture.Width/chunksWide, bigTexture.Height/chunksWide);
-                    var destRect = new Rectangle(0, 0, sizeToReturn.Width, sizeToReturn.Height);
                     var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
 
                     toReturn = (Bitmap) Common.Imaging.Util.CropBitmap(bigTexture, sourceRect);
@@ -493,7 +494,6 @@ namespace F4Utils.Terrain
                             lRecord = lodInfo.L[lIndex];
                             var xCoord = (blockCol*postsAcross) + postCol;
                             var yCoord = height - 1 - (blockRow*postsAcross) - postRow;
-                            int elevation = lRecord.Elevation;
                             *((byte*) startPtr + (yCoord*width) + xCoord) = lRecord.Pallete;
                         }
                     }
@@ -568,12 +568,9 @@ namespace F4Utils.Terrain
                                 {
                                     var baseDir = (string) toRead.GetValue("baseDir", null);
                                     var exePathFI = new FileInfo(exePath);
-                                    var exeDir = exePathFI.Directory.FullName;
-                                    if (baseDir != null && string.Compare(baseDir, exeDir, true) == 0)
+                                    if (baseDir != null && exePathFI.Directory.Parent.Parent.FullName.Equals(baseDir))
                                     {
-                                        var theaterDir = (string) toRead.GetValue("theaterDir", null);
-                                        var theaterDirInfo = new DirectoryInfo(theaterDir);
-                                        theaterName = theaterDirInfo.Name;
+                                        theaterName= (string) toRead.GetValue("curTheater", null);
                                         break;
                                     }
                                 }
@@ -605,39 +602,50 @@ namespace F4Utils.Terrain
             return theaterName;
         }
 
-        private TheaterDotTdfFileInfo GetCurrentTheaterDotTdf()
+        private TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath, FalconDataFormats version)
         {
-            var exePath = Process.Util.GetFalconExePath();
-
+            if (exePath == null) return null;
             var currentTheaterName = DetectCurrentTheaterName();
-            if (exePath != null && currentTheaterName != null)
+            if (currentTheaterName == null) return null;
+            var f4BaseDir = new FileInfo(exePath).DirectoryName;
+            FileInfo theaterDotLstFI;
+            
+            theaterDotLstFI = new FileInfo(f4BaseDir + Path.DirectorySeparatorChar + "theater.lst");
+            if (!theaterDotLstFI.Exists)
             {
-                var f4BaseDir = new FileInfo(exePath).DirectoryName;
-                var theaterDotLstFI = new FileInfo(f4BaseDir + Path.DirectorySeparatorChar + "theater.lst");
-                if (!theaterDotLstFI.Exists)
+                theaterDotLstFI =
+                    new FileInfo(f4BaseDir + Path.DirectorySeparatorChar +
+                                    "terrdata\\theaterdefinition\\theater.lst");
+            }
+            if (!theaterDotLstFI.Exists)
+            {
+                theaterDotLstFI =
+                    new FileInfo(new DirectoryInfo(f4BaseDir).Parent.Parent.FullName + Path.DirectorySeparatorChar +
+                                    "data\\terrdata\\theaterdefinition\\theater.lst");
+            }
+
+            if (theaterDotLstFI.Exists)
+            {
+                using (var fs = new FileStream(theaterDotLstFI.FullName, FileMode.Open))
+                using (var sw = new StreamReader(fs))
                 {
-                    theaterDotLstFI =
-                        new FileInfo(f4BaseDir + Path.DirectorySeparatorChar +
-                                     "terrdata\\theaterdefinition\\theater.lst");
-                }
-                if (theaterDotLstFI.Exists)
-                {
-                    using (var fs = new FileStream(theaterDotLstFI.FullName, FileMode.Open))
-                    using (var sw = new StreamReader(fs))
+                    while (!sw.EndOfStream)
                     {
-                        while (!sw.EndOfStream)
+                        var thisLine = sw.ReadLine();
+                        var tdfDetailsThisLine =
+                            ReadTheaterDotTdf(f4BaseDir + Path.DirectorySeparatorChar + thisLine);
+
+                        if (tdfDetailsThisLine == null)
                         {
-                            var thisLine = sw.ReadLine();
-                            var tdfDetailsThisLine =
-                                ReadTheaterDotTdf(f4BaseDir + Path.DirectorySeparatorChar + thisLine);
-                            if (tdfDetailsThisLine != null)
+                            tdfDetailsThisLine = ReadTheaterDotTdf(f4BaseDir + Path.DirectorySeparatorChar + "..\\..\\data" + Path.DirectorySeparatorChar + thisLine);
+                        }
+                        if (tdfDetailsThisLine != null)
+                        {
+                            if (tdfDetailsThisLine.theaterName != null &&
+                                tdfDetailsThisLine.theaterName.ToLower().Trim() ==
+                                currentTheaterName.ToLower().Trim())
                             {
-                                if (tdfDetailsThisLine.theaterName != null &&
-                                    tdfDetailsThisLine.theaterName.ToLower().Trim() ==
-                                    currentTheaterName.ToLower().Trim())
-                                {
-                                    return tdfDetailsThisLine;
-                                }
+                                return tdfDetailsThisLine;
                             }
                         }
                     }
@@ -780,16 +788,12 @@ namespace F4Utils.Terrain
             var Q11East = col*feetAcross;
             float FQ11 = Q11.Elevation;
 
-            var Q21North = row*feetAcross;
             var Q21East = (col + 1)*feetAcross;
             float FQ21 = Q21.Elevation;
 
-            var Q22North = (row + 1)*feetAcross;
-            var Q22East = (col + 1)*feetAcross;
             float FQ22 = Q22.Elevation;
 
             var Q12North = (row + 1)*feetAcross;
-            var Q12East = col*feetAcross;
             float FQ12 = Q12.Elevation;
 
             //perform bilinear interpolation on the 4 outer elevation posts relative to our actual center post
