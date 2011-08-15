@@ -33,8 +33,40 @@ namespace F16CPD
         private float _trueAltitudeAboveMeanSeaLevelInFeet;
         private float _windOffsetToFlightPathMarkerDegrees;
 
-        public float MapCoordinateFeetNorth { get; set; }
-        public float MapCoordinateFeetEast { get; set; }
+        private float _mapCoordinateFeetNorth;
+        public float MapCoordinateFeetNorth
+        {
+            get { return _mapCoordinateFeetNorth; }
+            set
+            {
+                if (!float.IsInfinity(value) && !float.IsNaN(value))
+                {
+                    _mapCoordinateFeetNorth = value;
+                }
+                else
+                {
+                    _mapCoordinateFeetNorth = 0.0f;
+                }
+            }
+        }
+
+        private float _mapCoordinateFeetEast;
+        public float MapCoordinateFeetEast
+        {
+            get { return _mapCoordinateFeetEast; }
+            set
+            {
+                if (!float.IsInfinity(value) && !float.IsNaN(value))
+                {
+                    _mapCoordinateFeetEast = value;
+                }
+                else
+                {
+                    _mapCoordinateFeetEast = 0.0f;
+                }
+            }
+        }
+
         public bool HsiDisplayToFromFlag { get; set; }
 
         public string TacanChannel
@@ -43,8 +75,40 @@ namespace F16CPD
             set { _tacanChannel = value; }
         }
 
-        public float LatitudeInDecimalDegrees { get; set; }
-        public float LongitudeInDecimalDegrees { get; set; }
+        private float _latitudeInDecimalDegrees;
+        public float LatitudeInDecimalDegrees
+        {
+            get { return _latitudeInDecimalDegrees; }
+            set
+            {
+                if (!float.IsInfinity(value) && !float.IsNaN(value))
+                {
+                    _latitudeInDecimalDegrees = value;
+                }
+                else
+                {
+                    _latitudeInDecimalDegrees = 0.0f;
+                }
+            }
+        }
+
+        private float _longitudeInDecimalDegrees;
+        public float LongitudeInDecimalDegrees
+        {
+            get { return _longitudeInDecimalDegrees; }
+            set
+            {
+                if (!float.IsInfinity(value) && !float.IsNaN(value))
+                {
+                    _longitudeInDecimalDegrees = value;
+                }
+                else
+                {
+                    _longitudeInDecimalDegrees = 0.0f;
+                }
+            }
+        
+        }
 
         public int TransitionAltitudeInFeet
         {
@@ -79,6 +143,7 @@ namespace F16CPD
             get { return _indicatedAltitudeAboveMeanSeaLevelInFeet; }
             set
             {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
                 if (value < -4500) value = -4500;
                 if (value > 120000) value = 120000;
                 _indicatedAltitudeAboveMeanSeaLevelInFeet = value;
@@ -90,6 +155,7 @@ namespace F16CPD
             get { return _trueAltitudeAboveMeanSeaLevelInFeet; }
             set
             {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
                 if (value < -2500) value = -2500;
                 if (value > 120000) value = 120000;
                 _trueAltitudeAboveMeanSeaLevelInFeet = value;
@@ -101,22 +167,55 @@ namespace F16CPD
             get { return _altitudeAboveGroundLevelInFeet; }
             set
             {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
                 if (value < 0) value = 0;
                 if (value > 180000) value = 180000;
                 _altitudeAboveGroundLevelInFeet = value;
             }
         }
 
-        public float MachNumber { get; set; }
+        private float _machNumber;
+        public float MachNumber
+        {
+            get { return _machNumber; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _machNumber = value;
+            }
+        }
 
         public float IndicatedAirspeedInDecimalFeetPerSecond
         {
             get { return _indicatedAirspeedFeetPerSecond; }
-            set { _indicatedAirspeedFeetPerSecond = (float) (Math.Round(value, 1)); }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _indicatedAirspeedFeetPerSecond = (float)(Math.Round(value, 1));
+            }
         }
 
-        public float TrueAirspeedInDecimalFeetPerSecond { get; set; }
-        public float GroundSpeedInDecimalFeetPerSecond { get; set; }
+        private float _trueAirspeedInDecimalFeetPerSecond;
+        public float TrueAirspeedInDecimalFeetPerSecond
+        {
+            get { return _trueAirspeedInDecimalFeetPerSecond; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _trueAirspeedInDecimalFeetPerSecond = value;
+            }
+        }
+
+        private float _groundSpeedInDecimalFeetPerSecond;
+        public float GroundSpeedInDecimalFeetPerSecond
+        {
+            get { return _groundSpeedInDecimalFeetPerSecond; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _groundSpeedInDecimalFeetPerSecond = value;
+            }
+        }
 
         public int AutomaticLowAltitudeWarningInFeet
         {
@@ -134,6 +233,7 @@ namespace F16CPD
             get { return _barometricPressureInInchesOfMercury; }
             set
             {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
                 if (value < 27.97f) value = 27.97f;
                 if (value > 31.11f) value = 31.11f;
                 _barometricPressureInInchesOfMercury = value;
@@ -143,7 +243,11 @@ namespace F16CPD
         public float AngleOfAttackInDegrees
         {
             get { return _angleOfAttackInDegrees; }
-            set { _angleOfAttackInDegrees = value%360; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _angleOfAttackInDegrees = value % 360;
+            }
         }
 
         public float VerticalVelocityInDecimalFeetPerSecond { get; set; }
@@ -153,7 +257,8 @@ namespace F16CPD
             get { return _pitchAngleInDegrees; }
             set
             {
-                _pitchAngleInDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _pitchAngleInDegrees = value % 360;
                 if (_pitchAngleInDegrees > 90) _pitchAngleInDegrees = 90;
                 if (_pitchAngleInDegrees < -90) _pitchAngleInDegrees = -90;
             }
@@ -162,25 +267,41 @@ namespace F16CPD
         public float RollAngleInDecimalDegrees
         {
             get { return _rollAngleInDegrees; }
-            set { _rollAngleInDegrees = value%360; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _rollAngleInDegrees = value % 360;
+            }
         }
 
         public float BetaAngleInDecimalDegrees
         {
             get { return _betaAngleInDegrees; }
-            set { _betaAngleInDegrees = value%360; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _betaAngleInDegrees = value % 360;
+            }
         }
 
         public float GammaAngleInDecimalDegrees
         {
             get { return _gammaAngleInDegrees; }
-            set { _gammaAngleInDegrees = value%360; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _gammaAngleInDegrees = value % 360;
+            }
         }
 
         public float WindOffsetToFlightPathMarkerInDecimalDegrees
         {
             get { return _windOffsetToFlightPathMarkerDegrees; }
-            set { _windOffsetToFlightPathMarkerDegrees = value%360; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _windOffsetToFlightPathMarkerDegrees = value % 360;
+            }
         }
 
         public int HsiDesiredCourseInDegrees
@@ -210,7 +331,8 @@ namespace F16CPD
             get { return _adiIlsLocalizerDeviationDecimalDegrees; }
             set
             {
-                _adiIlsLocalizerDeviationDecimalDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _adiIlsLocalizerDeviationDecimalDegrees = value % 360;
                 if (Math.Abs(_adiIlsLocalizerDeviationDecimalDegrees) >
                     Pfd.ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES)
                 {
@@ -225,7 +347,8 @@ namespace F16CPD
             get { return _adiIlsGlideslopeDeviationDecimalDegrees; }
             set
             {
-                _adiIlsGlideslopeDeviationDecimalDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _adiIlsGlideslopeDeviationDecimalDegrees = value % 360;
                 if (Math.Abs(_adiIlsGlideslopeDeviationDecimalDegrees) >
                     Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
                 {
@@ -238,7 +361,11 @@ namespace F16CPD
         public float HsiCourseDeviationInDecimalDegrees
         {
             get { return _hsiCourseDeviationInDegrees; }
-            set { _hsiCourseDeviationInDegrees = value%360; }
+            set
+            {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _hsiCourseDeviationInDegrees = value % 360;
+            }
         }
 
         public float HsiDistanceToBeaconInNauticalMiles
@@ -246,6 +373,7 @@ namespace F16CPD
             get { return _hsiDistanceToBeaconInNauticalMiles; }
             set
             {
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
                 if (value < 0) value = 0;
                 if (value > 3500) value = 3500;
                 _hsiDistanceToBeaconInNauticalMiles = value;
@@ -257,7 +385,8 @@ namespace F16CPD
             get { return _hsiBearingToBeaconInDegrees; }
             set
             {
-                _hsiBearingToBeaconInDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _hsiBearingToBeaconInDegrees = value % 360;
                 if (_hsiBearingToBeaconInDegrees < 0)
                     _hsiBearingToBeaconInDegrees = 360 - Math.Abs(_hsiBearingToBeaconInDegrees);
             }
@@ -268,7 +397,8 @@ namespace F16CPD
             get { return _hsiCourseDeviationLimitInDecimalDegrees; }
             set
             {
-                _hsiCourseDeviationLimitInDecimalDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _hsiCourseDeviationLimitInDecimalDegrees = value % 360;
                 if (_hsiCourseDeviationLimitInDecimalDegrees < 0)
                     _hsiCourseDeviationLimitInDecimalDegrees = Math.Abs(_hsiCourseDeviationLimitInDecimalDegrees);
             }
@@ -279,7 +409,8 @@ namespace F16CPD
             get { return _hsiLocalizerCourseInDecimalDegrees; }
             set
             {
-                _hsiLocalizerCourseInDecimalDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _hsiLocalizerCourseInDecimalDegrees = value % 360;
                 if (_hsiLocalizerCourseInDecimalDegrees < 0)
                     _hsiLocalizerCourseInDecimalDegrees = 360 - Math.Abs(_hsiLocalizerCourseInDecimalDegrees);
             }
@@ -290,7 +421,8 @@ namespace F16CPD
             get { return _magneticHeadingInDecimalDegrees; }
             set
             {
-                _magneticHeadingInDecimalDegrees = value%360;
+                if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
+                _magneticHeadingInDecimalDegrees = value % 360;
                 if (_magneticHeadingInDecimalDegrees < 0)
                     _magneticHeadingInDecimalDegrees = 360 - Math.Abs(_magneticHeadingInDecimalDegrees);
             }

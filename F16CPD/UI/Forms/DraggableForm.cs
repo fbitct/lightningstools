@@ -12,6 +12,7 @@ namespace F16CPD.UI.Forms
     {
         #region Declarations
 
+        protected object lockObject = new object();
         protected bool Drag;
         protected Point StartPoint = new Point(0, 0);
 
@@ -168,7 +169,13 @@ namespace F16CPD.UI.Forms
 
         public bool Draggable
         {
-            set { draggable = value; }
+            set
+            {
+                lock (lockObject)
+                {
+                    draggable = value;
+                }
+            }
             get { return draggable; }
         }
 

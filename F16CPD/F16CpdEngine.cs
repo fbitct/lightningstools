@@ -25,13 +25,6 @@ namespace F16CPD
     [Synchronization]
     internal partial class F16CpdEngine : MfdForm, IDisposable
     {
-        private const int WM_SIZING = 0x214;
-        private const int WMSZ_LEFT = 1;
-        private const int WMSZ_RIGHT = 2;
-        private const int WMSZ_TOP = 3;
-        private const int WMSZ_BOTTOM = 6;
-
-
         private static readonly ILog _log = LogManager.GetLogger(typeof (F16CpdEngine));
         private readonly Bitmap _bezel = Resources.cpdbezel;
         private readonly FlightDataValuesSimulator _flightDataValuesSimulator = new FlightDataValuesSimulator();
@@ -479,65 +472,6 @@ namespace F16CPD
             var wait = (int) (pollingFrequencyMillis - elapsed.TotalMilliseconds);
             if (wait < 1) wait = 1;
             Thread.Sleep(wait);
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == WM_SIZING)
-            {
-                var rc = (RECT) Marshal.PtrToStructure(m.LParam, typeof (RECT));
-                var res = m.WParam.ToInt32();
-                if (res == WMSZ_LEFT)
-                {
-                    //Left or right resize -> adjust height (bottom)
-                    rc.Bottom = rc.Top +
-                                (int) Math.Floor(((rc.Right - rc.Left)*((float) _heightFactor/(float) _widthFactor)));
-                }
-                if (res == WMSZ_RIGHT)
-                {
-                    //Left or right resize -> adjust height (bottom)
-                    rc.Bottom = rc.Top +
-                                (int) Math.Floor(((rc.Right - rc.Left)*((float) _heightFactor/(float) _widthFactor)));
-                }
-                else if (res == WMSZ_TOP)
-                {
-                    //Up or down resize -> adjust width (right)
-                    rc.Right = rc.Left +
-                               (int) Math.Floor(((rc.Bottom - rc.Top)*((float) _widthFactor/(float) _heightFactor)));
-                }
-                else if (res == WMSZ_BOTTOM)
-                {
-                    //Up or down resize -> adjust width (right)
-                    rc.Right = rc.Left +
-                               (int) Math.Floor(((rc.Bottom - rc.Top)*((float) _widthFactor/(float) _heightFactor)));
-                }
-                else if (res == WMSZ_RIGHT + WMSZ_BOTTOM)
-                {
-                    //Lower-right corner resize -> adjust height (could have been width)
-                    rc.Bottom = rc.Top +
-                                (int) Math.Floor(((rc.Right - rc.Left)*((float) _heightFactor/(float) _widthFactor)));
-                }
-                else if (res == WMSZ_LEFT + WMSZ_TOP)
-                {
-                    //Upper-left corner -> adjust width (could have been height)
-                    rc.Right = rc.Left +
-                               (int) Math.Floor(((rc.Bottom - rc.Top)*((float) _widthFactor/(float) _heightFactor)));
-                }
-                else if (res == WMSZ_LEFT + WMSZ_BOTTOM)
-                {
-                    //Lower-left corner resize -> adjust height (could have been width)
-                    rc.Bottom = rc.Top +
-                                (int) Math.Floor(((rc.Right - rc.Left)*((float) _heightFactor/(float) _widthFactor)));
-                }
-                else if (res == WMSZ_RIGHT + WMSZ_TOP)
-                {
-                    //Upper-right corner -> adjust width (could have been height)
-                    rc.Right = rc.Left +
-                               (int) Math.Floor(((rc.Bottom - rc.Top)*((float) _widthFactor/(float) _heightFactor)));
-                }
-                Marshal.StructureToPtr(rc, m.LParam, true);
-            }
-            base.WndProc(ref m);
         }
 
         protected void UpdateRotationSpecificSettings()
