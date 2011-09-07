@@ -11434,13 +11434,15 @@ namespace MFDExtractor
         }
         private static bool IsDoubleResolutionRtt()
         {
-            FileInfo file = new FileInfo(Path.Combine(RunningBmsInstanceBasePath(), "FalconBMS.cfg"));
+            string bmsPath = RunningBmsInstanceBasePath();
+            if (string.IsNullOrEmpty(bmsPath)) return false;
+            FileInfo file = new FileInfo(Path.Combine(bmsPath, "FalconBMS.cfg"));
             if (!file.Exists)
             {
-                file = new FileInfo(Path.Combine(Path.Combine(RunningBmsInstanceBasePath(), "config"), "Falcon BMS.cfg"));
+                file = new FileInfo(Path.Combine(Path.Combine(bmsPath, "config"), "Falcon BMS.cfg"));
                 if (!file.Exists)
                 {
-                    file = new FileInfo(Path.Combine(Path.Combine(RunningBmsInstanceBasePath(), @"..\..\User\config"), "Falcon BMS.cfg"));
+                    file = new FileInfo(Path.Combine(Path.Combine(bmsPath, @"..\..\User\config"), "Falcon BMS.cfg"));
                 }
 
             }
