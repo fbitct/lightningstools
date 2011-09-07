@@ -11299,6 +11299,7 @@ namespace MFDExtractor
             {
                 return;
             }
+            bool isDoubleResolution = IsDoubleResolutionRtt();
             mfd4_3DImageSourceRectangle = new Rectangle();
             mfd3_3DImageSourceRectangle = new Rectangle();
             leftMfd3DImageSourceRectangle = new Rectangle();
@@ -11407,6 +11408,19 @@ namespace MFDExtractor
                     }
                 }
             }
+            if (isDoubleResolution)
+            {
+                leftMfd3DImageSourceRectangle = MultiplyRectangle(leftMfd3DImageSourceRectangle, 2);
+                rightMfd3DImageSourceRectangle = MultiplyRectangle(rightMfd3DImageSourceRectangle, 2);
+                mfd3_3DImageSourceRectangle = MultiplyRectangle(mfd3_3DImageSourceRectangle, 2);
+                mfd4_3DImageSourceRectangle = MultiplyRectangle(mfd4_3DImageSourceRectangle, 2);
+                hud3DImageSourceRectangle = MultiplyRectangle(hud3DImageSourceRectangle, 2);
+            }
+        }
+        private static Rectangle MultiplyRectangle(Rectangle rect, int factor)
+        {
+            return new Rectangle(rect.X*factor, rect.Y*factor, rect.Width*factor,
+                                 rect.Height*factor);
         }
         private static string RunningBmsInstanceBasePath()
         {
@@ -11416,11 +11430,49 @@ namespace MFDExtractor
             {
                 toReturn = new FileInfo(exePath).Directory.FullName;
             }
-            else
-            {
-            }
             return toReturn;
         }
+        private static bool IsDoubleResolutionRtt()
+        {
+            FileInfo file = new FileInfo(Path.Combine(RunningBmsInstanceBasePath(), "FalconBMS.cfg"));
+            if (!file.Exists)
+            {
+                file = new FileInfo(Path.Combine(Path.Combine(RunningBmsInstanceBasePath(), "config"), "Falcon BMS.cfg"));
+                if (!file.Exists)
+                {
+                    file = new FileInfo(Path.Combine(Path.Combine(RunningBmsInstanceBasePath(), @"..\..\User\config"), "Falcon BMS.cfg"));
+                }
+
+            }
+
+            if (file.Exists)
+            {
+                List<string> allLines = new List<string>();
+                using (StreamReader reader = new StreamReader(file.FullName))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        allLines.Add(reader.ReadLine());
+                    }
+                    reader.Close();
+                }
+
+                for (int i = 0; i < allLines.Count; i++)
+                {
+                    string currentLine = allLines[i];
+                    List<String> tokens = Common.Strings.Util.Tokenize(currentLine);
+                    if (tokens.Count > 2)
+                    {
+                        if (tokens[0].ToLowerInvariant() == "set" && tokens[1].ToLowerInvariant() == "g_bDoubleRTTResolution".ToLowerInvariant() && (tokens[2].ToLowerInvariant() == "1".ToLowerInvariant()))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         private static FileInfo FindBms3DCockpitFile()
         {
             string basePath = RunningBmsInstanceBasePath();
