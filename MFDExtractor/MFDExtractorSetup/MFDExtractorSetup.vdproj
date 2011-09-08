@@ -393,11 +393,6 @@
                     "Name" = "8:Microsoft .NET Framework 4 (x86 and x64)"
                     "ProductCode" = "8:.NETFramework,Version=v4.0"
                     }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.10.0.x86"
-                    {
-                    "Name" = "8:Visual C++ 2010 Runtime Libraries (x86)"
-                    "ProductCode" = "8:Microsoft.Visual.C++.10.0.x86"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.4.5"
                     {
                     "Name" = "8:Windows Installer 4.5"
@@ -426,7 +421,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:2.0.50727 "
+                "FrameworkVersion" = "8:2.0.50727  "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=9832"
                 }
@@ -1036,7 +1031,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon MFD Extractor"
         "ProductCode" = "8:{8AF4A8FF-0CB7-4651-A656-E17BCFEE86E6}"
-        "PackageCode" = "8:{05E3AA85-5104-473F-ACD7-1ED2FE855C82}"
+        "PackageCode" = "8:{38DA4844-DE9E-4319-84E4-DE1DDD95ED18}"
         "UpgradeCode" = "8:{53D32A09-9B77-4C68-AE21-7F8024EEF04F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
