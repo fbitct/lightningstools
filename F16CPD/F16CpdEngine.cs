@@ -459,18 +459,21 @@ namespace F16CPD
             }
         }
 
+        private int _cycle;
         private void RenderOnce(int pollingFrequencyMillis)
         {
             if (_isDisposed || !_keepRunning) return;
             var loopStartTime = DateTime.Now;
             UpdateManagerSize();
             Render();
-            Application.DoEvents();
+            if (_cycle %10==0) Application.DoEvents();
+            _cycle++;
             //System.GC.Collect();
             var loopEndTime = DateTime.Now;
             var elapsed = loopEndTime.Subtract(loopStartTime);
             var wait = (int) (pollingFrequencyMillis - elapsed.TotalMilliseconds);
             if (wait < 1) wait = 1;
+            if (!_simSupportModule.IsSimRunning) wait = 350;
             Thread.Sleep(wait);
         }
 
