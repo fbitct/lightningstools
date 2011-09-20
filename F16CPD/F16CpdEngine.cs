@@ -473,7 +473,7 @@ namespace F16CPD
             var elapsed = loopEndTime.Subtract(loopStartTime);
             var wait = (int) (pollingFrequencyMillis - elapsed.TotalMilliseconds);
             if (wait < 1) wait = 1;
-            if (!_simSupportModule.IsSimRunning) wait = 350;
+            if (!Settings.Default.RunAsClient && !_simSupportModule.IsSimRunning) wait = 350;
             Thread.Sleep(wait);
         }
 
