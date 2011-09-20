@@ -981,7 +981,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:F-16 Center Pedestal Display"
         "ProductCode" = "8:{2EFE1C77-8875-4337-A5EF-B1A92E78127F}"
-        "PackageCode" = "8:{C5A2FC90-6330-498D-88BD-3A8904B9147F}"
+        "PackageCode" = "8:{AC4C42F2-06AB-48C3-AAAE-E1D6EA4C214F}"
         "UpgradeCode" = "8:{7C3129E4-6A78-4D6F-87B3-A8784E98FD74}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
