@@ -2886,7 +2886,7 @@ namespace MFDExtractor
                             toReturn = _falconSmReader.GetCurrentData();
 
                             bool computeRalt = false;
-                            if (Properties.Settings.Default.EnableISISOutput)
+                            if (Properties.Settings.Default.EnableISISOutput || NetworkMode == NetworkMode.Server)
                             {
                                 computeRalt = true;
                             }
@@ -9975,7 +9975,13 @@ namespace MFDExtractor
                 bool[] currentKeyboardState = new bool[Enum.GetValues(typeof(Key)).Length];
                 while (_keepRunning)
                 {
-                    resetEvent.WaitOne();
+                    try
+                    {
+                        resetEvent.WaitOne(50);
+                    }
+                    catch (TimeoutException)
+                    {
+                    }
                     try
                     {
                         KeyboardState curState = device.GetCurrentKeyboardState();
