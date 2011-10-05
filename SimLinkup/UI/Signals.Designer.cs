@@ -46,9 +46,10 @@
             this.SignalsList.FullRowSelect = true;
             this.SignalsList.LabelWrap = false;
             this.SignalsList.Location = new System.Drawing.Point(0, 0);
+            this.SignalsList.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.SignalsList.MultiSelect = false;
             this.SignalsList.Name = "SignalsList";
-            this.SignalsList.Size = new System.Drawing.Size(953, 431);
+            this.SignalsList.Size = new System.Drawing.Size(635, 280);
             this.SignalsList.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.SignalsList.TabIndex = 0;
             this.SignalsList.UseCompatibleStateImageBehavior = false;
@@ -62,24 +63,25 @@
             // SourceSignalName
             // 
             this.SourceSignalName.Text = "Source Module Output";
-            this.SourceSignalName.Width = 101;
+            this.SourceSignalName.Width = 134;
             // 
             // DestinationSignalSource
             // 
             this.DestinationSignalSource.Text = "Destination Module";
-            this.DestinationSignalSource.Width = 100;
+            this.DestinationSignalSource.Width = 151;
             // 
             // DestinationSignalName
             // 
             this.DestinationSignalName.Text = "Destination Module Input";
-            this.DestinationSignalName.Width = 123;
+            this.DestinationSignalName.Width = 167;
             // 
             // Signals
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(953, 431);
+            this.ClientSize = new System.Drawing.Size(635, 280);
             this.Controls.Add(this.SignalsList);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Signals";
             this.Text = "Signals";
             this.ResumeLayout(false);
