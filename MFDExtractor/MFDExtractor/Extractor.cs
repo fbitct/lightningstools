@@ -8617,9 +8617,18 @@ namespace MFDExtractor
                     ((F16NozzlePositionIndicator)_nozPos2Renderer).InstrumentState.NozzlePositionPercent = NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm2, fromFalcon.z, fromFalcon.fuelFlow);
                     //******************
                 }
+                else if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
+                {
+                    //** UPDATE NOZ1
+                    ((F16NozzlePositionIndicator)_nozPos1Renderer).InstrumentState.NozzlePositionPercent = fromFalcon.nozzlePos * 100.0f;
+                    //******************
+                    //** UPDATE NOZ2
+                    ((F16NozzlePositionIndicator)_nozPos2Renderer).InstrumentState.NozzlePositionPercent = fromFalcon.nozzlePos2 * 100.0f;
+                    //******************
+                }
                 else
                 {
-                    //NOZ is OK in BMS4, AF, RedViper, FF5
+                    //NOZ is OK in AF, RedViper, FF5
                     //** UPDATE NOZ1
                     ((F16NozzlePositionIndicator)_nozPos1Renderer).InstrumentState.NozzlePositionPercent = fromFalcon.nozzlePos;
                     //******************

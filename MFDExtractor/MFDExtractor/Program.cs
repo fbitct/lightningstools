@@ -94,7 +94,7 @@ namespace MFDExtractor
                     _log.Error(e.Message, e);
                 }
             }
-            Application.Run(mainForm);
+        Application.Run(mainForm);
         }
 
         #endregion
