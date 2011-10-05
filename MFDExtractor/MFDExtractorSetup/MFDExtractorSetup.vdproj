@@ -15,8 +15,8 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_0199B10D22A37AD4BC41E54CA100C245"
-        "OwnerKey" = "8:_B0BFAD95B86647E0B75CF2BA8D1E4799"
+        "MsmKey" = "8:_0551094BDF7C4617705C914203F11868"
+        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -27,20 +27,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0551094BDF7C4617705C914203F11868"
-        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0EEE5EE61750C8461365F2378E16E8DA"
-        "OwnerKey" = "8:_0551094BDF7C4617705C914203F11868"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_169FBF597FFC476980C9F373B5005727"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_317AA170F6803A9793745708BA7B7165"
+        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -59,12 +53,6 @@
         {
         "MsmKey" = "8:_317AA170F6803A9793745708BA7B7165"
         "OwnerKey" = "8:_E96C018E6D7FFF349F9CFAF94C56F674"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_317AA170F6803A9793745708BA7B7165"
-        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -99,12 +87,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4DC5377C9DF5306A94B76A3204462950"
-        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
         "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
@@ -124,6 +106,12 @@
         "Entry"
         {
         "MsmKey" = "8:_9DD96E9B1F52EA161E64AE52DD3B9E60"
+        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A9930EAAB47B28175666DECEA3D66891"
         "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -137,12 +125,6 @@
         {
         "MsmKey" = "8:_A9930EAAB47B28175666DECEA3D66891"
         "OwnerKey" = "8:_E96C018E6D7FFF349F9CFAF94C56F674"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A9930EAAB47B28175666DECEA3D66891"
-        "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -208,25 +190,25 @@
         "Entry"
         {
         "MsmKey" = "8:_EF9B21AD281706C2D53464AD0745F905"
-        "OwnerKey" = "8:_E96C018E6D7FFF349F9CFAF94C56F674"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_EF9B21AD281706C2D53464AD0745F905"
         "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F1A539D53ABA1B5A537A68793C0B99D7"
-        "OwnerKey" = "8:_F2FECC2FF42EF2B1FEB9FD0ED3188B51"
+        "MsmKey" = "8:_EF9B21AD281706C2D53464AD0745F905"
+        "OwnerKey" = "8:_E96C018E6D7FFF349F9CFAF94C56F674"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_F2FECC2FF42EF2B1FEB9FD0ED3188B51"
         "OwnerKey" = "8:_AA8BE9BC07A644838AA1B37349C42BB9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F8260C5D7AB4EE1990A6010D54E738C4"
+        "OwnerKey" = "8:_6B2E67EE6CB68649606E16FE59D74826"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -406,7 +388,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:2.0.50727   "
+                "FrameworkVersion" = "8:2.0.50727    "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=9832"
                 }
@@ -414,26 +396,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0199B10D22A37AD4BC41E54CA100C245"
-            {
-            "SourcePath" = "8:F4SharedMem.tlb"
-            "TargetName" = "8:F4SharedMem.tlb"
-            "Tag" = "8:"
-            "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:2"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0551094BDF7C4617705C914203F11868"
             {
             "AssemblyRegister" = "3:1"
@@ -461,26 +423,6 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0EEE5EE61750C8461365F2378E16E8DA"
-            {
-            "SourcePath" = "8:Phcc.tlb"
-            "TargetName" = "8:Phcc.tlb"
-            "Tag" = "8:"
-            "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:2"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
@@ -594,26 +536,6 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4DC5377C9DF5306A94B76A3204462950"
-            {
-            "SourcePath" = "8:F4KeyFile.tlb"
-            "TargetName" = "8:F4KeyFile.tlb"
-            "Tag" = "8:"
-            "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:2"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
@@ -897,26 +819,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F1A539D53ABA1B5A537A68793C0B99D7"
-            {
-            "SourcePath" = "8:F4TexSharedMem.tlb"
-            "TargetName" = "8:F4TexSharedMem.tlb"
-            "Tag" = "8:"
-            "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:2"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F2FECC2FF42EF2B1FEB9FD0ED3188B51"
             {
             "AssemblyRegister" = "3:1"
@@ -944,6 +846,26 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F8260C5D7AB4EE1990A6010D54E738C4"
+            {
+            "SourcePath" = "8:F4KeyFile.tlb"
+            "TargetName" = "8:F4KeyFile.tlb"
+            "Tag" = "8:"
+            "Folder" = "8:_211EB4A9D5FF4EA382418DA0967E9719"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:2"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
@@ -1015,15 +937,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon MFD Extractor"
-        "ProductCode" = "8:{8AF4A8FF-0CB7-4651-A656-E17BCFEE86E6}"
-        "PackageCode" = "8:{C88BE780-031F-4CF2-ABBA-D0B667E95CE8}"
+        "ProductCode" = "8:{B4BB204A-01FE-4F97-ACE6-F4209A36BEBC}"
+        "PackageCode" = "8:{EC0803ED-D488-4838-8DCC-4B197E8489C3}"
         "UpgradeCode" = "8:{53D32A09-9B77-4C68-AE21-7F8024EEF04F}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.5.4"
+        "ProductVersion" = "8:0.5.5"
         "Manufacturer" = "8:None"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
