@@ -16,8 +16,13 @@ namespace TlkTool.UI
 {
     public partial class frmMain : Form
     {
-        private string _currentTlkFilePath = null;
+        private string _tlkFilePath = null;
         private SoundPlayer _player = new SoundPlayer();
+        private TlkFile _tlkFile;
+        private CommFile _commFile;
+        private EvalFile _evalFile;
+        private FragFile _fragFile;
+
         public frmMain()
         {
             InitializeComponent();
@@ -40,10 +45,7 @@ namespace TlkTool.UI
 
         private void FileOpen()
         {
-            if (tabControl1.SelectedTab == tabTlkFile)
-            {
-                OpenTlkFile();
-            }
+            OpenTlkFile();
         }
         private void OpenTlkFile()
         {
@@ -80,15 +82,70 @@ namespace TlkTool.UI
         }
         void LoadTlkFile(string tlkFilePath)
         {
+            SetCurrentTlkFile(tlkFilePath);
             PopulateTreeViewWithNamesOfFilesInTlkFile(tlkFilePath, tvTlkFileContents);
-            _currentTlkFilePath = tlkFilePath;
+            LoadCommFile();
+            LoadFragFile();
+            LoadEvalFile();
+        }
+        void PopulateComms()
+        {
+            lvComms.Columns.Clear();
+            lvComms.Columns.AddRange(
+                new[] {
+                    new ColumnHeader { Text = "commHdrNbr" },
+                    new ColumnHeader { Text = "warp" },
+                    new ColumnHeader { Text = "priority" },
+                    new ColumnHeader { Text = "positionElement" },
+                    new ColumnHeader { Text = "bullseye" },
+                    new ColumnHeader { Text = "totalElements" },
+                    new ColumnHeader { Text = "totalEvals" },
+                    new ColumnHeader { Text = "commOffset" }
+                }
+            );
+            foreach (var comm in _commFile.Headers) 
+            {
+                lvComms.Items.Add(new ListViewItem(new[] { comm.commHdrNbr.ToString(), comm.warp.ToString(), comm.priority.ToString(), 
+                    comm.positionElement.ToString(), comm.bullseye.ToString(), comm.totalElements.ToString(), comm.totalEvals.ToString(),
+                    comm.commOffset.ToString()}));
+            }
+         
+        }
+        void PopulateEvals()
+        {
+            lvEvals.Columns.Clear();
+            lvEvals.Columns.AddRange(
+                new[] {
+                    new ColumnHeader { Text = "evalHdrNbr" },
+                    new ColumnHeader { Text = "numEvals" },
+                    new ColumnHeader { Text = "evalOffset" },
+                }
+            );
+            foreach (var eval in _evalFile.Headers)
+            {
+                lvEvals.Items.Add(new ListViewItem(new[] { eval.evalHdrNbr.ToString(), eval.numEvals.ToString(), eval.evalOffset.ToString()}));            
+            }
+
+        }
+        void PopulateFrags()
+        {
+            lvFrags.Columns.Clear();
+            lvFrags.Columns.AddRange(
+                new[] {
+                    new ColumnHeader { Text = "fragHdrNbr" },
+                    new ColumnHeader { Text = "totalSpeakers" },
+                    new ColumnHeader { Text = "fragOffset" },
+                }
+            );
+            foreach (var frag in _fragFile.headers)
+            {
+                lvFrags.Items.Add(new ListViewItem(new[] { frag.fragHdrNbr.ToString(), frag.totalSpeakers.ToString(), frag.fragOffset.ToString()}));
+            }
         }
         void PopulateTreeViewWithNamesOfFilesInTlkFile(string tlkFilePath, TreeView treeview)
         {
-            TlkFile tlkFile=TlkFile.Load(tlkFilePath);
-            SetCurrentTlkFile(tlkFile, tlkFilePath);
-            string codecType = tlkFile.DetectTlkFileCodecType().ToString();
-            for(int i=0;i<tlkFile.Records.Length;i++)
+            string codecType = _tlkFile.DetectTlkFileCodecType().ToString();
+            for (int i = 0; i < _tlkFile.Records.Length; i++)
             {
                 treeview.Nodes[0].Nodes.Add(string.Format("{0}.{1}", i.ToString(), codecType));
             }
@@ -98,6 +155,21 @@ namespace TlkTool.UI
             treeview.SelectedNode = treeview.Nodes[0];
             treeview.Refresh();
             treeview.Select();
+        }
+        void LoadCommFile()
+        {
+            _commFile = CommFile.LoadFromBinary(Path.GetDirectoryName(_tlkFilePath) + Path.DirectorySeparatorChar + "commFile.bin");
+            PopulateComms();
+        }
+        void LoadFragFile()
+        {
+            _fragFile = FragFile.LoadFromBinary(Path.GetDirectoryName(_tlkFilePath) + Path.DirectorySeparatorChar + "fragFile.bin");
+            PopulateFrags();
+        }
+        void LoadEvalFile()
+        {
+            _evalFile = EvalFile.LoadFromBinary(Path.GetDirectoryName(_tlkFilePath) + Path.DirectorySeparatorChar + "evalFile.bin");
+            PopulateEvals();
         }
         void DisplayTlkNodeOptions()
         {
@@ -130,15 +202,14 @@ namespace TlkTool.UI
 
             string selectedFragName=tvTlkFileContents.SelectedNode.Text;
             int selectedTlkId = Int32.Parse(Path.GetFileNameWithoutExtension(selectedFragName));
-            TlkFile currentTlkFile = GetCurrentTlkFile();
             using (MemoryStream ms = new MemoryStream())
             {
                 StopPlayingFrag();
                 using (_player = new SoundPlayer(ms))
                 {
-                    currentTlkFile.DecompressRecordAndWriteToStream(
-                        currentTlkFile.DetectTlkFileCodecType(),
-                        currentTlkFile.Records[selectedTlkId],
+                    _tlkFile.DecompressRecordAndWriteToStream(
+                        _tlkFile.DetectTlkFileCodecType(),
+                        _tlkFile.Records[selectedTlkId],
                         ms);
                     ms.Flush();
                     ms.Seek(0, SeekOrigin.Begin);
@@ -146,19 +217,14 @@ namespace TlkTool.UI
                 }
             }
         }
-        TlkFile GetCurrentTlkFile()
+        void SetCurrentTlkFile(string tlkFilePath)
         {
-            if (tvTlkFileContents.Nodes != null && tvTlkFileContents.Nodes.Count > 0 && tvTlkFileContents.Nodes[0] != null)
-            {
-                return (TlkFile)((tvTlkFileContents.Nodes[0]).Tag);
-            }
-            else return null;
-        }
-        void SetCurrentTlkFile(TlkFile tlkFile, string tlkFilePath)
-        {
+            _tlkFile = TlkFile.Load(tlkFilePath);
+            _tlkFilePath = tlkFilePath;
+
             tvTlkFileContents.Nodes.Clear();
             TreeNode rootNode = tvTlkFileContents.Nodes.Add(tlkFilePath);
-            rootNode.Tag = tlkFile;
+            rootNode.Tag = _tlkFile;
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -265,7 +331,6 @@ namespace TlkTool.UI
         }
         private void AddFragNode(string fileName)
         {
-            TlkFile currentTlkFile = GetCurrentTlkFile();
             string fileFormat = Path.GetExtension(fileName);
             while (!string.IsNullOrEmpty(fileFormat) && fileFormat.StartsWith("."))
             {
@@ -300,6 +365,6 @@ namespace TlkTool.UI
                 e.Effect = DragDropEffects.None;
             }
         }
-        
+
     }
 }
