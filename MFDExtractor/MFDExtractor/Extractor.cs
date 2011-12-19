@@ -359,6 +359,7 @@ namespace MFDExtractor
         /// area -- this reference is used to perform the actual 3D-mode image extraction
         /// </summary>
         private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
+        private object _texSmReaderLock = new object();
         /// <summary>
         /// Reference to a Reader object that can read images from BMS's "textures shared memory" area 
         /// -- this reference is used to detect whether the 3D-mode shared 
@@ -3176,9 +3177,12 @@ namespace MFDExtractor
             {
                 try
                 {
-                    if (_texSmReader != null)
+                    lock (_texSmReaderLock)
                     {
-                        toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_hud3DInputRect));
+                        if (_texSmReader != null)
+                        {
+                            toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_hud3DInputRect));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -3199,9 +3203,12 @@ namespace MFDExtractor
             {
                 try
                 {
-                    if (_texSmReader != null)
+                    lock (_texSmReaderLock)
                     {
-                        toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_mfd4_3DInputRect));
+                        if (_texSmReader != null)
+                        {
+                            toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_mfd4_3DInputRect));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -3222,9 +3229,12 @@ namespace MFDExtractor
             {
                 try
                 {
-                    if (_texSmReader != null)
+                    lock (_texSmReaderLock)
                     {
-                        toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_mfd3_3DInputRect));
+                        if (_texSmReader != null)
+                        {
+                            toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_mfd3_3DInputRect));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -3245,9 +3255,12 @@ namespace MFDExtractor
             {
                 try
                 {
-                    if (_texSmReader != null)
+                    lock (_texSmReaderLock)
                     {
-                        toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_leftMfd3DInputRect));
+                        if (_texSmReader != null)
+                        {
+                            toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_leftMfd3DInputRect));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -3268,9 +3281,12 @@ namespace MFDExtractor
             {
                 try
                 {
-                    if (_texSmReader != null)
+                    lock (_texSmReaderLock)
                     {
-                        toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_rightMfd3DInputRect));
+                        if (_texSmReader != null)
+                        {
+                            toReturn = Common.Imaging.Util.CloneBitmap(_texSmReader.GetImage(_rightMfd3DInputRect));
+                        }
                     }
                 }
                 catch (Exception e)
@@ -11151,7 +11167,10 @@ namespace MFDExtractor
                                 {
                                     if (_threeDeeMode)
                                     {
-                                        if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
+                                        lock (_texSmReaderLock)
+                                        {
+                                            if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
+                                        }
                                         if ((Properties.Settings.Default.EnableLeftMFDOutput || 
                                             Properties.Settings.Default.EnableRightMFDOutput ||
                                             Properties.Settings.Default.EnableMfd3Output ||

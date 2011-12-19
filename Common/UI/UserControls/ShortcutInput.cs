@@ -186,36 +186,36 @@ namespace Common.UI.UserControls
             this._ddnChars = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
-            // CbxShift
+            // _cbxShift
             // 
             this._cbxShift.Location = new System.Drawing.Point(14, 3);
             this._cbxShift.Name = "_cbxShift";
-            this._cbxShift.Size = new System.Drawing.Size(56, 24);
+            this._cbxShift.Size = new System.Drawing.Size(61, 24);
             this._cbxShift.TabIndex = 0;
             this._cbxShift.Text = "Shift";
             // 
-            // CbxControl
+            // _cbxControl
             // 
-            this._cbxControl.Location = new System.Drawing.Point(70, 3);
+            this._cbxControl.Location = new System.Drawing.Point(93, 3);
             this._cbxControl.Name = "_cbxControl";
-            this._cbxControl.Size = new System.Drawing.Size(64, 24);
+            this._cbxControl.Size = new System.Drawing.Size(88, 24);
             this._cbxControl.TabIndex = 1;
             this._cbxControl.Text = "Control";
             // 
-            // CbxAlt
+            // _cbxAlt
             // 
-            this._cbxAlt.Location = new System.Drawing.Point(142, 3);
+            this._cbxAlt.Location = new System.Drawing.Point(187, 3);
             this._cbxAlt.Name = "_cbxAlt";
-            this._cbxAlt.Size = new System.Drawing.Size(40, 24);
+            this._cbxAlt.Size = new System.Drawing.Size(60, 24);
             this._cbxAlt.TabIndex = 2;
             this._cbxAlt.Text = "Alt";
             // 
-            // DdnChars
+            // _ddnChars
             // 
             this._ddnChars.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._ddnChars.Location = new System.Drawing.Point(190, 3);
+            this._ddnChars.Location = new System.Drawing.Point(253, 3);
             this._ddnChars.Name = "_ddnChars";
-            this._ddnChars.Size = new System.Drawing.Size(40, 21);
+            this._ddnChars.Size = new System.Drawing.Size(40, 24);
             this._ddnChars.TabIndex = 4;
             // 
             // ShortcutInput
@@ -225,8 +225,9 @@ namespace Common.UI.UserControls
             this.Controls.Add(this._cbxControl);
             this.Controls.Add(this._cbxShift);
             this.Name = "ShortcutInput";
-            this.Size = new System.Drawing.Size(248, 29);
+            this.Size = new System.Drawing.Size(360, 29);
             this.ResumeLayout(false);
+
         }
 
         #endregion
