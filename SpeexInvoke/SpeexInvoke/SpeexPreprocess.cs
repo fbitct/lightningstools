@@ -45,21 +45,21 @@ public static partial class Speex
     public const int SPEEX_PREPROCESS_SET_AGC_TARGET = 46;
     public const int SPEEX_PREPROCESS_GET_AGC_TARGET = 47;
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern IntPtr speex_preprocess_state_init(int frame_size, int sampling_rate);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void speex_preprocess_state_destroy(IntPtr st);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int speex_preprocess_run(IntPtr st, Int16[] x);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int speex_preprocess(IntPtr st, Int16[] x, Int32[] echo);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void speex_preprocess_estimate_update(IntPtr st, Int16[] x);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int speex_preprocess_ctl(IntPtr st, int request, IntPtr ptr);
 }

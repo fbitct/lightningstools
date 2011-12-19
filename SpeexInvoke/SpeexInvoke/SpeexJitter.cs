@@ -23,38 +23,38 @@ public static partial class Speex
     public const int JITTER_BUFFER_SET_LATE_COST = 12;
     public const int JITTER_BUFFER_GET_LATE_COST = 13;
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern IntPtr jitter_buffer_init(int step_size);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void jitter_buffer_reset(IntPtr jitter);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void jitter_buffer_destroy(IntPtr jitter);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void jitter_buffer_put(IntPtr jitter, ref JitterBufferPacket packet);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int jitter_buffer_get(IntPtr jitter, ref JitterBufferPacket packet, int desired_span,
                                                [Out] out int start_offset);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int jitter_buffer_get_another(IntPtr jitter, ref JitterBufferPacket packet);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int jitter_buffer_get_pointer_timestamp(IntPtr jitter);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void jitter_buffer_tick(IntPtr jitter);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern void jitter_buffer_remaining_span(IntPtr jitter, UInt32 rem);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int jitter_buffer_ctl(IntPtr jitter, int request, IntPtr ptr);
 
-    [DllImport("libspeexdsp.dll")]
+    [DllImport("libspeexdsp.dll", CallingConvention=CallingConvention.Cdecl)]
     public static extern int jitter_buffer_update_delay(IntPtr jitter, ref JitterBufferPacket packet,
                                                         [Out] out int start_offset);
 

@@ -23,31 +23,31 @@ public static partial class Speex
     public const int SPEEX_INBAND_MAX_BITRATE = 10;
     public const int SPEEX_INBAND_ACKNOWLEDGE = 12;
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_inband_handler(ref SpeexBits bits, SpeexCallback[] callback_list, IntPtr state);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_mode_request_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_high_mode_request_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_char_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_default_user_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_low_mode_request_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_vbr_request_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_enh_request_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern int speex_std_vbr_quality_request_handler(ref SpeexBits bits, IntPtr state, IntPtr data);
 
     #region Nested type: SpeexCallback

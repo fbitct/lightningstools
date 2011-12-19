@@ -6,16 +6,16 @@ public static partial class Speex
     public const int SPEEX_HEADER_STRING_LENGTH = 8;
     public const int SPEEX_HEADER_VERSION_LENGTH = 20;
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void speex_init_header(ref SpeexHeader header, int rate, int nb_channels, IntPtr m);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern byte[] speex_header_to_packet(ref SpeexHeader header, [Out] out int size);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern SpeexHeader speex_packet_to_header(byte[] packet, int size);
 
-    [DllImport("libspeex.dll")]
+    [DllImport("libspeex.dll", CallingConvention = CallingConvention.Cdecl)]
     public static extern void speex_header_free(IntPtr ptr);
 
     #region Nested type: SpeexHeader

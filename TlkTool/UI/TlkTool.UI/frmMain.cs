@@ -76,7 +76,7 @@ namespace TlkTool.UI
         {
             if (e.Cancel) return;
 
-            LoadTlkFile(openFileDialog1.SafeFileName);
+            LoadTlkFile(openFileDialog1.FileName);
         }
         void LoadTlkFile(string tlkFilePath)
         {
@@ -87,12 +87,13 @@ namespace TlkTool.UI
         {
             TlkFile tlkFile=TlkFile.Load(tlkFilePath);
             SetCurrentTlkFile(tlkFile, tlkFilePath);
+            string codecType = tlkFile.DetectTlkFileCodecType().ToString();
             for(int i=0;i<tlkFile.Records.Length;i++)
             {
-                treeview.Nodes[0].Nodes.Add(string.Format("{0}.{1}", i.ToString(), tlkFile.DetectTlkFileCodecType().ToString()));
+                treeview.Nodes[0].Nodes.Add(string.Format("{0}.{1}", i.ToString(), codecType));
             }
             
-            treeview.TreeViewNodeSorter =  new StringLogicalComparer();
+            //treeview.TreeViewNodeSorter =  new StringLogicalComparer();
             treeview.ExpandAll();
             treeview.SelectedNode = treeview.Nodes[0];
             treeview.Refresh();

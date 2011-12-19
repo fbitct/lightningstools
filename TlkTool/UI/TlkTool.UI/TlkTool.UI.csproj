@@ -130,6 +130,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Common.csproj">
+      <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\F4Utils\Speech\F4Utils.Speech.csproj">
       <Project>{0CC7A7C4-BD53-4AAC-8AEB-8654672272AA}</Project>
       <Name>F4Utils.Speech</Name>
