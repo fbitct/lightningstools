@@ -391,10 +391,13 @@ namespace F4Utils.Speech
             for (var i = 0; i < Directory.records.Length; i++)
             {
                 var record = Directory.records[i];
-                var outputBuffer = new byte[record.compressedDataLength];
-                GetCompressedAudioDataFromRecord(record, outputBuffer, 0);
-                record.compressedData = outputBuffer;
-                Directory.records[i] = record;
+                if (record.compressedData == null || record.compressedData.Length == 0)
+                {
+                    var outputBuffer = new byte[record.compressedDataLength];
+                    GetCompressedAudioDataFromRecord(record, outputBuffer, 0);
+                    record.compressedData = outputBuffer;
+                    Directory.records[i] = record;
+                }
             }
         }
 
