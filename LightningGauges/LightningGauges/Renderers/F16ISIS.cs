@@ -273,13 +273,20 @@ namespace LightningGauges.Renderers
                 string units = null;
                 if (Options.PressureAltitudeUnits == F16ISISOptions.PressureUnits.InchesOfMercury)
                 {
-                    baroString = string.Format("{0:#0.00}", pressure);
+                    //baroString = string.Format("{0:#0.00}", pressure);
+                    baroString = string.Format("{0:#0.00}", pressure / 100);
                     units = "in";
+                    barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 15,
+                                                                 20, barometricPressureAreaWidth,
+                                                                 topRectangle.Height - 20);
                 }
                 else if (Options.PressureAltitudeUnits == F16ISISOptions.PressureUnits.Millibars)
                 {
                     baroString = string.Format("{0:###0}", pressure);
                     units = "hPa";
+                    barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 25,
+                                                                 20, barometricPressureAreaWidth,
+                                                                 topRectangle.Height - 20);
                 }
                 gfx.DrawString(baroString, new Font(_fonts.Families[0], 20, FontStyle.Regular, GraphicsUnit.Point),
                                barometricPressureBrush, barometricPressureRectangle, barometricPressureStringFormat);
@@ -1300,7 +1307,7 @@ namespace LightningGauges.Renderers
             private const float DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
             private const float DEFAULT_LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
             private float _airspeedKnots;
-            private float _barometricPressure = 29.92f;
+            private float _barometricPressure = 2992f;
             private int _brightness = MAX_BRIGHTNESS;
             private float _glideslopeDeviationDegrees;
             private float _glideslopeDeviationLimitDegrees = DEFAULT_GLIDESLOPE_DEVIATION_LIMIT_DEGREES;

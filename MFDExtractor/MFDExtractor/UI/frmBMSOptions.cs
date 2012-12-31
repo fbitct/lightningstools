@@ -11,6 +11,7 @@ namespace MFDExtractor.UI
         private static ILog _log = LogManager.GetLogger(typeof(frmBMSOptions));
 
         private string _bmsPath = null;
+        private string _configPath = null; //Falcas 04/09/2012
         private bool _cancelled = false;
 
         public bool Cancelled
@@ -28,55 +29,14 @@ namespace MFDExtractor.UI
                     DirectoryInfo proposed = new DirectoryInfo(value);
                     if (proposed.Exists)
                     {
-                        FileInfo bmsExeFile = new FileInfo(Path.Combine(proposed.FullName, "F4-BMS.exe"));
+                        //FileInfo bmsExeFile = new FileInfo(Path.Combine(proposed.FullName, "F4-BMS.exe"));
+                        FileInfo bmsExeFile = new FileInfo(Path.Combine(proposed.FullName, "Launcher.exe")); //Falcas 04/09/2012
                         if (bmsExeFile.Exists)
                         {
-                            DirectoryInfo artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"art\ckptart"));
+                            DirectoryInfo artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"data\art\ckptart")); //Falcas 04/09/2012 Updated for BMS4.32
                             if (artFolder.Exists)
                             {
                                 valid = true;
-                            }
-                            else
-                            {
-                                artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"art\ckptartn"));
-                                if (artFolder.Exists)
-                                {
-                                    valid = true;
-                                }
-                            }
-                        }
-                        bmsExeFile = new FileInfo(Path.Combine(proposed.FullName, "Falcon BMS.exe"));
-                        if (bmsExeFile.Exists)
-                        {
-                            DirectoryInfo artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"art\ckptart"));
-                            if (artFolder.Exists)
-                            {
-                                valid = true;
-                            }
-                            else
-                            {
-                                artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"art\ckptartn"));
-                                if (artFolder.Exists)
-                                {
-                                    valid = true;
-                                }
-                                else
-                                {
-
-                                    artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"..\..\Data\art\ckptart"));
-                                    if (artFolder.Exists)
-                                    {
-                                        valid = true;
-                                    }
-                                    else
-                                    {
-                                        artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"..\..\Data\art\ckptartn"));
-                                        if (artFolder.Exists)
-                                        {
-                                            valid = true;
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
@@ -84,6 +44,7 @@ namespace MFDExtractor.UI
                 if (valid)
                 {
                     _bmsPath = value;
+                    _configPath = value + "\\User\\Config\\";
                     txtBmsInstallationPath.Text = Common.Win32.Paths.Util.Compact(_bmsPath, 75);
                     grpSharedMemOptions.Enabled = true;
                     cmdOk.Enabled = true;
@@ -126,46 +87,14 @@ namespace MFDExtractor.UI
                 this.Close();
             }
         }
-        private void ReadBmsConfigSettings(ref bool? bms3dExportEnabled, ref int? batchSize, ref int? minBatchSize)
+        private void ReadBmsConfigSettings(ref bool? bms3dExportEnabled, ref int? batchSize)
         {
             if (_bmsPath == null || _bmsPath == string.Empty)
             {
                 return;
             }
-            minBatchSize = 2;
-            FileInfo file = new FileInfo(Path.Combine(_bmsPath, "FalconBMS.cfg"));
-            if (!file.Exists)
-            {
-                file = new FileInfo(Path.Combine(Path.Combine(_bmsPath, "config"), "Falcon BMS.cfg"));
-                if (!file.Exists)
-                {
-                    file = new FileInfo(Path.Combine(Path.Combine(_bmsPath, @"..\..\user\config"), "Falcon BMS.cfg"));
-
-                }
-                if (file.Exists)
-                {
-                    try
-                    {
-                        string exePath = Path.Combine(_bmsPath, "Falcon BMS.exe");
-                        if (exePath != null && File.Exists(exePath))
-                        {
-                            FileVersionInfo verInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(exePath);
-                            if (verInfo.ProductMajorPart >= 4)
-                            {
-                                minBatchSize = 1;
-                            }
-                        }
-                        else
-                        {
-                            minBatchSize = 2;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _log.Error(e.Message, e);
-                    }
-                }
-            }
+            //FileInfo file = new FileInfo(Path.Combine(_bmsPath, "FalconBMS.cfg"));
+            FileInfo file = new FileInfo(Path.Combine(_configPath, "Falcon BMS.cfg")); //Falcas 04/09/2012
             if (file.Exists)
             {
                 using (StreamReader reader = new StreamReader(file.FullName))
@@ -213,22 +142,10 @@ namespace MFDExtractor.UI
             {
                 return null;
             }
-            FileInfo fileToRead = new FileInfo(Path.Combine(_bmsPath, @"art\ckptart\3dckpit.dat"));
+            FileInfo fileToRead = new FileInfo(Path.Combine(_bmsPath, @"data\art\ckptart\3dckpit.dat")); //Falcas 04/09/2012 Added data\
             if (!fileToRead.Exists)
             {
-                fileToRead = new FileInfo(Path.Combine(_bmsPath, @"art\ckptartn\3dckpit.dat"));
-                if (!fileToRead.Exists)
-                {
-                    fileToRead = new FileInfo(Path.Combine(_bmsPath, @"..\..\Data\art\ckptart\3dckpit.dat"));
-                    if (!fileToRead.Exists)
-                    {
-                        fileToRead = new FileInfo(Path.Combine(_bmsPath, @"..\..\Data\art\ckptart\3dckpitn.dat"));
-                        if (!fileToRead.Exists)
-                        {
-                            return null;
-                        }
-                    }
-                }
+                return null;
             }
             int? toReturn = null;
             using (StreamReader reader = new StreamReader(fileToRead.FullName))
@@ -252,8 +169,7 @@ namespace MFDExtractor.UI
         }
         private void WriteBms3DCockpitRttColorDepths()
         {
-            string path = Path.Combine (_bmsPath, @"art\ckptart");
-
+            string path = Path.Combine(_bmsPath, @"data\art\ckptart"); //Falcas 04/09/2012 Added data\
             if (new DirectoryInfo(path).Exists) 
             {
                 string[] files = Directory.GetFiles(path, "3dckpit.dat", SearchOption.AllDirectories);
@@ -262,38 +178,6 @@ namespace MFDExtractor.UI
                     WriteBms3DCockpitRttColorDepth(new FileInfo(fileName));
                 }
             }
-            path = Path.Combine(_bmsPath, @"art\ckptartn");
-            if (new DirectoryInfo(path).Exists)
-            {
-                string[] files = Directory.GetFiles(path, "3dckpit.dat", SearchOption.AllDirectories);
-                foreach (string fileName in files)
-                {
-                    WriteBms3DCockpitRttColorDepth(new FileInfo(fileName));
-                }
-            }
-
-
-
-            path = Path.Combine(_bmsPath, @"..\..\Data\art\ckptart");
-            if (new DirectoryInfo(path).Exists)
-            {
-                string[] files = Directory.GetFiles(path, "3dckpit.dat", SearchOption.AllDirectories);
-                foreach (string fileName in files)
-                {
-                    WriteBms3DCockpitRttColorDepth(new FileInfo(fileName));
-                }
-            }
-            path = Path.Combine(_bmsPath, @"..\..\Data\art\ckptartn");
-            if (new DirectoryInfo(path).Exists)
-            {
-                string[] files = Directory.GetFiles(path, "3dckpit.dat", SearchOption.AllDirectories);
-                foreach (string fileName in files)
-                {
-                    WriteBms3DCockpitRttColorDepth(new FileInfo(fileName));
-                }
-            }
-
-
         }
         private void WriteBms3DCockpitRttColorDepth(FileInfo fileToUpdate)
         {
@@ -358,17 +242,8 @@ namespace MFDExtractor.UI
         }
         private void WriteBmsConfigSettings()
         {
-            FileInfo file = new FileInfo(Path.Combine(_bmsPath, "FalconBMS.cfg"));
-            if (!file.Exists)
-            {
-                file = new FileInfo(Path.Combine(Path.Combine(_bmsPath, "config"), "Falcon BMS.cfg"));
-                if (!file.Exists)
-                {
-                    file = new FileInfo(Path.Combine(Path.Combine(_bmsPath, @"..\..\User\config"), "Falcon BMS.cfg"));
-                }
-            
-            }
-
+            //FileInfo file = new FileInfo(Path.Combine(_bmsPath, "FalconBMS.cfg"));
+            FileInfo file = new FileInfo(Path.Combine(_configPath, "Falcon BMS.cfg")); //Falcas 04/09/2012
             if (file.Exists)
             {
                 List<string> allLines = new List<string>();
@@ -451,7 +326,8 @@ namespace MFDExtractor.UI
             _errProvider.Clear();
             if (_bmsPath == null || txtBmsInstallationPath.Text == null)
             {
-                _errProvider.SetError(lblBmsInstallationPath, "Please select your Falcon BMS installation path.");
+                //_errProvider.SetError(lblBmsInstallationPath, "Please select your OpenFalcon installation path.");
+                _errProvider.SetError(lblBmsInstallationPath, "Please select your BMS4.32 installation path."); //Falcas 04/09/2012
                 return false;
             }
             return true;
@@ -471,7 +347,9 @@ namespace MFDExtractor.UI
                     if (this.BmsPath == null)
                     {
                         this.BmsPath = oldBmsPath;
-                        MessageBox.Show(this, "Could not find a valid Falcon BMS installation in " + proposedPath.FullName + ".", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                        //MessageBox.Show(this, "Could not find a valid OpenFalcon installation in " + proposedPath.FullName + ".", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                        MessageBox.Show(this, "Could not find a valid BMS4.32 installation in " + proposedPath.FullName + ".", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                        //Falcas 04/09/2012
                     }
                 }
             }
@@ -482,21 +360,19 @@ namespace MFDExtractor.UI
         {
             _cancelled = true;
         }
-        
+
         private void frmBMSOptions_Load(object sender, EventArgs e)
         {
             bool? bms3dExportEnabled= new bool?();
             int? batchSize= new int?();
-            int? minBatchSize = new int?();
-            ReadBmsConfigSettings(ref bms3dExportEnabled, ref batchSize, ref minBatchSize);
+            ReadBmsConfigSettings(ref bms3dExportEnabled, ref batchSize);
             if (bms3dExportEnabled.HasValue)
             {
                 chkEnable3DModeExtraction.Checked = bms3dExportEnabled.Value;
             }
-            if (minBatchSize.HasValue) udBatchSize.Minimum = minBatchSize.Value;
             if (batchSize.HasValue)
             {
-                udBatchSize.Value = batchSize.Value >= udBatchSize.Minimum? batchSize.Value : udBatchSize.Minimum;
+                udBatchSize.Value = batchSize.Value;
             }
             int? colorDepth = ReadBms3DCockpitRttColorDepth();
             if (colorDepth.HasValue)

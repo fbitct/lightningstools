@@ -62,6 +62,7 @@ namespace LightningGauges.Renderers
 
         private void LoadFonts()
         {
+            _fonts.AddFontFile("ISISDigits.ttf");
             _fonts.AddFontFile(ALT_DIGIT_FONT_FILENAME);
         }
 
@@ -195,7 +196,7 @@ namespace LightningGauges.Renderers
                 PneumaticModeFlag = true;
                 ElectricModeFlag = false;
                 IndicatedAltitudeFeetMSL = 0.0f;
-                BarometricPressure = 29.92f;
+                BarometricPressure = 2992f;
             }
 
             public float BarometricPressure { get; set; }
@@ -287,8 +288,50 @@ namespace LightningGauges.Renderers
                             //draw hundreds digit
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                             g.TranslateTransform(translateX, translateY);
-                            g.TranslateTransform(0, digitHeights*hundreds);
+                            g.TranslateTransform(0, digitHeights * hundreds);
                             g.DrawImage(_hundredsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+
+                            //draw the barometric pressure area
+                            //draw top rectangle
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            var topRectangle = new RectangleF(0, 0, width, 42);
+                            g.FillRectangle(Brushes.Black, topRectangle);
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            float barometricPressureAreaWidth = 65;
+                            var barometricPressureStringFormat = new StringFormat();
+                            barometricPressureStringFormat.Alignment = StringAlignment.Far;
+                            barometricPressureStringFormat.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.NoClip |
+                                                                         StringFormatFlags.NoWrap;
+                            barometricPressureStringFormat.LineAlignment = StringAlignment.Far;
+                            barometricPressureStringFormat.Trimming = StringTrimming.None;
+
+                            var pressure = InstrumentState.BarometricPressure;
+
+                            var barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 15,
+                                                                             20, barometricPressureAreaWidth,
+                                                                             topRectangle.Height - 20);
+                            var barometricPressureBrush = Brushes.White;
+
+                            string baroString = null;
+                            if (Options.PressureAltitudeUnits == F16AltimeterOptions.PressureUnits.InchesOfMercury)
+                            {
+                                baroString = string.Format("{0:#0.00}", pressure / 100);
+                                barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 18,
+                                                                             136, barometricPressureAreaWidth,
+                                                                             topRectangle.Height - 20);
+                            }
+                            else if (Options.PressureAltitudeUnits == F16AltimeterOptions.PressureUnits.Millibars)
+                            {
+                                baroString = string.Format("{0:###0}", pressure);
+                                barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 22,
+                                                                             136, barometricPressureAreaWidth,
+                                                                             topRectangle.Height - 20);
+                            }
+                            g.DrawString(baroString, new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point),
+                                           barometricPressureBrush, barometricPressureRectangle, barometricPressureStringFormat);
                             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                         }
                         break;
@@ -304,18 +347,18 @@ namespace LightningGauges.Renderers
                             var littleDigitsRect = new RectangleF(bigDigitsRect.Right + 7, bigDigitsRect.Y + 4, littleDigitWidth,
                                                                   littleDigitHeight);
                             var onesRect =
-                                new RectangleF(littleDigitsRect.X + littleDigitsRect.Width - (littleDigitsRect.Width/3.0f),
-                                               littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
+                                new RectangleF(littleDigitsRect.X + littleDigitsRect.Width - (littleDigitsRect.Width / 3.0f),
+                                               littleDigitsRect.Y, (littleDigitsRect.Width / 3.0f), littleDigitsRect.Height);
                             var tensRect =
                                 new RectangleF(
-                                    littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width/3.0f)*2.0f),
-                                    littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
+                                    littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width / 3.0f) * 2.0f),
+                                    littleDigitsRect.Y, (littleDigitsRect.Width / 3.0f), littleDigitsRect.Height);
                             var hundredsRect =
                                 new RectangleF(
-                                    littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width/3.0f)*3.0f),
-                                    littleDigitsRect.Y, (littleDigitsRect.Width/3.0f), littleDigitsRect.Height);
-                            var bigDigitsFont = new Font(_fonts.Families[0], 20, FontStyle.Regular, GraphicsUnit.Point);
-                            var littleDigitsFont = new Font(_fonts.Families[0], 18, FontStyle.Regular, GraphicsUnit.Point);
+                                    littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width / 3.0f) * 3.0f),
+                                    littleDigitsRect.Y, (littleDigitsRect.Width / 3.0f), littleDigitsRect.Height);
+                            var bigDigitsFont = new Font(_fonts.Families[1], 20, FontStyle.Regular, GraphicsUnit.Point);
+                            var littleDigitsFont = new Font(_fonts.Families[1], 18, FontStyle.Regular, GraphicsUnit.Point);
                             var digitsFormat = new StringFormat
                                                    {
                                                        Alignment = StringAlignment.Far,
@@ -325,7 +368,7 @@ namespace LightningGauges.Renderers
                                                    };
                             var digitColor = Color.FromArgb(255, 252, 205);
                             Brush digitsBrush = new SolidBrush(digitColor);
-                            float thousandscombined = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/1000.0f));
+                            float thousandscombined = (int)Math.Floor((Math.Abs(absIndicatedAltitude) / 1000.0f));
                             var thousandsString = string.Format("{0:#0}", thousandscombined);
                             if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
                             g.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
@@ -333,12 +376,53 @@ namespace LightningGauges.Renderers
                             var hundredsString = allHundredsString.Substring(0, 1);
 
                             var tensString = string.Format("{0:0}",
-                                                           (int) Math.Floor(((Math.Abs(absIndicatedAltitude)/10.0f)%10.0f)));
+                                                           (int)Math.Floor(((Math.Abs(absIndicatedAltitude) / 10.0f) % 10.0f)));
                             const string onesString = "0";
 
                             g.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
                             g.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
                             g.DrawString(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
+
+                            //draw the barometric pressure area
+                            //draw top rectangle
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            var topRectangle = new RectangleF(0, 0, width, 42);
+                            g.FillRectangle(Brushes.Black, topRectangle);
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            float barometricPressureAreaWidth = 65;
+                            var barometricPressureStringFormat = new StringFormat();
+                            barometricPressureStringFormat.Alignment = StringAlignment.Far;
+                            barometricPressureStringFormat.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.NoClip |
+                                                                         StringFormatFlags.NoWrap;
+                            barometricPressureStringFormat.LineAlignment = StringAlignment.Far;
+                            barometricPressureStringFormat.Trimming = StringTrimming.None;
+
+                            var pressure = InstrumentState.BarometricPressure;
+
+                            var barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 15,
+                                                                             20, barometricPressureAreaWidth,
+                                                                             topRectangle.Height - 20);
+                            
+                            string baroString = null;
+                            if (Options.PressureAltitudeUnits == F16AltimeterOptions.PressureUnits.InchesOfMercury)
+                            {
+                                baroString = string.Format("{0:#0.00}", pressure / 100);
+                                barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 35,
+                                                                             139, barometricPressureAreaWidth,
+                                                                             topRectangle.Height - 20);
+                            }
+                            else if (Options.PressureAltitudeUnits == F16AltimeterOptions.PressureUnits.Millibars)
+                            {
+                                baroString = string.Format("{0:###0}", pressure);
+                                barometricPressureRectangle = new RectangleF(topRectangle.Width - barometricPressureAreaWidth - 35,
+                                                                             139, barometricPressureAreaWidth,
+                                                                             topRectangle.Height - 20);
+                            }
+                            g.DrawString(baroString, new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point),
+                                           digitsBrush, barometricPressureRectangle, barometricPressureStringFormat);
+                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                         }
                         break;
                 }

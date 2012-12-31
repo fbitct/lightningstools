@@ -2872,7 +2872,8 @@ namespace MFDExtractor
                             string exePath = F4Utils.Process.Util.GetFalconExePath();
                             FileVersionInfo verInfo = null;
                             if (exePath != null) verInfo = System.Diagnostics.FileVersionInfo.GetVersionInfo(exePath);
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null && ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) || (verInfo.ProductMajorPart > 4)))
+                            //12-08-12 Falcas change verInfo.ProductMinorPart >= 6826 to verInfo.ProductMinorPart >= 32
+                            if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null && ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 32) || (verInfo.ProductMajorPart > 4)))
                             {
                                 EnableBMSAdvancedSharedmemValues();
                             }
@@ -7978,20 +7979,42 @@ namespace MFDExtractor
             if (_simRunning || NetworkMode == NetworkMode.Client)
             {
                 HsiBits hsibits = ((HsiBits)fromFalcon.hsiBits);
+                AltBits altbits = ((AltBits)fromFalcon.altBits); //12-08-12 added by Falcas 
                 bool commandBarsOn = false;
 
                 //*** UPDATE ISIS ***
                 ((F16ISIS)_isisRenderer).InstrumentState.AirspeedKnots = fromFalcon.kias;
-                ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure = 29.92f;
+
                 if (fromFalcon.DataFormat == FalconDataFormats.BMS4 && _useBMSAdvancedSharedmemValues)
                 {
                     ((F16ISIS)_isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
                     //((F16ISIS)_isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude (-fromFalcon.z, ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure, ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits == F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury);
+
+                    if (fromFalcon.VersionNum >= 111)
+                    {
+                        if (((altbits & AltBits.CalType) == AltBits.CalType)) //13-08-12 added by Falcas
+                        {
+                            ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits = F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
+                        }
+                        else
+                        {
+                            ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits = F16ISIS.F16ISISOptions.PressureUnits.Millibars;
+                        }
+
+                        ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure = fromFalcon.AltCalReading; //13-08-12 added by Falcas
+                    }
+                    else
+                    {
+                        ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure = 2992f; //14-0-12 Falcas removed the point
+                        ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits = F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; //14-08-12 added by Falcas
+                    }
                 }
                 else
                 {
                     //((F16ISIS)_isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude(-fromFalcon.z, ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure, ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits == F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury);
                     ((F16ISIS)_isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
+                    ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure = 2992f; //14-0-12 Falcas removed the point
+                    ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits = F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; //14-08-12 added by Falcas
                 }
                 if (extensionData != null)
                 {
@@ -8037,13 +8060,35 @@ namespace MFDExtractor
                 // *** UPDATE ALTIMETER ***
                 if (fromFalcon.DataFormat == FalconDataFormats.BMS4 && _useBMSAdvancedSharedmemValues)
                 {
+                    if (((altbits & AltBits.CalType) == AltBits.CalType)) //13-08-12 added by Falcas
+                    {
+                        ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury;
+                    }
+                    else
+                    {
+                        ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars;
+                    }
                     //((F16Altimeter)_altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude (- fromFalcon.z,((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure, ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits == F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury) ;
                     ((F16Altimeter)_altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
+                    if (fromFalcon.VersionNum >= 111)
+                    {
+                        ((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure = fromFalcon.AltCalReading; //12-08-12 added by Falcas
+                        ((F16Altimeter)_altimeterRenderer).InstrumentState.PneumaticModeFlag = ((altbits & AltBits.PneuFlag) == AltBits.PneuFlag); //12-08-12 added by Falcas
+                    }
+                    else
+                    {
+                        ((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure = 2992f; //12-08-12 added by Falcas
+                        ((F16Altimeter)_altimeterRenderer).InstrumentState.PneumaticModeFlag = false; //12-08-12 added by Falcas
+                        ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury; //12-08-12 added by Falcas
+                    }
                 }
                 else
                 {
                     //((F16Altimeter)_altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude(-fromFalcon.z, ((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure, ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits == F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury);
                     ((F16Altimeter)_altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
+                    ((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure = 2992f; //12-08-12 added by Falcas
+                    ((F16Altimeter)_altimeterRenderer).InstrumentState.PneumaticModeFlag = false; //12-08-12 added by Falcas
+                    ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury; //12-08-12 added by Falcas
                 }
                 //*************************
 
@@ -8481,22 +8526,22 @@ namespace MFDExtractor
                 ((F16CMDSPanel)_cmdsPanelRenderer).InstrumentState.FlareLow = ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.FlareLo) == (int)F4SharedMem.Headers.LightBits2.FlareLo);
                 ((F16CMDSPanel)_cmdsPanelRenderer).InstrumentState.Go =
                     (
-                        ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Go) == (int)F4SharedMem.Headers.LightBits2.Go)
-                                &&
-                            !(
-                                ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.NoGo) == (int)F4SharedMem.Headers.LightBits2.NoGo)
-                                         ||
-                                ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
-                                         ||
-                                ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Rdy) == (int)F4SharedMem.Headers.LightBits2.Rdy)
-                            )
+                        ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Go) == (int)F4SharedMem.Headers.LightBits2.Go) //Falcas 04/09/2012 to match what you see in BMS
+                            //    &&
+                            //!(
+                            //    ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.NoGo) == (int)F4SharedMem.Headers.LightBits2.NoGo)
+                            //             ||
+                            //    ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
+                            //             ||
+                            //    ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Rdy) == (int)F4SharedMem.Headers.LightBits2.Rdy)
+                            //)
                     );
 
                 ((F16CMDSPanel)_cmdsPanelRenderer).InstrumentState.NoGo =
                     (
-                        ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.NoGo) == (int)F4SharedMem.Headers.LightBits2.NoGo)
-                                 ||
-                        ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
+                        ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.NoGo) == (int)F4SharedMem.Headers.LightBits2.NoGo) //Falcas 04/09/2012 to match what you see in BMS
+                        //         ||
+                        //((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
                     );
                 ((F16CMDSPanel)_cmdsPanelRenderer).InstrumentState.Other1Count = 0;
                 ((F16CMDSPanel)_cmdsPanelRenderer).InstrumentState.Other1Low = true;

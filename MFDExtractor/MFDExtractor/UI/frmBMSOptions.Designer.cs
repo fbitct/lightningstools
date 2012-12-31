@@ -272,9 +272,9 @@
             this.lblBmsInstallationPath.AutoSize = true;
             this.lblBmsInstallationPath.Location = new System.Drawing.Point(3, 12);
             this.lblBmsInstallationPath.Name = "lblBmsInstallationPath";
-            this.lblBmsInstallationPath.Size = new System.Drawing.Size(153, 13);
+            this.lblBmsInstallationPath.Size = new System.Drawing.Size(139, 13);
             this.lblBmsInstallationPath.TabIndex = 3;
-            this.lblBmsInstallationPath.Text = "Falcon BMS Installation Folder:";
+            this.lblBmsInstallationPath.Text = "BMS4.32 Installation Folder:";
             // 
             // txtBmsInstallationPath
             // 
@@ -313,7 +313,7 @@
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Falcon BMS Advanced Options";
+            this.Text = "OpenFalcon Advanced Options";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.frmBMSOptions_Load);
             ((System.ComponentModel.ISupportInitialize)(this._errProvider)).EndInit();

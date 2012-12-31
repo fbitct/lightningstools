@@ -488,10 +488,9 @@ namespace MFDExtractor.UI
             // 
             // cmdOk
             // 
-            this.cmdOk.Location = new System.Drawing.Point(4, 658);
-            this.cmdOk.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdOk.Location = new System.Drawing.Point(3, 535);
             this.cmdOk.Name = "cmdOk";
-            this.cmdOk.Size = new System.Drawing.Size(143, 36);
+            this.cmdOk.Size = new System.Drawing.Size(107, 29);
             this.cmdOk.TabIndex = 150;
             this.cmdOk.Text = "&OK";
             this.cmdOk.UseVisualStyleBackColor = true;
@@ -500,10 +499,9 @@ namespace MFDExtractor.UI
             // cmdCancel
             // 
             this.cmdCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cmdCancel.Location = new System.Drawing.Point(151, 658);
-            this.cmdCancel.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdCancel.Location = new System.Drawing.Point(113, 535);
             this.cmdCancel.Name = "cmdCancel";
-            this.cmdCancel.Size = new System.Drawing.Size(140, 36);
+            this.cmdCancel.Size = new System.Drawing.Size(105, 29);
             this.cmdCancel.TabIndex = 151;
             this.cmdCancel.Text = "&Cancel";
             this.cmdCancel.UseVisualStyleBackColor = true;
@@ -525,21 +523,19 @@ namespace MFDExtractor.UI
             this.tabAllTabs.Dock = System.Windows.Forms.DockStyle.Top;
             this.errControlErrorProvider.SetIconAlignment(this.tabAllTabs, System.Windows.Forms.ErrorIconAlignment.TopRight);
             this.tabAllTabs.Location = new System.Drawing.Point(0, 0);
-            this.tabAllTabs.Margin = new System.Windows.Forms.Padding(4);
             this.tabAllTabs.Multiline = true;
             this.tabAllTabs.Name = "tabAllTabs";
             this.tabAllTabs.SelectedIndex = 0;
-            this.tabAllTabs.Size = new System.Drawing.Size(704, 650);
+            this.tabAllTabs.Size = new System.Drawing.Size(528, 528);
             this.tabAllTabs.TabIndex = 1;
             // 
             // tabInstruments
             // 
             this.tabInstruments.Controls.Add(this.panel1);
-            this.tabInstruments.Location = new System.Drawing.Point(4, 25);
-            this.tabInstruments.Margin = new System.Windows.Forms.Padding(4);
+            this.tabInstruments.Location = new System.Drawing.Point(4, 22);
             this.tabInstruments.Name = "tabInstruments";
-            this.tabInstruments.Padding = new System.Windows.Forms.Padding(4);
-            this.tabInstruments.Size = new System.Drawing.Size(696, 621);
+            this.tabInstruments.Padding = new System.Windows.Forms.Padding(3);
+            this.tabInstruments.Size = new System.Drawing.Size(520, 502);
             this.tabInstruments.TabIndex = 11;
             this.tabInstruments.Text = "Instruments";
             this.tabInstruments.UseVisualStyleBackColor = true;
@@ -548,10 +544,9 @@ namespace MFDExtractor.UI
             // 
             this.panel1.Controls.Add(this.tabOtherInstros);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(4, 4);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(688, 613);
+            this.panel1.Size = new System.Drawing.Size(514, 496);
             this.panel1.TabIndex = 156;
             // 
             // tabOtherInstros
@@ -568,11 +563,10 @@ namespace MFDExtractor.UI
             this.tabOtherInstros.Controls.Add(this.tabGearAndBrakes);
             this.tabOtherInstros.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabOtherInstros.Location = new System.Drawing.Point(0, 0);
-            this.tabOtherInstros.Margin = new System.Windows.Forms.Padding(4);
             this.tabOtherInstros.Multiline = true;
             this.tabOtherInstros.Name = "tabOtherInstros";
             this.tabOtherInstros.SelectedIndex = 0;
-            this.tabOtherInstros.Size = new System.Drawing.Size(688, 613);
+            this.tabOtherInstros.Size = new System.Drawing.Size(514, 496);
             this.tabOtherInstros.TabIndex = 156;
             // 
             // tabMfdsHud
@@ -580,21 +574,19 @@ namespace MFDExtractor.UI
             this.tabMfdsHud.Controls.Add(this.cmdExportCoordinates);
             this.tabMfdsHud.Controls.Add(this.tabMFDsAndHUD);
             this.tabMfdsHud.Controls.Add(this.cmdImportCoordinates);
-            this.tabMfdsHud.Location = new System.Drawing.Point(4, 46);
-            this.tabMfdsHud.Margin = new System.Windows.Forms.Padding(4);
+            this.tabMfdsHud.Location = new System.Drawing.Point(4, 40);
             this.tabMfdsHud.Name = "tabMfdsHud";
-            this.tabMfdsHud.Padding = new System.Windows.Forms.Padding(4);
-            this.tabMfdsHud.Size = new System.Drawing.Size(680, 563);
+            this.tabMfdsHud.Padding = new System.Windows.Forms.Padding(3);
+            this.tabMfdsHud.Size = new System.Drawing.Size(506, 452);
             this.tabMfdsHud.TabIndex = 17;
             this.tabMfdsHud.Text = "MFDs & HUD";
             this.tabMfdsHud.UseVisualStyleBackColor = true;
             // 
             // cmdExportCoordinates
             // 
-            this.cmdExportCoordinates.Location = new System.Drawing.Point(229, 297);
-            this.cmdExportCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdExportCoordinates.Location = new System.Drawing.Point(172, 241);
             this.cmdExportCoordinates.Name = "cmdExportCoordinates";
-            this.cmdExportCoordinates.Size = new System.Drawing.Size(220, 28);
+            this.cmdExportCoordinates.Size = new System.Drawing.Size(165, 23);
             this.cmdExportCoordinates.TabIndex = 154;
             this.cmdExportCoordinates.Text = "&Save coordinates to file...";
             this.cmdExportCoordinates.UseVisualStyleBackColor = true;
@@ -608,11 +600,10 @@ namespace MFDExtractor.UI
             this.tabMFDsAndHUD.Controls.Add(this.tabMFD4);
             this.tabMFDsAndHUD.Controls.Add(this.tabHUD);
             this.tabMFDsAndHUD.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabMFDsAndHUD.Location = new System.Drawing.Point(4, 4);
-            this.tabMFDsAndHUD.Margin = new System.Windows.Forms.Padding(4);
+            this.tabMFDsAndHUD.Location = new System.Drawing.Point(3, 3);
             this.tabMFDsAndHUD.Name = "tabMFDsAndHUD";
             this.tabMFDsAndHUD.SelectedIndex = 0;
-            this.tabMFDsAndHUD.Size = new System.Drawing.Size(672, 286);
+            this.tabMFDsAndHUD.Size = new System.Drawing.Size(500, 232);
             this.tabMFDsAndHUD.TabIndex = 171;
             // 
             // tabLMFD
@@ -621,11 +612,10 @@ namespace MFDExtractor.UI
             this.tabLMFD.Controls.Add(this.grpPrimaryViewLeftMfdImageSourceCoordinates);
             this.tabLMFD.Controls.Add(this.grpSecondaryViewLeftMfdImageSourceCoordinates);
             this.tabLMFD.Controls.Add(this.cmdRecoverLeftMfd);
-            this.tabLMFD.Location = new System.Drawing.Point(4, 25);
-            this.tabLMFD.Margin = new System.Windows.Forms.Padding(4);
+            this.tabLMFD.Location = new System.Drawing.Point(4, 22);
             this.tabLMFD.Name = "tabLMFD";
-            this.tabLMFD.Padding = new System.Windows.Forms.Padding(4);
-            this.tabLMFD.Size = new System.Drawing.Size(664, 257);
+            this.tabLMFD.Padding = new System.Windows.Forms.Padding(3);
+            this.tabLMFD.Size = new System.Drawing.Size(492, 206);
             this.tabLMFD.TabIndex = 0;
             this.tabLMFD.Text = "Left MFD";
             this.tabLMFD.UseVisualStyleBackColor = true;
@@ -633,10 +623,9 @@ namespace MFDExtractor.UI
             // chkEnableLeftMFD
             // 
             this.chkEnableLeftMFD.AutoSize = true;
-            this.chkEnableLeftMFD.Location = new System.Drawing.Point(8, 7);
-            this.chkEnableLeftMFD.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnableLeftMFD.Location = new System.Drawing.Point(6, 6);
             this.chkEnableLeftMFD.Name = "chkEnableLeftMFD";
-            this.chkEnableLeftMFD.Size = new System.Drawing.Size(179, 21);
+            this.chkEnableLeftMFD.Size = new System.Drawing.Size(139, 17);
             this.chkEnableLeftMFD.TabIndex = 2;
             this.chkEnableLeftMFD.Text = "Enable Left MFD output";
             this.chkEnableLeftMFD.UseVisualStyleBackColor = true;
@@ -652,11 +641,9 @@ namespace MFDExtractor.UI
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.Controls.Add(this.label3);
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.Controls.Add(this.txtPrimaryViewLMFD_ULY);
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.Controls.Add(this.txtPrimaryViewLMFD_LRX);
-            this.grpPrimaryViewLeftMfdImageSourceCoordinates.Location = new System.Drawing.Point(8, 36);
-            this.grpPrimaryViewLeftMfdImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPrimaryViewLeftMfdImageSourceCoordinates.Location = new System.Drawing.Point(6, 29);
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.Name = "grpPrimaryViewLeftMfdImageSourceCoordinates";
-            this.grpPrimaryViewLeftMfdImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPrimaryViewLeftMfdImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpPrimaryViewLeftMfdImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.TabIndex = 3;
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.TabStop = false;
             this.grpPrimaryViewLeftMfdImageSourceCoordinates.Text = "Primary 2D Cockpit View Image Source Coordinates";
@@ -664,73 +651,65 @@ namespace MFDExtractor.UI
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(8, 59);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(6, 48);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(92, 17);
+            this.label6.Size = new System.Drawing.Size(70, 13);
             this.label6.TabIndex = 21;
             this.label6.Text = "Upper Left Y:";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(199, 59);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(149, 48);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(100, 17);
+            this.label7.Size = new System.Drawing.Size(77, 13);
             this.label7.TabIndex = 22;
             this.label7.Text = "Lower Right Y:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 27);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(6, 22);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(92, 17);
+            this.label2.Size = new System.Drawing.Size(70, 13);
             this.label2.TabIndex = 19;
             this.label2.Text = "Upper Left X:";
             // 
             // txtPrimaryViewLMFD_ULX
             // 
-            this.txtPrimaryViewLMFD_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtPrimaryViewLMFD_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewLMFD_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtPrimaryViewLMFD_ULX.Name = "txtPrimaryViewLMFD_ULX";
-            this.txtPrimaryViewLMFD_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewLMFD_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewLMFD_ULX.TabIndex = 4;
             // 
             // txtPrimaryViewLMFD_LRY
             // 
-            this.txtPrimaryViewLMFD_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtPrimaryViewLMFD_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewLMFD_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtPrimaryViewLMFD_LRY.Name = "txtPrimaryViewLMFD_LRY";
-            this.txtPrimaryViewLMFD_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewLMFD_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewLMFD_LRY.TabIndex = 7;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(199, 27);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(149, 22);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 17);
+            this.label3.Size = new System.Drawing.Size(77, 13);
             this.label3.TabIndex = 20;
             this.label3.Text = "Lower Right X:";
             // 
             // txtPrimaryViewLMFD_ULY
             // 
-            this.txtPrimaryViewLMFD_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtPrimaryViewLMFD_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewLMFD_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtPrimaryViewLMFD_ULY.Name = "txtPrimaryViewLMFD_ULY";
-            this.txtPrimaryViewLMFD_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewLMFD_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewLMFD_ULY.TabIndex = 5;
             // 
             // txtPrimaryViewLMFD_LRX
             // 
-            this.txtPrimaryViewLMFD_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtPrimaryViewLMFD_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewLMFD_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtPrimaryViewLMFD_LRX.Name = "txtPrimaryViewLMFD_LRX";
-            this.txtPrimaryViewLMFD_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewLMFD_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewLMFD_LRX.TabIndex = 6;
             // 
             // grpSecondaryViewLeftMfdImageSourceCoordinates
@@ -743,11 +722,9 @@ namespace MFDExtractor.UI
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.Controls.Add(this.label12);
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.Controls.Add(this.txtSecondaryViewLMFD_ULY);
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.Controls.Add(this.txtSecondaryViewLMFD_LRX);
-            this.grpSecondaryViewLeftMfdImageSourceCoordinates.Location = new System.Drawing.Point(8, 135);
-            this.grpSecondaryViewLeftMfdImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSecondaryViewLeftMfdImageSourceCoordinates.Location = new System.Drawing.Point(6, 110);
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.Name = "grpSecondaryViewLeftMfdImageSourceCoordinates";
-            this.grpSecondaryViewLeftMfdImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpSecondaryViewLeftMfdImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpSecondaryViewLeftMfdImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.TabIndex = 8;
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.TabStop = false;
             this.grpSecondaryViewLeftMfdImageSourceCoordinates.Text = "Secondary 2D Cockpit View Image Source Coordinates";
@@ -755,81 +732,72 @@ namespace MFDExtractor.UI
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 59);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(6, 48);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(92, 17);
+            this.label1.Size = new System.Drawing.Size(70, 13);
             this.label1.TabIndex = 21;
             this.label1.Text = "Upper Left Y:";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(199, 59);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Location = new System.Drawing.Point(149, 48);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(100, 17);
+            this.label10.Size = new System.Drawing.Size(77, 13);
             this.label10.TabIndex = 22;
             this.label10.Text = "Lower Right Y:";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(8, 27);
-            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label11.Location = new System.Drawing.Point(6, 22);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(92, 17);
+            this.label11.Size = new System.Drawing.Size(70, 13);
             this.label11.TabIndex = 19;
             this.label11.Text = "Upper Left X:";
             // 
             // txtSecondaryViewLMFD_ULX
             // 
-            this.txtSecondaryViewLMFD_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtSecondaryViewLMFD_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewLMFD_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtSecondaryViewLMFD_ULX.Name = "txtSecondaryViewLMFD_ULX";
-            this.txtSecondaryViewLMFD_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewLMFD_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewLMFD_ULX.TabIndex = 9;
             // 
             // txtSecondaryViewLMFD_LRY
             // 
-            this.txtSecondaryViewLMFD_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtSecondaryViewLMFD_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewLMFD_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtSecondaryViewLMFD_LRY.Name = "txtSecondaryViewLMFD_LRY";
-            this.txtSecondaryViewLMFD_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewLMFD_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewLMFD_LRY.TabIndex = 12;
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(199, 27);
-            this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label12.Location = new System.Drawing.Point(149, 22);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(100, 17);
+            this.label12.Size = new System.Drawing.Size(77, 13);
             this.label12.TabIndex = 20;
             this.label12.Text = "Lower Right X:";
             // 
             // txtSecondaryViewLMFD_ULY
             // 
-            this.txtSecondaryViewLMFD_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtSecondaryViewLMFD_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewLMFD_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtSecondaryViewLMFD_ULY.Name = "txtSecondaryViewLMFD_ULY";
-            this.txtSecondaryViewLMFD_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewLMFD_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewLMFD_ULY.TabIndex = 10;
             // 
             // txtSecondaryViewLMFD_LRX
             // 
-            this.txtSecondaryViewLMFD_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtSecondaryViewLMFD_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewLMFD_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtSecondaryViewLMFD_LRX.Name = "txtSecondaryViewLMFD_LRX";
-            this.txtSecondaryViewLMFD_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewLMFD_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewLMFD_LRX.TabIndex = 11;
             // 
             // cmdRecoverLeftMfd
             // 
-            this.cmdRecoverLeftMfd.Location = new System.Drawing.Point(307, 7);
-            this.cmdRecoverLeftMfd.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdRecoverLeftMfd.Location = new System.Drawing.Point(230, 6);
             this.cmdRecoverLeftMfd.Name = "cmdRecoverLeftMfd";
-            this.cmdRecoverLeftMfd.Size = new System.Drawing.Size(107, 28);
+            this.cmdRecoverLeftMfd.Size = new System.Drawing.Size(80, 23);
             this.cmdRecoverLeftMfd.TabIndex = 9;
             this.cmdRecoverLeftMfd.Text = "&Recover";
             this.cmdRecoverLeftMfd.UseVisualStyleBackColor = true;
@@ -841,11 +809,10 @@ namespace MFDExtractor.UI
             this.tabRMFD.Controls.Add(this.grpPrimaryViewRightMfdImageSourceCoordinates);
             this.tabRMFD.Controls.Add(this.grpSecondaryViewRightMfdImageSourceCoordinates);
             this.tabRMFD.Controls.Add(this.cmdRecoverRightMfd);
-            this.tabRMFD.Location = new System.Drawing.Point(4, 25);
-            this.tabRMFD.Margin = new System.Windows.Forms.Padding(4);
+            this.tabRMFD.Location = new System.Drawing.Point(4, 22);
             this.tabRMFD.Name = "tabRMFD";
-            this.tabRMFD.Padding = new System.Windows.Forms.Padding(4);
-            this.tabRMFD.Size = new System.Drawing.Size(664, 257);
+            this.tabRMFD.Padding = new System.Windows.Forms.Padding(3);
+            this.tabRMFD.Size = new System.Drawing.Size(492, 206);
             this.tabRMFD.TabIndex = 1;
             this.tabRMFD.Text = "Right MFD";
             this.tabRMFD.UseVisualStyleBackColor = true;
@@ -853,10 +820,9 @@ namespace MFDExtractor.UI
             // chkEnableRightMFD
             // 
             this.chkEnableRightMFD.AutoSize = true;
-            this.chkEnableRightMFD.Location = new System.Drawing.Point(8, 7);
-            this.chkEnableRightMFD.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnableRightMFD.Location = new System.Drawing.Point(6, 6);
             this.chkEnableRightMFD.Name = "chkEnableRightMFD";
-            this.chkEnableRightMFD.Size = new System.Drawing.Size(188, 21);
+            this.chkEnableRightMFD.Size = new System.Drawing.Size(146, 17);
             this.chkEnableRightMFD.TabIndex = 155;
             this.chkEnableRightMFD.Text = "Enable Right MFD output";
             this.chkEnableRightMFD.UseVisualStyleBackColor = true;
@@ -872,84 +838,74 @@ namespace MFDExtractor.UI
             this.grpPrimaryViewRightMfdImageSourceCoordinates.Controls.Add(this.txtPrimaryViewRMFD_ULX);
             this.grpPrimaryViewRightMfdImageSourceCoordinates.Controls.Add(this.txtPrimaryViewRMFD_ULY);
             this.grpPrimaryViewRightMfdImageSourceCoordinates.Controls.Add(this.label5);
-            this.grpPrimaryViewRightMfdImageSourceCoordinates.Location = new System.Drawing.Point(8, 36);
-            this.grpPrimaryViewRightMfdImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPrimaryViewRightMfdImageSourceCoordinates.Location = new System.Drawing.Point(6, 29);
             this.grpPrimaryViewRightMfdImageSourceCoordinates.Name = "grpPrimaryViewRightMfdImageSourceCoordinates";
-            this.grpPrimaryViewRightMfdImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPrimaryViewRightMfdImageSourceCoordinates.Size = new System.Drawing.Size(407, 92);
+            this.grpPrimaryViewRightMfdImageSourceCoordinates.Size = new System.Drawing.Size(305, 75);
             this.grpPrimaryViewRightMfdImageSourceCoordinates.TabIndex = 156;
             this.grpPrimaryViewRightMfdImageSourceCoordinates.TabStop = false;
             this.grpPrimaryViewRightMfdImageSourceCoordinates.Text = "Primary 2D Cockpit View Image Source Coordinates";
             // 
             // txtPrimaryViewRMFD_LRY
             // 
-            this.txtPrimaryViewRMFD_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtPrimaryViewRMFD_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewRMFD_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtPrimaryViewRMFD_LRY.Name = "txtPrimaryViewRMFD_LRY";
-            this.txtPrimaryViewRMFD_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewRMFD_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewRMFD_LRY.TabIndex = 18;
             // 
             // txtPrimaryViewRMFD_LRX
             // 
-            this.txtPrimaryViewRMFD_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtPrimaryViewRMFD_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewRMFD_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtPrimaryViewRMFD_LRX.Name = "txtPrimaryViewRMFD_LRX";
-            this.txtPrimaryViewRMFD_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewRMFD_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewRMFD_LRX.TabIndex = 17;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 27);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Location = new System.Drawing.Point(6, 22);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(92, 17);
+            this.label9.Size = new System.Drawing.Size(70, 13);
             this.label9.TabIndex = 23;
             this.label9.Text = "Upper Left X:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(199, 59);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(149, 48);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(100, 17);
+            this.label4.Size = new System.Drawing.Size(77, 13);
             this.label4.TabIndex = 26;
             this.label4.Text = "Lower Right Y:";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(199, 27);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Location = new System.Drawing.Point(149, 22);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 17);
+            this.label8.Size = new System.Drawing.Size(77, 13);
             this.label8.TabIndex = 24;
             this.label8.Text = "Lower Right X:";
             // 
             // txtPrimaryViewRMFD_ULX
             // 
-            this.txtPrimaryViewRMFD_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtPrimaryViewRMFD_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewRMFD_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtPrimaryViewRMFD_ULX.Name = "txtPrimaryViewRMFD_ULX";
-            this.txtPrimaryViewRMFD_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewRMFD_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewRMFD_ULX.TabIndex = 15;
             // 
             // txtPrimaryViewRMFD_ULY
             // 
-            this.txtPrimaryViewRMFD_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtPrimaryViewRMFD_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewRMFD_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtPrimaryViewRMFD_ULY.Name = "txtPrimaryViewRMFD_ULY";
-            this.txtPrimaryViewRMFD_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewRMFD_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewRMFD_ULY.TabIndex = 16;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 59);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(6, 48);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(92, 17);
+            this.label5.Size = new System.Drawing.Size(70, 13);
             this.label5.TabIndex = 25;
             this.label5.Text = "Upper Left Y:";
             // 
@@ -963,93 +919,82 @@ namespace MFDExtractor.UI
             this.grpSecondaryViewRightMfdImageSourceCoordinates.Controls.Add(this.txtSecondaryViewRMFD_ULX);
             this.grpSecondaryViewRightMfdImageSourceCoordinates.Controls.Add(this.txtSecondaryViewRMFD_ULY);
             this.grpSecondaryViewRightMfdImageSourceCoordinates.Controls.Add(this.label16);
-            this.grpSecondaryViewRightMfdImageSourceCoordinates.Location = new System.Drawing.Point(8, 135);
-            this.grpSecondaryViewRightMfdImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSecondaryViewRightMfdImageSourceCoordinates.Location = new System.Drawing.Point(6, 110);
             this.grpSecondaryViewRightMfdImageSourceCoordinates.Name = "grpSecondaryViewRightMfdImageSourceCoordinates";
-            this.grpSecondaryViewRightMfdImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpSecondaryViewRightMfdImageSourceCoordinates.Size = new System.Drawing.Size(407, 92);
+            this.grpSecondaryViewRightMfdImageSourceCoordinates.Size = new System.Drawing.Size(305, 75);
             this.grpSecondaryViewRightMfdImageSourceCoordinates.TabIndex = 157;
             this.grpSecondaryViewRightMfdImageSourceCoordinates.TabStop = false;
             this.grpSecondaryViewRightMfdImageSourceCoordinates.Text = "Secondary 2D Cockpit View Image Source Coordinates";
             // 
             // txtSecondaryViewRMFD_LRY
             // 
-            this.txtSecondaryViewRMFD_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtSecondaryViewRMFD_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewRMFD_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtSecondaryViewRMFD_LRY.Name = "txtSecondaryViewRMFD_LRY";
-            this.txtSecondaryViewRMFD_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewRMFD_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewRMFD_LRY.TabIndex = 23;
             // 
             // txtSecondaryViewRMFD_LRX
             // 
-            this.txtSecondaryViewRMFD_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtSecondaryViewRMFD_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewRMFD_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtSecondaryViewRMFD_LRX.Name = "txtSecondaryViewRMFD_LRX";
-            this.txtSecondaryViewRMFD_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewRMFD_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewRMFD_LRX.TabIndex = 22;
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(8, 27);
-            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Location = new System.Drawing.Point(6, 22);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(92, 17);
+            this.label13.Size = new System.Drawing.Size(70, 13);
             this.label13.TabIndex = 23;
             this.label13.Text = "Upper Left X:";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(199, 59);
-            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label14.Location = new System.Drawing.Point(149, 48);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(100, 17);
+            this.label14.Size = new System.Drawing.Size(77, 13);
             this.label14.TabIndex = 26;
             this.label14.Text = "Lower Right Y:";
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(199, 27);
-            this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label15.Location = new System.Drawing.Point(149, 22);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(100, 17);
+            this.label15.Size = new System.Drawing.Size(77, 13);
             this.label15.TabIndex = 24;
             this.label15.Text = "Lower Right X:";
             // 
             // txtSecondaryViewRMFD_ULX
             // 
-            this.txtSecondaryViewRMFD_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtSecondaryViewRMFD_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewRMFD_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtSecondaryViewRMFD_ULX.Name = "txtSecondaryViewRMFD_ULX";
-            this.txtSecondaryViewRMFD_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewRMFD_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewRMFD_ULX.TabIndex = 20;
             // 
             // txtSecondaryViewRMFD_ULY
             // 
-            this.txtSecondaryViewRMFD_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtSecondaryViewRMFD_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewRMFD_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtSecondaryViewRMFD_ULY.Name = "txtSecondaryViewRMFD_ULY";
-            this.txtSecondaryViewRMFD_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewRMFD_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewRMFD_ULY.TabIndex = 21;
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(8, 59);
-            this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label16.Location = new System.Drawing.Point(6, 48);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(92, 17);
+            this.label16.Size = new System.Drawing.Size(70, 13);
             this.label16.TabIndex = 25;
             this.label16.Text = "Upper Left Y:";
             // 
             // cmdRecoverRightMfd
             // 
-            this.cmdRecoverRightMfd.Location = new System.Drawing.Point(307, 7);
-            this.cmdRecoverRightMfd.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdRecoverRightMfd.Location = new System.Drawing.Point(230, 6);
             this.cmdRecoverRightMfd.Name = "cmdRecoverRightMfd";
-            this.cmdRecoverRightMfd.Size = new System.Drawing.Size(107, 28);
+            this.cmdRecoverRightMfd.Size = new System.Drawing.Size(80, 23);
             this.cmdRecoverRightMfd.TabIndex = 158;
             this.cmdRecoverRightMfd.Text = "&Recover";
             this.cmdRecoverRightMfd.UseVisualStyleBackColor = true;
@@ -1061,11 +1006,10 @@ namespace MFDExtractor.UI
             this.tabMFD3.Controls.Add(this.grpPrimaryViewMfd3ImageSourceCoordinates);
             this.tabMFD3.Controls.Add(this.grpSecondaryViewMfd3ImageSourceCoordinates);
             this.tabMFD3.Controls.Add(this.cmdRecoverMfd3);
-            this.tabMFD3.Location = new System.Drawing.Point(4, 25);
-            this.tabMFD3.Margin = new System.Windows.Forms.Padding(4);
+            this.tabMFD3.Location = new System.Drawing.Point(4, 22);
             this.tabMFD3.Name = "tabMFD3";
-            this.tabMFD3.Padding = new System.Windows.Forms.Padding(4);
-            this.tabMFD3.Size = new System.Drawing.Size(664, 257);
+            this.tabMFD3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabMFD3.Size = new System.Drawing.Size(492, 206);
             this.tabMFD3.TabIndex = 2;
             this.tabMFD3.Text = "MFD #3";
             this.tabMFD3.UseVisualStyleBackColor = true;
@@ -1073,10 +1017,9 @@ namespace MFDExtractor.UI
             // chkEnableMFD3
             // 
             this.chkEnableMFD3.AutoSize = true;
-            this.chkEnableMFD3.Location = new System.Drawing.Point(8, 7);
-            this.chkEnableMFD3.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnableMFD3.Location = new System.Drawing.Point(6, 6);
             this.chkEnableMFD3.Name = "chkEnableMFD3";
-            this.chkEnableMFD3.Size = new System.Drawing.Size(171, 21);
+            this.chkEnableMFD3.Size = new System.Drawing.Size(134, 17);
             this.chkEnableMFD3.TabIndex = 159;
             this.chkEnableMFD3.Text = "Enable MFD #3 output";
             this.chkEnableMFD3.UseVisualStyleBackColor = true;
@@ -1092,11 +1035,9 @@ namespace MFDExtractor.UI
             this.grpPrimaryViewMfd3ImageSourceCoordinates.Controls.Add(this.label44);
             this.grpPrimaryViewMfd3ImageSourceCoordinates.Controls.Add(this.txtPrimaryViewMFD3_ULY);
             this.grpPrimaryViewMfd3ImageSourceCoordinates.Controls.Add(this.txtPrimaryViewMFD3_LRX);
-            this.grpPrimaryViewMfd3ImageSourceCoordinates.Location = new System.Drawing.Point(8, 36);
-            this.grpPrimaryViewMfd3ImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPrimaryViewMfd3ImageSourceCoordinates.Location = new System.Drawing.Point(6, 29);
             this.grpPrimaryViewMfd3ImageSourceCoordinates.Name = "grpPrimaryViewMfd3ImageSourceCoordinates";
-            this.grpPrimaryViewMfd3ImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPrimaryViewMfd3ImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpPrimaryViewMfd3ImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpPrimaryViewMfd3ImageSourceCoordinates.TabIndex = 160;
             this.grpPrimaryViewMfd3ImageSourceCoordinates.TabStop = false;
             this.grpPrimaryViewMfd3ImageSourceCoordinates.Text = "Primary 2D Cockpit View Image Source Coordinates";
@@ -1104,73 +1045,65 @@ namespace MFDExtractor.UI
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(8, 59);
-            this.label41.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label41.Location = new System.Drawing.Point(6, 48);
             this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(92, 17);
+            this.label41.Size = new System.Drawing.Size(70, 13);
             this.label41.TabIndex = 21;
             this.label41.Text = "Upper Left Y:";
             // 
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(199, 59);
-            this.label42.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label42.Location = new System.Drawing.Point(149, 48);
             this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(100, 17);
+            this.label42.Size = new System.Drawing.Size(77, 13);
             this.label42.TabIndex = 22;
             this.label42.Text = "Lower Right Y:";
             // 
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(8, 27);
-            this.label43.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label43.Location = new System.Drawing.Point(6, 22);
             this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(92, 17);
+            this.label43.Size = new System.Drawing.Size(70, 13);
             this.label43.TabIndex = 19;
             this.label43.Text = "Upper Left X:";
             // 
             // txtPrimaryViewMFD3_ULX
             // 
-            this.txtPrimaryViewMFD3_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtPrimaryViewMFD3_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD3_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtPrimaryViewMFD3_ULX.Name = "txtPrimaryViewMFD3_ULX";
-            this.txtPrimaryViewMFD3_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD3_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD3_ULX.TabIndex = 4;
             // 
             // txtPrimaryViewMFD3_LRY
             // 
-            this.txtPrimaryViewMFD3_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtPrimaryViewMFD3_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD3_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtPrimaryViewMFD3_LRY.Name = "txtPrimaryViewMFD3_LRY";
-            this.txtPrimaryViewMFD3_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD3_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD3_LRY.TabIndex = 7;
             // 
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(199, 27);
-            this.label44.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label44.Location = new System.Drawing.Point(149, 22);
             this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(100, 17);
+            this.label44.Size = new System.Drawing.Size(77, 13);
             this.label44.TabIndex = 20;
             this.label44.Text = "Lower Right X:";
             // 
             // txtPrimaryViewMFD3_ULY
             // 
-            this.txtPrimaryViewMFD3_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtPrimaryViewMFD3_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD3_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtPrimaryViewMFD3_ULY.Name = "txtPrimaryViewMFD3_ULY";
-            this.txtPrimaryViewMFD3_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD3_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD3_ULY.TabIndex = 5;
             // 
             // txtPrimaryViewMFD3_LRX
             // 
-            this.txtPrimaryViewMFD3_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtPrimaryViewMFD3_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD3_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtPrimaryViewMFD3_LRX.Name = "txtPrimaryViewMFD3_LRX";
-            this.txtPrimaryViewMFD3_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD3_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD3_LRX.TabIndex = 6;
             // 
             // grpSecondaryViewMfd3ImageSourceCoordinates
@@ -1183,11 +1116,9 @@ namespace MFDExtractor.UI
             this.grpSecondaryViewMfd3ImageSourceCoordinates.Controls.Add(this.label40);
             this.grpSecondaryViewMfd3ImageSourceCoordinates.Controls.Add(this.txtSecondaryViewMFD3_ULY);
             this.grpSecondaryViewMfd3ImageSourceCoordinates.Controls.Add(this.txtSecondaryViewMFD3_LRX);
-            this.grpSecondaryViewMfd3ImageSourceCoordinates.Location = new System.Drawing.Point(8, 135);
-            this.grpSecondaryViewMfd3ImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSecondaryViewMfd3ImageSourceCoordinates.Location = new System.Drawing.Point(6, 110);
             this.grpSecondaryViewMfd3ImageSourceCoordinates.Name = "grpSecondaryViewMfd3ImageSourceCoordinates";
-            this.grpSecondaryViewMfd3ImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpSecondaryViewMfd3ImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpSecondaryViewMfd3ImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpSecondaryViewMfd3ImageSourceCoordinates.TabIndex = 161;
             this.grpSecondaryViewMfd3ImageSourceCoordinates.TabStop = false;
             this.grpSecondaryViewMfd3ImageSourceCoordinates.Text = "Secondary 2D Cockpit View Image Source Coordinates";
@@ -1195,81 +1126,72 @@ namespace MFDExtractor.UI
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(8, 59);
-            this.label37.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label37.Location = new System.Drawing.Point(6, 48);
             this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(92, 17);
+            this.label37.Size = new System.Drawing.Size(70, 13);
             this.label37.TabIndex = 21;
             this.label37.Text = "Upper Left Y:";
             // 
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(199, 59);
-            this.label38.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label38.Location = new System.Drawing.Point(149, 48);
             this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(100, 17);
+            this.label38.Size = new System.Drawing.Size(77, 13);
             this.label38.TabIndex = 22;
             this.label38.Text = "Lower Right Y:";
             // 
             // label39
             // 
             this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(8, 27);
-            this.label39.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label39.Location = new System.Drawing.Point(6, 22);
             this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(92, 17);
+            this.label39.Size = new System.Drawing.Size(70, 13);
             this.label39.TabIndex = 19;
             this.label39.Text = "Upper Left X:";
             // 
             // txtSecondaryViewMFD3_ULX
             // 
-            this.txtSecondaryViewMFD3_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtSecondaryViewMFD3_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD3_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtSecondaryViewMFD3_ULX.Name = "txtSecondaryViewMFD3_ULX";
-            this.txtSecondaryViewMFD3_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD3_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD3_ULX.TabIndex = 9;
             // 
             // txtSecondaryViewMFD3_LRY
             // 
-            this.txtSecondaryViewMFD3_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtSecondaryViewMFD3_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD3_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtSecondaryViewMFD3_LRY.Name = "txtSecondaryViewMFD3_LRY";
-            this.txtSecondaryViewMFD3_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD3_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD3_LRY.TabIndex = 12;
             // 
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(199, 27);
-            this.label40.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label40.Location = new System.Drawing.Point(149, 22);
             this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(100, 17);
+            this.label40.Size = new System.Drawing.Size(77, 13);
             this.label40.TabIndex = 20;
             this.label40.Text = "Lower Right X:";
             // 
             // txtSecondaryViewMFD3_ULY
             // 
-            this.txtSecondaryViewMFD3_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtSecondaryViewMFD3_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD3_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtSecondaryViewMFD3_ULY.Name = "txtSecondaryViewMFD3_ULY";
-            this.txtSecondaryViewMFD3_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD3_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD3_ULY.TabIndex = 10;
             // 
             // txtSecondaryViewMFD3_LRX
             // 
-            this.txtSecondaryViewMFD3_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtSecondaryViewMFD3_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD3_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtSecondaryViewMFD3_LRX.Name = "txtSecondaryViewMFD3_LRX";
-            this.txtSecondaryViewMFD3_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD3_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD3_LRX.TabIndex = 11;
             // 
             // cmdRecoverMfd3
             // 
-            this.cmdRecoverMfd3.Location = new System.Drawing.Point(307, 7);
-            this.cmdRecoverMfd3.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdRecoverMfd3.Location = new System.Drawing.Point(230, 6);
             this.cmdRecoverMfd3.Name = "cmdRecoverMfd3";
-            this.cmdRecoverMfd3.Size = new System.Drawing.Size(107, 28);
+            this.cmdRecoverMfd3.Size = new System.Drawing.Size(80, 23);
             this.cmdRecoverMfd3.TabIndex = 162;
             this.cmdRecoverMfd3.Text = "&Recover";
             this.cmdRecoverMfd3.UseVisualStyleBackColor = true;
@@ -1281,10 +1203,9 @@ namespace MFDExtractor.UI
             this.tabMFD4.Controls.Add(this.grpPrimaryViewMfd4ImageSourceCoordinates);
             this.tabMFD4.Controls.Add(this.grpSecondaryViewMfd4ImageSourceCoordinates);
             this.tabMFD4.Controls.Add(this.cmdRecoverMfd4);
-            this.tabMFD4.Location = new System.Drawing.Point(4, 25);
-            this.tabMFD4.Margin = new System.Windows.Forms.Padding(4);
+            this.tabMFD4.Location = new System.Drawing.Point(4, 22);
             this.tabMFD4.Name = "tabMFD4";
-            this.tabMFD4.Size = new System.Drawing.Size(664, 257);
+            this.tabMFD4.Size = new System.Drawing.Size(492, 206);
             this.tabMFD4.TabIndex = 3;
             this.tabMFD4.Text = "MFD #4";
             this.tabMFD4.UseVisualStyleBackColor = true;
@@ -1292,10 +1213,9 @@ namespace MFDExtractor.UI
             // chkEnableMFD4
             // 
             this.chkEnableMFD4.AutoSize = true;
-            this.chkEnableMFD4.Location = new System.Drawing.Point(8, 7);
-            this.chkEnableMFD4.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnableMFD4.Location = new System.Drawing.Point(6, 6);
             this.chkEnableMFD4.Name = "chkEnableMFD4";
-            this.chkEnableMFD4.Size = new System.Drawing.Size(171, 21);
+            this.chkEnableMFD4.Size = new System.Drawing.Size(134, 17);
             this.chkEnableMFD4.TabIndex = 163;
             this.chkEnableMFD4.Text = "Enable MFD #4 output";
             this.chkEnableMFD4.UseVisualStyleBackColor = true;
@@ -1311,11 +1231,9 @@ namespace MFDExtractor.UI
             this.grpPrimaryViewMfd4ImageSourceCoordinates.Controls.Add(this.label52);
             this.grpPrimaryViewMfd4ImageSourceCoordinates.Controls.Add(this.txtPrimaryViewMFD4_ULY);
             this.grpPrimaryViewMfd4ImageSourceCoordinates.Controls.Add(this.txtPrimaryViewMFD4_LRX);
-            this.grpPrimaryViewMfd4ImageSourceCoordinates.Location = new System.Drawing.Point(8, 36);
-            this.grpPrimaryViewMfd4ImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPrimaryViewMfd4ImageSourceCoordinates.Location = new System.Drawing.Point(6, 29);
             this.grpPrimaryViewMfd4ImageSourceCoordinates.Name = "grpPrimaryViewMfd4ImageSourceCoordinates";
-            this.grpPrimaryViewMfd4ImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPrimaryViewMfd4ImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpPrimaryViewMfd4ImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpPrimaryViewMfd4ImageSourceCoordinates.TabIndex = 164;
             this.grpPrimaryViewMfd4ImageSourceCoordinates.TabStop = false;
             this.grpPrimaryViewMfd4ImageSourceCoordinates.Text = "Primary 2D Cockpit View Image Source Coordinates";
@@ -1323,73 +1241,65 @@ namespace MFDExtractor.UI
             // label49
             // 
             this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(8, 59);
-            this.label49.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label49.Location = new System.Drawing.Point(6, 48);
             this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(92, 17);
+            this.label49.Size = new System.Drawing.Size(70, 13);
             this.label49.TabIndex = 21;
             this.label49.Text = "Upper Left Y:";
             // 
             // label50
             // 
             this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(199, 59);
-            this.label50.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label50.Location = new System.Drawing.Point(149, 48);
             this.label50.Name = "label50";
-            this.label50.Size = new System.Drawing.Size(100, 17);
+            this.label50.Size = new System.Drawing.Size(77, 13);
             this.label50.TabIndex = 22;
             this.label50.Text = "Lower Right Y:";
             // 
             // label51
             // 
             this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(8, 27);
-            this.label51.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label51.Location = new System.Drawing.Point(6, 22);
             this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(92, 17);
+            this.label51.Size = new System.Drawing.Size(70, 13);
             this.label51.TabIndex = 19;
             this.label51.Text = "Upper Left X:";
             // 
             // txtPrimaryViewMFD4_ULX
             // 
-            this.txtPrimaryViewMFD4_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtPrimaryViewMFD4_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD4_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtPrimaryViewMFD4_ULX.Name = "txtPrimaryViewMFD4_ULX";
-            this.txtPrimaryViewMFD4_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD4_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD4_ULX.TabIndex = 4;
             // 
             // txtPrimaryViewMFD4_LRY
             // 
-            this.txtPrimaryViewMFD4_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtPrimaryViewMFD4_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD4_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtPrimaryViewMFD4_LRY.Name = "txtPrimaryViewMFD4_LRY";
-            this.txtPrimaryViewMFD4_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD4_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD4_LRY.TabIndex = 7;
             // 
             // label52
             // 
             this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(199, 27);
-            this.label52.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label52.Location = new System.Drawing.Point(149, 22);
             this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(100, 17);
+            this.label52.Size = new System.Drawing.Size(77, 13);
             this.label52.TabIndex = 20;
             this.label52.Text = "Lower Right X:";
             // 
             // txtPrimaryViewMFD4_ULY
             // 
-            this.txtPrimaryViewMFD4_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtPrimaryViewMFD4_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD4_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtPrimaryViewMFD4_ULY.Name = "txtPrimaryViewMFD4_ULY";
-            this.txtPrimaryViewMFD4_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD4_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD4_ULY.TabIndex = 5;
             // 
             // txtPrimaryViewMFD4_LRX
             // 
-            this.txtPrimaryViewMFD4_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtPrimaryViewMFD4_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewMFD4_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtPrimaryViewMFD4_LRX.Name = "txtPrimaryViewMFD4_LRX";
-            this.txtPrimaryViewMFD4_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewMFD4_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewMFD4_LRX.TabIndex = 6;
             // 
             // grpSecondaryViewMfd4ImageSourceCoordinates
@@ -1402,11 +1312,9 @@ namespace MFDExtractor.UI
             this.grpSecondaryViewMfd4ImageSourceCoordinates.Controls.Add(this.label48);
             this.grpSecondaryViewMfd4ImageSourceCoordinates.Controls.Add(this.txtSecondaryViewMFD4_ULY);
             this.grpSecondaryViewMfd4ImageSourceCoordinates.Controls.Add(this.txtSecondaryViewMFD4_LRX);
-            this.grpSecondaryViewMfd4ImageSourceCoordinates.Location = new System.Drawing.Point(8, 135);
-            this.grpSecondaryViewMfd4ImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSecondaryViewMfd4ImageSourceCoordinates.Location = new System.Drawing.Point(6, 110);
             this.grpSecondaryViewMfd4ImageSourceCoordinates.Name = "grpSecondaryViewMfd4ImageSourceCoordinates";
-            this.grpSecondaryViewMfd4ImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpSecondaryViewMfd4ImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpSecondaryViewMfd4ImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpSecondaryViewMfd4ImageSourceCoordinates.TabIndex = 165;
             this.grpSecondaryViewMfd4ImageSourceCoordinates.TabStop = false;
             this.grpSecondaryViewMfd4ImageSourceCoordinates.Text = "Secondary 2D Cockpit View Image Source Coordinates";
@@ -1414,81 +1322,72 @@ namespace MFDExtractor.UI
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(8, 59);
-            this.label45.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label45.Location = new System.Drawing.Point(6, 48);
             this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(92, 17);
+            this.label45.Size = new System.Drawing.Size(70, 13);
             this.label45.TabIndex = 21;
             this.label45.Text = "Upper Left Y:";
             // 
             // label46
             // 
             this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(199, 59);
-            this.label46.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label46.Location = new System.Drawing.Point(149, 48);
             this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(100, 17);
+            this.label46.Size = new System.Drawing.Size(77, 13);
             this.label46.TabIndex = 22;
             this.label46.Text = "Lower Right Y:";
             // 
             // label47
             // 
             this.label47.AutoSize = true;
-            this.label47.Location = new System.Drawing.Point(8, 27);
-            this.label47.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label47.Location = new System.Drawing.Point(6, 22);
             this.label47.Name = "label47";
-            this.label47.Size = new System.Drawing.Size(92, 17);
+            this.label47.Size = new System.Drawing.Size(70, 13);
             this.label47.TabIndex = 19;
             this.label47.Text = "Upper Left X:";
             // 
             // txtSecondaryViewMFD4_ULX
             // 
-            this.txtSecondaryViewMFD4_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtSecondaryViewMFD4_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD4_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtSecondaryViewMFD4_ULX.Name = "txtSecondaryViewMFD4_ULX";
-            this.txtSecondaryViewMFD4_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD4_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD4_ULX.TabIndex = 9;
             // 
             // txtSecondaryViewMFD4_LRY
             // 
-            this.txtSecondaryViewMFD4_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtSecondaryViewMFD4_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD4_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtSecondaryViewMFD4_LRY.Name = "txtSecondaryViewMFD4_LRY";
-            this.txtSecondaryViewMFD4_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD4_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD4_LRY.TabIndex = 12;
             // 
             // label48
             // 
             this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(199, 27);
-            this.label48.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label48.Location = new System.Drawing.Point(149, 22);
             this.label48.Name = "label48";
-            this.label48.Size = new System.Drawing.Size(100, 17);
+            this.label48.Size = new System.Drawing.Size(77, 13);
             this.label48.TabIndex = 20;
             this.label48.Text = "Lower Right X:";
             // 
             // txtSecondaryViewMFD4_ULY
             // 
-            this.txtSecondaryViewMFD4_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtSecondaryViewMFD4_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD4_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtSecondaryViewMFD4_ULY.Name = "txtSecondaryViewMFD4_ULY";
-            this.txtSecondaryViewMFD4_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD4_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD4_ULY.TabIndex = 10;
             // 
             // txtSecondaryViewMFD4_LRX
             // 
-            this.txtSecondaryViewMFD4_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtSecondaryViewMFD4_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewMFD4_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtSecondaryViewMFD4_LRX.Name = "txtSecondaryViewMFD4_LRX";
-            this.txtSecondaryViewMFD4_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewMFD4_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewMFD4_LRX.TabIndex = 11;
             // 
             // cmdRecoverMfd4
             // 
-            this.cmdRecoverMfd4.Location = new System.Drawing.Point(307, 7);
-            this.cmdRecoverMfd4.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdRecoverMfd4.Location = new System.Drawing.Point(230, 6);
             this.cmdRecoverMfd4.Name = "cmdRecoverMfd4";
-            this.cmdRecoverMfd4.Size = new System.Drawing.Size(107, 28);
+            this.cmdRecoverMfd4.Size = new System.Drawing.Size(80, 23);
             this.cmdRecoverMfd4.TabIndex = 166;
             this.cmdRecoverMfd4.Text = "&Recover";
             this.cmdRecoverMfd4.UseVisualStyleBackColor = true;
@@ -1500,10 +1399,9 @@ namespace MFDExtractor.UI
             this.tabHUD.Controls.Add(this.cmdRecoverHud);
             this.tabHUD.Controls.Add(this.grpPrimaryViewHudImageSourceCoordinates);
             this.tabHUD.Controls.Add(this.grpSecondaryViewHudImageSourceCoordinates);
-            this.tabHUD.Location = new System.Drawing.Point(4, 25);
-            this.tabHUD.Margin = new System.Windows.Forms.Padding(4);
+            this.tabHUD.Location = new System.Drawing.Point(4, 22);
             this.tabHUD.Name = "tabHUD";
-            this.tabHUD.Size = new System.Drawing.Size(664, 257);
+            this.tabHUD.Size = new System.Drawing.Size(492, 206);
             this.tabHUD.TabIndex = 4;
             this.tabHUD.Text = "HUD";
             this.tabHUD.UseVisualStyleBackColor = true;
@@ -1511,10 +1409,9 @@ namespace MFDExtractor.UI
             // chkEnableHud
             // 
             this.chkEnableHud.AutoSize = true;
-            this.chkEnableHud.Location = new System.Drawing.Point(8, 7);
-            this.chkEnableHud.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEnableHud.Location = new System.Drawing.Point(6, 6);
             this.chkEnableHud.Name = "chkEnableHud";
-            this.chkEnableHud.Size = new System.Drawing.Size(152, 21);
+            this.chkEnableHud.Size = new System.Drawing.Size(119, 17);
             this.chkEnableHud.TabIndex = 167;
             this.chkEnableHud.Text = "Enable HUD output";
             this.chkEnableHud.UseVisualStyleBackColor = true;
@@ -1522,10 +1419,9 @@ namespace MFDExtractor.UI
             // 
             // cmdRecoverHud
             // 
-            this.cmdRecoverHud.Location = new System.Drawing.Point(307, 7);
-            this.cmdRecoverHud.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdRecoverHud.Location = new System.Drawing.Point(230, 6);
             this.cmdRecoverHud.Name = "cmdRecoverHud";
-            this.cmdRecoverHud.Size = new System.Drawing.Size(107, 28);
+            this.cmdRecoverHud.Size = new System.Drawing.Size(80, 23);
             this.cmdRecoverHud.TabIndex = 170;
             this.cmdRecoverHud.Text = "&Recover";
             this.cmdRecoverHud.UseVisualStyleBackColor = true;
@@ -1541,11 +1437,9 @@ namespace MFDExtractor.UI
             this.grpPrimaryViewHudImageSourceCoordinates.Controls.Add(this.label31);
             this.grpPrimaryViewHudImageSourceCoordinates.Controls.Add(this.txtPrimaryViewHUD_ULY);
             this.grpPrimaryViewHudImageSourceCoordinates.Controls.Add(this.txtPrimaryViewHUD_LRX);
-            this.grpPrimaryViewHudImageSourceCoordinates.Location = new System.Drawing.Point(8, 36);
-            this.grpPrimaryViewHudImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPrimaryViewHudImageSourceCoordinates.Location = new System.Drawing.Point(6, 29);
             this.grpPrimaryViewHudImageSourceCoordinates.Name = "grpPrimaryViewHudImageSourceCoordinates";
-            this.grpPrimaryViewHudImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPrimaryViewHudImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpPrimaryViewHudImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpPrimaryViewHudImageSourceCoordinates.TabIndex = 168;
             this.grpPrimaryViewHudImageSourceCoordinates.TabStop = false;
             this.grpPrimaryViewHudImageSourceCoordinates.Text = "Primary 2D Cockpit View Image Source Coordinates";
@@ -1553,74 +1447,66 @@ namespace MFDExtractor.UI
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(8, 59);
-            this.label28.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label28.Location = new System.Drawing.Point(6, 48);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(92, 17);
+            this.label28.Size = new System.Drawing.Size(70, 13);
             this.label28.TabIndex = 21;
             this.label28.Text = "Upper Left Y:";
             // 
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(199, 59);
-            this.label29.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label29.Location = new System.Drawing.Point(149, 48);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(100, 17);
+            this.label29.Size = new System.Drawing.Size(77, 13);
             this.label29.TabIndex = 22;
             this.label29.Text = "Lower Right Y:";
             // 
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(8, 27);
-            this.label30.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label30.Location = new System.Drawing.Point(6, 22);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(92, 17);
+            this.label30.Size = new System.Drawing.Size(70, 13);
             this.label30.TabIndex = 19;
             this.label30.Text = "Upper Left X:";
             // 
             // txtPrimaryViewHUD_ULX
             // 
-            this.txtPrimaryViewHUD_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtPrimaryViewHUD_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewHUD_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtPrimaryViewHUD_ULX.Name = "txtPrimaryViewHUD_ULX";
-            this.txtPrimaryViewHUD_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewHUD_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewHUD_ULX.TabIndex = 26;
             // 
             // txtPrimaryViewHUD_LRY
             // 
-            this.txtPrimaryViewHUD_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtPrimaryViewHUD_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewHUD_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtPrimaryViewHUD_LRY.Name = "txtPrimaryViewHUD_LRY";
-            this.txtPrimaryViewHUD_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewHUD_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewHUD_LRY.TabIndex = 29;
             // 
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(199, 27);
-            this.label31.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label31.Location = new System.Drawing.Point(149, 22);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(100, 17);
+            this.label31.Size = new System.Drawing.Size(77, 13);
             this.label31.TabIndex = 20;
             this.label31.Text = "Lower Right X:";
             // 
             // txtPrimaryViewHUD_ULY
             // 
             this.txtPrimaryViewHUD_ULY.AcceptsReturn = true;
-            this.txtPrimaryViewHUD_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtPrimaryViewHUD_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewHUD_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtPrimaryViewHUD_ULY.Name = "txtPrimaryViewHUD_ULY";
-            this.txtPrimaryViewHUD_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewHUD_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewHUD_ULY.TabIndex = 27;
             // 
             // txtPrimaryViewHUD_LRX
             // 
-            this.txtPrimaryViewHUD_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtPrimaryViewHUD_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPrimaryViewHUD_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtPrimaryViewHUD_LRX.Name = "txtPrimaryViewHUD_LRX";
-            this.txtPrimaryViewHUD_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtPrimaryViewHUD_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtPrimaryViewHUD_LRX.TabIndex = 28;
             // 
             // grpSecondaryViewHudImageSourceCoordinates
@@ -1633,11 +1519,9 @@ namespace MFDExtractor.UI
             this.grpSecondaryViewHudImageSourceCoordinates.Controls.Add(this.label23);
             this.grpSecondaryViewHudImageSourceCoordinates.Controls.Add(this.txtSecondaryViewHUD_ULY);
             this.grpSecondaryViewHudImageSourceCoordinates.Controls.Add(this.txtSecondaryViewHUD_LRX);
-            this.grpSecondaryViewHudImageSourceCoordinates.Location = new System.Drawing.Point(8, 135);
-            this.grpSecondaryViewHudImageSourceCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.grpSecondaryViewHudImageSourceCoordinates.Location = new System.Drawing.Point(6, 110);
             this.grpSecondaryViewHudImageSourceCoordinates.Name = "grpSecondaryViewHudImageSourceCoordinates";
-            this.grpSecondaryViewHudImageSourceCoordinates.Padding = new System.Windows.Forms.Padding(4);
-            this.grpSecondaryViewHudImageSourceCoordinates.Size = new System.Drawing.Size(405, 92);
+            this.grpSecondaryViewHudImageSourceCoordinates.Size = new System.Drawing.Size(304, 75);
             this.grpSecondaryViewHudImageSourceCoordinates.TabIndex = 169;
             this.grpSecondaryViewHudImageSourceCoordinates.TabStop = false;
             this.grpSecondaryViewHudImageSourceCoordinates.Text = "Secondary 2D Cockpit View Image Source Coordinates";
@@ -1645,81 +1529,72 @@ namespace MFDExtractor.UI
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(8, 59);
-            this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label17.Location = new System.Drawing.Point(6, 48);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(92, 17);
+            this.label17.Size = new System.Drawing.Size(70, 13);
             this.label17.TabIndex = 21;
             this.label17.Text = "Upper Left Y:";
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(199, 59);
-            this.label20.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label20.Location = new System.Drawing.Point(149, 48);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(100, 17);
+            this.label20.Size = new System.Drawing.Size(77, 13);
             this.label20.TabIndex = 22;
             this.label20.Text = "Lower Right Y:";
             // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(8, 27);
-            this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label21.Location = new System.Drawing.Point(6, 22);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(92, 17);
+            this.label21.Size = new System.Drawing.Size(70, 13);
             this.label21.TabIndex = 19;
             this.label21.Text = "Upper Left X:";
             // 
             // txtSecondaryViewHUD_ULX
             // 
-            this.txtSecondaryViewHUD_ULX.Location = new System.Drawing.Point(109, 23);
-            this.txtSecondaryViewHUD_ULX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewHUD_ULX.Location = new System.Drawing.Point(82, 19);
             this.txtSecondaryViewHUD_ULX.Name = "txtSecondaryViewHUD_ULX";
-            this.txtSecondaryViewHUD_ULX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewHUD_ULX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewHUD_ULX.TabIndex = 31;
             // 
             // txtSecondaryViewHUD_LRY
             // 
-            this.txtSecondaryViewHUD_LRY.Location = new System.Drawing.Point(309, 55);
-            this.txtSecondaryViewHUD_LRY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewHUD_LRY.Location = new System.Drawing.Point(232, 45);
             this.txtSecondaryViewHUD_LRY.Name = "txtSecondaryViewHUD_LRY";
-            this.txtSecondaryViewHUD_LRY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewHUD_LRY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewHUD_LRY.TabIndex = 34;
             // 
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(199, 27);
-            this.label23.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label23.Location = new System.Drawing.Point(149, 22);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(100, 17);
+            this.label23.Size = new System.Drawing.Size(77, 13);
             this.label23.TabIndex = 20;
             this.label23.Text = "Lower Right X:";
             // 
             // txtSecondaryViewHUD_ULY
             // 
-            this.txtSecondaryViewHUD_ULY.Location = new System.Drawing.Point(109, 55);
-            this.txtSecondaryViewHUD_ULY.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewHUD_ULY.Location = new System.Drawing.Point(82, 45);
             this.txtSecondaryViewHUD_ULY.Name = "txtSecondaryViewHUD_ULY";
-            this.txtSecondaryViewHUD_ULY.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewHUD_ULY.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewHUD_ULY.TabIndex = 32;
             // 
             // txtSecondaryViewHUD_LRX
             // 
-            this.txtSecondaryViewHUD_LRX.Location = new System.Drawing.Point(309, 23);
-            this.txtSecondaryViewHUD_LRX.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSecondaryViewHUD_LRX.Location = new System.Drawing.Point(232, 19);
             this.txtSecondaryViewHUD_LRX.Name = "txtSecondaryViewHUD_LRX";
-            this.txtSecondaryViewHUD_LRX.Size = new System.Drawing.Size(80, 22);
+            this.txtSecondaryViewHUD_LRX.Size = new System.Drawing.Size(61, 20);
             this.txtSecondaryViewHUD_LRX.TabIndex = 33;
             // 
             // cmdImportCoordinates
             // 
-            this.cmdImportCoordinates.Location = new System.Drawing.Point(8, 297);
-            this.cmdImportCoordinates.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdImportCoordinates.Location = new System.Drawing.Point(6, 241);
             this.cmdImportCoordinates.Name = "cmdImportCoordinates";
-            this.cmdImportCoordinates.Size = new System.Drawing.Size(217, 28);
+            this.cmdImportCoordinates.Size = new System.Drawing.Size(163, 23);
             this.cmdImportCoordinates.TabIndex = 153;
             this.cmdImportCoordinates.Text = "&Load coordinates from file...";
             this.cmdImportCoordinates.UseVisualStyleBackColor = true;
@@ -1756,11 +1631,10 @@ namespace MFDExtractor.UI
             this.tabFlightInstruments.Controls.Add(this.pbRecoverAltimeter);
             this.tabFlightInstruments.Controls.Add(this.grpAltimeterStyle);
             this.tabFlightInstruments.Controls.Add(this.grpPressureAltitudeSettings);
-            this.tabFlightInstruments.Location = new System.Drawing.Point(4, 46);
-            this.tabFlightInstruments.Margin = new System.Windows.Forms.Padding(4);
+            this.tabFlightInstruments.Location = new System.Drawing.Point(4, 40);
             this.tabFlightInstruments.Name = "tabFlightInstruments";
-            this.tabFlightInstruments.Padding = new System.Windows.Forms.Padding(4);
-            this.tabFlightInstruments.Size = new System.Drawing.Size(680, 563);
+            this.tabFlightInstruments.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFlightInstruments.Size = new System.Drawing.Size(506, 452);
             this.tabFlightInstruments.TabIndex = 8;
             this.tabFlightInstruments.Text = "Flight & Navigation Instruments";
             this.tabFlightInstruments.UseVisualStyleBackColor = true;
@@ -1768,10 +1642,9 @@ namespace MFDExtractor.UI
             // chkDED
             // 
             this.chkDED.AutoSize = true;
-            this.chkDED.Location = new System.Drawing.Point(8, 334);
-            this.chkDED.Margin = new System.Windows.Forms.Padding(4);
+            this.chkDED.Location = new System.Drawing.Point(6, 271);
             this.chkDED.Name = "chkDED";
-            this.chkDED.Size = new System.Drawing.Size(190, 21);
+            this.chkDED.Size = new System.Drawing.Size(145, 17);
             this.chkDED.TabIndex = 72;
             this.chkDED.Text = "Data Entry Display (DED)";
             this.chkDED.UseVisualStyleBackColor = true;
@@ -1783,12 +1656,11 @@ namespace MFDExtractor.UI
             this.pbRecoverDED.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverDED.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverDED.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverDED.Location = new System.Drawing.Point(356, 334);
-            this.pbRecoverDED.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverDED.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverDED.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverDED.Location = new System.Drawing.Point(267, 271);
+            this.pbRecoverDED.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverDED.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverDED.Name = "pbRecoverDED";
-            this.pbRecoverDED.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverDED.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverDED.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverDED.TabIndex = 73;
             this.pbRecoverDED.TabStop = false;
@@ -1798,10 +1670,9 @@ namespace MFDExtractor.UI
             // chkEHSI
             // 
             this.chkEHSI.AutoSize = true;
-            this.chkEHSI.Location = new System.Drawing.Point(8, 362);
-            this.chkEHSI.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEHSI.Location = new System.Drawing.Point(6, 294);
             this.chkEHSI.Name = "chkEHSI";
-            this.chkEHSI.Size = new System.Drawing.Size(322, 21);
+            this.chkEHSI.Size = new System.Drawing.Size(245, 17);
             this.chkEHSI.TabIndex = 19;
             this.chkEHSI.Text = "Electronic Horizontal Situation Indicator (EHSI)";
             this.chkEHSI.UseVisualStyleBackColor = true;
@@ -1810,10 +1681,9 @@ namespace MFDExtractor.UI
             // chkAccelerometer
             // 
             this.chkAccelerometer.AutoSize = true;
-            this.chkAccelerometer.Location = new System.Drawing.Point(8, 7);
-            this.chkAccelerometer.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAccelerometer.Location = new System.Drawing.Point(6, 6);
             this.chkAccelerometer.Name = "chkAccelerometer";
-            this.chkAccelerometer.Size = new System.Drawing.Size(187, 21);
+            this.chkAccelerometer.Size = new System.Drawing.Size(140, 17);
             this.chkAccelerometer.TabIndex = 0;
             this.chkAccelerometer.Text = "Accelerometer (G-meter)";
             this.chkAccelerometer.UseVisualStyleBackColor = true;
@@ -1825,12 +1695,11 @@ namespace MFDExtractor.UI
             this.pbRecoverEHSI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverEHSI.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverEHSI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverEHSI.Location = new System.Drawing.Point(356, 362);
-            this.pbRecoverEHSI.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverEHSI.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverEHSI.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverEHSI.Location = new System.Drawing.Point(267, 294);
+            this.pbRecoverEHSI.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverEHSI.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverEHSI.Name = "pbRecoverEHSI";
-            this.pbRecoverEHSI.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverEHSI.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverEHSI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverEHSI.TabIndex = 86;
             this.pbRecoverEHSI.TabStop = false;
@@ -1843,12 +1712,11 @@ namespace MFDExtractor.UI
             this.pbRecoverASI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverASI.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverASI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverASI.Location = new System.Drawing.Point(356, 38);
-            this.pbRecoverASI.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverASI.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverASI.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverASI.Location = new System.Drawing.Point(267, 31);
+            this.pbRecoverASI.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverASI.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverASI.Name = "pbRecoverASI";
-            this.pbRecoverASI.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverASI.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverASI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverASI.TabIndex = 67;
             this.pbRecoverASI.TabStop = false;
@@ -1859,11 +1727,9 @@ namespace MFDExtractor.UI
             // 
             this.grpVVIOptions.Controls.Add(this.rdoVVIStyleNeedle);
             this.grpVVIOptions.Controls.Add(this.rdoVVIStyleTape);
-            this.grpVVIOptions.Location = new System.Drawing.Point(39, 506);
-            this.grpVVIOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpVVIOptions.Location = new System.Drawing.Point(29, 411);
             this.grpVVIOptions.Name = "grpVVIOptions";
-            this.grpVVIOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpVVIOptions.Size = new System.Drawing.Size(249, 46);
+            this.grpVVIOptions.Size = new System.Drawing.Size(187, 37);
             this.grpVVIOptions.TabIndex = 44;
             this.grpVVIOptions.TabStop = false;
             this.grpVVIOptions.Text = "Style";
@@ -1871,10 +1737,9 @@ namespace MFDExtractor.UI
             // rdoVVIStyleNeedle
             // 
             this.rdoVVIStyleNeedle.AutoSize = true;
-            this.rdoVVIStyleNeedle.Location = new System.Drawing.Point(85, 18);
-            this.rdoVVIStyleNeedle.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoVVIStyleNeedle.Location = new System.Drawing.Point(64, 15);
             this.rdoVVIStyleNeedle.Name = "rdoVVIStyleNeedle";
-            this.rdoVVIStyleNeedle.Size = new System.Drawing.Size(74, 21);
+            this.rdoVVIStyleNeedle.Size = new System.Drawing.Size(59, 17);
             this.rdoVVIStyleNeedle.TabIndex = 1;
             this.rdoVVIStyleNeedle.TabStop = true;
             this.rdoVVIStyleNeedle.Text = "Needle";
@@ -1884,10 +1749,9 @@ namespace MFDExtractor.UI
             // rdoVVIStyleTape
             // 
             this.rdoVVIStyleTape.AutoSize = true;
-            this.rdoVVIStyleTape.Location = new System.Drawing.Point(15, 18);
-            this.rdoVVIStyleTape.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoVVIStyleTape.Location = new System.Drawing.Point(11, 15);
             this.rdoVVIStyleTape.Name = "rdoVVIStyleTape";
-            this.rdoVVIStyleTape.Size = new System.Drawing.Size(62, 21);
+            this.rdoVVIStyleTape.Size = new System.Drawing.Size(50, 17);
             this.rdoVVIStyleTape.TabIndex = 0;
             this.rdoVVIStyleTape.TabStop = true;
             this.rdoVVIStyleTape.Text = "Tape";
@@ -1897,10 +1761,9 @@ namespace MFDExtractor.UI
             // chkStandbyADI
             // 
             this.chkStandbyADI.AutoSize = true;
-            this.chkStandbyADI.Location = new System.Drawing.Point(8, 447);
-            this.chkStandbyADI.Margin = new System.Windows.Forms.Padding(4);
+            this.chkStandbyADI.Location = new System.Drawing.Point(6, 363);
             this.chkStandbyADI.Name = "chkStandbyADI";
-            this.chkStandbyADI.Size = new System.Drawing.Size(192, 21);
+            this.chkStandbyADI.Size = new System.Drawing.Size(148, 17);
             this.chkStandbyADI.TabIndex = 91;
             this.chkStandbyADI.Text = "Standby Attitude Indicator";
             this.chkStandbyADI.UseVisualStyleBackColor = true;
@@ -1909,10 +1772,9 @@ namespace MFDExtractor.UI
             // chkHSI
             // 
             this.chkHSI.AutoSize = true;
-            this.chkHSI.Location = new System.Drawing.Point(8, 390);
-            this.chkHSI.Margin = new System.Windows.Forms.Padding(4);
+            this.chkHSI.Location = new System.Drawing.Point(6, 317);
             this.chkHSI.Name = "chkHSI";
-            this.chkHSI.Size = new System.Drawing.Size(247, 21);
+            this.chkHSI.Size = new System.Drawing.Size(188, 17);
             this.chkHSI.TabIndex = 33;
             this.chkHSI.Text = "Horizontal Situation Indicator (HSI)";
             this.chkHSI.UseVisualStyleBackColor = true;
@@ -1924,12 +1786,11 @@ namespace MFDExtractor.UI
             this.pbRecoverCompass.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCompass.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCompass.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverCompass.Location = new System.Drawing.Point(356, 305);
-            this.pbRecoverCompass.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverCompass.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverCompass.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverCompass.Location = new System.Drawing.Point(267, 248);
+            this.pbRecoverCompass.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverCompass.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverCompass.Name = "pbRecoverCompass";
-            this.pbRecoverCompass.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverCompass.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverCompass.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverCompass.TabIndex = 90;
             this.pbRecoverCompass.TabStop = false;
@@ -1942,12 +1803,11 @@ namespace MFDExtractor.UI
             this.pbRecoverStandbyADI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverStandbyADI.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverStandbyADI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverStandbyADI.Location = new System.Drawing.Point(356, 447);
-            this.pbRecoverStandbyADI.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverStandbyADI.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverStandbyADI.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverStandbyADI.Location = new System.Drawing.Point(267, 363);
+            this.pbRecoverStandbyADI.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverStandbyADI.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverStandbyADI.Name = "pbRecoverStandbyADI";
-            this.pbRecoverStandbyADI.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverStandbyADI.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverStandbyADI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverStandbyADI.TabIndex = 92;
             this.pbRecoverStandbyADI.TabStop = false;
@@ -1960,12 +1820,11 @@ namespace MFDExtractor.UI
             this.pbRecoverHSI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverHSI.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverHSI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverHSI.Location = new System.Drawing.Point(356, 390);
-            this.pbRecoverHSI.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverHSI.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverHSI.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverHSI.Location = new System.Drawing.Point(267, 317);
+            this.pbRecoverHSI.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverHSI.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverHSI.Name = "pbRecoverHSI";
-            this.pbRecoverHSI.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverHSI.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverHSI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverHSI.TabIndex = 51;
             this.pbRecoverHSI.TabStop = false;
@@ -1978,12 +1837,11 @@ namespace MFDExtractor.UI
             this.pbRecoverVVI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverVVI.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverVVI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverVVI.Location = new System.Drawing.Point(356, 475);
-            this.pbRecoverVVI.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverVVI.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverVVI.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverVVI.Location = new System.Drawing.Point(267, 386);
+            this.pbRecoverVVI.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverVVI.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverVVI.Name = "pbRecoverVVI";
-            this.pbRecoverVVI.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverVVI.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverVVI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverVVI.TabIndex = 50;
             this.pbRecoverVVI.TabStop = false;
@@ -1993,10 +1851,9 @@ namespace MFDExtractor.UI
             // chkCabinPress
             // 
             this.chkCabinPress.AutoSize = true;
-            this.chkCabinPress.Location = new System.Drawing.Point(8, 277);
-            this.chkCabinPress.Margin = new System.Windows.Forms.Padding(4);
+            this.chkCabinPress.Location = new System.Drawing.Point(6, 225);
             this.chkCabinPress.Name = "chkCabinPress";
-            this.chkCabinPress.Size = new System.Drawing.Size(186, 21);
+            this.chkCabinPress.Size = new System.Drawing.Size(140, 17);
             this.chkCabinPress.TabIndex = 62;
             this.chkCabinPress.Text = "Cabin Pressure Altimeter";
             this.chkCabinPress.UseVisualStyleBackColor = true;
@@ -2008,12 +1865,11 @@ namespace MFDExtractor.UI
             this.pbRecoverCabinPress.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCabinPress.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCabinPress.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverCabinPress.Location = new System.Drawing.Point(356, 277);
-            this.pbRecoverCabinPress.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverCabinPress.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverCabinPress.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverCabinPress.Location = new System.Drawing.Point(267, 225);
+            this.pbRecoverCabinPress.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverCabinPress.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverCabinPress.Name = "pbRecoverCabinPress";
-            this.pbRecoverCabinPress.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverCabinPress.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverCabinPress.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverCabinPress.TabIndex = 63;
             this.pbRecoverCabinPress.TabStop = false;
@@ -2023,10 +1879,9 @@ namespace MFDExtractor.UI
             // chkAirspeedIndicator
             // 
             this.chkAirspeedIndicator.AutoSize = true;
-            this.chkAirspeedIndicator.Location = new System.Drawing.Point(8, 38);
-            this.chkAirspeedIndicator.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAirspeedIndicator.Location = new System.Drawing.Point(6, 31);
             this.chkAirspeedIndicator.Name = "chkAirspeedIndicator";
-            this.chkAirspeedIndicator.Size = new System.Drawing.Size(222, 21);
+            this.chkAirspeedIndicator.Size = new System.Drawing.Size(173, 17);
             this.chkAirspeedIndicator.TabIndex = 1;
             this.chkAirspeedIndicator.Text = "Airspeed Indicator/Mach Meter";
             this.chkAirspeedIndicator.UseVisualStyleBackColor = true;
@@ -2038,12 +1893,11 @@ namespace MFDExtractor.UI
             this.pbRecoverAccelerometer.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAccelerometer.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAccelerometer.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAccelerometer.Location = new System.Drawing.Point(356, 7);
-            this.pbRecoverAccelerometer.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverAccelerometer.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverAccelerometer.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverAccelerometer.Location = new System.Drawing.Point(267, 6);
+            this.pbRecoverAccelerometer.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverAccelerometer.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverAccelerometer.Name = "pbRecoverAccelerometer";
-            this.pbRecoverAccelerometer.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverAccelerometer.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverAccelerometer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverAccelerometer.TabIndex = 88;
             this.pbRecoverAccelerometer.TabStop = false;
@@ -2053,10 +1907,9 @@ namespace MFDExtractor.UI
             // chkVVI
             // 
             this.chkVVI.AutoSize = true;
-            this.chkVVI.Location = new System.Drawing.Point(8, 475);
-            this.chkVVI.Margin = new System.Windows.Forms.Padding(4);
+            this.chkVVI.Location = new System.Drawing.Point(6, 386);
             this.chkVVI.Name = "chkVVI";
-            this.chkVVI.Size = new System.Drawing.Size(223, 21);
+            this.chkVVI.Size = new System.Drawing.Size(171, 17);
             this.chkVVI.TabIndex = 43;
             this.chkVVI.Text = "Vertical Velocity Indicator (VVI)";
             this.chkVVI.UseVisualStyleBackColor = true;
@@ -2065,10 +1918,9 @@ namespace MFDExtractor.UI
             // chkAltimeter
             // 
             this.chkAltimeter.AutoSize = true;
-            this.chkAltimeter.Location = new System.Drawing.Point(8, 66);
-            this.chkAltimeter.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAltimeter.Location = new System.Drawing.Point(6, 54);
             this.chkAltimeter.Name = "chkAltimeter";
-            this.chkAltimeter.Size = new System.Drawing.Size(85, 21);
+            this.chkAltimeter.Size = new System.Drawing.Size(66, 17);
             this.chkAltimeter.TabIndex = 2;
             this.chkAltimeter.Text = "Altimeter";
             this.chkAltimeter.UseVisualStyleBackColor = true;
@@ -2077,10 +1929,9 @@ namespace MFDExtractor.UI
             // chkISIS
             // 
             this.chkISIS.AutoSize = true;
-            this.chkISIS.Location = new System.Drawing.Point(8, 418);
-            this.chkISIS.Margin = new System.Windows.Forms.Padding(4);
+            this.chkISIS.Location = new System.Drawing.Point(6, 340);
             this.chkISIS.Name = "chkISIS";
-            this.chkISIS.Size = new System.Drawing.Size(308, 21);
+            this.chkISIS.Size = new System.Drawing.Size(234, 17);
             this.chkISIS.TabIndex = 36;
             this.chkISIS.Text = "Integrated Standby Instrument System (ISIS)";
             this.chkISIS.UseVisualStyleBackColor = true;
@@ -2089,10 +1940,9 @@ namespace MFDExtractor.UI
             // chkCompass
             // 
             this.chkCompass.AutoSize = true;
-            this.chkCompass.Location = new System.Drawing.Point(8, 305);
-            this.chkCompass.Margin = new System.Windows.Forms.Padding(4);
+            this.chkCompass.Location = new System.Drawing.Point(6, 248);
             this.chkCompass.Name = "chkCompass";
-            this.chkCompass.Size = new System.Drawing.Size(88, 21);
+            this.chkCompass.Size = new System.Drawing.Size(69, 17);
             this.chkCompass.TabIndex = 89;
             this.chkCompass.Text = "Compass";
             this.chkCompass.UseVisualStyleBackColor = true;
@@ -2104,12 +1954,11 @@ namespace MFDExtractor.UI
             this.pbRecoverISIS.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverISIS.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverISIS.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverISIS.Location = new System.Drawing.Point(356, 418);
-            this.pbRecoverISIS.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverISIS.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverISIS.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverISIS.Location = new System.Drawing.Point(267, 340);
+            this.pbRecoverISIS.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverISIS.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverISIS.Name = "pbRecoverISIS";
-            this.pbRecoverISIS.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverISIS.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverISIS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverISIS.TabIndex = 84;
             this.pbRecoverISIS.TabStop = false;
@@ -2119,10 +1968,9 @@ namespace MFDExtractor.UI
             // chkADI
             // 
             this.chkADI.AutoSize = true;
-            this.chkADI.Location = new System.Drawing.Point(8, 249);
-            this.chkADI.Margin = new System.Windows.Forms.Padding(4);
+            this.chkADI.Location = new System.Drawing.Point(6, 202);
             this.chkADI.Name = "chkADI";
-            this.chkADI.Size = new System.Drawing.Size(226, 21);
+            this.chkADI.Size = new System.Drawing.Size(173, 17);
             this.chkADI.TabIndex = 8;
             this.chkADI.Text = "Attitude Director Indicator (ADI)";
             this.chkADI.UseVisualStyleBackColor = true;
@@ -2134,12 +1982,11 @@ namespace MFDExtractor.UI
             this.pbRecoverADI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverADI.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverADI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverADI.Location = new System.Drawing.Point(356, 249);
-            this.pbRecoverADI.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverADI.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverADI.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverADI.Location = new System.Drawing.Point(267, 202);
+            this.pbRecoverADI.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverADI.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverADI.Name = "pbRecoverADI";
-            this.pbRecoverADI.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverADI.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverADI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverADI.TabIndex = 28;
             this.pbRecoverADI.TabStop = false;
@@ -2149,10 +1996,9 @@ namespace MFDExtractor.UI
             // chkAOAIndicator
             // 
             this.chkAOAIndicator.AutoSize = true;
-            this.chkAOAIndicator.Location = new System.Drawing.Point(8, 220);
-            this.chkAOAIndicator.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAOAIndicator.Location = new System.Drawing.Point(6, 179);
             this.chkAOAIndicator.Name = "chkAOAIndicator";
-            this.chkAOAIndicator.Size = new System.Drawing.Size(226, 21);
+            this.chkAOAIndicator.Size = new System.Drawing.Size(174, 17);
             this.chkAOAIndicator.TabIndex = 7;
             this.chkAOAIndicator.Text = "Angle of Attack (AOA) Indicator";
             this.chkAOAIndicator.UseVisualStyleBackColor = true;
@@ -2164,12 +2010,11 @@ namespace MFDExtractor.UI
             this.pbRecoverAOAIndicator.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAOAIndicator.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAOAIndicator.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAOAIndicator.Location = new System.Drawing.Point(356, 220);
-            this.pbRecoverAOAIndicator.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverAOAIndicator.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverAOAIndicator.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverAOAIndicator.Location = new System.Drawing.Point(267, 179);
+            this.pbRecoverAOAIndicator.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverAOAIndicator.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverAOAIndicator.Name = "pbRecoverAOAIndicator";
-            this.pbRecoverAOAIndicator.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverAOAIndicator.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverAOAIndicator.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverAOAIndicator.TabIndex = 32;
             this.pbRecoverAOAIndicator.TabStop = false;
@@ -2182,12 +2027,11 @@ namespace MFDExtractor.UI
             this.pbRecoverAltimeter.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAltimeter.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAltimeter.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAltimeter.Location = new System.Drawing.Point(356, 70);
-            this.pbRecoverAltimeter.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverAltimeter.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverAltimeter.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverAltimeter.Location = new System.Drawing.Point(267, 57);
+            this.pbRecoverAltimeter.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverAltimeter.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverAltimeter.Name = "pbRecoverAltimeter";
-            this.pbRecoverAltimeter.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverAltimeter.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverAltimeter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverAltimeter.TabIndex = 30;
             this.pbRecoverAltimeter.TabStop = false;
@@ -2198,11 +2042,9 @@ namespace MFDExtractor.UI
             // 
             this.grpAltimeterStyle.Controls.Add(this.rdoAltimeterStyleDigital);
             this.grpAltimeterStyle.Controls.Add(this.rdoAltimeterStyleElectromechanical);
-            this.grpAltimeterStyle.Location = new System.Drawing.Point(28, 98);
-            this.grpAltimeterStyle.Margin = new System.Windows.Forms.Padding(4);
+            this.grpAltimeterStyle.Location = new System.Drawing.Point(21, 80);
             this.grpAltimeterStyle.Name = "grpAltimeterStyle";
-            this.grpAltimeterStyle.Padding = new System.Windows.Forms.Padding(4);
-            this.grpAltimeterStyle.Size = new System.Drawing.Size(260, 58);
+            this.grpAltimeterStyle.Size = new System.Drawing.Size(195, 47);
             this.grpAltimeterStyle.TabIndex = 4;
             this.grpAltimeterStyle.TabStop = false;
             this.grpAltimeterStyle.Text = "Style";
@@ -2210,10 +2052,9 @@ namespace MFDExtractor.UI
             // rdoAltimeterStyleDigital
             // 
             this.rdoAltimeterStyleDigital.AutoSize = true;
-            this.rdoAltimeterStyleDigital.Location = new System.Drawing.Point(165, 23);
-            this.rdoAltimeterStyleDigital.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoAltimeterStyleDigital.Location = new System.Drawing.Point(124, 19);
             this.rdoAltimeterStyleDigital.Name = "rdoAltimeterStyleDigital";
-            this.rdoAltimeterStyleDigital.Size = new System.Drawing.Size(68, 21);
+            this.rdoAltimeterStyleDigital.Size = new System.Drawing.Size(54, 17);
             this.rdoAltimeterStyleDigital.TabIndex = 1;
             this.rdoAltimeterStyleDigital.TabStop = true;
             this.rdoAltimeterStyleDigital.Text = "Digital";
@@ -2223,10 +2064,9 @@ namespace MFDExtractor.UI
             // rdoAltimeterStyleElectromechanical
             // 
             this.rdoAltimeterStyleElectromechanical.AutoSize = true;
-            this.rdoAltimeterStyleElectromechanical.Location = new System.Drawing.Point(8, 23);
-            this.rdoAltimeterStyleElectromechanical.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoAltimeterStyleElectromechanical.Location = new System.Drawing.Point(6, 19);
             this.rdoAltimeterStyleElectromechanical.Name = "rdoAltimeterStyleElectromechanical";
-            this.rdoAltimeterStyleElectromechanical.Size = new System.Drawing.Size(144, 21);
+            this.rdoAltimeterStyleElectromechanical.Size = new System.Drawing.Size(112, 17);
             this.rdoAltimeterStyleElectromechanical.TabIndex = 0;
             this.rdoAltimeterStyleElectromechanical.TabStop = true;
             this.rdoAltimeterStyleElectromechanical.Text = "Electromechanical";
@@ -2238,22 +2078,20 @@ namespace MFDExtractor.UI
             this.grpPressureAltitudeSettings.Controls.Add(this.rdoMillibars);
             this.grpPressureAltitudeSettings.Controls.Add(this.rdoInchesOfMercury);
             this.grpPressureAltitudeSettings.Enabled = false;
-            this.grpPressureAltitudeSettings.Location = new System.Drawing.Point(28, 164);
-            this.grpPressureAltitudeSettings.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPressureAltitudeSettings.Location = new System.Drawing.Point(21, 133);
             this.grpPressureAltitudeSettings.Name = "grpPressureAltitudeSettings";
-            this.grpPressureAltitudeSettings.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPressureAltitudeSettings.Size = new System.Drawing.Size(260, 49);
+            this.grpPressureAltitudeSettings.Size = new System.Drawing.Size(195, 40);
             this.grpPressureAltitudeSettings.TabIndex = 5;
             this.grpPressureAltitudeSettings.TabStop = false;
             this.grpPressureAltitudeSettings.Text = "Display Pressure Altitude Setting In";
+            this.grpPressureAltitudeSettings.Visible = false;
             // 
             // rdoMillibars
             // 
             this.rdoMillibars.AutoSize = true;
-            this.rdoMillibars.Location = new System.Drawing.Point(8, 23);
-            this.rdoMillibars.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoMillibars.Location = new System.Drawing.Point(6, 19);
             this.rdoMillibars.Name = "rdoMillibars";
-            this.rdoMillibars.Size = new System.Drawing.Size(80, 21);
+            this.rdoMillibars.Size = new System.Drawing.Size(62, 17);
             this.rdoMillibars.TabIndex = 0;
             this.rdoMillibars.TabStop = true;
             this.rdoMillibars.Text = "Millibars";
@@ -2263,10 +2101,9 @@ namespace MFDExtractor.UI
             // rdoInchesOfMercury
             // 
             this.rdoInchesOfMercury.AutoSize = true;
-            this.rdoInchesOfMercury.Location = new System.Drawing.Point(99, 23);
-            this.rdoInchesOfMercury.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoInchesOfMercury.Location = new System.Drawing.Point(74, 19);
             this.rdoInchesOfMercury.Name = "rdoInchesOfMercury";
-            this.rdoInchesOfMercury.Size = new System.Drawing.Size(141, 21);
+            this.rdoInchesOfMercury.Size = new System.Drawing.Size(110, 17);
             this.rdoInchesOfMercury.TabIndex = 1;
             this.rdoInchesOfMercury.TabStop = true;
             this.rdoInchesOfMercury.Text = "Inches of Mercury";
@@ -2280,11 +2117,10 @@ namespace MFDExtractor.UI
             this.tabEW.Controls.Add(this.chkCMDSPanel);
             this.tabEW.Controls.Add(this.pbRecoverCMDSPanel);
             this.tabEW.Controls.Add(this.grpAzimuthIndicatorStyle);
-            this.tabEW.Location = new System.Drawing.Point(4, 46);
-            this.tabEW.Margin = new System.Windows.Forms.Padding(4);
+            this.tabEW.Location = new System.Drawing.Point(4, 40);
             this.tabEW.Name = "tabEW";
-            this.tabEW.Padding = new System.Windows.Forms.Padding(4);
-            this.tabEW.Size = new System.Drawing.Size(680, 563);
+            this.tabEW.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEW.Size = new System.Drawing.Size(506, 452);
             this.tabEW.TabIndex = 11;
             this.tabEW.Text = "EW Suite";
             this.tabEW.UseVisualStyleBackColor = true;
@@ -2292,10 +2128,9 @@ namespace MFDExtractor.UI
             // chkAzimuthIndicator
             // 
             this.chkAzimuthIndicator.AutoSize = true;
-            this.chkAzimuthIndicator.Location = new System.Drawing.Point(8, 7);
-            this.chkAzimuthIndicator.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAzimuthIndicator.Location = new System.Drawing.Point(6, 6);
             this.chkAzimuthIndicator.Name = "chkAzimuthIndicator";
-            this.chkAzimuthIndicator.Size = new System.Drawing.Size(185, 21);
+            this.chkAzimuthIndicator.Size = new System.Drawing.Size(143, 17);
             this.chkAzimuthIndicator.TabIndex = 76;
             this.chkAzimuthIndicator.Text = "Azimuth Indicator (RWR)";
             this.chkAzimuthIndicator.UseVisualStyleBackColor = true;
@@ -2307,12 +2142,11 @@ namespace MFDExtractor.UI
             this.pbRecoverAzimuthIndicator.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAzimuthIndicator.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAzimuthIndicator.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAzimuthIndicator.Location = new System.Drawing.Point(352, 9);
-            this.pbRecoverAzimuthIndicator.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverAzimuthIndicator.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverAzimuthIndicator.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverAzimuthIndicator.Location = new System.Drawing.Point(264, 7);
+            this.pbRecoverAzimuthIndicator.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverAzimuthIndicator.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverAzimuthIndicator.Name = "pbRecoverAzimuthIndicator";
-            this.pbRecoverAzimuthIndicator.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverAzimuthIndicator.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverAzimuthIndicator.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverAzimuthIndicator.TabIndex = 78;
             this.pbRecoverAzimuthIndicator.TabStop = false;
@@ -2322,10 +2156,9 @@ namespace MFDExtractor.UI
             // chkCMDSPanel
             // 
             this.chkCMDSPanel.AutoSize = true;
-            this.chkCMDSPanel.Location = new System.Drawing.Point(8, 185);
-            this.chkCMDSPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.chkCMDSPanel.Location = new System.Drawing.Point(6, 150);
             this.chkCMDSPanel.Name = "chkCMDSPanel";
-            this.chkCMDSPanel.Size = new System.Drawing.Size(109, 21);
+            this.chkCMDSPanel.Size = new System.Drawing.Size(87, 17);
             this.chkCMDSPanel.TabIndex = 79;
             this.chkCMDSPanel.Text = "CMDS Panel";
             this.chkCMDSPanel.UseVisualStyleBackColor = true;
@@ -2337,12 +2170,11 @@ namespace MFDExtractor.UI
             this.pbRecoverCMDSPanel.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCMDSPanel.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCMDSPanel.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverCMDSPanel.Location = new System.Drawing.Point(352, 185);
-            this.pbRecoverCMDSPanel.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverCMDSPanel.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverCMDSPanel.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverCMDSPanel.Location = new System.Drawing.Point(264, 150);
+            this.pbRecoverCMDSPanel.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverCMDSPanel.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverCMDSPanel.Name = "pbRecoverCMDSPanel";
-            this.pbRecoverCMDSPanel.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverCMDSPanel.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverCMDSPanel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverCMDSPanel.TabIndex = 80;
             this.pbRecoverCMDSPanel.TabStop = false;
@@ -2355,11 +2187,9 @@ namespace MFDExtractor.UI
             this.grpAzimuthIndicatorStyle.Controls.Add(this.rdoAzimuthIndicatorStyleDigital);
             this.grpAzimuthIndicatorStyle.Controls.Add(this.grpAzimuthIndicatorBezelTypes);
             this.grpAzimuthIndicatorStyle.Controls.Add(this.grpAzimuthIndicatorDigitalTypes);
-            this.grpAzimuthIndicatorStyle.Location = new System.Drawing.Point(15, 34);
-            this.grpAzimuthIndicatorStyle.Margin = new System.Windows.Forms.Padding(4);
+            this.grpAzimuthIndicatorStyle.Location = new System.Drawing.Point(11, 28);
             this.grpAzimuthIndicatorStyle.Name = "grpAzimuthIndicatorStyle";
-            this.grpAzimuthIndicatorStyle.Padding = new System.Windows.Forms.Padding(4);
-            this.grpAzimuthIndicatorStyle.Size = new System.Drawing.Size(359, 143);
+            this.grpAzimuthIndicatorStyle.Size = new System.Drawing.Size(269, 116);
             this.grpAzimuthIndicatorStyle.TabIndex = 77;
             this.grpAzimuthIndicatorStyle.TabStop = false;
             this.grpAzimuthIndicatorStyle.Text = "Style";
@@ -2367,10 +2197,9 @@ namespace MFDExtractor.UI
             // rdoAzimuthIndicatorStyleScope
             // 
             this.rdoAzimuthIndicatorStyleScope.AutoSize = true;
-            this.rdoAzimuthIndicatorStyleScope.Location = new System.Drawing.Point(8, 20);
-            this.rdoAzimuthIndicatorStyleScope.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoAzimuthIndicatorStyleScope.Location = new System.Drawing.Point(6, 16);
             this.rdoAzimuthIndicatorStyleScope.Name = "rdoAzimuthIndicatorStyleScope";
-            this.rdoAzimuthIndicatorStyleScope.Size = new System.Drawing.Size(101, 21);
+            this.rdoAzimuthIndicatorStyleScope.Size = new System.Drawing.Size(81, 17);
             this.rdoAzimuthIndicatorStyleScope.TabIndex = 11;
             this.rdoAzimuthIndicatorStyleScope.TabStop = true;
             this.rdoAzimuthIndicatorStyleScope.Text = "CRT Scope";
@@ -2380,10 +2209,9 @@ namespace MFDExtractor.UI
             // rdoAzimuthIndicatorStyleDigital
             // 
             this.rdoAzimuthIndicatorStyleDigital.AutoSize = true;
-            this.rdoAzimuthIndicatorStyleDigital.Location = new System.Drawing.Point(7, 48);
-            this.rdoAzimuthIndicatorStyleDigital.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoAzimuthIndicatorStyleDigital.Location = new System.Drawing.Point(5, 39);
             this.rdoAzimuthIndicatorStyleDigital.Name = "rdoAzimuthIndicatorStyleDigital";
-            this.rdoAzimuthIndicatorStyleDigital.Size = new System.Drawing.Size(105, 21);
+            this.rdoAzimuthIndicatorStyleDigital.Size = new System.Drawing.Size(82, 17);
             this.rdoAzimuthIndicatorStyleDigital.TabIndex = 12;
             this.rdoAzimuthIndicatorStyleDigital.TabStop = true;
             this.rdoAzimuthIndicatorStyleDigital.Text = "TFT Display";
@@ -2395,11 +2223,9 @@ namespace MFDExtractor.UI
             this.grpAzimuthIndicatorBezelTypes.Controls.Add(this.rdoAzimuthIndicatorNoBezel);
             this.grpAzimuthIndicatorBezelTypes.Controls.Add(this.rdoRWRHAFBezelType);
             this.grpAzimuthIndicatorBezelTypes.Controls.Add(this.rdoRWRIP1310BezelType);
-            this.grpAzimuthIndicatorBezelTypes.Location = new System.Drawing.Point(24, 82);
-            this.grpAzimuthIndicatorBezelTypes.Margin = new System.Windows.Forms.Padding(4);
+            this.grpAzimuthIndicatorBezelTypes.Location = new System.Drawing.Point(18, 67);
             this.grpAzimuthIndicatorBezelTypes.Name = "grpAzimuthIndicatorBezelTypes";
-            this.grpAzimuthIndicatorBezelTypes.Padding = new System.Windows.Forms.Padding(4);
-            this.grpAzimuthIndicatorBezelTypes.Size = new System.Drawing.Size(319, 53);
+            this.grpAzimuthIndicatorBezelTypes.Size = new System.Drawing.Size(239, 43);
             this.grpAzimuthIndicatorBezelTypes.TabIndex = 13;
             this.grpAzimuthIndicatorBezelTypes.TabStop = false;
             this.grpAzimuthIndicatorBezelTypes.Text = "Bezel Type";
@@ -2407,10 +2233,9 @@ namespace MFDExtractor.UI
             // rdoAzimuthIndicatorNoBezel
             // 
             this.rdoAzimuthIndicatorNoBezel.AutoSize = true;
-            this.rdoAzimuthIndicatorNoBezel.Location = new System.Drawing.Point(244, 23);
-            this.rdoAzimuthIndicatorNoBezel.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoAzimuthIndicatorNoBezel.Location = new System.Drawing.Point(183, 19);
             this.rdoAzimuthIndicatorNoBezel.Name = "rdoAzimuthIndicatorNoBezel";
-            this.rdoAzimuthIndicatorNoBezel.Size = new System.Drawing.Size(63, 21);
+            this.rdoAzimuthIndicatorNoBezel.Size = new System.Drawing.Size(51, 17);
             this.rdoAzimuthIndicatorNoBezel.TabIndex = 3;
             this.rdoAzimuthIndicatorNoBezel.TabStop = true;
             this.rdoAzimuthIndicatorNoBezel.Text = "None";
@@ -2420,10 +2245,9 @@ namespace MFDExtractor.UI
             // rdoRWRHAFBezelType
             // 
             this.rdoRWRHAFBezelType.AutoSize = true;
-            this.rdoRWRHAFBezelType.Location = new System.Drawing.Point(175, 23);
-            this.rdoRWRHAFBezelType.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoRWRHAFBezelType.Location = new System.Drawing.Point(131, 19);
             this.rdoRWRHAFBezelType.Name = "rdoRWRHAFBezelType";
-            this.rdoRWRHAFBezelType.Size = new System.Drawing.Size(56, 21);
+            this.rdoRWRHAFBezelType.Size = new System.Drawing.Size(46, 17);
             this.rdoRWRHAFBezelType.TabIndex = 2;
             this.rdoRWRHAFBezelType.TabStop = true;
             this.rdoRWRHAFBezelType.Text = "HAF";
@@ -2433,10 +2257,9 @@ namespace MFDExtractor.UI
             // rdoRWRIP1310BezelType
             // 
             this.rdoRWRIP1310BezelType.AutoSize = true;
-            this.rdoRWRIP1310BezelType.Location = new System.Drawing.Point(0, 23);
-            this.rdoRWRIP1310BezelType.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoRWRIP1310BezelType.Location = new System.Drawing.Point(0, 19);
             this.rdoRWRIP1310BezelType.Name = "rdoRWRIP1310BezelType";
-            this.rdoRWRIP1310BezelType.Size = new System.Drawing.Size(151, 21);
+            this.rdoRWRIP1310BezelType.Size = new System.Drawing.Size(119, 17);
             this.rdoRWRIP1310BezelType.TabIndex = 1;
             this.rdoRWRIP1310BezelType.TabStop = true;
             this.rdoRWRIP1310BezelType.Text = "IP-1310/ALR (USA)";
@@ -2447,11 +2270,9 @@ namespace MFDExtractor.UI
             // 
             this.grpAzimuthIndicatorDigitalTypes.Controls.Add(this.rdoTTD);
             this.grpAzimuthIndicatorDigitalTypes.Controls.Add(this.rdoATDPlus);
-            this.grpAzimuthIndicatorDigitalTypes.Location = new System.Drawing.Point(24, 82);
-            this.grpAzimuthIndicatorDigitalTypes.Margin = new System.Windows.Forms.Padding(4);
+            this.grpAzimuthIndicatorDigitalTypes.Location = new System.Drawing.Point(18, 67);
             this.grpAzimuthIndicatorDigitalTypes.Name = "grpAzimuthIndicatorDigitalTypes";
-            this.grpAzimuthIndicatorDigitalTypes.Padding = new System.Windows.Forms.Padding(4);
-            this.grpAzimuthIndicatorDigitalTypes.Size = new System.Drawing.Size(319, 53);
+            this.grpAzimuthIndicatorDigitalTypes.Size = new System.Drawing.Size(239, 43);
             this.grpAzimuthIndicatorDigitalTypes.TabIndex = 13;
             this.grpAzimuthIndicatorDigitalTypes.TabStop = false;
             this.grpAzimuthIndicatorDigitalTypes.Text = "Display Type";
@@ -2460,10 +2281,9 @@ namespace MFDExtractor.UI
             // 
             this.rdoTTD.AutoSize = true;
             this.rdoTTD.Enabled = false;
-            this.rdoTTD.Location = new System.Drawing.Point(87, 23);
-            this.rdoTTD.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoTTD.Location = new System.Drawing.Point(65, 19);
             this.rdoTTD.Name = "rdoTTD";
-            this.rdoTTD.Size = new System.Drawing.Size(57, 21);
+            this.rdoTTD.Size = new System.Drawing.Size(47, 17);
             this.rdoTTD.TabIndex = 2;
             this.rdoTTD.TabStop = true;
             this.rdoTTD.Text = "TTD";
@@ -2472,10 +2292,9 @@ namespace MFDExtractor.UI
             // rdoATDPlus
             // 
             this.rdoATDPlus.AutoSize = true;
-            this.rdoATDPlus.Location = new System.Drawing.Point(8, 23);
-            this.rdoATDPlus.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoATDPlus.Location = new System.Drawing.Point(6, 19);
             this.rdoATDPlus.Name = "rdoATDPlus";
-            this.rdoATDPlus.Size = new System.Drawing.Size(65, 21);
+            this.rdoATDPlus.Size = new System.Drawing.Size(53, 17);
             this.rdoATDPlus.TabIndex = 1;
             this.rdoATDPlus.TabStop = true;
             this.rdoATDPlus.Text = "ATD+";
@@ -2491,11 +2310,10 @@ namespace MFDExtractor.UI
             this.tabEngineInstruments.Controls.Add(this.gbFuelQuantityOptions);
             this.tabEngineInstruments.Controls.Add(this.chkFuelQty);
             this.tabEngineInstruments.Controls.Add(this.pbRecoverFuelQuantity);
-            this.tabEngineInstruments.Location = new System.Drawing.Point(4, 46);
-            this.tabEngineInstruments.Margin = new System.Windows.Forms.Padding(4);
+            this.tabEngineInstruments.Location = new System.Drawing.Point(4, 40);
             this.tabEngineInstruments.Name = "tabEngineInstruments";
-            this.tabEngineInstruments.Padding = new System.Windows.Forms.Padding(4);
-            this.tabEngineInstruments.Size = new System.Drawing.Size(680, 563);
+            this.tabEngineInstruments.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEngineInstruments.Size = new System.Drawing.Size(506, 452);
             this.tabEngineInstruments.TabIndex = 10;
             this.tabEngineInstruments.Text = "Engine & Fuel Instruments";
             this.tabEngineInstruments.UseVisualStyleBackColor = true;
@@ -2503,10 +2321,9 @@ namespace MFDExtractor.UI
             // chkFuelFlow
             // 
             this.chkFuelFlow.AutoSize = true;
-            this.chkFuelFlow.Location = new System.Drawing.Point(16, 320);
-            this.chkFuelFlow.Margin = new System.Windows.Forms.Padding(4);
+            this.chkFuelFlow.Location = new System.Drawing.Point(12, 260);
             this.chkFuelFlow.Name = "chkFuelFlow";
-            this.chkFuelFlow.Size = new System.Drawing.Size(147, 21);
+            this.chkFuelFlow.Size = new System.Drawing.Size(115, 17);
             this.chkFuelFlow.TabIndex = 29;
             this.chkFuelFlow.Text = "Fuel Flow Indicator";
             this.chkFuelFlow.UseVisualStyleBackColor = true;
@@ -2518,12 +2335,11 @@ namespace MFDExtractor.UI
             this.pbRecoverFuelFlow.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFuelFlow.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFuelFlow.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverFuelFlow.Location = new System.Drawing.Point(364, 320);
-            this.pbRecoverFuelFlow.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverFuelFlow.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverFuelFlow.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverFuelFlow.Location = new System.Drawing.Point(273, 260);
+            this.pbRecoverFuelFlow.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverFuelFlow.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverFuelFlow.Name = "pbRecoverFuelFlow";
-            this.pbRecoverFuelFlow.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverFuelFlow.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverFuelFlow.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverFuelFlow.TabIndex = 46;
             this.pbRecoverFuelFlow.TabStop = false;
@@ -2540,11 +2356,9 @@ namespace MFDExtractor.UI
             this.gbEngine1Instros.Controls.Add(this.chkRPM1);
             this.gbEngine1Instros.Controls.Add(this.chkOIL1);
             this.gbEngine1Instros.Controls.Add(this.chkNOZ1);
-            this.gbEngine1Instros.Location = new System.Drawing.Point(8, 7);
-            this.gbEngine1Instros.Margin = new System.Windows.Forms.Padding(4);
+            this.gbEngine1Instros.Location = new System.Drawing.Point(6, 6);
             this.gbEngine1Instros.Name = "gbEngine1Instros";
-            this.gbEngine1Instros.Padding = new System.Windows.Forms.Padding(4);
-            this.gbEngine1Instros.Size = new System.Drawing.Size(396, 149);
+            this.gbEngine1Instros.Size = new System.Drawing.Size(297, 121);
             this.gbEngine1Instros.TabIndex = 56;
             this.gbEngine1Instros.TabStop = false;
             this.gbEngine1Instros.Text = "Engine 1 Instruments";
@@ -2552,10 +2366,9 @@ namespace MFDExtractor.UI
             // chkFTIT1
             // 
             this.chkFTIT1.AutoSize = true;
-            this.chkFTIT1.Location = new System.Drawing.Point(8, 27);
-            this.chkFTIT1.Margin = new System.Windows.Forms.Padding(4);
+            this.chkFTIT1.Location = new System.Drawing.Point(6, 22);
             this.chkFTIT1.Name = "chkFTIT1";
-            this.chkFTIT1.Size = new System.Drawing.Size(106, 21);
+            this.chkFTIT1.Size = new System.Drawing.Size(84, 17);
             this.chkFTIT1.TabIndex = 20;
             this.chkFTIT1.Text = "FTIT Gauge";
             this.chkFTIT1.UseVisualStyleBackColor = true;
@@ -2567,12 +2380,11 @@ namespace MFDExtractor.UI
             this.pbRecoverRPM1.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverRPM1.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverRPM1.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverRPM1.Location = new System.Drawing.Point(356, 112);
-            this.pbRecoverRPM1.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverRPM1.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverRPM1.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverRPM1.Location = new System.Drawing.Point(267, 91);
+            this.pbRecoverRPM1.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverRPM1.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverRPM1.Name = "pbRecoverRPM1";
-            this.pbRecoverRPM1.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverRPM1.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverRPM1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverRPM1.TabIndex = 40;
             this.pbRecoverRPM1.TabStop = false;
@@ -2585,12 +2397,11 @@ namespace MFDExtractor.UI
             this.pbRecoverOil1.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverOil1.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverOil1.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverOil1.Location = new System.Drawing.Point(356, 84);
-            this.pbRecoverOil1.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverOil1.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverOil1.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverOil1.Location = new System.Drawing.Point(267, 68);
+            this.pbRecoverOil1.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverOil1.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverOil1.Name = "pbRecoverOil1";
-            this.pbRecoverOil1.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverOil1.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverOil1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverOil1.TabIndex = 39;
             this.pbRecoverOil1.TabStop = false;
@@ -2603,12 +2414,11 @@ namespace MFDExtractor.UI
             this.pbRecoverNozPos1.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverNozPos1.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverNozPos1.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos1.Location = new System.Drawing.Point(356, 55);
-            this.pbRecoverNozPos1.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverNozPos1.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverNozPos1.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverNozPos1.Location = new System.Drawing.Point(267, 45);
+            this.pbRecoverNozPos1.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverNozPos1.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverNozPos1.Name = "pbRecoverNozPos1";
-            this.pbRecoverNozPos1.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverNozPos1.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverNozPos1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverNozPos1.TabIndex = 38;
             this.pbRecoverNozPos1.TabStop = false;
@@ -2621,12 +2431,11 @@ namespace MFDExtractor.UI
             this.pbRecoverFTIT1.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFTIT1.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFTIT1.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverFTIT1.Location = new System.Drawing.Point(356, 27);
-            this.pbRecoverFTIT1.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverFTIT1.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverFTIT1.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverFTIT1.Location = new System.Drawing.Point(267, 22);
+            this.pbRecoverFTIT1.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverFTIT1.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverFTIT1.Name = "pbRecoverFTIT1";
-            this.pbRecoverFTIT1.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverFTIT1.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverFTIT1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverFTIT1.TabIndex = 37;
             this.pbRecoverFTIT1.TabStop = false;
@@ -2636,10 +2445,9 @@ namespace MFDExtractor.UI
             // chkRPM1
             // 
             this.chkRPM1.AutoSize = true;
-            this.chkRPM1.Location = new System.Drawing.Point(8, 112);
-            this.chkRPM1.Margin = new System.Windows.Forms.Padding(4);
+            this.chkRPM1.Location = new System.Drawing.Point(6, 91);
             this.chkRPM1.Name = "chkRPM1";
-            this.chkRPM1.Size = new System.Drawing.Size(107, 21);
+            this.chkRPM1.Size = new System.Drawing.Size(85, 17);
             this.chkRPM1.TabIndex = 23;
             this.chkRPM1.Text = "RPM Gauge";
             this.chkRPM1.UseVisualStyleBackColor = true;
@@ -2648,10 +2456,9 @@ namespace MFDExtractor.UI
             // chkOIL1
             // 
             this.chkOIL1.AutoSize = true;
-            this.chkOIL1.Location = new System.Drawing.Point(8, 84);
-            this.chkOIL1.Margin = new System.Windows.Forms.Padding(4);
+            this.chkOIL1.Location = new System.Drawing.Point(6, 68);
             this.chkOIL1.Name = "chkOIL1";
-            this.chkOIL1.Size = new System.Drawing.Size(155, 21);
+            this.chkOIL1.Size = new System.Drawing.Size(117, 17);
             this.chkOIL1.TabIndex = 22;
             this.chkOIL1.Text = "Oil Pressure Gauge";
             this.chkOIL1.UseVisualStyleBackColor = true;
@@ -2660,10 +2467,9 @@ namespace MFDExtractor.UI
             // chkNOZ1
             // 
             this.chkNOZ1.AutoSize = true;
-            this.chkNOZ1.Location = new System.Drawing.Point(8, 55);
-            this.chkNOZ1.Margin = new System.Windows.Forms.Padding(4);
+            this.chkNOZ1.Location = new System.Drawing.Point(6, 45);
             this.chkNOZ1.Name = "chkNOZ1";
-            this.chkNOZ1.Size = new System.Drawing.Size(185, 21);
+            this.chkNOZ1.Size = new System.Drawing.Size(142, 17);
             this.chkNOZ1.TabIndex = 21;
             this.chkNOZ1.Text = "Nozzle Position Indicator";
             this.chkNOZ1.UseVisualStyleBackColor = true;
@@ -2679,11 +2485,9 @@ namespace MFDExtractor.UI
             this.gbEngine2Instros.Controls.Add(this.pbRecoverNozPos2);
             this.gbEngine2Instros.Controls.Add(this.pbRecoverFTIT2);
             this.gbEngine2Instros.Controls.Add(this.chkRPM2);
-            this.gbEngine2Instros.Location = new System.Drawing.Point(8, 164);
-            this.gbEngine2Instros.Margin = new System.Windows.Forms.Padding(4);
+            this.gbEngine2Instros.Location = new System.Drawing.Point(6, 133);
             this.gbEngine2Instros.Name = "gbEngine2Instros";
-            this.gbEngine2Instros.Padding = new System.Windows.Forms.Padding(4);
-            this.gbEngine2Instros.Size = new System.Drawing.Size(396, 149);
+            this.gbEngine2Instros.Size = new System.Drawing.Size(297, 121);
             this.gbEngine2Instros.TabIndex = 57;
             this.gbEngine2Instros.TabStop = false;
             this.gbEngine2Instros.Text = "Engine 2 Instruments";
@@ -2691,10 +2495,9 @@ namespace MFDExtractor.UI
             // chkFTIT2
             // 
             this.chkFTIT2.AutoSize = true;
-            this.chkFTIT2.Location = new System.Drawing.Point(8, 26);
-            this.chkFTIT2.Margin = new System.Windows.Forms.Padding(4);
+            this.chkFTIT2.Location = new System.Drawing.Point(6, 21);
             this.chkFTIT2.Name = "chkFTIT2";
-            this.chkFTIT2.Size = new System.Drawing.Size(106, 21);
+            this.chkFTIT2.Size = new System.Drawing.Size(84, 17);
             this.chkFTIT2.TabIndex = 24;
             this.chkFTIT2.Text = "FTIT Gauge";
             this.chkFTIT2.UseVisualStyleBackColor = true;
@@ -2703,10 +2506,9 @@ namespace MFDExtractor.UI
             // chkNOZ2
             // 
             this.chkNOZ2.AutoSize = true;
-            this.chkNOZ2.Location = new System.Drawing.Point(8, 54);
-            this.chkNOZ2.Margin = new System.Windows.Forms.Padding(4);
+            this.chkNOZ2.Location = new System.Drawing.Point(6, 44);
             this.chkNOZ2.Name = "chkNOZ2";
-            this.chkNOZ2.Size = new System.Drawing.Size(185, 21);
+            this.chkNOZ2.Size = new System.Drawing.Size(142, 17);
             this.chkNOZ2.TabIndex = 25;
             this.chkNOZ2.Text = "Nozzle Position Indicator";
             this.chkNOZ2.UseVisualStyleBackColor = true;
@@ -2718,12 +2520,11 @@ namespace MFDExtractor.UI
             this.pbRecoverRPM2.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverRPM2.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverRPM2.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverRPM2.Location = new System.Drawing.Point(356, 111);
-            this.pbRecoverRPM2.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverRPM2.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverRPM2.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverRPM2.Location = new System.Drawing.Point(267, 90);
+            this.pbRecoverRPM2.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverRPM2.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverRPM2.Name = "pbRecoverRPM2";
-            this.pbRecoverRPM2.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverRPM2.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverRPM2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverRPM2.TabIndex = 44;
             this.pbRecoverRPM2.TabStop = false;
@@ -2736,12 +2537,11 @@ namespace MFDExtractor.UI
             this.pbRecoverOil2.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverOil2.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverOil2.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverOil2.Location = new System.Drawing.Point(356, 82);
-            this.pbRecoverOil2.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverOil2.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverOil2.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverOil2.Location = new System.Drawing.Point(267, 67);
+            this.pbRecoverOil2.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverOil2.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverOil2.Name = "pbRecoverOil2";
-            this.pbRecoverOil2.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverOil2.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverOil2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverOil2.TabIndex = 43;
             this.pbRecoverOil2.TabStop = false;
@@ -2751,10 +2551,9 @@ namespace MFDExtractor.UI
             // chkOIL2
             // 
             this.chkOIL2.AutoSize = true;
-            this.chkOIL2.Location = new System.Drawing.Point(8, 82);
-            this.chkOIL2.Margin = new System.Windows.Forms.Padding(4);
+            this.chkOIL2.Location = new System.Drawing.Point(6, 67);
             this.chkOIL2.Name = "chkOIL2";
-            this.chkOIL2.Size = new System.Drawing.Size(155, 21);
+            this.chkOIL2.Size = new System.Drawing.Size(117, 17);
             this.chkOIL2.TabIndex = 26;
             this.chkOIL2.Text = "Oil Pressure Gauge";
             this.chkOIL2.UseVisualStyleBackColor = true;
@@ -2766,12 +2565,11 @@ namespace MFDExtractor.UI
             this.pbRecoverNozPos2.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverNozPos2.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverNozPos2.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos2.Location = new System.Drawing.Point(356, 54);
-            this.pbRecoverNozPos2.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverNozPos2.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverNozPos2.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverNozPos2.Location = new System.Drawing.Point(267, 44);
+            this.pbRecoverNozPos2.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverNozPos2.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverNozPos2.Name = "pbRecoverNozPos2";
-            this.pbRecoverNozPos2.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverNozPos2.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverNozPos2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverNozPos2.TabIndex = 42;
             this.pbRecoverNozPos2.TabStop = false;
@@ -2784,12 +2582,11 @@ namespace MFDExtractor.UI
             this.pbRecoverFTIT2.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFTIT2.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFTIT2.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverFTIT2.Location = new System.Drawing.Point(356, 26);
-            this.pbRecoverFTIT2.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverFTIT2.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverFTIT2.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverFTIT2.Location = new System.Drawing.Point(267, 21);
+            this.pbRecoverFTIT2.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverFTIT2.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverFTIT2.Name = "pbRecoverFTIT2";
-            this.pbRecoverFTIT2.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverFTIT2.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverFTIT2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverFTIT2.TabIndex = 41;
             this.pbRecoverFTIT2.TabStop = false;
@@ -2799,10 +2596,9 @@ namespace MFDExtractor.UI
             // chkRPM2
             // 
             this.chkRPM2.AutoSize = true;
-            this.chkRPM2.Location = new System.Drawing.Point(8, 111);
-            this.chkRPM2.Margin = new System.Windows.Forms.Padding(4);
+            this.chkRPM2.Location = new System.Drawing.Point(6, 90);
             this.chkRPM2.Name = "chkRPM2";
-            this.chkRPM2.Size = new System.Drawing.Size(107, 21);
+            this.chkRPM2.Size = new System.Drawing.Size(85, 17);
             this.chkRPM2.TabIndex = 27;
             this.chkRPM2.Text = "RPM Gauge";
             this.chkRPM2.UseVisualStyleBackColor = true;
@@ -2812,11 +2608,9 @@ namespace MFDExtractor.UI
             // 
             this.gbFuelQuantityOptions.Controls.Add(this.rdoFuelQuantityDModel);
             this.gbFuelQuantityOptions.Controls.Add(this.rdoFuelQuantityNeedleCModel);
-            this.gbFuelQuantityOptions.Location = new System.Drawing.Point(48, 377);
-            this.gbFuelQuantityOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.gbFuelQuantityOptions.Location = new System.Drawing.Point(36, 306);
             this.gbFuelQuantityOptions.Name = "gbFuelQuantityOptions";
-            this.gbFuelQuantityOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.gbFuelQuantityOptions.Size = new System.Drawing.Size(260, 50);
+            this.gbFuelQuantityOptions.Size = new System.Drawing.Size(195, 41);
             this.gbFuelQuantityOptions.TabIndex = 67;
             this.gbFuelQuantityOptions.TabStop = false;
             this.gbFuelQuantityOptions.Text = "Needle Style";
@@ -2824,10 +2618,9 @@ namespace MFDExtractor.UI
             // rdoFuelQuantityDModel
             // 
             this.rdoFuelQuantityDModel.AutoSize = true;
-            this.rdoFuelQuantityDModel.Location = new System.Drawing.Point(111, 23);
-            this.rdoFuelQuantityDModel.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoFuelQuantityDModel.Location = new System.Drawing.Point(83, 19);
             this.rdoFuelQuantityDModel.Name = "rdoFuelQuantityDModel";
-            this.rdoFuelQuantityDModel.Size = new System.Drawing.Size(81, 21);
+            this.rdoFuelQuantityDModel.Size = new System.Drawing.Size(65, 17);
             this.rdoFuelQuantityDModel.TabIndex = 1;
             this.rdoFuelQuantityDModel.TabStop = true;
             this.rdoFuelQuantityDModel.Text = "D Model";
@@ -2837,10 +2630,9 @@ namespace MFDExtractor.UI
             // rdoFuelQuantityNeedleCModel
             // 
             this.rdoFuelQuantityNeedleCModel.AutoSize = true;
-            this.rdoFuelQuantityNeedleCModel.Location = new System.Drawing.Point(17, 23);
-            this.rdoFuelQuantityNeedleCModel.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoFuelQuantityNeedleCModel.Location = new System.Drawing.Point(13, 19);
             this.rdoFuelQuantityNeedleCModel.Name = "rdoFuelQuantityNeedleCModel";
-            this.rdoFuelQuantityNeedleCModel.Size = new System.Drawing.Size(80, 21);
+            this.rdoFuelQuantityNeedleCModel.Size = new System.Drawing.Size(64, 17);
             this.rdoFuelQuantityNeedleCModel.TabIndex = 0;
             this.rdoFuelQuantityNeedleCModel.TabStop = true;
             this.rdoFuelQuantityNeedleCModel.Text = "C Model";
@@ -2850,10 +2642,9 @@ namespace MFDExtractor.UI
             // chkFuelQty
             // 
             this.chkFuelQty.AutoSize = true;
-            this.chkFuelQty.Location = new System.Drawing.Point(16, 348);
-            this.chkFuelQty.Margin = new System.Windows.Forms.Padding(4);
+            this.chkFuelQty.Location = new System.Drawing.Point(12, 283);
             this.chkFuelQty.Name = "chkFuelQty";
-            this.chkFuelQty.Size = new System.Drawing.Size(172, 21);
+            this.chkFuelQty.Size = new System.Drawing.Size(132, 17);
             this.chkFuelQty.TabIndex = 66;
             this.chkFuelQty.Text = "Fuel Quantity Indicator";
             this.chkFuelQty.UseVisualStyleBackColor = true;
@@ -2865,12 +2656,11 @@ namespace MFDExtractor.UI
             this.pbRecoverFuelQuantity.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFuelQuantity.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverFuelQuantity.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverFuelQuantity.Location = new System.Drawing.Point(364, 348);
-            this.pbRecoverFuelQuantity.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverFuelQuantity.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverFuelQuantity.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverFuelQuantity.Location = new System.Drawing.Point(273, 283);
+            this.pbRecoverFuelQuantity.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverFuelQuantity.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverFuelQuantity.Name = "pbRecoverFuelQuantity";
-            this.pbRecoverFuelQuantity.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverFuelQuantity.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverFuelQuantity.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverFuelQuantity.TabIndex = 68;
             this.pbRecoverFuelQuantity.TabStop = false;
@@ -2882,11 +2672,10 @@ namespace MFDExtractor.UI
             this.tabHydraulics.Controls.Add(this.pbRecoverHydA);
             this.tabHydraulics.Controls.Add(this.pbRecoverHydB);
             this.tabHydraulics.Controls.Add(this.chkHydB);
-            this.tabHydraulics.Location = new System.Drawing.Point(4, 46);
-            this.tabHydraulics.Margin = new System.Windows.Forms.Padding(4);
+            this.tabHydraulics.Location = new System.Drawing.Point(4, 40);
             this.tabHydraulics.Name = "tabHydraulics";
-            this.tabHydraulics.Padding = new System.Windows.Forms.Padding(4);
-            this.tabHydraulics.Size = new System.Drawing.Size(680, 563);
+            this.tabHydraulics.Padding = new System.Windows.Forms.Padding(3);
+            this.tabHydraulics.Size = new System.Drawing.Size(506, 452);
             this.tabHydraulics.TabIndex = 14;
             this.tabHydraulics.Text = "Hydraulic Instruments";
             this.tabHydraulics.UseVisualStyleBackColor = true;
@@ -2894,10 +2683,9 @@ namespace MFDExtractor.UI
             // chkHydA
             // 
             this.chkHydA.AutoSize = true;
-            this.chkHydA.Location = new System.Drawing.Point(8, 7);
-            this.chkHydA.Margin = new System.Windows.Forms.Padding(4);
+            this.chkHydA.Location = new System.Drawing.Point(6, 6);
             this.chkHydA.Name = "chkHydA";
-            this.chkHydA.Size = new System.Drawing.Size(225, 21);
+            this.chkHydA.Size = new System.Drawing.Size(171, 17);
             this.chkHydA.TabIndex = 69;
             this.chkHydA.Text = "Hydraulic Pressure Indicator A ";
             this.chkHydA.UseVisualStyleBackColor = true;
@@ -2909,12 +2697,11 @@ namespace MFDExtractor.UI
             this.pbRecoverHydA.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverHydA.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverHydA.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverHydA.Location = new System.Drawing.Point(355, 7);
-            this.pbRecoverHydA.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverHydA.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverHydA.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverHydA.Location = new System.Drawing.Point(266, 6);
+            this.pbRecoverHydA.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverHydA.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverHydA.Name = "pbRecoverHydA";
-            this.pbRecoverHydA.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverHydA.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverHydA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverHydA.TabIndex = 71;
             this.pbRecoverHydA.TabStop = false;
@@ -2927,12 +2714,11 @@ namespace MFDExtractor.UI
             this.pbRecoverHydB.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverHydB.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverHydB.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverHydB.Location = new System.Drawing.Point(355, 36);
-            this.pbRecoverHydB.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverHydB.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverHydB.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverHydB.Location = new System.Drawing.Point(266, 29);
+            this.pbRecoverHydB.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverHydB.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverHydB.Name = "pbRecoverHydB";
-            this.pbRecoverHydB.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverHydB.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverHydB.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverHydB.TabIndex = 72;
             this.pbRecoverHydB.TabStop = false;
@@ -2942,10 +2728,9 @@ namespace MFDExtractor.UI
             // chkHydB
             // 
             this.chkHydB.AutoSize = true;
-            this.chkHydB.Location = new System.Drawing.Point(8, 34);
-            this.chkHydB.Margin = new System.Windows.Forms.Padding(4);
+            this.chkHydB.Location = new System.Drawing.Point(6, 28);
             this.chkHydB.Name = "chkHydB";
-            this.chkHydB.Size = new System.Drawing.Size(221, 21);
+            this.chkHydB.Size = new System.Drawing.Size(168, 17);
             this.chkHydB.TabIndex = 70;
             this.chkHydB.Text = "Hydraulic Pressure Indicator B";
             this.chkHydB.UseVisualStyleBackColor = true;
@@ -2957,11 +2742,10 @@ namespace MFDExtractor.UI
             this.tabFaults.Controls.Add(this.chkCautionPanel);
             this.tabFaults.Controls.Add(this.pbRecoverCautionPanel);
             this.tabFaults.Controls.Add(this.pbRecoverPFL);
-            this.tabFaults.Location = new System.Drawing.Point(4, 46);
-            this.tabFaults.Margin = new System.Windows.Forms.Padding(4);
+            this.tabFaults.Location = new System.Drawing.Point(4, 40);
             this.tabFaults.Name = "tabFaults";
-            this.tabFaults.Padding = new System.Windows.Forms.Padding(4);
-            this.tabFaults.Size = new System.Drawing.Size(680, 563);
+            this.tabFaults.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFaults.Size = new System.Drawing.Size(506, 452);
             this.tabFaults.TabIndex = 7;
             this.tabFaults.Text = "Fault Indicators";
             this.tabFaults.UseVisualStyleBackColor = true;
@@ -2969,10 +2753,9 @@ namespace MFDExtractor.UI
             // chkPFL
             // 
             this.chkPFL.AutoSize = true;
-            this.chkPFL.Location = new System.Drawing.Point(8, 36);
-            this.chkPFL.Margin = new System.Windows.Forms.Padding(4);
+            this.chkPFL.Location = new System.Drawing.Point(6, 29);
             this.chkPFL.Name = "chkPFL";
-            this.chkPFL.Size = new System.Drawing.Size(157, 21);
+            this.chkPFL.Size = new System.Drawing.Size(119, 17);
             this.chkPFL.TabIndex = 74;
             this.chkPFL.Text = "Pilot Fault List (PFL)";
             this.chkPFL.UseVisualStyleBackColor = true;
@@ -2981,10 +2764,9 @@ namespace MFDExtractor.UI
             // chkCautionPanel
             // 
             this.chkCautionPanel.AutoSize = true;
-            this.chkCautionPanel.Location = new System.Drawing.Point(8, 7);
-            this.chkCautionPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.chkCautionPanel.Location = new System.Drawing.Point(6, 6);
             this.chkCautionPanel.Name = "chkCautionPanel";
-            this.chkCautionPanel.Size = new System.Drawing.Size(118, 21);
+            this.chkCautionPanel.Size = new System.Drawing.Size(92, 17);
             this.chkCautionPanel.TabIndex = 70;
             this.chkCautionPanel.Text = "Caution Panel";
             this.chkCautionPanel.UseVisualStyleBackColor = true;
@@ -2996,12 +2778,11 @@ namespace MFDExtractor.UI
             this.pbRecoverCautionPanel.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCautionPanel.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverCautionPanel.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverCautionPanel.Location = new System.Drawing.Point(356, 7);
-            this.pbRecoverCautionPanel.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverCautionPanel.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverCautionPanel.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverCautionPanel.Location = new System.Drawing.Point(267, 6);
+            this.pbRecoverCautionPanel.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverCautionPanel.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverCautionPanel.Name = "pbRecoverCautionPanel";
-            this.pbRecoverCautionPanel.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverCautionPanel.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverCautionPanel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverCautionPanel.TabIndex = 71;
             this.pbRecoverCautionPanel.TabStop = false;
@@ -3014,12 +2795,11 @@ namespace MFDExtractor.UI
             this.pbRecoverPFL.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverPFL.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverPFL.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverPFL.Location = new System.Drawing.Point(356, 36);
-            this.pbRecoverPFL.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverPFL.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverPFL.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverPFL.Location = new System.Drawing.Point(267, 29);
+            this.pbRecoverPFL.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverPFL.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverPFL.Name = "pbRecoverPFL";
-            this.pbRecoverPFL.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverPFL.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverPFL.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverPFL.TabIndex = 75;
             this.pbRecoverPFL.TabStop = false;
@@ -3032,11 +2812,10 @@ namespace MFDExtractor.UI
             this.tabIndexers.Controls.Add(this.pbRecoverNWS);
             this.tabIndexers.Controls.Add(this.chkAOAIndexer);
             this.tabIndexers.Controls.Add(this.pbRecoverAOAIndexer);
-            this.tabIndexers.Location = new System.Drawing.Point(4, 46);
-            this.tabIndexers.Margin = new System.Windows.Forms.Padding(4);
+            this.tabIndexers.Location = new System.Drawing.Point(4, 40);
             this.tabIndexers.Name = "tabIndexers";
-            this.tabIndexers.Padding = new System.Windows.Forms.Padding(4);
-            this.tabIndexers.Size = new System.Drawing.Size(680, 563);
+            this.tabIndexers.Padding = new System.Windows.Forms.Padding(3);
+            this.tabIndexers.Size = new System.Drawing.Size(506, 452);
             this.tabIndexers.TabIndex = 13;
             this.tabIndexers.Text = "Indexers";
             this.tabIndexers.UseVisualStyleBackColor = true;
@@ -3044,10 +2823,9 @@ namespace MFDExtractor.UI
             // chkNWSIndexer
             // 
             this.chkNWSIndexer.AutoSize = true;
-            this.chkNWSIndexer.Location = new System.Drawing.Point(8, 36);
-            this.chkNWSIndexer.Margin = new System.Windows.Forms.Padding(4);
+            this.chkNWSIndexer.Location = new System.Drawing.Point(6, 29);
             this.chkNWSIndexer.Name = "chkNWSIndexer";
-            this.chkNWSIndexer.Size = new System.Drawing.Size(252, 21);
+            this.chkNWSIndexer.Size = new System.Drawing.Size(194, 17);
             this.chkNWSIndexer.TabIndex = 95;
             this.chkNWSIndexer.Text = "Nosewheel Steering (NWS) Indexer";
             this.chkNWSIndexer.UseVisualStyleBackColor = true;
@@ -3059,12 +2837,11 @@ namespace MFDExtractor.UI
             this.pbRecoverNWS.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverNWS.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverNWS.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNWS.Location = new System.Drawing.Point(356, 36);
-            this.pbRecoverNWS.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverNWS.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverNWS.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverNWS.Location = new System.Drawing.Point(267, 29);
+            this.pbRecoverNWS.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverNWS.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverNWS.Name = "pbRecoverNWS";
-            this.pbRecoverNWS.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverNWS.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverNWS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverNWS.TabIndex = 96;
             this.pbRecoverNWS.TabStop = false;
@@ -3074,10 +2851,9 @@ namespace MFDExtractor.UI
             // chkAOAIndexer
             // 
             this.chkAOAIndexer.AutoSize = true;
-            this.chkAOAIndexer.Location = new System.Drawing.Point(8, 7);
-            this.chkAOAIndexer.Margin = new System.Windows.Forms.Padding(4);
+            this.chkAOAIndexer.Location = new System.Drawing.Point(6, 6);
             this.chkAOAIndexer.Name = "chkAOAIndexer";
-            this.chkAOAIndexer.Size = new System.Drawing.Size(218, 21);
+            this.chkAOAIndexer.Size = new System.Drawing.Size(168, 17);
             this.chkAOAIndexer.TabIndex = 93;
             this.chkAOAIndexer.Text = "Angle of Attack (AOA) Indexer";
             this.chkAOAIndexer.UseVisualStyleBackColor = true;
@@ -3089,12 +2865,11 @@ namespace MFDExtractor.UI
             this.pbRecoverAOAIndexer.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAOAIndexer.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverAOAIndexer.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAOAIndexer.Location = new System.Drawing.Point(356, 7);
-            this.pbRecoverAOAIndexer.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverAOAIndexer.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverAOAIndexer.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverAOAIndexer.Location = new System.Drawing.Point(267, 6);
+            this.pbRecoverAOAIndexer.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverAOAIndexer.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverAOAIndexer.Name = "pbRecoverAOAIndexer";
-            this.pbRecoverAOAIndexer.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverAOAIndexer.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverAOAIndexer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverAOAIndexer.TabIndex = 94;
             this.pbRecoverAOAIndexer.TabStop = false;
@@ -3107,11 +2882,10 @@ namespace MFDExtractor.UI
             this.tabTrim.Controls.Add(this.pbRecoverPitchTrim);
             this.tabTrim.Controls.Add(this.pbRecoverRollTrim);
             this.tabTrim.Controls.Add(this.chkRollTrim);
-            this.tabTrim.Location = new System.Drawing.Point(4, 46);
-            this.tabTrim.Margin = new System.Windows.Forms.Padding(4);
+            this.tabTrim.Location = new System.Drawing.Point(4, 40);
             this.tabTrim.Name = "tabTrim";
-            this.tabTrim.Padding = new System.Windows.Forms.Padding(4);
-            this.tabTrim.Size = new System.Drawing.Size(680, 563);
+            this.tabTrim.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTrim.Size = new System.Drawing.Size(506, 452);
             this.tabTrim.TabIndex = 6;
             this.tabTrim.Text = "Manual Trim";
             this.tabTrim.UseVisualStyleBackColor = true;
@@ -3119,10 +2893,9 @@ namespace MFDExtractor.UI
             // chkPitchTrim
             // 
             this.chkPitchTrim.AutoSize = true;
-            this.chkPitchTrim.Location = new System.Drawing.Point(8, 7);
-            this.chkPitchTrim.Margin = new System.Windows.Forms.Padding(4);
+            this.chkPitchTrim.Location = new System.Drawing.Point(6, 6);
             this.chkPitchTrim.Name = "chkPitchTrim";
-            this.chkPitchTrim.Size = new System.Drawing.Size(151, 21);
+            this.chkPitchTrim.Size = new System.Drawing.Size(117, 17);
             this.chkPitchTrim.TabIndex = 39;
             this.chkPitchTrim.Text = "Pitch Trim Indicator";
             this.chkPitchTrim.UseVisualStyleBackColor = true;
@@ -3134,12 +2907,11 @@ namespace MFDExtractor.UI
             this.pbRecoverPitchTrim.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverPitchTrim.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverPitchTrim.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverPitchTrim.Location = new System.Drawing.Point(361, 7);
-            this.pbRecoverPitchTrim.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverPitchTrim.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverPitchTrim.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverPitchTrim.Location = new System.Drawing.Point(271, 6);
+            this.pbRecoverPitchTrim.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverPitchTrim.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverPitchTrim.Name = "pbRecoverPitchTrim";
-            this.pbRecoverPitchTrim.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverPitchTrim.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverPitchTrim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverPitchTrim.TabIndex = 65;
             this.pbRecoverPitchTrim.TabStop = false;
@@ -3152,12 +2924,11 @@ namespace MFDExtractor.UI
             this.pbRecoverRollTrim.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverRollTrim.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverRollTrim.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverRollTrim.Location = new System.Drawing.Point(361, 36);
-            this.pbRecoverRollTrim.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverRollTrim.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverRollTrim.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverRollTrim.Location = new System.Drawing.Point(271, 29);
+            this.pbRecoverRollTrim.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverRollTrim.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverRollTrim.Name = "pbRecoverRollTrim";
-            this.pbRecoverRollTrim.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverRollTrim.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverRollTrim.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverRollTrim.TabIndex = 63;
             this.pbRecoverRollTrim.TabStop = false;
@@ -3167,10 +2938,9 @@ namespace MFDExtractor.UI
             // chkRollTrim
             // 
             this.chkRollTrim.AutoSize = true;
-            this.chkRollTrim.Location = new System.Drawing.Point(8, 36);
-            this.chkRollTrim.Margin = new System.Windows.Forms.Padding(4);
+            this.chkRollTrim.Location = new System.Drawing.Point(6, 29);
             this.chkRollTrim.Name = "chkRollTrim";
-            this.chkRollTrim.Size = new System.Drawing.Size(144, 21);
+            this.chkRollTrim.Size = new System.Drawing.Size(111, 17);
             this.chkRollTrim.TabIndex = 40;
             this.chkRollTrim.Text = "Roll Trim Indicator";
             this.chkRollTrim.UseVisualStyleBackColor = true;
@@ -3180,11 +2950,10 @@ namespace MFDExtractor.UI
             // 
             this.tabEPU.Controls.Add(this.chkEPU);
             this.tabEPU.Controls.Add(this.pbRecoverEPU);
-            this.tabEPU.Location = new System.Drawing.Point(4, 46);
-            this.tabEPU.Margin = new System.Windows.Forms.Padding(4);
+            this.tabEPU.Location = new System.Drawing.Point(4, 40);
             this.tabEPU.Name = "tabEPU";
-            this.tabEPU.Padding = new System.Windows.Forms.Padding(4);
-            this.tabEPU.Size = new System.Drawing.Size(680, 563);
+            this.tabEPU.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEPU.Size = new System.Drawing.Size(506, 452);
             this.tabEPU.TabIndex = 15;
             this.tabEPU.Text = "EPU";
             this.tabEPU.UseVisualStyleBackColor = true;
@@ -3192,10 +2961,9 @@ namespace MFDExtractor.UI
             // chkEPU
             // 
             this.chkEPU.AutoSize = true;
-            this.chkEPU.Location = new System.Drawing.Point(8, 7);
-            this.chkEPU.Margin = new System.Windows.Forms.Padding(4);
+            this.chkEPU.Location = new System.Drawing.Point(6, 6);
             this.chkEPU.Name = "chkEPU";
-            this.chkEPU.Size = new System.Drawing.Size(136, 21);
+            this.chkEPU.Size = new System.Drawing.Size(106, 17);
             this.chkEPU.TabIndex = 64;
             this.chkEPU.Text = "EPU Fuel Gauge";
             this.chkEPU.UseVisualStyleBackColor = true;
@@ -3207,12 +2975,11 @@ namespace MFDExtractor.UI
             this.pbRecoverEPU.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverEPU.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverEPU.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverEPU.Location = new System.Drawing.Point(356, 7);
-            this.pbRecoverEPU.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverEPU.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverEPU.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverEPU.Location = new System.Drawing.Point(267, 6);
+            this.pbRecoverEPU.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverEPU.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverEPU.Name = "pbRecoverEPU";
-            this.pbRecoverEPU.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverEPU.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverEPU.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverEPU.TabIndex = 65;
             this.pbRecoverEPU.TabStop = false;
@@ -3225,11 +2992,10 @@ namespace MFDExtractor.UI
             this.tabGearAndBrakes.Controls.Add(this.pbRecoverSpeedbrake);
             this.tabGearAndBrakes.Controls.Add(this.chkGearLights);
             this.tabGearAndBrakes.Controls.Add(this.pbRecoverGearLights);
-            this.tabGearAndBrakes.Location = new System.Drawing.Point(4, 46);
-            this.tabGearAndBrakes.Margin = new System.Windows.Forms.Padding(4);
+            this.tabGearAndBrakes.Location = new System.Drawing.Point(4, 40);
             this.tabGearAndBrakes.Name = "tabGearAndBrakes";
-            this.tabGearAndBrakes.Padding = new System.Windows.Forms.Padding(4);
-            this.tabGearAndBrakes.Size = new System.Drawing.Size(680, 563);
+            this.tabGearAndBrakes.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGearAndBrakes.Size = new System.Drawing.Size(506, 452);
             this.tabGearAndBrakes.TabIndex = 16;
             this.tabGearAndBrakes.Text = "Gear & Brakes";
             this.tabGearAndBrakes.UseVisualStyleBackColor = true;
@@ -3237,10 +3003,9 @@ namespace MFDExtractor.UI
             // chkSpeedbrake
             // 
             this.chkSpeedbrake.AutoSize = true;
-            this.chkSpeedbrake.Location = new System.Drawing.Point(8, 36);
-            this.chkSpeedbrake.Margin = new System.Windows.Forms.Padding(4);
+            this.chkSpeedbrake.Location = new System.Drawing.Point(6, 29);
             this.chkSpeedbrake.Name = "chkSpeedbrake";
-            this.chkSpeedbrake.Size = new System.Drawing.Size(224, 21);
+            this.chkSpeedbrake.Size = new System.Drawing.Size(172, 17);
             this.chkSpeedbrake.TabIndex = 67;
             this.chkSpeedbrake.Text = "Speed Brake Position Indicator";
             this.chkSpeedbrake.UseVisualStyleBackColor = true;
@@ -3252,12 +3017,11 @@ namespace MFDExtractor.UI
             this.pbRecoverSpeedbrake.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverSpeedbrake.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverSpeedbrake.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverSpeedbrake.Location = new System.Drawing.Point(352, 36);
-            this.pbRecoverSpeedbrake.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverSpeedbrake.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverSpeedbrake.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverSpeedbrake.Location = new System.Drawing.Point(264, 29);
+            this.pbRecoverSpeedbrake.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverSpeedbrake.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverSpeedbrake.Name = "pbRecoverSpeedbrake";
-            this.pbRecoverSpeedbrake.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverSpeedbrake.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverSpeedbrake.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverSpeedbrake.TabIndex = 68;
             this.pbRecoverSpeedbrake.TabStop = false;
@@ -3267,10 +3031,9 @@ namespace MFDExtractor.UI
             // chkGearLights
             // 
             this.chkGearLights.AutoSize = true;
-            this.chkGearLights.Location = new System.Drawing.Point(8, 7);
-            this.chkGearLights.Margin = new System.Windows.Forms.Padding(4);
+            this.chkGearLights.Location = new System.Drawing.Point(6, 6);
             this.chkGearLights.Name = "chkGearLights";
-            this.chkGearLights.Size = new System.Drawing.Size(158, 21);
+            this.chkGearLights.Size = new System.Drawing.Size(124, 17);
             this.chkGearLights.TabIndex = 66;
             this.chkGearLights.Text = "Wheels Down Lights";
             this.chkGearLights.UseVisualStyleBackColor = true;
@@ -3282,12 +3045,11 @@ namespace MFDExtractor.UI
             this.pbRecoverGearLights.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverGearLights.Image = global::MFDExtractor.Properties.Resources.restore;
             this.pbRecoverGearLights.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverGearLights.Location = new System.Drawing.Point(352, 7);
-            this.pbRecoverGearLights.Margin = new System.Windows.Forms.Padding(4);
-            this.pbRecoverGearLights.MaximumSize = new System.Drawing.Size(21, 20);
-            this.pbRecoverGearLights.MinimumSize = new System.Drawing.Size(21, 20);
+            this.pbRecoverGearLights.Location = new System.Drawing.Point(264, 6);
+            this.pbRecoverGearLights.MaximumSize = new System.Drawing.Size(16, 16);
+            this.pbRecoverGearLights.MinimumSize = new System.Drawing.Size(16, 16);
             this.pbRecoverGearLights.Name = "pbRecoverGearLights";
-            this.pbRecoverGearLights.Size = new System.Drawing.Size(21, 20);
+            this.pbRecoverGearLights.Size = new System.Drawing.Size(16, 16);
             this.pbRecoverGearLights.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbRecoverGearLights.TabIndex = 69;
             this.pbRecoverGearLights.TabStop = false;
@@ -3297,11 +3059,10 @@ namespace MFDExtractor.UI
             // tabHotkeys
             // 
             this.tabHotkeys.Controls.Add(this.panel2);
-            this.tabHotkeys.Location = new System.Drawing.Point(4, 25);
-            this.tabHotkeys.Margin = new System.Windows.Forms.Padding(4);
+            this.tabHotkeys.Location = new System.Drawing.Point(4, 22);
             this.tabHotkeys.Name = "tabHotkeys";
-            this.tabHotkeys.Padding = new System.Windows.Forms.Padding(4);
-            this.tabHotkeys.Size = new System.Drawing.Size(696, 621);
+            this.tabHotkeys.Padding = new System.Windows.Forms.Padding(3);
+            this.tabHotkeys.Size = new System.Drawing.Size(520, 502);
             this.tabHotkeys.TabIndex = 6;
             this.tabHotkeys.Text = "Hotkeys";
             this.tabHotkeys.UseVisualStyleBackColor = true;
@@ -3310,10 +3071,9 @@ namespace MFDExtractor.UI
             // 
             this.panel2.Controls.Add(this.tabHotkeysInner);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(4, 4);
-            this.panel2.Margin = new System.Windows.Forms.Padding(4);
+            this.panel2.Location = new System.Drawing.Point(3, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(688, 613);
+            this.panel2.Size = new System.Drawing.Size(516, 498);
             this.panel2.TabIndex = 156;
             // 
             // tabHotkeysInner
@@ -3326,10 +3086,9 @@ namespace MFDExtractor.UI
             this.tabHotkeysInner.Controls.Add(this.tabISISKeys);
             this.tabHotkeysInner.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabHotkeysInner.Location = new System.Drawing.Point(0, 0);
-            this.tabHotkeysInner.Margin = new System.Windows.Forms.Padding(4);
             this.tabHotkeysInner.Name = "tabHotkeysInner";
             this.tabHotkeysInner.SelectedIndex = 0;
-            this.tabHotkeysInner.Size = new System.Drawing.Size(688, 613);
+            this.tabHotkeysInner.Size = new System.Drawing.Size(516, 498);
             this.tabHotkeysInner.TabIndex = 156;
             // 
             // tabGeneralKeys
@@ -3337,11 +3096,10 @@ namespace MFDExtractor.UI
             this.tabGeneralKeys.Controls.Add(this.groupBox6);
             this.tabGeneralKeys.Controls.Add(this.lblNVIS);
             this.tabGeneralKeys.Controls.Add(this.cmdNV);
-            this.tabGeneralKeys.Location = new System.Drawing.Point(4, 25);
-            this.tabGeneralKeys.Margin = new System.Windows.Forms.Padding(4);
+            this.tabGeneralKeys.Location = new System.Drawing.Point(4, 22);
             this.tabGeneralKeys.Name = "tabGeneralKeys";
-            this.tabGeneralKeys.Padding = new System.Windows.Forms.Padding(4);
-            this.tabGeneralKeys.Size = new System.Drawing.Size(680, 584);
+            this.tabGeneralKeys.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGeneralKeys.Size = new System.Drawing.Size(508, 472);
             this.tabGeneralKeys.TabIndex = 0;
             this.tabGeneralKeys.Text = "General";
             this.tabGeneralKeys.UseVisualStyleBackColor = true;
@@ -3354,11 +3112,9 @@ namespace MFDExtractor.UI
             this.groupBox6.Controls.Add(this.label24);
             this.groupBox6.Controls.Add(this.lbl3DModeHotkey);
             this.groupBox6.Controls.Add(this.sci3DModeHotkey);
-            this.groupBox6.Location = new System.Drawing.Point(8, 7);
-            this.groupBox6.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox6.Location = new System.Drawing.Point(6, 6);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox6.Size = new System.Drawing.Size(635, 146);
+            this.groupBox6.Size = new System.Drawing.Size(476, 119);
             this.groupBox6.TabIndex = 16;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Capture Mode Hotkeys";
@@ -3366,10 +3122,9 @@ namespace MFDExtractor.UI
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(28, 22);
-            this.label22.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label22.Location = new System.Drawing.Point(21, 18);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(169, 17);
+            this.label22.Size = new System.Drawing.Size(128, 13);
             this.label22.TabIndex = 1;
             this.label22.Text = "Primary 2D Mode Hotkey:";
             this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -3380,11 +3135,10 @@ namespace MFDExtractor.UI
             this.sciSecondary2DModeHotkey.CharCode = ((byte)(65));
             this.sciSecondary2DModeHotkey.Control = false;
             this.sciSecondary2DModeHotkey.Keys = System.Windows.Forms.Keys.A;
-            this.sciSecondary2DModeHotkey.Location = new System.Drawing.Point(195, 55);
-            this.sciSecondary2DModeHotkey.Margin = new System.Windows.Forms.Padding(4);
+            this.sciSecondary2DModeHotkey.Location = new System.Drawing.Point(146, 45);
             this.sciSecondary2DModeHotkey.Name = "sciSecondary2DModeHotkey";
             this.sciSecondary2DModeHotkey.Shift = false;
-            this.sciSecondary2DModeHotkey.Size = new System.Drawing.Size(419, 37);
+            this.sciSecondary2DModeHotkey.Size = new System.Drawing.Size(314, 30);
             this.sciSecondary2DModeHotkey.TabIndex = 4;
             // 
             // sciPrimary2DModeHotkey
@@ -3393,20 +3147,18 @@ namespace MFDExtractor.UI
             this.sciPrimary2DModeHotkey.CharCode = ((byte)(65));
             this.sciPrimary2DModeHotkey.Control = false;
             this.sciPrimary2DModeHotkey.Keys = System.Windows.Forms.Keys.A;
-            this.sciPrimary2DModeHotkey.Location = new System.Drawing.Point(195, 11);
-            this.sciPrimary2DModeHotkey.Margin = new System.Windows.Forms.Padding(4);
+            this.sciPrimary2DModeHotkey.Location = new System.Drawing.Point(146, 9);
             this.sciPrimary2DModeHotkey.Name = "sciPrimary2DModeHotkey";
             this.sciPrimary2DModeHotkey.Shift = false;
-            this.sciPrimary2DModeHotkey.Size = new System.Drawing.Size(419, 37);
+            this.sciPrimary2DModeHotkey.Size = new System.Drawing.Size(314, 30);
             this.sciPrimary2DModeHotkey.TabIndex = 2;
             // 
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(5, 64);
-            this.label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label24.Location = new System.Drawing.Point(4, 52);
             this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(189, 17);
+            this.label24.Size = new System.Drawing.Size(145, 13);
             this.label24.TabIndex = 3;
             this.label24.Text = "Secondary 2D Mode Hotkey:";
             this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -3414,10 +3166,9 @@ namespace MFDExtractor.UI
             // lbl3DModeHotkey
             // 
             this.lbl3DModeHotkey.AutoSize = true;
-            this.lbl3DModeHotkey.Location = new System.Drawing.Point(77, 107);
-            this.lbl3DModeHotkey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbl3DModeHotkey.Location = new System.Drawing.Point(58, 87);
             this.lbl3DModeHotkey.Name = "lbl3DModeHotkey";
-            this.lbl3DModeHotkey.Size = new System.Drawing.Size(117, 17);
+            this.lbl3DModeHotkey.Size = new System.Drawing.Size(91, 13);
             this.lbl3DModeHotkey.TabIndex = 5;
             this.lbl3DModeHotkey.Text = "3D Mode Hotkey:";
             this.lbl3DModeHotkey.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -3428,29 +3179,26 @@ namespace MFDExtractor.UI
             this.sci3DModeHotkey.CharCode = ((byte)(65));
             this.sci3DModeHotkey.Control = false;
             this.sci3DModeHotkey.Keys = System.Windows.Forms.Keys.A;
-            this.sci3DModeHotkey.Location = new System.Drawing.Point(193, 100);
-            this.sci3DModeHotkey.Margin = new System.Windows.Forms.Padding(4);
+            this.sci3DModeHotkey.Location = new System.Drawing.Point(145, 81);
             this.sci3DModeHotkey.Name = "sci3DModeHotkey";
             this.sci3DModeHotkey.Shift = false;
-            this.sci3DModeHotkey.Size = new System.Drawing.Size(421, 37);
+            this.sci3DModeHotkey.Size = new System.Drawing.Size(316, 30);
             this.sci3DModeHotkey.TabIndex = 6;
             // 
             // lblNVIS
             // 
             this.lblNVIS.AutoSize = true;
-            this.lblNVIS.Location = new System.Drawing.Point(13, 169);
-            this.lblNVIS.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblNVIS.Location = new System.Drawing.Point(10, 137);
             this.lblNVIS.Name = "lblNVIS";
-            this.lblNVIS.Size = new System.Drawing.Size(130, 17);
+            this.lblNVIS.Size = new System.Drawing.Size(101, 13);
             this.lblNVIS.TabIndex = 7;
             this.lblNVIS.Text = "NVIS Mode Toggle:";
             // 
             // cmdNV
             // 
-            this.cmdNV.Location = new System.Drawing.Point(156, 162);
-            this.cmdNV.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdNV.Location = new System.Drawing.Point(117, 132);
             this.cmdNV.Name = "cmdNV";
-            this.cmdNV.Size = new System.Drawing.Size(100, 28);
+            this.cmdNV.Size = new System.Drawing.Size(75, 23);
             this.cmdNV.TabIndex = 8;
             this.cmdNV.Text = "View/Set...";
             this.cmdNV.UseVisualStyleBackColor = true;
@@ -3459,11 +3207,10 @@ namespace MFDExtractor.UI
             // tabAccelerometerKeys
             // 
             this.tabAccelerometerKeys.Controls.Add(this.gbAccelerometer);
-            this.tabAccelerometerKeys.Location = new System.Drawing.Point(4, 25);
-            this.tabAccelerometerKeys.Margin = new System.Windows.Forms.Padding(4);
+            this.tabAccelerometerKeys.Location = new System.Drawing.Point(4, 22);
             this.tabAccelerometerKeys.Name = "tabAccelerometerKeys";
-            this.tabAccelerometerKeys.Padding = new System.Windows.Forms.Padding(4);
-            this.tabAccelerometerKeys.Size = new System.Drawing.Size(677, 581);
+            this.tabAccelerometerKeys.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAccelerometerKeys.Size = new System.Drawing.Size(508, 472);
             this.tabAccelerometerKeys.TabIndex = 4;
             this.tabAccelerometerKeys.Text = "Accelerometer";
             this.tabAccelerometerKeys.UseVisualStyleBackColor = true;
@@ -3471,11 +3218,9 @@ namespace MFDExtractor.UI
             // gbAccelerometer
             // 
             this.gbAccelerometer.Controls.Add(this.groupBox5);
-            this.gbAccelerometer.Location = new System.Drawing.Point(8, 7);
-            this.gbAccelerometer.Margin = new System.Windows.Forms.Padding(4);
+            this.gbAccelerometer.Location = new System.Drawing.Point(6, 6);
             this.gbAccelerometer.Name = "gbAccelerometer";
-            this.gbAccelerometer.Padding = new System.Windows.Forms.Padding(4);
-            this.gbAccelerometer.Size = new System.Drawing.Size(255, 110);
+            this.gbAccelerometer.Size = new System.Drawing.Size(191, 89);
             this.gbAccelerometer.TabIndex = 11;
             this.gbAccelerometer.TabStop = false;
             this.gbAccelerometer.Text = "Accelerometer Hotkeys";
@@ -3484,21 +3229,18 @@ namespace MFDExtractor.UI
             // 
             this.groupBox5.Controls.Add(this.cmdAccelerometerResetButtonPressed);
             this.groupBox5.Controls.Add(this.lblAccelerometerResetButtonPressed);
-            this.groupBox5.Location = new System.Drawing.Point(12, 23);
-            this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox5.Location = new System.Drawing.Point(9, 19);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox5.Size = new System.Drawing.Size(231, 69);
+            this.groupBox5.Size = new System.Drawing.Size(173, 56);
             this.groupBox5.TabIndex = 6;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Reset Button";
             // 
             // cmdAccelerometerResetButtonPressed
             // 
-            this.cmdAccelerometerResetButtonPressed.Location = new System.Drawing.Point(103, 23);
-            this.cmdAccelerometerResetButtonPressed.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdAccelerometerResetButtonPressed.Location = new System.Drawing.Point(77, 19);
             this.cmdAccelerometerResetButtonPressed.Name = "cmdAccelerometerResetButtonPressed";
-            this.cmdAccelerometerResetButtonPressed.Size = new System.Drawing.Size(100, 28);
+            this.cmdAccelerometerResetButtonPressed.Size = new System.Drawing.Size(75, 23);
             this.cmdAccelerometerResetButtonPressed.TabIndex = 5;
             this.cmdAccelerometerResetButtonPressed.Text = "View/Set...";
             this.cmdAccelerometerResetButtonPressed.UseVisualStyleBackColor = true;
@@ -3507,21 +3249,19 @@ namespace MFDExtractor.UI
             // lblAccelerometerResetButtonPressed
             // 
             this.lblAccelerometerResetButtonPressed.AutoSize = true;
-            this.lblAccelerometerResetButtonPressed.Location = new System.Drawing.Point(15, 30);
-            this.lblAccelerometerResetButtonPressed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAccelerometerResetButtonPressed.Location = new System.Drawing.Point(11, 24);
             this.lblAccelerometerResetButtonPressed.Name = "lblAccelerometerResetButtonPressed";
-            this.lblAccelerometerResetButtonPressed.Size = new System.Drawing.Size(64, 17);
+            this.lblAccelerometerResetButtonPressed.Size = new System.Drawing.Size(48, 13);
             this.lblAccelerometerResetButtonPressed.TabIndex = 4;
             this.lblAccelerometerResetButtonPressed.Text = "Pressed:";
             // 
             // tabASI
             // 
             this.tabASI.Controls.Add(this.gbAirspeedIndicator);
-            this.tabASI.Location = new System.Drawing.Point(4, 25);
-            this.tabASI.Margin = new System.Windows.Forms.Padding(4);
+            this.tabASI.Location = new System.Drawing.Point(4, 22);
             this.tabASI.Name = "tabASI";
-            this.tabASI.Padding = new System.Windows.Forms.Padding(4);
-            this.tabASI.Size = new System.Drawing.Size(677, 581);
+            this.tabASI.Padding = new System.Windows.Forms.Padding(3);
+            this.tabASI.Size = new System.Drawing.Size(508, 472);
             this.tabASI.TabIndex = 2;
             this.tabASI.Text = "Airspeed Indicator";
             this.tabASI.UseVisualStyleBackColor = true;
@@ -3529,11 +3269,9 @@ namespace MFDExtractor.UI
             // gbAirspeedIndicator
             // 
             this.gbAirspeedIndicator.Controls.Add(this.gbASIIndexKnob);
-            this.gbAirspeedIndicator.Location = new System.Drawing.Point(8, 7);
-            this.gbAirspeedIndicator.Margin = new System.Windows.Forms.Padding(4);
+            this.gbAirspeedIndicator.Location = new System.Drawing.Point(6, 6);
             this.gbAirspeedIndicator.Name = "gbAirspeedIndicator";
-            this.gbAirspeedIndicator.Padding = new System.Windows.Forms.Padding(4);
-            this.gbAirspeedIndicator.Size = new System.Drawing.Size(256, 134);
+            this.gbAirspeedIndicator.Size = new System.Drawing.Size(192, 109);
             this.gbAirspeedIndicator.TabIndex = 14;
             this.gbAirspeedIndicator.TabStop = false;
             this.gbAirspeedIndicator.Text = "Airspeed Indicator Hotkeys";
@@ -3544,11 +3282,9 @@ namespace MFDExtractor.UI
             this.gbASIIndexKnob.Controls.Add(this.cmdAirspeedIndexIncreaseHotkey);
             this.gbASIIndexKnob.Controls.Add(this.lblAirspeedIndexDecreaseHotkey);
             this.gbASIIndexKnob.Controls.Add(this.cmdAirspeedIndexDecreaseHotkey);
-            this.gbASIIndexKnob.Location = new System.Drawing.Point(8, 23);
-            this.gbASIIndexKnob.Margin = new System.Windows.Forms.Padding(4);
+            this.gbASIIndexKnob.Location = new System.Drawing.Point(6, 19);
             this.gbASIIndexKnob.Name = "gbASIIndexKnob";
-            this.gbASIIndexKnob.Padding = new System.Windows.Forms.Padding(4);
-            this.gbASIIndexKnob.Size = new System.Drawing.Size(237, 96);
+            this.gbASIIndexKnob.Size = new System.Drawing.Size(178, 78);
             this.gbASIIndexKnob.TabIndex = 7;
             this.gbASIIndexKnob.TabStop = false;
             this.gbASIIndexKnob.Text = "Index Knob";
@@ -3556,19 +3292,17 @@ namespace MFDExtractor.UI
             // lblAirspeedIndexIncreaseHotkey
             // 
             this.lblAirspeedIndexIncreaseHotkey.AutoSize = true;
-            this.lblAirspeedIndexIncreaseHotkey.Location = new System.Drawing.Point(8, 30);
-            this.lblAirspeedIndexIncreaseHotkey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAirspeedIndexIncreaseHotkey.Location = new System.Drawing.Point(6, 24);
             this.lblAirspeedIndexIncreaseHotkey.Name = "lblAirspeedIndexIncreaseHotkey";
-            this.lblAirspeedIndexIncreaseHotkey.Size = new System.Drawing.Size(74, 17);
+            this.lblAirspeedIndexIncreaseHotkey.Size = new System.Drawing.Size(57, 13);
             this.lblAirspeedIndexIncreaseHotkey.TabIndex = 0;
             this.lblAirspeedIndexIncreaseHotkey.Text = "Increment:";
             // 
             // cmdAirspeedIndexIncreaseHotkey
             // 
-            this.cmdAirspeedIndexIncreaseHotkey.Location = new System.Drawing.Point(109, 23);
-            this.cmdAirspeedIndexIncreaseHotkey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdAirspeedIndexIncreaseHotkey.Location = new System.Drawing.Point(82, 19);
             this.cmdAirspeedIndexIncreaseHotkey.Name = "cmdAirspeedIndexIncreaseHotkey";
-            this.cmdAirspeedIndexIncreaseHotkey.Size = new System.Drawing.Size(100, 28);
+            this.cmdAirspeedIndexIncreaseHotkey.Size = new System.Drawing.Size(75, 23);
             this.cmdAirspeedIndexIncreaseHotkey.TabIndex = 1;
             this.cmdAirspeedIndexIncreaseHotkey.Text = "View/Set...";
             this.cmdAirspeedIndexIncreaseHotkey.UseVisualStyleBackColor = true;
@@ -3577,19 +3311,17 @@ namespace MFDExtractor.UI
             // lblAirspeedIndexDecreaseHotkey
             // 
             this.lblAirspeedIndexDecreaseHotkey.AutoSize = true;
-            this.lblAirspeedIndexDecreaseHotkey.Location = new System.Drawing.Point(8, 65);
-            this.lblAirspeedIndexDecreaseHotkey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAirspeedIndexDecreaseHotkey.Location = new System.Drawing.Point(6, 53);
             this.lblAirspeedIndexDecreaseHotkey.Name = "lblAirspeedIndexDecreaseHotkey";
-            this.lblAirspeedIndexDecreaseHotkey.Size = new System.Drawing.Size(81, 17);
+            this.lblAirspeedIndexDecreaseHotkey.Size = new System.Drawing.Size(62, 13);
             this.lblAirspeedIndexDecreaseHotkey.TabIndex = 2;
             this.lblAirspeedIndexDecreaseHotkey.Text = "Decrement:";
             // 
             // cmdAirspeedIndexDecreaseHotkey
             // 
-            this.cmdAirspeedIndexDecreaseHotkey.Location = new System.Drawing.Point(109, 59);
-            this.cmdAirspeedIndexDecreaseHotkey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdAirspeedIndexDecreaseHotkey.Location = new System.Drawing.Point(82, 48);
             this.cmdAirspeedIndexDecreaseHotkey.Name = "cmdAirspeedIndexDecreaseHotkey";
-            this.cmdAirspeedIndexDecreaseHotkey.Size = new System.Drawing.Size(100, 28);
+            this.cmdAirspeedIndexDecreaseHotkey.Size = new System.Drawing.Size(75, 23);
             this.cmdAirspeedIndexDecreaseHotkey.TabIndex = 3;
             this.cmdAirspeedIndexDecreaseHotkey.Text = "View/Set...";
             this.cmdAirspeedIndexDecreaseHotkey.UseVisualStyleBackColor = true;
@@ -3598,11 +3330,10 @@ namespace MFDExtractor.UI
             // tabAzimuthIndicatorKeys
             // 
             this.tabAzimuthIndicatorKeys.Controls.Add(this.gbAzimuthIndicator);
-            this.tabAzimuthIndicatorKeys.Location = new System.Drawing.Point(4, 25);
-            this.tabAzimuthIndicatorKeys.Margin = new System.Windows.Forms.Padding(4);
+            this.tabAzimuthIndicatorKeys.Location = new System.Drawing.Point(4, 22);
             this.tabAzimuthIndicatorKeys.Name = "tabAzimuthIndicatorKeys";
-            this.tabAzimuthIndicatorKeys.Padding = new System.Windows.Forms.Padding(4);
-            this.tabAzimuthIndicatorKeys.Size = new System.Drawing.Size(677, 581);
+            this.tabAzimuthIndicatorKeys.Padding = new System.Windows.Forms.Padding(3);
+            this.tabAzimuthIndicatorKeys.Size = new System.Drawing.Size(508, 472);
             this.tabAzimuthIndicatorKeys.TabIndex = 3;
             this.tabAzimuthIndicatorKeys.Text = "Azimuth Indicator";
             this.tabAzimuthIndicatorKeys.UseVisualStyleBackColor = true;
@@ -3610,11 +3341,9 @@ namespace MFDExtractor.UI
             // gbAzimuthIndicator
             // 
             this.gbAzimuthIndicator.Controls.Add(this.gbAzimuthIndicatorBrightnessControl);
-            this.gbAzimuthIndicator.Location = new System.Drawing.Point(8, 7);
-            this.gbAzimuthIndicator.Margin = new System.Windows.Forms.Padding(4);
+            this.gbAzimuthIndicator.Location = new System.Drawing.Point(6, 6);
             this.gbAzimuthIndicator.Name = "gbAzimuthIndicator";
-            this.gbAzimuthIndicator.Padding = new System.Windows.Forms.Padding(4);
-            this.gbAzimuthIndicator.Size = new System.Drawing.Size(251, 132);
+            this.gbAzimuthIndicator.Size = new System.Drawing.Size(188, 107);
             this.gbAzimuthIndicator.TabIndex = 15;
             this.gbAzimuthIndicator.TabStop = false;
             this.gbAzimuthIndicator.Text = "Azimuth Indicator Hotkeys";
@@ -3625,11 +3354,9 @@ namespace MFDExtractor.UI
             this.gbAzimuthIndicatorBrightnessControl.Controls.Add(this.lblAzimuthIndicatorBrightnessIncrease);
             this.gbAzimuthIndicatorBrightnessControl.Controls.Add(this.cmdAzimuthIndicatorBrightnessIncrease);
             this.gbAzimuthIndicatorBrightnessControl.Controls.Add(this.cmdAzimuthIndicatorBrightnessDecrease);
-            this.gbAzimuthIndicatorBrightnessControl.Location = new System.Drawing.Point(8, 23);
-            this.gbAzimuthIndicatorBrightnessControl.Margin = new System.Windows.Forms.Padding(4);
+            this.gbAzimuthIndicatorBrightnessControl.Location = new System.Drawing.Point(6, 19);
             this.gbAzimuthIndicatorBrightnessControl.Name = "gbAzimuthIndicatorBrightnessControl";
-            this.gbAzimuthIndicatorBrightnessControl.Padding = new System.Windows.Forms.Padding(4);
-            this.gbAzimuthIndicatorBrightnessControl.Size = new System.Drawing.Size(225, 95);
+            this.gbAzimuthIndicatorBrightnessControl.Size = new System.Drawing.Size(169, 77);
             this.gbAzimuthIndicatorBrightnessControl.TabIndex = 0;
             this.gbAzimuthIndicatorBrightnessControl.TabStop = false;
             this.gbAzimuthIndicatorBrightnessControl.Text = "Brightness Control";
@@ -3637,29 +3364,26 @@ namespace MFDExtractor.UI
             // lblAzimuthIndicatorBrightnessDecrease
             // 
             this.lblAzimuthIndicatorBrightnessDecrease.AutoSize = true;
-            this.lblAzimuthIndicatorBrightnessDecrease.Location = new System.Drawing.Point(8, 65);
-            this.lblAzimuthIndicatorBrightnessDecrease.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAzimuthIndicatorBrightnessDecrease.Location = new System.Drawing.Point(6, 53);
             this.lblAzimuthIndicatorBrightnessDecrease.Name = "lblAzimuthIndicatorBrightnessDecrease";
-            this.lblAzimuthIndicatorBrightnessDecrease.Size = new System.Drawing.Size(73, 17);
+            this.lblAzimuthIndicatorBrightnessDecrease.Size = new System.Drawing.Size(56, 13);
             this.lblAzimuthIndicatorBrightnessDecrease.TabIndex = 2;
             this.lblAzimuthIndicatorBrightnessDecrease.Text = "Decrease:";
             // 
             // lblAzimuthIndicatorBrightnessIncrease
             // 
             this.lblAzimuthIndicatorBrightnessIncrease.AutoSize = true;
-            this.lblAzimuthIndicatorBrightnessIncrease.Location = new System.Drawing.Point(8, 30);
-            this.lblAzimuthIndicatorBrightnessIncrease.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblAzimuthIndicatorBrightnessIncrease.Location = new System.Drawing.Point(6, 24);
             this.lblAzimuthIndicatorBrightnessIncrease.Name = "lblAzimuthIndicatorBrightnessIncrease";
-            this.lblAzimuthIndicatorBrightnessIncrease.Size = new System.Drawing.Size(66, 17);
+            this.lblAzimuthIndicatorBrightnessIncrease.Size = new System.Drawing.Size(51, 13);
             this.lblAzimuthIndicatorBrightnessIncrease.TabIndex = 0;
             this.lblAzimuthIndicatorBrightnessIncrease.Text = "Increase:";
             // 
             // cmdAzimuthIndicatorBrightnessIncrease
             // 
-            this.cmdAzimuthIndicatorBrightnessIncrease.Location = new System.Drawing.Point(109, 23);
-            this.cmdAzimuthIndicatorBrightnessIncrease.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdAzimuthIndicatorBrightnessIncrease.Location = new System.Drawing.Point(82, 19);
             this.cmdAzimuthIndicatorBrightnessIncrease.Name = "cmdAzimuthIndicatorBrightnessIncrease";
-            this.cmdAzimuthIndicatorBrightnessIncrease.Size = new System.Drawing.Size(100, 28);
+            this.cmdAzimuthIndicatorBrightnessIncrease.Size = new System.Drawing.Size(75, 23);
             this.cmdAzimuthIndicatorBrightnessIncrease.TabIndex = 1;
             this.cmdAzimuthIndicatorBrightnessIncrease.Text = "View/Set...";
             this.cmdAzimuthIndicatorBrightnessIncrease.UseVisualStyleBackColor = true;
@@ -3667,10 +3391,9 @@ namespace MFDExtractor.UI
             // 
             // cmdAzimuthIndicatorBrightnessDecrease
             // 
-            this.cmdAzimuthIndicatorBrightnessDecrease.Location = new System.Drawing.Point(109, 59);
-            this.cmdAzimuthIndicatorBrightnessDecrease.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdAzimuthIndicatorBrightnessDecrease.Location = new System.Drawing.Point(82, 48);
             this.cmdAzimuthIndicatorBrightnessDecrease.Name = "cmdAzimuthIndicatorBrightnessDecrease";
-            this.cmdAzimuthIndicatorBrightnessDecrease.Size = new System.Drawing.Size(100, 28);
+            this.cmdAzimuthIndicatorBrightnessDecrease.Size = new System.Drawing.Size(75, 23);
             this.cmdAzimuthIndicatorBrightnessDecrease.TabIndex = 3;
             this.cmdAzimuthIndicatorBrightnessDecrease.Text = "View/Set...";
             this.cmdAzimuthIndicatorBrightnessDecrease.UseVisualStyleBackColor = true;
@@ -3679,11 +3402,10 @@ namespace MFDExtractor.UI
             // tabEHSIKeys
             // 
             this.tabEHSIKeys.Controls.Add(this.gbEHSI);
-            this.tabEHSIKeys.Location = new System.Drawing.Point(4, 25);
-            this.tabEHSIKeys.Margin = new System.Windows.Forms.Padding(4);
+            this.tabEHSIKeys.Location = new System.Drawing.Point(4, 22);
             this.tabEHSIKeys.Name = "tabEHSIKeys";
-            this.tabEHSIKeys.Padding = new System.Windows.Forms.Padding(4);
-            this.tabEHSIKeys.Size = new System.Drawing.Size(677, 581);
+            this.tabEHSIKeys.Padding = new System.Windows.Forms.Padding(3);
+            this.tabEHSIKeys.Size = new System.Drawing.Size(508, 472);
             this.tabEHSIKeys.TabIndex = 1;
             this.tabEHSIKeys.Text = "EHSI";
             this.tabEHSIKeys.UseVisualStyleBackColor = true;
@@ -3694,11 +3416,9 @@ namespace MFDExtractor.UI
             this.gbEHSI.Controls.Add(this.groupBox4);
             this.gbEHSI.Controls.Add(this.groupBox3);
             this.gbEHSI.Controls.Add(this.cmdEHSIMenuButtonHotkey);
-            this.gbEHSI.Location = new System.Drawing.Point(8, 7);
-            this.gbEHSI.Margin = new System.Windows.Forms.Padding(4);
+            this.gbEHSI.Location = new System.Drawing.Point(6, 6);
             this.gbEHSI.Name = "gbEHSI";
-            this.gbEHSI.Padding = new System.Windows.Forms.Padding(4);
-            this.gbEHSI.Size = new System.Drawing.Size(540, 209);
+            this.gbEHSI.Size = new System.Drawing.Size(405, 170);
             this.gbEHSI.TabIndex = 8;
             this.gbEHSI.TabStop = false;
             this.gbEHSI.Text = "EHSI Hotkeys";
@@ -3706,10 +3426,9 @@ namespace MFDExtractor.UI
             // lblEHSIMenuButton
             // 
             this.lblEHSIMenuButton.AutoSize = true;
-            this.lblEHSIMenuButton.Location = new System.Drawing.Point(16, 20);
-            this.lblEHSIMenuButton.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEHSIMenuButton.Location = new System.Drawing.Point(12, 16);
             this.lblEHSIMenuButton.Name = "lblEHSIMenuButton";
-            this.lblEHSIMenuButton.Size = new System.Drawing.Size(68, 17);
+            this.lblEHSIMenuButton.Size = new System.Drawing.Size(53, 13);
             this.lblEHSIMenuButton.TabIndex = 0;
             this.lblEHSIMenuButton.Text = "M Button:";
             // 
@@ -3721,11 +3440,9 @@ namespace MFDExtractor.UI
             this.groupBox4.Controls.Add(this.lblEHSICourseDecreaseHotkey);
             this.groupBox4.Controls.Add(this.cmdEHSICourseDecreaseKey);
             this.groupBox4.Controls.Add(this.label54);
-            this.groupBox4.Location = new System.Drawing.Point(268, 57);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox4.Location = new System.Drawing.Point(201, 46);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox4.Size = new System.Drawing.Size(255, 139);
+            this.groupBox4.Size = new System.Drawing.Size(191, 113);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "CRS/BRT Knob";
@@ -3733,19 +3450,17 @@ namespace MFDExtractor.UI
             // lblEHSICourseIncreaseHotkey
             // 
             this.lblEHSICourseIncreaseHotkey.AutoSize = true;
-            this.lblEHSICourseIncreaseHotkey.Location = new System.Drawing.Point(16, 30);
-            this.lblEHSICourseIncreaseHotkey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEHSICourseIncreaseHotkey.Location = new System.Drawing.Point(12, 24);
             this.lblEHSICourseIncreaseHotkey.Name = "lblEHSICourseIncreaseHotkey";
-            this.lblEHSICourseIncreaseHotkey.Size = new System.Drawing.Size(74, 17);
+            this.lblEHSICourseIncreaseHotkey.Size = new System.Drawing.Size(57, 13);
             this.lblEHSICourseIncreaseHotkey.TabIndex = 0;
             this.lblEHSICourseIncreaseHotkey.Text = "Increment:";
             // 
             // cmdEHSICourseIncreaseKey
             // 
-            this.cmdEHSICourseIncreaseKey.Location = new System.Drawing.Point(131, 23);
-            this.cmdEHSICourseIncreaseKey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdEHSICourseIncreaseKey.Location = new System.Drawing.Point(98, 19);
             this.cmdEHSICourseIncreaseKey.Name = "cmdEHSICourseIncreaseKey";
-            this.cmdEHSICourseIncreaseKey.Size = new System.Drawing.Size(100, 28);
+            this.cmdEHSICourseIncreaseKey.Size = new System.Drawing.Size(75, 23);
             this.cmdEHSICourseIncreaseKey.TabIndex = 1;
             this.cmdEHSICourseIncreaseKey.Text = "View/Set...";
             this.cmdEHSICourseIncreaseKey.UseVisualStyleBackColor = true;
@@ -3753,10 +3468,9 @@ namespace MFDExtractor.UI
             // 
             // cmdEHSICourseKnobDepressedKey
             // 
-            this.cmdEHSICourseKnobDepressedKey.Location = new System.Drawing.Point(131, 95);
-            this.cmdEHSICourseKnobDepressedKey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdEHSICourseKnobDepressedKey.Location = new System.Drawing.Point(98, 77);
             this.cmdEHSICourseKnobDepressedKey.Name = "cmdEHSICourseKnobDepressedKey";
-            this.cmdEHSICourseKnobDepressedKey.Size = new System.Drawing.Size(100, 28);
+            this.cmdEHSICourseKnobDepressedKey.Size = new System.Drawing.Size(75, 23);
             this.cmdEHSICourseKnobDepressedKey.TabIndex = 5;
             this.cmdEHSICourseKnobDepressedKey.Text = "View/Set...";
             this.cmdEHSICourseKnobDepressedKey.UseVisualStyleBackColor = true;
@@ -3765,19 +3479,17 @@ namespace MFDExtractor.UI
             // lblEHSICourseDecreaseHotkey
             // 
             this.lblEHSICourseDecreaseHotkey.AutoSize = true;
-            this.lblEHSICourseDecreaseHotkey.Location = new System.Drawing.Point(16, 65);
-            this.lblEHSICourseDecreaseHotkey.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEHSICourseDecreaseHotkey.Location = new System.Drawing.Point(12, 53);
             this.lblEHSICourseDecreaseHotkey.Name = "lblEHSICourseDecreaseHotkey";
-            this.lblEHSICourseDecreaseHotkey.Size = new System.Drawing.Size(81, 17);
+            this.lblEHSICourseDecreaseHotkey.Size = new System.Drawing.Size(62, 13);
             this.lblEHSICourseDecreaseHotkey.TabIndex = 2;
             this.lblEHSICourseDecreaseHotkey.Text = "Decrement:";
             // 
             // cmdEHSICourseDecreaseKey
             // 
-            this.cmdEHSICourseDecreaseKey.Location = new System.Drawing.Point(131, 59);
-            this.cmdEHSICourseDecreaseKey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdEHSICourseDecreaseKey.Location = new System.Drawing.Point(98, 48);
             this.cmdEHSICourseDecreaseKey.Name = "cmdEHSICourseDecreaseKey";
-            this.cmdEHSICourseDecreaseKey.Size = new System.Drawing.Size(100, 28);
+            this.cmdEHSICourseDecreaseKey.Size = new System.Drawing.Size(75, 23);
             this.cmdEHSICourseDecreaseKey.TabIndex = 3;
             this.cmdEHSICourseDecreaseKey.Text = "View/Set...";
             this.cmdEHSICourseDecreaseKey.UseVisualStyleBackColor = true;
@@ -3786,10 +3498,9 @@ namespace MFDExtractor.UI
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(16, 101);
-            this.label54.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label54.Location = new System.Drawing.Point(12, 82);
             this.label54.Name = "label54";
-            this.label54.Size = new System.Drawing.Size(64, 17);
+            this.label54.Size = new System.Drawing.Size(48, 13);
             this.label54.TabIndex = 4;
             this.label54.Text = "Pressed:";
             // 
@@ -3799,11 +3510,9 @@ namespace MFDExtractor.UI
             this.groupBox3.Controls.Add(this.cmdEHSIHeadingIncreaseKey);
             this.groupBox3.Controls.Add(this.label53);
             this.groupBox3.Controls.Add(this.cmdEHSIHeadingDecreaseKey);
-            this.groupBox3.Location = new System.Drawing.Point(8, 57);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
+            this.groupBox3.Location = new System.Drawing.Point(6, 46);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(247, 139);
+            this.groupBox3.Size = new System.Drawing.Size(185, 113);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "HDG/ATT Knob";
@@ -3811,19 +3520,17 @@ namespace MFDExtractor.UI
             // lblEHSIHeadingIncreaseButton
             // 
             this.lblEHSIHeadingIncreaseButton.AutoSize = true;
-            this.lblEHSIHeadingIncreaseButton.Location = new System.Drawing.Point(8, 30);
-            this.lblEHSIHeadingIncreaseButton.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEHSIHeadingIncreaseButton.Location = new System.Drawing.Point(6, 24);
             this.lblEHSIHeadingIncreaseButton.Name = "lblEHSIHeadingIncreaseButton";
-            this.lblEHSIHeadingIncreaseButton.Size = new System.Drawing.Size(74, 17);
+            this.lblEHSIHeadingIncreaseButton.Size = new System.Drawing.Size(57, 13);
             this.lblEHSIHeadingIncreaseButton.TabIndex = 0;
             this.lblEHSIHeadingIncreaseButton.Text = "Increment:";
             // 
             // cmdEHSIHeadingIncreaseKey
             // 
-            this.cmdEHSIHeadingIncreaseKey.Location = new System.Drawing.Point(129, 23);
-            this.cmdEHSIHeadingIncreaseKey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdEHSIHeadingIncreaseKey.Location = new System.Drawing.Point(97, 19);
             this.cmdEHSIHeadingIncreaseKey.Name = "cmdEHSIHeadingIncreaseKey";
-            this.cmdEHSIHeadingIncreaseKey.Size = new System.Drawing.Size(100, 28);
+            this.cmdEHSIHeadingIncreaseKey.Size = new System.Drawing.Size(75, 23);
             this.cmdEHSIHeadingIncreaseKey.TabIndex = 1;
             this.cmdEHSIHeadingIncreaseKey.Text = "View/Set...";
             this.cmdEHSIHeadingIncreaseKey.UseVisualStyleBackColor = true;
@@ -3832,19 +3539,17 @@ namespace MFDExtractor.UI
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(8, 65);
-            this.label53.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label53.Location = new System.Drawing.Point(6, 53);
             this.label53.Name = "label53";
-            this.label53.Size = new System.Drawing.Size(81, 17);
+            this.label53.Size = new System.Drawing.Size(62, 13);
             this.label53.TabIndex = 2;
             this.label53.Text = "Decrement:";
             // 
             // cmdEHSIHeadingDecreaseKey
             // 
-            this.cmdEHSIHeadingDecreaseKey.Location = new System.Drawing.Point(129, 59);
-            this.cmdEHSIHeadingDecreaseKey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdEHSIHeadingDecreaseKey.Location = new System.Drawing.Point(97, 48);
             this.cmdEHSIHeadingDecreaseKey.Name = "cmdEHSIHeadingDecreaseKey";
-            this.cmdEHSIHeadingDecreaseKey.Size = new System.Drawing.Size(100, 28);
+            this.cmdEHSIHeadingDecreaseKey.Size = new System.Drawing.Size(75, 23);
             this.cmdEHSIHeadingDecreaseKey.TabIndex = 3;
             this.cmdEHSIHeadingDecreaseKey.Text = "View/Set...";
             this.cmdEHSIHeadingDecreaseKey.UseVisualStyleBackColor = true;
@@ -3852,10 +3557,9 @@ namespace MFDExtractor.UI
             // 
             // cmdEHSIMenuButtonHotkey
             // 
-            this.cmdEHSIMenuButtonHotkey.Location = new System.Drawing.Point(137, 14);
-            this.cmdEHSIMenuButtonHotkey.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdEHSIMenuButtonHotkey.Location = new System.Drawing.Point(103, 11);
             this.cmdEHSIMenuButtonHotkey.Name = "cmdEHSIMenuButtonHotkey";
-            this.cmdEHSIMenuButtonHotkey.Size = new System.Drawing.Size(100, 28);
+            this.cmdEHSIMenuButtonHotkey.Size = new System.Drawing.Size(75, 23);
             this.cmdEHSIMenuButtonHotkey.TabIndex = 1;
             this.cmdEHSIMenuButtonHotkey.Text = "View/Set...";
             this.cmdEHSIMenuButtonHotkey.UseVisualStyleBackColor = true;
@@ -3864,11 +3568,10 @@ namespace MFDExtractor.UI
             // tabISISKeys
             // 
             this.tabISISKeys.Controls.Add(this.gbISIS);
-            this.tabISISKeys.Location = new System.Drawing.Point(4, 25);
-            this.tabISISKeys.Margin = new System.Windows.Forms.Padding(4);
+            this.tabISISKeys.Location = new System.Drawing.Point(4, 22);
             this.tabISISKeys.Name = "tabISISKeys";
-            this.tabISISKeys.Padding = new System.Windows.Forms.Padding(4);
-            this.tabISISKeys.Size = new System.Drawing.Size(677, 581);
+            this.tabISISKeys.Padding = new System.Windows.Forms.Padding(3);
+            this.tabISISKeys.Size = new System.Drawing.Size(508, 472);
             this.tabISISKeys.TabIndex = 5;
             this.tabISISKeys.Text = "ISIS";
             this.tabISISKeys.UseVisualStyleBackColor = true;
@@ -3879,11 +3582,9 @@ namespace MFDExtractor.UI
             this.gbISIS.Controls.Add(this.cmdISISBrightButtonPressed);
             this.gbISIS.Controls.Add(this.cmdISISStandardBrightnessButtonPressed);
             this.gbISIS.Controls.Add(this.lblISISStandardBrightnessButtonPressed);
-            this.gbISIS.Location = new System.Drawing.Point(8, 7);
-            this.gbISIS.Margin = new System.Windows.Forms.Padding(4);
+            this.gbISIS.Location = new System.Drawing.Point(6, 6);
             this.gbISIS.Name = "gbISIS";
-            this.gbISIS.Padding = new System.Windows.Forms.Padding(4);
-            this.gbISIS.Size = new System.Drawing.Size(260, 91);
+            this.gbISIS.Size = new System.Drawing.Size(195, 74);
             this.gbISIS.TabIndex = 12;
             this.gbISIS.TabStop = false;
             this.gbISIS.Text = "ISIS Hotkeys";
@@ -3891,19 +3592,17 @@ namespace MFDExtractor.UI
             // lblISISBrightBrightnessButtonPressed
             // 
             this.lblISISBrightBrightnessButtonPressed.AutoSize = true;
-            this.lblISISBrightBrightnessButtonPressed.Location = new System.Drawing.Point(16, 23);
-            this.lblISISBrightBrightnessButtonPressed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblISISBrightBrightnessButtonPressed.Location = new System.Drawing.Point(12, 19);
             this.lblISISBrightBrightnessButtonPressed.Name = "lblISISBrightBrightnessButtonPressed";
-            this.lblISISBrightBrightnessButtonPressed.Size = new System.Drawing.Size(85, 17);
+            this.lblISISBrightBrightnessButtonPressed.Size = new System.Drawing.Size(66, 13);
             this.lblISISBrightBrightnessButtonPressed.TabIndex = 0;
             this.lblISISBrightBrightnessButtonPressed.Text = "BRT Button:";
             // 
             // cmdISISBrightButtonPressed
             // 
-            this.cmdISISBrightButtonPressed.Location = new System.Drawing.Point(117, 17);
-            this.cmdISISBrightButtonPressed.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdISISBrightButtonPressed.Location = new System.Drawing.Point(88, 14);
             this.cmdISISBrightButtonPressed.Name = "cmdISISBrightButtonPressed";
-            this.cmdISISBrightButtonPressed.Size = new System.Drawing.Size(100, 28);
+            this.cmdISISBrightButtonPressed.Size = new System.Drawing.Size(75, 23);
             this.cmdISISBrightButtonPressed.TabIndex = 1;
             this.cmdISISBrightButtonPressed.Text = "View/Set...";
             this.cmdISISBrightButtonPressed.UseVisualStyleBackColor = true;
@@ -3911,10 +3610,9 @@ namespace MFDExtractor.UI
             // 
             // cmdISISStandardBrightnessButtonPressed
             // 
-            this.cmdISISStandardBrightnessButtonPressed.Location = new System.Drawing.Point(117, 52);
-            this.cmdISISStandardBrightnessButtonPressed.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdISISStandardBrightnessButtonPressed.Location = new System.Drawing.Point(88, 42);
             this.cmdISISStandardBrightnessButtonPressed.Name = "cmdISISStandardBrightnessButtonPressed";
-            this.cmdISISStandardBrightnessButtonPressed.Size = new System.Drawing.Size(100, 28);
+            this.cmdISISStandardBrightnessButtonPressed.Size = new System.Drawing.Size(75, 23);
             this.cmdISISStandardBrightnessButtonPressed.TabIndex = 3;
             this.cmdISISStandardBrightnessButtonPressed.Text = "View/Set...";
             this.cmdISISStandardBrightnessButtonPressed.UseVisualStyleBackColor = true;
@@ -3923,21 +3621,19 @@ namespace MFDExtractor.UI
             // lblISISStandardBrightnessButtonPressed
             // 
             this.lblISISStandardBrightnessButtonPressed.AutoSize = true;
-            this.lblISISStandardBrightnessButtonPressed.Location = new System.Drawing.Point(16, 58);
-            this.lblISISStandardBrightnessButtonPressed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblISISStandardBrightnessButtonPressed.Location = new System.Drawing.Point(12, 47);
             this.lblISISStandardBrightnessButtonPressed.Name = "lblISISStandardBrightnessButtonPressed";
-            this.lblISISStandardBrightnessButtonPressed.Size = new System.Drawing.Size(85, 17);
+            this.lblISISStandardBrightnessButtonPressed.Size = new System.Drawing.Size(66, 13);
             this.lblISISStandardBrightnessButtonPressed.TabIndex = 2;
             this.lblISISStandardBrightnessButtonPressed.Text = "STD Button:";
             // 
             // tabNetworking
             // 
             this.tabNetworking.Controls.Add(this.grpNetworkMode);
-            this.tabNetworking.Location = new System.Drawing.Point(4, 25);
-            this.tabNetworking.Margin = new System.Windows.Forms.Padding(4);
+            this.tabNetworking.Location = new System.Drawing.Point(4, 22);
             this.tabNetworking.Name = "tabNetworking";
-            this.tabNetworking.Padding = new System.Windows.Forms.Padding(4);
-            this.tabNetworking.Size = new System.Drawing.Size(696, 621);
+            this.tabNetworking.Padding = new System.Windows.Forms.Padding(3);
+            this.tabNetworking.Size = new System.Drawing.Size(520, 502);
             this.tabNetworking.TabIndex = 16;
             this.tabNetworking.Text = "Networking";
             this.tabNetworking.UseVisualStyleBackColor = true;
@@ -3948,11 +3644,9 @@ namespace MFDExtractor.UI
             this.grpNetworkMode.Controls.Add(this.gbNetworkingMode);
             this.grpNetworkMode.Controls.Add(this.grpClientOptions);
             this.grpNetworkMode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpNetworkMode.Location = new System.Drawing.Point(4, 4);
-            this.grpNetworkMode.Margin = new System.Windows.Forms.Padding(4);
+            this.grpNetworkMode.Location = new System.Drawing.Point(3, 3);
             this.grpNetworkMode.Name = "grpNetworkMode";
-            this.grpNetworkMode.Padding = new System.Windows.Forms.Padding(4);
-            this.grpNetworkMode.Size = new System.Drawing.Size(688, 613);
+            this.grpNetworkMode.Size = new System.Drawing.Size(516, 498);
             this.grpNetworkMode.TabIndex = 58;
             this.grpNetworkMode.TabStop = false;
             this.grpNetworkMode.Text = "Networking";
@@ -3965,11 +3659,9 @@ namespace MFDExtractor.UI
             this.grpServerOptions.Controls.Add(this.cboImageFormat);
             this.grpServerOptions.Controls.Add(this.lblServerServerPortNum);
             this.grpServerOptions.Controls.Add(this.txtNetworkServerUsePortNum);
-            this.grpServerOptions.Location = new System.Drawing.Point(155, 20);
-            this.grpServerOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpServerOptions.Location = new System.Drawing.Point(116, 16);
             this.grpServerOptions.Name = "grpServerOptions";
-            this.grpServerOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpServerOptions.Size = new System.Drawing.Size(311, 117);
+            this.grpServerOptions.Size = new System.Drawing.Size(233, 95);
             this.grpServerOptions.TabIndex = 45;
             this.grpServerOptions.TabStop = false;
             this.grpServerOptions.Text = "Server Options";
@@ -3977,10 +3669,9 @@ namespace MFDExtractor.UI
             // lblCompressionType
             // 
             this.lblCompressionType.AutoSize = true;
-            this.lblCompressionType.Location = new System.Drawing.Point(5, 80);
-            this.lblCompressionType.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCompressionType.Location = new System.Drawing.Point(4, 65);
             this.lblCompressionType.Name = "lblCompressionType";
-            this.lblCompressionType.Size = new System.Drawing.Size(130, 17);
+            this.lblCompressionType.Size = new System.Drawing.Size(97, 13);
             this.lblCompressionType.TabIndex = 92;
             this.lblCompressionType.Text = "Compression Type:";
             // 
@@ -3988,19 +3679,17 @@ namespace MFDExtractor.UI
             // 
             this.cboCompressionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboCompressionType.FormattingEnabled = true;
-            this.cboCompressionType.Location = new System.Drawing.Point(143, 76);
-            this.cboCompressionType.Margin = new System.Windows.Forms.Padding(4);
+            this.cboCompressionType.Location = new System.Drawing.Point(107, 62);
             this.cboCompressionType.Name = "cboCompressionType";
-            this.cboCompressionType.Size = new System.Drawing.Size(115, 24);
+            this.cboCompressionType.Size = new System.Drawing.Size(87, 21);
             this.cboCompressionType.TabIndex = 48;
             // 
             // lblImageFormat
             // 
             this.lblImageFormat.AutoSize = true;
-            this.lblImageFormat.Location = new System.Drawing.Point(36, 50);
-            this.lblImageFormat.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblImageFormat.Location = new System.Drawing.Point(27, 41);
             this.lblImageFormat.Name = "lblImageFormat";
-            this.lblImageFormat.Size = new System.Drawing.Size(98, 17);
+            this.lblImageFormat.Size = new System.Drawing.Size(74, 13);
             this.lblImageFormat.TabIndex = 90;
             this.lblImageFormat.Text = "Image Format:";
             // 
@@ -4008,31 +3697,28 @@ namespace MFDExtractor.UI
             // 
             this.cboImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboImageFormat.FormattingEnabled = true;
-            this.cboImageFormat.Location = new System.Drawing.Point(143, 46);
-            this.cboImageFormat.Margin = new System.Windows.Forms.Padding(4);
+            this.cboImageFormat.Location = new System.Drawing.Point(107, 37);
             this.cboImageFormat.Name = "cboImageFormat";
-            this.cboImageFormat.Size = new System.Drawing.Size(115, 24);
+            this.cboImageFormat.Size = new System.Drawing.Size(87, 21);
             this.cboImageFormat.TabIndex = 47;
             this.cboImageFormat.SelectedIndexChanged += new System.EventHandler(this.cboImageFormat_SelectedIndexChanged);
             // 
             // lblServerServerPortNum
             // 
             this.lblServerServerPortNum.AutoSize = true;
-            this.lblServerServerPortNum.Location = new System.Drawing.Point(45, 20);
-            this.lblServerServerPortNum.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblServerServerPortNum.Location = new System.Drawing.Point(34, 16);
             this.lblServerServerPortNum.Name = "lblServerServerPortNum";
-            this.lblServerServerPortNum.Size = new System.Drawing.Size(92, 17);
+            this.lblServerServerPortNum.Size = new System.Drawing.Size(69, 13);
             this.lblServerServerPortNum.TabIndex = 5;
             this.lblServerServerPortNum.Text = "Port Number:";
             this.lblServerServerPortNum.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // txtNetworkServerUsePortNum
             // 
-            this.txtNetworkServerUsePortNum.Location = new System.Drawing.Point(143, 16);
-            this.txtNetworkServerUsePortNum.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNetworkServerUsePortNum.Location = new System.Drawing.Point(107, 13);
             this.txtNetworkServerUsePortNum.MaxLength = 5;
             this.txtNetworkServerUsePortNum.Name = "txtNetworkServerUsePortNum";
-            this.txtNetworkServerUsePortNum.Size = new System.Drawing.Size(115, 22);
+            this.txtNetworkServerUsePortNum.Size = new System.Drawing.Size(87, 20);
             this.txtNetworkServerUsePortNum.TabIndex = 46;
             // 
             // gbNetworkingMode
@@ -4040,11 +3726,9 @@ namespace MFDExtractor.UI
             this.gbNetworkingMode.Controls.Add(this.rdoServer);
             this.gbNetworkingMode.Controls.Add(this.rdoStandalone);
             this.gbNetworkingMode.Controls.Add(this.rdoClient);
-            this.gbNetworkingMode.Location = new System.Drawing.Point(21, 20);
-            this.gbNetworkingMode.Margin = new System.Windows.Forms.Padding(4);
+            this.gbNetworkingMode.Location = new System.Drawing.Point(16, 16);
             this.gbNetworkingMode.Name = "gbNetworkingMode";
-            this.gbNetworkingMode.Padding = new System.Windows.Forms.Padding(4);
-            this.gbNetworkingMode.Size = new System.Drawing.Size(125, 114);
+            this.gbNetworkingMode.Size = new System.Drawing.Size(94, 93);
             this.gbNetworkingMode.TabIndex = 58;
             this.gbNetworkingMode.TabStop = false;
             this.gbNetworkingMode.Text = "Mode";
@@ -4052,10 +3736,9 @@ namespace MFDExtractor.UI
             // rdoServer
             // 
             this.rdoServer.AutoSize = true;
-            this.rdoServer.Location = new System.Drawing.Point(8, 76);
-            this.rdoServer.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoServer.Location = new System.Drawing.Point(6, 62);
             this.rdoServer.Name = "rdoServer";
-            this.rdoServer.Size = new System.Drawing.Size(71, 21);
+            this.rdoServer.Size = new System.Drawing.Size(56, 17);
             this.rdoServer.TabIndex = 41;
             this.rdoServer.TabStop = true;
             this.rdoServer.Text = "Server";
@@ -4065,10 +3748,9 @@ namespace MFDExtractor.UI
             // rdoStandalone
             // 
             this.rdoStandalone.AutoSize = true;
-            this.rdoStandalone.Location = new System.Drawing.Point(8, 20);
-            this.rdoStandalone.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoStandalone.Location = new System.Drawing.Point(6, 16);
             this.rdoStandalone.Name = "rdoStandalone";
-            this.rdoStandalone.Size = new System.Drawing.Size(101, 21);
+            this.rdoStandalone.Size = new System.Drawing.Size(79, 17);
             this.rdoStandalone.TabIndex = 39;
             this.rdoStandalone.TabStop = true;
             this.rdoStandalone.Text = "Standalone";
@@ -4078,10 +3760,9 @@ namespace MFDExtractor.UI
             // rdoClient
             // 
             this.rdoClient.AutoSize = true;
-            this.rdoClient.Location = new System.Drawing.Point(8, 48);
-            this.rdoClient.Margin = new System.Windows.Forms.Padding(4);
+            this.rdoClient.Location = new System.Drawing.Point(6, 39);
             this.rdoClient.Name = "rdoClient";
-            this.rdoClient.Size = new System.Drawing.Size(64, 21);
+            this.rdoClient.Size = new System.Drawing.Size(51, 17);
             this.rdoClient.TabIndex = 40;
             this.rdoClient.TabStop = true;
             this.rdoClient.Text = "Client";
@@ -4094,11 +3775,9 @@ namespace MFDExtractor.UI
             this.grpClientOptions.Controls.Add(this.txtNetworkClientUseServerPortNum);
             this.grpClientOptions.Controls.Add(this.lblServerIpAddress);
             this.grpClientOptions.Controls.Add(this.ipaNetworkClientUseServerIpAddress);
-            this.grpClientOptions.Location = new System.Drawing.Point(155, 20);
-            this.grpClientOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpClientOptions.Location = new System.Drawing.Point(116, 16);
             this.grpClientOptions.Name = "grpClientOptions";
-            this.grpClientOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpClientOptions.Size = new System.Drawing.Size(311, 84);
+            this.grpClientOptions.Size = new System.Drawing.Size(233, 68);
             this.grpClientOptions.TabIndex = 42;
             this.grpClientOptions.TabStop = false;
             this.grpClientOptions.Text = "Client Options";
@@ -4106,30 +3785,27 @@ namespace MFDExtractor.UI
             // lblClientServerPortNum
             // 
             this.lblClientServerPortNum.AutoSize = true;
-            this.lblClientServerPortNum.Location = new System.Drawing.Point(43, 53);
-            this.lblClientServerPortNum.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblClientServerPortNum.Location = new System.Drawing.Point(32, 43);
             this.lblClientServerPortNum.Name = "lblClientServerPortNum";
-            this.lblClientServerPortNum.Size = new System.Drawing.Size(92, 17);
+            this.lblClientServerPortNum.Size = new System.Drawing.Size(69, 13);
             this.lblClientServerPortNum.TabIndex = 3;
             this.lblClientServerPortNum.Text = "Port Number:";
             this.lblClientServerPortNum.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // txtNetworkClientUseServerPortNum
             // 
-            this.txtNetworkClientUseServerPortNum.Location = new System.Drawing.Point(144, 49);
-            this.txtNetworkClientUseServerPortNum.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNetworkClientUseServerPortNum.Location = new System.Drawing.Point(108, 40);
             this.txtNetworkClientUseServerPortNum.MaxLength = 5;
             this.txtNetworkClientUseServerPortNum.Name = "txtNetworkClientUseServerPortNum";
-            this.txtNetworkClientUseServerPortNum.Size = new System.Drawing.Size(113, 22);
+            this.txtNetworkClientUseServerPortNum.Size = new System.Drawing.Size(86, 20);
             this.txtNetworkClientUseServerPortNum.TabIndex = 44;
             // 
             // lblServerIpAddress
             // 
             this.lblServerIpAddress.AutoSize = true;
-            this.lblServerIpAddress.Location = new System.Drawing.Point(8, 20);
-            this.lblServerIpAddress.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblServerIpAddress.Location = new System.Drawing.Point(6, 16);
             this.lblServerIpAddress.Name = "lblServerIpAddress";
-            this.lblServerIpAddress.Size = new System.Drawing.Size(126, 17);
+            this.lblServerIpAddress.Size = new System.Drawing.Size(95, 13);
             this.lblServerIpAddress.TabIndex = 1;
             this.lblServerIpAddress.Text = "Server IP Address:";
             this.lblServerIpAddress.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -4141,23 +3817,21 @@ namespace MFDExtractor.UI
             this.ipaNetworkClientUseServerIpAddress.BackColor = System.Drawing.SystemColors.Window;
             this.ipaNetworkClientUseServerIpAddress.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ipaNetworkClientUseServerIpAddress.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipaNetworkClientUseServerIpAddress.Location = new System.Drawing.Point(143, 16);
-            this.ipaNetworkClientUseServerIpAddress.Margin = new System.Windows.Forms.Padding(4);
-            this.ipaNetworkClientUseServerIpAddress.MinimumSize = new System.Drawing.Size(114, 22);
+            this.ipaNetworkClientUseServerIpAddress.Location = new System.Drawing.Point(107, 13);
+            this.ipaNetworkClientUseServerIpAddress.MinimumSize = new System.Drawing.Size(87, 20);
             this.ipaNetworkClientUseServerIpAddress.Name = "ipaNetworkClientUseServerIpAddress";
             this.ipaNetworkClientUseServerIpAddress.ReadOnly = false;
-            this.ipaNetworkClientUseServerIpAddress.Size = new System.Drawing.Size(152, 22);
+            this.ipaNetworkClientUseServerIpAddress.Size = new System.Drawing.Size(114, 20);
             this.ipaNetworkClientUseServerIpAddress.TabIndex = 43;
             this.ipaNetworkClientUseServerIpAddress.Text = "...";
             // 
             // tabPerformance
             // 
             this.tabPerformance.Controls.Add(this.grpPerformanceOptions);
-            this.tabPerformance.Location = new System.Drawing.Point(4, 25);
-            this.tabPerformance.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPerformance.Location = new System.Drawing.Point(4, 22);
             this.tabPerformance.Name = "tabPerformance";
-            this.tabPerformance.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPerformance.Size = new System.Drawing.Size(696, 621);
+            this.tabPerformance.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPerformance.Size = new System.Drawing.Size(520, 502);
             this.tabPerformance.TabIndex = 18;
             this.tabPerformance.Text = "Performance";
             this.tabPerformance.UseVisualStyleBackColor = true;
@@ -4172,21 +3846,18 @@ namespace MFDExtractor.UI
             this.grpPerformanceOptions.Controls.Add(this.label18);
             this.grpPerformanceOptions.Controls.Add(this.txtPollDelay);
             this.grpPerformanceOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpPerformanceOptions.Location = new System.Drawing.Point(4, 4);
-            this.grpPerformanceOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpPerformanceOptions.Location = new System.Drawing.Point(3, 3);
             this.grpPerformanceOptions.Name = "grpPerformanceOptions";
-            this.grpPerformanceOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpPerformanceOptions.Size = new System.Drawing.Size(688, 613);
+            this.grpPerformanceOptions.Size = new System.Drawing.Size(514, 496);
             this.grpPerformanceOptions.TabIndex = 57;
             this.grpPerformanceOptions.TabStop = false;
             this.grpPerformanceOptions.Text = "Performance";
             // 
             // cmdBMSOptions
             // 
-            this.cmdBMSOptions.Location = new System.Drawing.Point(16, 117);
-            this.cmdBMSOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdBMSOptions.Location = new System.Drawing.Point(12, 95);
             this.cmdBMSOptions.Name = "cmdBMSOptions";
-            this.cmdBMSOptions.Size = new System.Drawing.Size(277, 39);
+            this.cmdBMSOptions.Size = new System.Drawing.Size(208, 32);
             this.cmdBMSOptions.TabIndex = 52;
             this.cmdBMSOptions.Text = "Falcon BMS Advanced Options...";
             this.cmdBMSOptions.UseVisualStyleBackColor = true;
@@ -4195,10 +3866,9 @@ namespace MFDExtractor.UI
             // chkOnlyUpdateImagesWhenDataChanges
             // 
             this.chkOnlyUpdateImagesWhenDataChanges.AutoSize = true;
-            this.chkOnlyUpdateImagesWhenDataChanges.Location = new System.Drawing.Point(24, 89);
-            this.chkOnlyUpdateImagesWhenDataChanges.Margin = new System.Windows.Forms.Padding(4);
+            this.chkOnlyUpdateImagesWhenDataChanges.Location = new System.Drawing.Point(18, 72);
             this.chkOnlyUpdateImagesWhenDataChanges.Name = "chkOnlyUpdateImagesWhenDataChanges";
-            this.chkOnlyUpdateImagesWhenDataChanges.Size = new System.Drawing.Size(429, 21);
+            this.chkOnlyUpdateImagesWhenDataChanges.Size = new System.Drawing.Size(322, 17);
             this.chkOnlyUpdateImagesWhenDataChanges.TabIndex = 53;
             this.chkOnlyUpdateImagesWhenDataChanges.Text = "Give rendering priority to instruments with new or changed data";
             this.chkOnlyUpdateImagesWhenDataChanges.UseVisualStyleBackColor = true;
@@ -4207,10 +3877,9 @@ namespace MFDExtractor.UI
             // lblMilliseconds
             // 
             this.lblMilliseconds.AutoSize = true;
-            this.lblMilliseconds.Location = new System.Drawing.Point(249, 27);
-            this.lblMilliseconds.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblMilliseconds.Location = new System.Drawing.Point(187, 22);
             this.lblMilliseconds.Name = "lblMilliseconds";
-            this.lblMilliseconds.Size = new System.Drawing.Size(84, 17);
+            this.lblMilliseconds.Size = new System.Drawing.Size(63, 13);
             this.lblMilliseconds.TabIndex = 77;
             this.lblMilliseconds.Text = "milliseconds";
             // 
@@ -4218,48 +3887,43 @@ namespace MFDExtractor.UI
             // 
             this.cboThreadPriority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboThreadPriority.FormattingEnabled = true;
-            this.cboThreadPriority.Location = new System.Drawing.Point(204, 55);
-            this.cboThreadPriority.Margin = new System.Windows.Forms.Padding(4);
+            this.cboThreadPriority.Location = new System.Drawing.Point(153, 45);
             this.cboThreadPriority.Name = "cboThreadPriority";
-            this.cboThreadPriority.Size = new System.Drawing.Size(211, 24);
+            this.cboThreadPriority.Size = new System.Drawing.Size(159, 21);
             this.cboThreadPriority.TabIndex = 51;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(21, 59);
-            this.label19.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label19.Location = new System.Drawing.Point(16, 48);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(105, 17);
+            this.label19.Size = new System.Drawing.Size(77, 13);
             this.label19.TabIndex = 29;
             this.label19.Text = "Thread priority:";
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(21, 27);
-            this.label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label18.Location = new System.Drawing.Point(16, 22);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(152, 17);
+            this.label18.Size = new System.Drawing.Size(115, 13);
             this.label18.TabIndex = 27;
             this.label18.Text = "Poll for new data every";
             // 
             // txtPollDelay
             // 
-            this.txtPollDelay.Location = new System.Drawing.Point(204, 23);
-            this.txtPollDelay.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPollDelay.Location = new System.Drawing.Point(153, 19);
             this.txtPollDelay.Name = "txtPollDelay";
-            this.txtPollDelay.Size = new System.Drawing.Size(36, 22);
+            this.txtPollDelay.Size = new System.Drawing.Size(28, 20);
             this.txtPollDelay.TabIndex = 50;
             // 
             // tabGraphics
             // 
             this.tabGraphics.Controls.Add(this.gbGDIOptions);
-            this.tabGraphics.Location = new System.Drawing.Point(4, 25);
-            this.tabGraphics.Margin = new System.Windows.Forms.Padding(4);
+            this.tabGraphics.Location = new System.Drawing.Point(4, 22);
             this.tabGraphics.Name = "tabGraphics";
-            this.tabGraphics.Padding = new System.Windows.Forms.Padding(4);
-            this.tabGraphics.Size = new System.Drawing.Size(696, 621);
+            this.tabGraphics.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGraphics.Size = new System.Drawing.Size(520, 502);
             this.tabGraphics.TabIndex = 15;
             this.tabGraphics.Text = "Graphics";
             this.tabGraphics.UseVisualStyleBackColor = true;
@@ -4278,11 +3942,9 @@ namespace MFDExtractor.UI
             this.gbGDIOptions.Controls.Add(this.lblInterpolationMode);
             this.gbGDIOptions.Controls.Add(this.cbInterpolationMode);
             this.gbGDIOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbGDIOptions.Location = new System.Drawing.Point(4, 4);
-            this.gbGDIOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.gbGDIOptions.Location = new System.Drawing.Point(3, 3);
             this.gbGDIOptions.Name = "gbGDIOptions";
-            this.gbGDIOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.gbGDIOptions.Size = new System.Drawing.Size(688, 613);
+            this.gbGDIOptions.Size = new System.Drawing.Size(514, 496);
             this.gbGDIOptions.TabIndex = 56;
             this.gbGDIOptions.TabStop = false;
             this.gbGDIOptions.Text = "Graphics";
@@ -4290,10 +3952,9 @@ namespace MFDExtractor.UI
             // lblCompositingQuality
             // 
             this.lblCompositingQuality.AutoSize = true;
-            this.lblCompositingQuality.Location = new System.Drawing.Point(21, 20);
-            this.lblCompositingQuality.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCompositingQuality.Location = new System.Drawing.Point(16, 16);
             this.lblCompositingQuality.Name = "lblCompositingQuality";
-            this.lblCompositingQuality.Size = new System.Drawing.Size(137, 17);
+            this.lblCompositingQuality.Size = new System.Drawing.Size(102, 13);
             this.lblCompositingQuality.TabIndex = 1;
             this.lblCompositingQuality.Text = "Compositing Quality:";
             // 
@@ -4301,19 +3962,17 @@ namespace MFDExtractor.UI
             // 
             this.cbCompositingQuality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbCompositingQuality.FormattingEnabled = true;
-            this.cbCompositingQuality.Location = new System.Drawing.Point(177, 16);
-            this.cbCompositingQuality.Margin = new System.Windows.Forms.Padding(4);
+            this.cbCompositingQuality.Location = new System.Drawing.Point(133, 13);
             this.cbCompositingQuality.Name = "cbCompositingQuality";
-            this.cbCompositingQuality.Size = new System.Drawing.Size(224, 24);
+            this.cbCompositingQuality.Size = new System.Drawing.Size(169, 21);
             this.cbCompositingQuality.TabIndex = 2;
             // 
             // lblTextRenderingHint
             // 
             this.lblTextRenderingHint.AutoSize = true;
-            this.lblTextRenderingHint.Location = new System.Drawing.Point(21, 151);
-            this.lblTextRenderingHint.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblTextRenderingHint.Location = new System.Drawing.Point(16, 123);
             this.lblTextRenderingHint.Name = "lblTextRenderingHint";
-            this.lblTextRenderingHint.Size = new System.Drawing.Size(138, 17);
+            this.lblTextRenderingHint.Size = new System.Drawing.Size(105, 13);
             this.lblTextRenderingHint.TabIndex = 9;
             this.lblTextRenderingHint.Text = "Text Rendering Hint:";
             // 
@@ -4321,19 +3980,17 @@ namespace MFDExtractor.UI
             // 
             this.cbTextRenderingHint.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbTextRenderingHint.FormattingEnabled = true;
-            this.cbTextRenderingHint.Location = new System.Drawing.Point(177, 148);
-            this.cbTextRenderingHint.Margin = new System.Windows.Forms.Padding(4);
+            this.cbTextRenderingHint.Location = new System.Drawing.Point(133, 120);
             this.cbTextRenderingHint.Name = "cbTextRenderingHint";
-            this.cbTextRenderingHint.Size = new System.Drawing.Size(224, 24);
+            this.cbTextRenderingHint.Size = new System.Drawing.Size(169, 21);
             this.cbTextRenderingHint.TabIndex = 10;
             // 
             // chkHighlightOutputWindowsWhenContainMouseCursor
             // 
             this.chkHighlightOutputWindowsWhenContainMouseCursor.AutoSize = true;
-            this.chkHighlightOutputWindowsWhenContainMouseCursor.Location = new System.Drawing.Point(25, 181);
-            this.chkHighlightOutputWindowsWhenContainMouseCursor.Margin = new System.Windows.Forms.Padding(4);
+            this.chkHighlightOutputWindowsWhenContainMouseCursor.Location = new System.Drawing.Point(19, 147);
             this.chkHighlightOutputWindowsWhenContainMouseCursor.Name = "chkHighlightOutputWindowsWhenContainMouseCursor";
-            this.chkHighlightOutputWindowsWhenContainMouseCursor.Size = new System.Drawing.Size(231, 21);
+            this.chkHighlightOutputWindowsWhenContainMouseCursor.Size = new System.Drawing.Size(177, 17);
             this.chkHighlightOutputWindowsWhenContainMouseCursor.TabIndex = 0;
             this.chkHighlightOutputWindowsWhenContainMouseCursor.Text = "Highlight output window borders";
             this.chkHighlightOutputWindowsWhenContainMouseCursor.UseVisualStyleBackColor = true;
@@ -4342,10 +3999,9 @@ namespace MFDExtractor.UI
             // lblSmoothingMode
             // 
             this.lblSmoothingMode.AutoSize = true;
-            this.lblSmoothingMode.Location = new System.Drawing.Point(21, 118);
-            this.lblSmoothingMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSmoothingMode.Location = new System.Drawing.Point(16, 96);
             this.lblSmoothingMode.Name = "lblSmoothingMode";
-            this.lblSmoothingMode.Size = new System.Drawing.Size(118, 17);
+            this.lblSmoothingMode.Size = new System.Drawing.Size(90, 13);
             this.lblSmoothingMode.TabIndex = 7;
             this.lblSmoothingMode.Text = "Smoothing Mode:";
             // 
@@ -4353,19 +4009,17 @@ namespace MFDExtractor.UI
             // 
             this.cbSmoothingMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSmoothingMode.FormattingEnabled = true;
-            this.cbSmoothingMode.Location = new System.Drawing.Point(177, 114);
-            this.cbSmoothingMode.Margin = new System.Windows.Forms.Padding(4);
+            this.cbSmoothingMode.Location = new System.Drawing.Point(133, 93);
             this.cbSmoothingMode.Name = "cbSmoothingMode";
-            this.cbSmoothingMode.Size = new System.Drawing.Size(224, 24);
+            this.cbSmoothingMode.Size = new System.Drawing.Size(169, 21);
             this.cbSmoothingMode.TabIndex = 8;
             // 
             // lblPixelOffsetMode
             // 
             this.lblPixelOffsetMode.AutoSize = true;
-            this.lblPixelOffsetMode.Location = new System.Drawing.Point(21, 85);
-            this.lblPixelOffsetMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblPixelOffsetMode.Location = new System.Drawing.Point(16, 69);
             this.lblPixelOffsetMode.Name = "lblPixelOffsetMode";
-            this.lblPixelOffsetMode.Size = new System.Drawing.Size(122, 17);
+            this.lblPixelOffsetMode.Size = new System.Drawing.Size(93, 13);
             this.lblPixelOffsetMode.TabIndex = 5;
             this.lblPixelOffsetMode.Text = "Pixel Offset Mode:";
             // 
@@ -4373,19 +4027,17 @@ namespace MFDExtractor.UI
             // 
             this.cbPixelOffsetMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPixelOffsetMode.FormattingEnabled = true;
-            this.cbPixelOffsetMode.Location = new System.Drawing.Point(177, 81);
-            this.cbPixelOffsetMode.Margin = new System.Windows.Forms.Padding(4);
+            this.cbPixelOffsetMode.Location = new System.Drawing.Point(133, 66);
             this.cbPixelOffsetMode.Name = "cbPixelOffsetMode";
-            this.cbPixelOffsetMode.Size = new System.Drawing.Size(224, 24);
+            this.cbPixelOffsetMode.Size = new System.Drawing.Size(169, 21);
             this.cbPixelOffsetMode.TabIndex = 6;
             // 
             // lblInterpolationMode
             // 
             this.lblInterpolationMode.AutoSize = true;
-            this.lblInterpolationMode.Location = new System.Drawing.Point(21, 53);
-            this.lblInterpolationMode.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblInterpolationMode.Location = new System.Drawing.Point(16, 43);
             this.lblInterpolationMode.Name = "lblInterpolationMode";
-            this.lblInterpolationMode.Size = new System.Drawing.Size(129, 17);
+            this.lblInterpolationMode.Size = new System.Drawing.Size(98, 13);
             this.lblInterpolationMode.TabIndex = 3;
             this.lblInterpolationMode.Text = "Interpolation Mode:";
             // 
@@ -4393,20 +4045,18 @@ namespace MFDExtractor.UI
             // 
             this.cbInterpolationMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbInterpolationMode.FormattingEnabled = true;
-            this.cbInterpolationMode.Location = new System.Drawing.Point(177, 49);
-            this.cbInterpolationMode.Margin = new System.Windows.Forms.Padding(4);
+            this.cbInterpolationMode.Location = new System.Drawing.Point(133, 40);
             this.cbInterpolationMode.Name = "cbInterpolationMode";
-            this.cbInterpolationMode.Size = new System.Drawing.Size(224, 24);
+            this.cbInterpolationMode.Size = new System.Drawing.Size(169, 21);
             this.cbInterpolationMode.TabIndex = 4;
             // 
             // tabStartup
             // 
             this.tabStartup.Controls.Add(this.grpStartupOptions);
-            this.tabStartup.Location = new System.Drawing.Point(4, 25);
-            this.tabStartup.Margin = new System.Windows.Forms.Padding(4);
+            this.tabStartup.Location = new System.Drawing.Point(4, 22);
             this.tabStartup.Name = "tabStartup";
-            this.tabStartup.Padding = new System.Windows.Forms.Padding(4);
-            this.tabStartup.Size = new System.Drawing.Size(696, 621);
+            this.tabStartup.Padding = new System.Windows.Forms.Padding(3);
+            this.tabStartup.Size = new System.Drawing.Size(520, 502);
             this.tabStartup.TabIndex = 17;
             this.tabStartup.Text = "Startup";
             this.tabStartup.UseVisualStyleBackColor = true;
@@ -4416,11 +4066,9 @@ namespace MFDExtractor.UI
             this.grpStartupOptions.Controls.Add(this.chkStartWithWindows);
             this.grpStartupOptions.Controls.Add(this.chkStartOnLaunch);
             this.grpStartupOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grpStartupOptions.Location = new System.Drawing.Point(4, 4);
-            this.grpStartupOptions.Margin = new System.Windows.Forms.Padding(4);
+            this.grpStartupOptions.Location = new System.Drawing.Point(3, 3);
             this.grpStartupOptions.Name = "grpStartupOptions";
-            this.grpStartupOptions.Padding = new System.Windows.Forms.Padding(4);
-            this.grpStartupOptions.Size = new System.Drawing.Size(685, 610);
+            this.grpStartupOptions.Size = new System.Drawing.Size(514, 496);
             this.grpStartupOptions.TabIndex = 55;
             this.grpStartupOptions.TabStop = false;
             this.grpStartupOptions.Text = "Startup";
@@ -4428,10 +4076,9 @@ namespace MFDExtractor.UI
             // chkStartWithWindows
             // 
             this.chkStartWithWindows.AutoSize = true;
-            this.chkStartWithWindows.Location = new System.Drawing.Point(21, 48);
-            this.chkStartWithWindows.Margin = new System.Windows.Forms.Padding(4);
+            this.chkStartWithWindows.Location = new System.Drawing.Point(16, 39);
             this.chkStartWithWindows.Name = "chkStartWithWindows";
-            this.chkStartWithWindows.Size = new System.Drawing.Size(315, 21);
+            this.chkStartWithWindows.Size = new System.Drawing.Size(240, 17);
             this.chkStartWithWindows.TabIndex = 55;
             this.chkStartWithWindows.Text = "Launch automatically during Windows startup";
             this.chkStartWithWindows.UseVisualStyleBackColor = true;
@@ -4439,20 +4086,18 @@ namespace MFDExtractor.UI
             // chkStartOnLaunch
             // 
             this.chkStartOnLaunch.AutoSize = true;
-            this.chkStartOnLaunch.Location = new System.Drawing.Point(21, 20);
-            this.chkStartOnLaunch.Margin = new System.Windows.Forms.Padding(4);
+            this.chkStartOnLaunch.Location = new System.Drawing.Point(16, 16);
             this.chkStartOnLaunch.Name = "chkStartOnLaunch";
-            this.chkStartOnLaunch.Size = new System.Drawing.Size(321, 21);
+            this.chkStartOnLaunch.Size = new System.Drawing.Size(243, 17);
             this.chkStartOnLaunch.TabIndex = 54;
             this.chkStartOnLaunch.Text = "Start extracting when this program is launched";
             this.chkStartOnLaunch.UseVisualStyleBackColor = true;
             // 
             // cmdResetToDefaults
             // 
-            this.cmdResetToDefaults.Location = new System.Drawing.Point(519, 661);
-            this.cmdResetToDefaults.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdResetToDefaults.Location = new System.Drawing.Point(389, 537);
             this.cmdResetToDefaults.Name = "cmdResetToDefaults";
-            this.cmdResetToDefaults.Size = new System.Drawing.Size(168, 28);
+            this.cmdResetToDefaults.Size = new System.Drawing.Size(126, 23);
             this.cmdResetToDefaults.TabIndex = 152;
             this.cmdResetToDefaults.Text = "Rese&t to Defaults";
             this.cmdResetToDefaults.UseVisualStyleBackColor = true;
@@ -4489,7 +4134,7 @@ namespace MFDExtractor.UI
             this.label25.AutoSize = true;
             this.label25.Location = new System.Drawing.Point(6, 48);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(92, 17);
+            this.label25.Size = new System.Drawing.Size(70, 13);
             this.label25.TabIndex = 21;
             this.label25.Text = "Upper Left Y:";
             // 
@@ -4498,7 +4143,7 @@ namespace MFDExtractor.UI
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(149, 48);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(100, 17);
+            this.label26.Size = new System.Drawing.Size(77, 13);
             this.label26.TabIndex = 22;
             this.label26.Text = "Lower Right Y:";
             // 
@@ -4507,7 +4152,7 @@ namespace MFDExtractor.UI
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(6, 22);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(92, 17);
+            this.label27.Size = new System.Drawing.Size(70, 13);
             this.label27.TabIndex = 19;
             this.label27.Text = "Upper Left X:";
             // 
@@ -4515,14 +4160,14 @@ namespace MFDExtractor.UI
             // 
             this.textBox1.Location = new System.Drawing.Point(82, 19);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(61, 22);
+            this.textBox1.Size = new System.Drawing.Size(61, 20);
             this.textBox1.TabIndex = 9;
             // 
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(232, 45);
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(61, 22);
+            this.textBox2.Size = new System.Drawing.Size(61, 20);
             this.textBox2.TabIndex = 12;
             // 
             // label32
@@ -4530,7 +4175,7 @@ namespace MFDExtractor.UI
             this.label32.AutoSize = true;
             this.label32.Location = new System.Drawing.Point(149, 22);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(100, 17);
+            this.label32.Size = new System.Drawing.Size(77, 13);
             this.label32.TabIndex = 20;
             this.label32.Text = "Lower Right X:";
             // 
@@ -4538,14 +4183,14 @@ namespace MFDExtractor.UI
             // 
             this.textBox3.Location = new System.Drawing.Point(82, 45);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(61, 22);
+            this.textBox3.Size = new System.Drawing.Size(61, 20);
             this.textBox3.TabIndex = 10;
             // 
             // textBox4
             // 
             this.textBox4.Location = new System.Drawing.Point(232, 19);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(61, 22);
+            this.textBox4.Size = new System.Drawing.Size(61, 20);
             this.textBox4.TabIndex = 11;
             // 
             // checkBox1
@@ -4580,7 +4225,7 @@ namespace MFDExtractor.UI
             this.label33.AutoSize = true;
             this.label33.Location = new System.Drawing.Point(6, 48);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(92, 17);
+            this.label33.Size = new System.Drawing.Size(70, 13);
             this.label33.TabIndex = 21;
             this.label33.Text = "Upper Left Y:";
             // 
@@ -4589,7 +4234,7 @@ namespace MFDExtractor.UI
             this.label34.AutoSize = true;
             this.label34.Location = new System.Drawing.Point(149, 48);
             this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(100, 17);
+            this.label34.Size = new System.Drawing.Size(77, 13);
             this.label34.TabIndex = 22;
             this.label34.Text = "Lower Right Y:";
             // 
@@ -4598,7 +4243,7 @@ namespace MFDExtractor.UI
             this.label35.AutoSize = true;
             this.label35.Location = new System.Drawing.Point(6, 22);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(92, 17);
+            this.label35.Size = new System.Drawing.Size(70, 13);
             this.label35.TabIndex = 19;
             this.label35.Text = "Upper Left X:";
             // 
@@ -4606,14 +4251,14 @@ namespace MFDExtractor.UI
             // 
             this.textBox5.Location = new System.Drawing.Point(82, 19);
             this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(61, 22);
+            this.textBox5.Size = new System.Drawing.Size(61, 20);
             this.textBox5.TabIndex = 4;
             // 
             // textBox6
             // 
             this.textBox6.Location = new System.Drawing.Point(232, 45);
             this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(61, 22);
+            this.textBox6.Size = new System.Drawing.Size(61, 20);
             this.textBox6.TabIndex = 7;
             // 
             // label36
@@ -4621,7 +4266,7 @@ namespace MFDExtractor.UI
             this.label36.AutoSize = true;
             this.label36.Location = new System.Drawing.Point(149, 22);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(100, 17);
+            this.label36.Size = new System.Drawing.Size(77, 13);
             this.label36.TabIndex = 20;
             this.label36.Text = "Lower Right X:";
             // 
@@ -4629,22 +4274,21 @@ namespace MFDExtractor.UI
             // 
             this.textBox7.Location = new System.Drawing.Point(82, 45);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(61, 22);
+            this.textBox7.Size = new System.Drawing.Size(61, 20);
             this.textBox7.TabIndex = 5;
             // 
             // textBox8
             // 
             this.textBox8.Location = new System.Drawing.Point(232, 19);
             this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(61, 22);
+            this.textBox8.Size = new System.Drawing.Size(61, 20);
             this.textBox8.TabIndex = 6;
             // 
             // cmdApply
             // 
-            this.cmdApply.Location = new System.Drawing.Point(319, 657);
-            this.cmdApply.Margin = new System.Windows.Forms.Padding(4);
+            this.cmdApply.Location = new System.Drawing.Point(239, 534);
             this.cmdApply.Name = "cmdApply";
-            this.cmdApply.Size = new System.Drawing.Size(143, 36);
+            this.cmdApply.Size = new System.Drawing.Size(107, 29);
             this.cmdApply.TabIndex = 155;
             this.cmdApply.Text = "&Apply";
             this.cmdApply.UseVisualStyleBackColor = true;
@@ -4652,9 +4296,9 @@ namespace MFDExtractor.UI
             // 
             // frmOptions
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 706);
+            this.ClientSize = new System.Drawing.Size(528, 598);
             this.ControlBox = false;
             this.Controls.Add(this.tabAllTabs);
             this.Controls.Add(this.cmdApply);
@@ -4663,7 +4307,6 @@ namespace MFDExtractor.UI
             this.Controls.Add(this.cmdResetToDefaults);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmOptions";
