@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
+using System.Net;
+using System.Threading;
 using System.Windows.Forms;
+using Common.InputSupport.UI;
+using Common.Strings;
+using LightningGauges.Renderers;
+using MFDExtractor.Properties;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using log4net;
-using Common.InputSupport.DirectInput;
-using Common.InputSupport.UI;
-using System.Xml.Serialization;
-using LightningGauges.Renderers;
-using System.ComponentModel;
-using System.Threading;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
+
 namespace MFDExtractor.UI
 {
     public enum VVIStyles
@@ -22,27 +23,31 @@ namespace MFDExtractor.UI
         Tape,
         Needle
     }
+
     /// <summary>
-    /// Code-behind for the Options form
+    ///     Code-behind for the Options form
     /// </summary>
     public partial class frmOptions : Form
     {
-        private static ILog _log = LogManager.GetLogger(typeof(frmOptions));
-        /// <summary>
-        ///specifies whether the extractor should be running when the Options form exits (because
-        ///the Options form specifically stops the Extractor, so it should re-start it if
-        ///it was already started prior to entering the Options form)
-        /// </summary>
-        private bool _extractorRunningStateOnFormOpen = false;
+        private static readonly ILog _log = LogManager.GetLogger(typeof (frmOptions));
 
         /// <summary>
-        ///the current Extractor engine instance
+        ///     the current Extractor engine instance
         /// </summary>
-        private Extractor _extractor = Extractor.GetInstance();
+        private readonly Extractor _extractor = Extractor.GetInstance();
+
+        /// <summary>
+        ///     specifies whether the extractor should be running when the Options form exits (because
+        ///     the Options form specifically stops the Extractor, so it should re-start it if
+        ///     it was already started prior to entering the Options form)
+        /// </summary>
+        private bool _extractorRunningStateOnFormOpen;
+
         private bool _formLoading = true;
         private volatile bool _restartScheduled = false;
+
         /// <summary>
-        /// Default constructor for the Options Form
+        ///     Default constructor for the Options Form
         /// </summary>
         public frmOptions()
         {
@@ -51,13 +56,12 @@ namespace MFDExtractor.UI
 
 
         /// <summary>
-        /// Event handler for the form's Load event
+        ///     Event handler for the form's Load event
         /// </summary>
         /// <param name="sender">the object raising this event</param>
         /// <param name="e">Event arguments for the form's Load event</param>
         private void frmOptions_Load(object sender, EventArgs e)
         {
-
             _extractorRunningStateOnFormOpen = _extractor.Running; //store current running
             //state of the Extractor engine
             //stop the Extractor engine
@@ -67,12 +71,12 @@ namespace MFDExtractor.UI
             }
 
             //register for the Extractor's DataChanged event
-            _extractor.DataChanged += new EventHandler(extractor_DataChanged);
+            _extractor.DataChanged += extractor_DataChanged;
 
             //put the Extractor into Test mode (displays the Test/Blank images)
             _extractor.TestMode = true;
             //set the titlebar for the Options form
-            this.Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
+            Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
 
             //inform the shortcut-input controls that allow the user to input a hotkey for 2D mode 
             //and 3D mode, that there are "modifier" keys required (i.e. you're allowed to use "A" as
@@ -82,7 +86,7 @@ namespace MFDExtractor.UI
             sci3DModeHotkey.MinModifiers = 0;
 
             //add list of possible thread priority values to the thread priority drop-down list
-            string[] names = Enum.GetNames(typeof(System.Threading.ThreadPriority));
+            string[] names = Enum.GetNames(typeof (ThreadPriority));
             Array.Reverse(names);
             cboThreadPriority.Items.AddRange(names);
 
@@ -99,83 +103,85 @@ namespace MFDExtractor.UI
 
             _extractor.Start();
             _formLoading = false;
-
         }
+
         private void PopulateGDIPlusOptionsCombos()
         {
             cbInterpolationMode.Items.Clear();
-            List<InterpolationMode> interpolationModes = new List<InterpolationMode>();
-            foreach (var val in Enum.GetValues(typeof(InterpolationMode)))
+            var interpolationModes = new List<InterpolationMode>();
+            foreach (object val in Enum.GetValues(typeof (InterpolationMode)))
             {
-                if ((InterpolationMode)val != InterpolationMode.Invalid)
+                if ((InterpolationMode) val != InterpolationMode.Invalid)
                 {
-                    interpolationModes.Add((InterpolationMode)val);
+                    interpolationModes.Add((InterpolationMode) val);
                 }
             }
             cbInterpolationMode.DataSource = interpolationModes;
 
             cbSmoothingMode.Items.Clear();
-            List<SmoothingMode> smoothingModes = new List<SmoothingMode>();
-            Array vals =Enum.GetValues(typeof(SmoothingMode));
+            var smoothingModes = new List<SmoothingMode>();
+            Array vals = Enum.GetValues(typeof (SmoothingMode));
             Array.Sort(vals);
-            foreach (var val in vals)
+            foreach (object val in vals)
             {
-                if ((SmoothingMode)val != SmoothingMode.Invalid)
+                if ((SmoothingMode) val != SmoothingMode.Invalid)
                 {
-                    smoothingModes.Add((SmoothingMode)val);
+                    smoothingModes.Add((SmoothingMode) val);
                 }
             }
             cbSmoothingMode.DataSource = smoothingModes;
 
 
             cbPixelOffsetMode.Items.Clear();
-            List<PixelOffsetMode> pixelOffsetModes = new List<PixelOffsetMode>();
-            vals = Enum.GetValues(typeof(PixelOffsetMode));
+            var pixelOffsetModes = new List<PixelOffsetMode>();
+            vals = Enum.GetValues(typeof (PixelOffsetMode));
             Array.Sort(vals);
-            foreach (var val in vals)
+            foreach (object val in vals)
             {
-                if ((PixelOffsetMode)val != PixelOffsetMode.Invalid)
+                if ((PixelOffsetMode) val != PixelOffsetMode.Invalid)
                 {
-                    pixelOffsetModes.Add((PixelOffsetMode)val);
+                    pixelOffsetModes.Add((PixelOffsetMode) val);
                 }
             }
             cbPixelOffsetMode.DataSource = pixelOffsetModes;
 
             cbTextRenderingHint.Items.Clear();
-            Array vals2 = Enum.GetValues(typeof(TextRenderingHint));
+            Array vals2 = Enum.GetValues(typeof (TextRenderingHint));
             Array.Sort(vals2);
             cbTextRenderingHint.DataSource = vals2;
 
             cbCompositingQuality.Items.Clear();
-            List<CompositingQuality> compositingQualities = new List<CompositingQuality>();
-            vals = Enum.GetValues(typeof(CompositingQuality));
+            var compositingQualities = new List<CompositingQuality>();
+            vals = Enum.GetValues(typeof (CompositingQuality));
             Array.Sort(vals);
-            foreach (var val in vals)
+            foreach (object val in vals)
             {
-                if ((CompositingQuality)val != CompositingQuality.Invalid)
+                if ((CompositingQuality) val != CompositingQuality.Invalid)
                 {
-                    compositingQualities.Add((CompositingQuality)val);
+                    compositingQualities.Add((CompositingQuality) val);
                 }
             }
             cbCompositingQuality.DataSource = compositingQualities;
-
         }
+
         private void LoadGDIPlusSettings()
         {
-            cbInterpolationMode.SelectedItem = Properties.Settings.Default.InterpolationMode;
-            cbSmoothingMode.SelectedItem = Properties.Settings.Default.SmoothingMode;
-            cbPixelOffsetMode.SelectedItem = Properties.Settings.Default.PixelOffsetMode;
-            cbTextRenderingHint.SelectedItem = Properties.Settings.Default.TextRenderingHint;
-            cbCompositingQuality.SelectedItem = Properties.Settings.Default.CompositingQuality;
+            cbInterpolationMode.SelectedItem = Settings.Default.InterpolationMode;
+            cbSmoothingMode.SelectedItem = Settings.Default.SmoothingMode;
+            cbPixelOffsetMode.SelectedItem = Settings.Default.PixelOffsetMode;
+            cbTextRenderingHint.SelectedItem = Settings.Default.TextRenderingHint;
+            cbCompositingQuality.SelectedItem = Settings.Default.CompositingQuality;
         }
+
         private void SaveGDIPlusSettings()
         {
-            Properties.Settings.Default.InterpolationMode = (InterpolationMode)cbInterpolationMode.SelectedItem;
-            Properties.Settings.Default.SmoothingMode = (SmoothingMode)cbSmoothingMode.SelectedItem;
-            Properties.Settings.Default.PixelOffsetMode = (PixelOffsetMode)cbPixelOffsetMode.SelectedItem;
-            Properties.Settings.Default.TextRenderingHint = (TextRenderingHint)cbTextRenderingHint.SelectedItem;
-            Properties.Settings.Default.CompositingQuality = (CompositingQuality)cbCompositingQuality.SelectedItem;
+            Settings.Default.InterpolationMode = (InterpolationMode) cbInterpolationMode.SelectedItem;
+            Settings.Default.SmoothingMode = (SmoothingMode) cbSmoothingMode.SelectedItem;
+            Settings.Default.PixelOffsetMode = (PixelOffsetMode) cbPixelOffsetMode.SelectedItem;
+            Settings.Default.TextRenderingHint = (TextRenderingHint) cbTextRenderingHint.SelectedItem;
+            Settings.Default.CompositingQuality = (CompositingQuality) cbCompositingQuality.SelectedItem;
         }
+
         private void UpdateCompressionTypeList()
         {
             cboCompressionType.Items.Clear();
@@ -223,42 +229,45 @@ namespace MFDExtractor.UI
                     break;
             }
         }
+
         /// <summary>
-        /// Event handler for the Extractor engine's DataChanged event
+        ///     Event handler for the Extractor engine's DataChanged event
         /// </summary>
         /// <param name="sender">The object raising this event</param>
         /// <param name="e">EventArgs class for the Extractor engine's DataChanged event</param>
-        void extractor_DataChanged(object sender, EventArgs e)
+        private void extractor_DataChanged(object sender, EventArgs e)
         {
             //store the currently-selected user control on the Options form (required because
             //when we reload the user settings in the next step, the currenty-selected
             //control will go out of focus
-            Control currentControl = this.ActiveControl;
+            Control currentControl = ActiveControl;
 
             //reload user settings from the in-memory user config
             LoadSettings();
 
             //refocus the control that was in focus before we reloaded the user settings
-            this.ActiveControl = currentControl;
+            ActiveControl = currentControl;
         }
+
         /// <summary>
-        /// Reloads user settings from the in-memory user settings class (Properties.Settings)
+        ///     Reloads user settings from the in-memory user settings class (Properties.Settings)
         /// </summary>
         private void LoadSettings()
         {
             //load all committed user settings from memory (these may not mirror the settings
             //which have been persisted to the user-config file on disk; that only happens 
             //when Properties.Settings.Default.Save() is called)
-            Properties.Settings settings = Properties.Settings.Default;
+            Settings settings = Settings.Default;
             settings.UpgradeNeeded = false;
 
             //update the UI elements with the corresponding settings values that we just read in
             ipaNetworkClientUseServerIpAddress.Text = settings.ClientUseServerIpAddress;
-            txtNetworkClientUseServerPortNum.Text = settings.ClientUseServerPortNum.ToString(CultureInfo.InvariantCulture);
+            txtNetworkClientUseServerPortNum.Text =
+                settings.ClientUseServerPortNum.ToString(CultureInfo.InvariantCulture);
             txtNetworkServerUsePortNum.Text = settings.ServerUsePortNumber.ToString(CultureInfo.InvariantCulture);
 
             //set the current Extractor instance's network mode as per the user-config
-            NetworkMode networkMode = (NetworkMode)settings.NetworkingMode;
+            var networkMode = (NetworkMode) settings.NetworkingMode;
             if (networkMode == NetworkMode.Client)
             {
                 EnableClientModeOptions();
@@ -331,13 +340,13 @@ namespace MFDExtractor.UI
             cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
             cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
 
-            sciPrimary2DModeHotkey.Keys = (Keys)settings.TwoDPrimaryHotkey;
+            sciPrimary2DModeHotkey.Keys = settings.TwoDPrimaryHotkey;
             sciPrimary2DModeHotkey.Refresh();
 
-            sciSecondary2DModeHotkey.Keys = (Keys)settings.TwoDSecondaryHotkey;
+            sciSecondary2DModeHotkey.Keys = settings.TwoDSecondaryHotkey;
             sciSecondary2DModeHotkey.Refresh();
 
-            sci3DModeHotkey.Keys = (Keys)settings.ThreeDHotkey;
+            sci3DModeHotkey.Keys = settings.ThreeDHotkey;
             sci3DModeHotkey.Refresh();
             chkStartOnLaunch.Checked = settings.StartOnLaunch;
             chkStartWithWindows.Checked = settings.LaunchWithWindows;
@@ -424,7 +433,9 @@ namespace MFDExtractor.UI
 
 
             string azimuthIndicatorType = settings.AzimuthIndicatorType;
-            F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle azimuthIndicatorStyle = (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle)Enum.Parse(typeof(F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), azimuthIndicatorType);
+            var azimuthIndicatorStyle =
+                (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle)
+                Enum.Parse(typeof (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), azimuthIndicatorType);
             switch (azimuthIndicatorStyle)
             {
                 case F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR:
@@ -467,8 +478,10 @@ namespace MFDExtractor.UI
                     break;
             }
 
-            string altimeterStyleString = Properties.Settings.Default.Altimeter_Style;
-            F16Altimeter.F16AltimeterOptions.F16AltimeterStyle altimeterStyle = (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)Enum.Parse(typeof(F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterStyleString);
+            string altimeterStyleString = Settings.Default.Altimeter_Style;
+            var altimeterStyle =
+                (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)
+                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterStyleString);
             switch (altimeterStyle)
             {
                 case F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical:
@@ -483,8 +496,10 @@ namespace MFDExtractor.UI
                     break;
             }
 
-            string pressureUnitsString = Properties.Settings.Default.Altimeter_PressureUnits;
-            F16Altimeter.F16AltimeterOptions.PressureUnits pressureUnits = (F16Altimeter.F16AltimeterOptions.PressureUnits)Enum.Parse(typeof(F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
+            string pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
+            var pressureUnits =
+                (F16Altimeter.F16AltimeterOptions.PressureUnits)
+                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
             switch (pressureUnits)
             {
                 case F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury:
@@ -499,8 +514,8 @@ namespace MFDExtractor.UI
                     break;
             }
 
-            string vviStyleString = Properties.Settings.Default.VVI_Style;
-            VVIStyles vviStyle = (VVIStyles)Enum.Parse(typeof(VVIStyles), vviStyleString);
+            string vviStyleString = Settings.Default.VVI_Style;
+            var vviStyle = (VVIStyles) Enum.Parse(typeof (VVIStyles), vviStyleString);
             switch (vviStyle)
             {
                 case VVIStyles.Tape:
@@ -519,24 +534,28 @@ namespace MFDExtractor.UI
             //grpPressureAltitudeSettings.Enabled = chkAltimeter.Checked;
             grpAzimuthIndicatorStyle.Enabled = chkAzimuthIndicator.Checked;
 
-            rdoFuelQuantityNeedleCModel.Checked = Properties.Settings.Default.FuelQuantityIndicator_NeedleCModel;
-            rdoFuelQuantityDModel.Checked = !Properties.Settings.Default.FuelQuantityIndicator_NeedleCModel;
+            rdoFuelQuantityNeedleCModel.Checked = Settings.Default.FuelQuantityIndicator_NeedleCModel;
+            rdoFuelQuantityDModel.Checked = !Settings.Default.FuelQuantityIndicator_NeedleCModel;
 
             gbFuelQuantityOptions.Enabled = chkFuelQty.Checked;
             LoadGDIPlusSettings();
-            chkHighlightOutputWindowsWhenContainMouseCursor.Checked = Properties.Settings.Default.HighlightOutputWindows;
-            chkOnlyUpdateImagesWhenDataChanges.Checked = Properties.Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-
+            chkHighlightOutputWindowsWhenContainMouseCursor.Checked = Settings.Default.HighlightOutputWindows;
+            chkOnlyUpdateImagesWhenDataChanges.Checked = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
         }
+
         /// <summary>
-        /// Update's the Form's ErrorProvider to notify the user that a user-input item has
-        /// an error.  This method is called during user-input validation in order to provide
-        /// feedback to the user, via the Form's ErrorProvider.
+        ///     Update's the Form's ErrorProvider to notify the user that a user-input item has
+        ///     an error.  This method is called during user-input validation in order to provide
+        ///     feedback to the user, via the Form's ErrorProvider.
         /// </summary>
-        /// <param name="control">the <see cref="Control"/> that contains a user-input error.</param>
-        /// <param name="errorString">a descriptive message to display to the user when they hover
-        /// over the error symbol which the ErrorProvider places next to the <see cref="Control"/> containing
-        /// the error</param>
+        /// <param name="control">
+        ///     the <see cref="Control" /> that contains a user-input error.
+        /// </param>
+        /// <param name="errorString">
+        ///     a descriptive message to display to the user when they hover
+        ///     over the error symbol which the ErrorProvider places next to the <see cref="Control" /> containing
+        ///     the error
+        /// </param>
         private void SetError(Control control, string errorString)
         {
             //inform the Form's ErrorProvider of the error
@@ -544,26 +563,30 @@ namespace MFDExtractor.UI
 
             //locate the tab on which the specified Control has been placed
             Control parent = control.Parent;
-            while (parent != null && parent.GetType() != typeof(TabPage))
+            while (parent != null && parent.GetType() != typeof (TabPage))
             {
                 parent = parent.Parent;
             }
             //make the errored control's parent Tab control visible
-            tabAllTabs.SelectedTab = ((TabPage)parent);
+            tabAllTabs.SelectedTab = ((TabPage) parent);
 
             //now set focus to the errored control itself
             control.Focus();
         }
+
         /// <summary>
-        /// Validate all user input on all tabs
+        ///     Validate all user input on all tabs
         /// </summary>
-        /// <returns><see langword="true"/> if validation succeeds, or <see langword="false"/>, if validation fails due to 
-        /// a user-input error</returns>
+        /// <returns>
+        ///     <see langword="true" /> if validation succeeds, or <see langword="false" />, if validation fails due to
+        ///     a user-input error
+        /// </returns>
         private bool ValidateSettings()
         {
-            bool isValid = true;  //start with the assumption that all user input is already valid
+            bool isValid = true; //start with the assumption that all user input is already valid
 
-            errControlErrorProvider.Clear(); //clear any errors from in the Form's ErrorProvider (leftovers from previous validation attempts)
+            errControlErrorProvider.Clear();
+            //clear any errors from in the Form's ErrorProvider (leftovers from previous validation attempts)
 
             if (!sciPrimary2DModeHotkey.IsValid)
             {
@@ -582,20 +605,24 @@ namespace MFDExtractor.UI
             }
             else if (sciPrimary2DModeHotkey.Keys == sci3DModeHotkey.Keys)
             {
-                SetError(sciPrimary2DModeHotkey, "Please select a different hotkey for 2D Mode (primary view) and 3D Mode.");
+                SetError(sciPrimary2DModeHotkey,
+                         "Please select a different hotkey for 2D Mode (primary view) and 3D Mode.");
                 SetError(sci3DModeHotkey, "Please select a different hotkey for 2D Mode (primary view) and 3D Mode.");
                 isValid = false;
             }
             else if (sciSecondary2DModeHotkey.Keys == sci3DModeHotkey.Keys)
             {
-                SetError(sciSecondary2DModeHotkey, "Please select a different hotkey for 2D Mode (secondary view) and 3D Mode.");
+                SetError(sciSecondary2DModeHotkey,
+                         "Please select a different hotkey for 2D Mode (secondary view) and 3D Mode.");
                 SetError(sci3DModeHotkey, "Please select a different hotkey for 2D Mode (secondary view) and 3D Mode.");
                 isValid = false;
             }
             else if (sciPrimary2DModeHotkey.Keys == sciSecondary2DModeHotkey.Keys)
             {
-                SetError(sciPrimary2DModeHotkey, "Please select a different hotkey for 2D Mode (primary view) and 2D Mode (secondary view).");
-                SetError(sciSecondary2DModeHotkey, "Please select a different hotkey for 2D Mode (primary view) and 2D Mode (secondary view).");
+                SetError(sciPrimary2DModeHotkey,
+                         "Please select a different hotkey for 2D Mode (primary view) and 2D Mode (secondary view).");
+                SetError(sciSecondary2DModeHotkey,
+                         "Please select a different hotkey for 2D Mode (primary view) and 2D Mode (secondary view).");
                 isValid = false;
             }
             if (isValid && (rdoServer.Checked || rdoStandalone.Checked))
@@ -803,127 +830,250 @@ namespace MFDExtractor.UI
 
                 if (isValid)
                 {
-                    if (Convert.ToInt32(txtPrimaryViewMFD4_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewMFD4_LRX.Text, CultureInfo.InvariantCulture))
+                    if (Convert.ToInt32(txtPrimaryViewMFD4_ULX.Text, CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtPrimaryViewMFD4_LRX.Text, CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewMFD4_ULX, "Must be <= the lower right X value.");
                         SetError(txtPrimaryViewMFD4_LRX, "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewMFD4_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewMFD4_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (Convert.ToInt32(txtPrimaryViewMFD4_ULY.Text, CultureInfo.InvariantCulture) >
+                             Convert.ToInt32(txtPrimaryViewMFD4_LRY.Text, CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewMFD4_ULY, "Must be <= the lower right Y value.");
                         SetError(txtPrimaryViewMFD4_LRY, "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewMFD3_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewMFD3_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (Convert.ToInt32(txtPrimaryViewMFD3_ULX.Text, CultureInfo.InvariantCulture) >
+                             Convert.ToInt32(txtPrimaryViewMFD3_LRX.Text, CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewMFD3_ULX, "Must be <= the lower right X value.");
                         SetError(txtPrimaryViewMFD3_LRX, "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewMFD3_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewMFD3_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (Convert.ToInt32(txtPrimaryViewMFD3_ULY.Text, CultureInfo.InvariantCulture) >
+                             Convert.ToInt32(txtPrimaryViewMFD3_LRY.Text, CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewMFD3_ULY, "Must be <= the lower right Y value.");
                         SetError(txtPrimaryViewMFD3_LRY, "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewLMFD_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewLMFD_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (Convert.ToInt32(txtPrimaryViewLMFD_ULX.Text, CultureInfo.InvariantCulture) >
+                             Convert.ToInt32(txtPrimaryViewLMFD_LRX.Text, CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewLMFD_ULX, "Must be <= the lower right X value.");
                         SetError(txtPrimaryViewLMFD_LRX, "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewLMFD_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewLMFD_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (Convert.ToInt32(txtPrimaryViewLMFD_ULY.Text, CultureInfo.InvariantCulture) >
+                             Convert.ToInt32(txtPrimaryViewLMFD_LRY.Text, CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewLMFD_ULY, "Must be <= the lower right Y value.");
                         SetError(txtPrimaryViewLMFD_LRY, "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewRMFD_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewRMFD_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtPrimaryViewRMFD_ULX.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtPrimaryViewRMFD_LRX.Text,
+                                        CultureInfo.InvariantCulture))
                     {
                         SetError(txtPrimaryViewRMFD_ULX, "Must be <= the lower right X value.");
                         SetError(txtPrimaryViewRMFD_LRX, "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewRMFD_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewRMFD_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtPrimaryViewRMFD_ULY.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtPrimaryViewRMFD_LRY.Text,
+                                        CultureInfo.InvariantCulture))
                     {
-                        SetError(txtPrimaryViewRMFD_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtPrimaryViewRMFD_LRY, "Must be >= the upper left Y value.");
+                        SetError(txtPrimaryViewRMFD_ULY,
+                                 "Must be <= the lower right Y value.");
+                        SetError(txtPrimaryViewRMFD_LRY,
+                                 "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewHUD_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewHUD_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtPrimaryViewHUD_ULX.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtPrimaryViewHUD_LRX.Text,
+                                        CultureInfo.InvariantCulture))
                     {
-                        SetError(txtPrimaryViewHUD_ULX, "Must be <= the lower right X value.");
-                        SetError(txtPrimaryViewHUD_LRX, "Must be >= the upper left X value.");
+                        SetError(txtPrimaryViewHUD_ULX,
+                                 "Must be <= the lower right X value.");
+                        SetError(txtPrimaryViewHUD_LRX,
+                                 "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtPrimaryViewHUD_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtPrimaryViewHUD_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtPrimaryViewHUD_ULY.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtPrimaryViewHUD_LRY.Text,
+                                        CultureInfo.InvariantCulture))
                     {
-                        SetError(txtPrimaryViewHUD_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtPrimaryViewHUD_LRY, "Must be >= the upper left Y value.");
+                        SetError(txtPrimaryViewHUD_ULY,
+                                 "Must be <= the lower right Y value.");
+                        SetError(txtPrimaryViewHUD_LRY,
+                                 "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewMFD4_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewMFD4_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtSecondaryViewMFD4_ULX.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtSecondaryViewMFD4_LRX.Text,
+                                        CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewMFD4_ULX, "Must be <= the lower right X value.");
-                        SetError(txtSecondaryViewMFD4_LRX, "Must be >= the upper left X value.");
+                        SetError(txtSecondaryViewMFD4_ULX,
+                                 "Must be <= the lower right X value.");
+                        SetError(txtSecondaryViewMFD4_LRX,
+                                 "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewMFD4_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewMFD4_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtSecondaryViewMFD4_ULY.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtSecondaryViewMFD4_LRY.Text,
+                                        CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewMFD4_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtSecondaryViewMFD4_LRY, "Must be >= the upper left Y value.");
+                        SetError(txtSecondaryViewMFD4_ULY,
+                                 "Must be <= the lower right Y value.");
+                        SetError(txtSecondaryViewMFD4_LRY,
+                                 "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewMFD3_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewMFD3_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(txtSecondaryViewMFD3_ULX.Text,
+                                        CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(txtSecondaryViewMFD3_LRX.Text,
+                                        CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewMFD3_ULX, "Must be <= the lower right X value.");
-                        SetError(txtSecondaryViewMFD3_LRX, "Must be >= the upper left X value.");
+                        SetError(txtSecondaryViewMFD3_ULX,
+                                 "Must be <= the lower right X value.");
+                        SetError(txtSecondaryViewMFD3_LRX,
+                                 "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewMFD3_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewMFD3_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewMFD3_ULY.Text,
+                            CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewMFD3_LRY.Text,
+                            CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewMFD3_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtSecondaryViewMFD3_LRY, "Must be >= the upper left Y value.");
+                        SetError(txtSecondaryViewMFD3_ULY,
+                                 "Must be <= the lower right Y value.");
+                        SetError(txtSecondaryViewMFD3_LRY,
+                                 "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewLMFD_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewLMFD_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewLMFD_ULX.Text,
+                            CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewLMFD_LRX.Text,
+                            CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewLMFD_ULX, "Must be <= the lower right X value.");
-                        SetError(txtSecondaryViewLMFD_LRX, "Must be >= the upper left X value.");
+                        SetError(txtSecondaryViewLMFD_ULX,
+                                 "Must be <= the lower right X value.");
+                        SetError(txtSecondaryViewLMFD_LRX,
+                                 "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewLMFD_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewLMFD_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewLMFD_ULY.Text,
+                            CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewLMFD_LRY.Text,
+                            CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewLMFD_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtSecondaryViewLMFD_LRY, "Must be >= the upper left Y value.");
+                        SetError(txtSecondaryViewLMFD_ULY,
+                                 "Must be <= the lower right Y value.");
+                        SetError(txtSecondaryViewLMFD_LRY,
+                                 "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewRMFD_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewRMFD_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewRMFD_ULX
+                                .Text,
+                            CultureInfo.InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewRMFD_LRX
+                                .Text,
+                            CultureInfo.InvariantCulture))
                     {
-                        SetError(txtSecondaryViewRMFD_ULX, "Must be <= the lower right X value.");
-                        SetError(txtSecondaryViewRMFD_LRX, "Must be >= the upper left X value.");
+                        SetError(
+                            txtSecondaryViewRMFD_ULX,
+                            "Must be <= the lower right X value.");
+                        SetError(
+                            txtSecondaryViewRMFD_LRX,
+                            "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewRMFD_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewRMFD_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewRMFD_ULY
+                                .Text,
+                            CultureInfo
+                                .InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewRMFD_LRY
+                                .Text,
+                            CultureInfo
+                                .InvariantCulture))
                     {
-                        SetError(txtSecondaryViewRMFD_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtSecondaryViewRMFD_LRY, "Must be >= the upper left Y value.");
+                        SetError(
+                            txtSecondaryViewRMFD_ULY,
+                            "Must be <= the lower right Y value.");
+                        SetError(
+                            txtSecondaryViewRMFD_LRY,
+                            "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewHUD_ULX.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewHUD_LRX.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewHUD_ULX
+                                .Text,
+                            CultureInfo
+                                .InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewHUD_LRX
+                                .Text,
+                            CultureInfo
+                                .InvariantCulture))
                     {
-                        SetError(txtSecondaryViewHUD_ULX, "Must be <= the lower right X value.");
-                        SetError(txtSecondaryViewHUD_LRX, "Must be >= the upper left X value.");
+                        SetError(
+                            txtSecondaryViewHUD_ULX,
+                            "Must be <= the lower right X value.");
+                        SetError(
+                            txtSecondaryViewHUD_LRX,
+                            "Must be >= the upper left X value.");
                         isValid = false;
                     }
-                    else if (Convert.ToInt32(txtSecondaryViewHUD_ULY.Text, CultureInfo.InvariantCulture) > Convert.ToInt32(txtSecondaryViewHUD_LRY.Text, CultureInfo.InvariantCulture))
+                    else if (
+                        Convert.ToInt32(
+                            txtSecondaryViewHUD_ULY
+                                .Text,
+                            CultureInfo
+                                .InvariantCulture) >
+                        Convert.ToInt32(
+                            txtSecondaryViewHUD_LRY
+                                .Text,
+                            CultureInfo
+                                .InvariantCulture))
                     {
-                        SetError(txtSecondaryViewHUD_ULY, "Must be <= the lower right Y value.");
-                        SetError(txtSecondaryViewHUD_LRY, "Must be >= the upper left Y value.");
+                        SetError(
+                            txtSecondaryViewHUD_ULY,
+                            "Must be <= the lower right Y value.");
+                        SetError(
+                            txtSecondaryViewHUD_LRY,
+                            "Must be >= the upper left Y value.");
                         isValid = false;
                     }
-
                 }
             }
             if (isValid && rdoServer.Checked)
@@ -962,9 +1112,9 @@ namespace MFDExtractor.UI
             }
             if (isValid && rdoClient.Checked)
             {
-                System.Net.IPAddress ipAddress;
+                IPAddress ipAddress;
                 string serverIpAddress = ipaNetworkClientUseServerIpAddress.Text;
-                if (!System.Net.IPAddress.TryParse(serverIpAddress, out ipAddress))
+                if (!IPAddress.TryParse(serverIpAddress, out ipAddress))
                 {
                     SetError(ipaNetworkClientUseServerIpAddress, "Please enter a valid IP address.");
                     isValid = false;
@@ -989,18 +1139,22 @@ namespace MFDExtractor.UI
                 }
             }
             return isValid;
-
         }
+
         /// <summary>
-        /// Applies the current settings to the current Extractor instance, optionally
-        /// saving those settings to disk
+        ///     Applies the current settings to the current Extractor instance, optionally
+        ///     saving those settings to disk
         /// </summary>
-        /// <param name="persist">if <see langword="true"/>, the current settings will be persisited to 
-        /// the on-disk user-config file.  If <see langword="false"/>, the settings will not be 
-        /// persisited to disk.  In either case, the current Extractor instance will be 
-        /// updated with the new settings.</param>
-        /// <returns><see langword="true"/> if validation succeeds, or <see langword="false"/>, if 
-        /// validation fails due to a user-input error</returns>
+        /// <param name="persist">
+        ///     if <see langword="true" />, the current settings will be persisited to
+        ///     the on-disk user-config file.  If <see langword="false" />, the settings will not be
+        ///     persisited to disk.  In either case, the current Extractor instance will be
+        ///     updated with the new settings.
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> if validation succeeds, or <see langword="false" />, if
+        ///     validation fails due to a user-input error
+        /// </returns>
         private bool ApplySettings(bool persist)
         {
             //Validate user settings
@@ -1013,13 +1167,14 @@ namespace MFDExtractor.UI
             SaveSettings(persist);
             return true; //if we've got this far, then validation was successful, so return true to indicate that
         }
+
         private void cmdApply_Click(object sender, EventArgs e)
         {
             ValidateAndApplySettings();
         }
 
         /// <summary>
-        /// Event handler for the OK button's Click event
+        ///     Event handler for the OK button's Click event
         /// </summary>
         /// <param name="sender">the object raising this event</param>
         /// <param name="args">event arguments for the OK button's Click event</param>
@@ -1036,19 +1191,21 @@ namespace MFDExtractor.UI
         {
             try
             {
-                this.Close(); //TODO: handle this kind of stuff centrally
+                Close(); //TODO: handle this kind of stuff centrally
             }
             catch (Exception e)
             {
             }
         }
+
         private bool ValidateAndApplySettings()
         {
             bool valid = false; //assume all user input is *invalid*
             try
             {
                 valid = ApplySettings(true); //try to commit user settings to disk (will perform validation as well)
-                if (valid) //if validation succeeds, we can close the form (if not, then the form's ErrorProvider will display errors to the user)
+                if (valid)
+                    //if validation succeeds, we can close the form (if not, then the form's ErrorProvider will display errors to the user)
                 {
                     if (_extractorRunningStateOnFormOpen)
                     {
@@ -1065,25 +1222,31 @@ namespace MFDExtractor.UI
                 }
                 else
                 {
-                    MessageBox.Show("One or more settings are currently marked as invalid.\n\nYou must correct any settings that are marked as invalid before you can apply changes.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                    MessageBox.Show(
+                        "One or more settings are currently marked as invalid.\n\nYou must correct any settings that are marked as invalid before you can apply changes.",
+                        Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1);
                 }
             }
             catch (Exception e) //exceptions will cause the Options form to close
             {
-                _log.Error(e.Message.ToString(), e);
+                _log.Error(e.Message, e);
             }
             return valid;
         }
+
         /// <summary>
-        /// Saves user settings to the in-memory user-config cache (and optionally, to disk as well)
+        ///     Saves user settings to the in-memory user-config cache (and optionally, to disk as well)
         /// </summary>
-        /// <param name="persist">if <see langword="true"/>, the current settings will be persisited to 
-        /// the on-disk user-config file.  If <see langword="false"/>, the settings will not be 
-        /// persisited to disk.  In either case, the current Extractor instance will be 
-        /// updated with the new settings.</param>
+        /// <param name="persist">
+        ///     if <see langword="true" />, the current settings will be persisited to
+        ///     the on-disk user-config file.  If <see langword="false" />, the settings will not be
+        ///     persisited to disk.  In either case, the current Extractor instance will be
+        ///     updated with the new settings.
+        /// </param>
         private void SaveSettings(bool persist)
         {
-            Properties.Settings settings = Properties.Settings.Default;
+            Settings settings = Settings.Default;
             settings.UpgradeNeeded = false;
             settings.NetworkImageFormat = cboImageFormat.SelectedItem.ToString();
             settings.CompressionType = cboCompressionType.SelectedItem.ToString();
@@ -1111,28 +1274,46 @@ namespace MFDExtractor.UI
                 settings.Primary_HUD_2D_LRY = Convert.ToInt32(txtPrimaryViewHUD_LRY.Text, CultureInfo.InvariantCulture);
 
 
-                settings.Secondary_MFD4_2D_ULX = Convert.ToInt32(txtSecondaryViewMFD4_ULX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD4_2D_ULY = Convert.ToInt32(txtSecondaryViewMFD4_ULY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD4_2D_LRX = Convert.ToInt32(txtSecondaryViewMFD4_LRX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD4_2D_LRY = Convert.ToInt32(txtSecondaryViewMFD4_LRY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD3_2D_ULX = Convert.ToInt32(txtSecondaryViewMFD3_ULX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD3_2D_ULY = Convert.ToInt32(txtSecondaryViewMFD3_ULY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD3_2D_LRX = Convert.ToInt32(txtSecondaryViewMFD3_LRX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_MFD3_2D_LRY = Convert.ToInt32(txtSecondaryViewMFD3_LRY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_LMFD_2D_ULX = Convert.ToInt32(txtSecondaryViewLMFD_ULX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_LMFD_2D_ULY = Convert.ToInt32(txtSecondaryViewLMFD_ULY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_LMFD_2D_LRX = Convert.ToInt32(txtSecondaryViewLMFD_LRX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_LMFD_2D_LRY = Convert.ToInt32(txtSecondaryViewLMFD_LRY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_RMFD_2D_ULX = Convert.ToInt32(txtSecondaryViewRMFD_ULX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_RMFD_2D_ULY = Convert.ToInt32(txtSecondaryViewRMFD_ULY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_RMFD_2D_LRX = Convert.ToInt32(txtSecondaryViewRMFD_LRX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_RMFD_2D_LRY = Convert.ToInt32(txtSecondaryViewRMFD_LRY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_HUD_2D_ULX = Convert.ToInt32(txtSecondaryViewHUD_ULX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_HUD_2D_ULY = Convert.ToInt32(txtSecondaryViewHUD_ULY.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_HUD_2D_LRX = Convert.ToInt32(txtSecondaryViewHUD_LRX.Text, CultureInfo.InvariantCulture);
-                settings.Secondary_HUD_2D_LRY = Convert.ToInt32(txtSecondaryViewHUD_LRY.Text, CultureInfo.InvariantCulture);
-
-
+                settings.Secondary_MFD4_2D_ULX = Convert.ToInt32(txtSecondaryViewMFD4_ULX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD4_2D_ULY = Convert.ToInt32(txtSecondaryViewMFD4_ULY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD4_2D_LRX = Convert.ToInt32(txtSecondaryViewMFD4_LRX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD4_2D_LRY = Convert.ToInt32(txtSecondaryViewMFD4_LRY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD3_2D_ULX = Convert.ToInt32(txtSecondaryViewMFD3_ULX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD3_2D_ULY = Convert.ToInt32(txtSecondaryViewMFD3_ULY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD3_2D_LRX = Convert.ToInt32(txtSecondaryViewMFD3_LRX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_MFD3_2D_LRY = Convert.ToInt32(txtSecondaryViewMFD3_LRY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_LMFD_2D_ULX = Convert.ToInt32(txtSecondaryViewLMFD_ULX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_LMFD_2D_ULY = Convert.ToInt32(txtSecondaryViewLMFD_ULY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_LMFD_2D_LRX = Convert.ToInt32(txtSecondaryViewLMFD_LRX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_LMFD_2D_LRY = Convert.ToInt32(txtSecondaryViewLMFD_LRY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_RMFD_2D_ULX = Convert.ToInt32(txtSecondaryViewRMFD_ULX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_RMFD_2D_ULY = Convert.ToInt32(txtSecondaryViewRMFD_ULY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_RMFD_2D_LRX = Convert.ToInt32(txtSecondaryViewRMFD_LRX.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_RMFD_2D_LRY = Convert.ToInt32(txtSecondaryViewRMFD_LRY.Text,
+                                                                 CultureInfo.InvariantCulture);
+                settings.Secondary_HUD_2D_ULX = Convert.ToInt32(txtSecondaryViewHUD_ULX.Text,
+                                                                CultureInfo.InvariantCulture);
+                settings.Secondary_HUD_2D_ULY = Convert.ToInt32(txtSecondaryViewHUD_ULY.Text,
+                                                                CultureInfo.InvariantCulture);
+                settings.Secondary_HUD_2D_LRX = Convert.ToInt32(txtSecondaryViewHUD_LRX.Text,
+                                                                CultureInfo.InvariantCulture);
+                settings.Secondary_HUD_2D_LRY = Convert.ToInt32(txtSecondaryViewHUD_LRY.Text,
+                                                                CultureInfo.InvariantCulture);
             }
             settings.EnableMfd4Output = chkEnableMFD4.Checked;
             settings.EnableMfd3Output = chkEnableMFD3.Checked;
@@ -1184,7 +1365,8 @@ namespace MFDExtractor.UI
             }
             else if (rdoInchesOfMercury.Checked)
             {
-                settings.Altimeter_PressureUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
+                settings.Altimeter_PressureUnits =
+                    F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
             }
 
             if (rdoAltimeterStyleDigital.Checked)
@@ -1193,30 +1375,35 @@ namespace MFDExtractor.UI
             }
             else if (rdoAltimeterStyleElectromechanical.Checked)
             {
-                settings.Altimeter_Style = F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
+                settings.Altimeter_Style =
+                    F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
             }
 
             if (rdoAzimuthIndicatorStyleScope.Checked)
             {
                 if (rdoRWRIP1310BezelType.Checked)
                 {
-                    settings.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                    settings.AzimuthIndicatorType =
+                        F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                     settings.AzimuthIndicator_ShowBezel = true;
                 }
                 else if (rdoRWRHAFBezelType.Checked)
                 {
-                    settings.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
+                    settings.AzimuthIndicatorType =
+                        F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
                     settings.AzimuthIndicator_ShowBezel = true;
                 }
                 else if (rdoAzimuthIndicatorNoBezel.Checked)
                 {
-                    settings.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                    settings.AzimuthIndicatorType =
+                        F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                     settings.AzimuthIndicator_ShowBezel = false;
                 }
             }
             else if (rdoAzimuthIndicatorStyleDigital.Checked)
             {
-                settings.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
+                settings.AzimuthIndicatorType =
+                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
             }
 
             if (rdoVVIStyleNeedle.Checked)
@@ -1244,35 +1431,39 @@ namespace MFDExtractor.UI
                 settings.TwoDSecondaryHotkey = sciSecondary2DModeHotkey.Keys;
                 settings.ThreeDHotkey = sci3DModeHotkey.Keys;
             }
-            settings.ThreadPriority = (System.Threading.ThreadPriority)Enum.Parse(typeof(System.Threading.ThreadPriority), cboThreadPriority.SelectedItem.ToString());
+            settings.ThreadPriority =
+                (ThreadPriority) Enum.Parse(typeof (ThreadPriority), cboThreadPriority.SelectedItem.ToString());
             settings.PollingDelay = Convert.ToInt32(txtPollDelay.Text, CultureInfo.InvariantCulture);
             settings.LaunchWithWindows = chkStartWithWindows.Checked;
 
             if (rdoClient.Checked)
             {
-                settings.NetworkingMode = (int)NetworkMode.Client;
-                settings.ClientUseServerPortNum = Convert.ToInt32(txtNetworkClientUseServerPortNum.Text, CultureInfo.InvariantCulture);
+                settings.NetworkingMode = (int) NetworkMode.Client;
+                settings.ClientUseServerPortNum = Convert.ToInt32(txtNetworkClientUseServerPortNum.Text,
+                                                                  CultureInfo.InvariantCulture);
                 settings.ClientUseServerIpAddress = ipaNetworkClientUseServerIpAddress.Text;
             }
             else if (rdoServer.Checked)
             {
-                settings.NetworkingMode = (int)NetworkMode.Server;
-                settings.ServerUsePortNumber = Convert.ToInt32(txtNetworkServerUsePortNum.Text, CultureInfo.InvariantCulture);
+                settings.NetworkingMode = (int) NetworkMode.Server;
+                settings.ServerUsePortNumber = Convert.ToInt32(txtNetworkServerUsePortNum.Text,
+                                                               CultureInfo.InvariantCulture);
             }
             else if (rdoStandalone.Checked)
             {
-                settings.NetworkingMode = (int)NetworkMode.Standalone;
+                settings.NetworkingMode = (int) NetworkMode.Standalone;
             }
 
             SaveGDIPlusSettings();
 
-            Properties.Settings.Default.HighlightOutputWindows = chkHighlightOutputWindowsWhenContainMouseCursor.Checked;
-            Properties.Settings.Default.RenderInstrumentsOnlyOnStatechanges= chkOnlyUpdateImagesWhenDataChanges.Checked;
-            if (persist)                 //persist the user settings to disk
+            Settings.Default.HighlightOutputWindows = chkHighlightOutputWindowsWhenContainMouseCursor.Checked;
+            Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
+            if (persist) //persist the user settings to disk
             {
                 bool testMode = _extractor.TestMode; //store whether we're in test mode
                 settings.TestMode = false; //clear test mode flag from the current settings cache (in-memory)
-                _extractorRunningStateOnFormOpen = _extractor.Running; //store current Extractor instance's "isRunning" state
+                _extractorRunningStateOnFormOpen = _extractor.Running;
+                //store current Extractor instance's "isRunning" state
                 settings.Save(); //save our new settings to the current settings cache (on-disk)
                 settings.TestMode = testMode; //reset the test-mode flag in the current settings cache
 
@@ -1285,44 +1476,54 @@ namespace MFDExtractor.UI
                 //to the new user settings
                 if (chkStartWithWindows.Checked)
                 {
-                    Computer c = new Computer();
+                    var c = new Computer();
                     try
                     {
-                        using (Microsoft.Win32.RegistryKey startupKey = c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                        using (
+                            RegistryKey startupKey =
+                                c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
+                            )
                         {
-                            startupKey.SetValue(Application.ProductName, Application.ExecutablePath, Microsoft.Win32.RegistryValueKind.String);
+                            startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
+                                                RegistryValueKind.String);
                         }
                     }
                     catch (Exception e)
                     {
-                        _log.Error(e.Message.ToString(), e);
+                        _log.Error(e.Message, e);
                     }
                 }
                 else
                 {
-                    Computer c = new Computer();
+                    var c = new Computer();
                     try
                     {
-                        using (Microsoft.Win32.RegistryKey startupKey = c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                        using (
+                            RegistryKey startupKey =
+                                c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true)
+                            )
                         {
                             startupKey.DeleteValue(Application.ProductName, false);
                         }
                     }
                     catch (Exception e)
                     {
-                        _log.Error(e.Message.ToString(), e);
+                        _log.Error(e.Message, e);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// Tests a string to see if it contains (only) a valid integer (positive or negative)
+        ///     Tests a string to see if it contains (only) a valid integer (positive or negative)
         /// </summary>
-        /// <param name="coordinateString"><see cref="String"/> to test</param>
-        /// <returns><see langword="true"/> if the supplied string contains 
-        /// a valid integer, or <see langword="false"/> if the supplied string does
-        /// not contain a valid integer.
+        /// <param name="coordinateString">
+        ///     <see cref="String" /> to test
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> if the supplied string contains
+        ///     a valid integer, or <see langword="false" /> if the supplied string does
+        ///     not contain a valid integer.
         /// </returns>
         private static bool xyCoordinateIsValid(string coordinateString)
         {
@@ -1333,13 +1534,17 @@ namespace MFDExtractor.UI
             }
             return false;
         }
+
         /// <summary>
-        /// Tests a string to see if it contains (only) a valid *positive* integer
+        ///     Tests a string to see if it contains (only) a valid *positive* integer
         /// </summary>
-        /// <param name="coordinateString"><see cref="String"/> to test</param>
-        /// <returns><see langword="true"/> if the supplied string contains 
-        /// a valid positive integer, or <see langword="false"/> if the supplied string does
-        /// not contain a valid positive integer.
+        /// <param name="coordinateString">
+        ///     <see cref="String" /> to test
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> if the supplied string contains
+        ///     a valid positive integer, or <see langword="false" /> if the supplied string does
+        ///     not contain a valid positive integer.
         /// </returns>
         private static bool PositiveXyCoordinateIsValid(string coordinateString)
         {
@@ -1353,8 +1558,9 @@ namespace MFDExtractor.UI
             }
             return false;
         }
+
         /// <summary>
-        /// Event handler for the Cancel button's Click event
+        ///     Event handler for the Cancel button's Click event
         /// </summary>
         /// <param name="sender">object raising this event</param>
         /// <param name="e">Event arguments for the Cancel button's Click event</param>
@@ -1362,7 +1568,7 @@ namespace MFDExtractor.UI
         {
             try
             {
-                Properties.Settings.Default.Reload(); //re-load the on-disk user settings into the in-memory user config cache
+                Settings.Default.Reload(); //re-load the on-disk user settings into the in-memory user config cache
                 if (_extractor.Running)
                 {
                     _extractor.Stop(); //stop the Extractor engine if it's running
@@ -1373,11 +1579,11 @@ namespace MFDExtractor.UI
             {
                 Debug.WriteLine(ex.ToString());
             }
-            this.Close(); //user has cancelled out of the Options form, so close the form now
+            Close(); //user has cancelled out of the Options form, so close the form now
         }
 
         /// <summary>
-        /// Event handler for the "Test Changes" button's Click event
+        ///     Event handler for the "Test Changes" button's Click event
         /// </summary>
         /// <param name="sender">the object raising this event</param>
         /// <param name="e">Event arguments for the Click event</param>
@@ -1401,7 +1607,7 @@ namespace MFDExtractor.UI
         }
 
         /// <summary>
-        /// Event handler for the rdoStandalone control's CheckChanged event
+        ///     Event handler for the rdoStandalone control's CheckChanged event
         /// </summary>
         /// <param name="sender">the object raising this event</param>
         /// <param name="e">Event arguments for the rdoStandalone control's CheckChanged event</param>
@@ -1414,7 +1620,7 @@ namespace MFDExtractor.UI
         }
 
         /// <summary>
-        /// Event handler for the rdoClient control's CheckChanged event
+        ///     Event handler for the rdoClient control's CheckChanged event
         /// </summary>
         /// <param name="sender">the object raising this event</param>
         /// <param name="e">Event arguments for the rdoClient control's CheckChanged event</param>
@@ -1427,7 +1633,7 @@ namespace MFDExtractor.UI
         }
 
         /// <summary>
-        /// Event handler for the rdoServer control's CheckChanged event
+        ///     Event handler for the rdoServer control's CheckChanged event
         /// </summary>
         /// <param name="sender">the object raising this event</param>
         /// <param name="e">Event arguments for the rdoServer control's CheckChanged event</param>
@@ -1436,12 +1642,12 @@ namespace MFDExtractor.UI
             if (rdoServer.Checked)
             {
                 EnableServerModeOptions();
-
             }
         }
+
         /// <summary>
-        /// Enables options that are applicable for Server Mode (and disables options that are not
-        /// relevant to this mode)
+        ///     Enables options that are applicable for Server Mode (and disables options that are not
+        ///     relevant to this mode)
         /// </summary>
         private void EnableServerModeOptions()
         {
@@ -1468,9 +1674,10 @@ namespace MFDExtractor.UI
             cmdBMSOptions.Enabled = true;
             errControlErrorProvider.Clear();
         }
+
         /// <summary>
-        /// Enables options that are applicable for Client Mode (and disables options that are not
-        /// relevant to this mode)
+        ///     Enables options that are applicable for Client Mode (and disables options that are not
+        ///     relevant to this mode)
         /// </summary>
         private void EnableClientModeOptions()
         {
@@ -1497,9 +1704,10 @@ namespace MFDExtractor.UI
             cmdBMSOptions.Enabled = false;
             errControlErrorProvider.Clear();
         }
+
         /// <summary>
-        /// Enables options that are applicable for Standalone Mode (and disables options that are not
-        /// relevant to this mode)
+        ///     Enables options that are applicable for Standalone Mode (and disables options that are not
+        ///     relevant to this mode)
         /// </summary>
         private void EnableStandaloneModeOptions()
         {
@@ -1524,6 +1732,7 @@ namespace MFDExtractor.UI
             cmdBMSOptions.Enabled = true;
             errControlErrorProvider.Clear();
         }
+
         private void StopAndRestartExtractor()
         {
             if (_formLoading) return;
@@ -1533,50 +1742,51 @@ namespace MFDExtractor.UI
                 _extractor.LoadSettings();
                 _extractor.Start();
             }
-
-       }
+        }
 
         private void chkEnableMFD4_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableMfd4Output = chkEnableMFD4.Checked;
+            Settings.Default.EnableMfd4Output = chkEnableMFD4.Checked;
             cmdRecoverMfd4.Enabled = chkEnableMFD4.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
+
         private void chkEnableMFD3_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableMfd3Output = chkEnableMFD3.Checked;
+            Settings.Default.EnableMfd3Output = chkEnableMFD3.Checked;
             cmdRecoverMfd3.Enabled = chkEnableMFD3.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
+
         private void chkEnableLeftMFD_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
+            Settings.Default.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
             cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void chkEnableRightMFD_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableRightMFDOutput = chkEnableRightMFD.Checked;
+            Settings.Default.EnableRightMFDOutput = chkEnableRightMFD.Checked;
             cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void chkEnableHud_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableHudOutput = chkEnableHud.Checked;
+            Settings.Default.EnableHudOutput = chkEnableHud.Checked;
             cmdRecoverHud.Enabled = chkEnableHud.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void cmdBMSOptions_Click(object sender, EventArgs e)
         {
-            frmBMSOptions options = new frmBMSOptions();
+            var options = new frmBMSOptions();
             options.BmsPath = GetBmsPath();
             options.ShowDialog(this);
             if (!options.Cancelled)
@@ -1584,19 +1794,21 @@ namespace MFDExtractor.UI
                 string newBmsPath = options.BmsPath;
                 if (newBmsPath != null && newBmsPath != string.Empty)
                 {
-                    Properties.Settings.Default.BmsPath = options.BmsPath;
+                    Settings.Default.BmsPath = options.BmsPath;
                 }
             }
         }
+
         private string GetBmsPath()
         {
-            string bmsPath = Properties.Settings.Default.BmsPath;
+            string bmsPath = Settings.Default.BmsPath;
             if (bmsPath != null) bmsPath = bmsPath.Trim();
             bool exists = false;
             if (!String.IsNullOrEmpty(bmsPath))
             {
-                DirectoryInfo bmsDirInfo = new DirectoryInfo(bmsPath);
-                if (bmsDirInfo.Exists && ((bmsDirInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory))
+                var bmsDirInfo = new DirectoryInfo(bmsPath);
+                if (bmsDirInfo.Exists &&
+                    ((bmsDirInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory))
                 {
                     exists = true;
                 }
@@ -1616,14 +1828,14 @@ namespace MFDExtractor.UI
                     string baseDir = null;
                     try
                     {
-                        baseDir = (string)mainKey.GetValue("baseDir");
+                        baseDir = (string) mainKey.GetValue("baseDir");
                     }
                     catch (Exception)
                     {
                     }
                     if (!String.IsNullOrEmpty(baseDir))
                     {
-                        DirectoryInfo dirInfo = new DirectoryInfo(baseDir);
+                        var dirInfo = new DirectoryInfo(baseDir);
                         if (dirInfo.Exists)
                         {
                             if ((dirInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
@@ -1636,19 +1848,22 @@ namespace MFDExtractor.UI
             }
             return bmsPath;
         }
+
         private void cboImageFormat_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateCompressionTypeList();
-
         }
 
         private void cmdResetToDefaults_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Warning: This will reset all MFD Extractor options to their defaults.  You will lose any customizations you have made.  Do you want to continue?", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+            DialogResult result =
+                MessageBox.Show(
+                    "Warning: This will reset all MFD Extractor options to their defaults.  You will lose any customizations you have made.  Do you want to continue?",
+                    "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
             if (result == DialogResult.OK)
             {
-                Properties.Settings.Default.Reset();
-                Properties.Settings.Default.UpgradeNeeded = false;
+                Settings.Default.Reset();
+                Settings.Default.UpgradeNeeded = false;
                 bool extractorRunning = _extractor.Running;
                 if (extractorRunning)
                 {
@@ -1666,31 +1881,32 @@ namespace MFDExtractor.UI
 
         private void cmdRecoverMfd4_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverMfd4Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverMfd4Window(Screen.FromPoint(Location));
         }
+
         private void cmdRecoverMfd3_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverMfd3Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverMfd3Window(Screen.FromPoint(Location));
         }
 
         private void cmdRecoverLeftMfd_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverLeftMfdWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverLeftMfdWindow(Screen.FromPoint(Location));
         }
 
         private void cmdRecoverRightMfd_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRightMfdWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverRightMfdWindow(Screen.FromPoint(Location));
         }
 
         private void cmdRecoverHud_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHudWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverHudWindow(Screen.FromPoint(Location));
         }
 
         private void cmdImportCoordinates_Click(object sender, EventArgs e)
         {
-            OpenFileDialog file = new OpenFileDialog();
+            var file = new OpenFileDialog();
             file.AddExtension = true;
             file.AutoUpgradeEnabled = true;
             file.CheckFileExists = true;
@@ -1711,7 +1927,7 @@ namespace MFDExtractor.UI
             DialogResult result = file.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                frmSelectImportExportCoordinates selectForm = new frmSelectImportExportCoordinates();
+                var selectForm = new frmSelectImportExportCoordinates();
                 selectForm.Text = "Load Coordinates";
                 selectForm.DisableAll();
                 //determine which coordinate sets can be loaded
@@ -1734,7 +1950,7 @@ namespace MFDExtractor.UI
                             continue;
                         }
 
-                        List<string> tokens = Common.Strings.Util.Tokenize(thisLine);
+                        List<string> tokens = Util.Tokenize(thisLine);
                         if (tokens.Count == 3)
                         {
                             try
@@ -1908,7 +2124,6 @@ namespace MFDExtractor.UI
                 } //end using (StreamReader sr = File.OpenText(file.FileName))
 
 
-
                 //select which coordinate sets to load
                 selectForm.SelectAll();
                 result = selectForm.ShowDialog(this);
@@ -1934,7 +2149,7 @@ namespace MFDExtractor.UI
                                 continue;
                             }
 
-                            List<string> tokens = Common.Strings.Util.Tokenize(thisLine);
+                            List<string> tokens = Util.Tokenize(thisLine);
                             if (tokens.Count == 3)
                             {
                                 try
@@ -1943,190 +2158,190 @@ namespace MFDExtractor.UI
                                     {
                                         if (tokens[0].StartsWith("Primary_LMFD_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Primary_LMFD_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_LMFD_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_LMFD_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Primary_LMFD_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_LMFD_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_LMFD_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Primary_LMFD_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_LMFD_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_LMFD_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Primary_LMFD_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_LMFD_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportRightMfdPrimary)
                                     {
                                         if (tokens[0].StartsWith("Primary_RMFD_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Primary_RMFD_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_RMFD_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_RMFD_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Primary_RMFD_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_RMFD_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_RMFD_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Primary_RMFD_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_RMFD_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_RMFD_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Primary_RMFD_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_RMFD_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportMfd3Primary)
                                     {
                                         if (tokens[0].StartsWith("Primary_MFD3_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD3_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD3_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_MFD3_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD3_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD3_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_MFD3_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD3_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD3_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_MFD3_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD3_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD3_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportMfd4Primary)
                                     {
                                         if (tokens[0].StartsWith("Primary_MFD4_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD4_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD4_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_MFD4_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD4_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD4_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_MFD4_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD4_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD4_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_MFD4_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Primary_MFD4_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_MFD4_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportHudPrimary)
                                     {
                                         if (tokens[0].StartsWith("Primary_HUD_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Primary_HUD_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_HUD_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_HUD_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Primary_HUD_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_HUD_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_HUD_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Primary_HUD_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_HUD_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Primary_HUD_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Primary_HUD_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Primary_HUD_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportLeftMfdSecondary)
                                     {
                                         if (tokens[0].StartsWith("Secondary_LMFD_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Secondary_LMFD_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_LMFD_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_LMFD_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Secondary_LMFD_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_LMFD_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_LMFD_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Secondary_LMFD_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_LMFD_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_LMFD_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Secondary_LMFD_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_LMFD_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportRightMfdSecondary)
                                     {
                                         if (tokens[0].StartsWith("Secondary_RMFD_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Secondary_RMFD_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_RMFD_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_RMFD_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Secondary_RMFD_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_RMFD_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_RMFD_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Secondary_RMFD_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_RMFD_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_RMFD_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Secondary_RMFD_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_RMFD_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportMfd3Secondary)
                                     {
                                         if (tokens[0].StartsWith("Secondary_MFD3_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD3_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD3_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_MFD3_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD3_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD3_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_MFD3_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD3_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD3_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_MFD3_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD3_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD3_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportMfd4Secondary)
                                     {
                                         if (tokens[0].StartsWith("Secondary_MFD4_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD4_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD4_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_MFD4_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD4_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD4_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_MFD4_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD4_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD4_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_MFD4_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Secondary_MFD4_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_MFD4_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                     if (selectForm.ExportHudSecondary)
                                     {
                                         if (tokens[0].StartsWith("Secondary_HUD_2D_ULX"))
                                         {
-                                            Properties.Settings.Default.Secondary_HUD_2D_ULX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_HUD_2D_ULX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_HUD_2D_ULY"))
                                         {
-                                            Properties.Settings.Default.Secondary_HUD_2D_ULY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_HUD_2D_ULY = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_HUD_2D_LRX"))
                                         {
-                                            Properties.Settings.Default.Secondary_HUD_2D_LRX = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_HUD_2D_LRX = (int) UInt32.Parse(tokens[2]);
                                         }
                                         else if (tokens[0].StartsWith("Secondary_HUD_2D_LRY"))
                                         {
-                                            Properties.Settings.Default.Secondary_HUD_2D_LRY = (int)UInt32.Parse(tokens[2]);
+                                            Settings.Default.Secondary_HUD_2D_LRY = (int) UInt32.Parse(tokens[2]);
                                         }
                                     }
                                 }
@@ -2138,27 +2353,31 @@ namespace MFDExtractor.UI
                     } //end using (StreamReader sr = File.OpenText(file.FileName))
                     LoadSettings();
                 } //end if (result == DialogResult.OK)
-            }//end if (result == DialogResult.OK)
+            } //end if (result == DialogResult.OK)
         }
+
         private void LoadInstrumentTimings()
         {
             //dgvInstrumentTimings.Rows.Add(n
         }
+
         private void cmdExportCoordinates_Click(object sender, EventArgs e)
         {
             if (!ValidateSettings())
             {
-                MessageBox.Show("One or more settings are currently marked as invalid.\n\nYou must correct any settings that are marked as invalid before you can save coordinates to a file.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                MessageBox.Show(
+                    "One or more settings are currently marked as invalid.\n\nYou must correct any settings that are marked as invalid before you can save coordinates to a file.",
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
                 return;
             }
-            frmSelectImportExportCoordinates selectForm = new frmSelectImportExportCoordinates();
+            var selectForm = new frmSelectImportExportCoordinates();
             selectForm.Text = "Save Coordinates";
             selectForm.EnableAll();
             selectForm.SelectAll();
             DialogResult result = selectForm.ShowDialog(this);
             if (result == DialogResult.OK)
             {
-                SaveFileDialog file = new SaveFileDialog();
+                var file = new SaveFileDialog();
                 file.CreatePrompt = false;
                 file.OverwritePrompt = true;
                 file.AddExtension = true;
@@ -2180,77 +2399,117 @@ namespace MFDExtractor.UI
                 {
                     try
                     {
-                        using (StreamWriter sw = new StreamWriter(file.FileName))
+                        using (var sw = new StreamWriter(file.FileName))
                         {
                             if (selectForm.ExportLeftMfdPrimary)
                             {
-                                sw.WriteLine("Primary_LMFD_2D_ULX" + " = " + Properties.Settings.Default.Primary_LMFD_2D_ULX.ToString());
-                                sw.WriteLine("Primary_LMFD_2D_ULY" + " = " + Properties.Settings.Default.Primary_LMFD_2D_ULY.ToString());
-                                sw.WriteLine("Primary_LMFD_2D_LRX" + " = " + Properties.Settings.Default.Primary_LMFD_2D_LRX.ToString());
-                                sw.WriteLine("Primary_LMFD_2D_LRY" + " = " + Properties.Settings.Default.Primary_LMFD_2D_LRY.ToString());
+                                sw.WriteLine("Primary_LMFD_2D_ULX" + " = " +
+                                             Settings.Default.Primary_LMFD_2D_ULX.ToString());
+                                sw.WriteLine("Primary_LMFD_2D_ULY" + " = " +
+                                             Settings.Default.Primary_LMFD_2D_ULY.ToString());
+                                sw.WriteLine("Primary_LMFD_2D_LRX" + " = " +
+                                             Settings.Default.Primary_LMFD_2D_LRX.ToString());
+                                sw.WriteLine("Primary_LMFD_2D_LRY" + " = " +
+                                             Settings.Default.Primary_LMFD_2D_LRY.ToString());
                             }
                             if (selectForm.ExportRightMfdPrimary)
                             {
-                                sw.WriteLine("Primary_RMFD_2D_ULX" + " = " + Properties.Settings.Default.Primary_RMFD_2D_ULX.ToString());
-                                sw.WriteLine("Primary_RMFD_2D_ULY" + " = " + Properties.Settings.Default.Primary_RMFD_2D_ULY.ToString());
-                                sw.WriteLine("Primary_RMFD_2D_LRX" + " = " + Properties.Settings.Default.Primary_RMFD_2D_LRX.ToString());
-                                sw.WriteLine("Primary_RMFD_2D_LRY" + " = " + Properties.Settings.Default.Primary_RMFD_2D_LRY.ToString());
+                                sw.WriteLine("Primary_RMFD_2D_ULX" + " = " +
+                                             Settings.Default.Primary_RMFD_2D_ULX.ToString());
+                                sw.WriteLine("Primary_RMFD_2D_ULY" + " = " +
+                                             Settings.Default.Primary_RMFD_2D_ULY.ToString());
+                                sw.WriteLine("Primary_RMFD_2D_LRX" + " = " +
+                                             Settings.Default.Primary_RMFD_2D_LRX.ToString());
+                                sw.WriteLine("Primary_RMFD_2D_LRY" + " = " +
+                                             Settings.Default.Primary_RMFD_2D_LRY.ToString());
                             }
                             if (selectForm.ExportMfd3Primary)
                             {
-                                sw.WriteLine("Primary_MFD3_2D_ULX" + " = " + Properties.Settings.Default.Primary_MFD3_2D_ULX.ToString());
-                                sw.WriteLine("Primary_MFD3_2D_ULY" + " = " + Properties.Settings.Default.Primary_MFD3_2D_ULY.ToString());
-                                sw.WriteLine("Primary_MFD3_2D_LRX" + " = " + Properties.Settings.Default.Primary_MFD3_2D_LRX.ToString());
-                                sw.WriteLine("Primary_MFD3_2D_LRY" + " = " + Properties.Settings.Default.Primary_MFD3_2D_LRY.ToString());
+                                sw.WriteLine("Primary_MFD3_2D_ULX" + " = " +
+                                             Settings.Default.Primary_MFD3_2D_ULX.ToString());
+                                sw.WriteLine("Primary_MFD3_2D_ULY" + " = " +
+                                             Settings.Default.Primary_MFD3_2D_ULY.ToString());
+                                sw.WriteLine("Primary_MFD3_2D_LRX" + " = " +
+                                             Settings.Default.Primary_MFD3_2D_LRX.ToString());
+                                sw.WriteLine("Primary_MFD3_2D_LRY" + " = " +
+                                             Settings.Default.Primary_MFD3_2D_LRY.ToString());
                             }
                             if (selectForm.ExportMfd4Primary)
                             {
-                                sw.WriteLine("Primary_MFD4_2D_ULX" + " = " + Properties.Settings.Default.Primary_MFD4_2D_ULX.ToString());
-                                sw.WriteLine("Primary_MFD4_2D_ULY" + " = " + Properties.Settings.Default.Primary_MFD4_2D_ULY.ToString());
-                                sw.WriteLine("Primary_MFD4_2D_LRX" + " = " + Properties.Settings.Default.Primary_MFD4_2D_LRX.ToString());
-                                sw.WriteLine("Primary_MFD4_2D_LRY" + " = " + Properties.Settings.Default.Primary_MFD4_2D_LRY.ToString());
+                                sw.WriteLine("Primary_MFD4_2D_ULX" + " = " +
+                                             Settings.Default.Primary_MFD4_2D_ULX.ToString());
+                                sw.WriteLine("Primary_MFD4_2D_ULY" + " = " +
+                                             Settings.Default.Primary_MFD4_2D_ULY.ToString());
+                                sw.WriteLine("Primary_MFD4_2D_LRX" + " = " +
+                                             Settings.Default.Primary_MFD4_2D_LRX.ToString());
+                                sw.WriteLine("Primary_MFD4_2D_LRY" + " = " +
+                                             Settings.Default.Primary_MFD4_2D_LRY.ToString());
                             }
                             if (selectForm.ExportHudPrimary)
                             {
-                                sw.WriteLine("Primary_HUD_2D_ULX" + " = " + Properties.Settings.Default.Primary_HUD_2D_ULX.ToString());
-                                sw.WriteLine("Primary_HUD_2D_ULY" + " = " + Properties.Settings.Default.Primary_HUD_2D_ULY.ToString());
-                                sw.WriteLine("Primary_HUD_2D_LRX" + " = " + Properties.Settings.Default.Primary_HUD_2D_LRX.ToString());
-                                sw.WriteLine("Primary_HUD_2D_LRY" + " = " + Properties.Settings.Default.Primary_HUD_2D_LRY.ToString());
+                                sw.WriteLine("Primary_HUD_2D_ULX" + " = " +
+                                             Settings.Default.Primary_HUD_2D_ULX.ToString());
+                                sw.WriteLine("Primary_HUD_2D_ULY" + " = " +
+                                             Settings.Default.Primary_HUD_2D_ULY.ToString());
+                                sw.WriteLine("Primary_HUD_2D_LRX" + " = " +
+                                             Settings.Default.Primary_HUD_2D_LRX.ToString());
+                                sw.WriteLine("Primary_HUD_2D_LRY" + " = " +
+                                             Settings.Default.Primary_HUD_2D_LRY.ToString());
                             }
                             if (selectForm.ExportLeftMfdSecondary)
                             {
-                                sw.WriteLine("Secondary_LMFD_2D_ULX" + " = " + Properties.Settings.Default.Secondary_LMFD_2D_ULX.ToString());
-                                sw.WriteLine("Secondary_LMFD_2D_ULY" + " = " + Properties.Settings.Default.Secondary_LMFD_2D_ULY.ToString());
-                                sw.WriteLine("Secondary_LMFD_2D_LRX" + " = " + Properties.Settings.Default.Secondary_LMFD_2D_LRX.ToString());
-                                sw.WriteLine("Secondary_LMFD_2D_LRY" + " = " + Properties.Settings.Default.Secondary_LMFD_2D_LRY.ToString());
+                                sw.WriteLine("Secondary_LMFD_2D_ULX" + " = " +
+                                             Settings.Default.Secondary_LMFD_2D_ULX.ToString());
+                                sw.WriteLine("Secondary_LMFD_2D_ULY" + " = " +
+                                             Settings.Default.Secondary_LMFD_2D_ULY.ToString());
+                                sw.WriteLine("Secondary_LMFD_2D_LRX" + " = " +
+                                             Settings.Default.Secondary_LMFD_2D_LRX.ToString());
+                                sw.WriteLine("Secondary_LMFD_2D_LRY" + " = " +
+                                             Settings.Default.Secondary_LMFD_2D_LRY.ToString());
                             }
                             if (selectForm.ExportRightMfdSecondary)
                             {
-                                sw.WriteLine("Secondary_RMFD_2D_ULX" + " = " + Properties.Settings.Default.Secondary_RMFD_2D_ULX.ToString());
-                                sw.WriteLine("Secondary_RMFD_2D_ULY" + " = " + Properties.Settings.Default.Secondary_RMFD_2D_ULY.ToString());
-                                sw.WriteLine("Secondary_RMFD_2D_LRX" + " = " + Properties.Settings.Default.Secondary_RMFD_2D_LRX.ToString());
-                                sw.WriteLine("Secondary_RMFD_2D_LRY" + " = " + Properties.Settings.Default.Secondary_RMFD_2D_LRY.ToString());
+                                sw.WriteLine("Secondary_RMFD_2D_ULX" + " = " +
+                                             Settings.Default.Secondary_RMFD_2D_ULX.ToString());
+                                sw.WriteLine("Secondary_RMFD_2D_ULY" + " = " +
+                                             Settings.Default.Secondary_RMFD_2D_ULY.ToString());
+                                sw.WriteLine("Secondary_RMFD_2D_LRX" + " = " +
+                                             Settings.Default.Secondary_RMFD_2D_LRX.ToString());
+                                sw.WriteLine("Secondary_RMFD_2D_LRY" + " = " +
+                                             Settings.Default.Secondary_RMFD_2D_LRY.ToString());
                             }
                             if (selectForm.ExportMfd3Secondary)
                             {
-                                sw.WriteLine("Secondary_MFD3_2D_ULX" + " = " + Properties.Settings.Default.Secondary_MFD3_2D_ULX.ToString());
-                                sw.WriteLine("Secondary_MFD3_2D_ULY" + " = " + Properties.Settings.Default.Secondary_MFD3_2D_ULY.ToString());
-                                sw.WriteLine("Secondary_MFD3_2D_LRX" + " = " + Properties.Settings.Default.Secondary_MFD3_2D_LRX.ToString());
-                                sw.WriteLine("Secondary_MFD3_2D_LRY" + " = " + Properties.Settings.Default.Secondary_MFD3_2D_LRY.ToString());
+                                sw.WriteLine("Secondary_MFD3_2D_ULX" + " = " +
+                                             Settings.Default.Secondary_MFD3_2D_ULX.ToString());
+                                sw.WriteLine("Secondary_MFD3_2D_ULY" + " = " +
+                                             Settings.Default.Secondary_MFD3_2D_ULY.ToString());
+                                sw.WriteLine("Secondary_MFD3_2D_LRX" + " = " +
+                                             Settings.Default.Secondary_MFD3_2D_LRX.ToString());
+                                sw.WriteLine("Secondary_MFD3_2D_LRY" + " = " +
+                                             Settings.Default.Secondary_MFD3_2D_LRY.ToString());
                             }
                             if (selectForm.ExportMfd4Secondary)
                             {
-                                sw.WriteLine("Secondary_MFD4_2D_ULX" + " = " + Properties.Settings.Default.Secondary_MFD4_2D_ULX.ToString());
-                                sw.WriteLine("Secondary_MFD4_2D_ULY" + " = " + Properties.Settings.Default.Secondary_MFD4_2D_ULY.ToString());
-                                sw.WriteLine("Secondary_MFD4_2D_LRX" + " = " + Properties.Settings.Default.Secondary_MFD4_2D_LRX.ToString());
-                                sw.WriteLine("Secondary_MFD4_2D_LRY" + " = " + Properties.Settings.Default.Secondary_MFD4_2D_LRY.ToString());
+                                sw.WriteLine("Secondary_MFD4_2D_ULX" + " = " +
+                                             Settings.Default.Secondary_MFD4_2D_ULX.ToString());
+                                sw.WriteLine("Secondary_MFD4_2D_ULY" + " = " +
+                                             Settings.Default.Secondary_MFD4_2D_ULY.ToString());
+                                sw.WriteLine("Secondary_MFD4_2D_LRX" + " = " +
+                                             Settings.Default.Secondary_MFD4_2D_LRX.ToString());
+                                sw.WriteLine("Secondary_MFD4_2D_LRY" + " = " +
+                                             Settings.Default.Secondary_MFD4_2D_LRY.ToString());
                             }
                             if (selectForm.ExportHudSecondary)
                             {
-                                sw.WriteLine("Secondary_HUD_2D_ULX" + " = " + Properties.Settings.Default.Secondary_HUD_2D_ULX.ToString());
-                                sw.WriteLine("Secondary_HUD_2D_ULY" + " = " + Properties.Settings.Default.Secondary_HUD_2D_ULY.ToString());
-                                sw.WriteLine("Secondary_HUD_2D_LRX" + " = " + Properties.Settings.Default.Secondary_HUD_2D_LRX.ToString());
-                                sw.WriteLine("Secondary_HUD_2D_LRY" + " = " + Properties.Settings.Default.Secondary_HUD_2D_LRY.ToString());
+                                sw.WriteLine("Secondary_HUD_2D_ULX" + " = " +
+                                             Settings.Default.Secondary_HUD_2D_ULX.ToString());
+                                sw.WriteLine("Secondary_HUD_2D_ULY" + " = " +
+                                             Settings.Default.Secondary_HUD_2D_ULY.ToString());
+                                sw.WriteLine("Secondary_HUD_2D_LRX" + " = " +
+                                             Settings.Default.Secondary_HUD_2D_LRX.ToString());
+                                sw.WriteLine("Secondary_HUD_2D_LRY" + " = " +
+                                             Settings.Default.Secondary_HUD_2D_LRY.ToString());
                             }
                             sw.Flush();
                             sw.Close();
@@ -2258,7 +2517,8 @@ namespace MFDExtractor.UI
                     }
                     catch (Exception f)
                     {
-                        MessageBox.Show(f.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+                        MessageBox.Show(f.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
+                                        MessageBoxDefaultButton.Button1);
                     }
                 }
             }
@@ -2266,460 +2526,443 @@ namespace MFDExtractor.UI
 
         private void chkAOAIndicator_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableAOAIndicatorOutput = chkAOAIndicator.Checked;
+            Settings.Default.EnableAOAIndicatorOutput = chkAOAIndicator.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkAzimuthIndicator_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableRWROutput = chkAzimuthIndicator.Checked;
+            Settings.Default.EnableRWROutput = chkAzimuthIndicator.Checked;
             grpAzimuthIndicatorStyle.Enabled = chkAzimuthIndicator.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void chkADI_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableADIOutput = chkADI.Checked;
+            Settings.Default.EnableADIOutput = chkADI.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkAirspeedIndicator_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableASIOutput = chkAirspeedIndicator.Checked;
+            Settings.Default.EnableASIOutput = chkAirspeedIndicator.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkAltimeter_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableAltimeterOutput = chkAltimeter.Checked;
+            Settings.Default.EnableAltimeterOutput = chkAltimeter.Checked;
             grpAltimeterStyle.Enabled = chkAltimeter.Checked;
             //grpPressureAltitudeSettings.Enabled = chkAltimeter.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkAOAIndexer_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableAOAIndexerOutput = chkAOAIndexer.Checked;
+            Settings.Default.EnableAOAIndexerOutput = chkAOAIndexer.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkCautionPanel_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableCautionPanelOutput = chkCautionPanel.Checked;
+            Settings.Default.EnableCautionPanelOutput = chkCautionPanel.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkCMDSPanel_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableCMDSOutput = chkCMDSPanel.Checked;
+            Settings.Default.EnableCMDSOutput = chkCMDSPanel.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkCompass_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableCompassOutput = chkCompass.Checked;
+            Settings.Default.EnableCompassOutput = chkCompass.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkDED_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableDEDOutput = chkDED.Checked;
+            Settings.Default.EnableDEDOutput = chkDED.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkFTIT1_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableFTIT1Output = chkFTIT1.Checked;
+            Settings.Default.EnableFTIT1Output = chkFTIT1.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
+
         private void chkAccelerometer_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableAccelerometerOutput = chkAccelerometer.Checked;
+            Settings.Default.EnableAccelerometerOutput = chkAccelerometer.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void chkNOZ1_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableNOZ1Output = chkNOZ1.Checked;
+            Settings.Default.EnableNOZ1Output = chkNOZ1.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkOIL1_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableOIL1Output = chkOIL1.Checked;
+            Settings.Default.EnableOIL1Output = chkOIL1.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkRPM1_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableRPM1Output = chkRPM1.Checked;
+            Settings.Default.EnableRPM1Output = chkRPM1.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkFTIT2_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableFTIT2Output = chkFTIT2.Checked;
+            Settings.Default.EnableFTIT2Output = chkFTIT2.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkNOZ2_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableNOZ2Output = chkNOZ2.Checked;
+            Settings.Default.EnableNOZ2Output = chkNOZ2.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkOIL2_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableOIL2Output = chkOIL2.Checked;
+            Settings.Default.EnableOIL2Output = chkOIL2.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkRPM2_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableRPM2Output = chkRPM2.Checked;
+            Settings.Default.EnableRPM2Output = chkRPM2.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkEPU_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableEPUFuelOutput = chkEPU.Checked;
+            Settings.Default.EnableEPUFuelOutput = chkEPU.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkFuelFlow_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableFuelFlowOutput = chkFuelFlow.Checked;
+            Settings.Default.EnableFuelFlowOutput = chkFuelFlow.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
+
         private void chkISIS_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableISISOutput = chkISIS.Checked;
+            Settings.Default.EnableISISOutput = chkISIS.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkFuelQty_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableFuelQuantityOutput = chkFuelQty.Checked;
+            Settings.Default.EnableFuelQuantityOutput = chkFuelQty.Checked;
             gbFuelQuantityOptions.Enabled = chkFuelQty.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkGearLights_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableGearLightsOutput = chkGearLights.Checked;
+            Settings.Default.EnableGearLightsOutput = chkGearLights.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkHSI_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableHSIOutput = chkHSI.Checked;
+            Settings.Default.EnableHSIOutput = chkHSI.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
+
         private void chkEHSI_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableEHSIOutput = chkEHSI.Checked;
+            Settings.Default.EnableEHSIOutput = chkEHSI.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void chkNWSIndexer_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableNWSIndexerOutput = chkNWSIndexer.Checked;
+            Settings.Default.EnableNWSIndexerOutput = chkNWSIndexer.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkPFL_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnablePFLOutput = chkPFL.Checked;
+            Settings.Default.EnablePFLOutput = chkPFL.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkSpeedbrake_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableSpeedbrakeOutput = chkSpeedbrake.Checked;
+            Settings.Default.EnableSpeedbrakeOutput = chkSpeedbrake.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void chkStandbyADI_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableBackupADIOutput = chkStandbyADI.Checked;
+            Settings.Default.EnableBackupADIOutput = chkStandbyADI.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
 
         private void chkVVI_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableVVIOutput = chkVVI.Checked;
+            Settings.Default.EnableVVIOutput = chkVVI.Checked;
             grpVVIOptions.Enabled = chkVVI.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
+
         private void chkHydA_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableHYDAOutput = chkHydA.Checked;
+            Settings.Default.EnableHYDAOutput = chkHydA.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
+
         private void chkHydB_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableHYDBOutput = chkHydB.Checked;
+            Settings.Default.EnableHYDBOutput = chkHydB.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
+
         private void chkCabinPress_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableCabinPressOutput = chkCabinPress.Checked;
+            Settings.Default.EnableCabinPressOutput = chkCabinPress.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
+
         private void chkRollTrim_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnableRollTrimOutput = chkRollTrim.Checked;
+            Settings.Default.EnableRollTrimOutput = chkRollTrim.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
+            BringToFront();
         }
+
         private void chkPitchTrim_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.EnablePitchTrimOutput = chkPitchTrim.Checked;
+            Settings.Default.EnablePitchTrimOutput = chkPitchTrim.Checked;
             //StopAndRestartExtractor();
-            this.BringToFront();
-
+            BringToFront();
         }
 
         private void pbRecoverADI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverADIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverADIWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverAltimeter_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAltimeterWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverAltimeterWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverAOAIndexer_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAOAIndexerWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverAOAIndexerWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverAOAIndicator_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAOAIndicatorWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverAOAIndicatorWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverCautionPanel_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCautionPanelWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverCautionPanelWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverCMDSPanel_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCMDSPanelWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverCMDSPanelWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverCompass_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCompassWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverCompassWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverDED_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverDEDWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverDEDWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverFTIT1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFTIT1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverFTIT1Window(Screen.FromPoint(Location));
         }
+
         private void pbRecoverAccelerometer_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAccelerometerWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverAccelerometerWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverNozPos1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverNOZ1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverNOZ1Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverOil1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverOil1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverOil1Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverRPM1_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRPM1Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverRPM1Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverFTIT2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFTIT2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverFTIT2Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverNozPos2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverNOZ2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverNOZ2Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverOil2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverOil2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverOil2Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverRPM2_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRPM2Window(Screen.FromPoint(this.Location));
+            _extractor.RecoverRPM2Window(Screen.FromPoint(Location));
         }
 
         private void pbRecoverEPU_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverEPUFuelWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverEPUFuelWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverFuelFlow_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFuelFlowWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverFuelFlowWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverISIS_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverISISWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverISISWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverNWS_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverNWSWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverNWSWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverPFL_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverPFLWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverPFLWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverSpeedbrake_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverSpeedbrakeWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverSpeedbrakeWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverVVI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverVVIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverVVIWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverHSI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHSIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverHSIWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverEHSI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverEHSIWindow(Screen.FromPoint(this.Location));
-
+            _extractor.RecoverEHSIWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverGearLights_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverLandingGearLightsWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverLandingGearLightsWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverFuelQuantity_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverFuelQuantityWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverFuelQuantityWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverStandbyADI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverBackupADIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverBackupADIWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverHydA_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHydAWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverHydAWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverHydB_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverHydBWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverHydBWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverCabinPress_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverCabinPressWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverCabinPressWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverRollTrim_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverRollTrimWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverRollTrimWindow(Screen.FromPoint(Location));
         }
+
         private void pbRecoverPitchTrim_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverPitchTrimWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverPitchTrimWindow(Screen.FromPoint(Location));
         }
 
         private void cmdNV_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.NVISKey;
+            string keyFromSettingsString = Settings.Default.NVISKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -2732,8 +2975,8 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.NVISKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.NVISKey = serialized;
             }
         }
 
@@ -2746,11 +2989,11 @@ namespace MFDExtractor.UI
                 if (!rdoRWRIP1310BezelType.Checked && !rdoRWRHAFBezelType.Checked)
                 {
                     rdoRWRIP1310BezelType.Checked = true;
-                    Properties.Settings.Default.AzimuthIndicator_ShowBezel = false;
+                    Settings.Default.AzimuthIndicator_ShowBezel = false;
                 }
                 else
                 {
-                    Properties.Settings.Default.AzimuthIndicator_ShowBezel = true;
+                    Settings.Default.AzimuthIndicator_ShowBezel = true;
                 }
             }
         }
@@ -2759,8 +3002,9 @@ namespace MFDExtractor.UI
         {
             if (rdoRWRIP1310BezelType.Checked)
             {
-                Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
-                Properties.Settings.Default.AzimuthIndicator_ShowBezel = true;
+                Settings.Default.AzimuthIndicatorType =
+                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                Settings.Default.AzimuthIndicator_ShowBezel = true;
                 //StopAndRestartExtractor();
             }
         }
@@ -2769,19 +3013,20 @@ namespace MFDExtractor.UI
         {
             if (rdoRWRHAFBezelType.Checked)
             {
-                Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
-                Properties.Settings.Default.AzimuthIndicator_ShowBezel = true;
+                Settings.Default.AzimuthIndicatorType =
+                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
+                Settings.Default.AzimuthIndicator_ShowBezel = true;
                 //StopAndRestartExtractor();
             }
-
         }
 
         private void rdoAzimuthIndicatorNoBezel_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoAzimuthIndicatorNoBezel.Checked)
             {
-                Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
-                Properties.Settings.Default.AzimuthIndicator_ShowBezel = false;
+                Settings.Default.AzimuthIndicatorType =
+                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                Settings.Default.AzimuthIndicator_ShowBezel = false;
                 //StopAndRestartExtractor();
             }
         }
@@ -2797,27 +3042,26 @@ namespace MFDExtractor.UI
                     rdoATDPlus.Checked = true;
                 }
             }
-
-
         }
 
         private void rdoATDPlus_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoATDPlus.Checked)
             {
-                Properties.Settings.Default.AzimuthIndicatorType = F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
+                Settings.Default.AzimuthIndicatorType =
+                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
                 //StopAndRestartExtractor();
             }
         }
 
         private void pbRecoverASI_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverASIWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverASIWindow(Screen.FromPoint(Location));
         }
 
         private void pbRecoverAzimuthIndicator_Click(object sender, EventArgs e)
         {
-            _extractor.RecoverAzimuthIndicatorWindow(Screen.FromPoint(this.Location));
+            _extractor.RecoverAzimuthIndicatorWindow(Screen.FromPoint(Location));
         }
 
 
@@ -2825,7 +3069,8 @@ namespace MFDExtractor.UI
         {
             if (rdoAltimeterStyleElectromechanical.Checked)
             {
-                Properties.Settings.Default.Altimeter_Style = F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
+                Settings.Default.Altimeter_Style =
+                    F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -2834,17 +3079,18 @@ namespace MFDExtractor.UI
         {
             if (rdoAltimeterStyleDigital.Checked)
             {
-                Properties.Settings.Default.Altimeter_Style = F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
+                Settings.Default.Altimeter_Style =
+                    F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
                 //StopAndRestartExtractor();
             }
-
         }
 
         private void rdoInchesOfMercury_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoInchesOfMercury.Checked)
             {
-                Properties.Settings.Default.Altimeter_PressureUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
+                Settings.Default.Altimeter_PressureUnits =
+                    F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -2853,7 +3099,8 @@ namespace MFDExtractor.UI
         {
             if (rdoMillibars.Checked)
             {
-                Properties.Settings.Default.Altimeter_PressureUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars.ToString();
+                Settings.Default.Altimeter_PressureUnits =
+                    F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -2862,7 +3109,7 @@ namespace MFDExtractor.UI
         {
             if (rdoVVIStyleTape.Checked)
             {
-                Properties.Settings.Default.VVI_Style = VVIStyles.Tape.ToString();
+                Settings.Default.VVI_Style = VVIStyles.Tape.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -2871,7 +3118,7 @@ namespace MFDExtractor.UI
         {
             if (rdoVVIStyleNeedle.Checked)
             {
-                Properties.Settings.Default.VVI_Style = VVIStyles.Needle.ToString();
+                Settings.Default.VVI_Style = VVIStyles.Needle.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -2880,7 +3127,7 @@ namespace MFDExtractor.UI
         {
             if (rdoFuelQuantityNeedleCModel.Checked)
             {
-                Properties.Settings.Default.FuelQuantityIndicator_NeedleCModel = true;
+                Settings.Default.FuelQuantityIndicator_NeedleCModel = true;
                 //StopAndRestartExtractor();
             }
         }
@@ -2889,7 +3136,7 @@ namespace MFDExtractor.UI
         {
             if (rdoFuelQuantityDModel.Checked)
             {
-                Properties.Settings.Default.FuelQuantityIndicator_NeedleCModel = false;
+                Settings.Default.FuelQuantityIndicator_NeedleCModel = false;
                 //StopAndRestartExtractor();
             }
         }
@@ -2897,14 +3144,16 @@ namespace MFDExtractor.UI
 
         private void cmdAirspeedIndexIncreaseHotkey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AirspeedIndexIncreaseKey;
+            string keyFromSettingsString = Settings.Default.AirspeedIndexIncreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -2917,21 +3166,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AirspeedIndexIncreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.AirspeedIndexIncreaseKey = serialized;
             }
         }
 
         private void cmdAirspeedIndexDecreaseHotkey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AirspeedIndexDecreaseKey;
+            string keyFromSettingsString = Settings.Default.AirspeedIndexDecreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -2944,22 +3195,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AirspeedIndexDecreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.AirspeedIndexDecreaseKey = serialized;
             }
-
         }
 
         private void cmdEHSIMenuButtonHotkey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSIMenuButtonKey;
+            string keyFromSettingsString = Settings.Default.EHSIMenuButtonKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -2972,22 +3224,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSIMenuButtonKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.EHSIMenuButtonKey = serialized;
             }
-
         }
 
         private void cmdEHSIHeadingIncreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSIHeadingIncreaseKey;
+            string keyFromSettingsString = Settings.Default.EHSIHeadingIncreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3000,22 +3253,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSIHeadingIncreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.EHSIHeadingIncreaseKey = serialized;
             }
-
         }
 
         private void cmdEHSIHeadingDecreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSIHeadingDecreaseKey;
+            string keyFromSettingsString = Settings.Default.EHSIHeadingDecreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3028,22 +3282,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSIHeadingDecreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.EHSIHeadingDecreaseKey = serialized;
             }
-
         }
 
         private void cmdEHSICourseIncreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSICourseIncreaseKey;
+            string keyFromSettingsString = Settings.Default.EHSICourseIncreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3056,22 +3311,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSICourseIncreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.EHSICourseIncreaseKey = serialized;
             }
-
         }
 
         private void cmdEHSICourseDecreaseKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSICourseDecreaseKey;
+            string keyFromSettingsString = Settings.Default.EHSICourseDecreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3084,22 +3340,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSICourseDecreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.EHSICourseDecreaseKey = serialized;
             }
-
         }
 
         private void cmdEHSICourseKnobDepressedKey_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.EHSICourseKnobDepressedKey;
+            string keyFromSettingsString = Settings.Default.EHSICourseKnobDepressedKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3112,22 +3369,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.EHSICourseKnobDepressedKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.EHSICourseKnobDepressedKey = serialized;
             }
-
         }
 
         private void cmdAzimuthIndicatorBrightnessIncrease_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AzimuthIndicatorBrightnessIncreaseKey;
+            string keyFromSettingsString = Settings.Default.AzimuthIndicatorBrightnessIncreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3140,21 +3398,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AzimuthIndicatorBrightnessIncreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.AzimuthIndicatorBrightnessIncreaseKey = serialized;
             }
         }
 
         private void cmdAzimuthIndicatorBrightnessDecrease_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AzimuthIndicatorBrightnessDecreaseKey;
+            string keyFromSettingsString = Settings.Default.AzimuthIndicatorBrightnessDecreaseKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3167,21 +3427,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AzimuthIndicatorBrightnessDecreaseKey = serialized;
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.AzimuthIndicatorBrightnessDecreaseKey = serialized;
             }
         }
 
         private void cmdISISBrightButtonPressed_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.ISISBrightButtonKey;
+            string keyFromSettingsString = Settings.Default.ISISBrightButtonKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3194,21 +3456,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.ISISBrightButtonKey = serialized;
-            }   
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.ISISBrightButtonKey = serialized;
+            }
         }
 
         private void cmdISISStandardBrightnessButtonPressed_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.ISISStandardButtonKey;
+            string keyFromSettingsString = Settings.Default.ISISStandardButtonKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3221,21 +3485,23 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.ISISStandardButtonKey = serialized;
-            }   
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.ISISStandardButtonKey = serialized;
+            }
         }
 
         private void cmdAccelerometerResetButtonPressed_Click(object sender, EventArgs e)
         {
-            InputSourceSelector toShow = new InputSourceSelector();
+            var toShow = new InputSourceSelector();
             toShow.Mediator = _extractor.Mediator;
-            string keyFromSettingsString = Properties.Settings.Default.AccelerometerResetKey;
+            string keyFromSettingsString = Settings.Default.AccelerometerResetKey;
 
             InputControlSelection keyFromSettings = null;
             try
             {
-                keyFromSettings = (InputControlSelection)Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof(InputControlSelection));
+                keyFromSettings =
+                    (InputControlSelection)
+                    Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
             catch (Exception ex)
             {
@@ -3248,26 +3514,19 @@ namespace MFDExtractor.UI
             InputControlSelection selection = toShow.SelectedControl;
             if (selection != null)
             {
-                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof(InputControlSelection));
-                Properties.Settings.Default.AccelerometerResetKey = serialized;
-            }   
+                string serialized = Common.Serialization.Util.SerializeToXml(selection, typeof (InputControlSelection));
+                Settings.Default.AccelerometerResetKey = serialized;
+            }
         }
 
         private void chkHighlightOutputWindowsWhenContainMouseCursor_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.HighlightOutputWindows = chkHighlightOutputWindowsWhenContainMouseCursor.Checked;
+            Settings.Default.HighlightOutputWindows = chkHighlightOutputWindowsWhenContainMouseCursor.Checked;
         }
 
         private void chkOnlyUpdateImagesWhenDataChanges_CheckedChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
+            Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
         }
-
-
-
-
-
-
-
     }
 }

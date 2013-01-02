@@ -1,43 +1,40 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Net;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
-using System.Globalization;
-using F4SharedMem;
-using System.Collections.Generic;
-using System.ComponentModel;
+using System.Threading;
 using System.Windows.Forms;
-namespace MFDExtractor.Networking
+using Common.Imaging;
+using F4SharedMem;
+
+namespace MFDExtractor
 {
     [Serializable]
     public class Message
     {
         public Message()
-            : base()
         {
         }
+
         public Message(string messageType, object payload)
             : this()
         {
-            this.MessageType = messageType;
-            this.Payload = payload;
+            MessageType = messageType;
+            Payload = payload;
         }
-        public string MessageType
-        {
-            get;
-            set;
-        }
-        public object Payload
-        {
-            get;
-            set;
-        }
+
+        public string MessageType { get; set; }
+        public object Payload { get; set; }
     }
+
     public enum MessageTypes
     {
         AirspeedIndexIncrease,
@@ -58,8 +55,10 @@ namespace MFDExtractor.Networking
         EnableBMSAdvancedSharedmemValues,
         DisableBMSAdvancedSharedmemValues
     }
+
     public interface IExtractorClient
     {
+        bool IsConnected { get; }
         Image GetMfd4Bitmap();
         Image GetMfd3Bitmap();
         Image GetLeftMfdBitmap();
@@ -69,11 +68,8 @@ namespace MFDExtractor.Networking
         void SendMessageToServer(Message message);
         void ClearPendingMessagesToClientFromServer();
         Message GetNextMessageToClientFromServer();
-        bool IsConnected
-        {
-            get;
-        }
     }
+
     public interface IExtractorServer
     {
         byte[] GetMfd4BitmapBytes();
@@ -87,14 +83,184 @@ namespace MFDExtractor.Networking
         Message GetNextPendingMessageToClientFromServer();
         bool TestConnection();
     }
+
     public class ExtractorClient : IExtractorClient
     {
-        private IExtractorServer _server = null;
-        private IPEndPoint _serverEndpoint = null;
-        private string _serviceName = null;
-        private DateTime _lastConnectionCheckTime = DateTime.Now.Subtract(new TimeSpan(0,5,0));
-        private bool _wasConnected = false;
-        private BackgroundWorker _connectionTestingBackgroundWorker = null;
+        private readonly IPEndPoint _serverEndpoint;
+        private readonly string _serviceName;
+        private BackgroundWorker _connectionTestingBackgroundWorker;
+        private DateTime _lastConnectionCheckTime = DateTime.Now.Subtract(new TimeSpan(0, 5, 0));
+        private IExtractorServer _server;
+        private bool _wasConnected;
+
+        public ExtractorClient(IPEndPoint serverEndpoint, string serviceName)
+        {
+            _serverEndpoint = serverEndpoint;
+            _serviceName = serviceName;
+            EnsureConnected();
+        }
+
+        [DebuggerHidden]
+        public bool IsConnected
+        {
+            get
+            {
+                var toReturn = false;
+                var secondsSinceLastCheck = (int) DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
+                if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
+                {
+                    return _wasConnected;
+                }
+                if (_server != null)
+                {
+                    try
+                    {
+                        _lastConnectionCheckTime = DateTime.Now;
+                        Application.DoEvents();
+                        if (_connectionTestingBackgroundWorker == null)
+                        {
+                            _connectionTestingBackgroundWorker = new BackgroundWorker();
+                            _connectionTestingBackgroundWorker.DoWork += _connectionTestingBackgroundWorker_DoWork;
+                        }
+                        if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
+                        {
+                            _connectionTestingBackgroundWorker.RunWorkerAsync();
+                        }
+                        toReturn = _wasConnected;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+                return toReturn;
+            }
+        }
+
+        public Image GetMfd4Bitmap()
+        {
+            if (_server != null)
+            {
+                var raw = _server.GetMfd4BitmapBytes();
+                return Util.BitmapFromBytes(raw);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Image GetMfd3Bitmap()
+        {
+            if (_server != null)
+            {
+                var raw = _server.GetMfd3BitmapBytes();
+                return Util.BitmapFromBytes(raw);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Image GetLeftMfdBitmap()
+        {
+            if (_server != null)
+            {
+                var raw = _server.GetLeftMfdBitmapBytes();
+                return Util.BitmapFromBytes(raw);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Image GetRightMfdBitmap()
+        {
+            if (_server != null)
+            {
+                var raw = _server.GetRightMfdBitmapBytes();
+                return Util.BitmapFromBytes(raw);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Image GetHudBitmap()
+        {
+            if (_server != null)
+            {
+                var raw = _server.GetHudBitmapBytes();
+                return Util.BitmapFromBytes(raw);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public FlightData GetFlightData()
+        {
+            return _server != null ? _server.GetFlightData() : null;
+        }
+
+        public void SendMessageToServer(Message message)
+        {
+            EnsureConnected();
+            if (IsConnected)
+            {
+                try
+                {
+                    if (_server != null)
+                    {
+                        _server.SubmitMessageToServerFromClient(message);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        public void ClearPendingMessagesToClientFromServer()
+        {
+            EnsureConnected();
+            if (IsConnected)
+            {
+                try
+                {
+                    if (_server != null)
+                    {
+                        _server.ClearPendingMessagesToClientFromServer();
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        public Message GetNextMessageToClientFromServer()
+        {
+            EnsureConnected();
+            Message toReturn = null;
+            if (IsConnected)
+            {
+                try
+                {
+                    if (_server != null)
+                    {
+                        toReturn = _server.GetNextPendingMessageToClientFromServer();
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+            return toReturn;
+        }
 
         [DebuggerHidden]
         private void EnsureConnected()
@@ -106,7 +272,7 @@ namespace MFDExtractor.Networking
                 prop["port"] = _serverEndpoint.Port;
                 prop["machineName"] = _serverEndpoint.Address.ToString();
                 prop["priority"] = 100;
-                prop["timeout"] = (uint)1;
+                prop["timeout"] = (uint) 1;
                 prop["retryCount"] = 0;
                 prop["useIpAddress"] = 1;
                 TcpClientChannel chan = null;
@@ -137,58 +303,23 @@ namespace MFDExtractor.Networking
                 try
                 {
                     // Create an instance of the remote object
-                    _server = (Networking.ExtractorServer)Activator.GetObject(
-                        typeof(Networking.ExtractorServer),
+                    _server = (ExtractorServer) Activator.GetObject(
+                        typeof (ExtractorServer),
                         "tcp://"
-                            + _serverEndpoint.Address.ToString()
-                            + ":"
-                            + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
-                            + "/"
-                            + _serviceName);
+                        + _serverEndpoint.Address
+                        + ":"
+                        + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
+                        + "/"
+                        + _serviceName);
                 }
                 catch (Exception)
                 {
                 }
             }
         }
-        [DebuggerHidden]
-        public bool IsConnected
-        {
-            get
-            {
-                bool toReturn = false;
-                int secondsSinceLastCheck = (int)DateTime.Now.Subtract(_lastConnectionCheckTime).TotalSeconds;
-                if (secondsSinceLastCheck > 0 && secondsSinceLastCheck < 5)
-                {
-                    return _wasConnected;
-                }
-                if (_server != null)
-                {
-                    try
-                    {
-                        _lastConnectionCheckTime = DateTime.Now;
-                        Application.DoEvents();
-                        if (_connectionTestingBackgroundWorker == null)
-                        {
-                            _connectionTestingBackgroundWorker = new BackgroundWorker();
-                            _connectionTestingBackgroundWorker.DoWork += new DoWorkEventHandler(_connectionTestingBackgroundWorker_DoWork);
-                        }
-                        if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
-                        {
-                            _connectionTestingBackgroundWorker.RunWorkerAsync();
-                        }
-                        toReturn = _wasConnected;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-                return toReturn;
-            }
-        }
 
         [DebuggerHidden]
-        void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             if (_server != null)
             {
@@ -201,179 +332,241 @@ namespace MFDExtractor.Networking
                 }
             }
         }
-        public ExtractorClient(IPEndPoint serverEndpoint, string serviceName)
-        {
-            _serverEndpoint = serverEndpoint;
-            _serviceName = serviceName;
-            EnsureConnected();
-        }
-        public Image GetMfd4Bitmap()
-        {
-            if (_server != null)
-            {
-                byte[] raw = _server.GetMfd4BitmapBytes();
-                return Common.Imaging.Util.BitmapFromBytes(raw);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public Image GetMfd3Bitmap()
-        {
-            if (_server != null)
-            {
-                byte[] raw = _server.GetMfd3BitmapBytes();
-                return Common.Imaging.Util.BitmapFromBytes(raw);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public Image GetLeftMfdBitmap()
-        {
-            if (_server != null)
-            {
-                byte[] raw = _server.GetLeftMfdBitmapBytes();
-                return Common.Imaging.Util.BitmapFromBytes(raw);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public Image GetRightMfdBitmap()
-        {
-            if (_server != null)
-            {
-                byte[] raw = _server.GetRightMfdBitmapBytes();
-                return Common.Imaging.Util.BitmapFromBytes(raw);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public Image GetHudBitmap()
-        {
-            if (_server != null)
-            {
-                byte[] raw = _server.GetHudBitmapBytes();
-                return Common.Imaging.Util.BitmapFromBytes(raw);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public FlightData GetFlightData()
-        {
-            if (_server != null)
-            {
-                return _server.GetFlightData();
-            }
-            else
-            {
-                return null;
-            }
-        }
-        public void SendMessageToServer(Message message)
-        {
-            EnsureConnected();
-            if (IsConnected)
-            {
-                try
-                {
-                    if (_server != null)
-                    {
-                        _server.SubmitMessageToServerFromClient(message);
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
-        public void ClearPendingMessagesToClientFromServer()
-        {
-            EnsureConnected();
-            if (IsConnected)
-            {
-                try
-                {
-                    if (_server != null)
-                    {
-                        _server.ClearPendingMessagesToClientFromServer();
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
-        public Message GetNextMessageToClientFromServer()
-        {
-            EnsureConnected();
-            Message toReturn = null;
-            if (IsConnected)
-            {
-                try
-                {
-                    if (_server != null)
-                    {
-                        toReturn = _server.GetNextPendingMessageToClientFromServer();
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
-            return toReturn;
-        }
-
-
     }
+
     public class ExtractorServer : MarshalByRefObject, IExtractorServer
     {
-        private ExtractorServer()
-        {
-        }
-        private static object _mfd4BitmapLock = new object();
-        private static object _mfd3BitmapLock = new object();
-        private static object _leftMfdBitmapLock = new object();
-        private static object _rightMfdBitmapLock = new object();
-        private static object _hudBitmapLock = new object();
-        private static object _flightDataLock = new object();
-        private static FlightData _flightData = null;
-        private static Image _mfd4Bitmap = null;
-        private static Image _mfd3Bitmap = null;
-        private static Image _leftMfdBitmap = null;
-        private static Image _rightMfdBitmap = null;
-        private static Image _hudBitmap = null;
-        private static long _mfd4ImageSequenceNum = 0;
-        private static long _mfd3ImageSequenceNum = 0;
-        private static long _leftMfdImageSequenceNum = 0;
-        private static long _rightMfdImageSequenceNum = 0;
-        private static long _hudImageSequenceNum = 0;
-        private static long _flightDataSequenceNum = 0;
+        private static readonly object _mfd4BitmapLock = new object();
+        private static readonly object _mfd3BitmapLock = new object();
+        private static readonly object _leftMfdBitmapLock = new object();
+        private static readonly object _rightMfdBitmapLock = new object();
+        private static readonly object _hudBitmapLock = new object();
+        private static readonly object _flightDataLock = new object();
+        private static FlightData _flightData;
+        private static Image _mfd4Bitmap;
+        private static Image _mfd3Bitmap;
+        private static Image _leftMfdBitmap;
+        private static Image _rightMfdBitmap;
+        private static Image _hudBitmap;
+        private static long _mfd4ImageSequenceNum;
+        private static long _mfd3ImageSequenceNum;
+        private static long _leftMfdImageSequenceNum;
+        private static long _rightMfdImageSequenceNum;
+        private static long _hudImageSequenceNum;
+        private static long _flightDataSequenceNum;
         private static long _lastRetrievedMfd4ImageSequenceNum = 0;
         private static long _lastRetrievedMfd3ImageSequenceNum = 0;
         private static long _lastRetrievedLeftMfdImageSequenceNum = 0;
         private static long _lastRetrievedRightMfdImageSequenceNum = 0;
         private static long _lastRetrievedHudImageSequenceNum = 0;
         private static long _lastRetrievedFlightDataSequenceNum = 0;
-        private static byte[] _lastRetrievedMfd4ImageBytes = null;
-        private static byte[] _lastRetrievedMfd3ImageBytes = null;
-        private static byte[] _lastRetrievedLeftMfdImageBytes = null;
-        private static byte[] _lastRetrievedRightMfdImageBytes = null;
-        private static byte[] _lastRetrievedHudImageBytes = null;
-        private static FlightData _lastRetrievedFlightData = null;
+        private static byte[] _lastRetrievedMfd4ImageBytes;
+        private static byte[] _lastRetrievedMfd3ImageBytes;
+        private static byte[] _lastRetrievedLeftMfdImageBytes;
+        private static byte[] _lastRetrievedRightMfdImageBytes;
+        private static byte[] _lastRetrievedHudImageBytes;
+        private static FlightData _lastRetrievedFlightData;
         private static string _compressionType = "LZW";
         private static string _imageFormat = "TIFF";
-        private static List<Message> _messagesToServerFromClient = new List<Message>();
-        private static List<Message> _messagesToClientFromServer = new List<Message>();
-        private static bool _serviceEstablished = false;
+        private static readonly List<Message> _messagesToServerFromClient = new List<Message>();
+        private static readonly List<Message> _messagesToClientFromServer = new List<Message>();
+        private static bool _serviceEstablished;
+
+        private ExtractorServer()
+        {
+        }
+
+        public FlightData GetFlightData()
+        {
+            FlightData toReturn = null;
+            if (!Extractor._simRunning)
+            {
+                return null;
+            }
+            if (_lastRetrievedFlightDataSequenceNum == _flightDataSequenceNum)
+            {
+                return _lastRetrievedFlightData;
+            }
+            if (_flightData == null)
+            {
+                return null;
+            }
+            lock (_flightDataLock)
+            {
+                toReturn = _flightData;
+                Interlocked.Exchange(ref _lastRetrievedFlightData, toReturn);
+            }
+            return toReturn;
+        }
+
+        public byte[] GetMfd4BitmapBytes()
+        {
+            byte[] toReturn = null;
+            if (!Extractor._simRunning)
+            {
+                return null;
+            }
+            if (_lastRetrievedMfd4ImageSequenceNum == _mfd4ImageSequenceNum)
+            {
+                return _lastRetrievedMfd4ImageBytes;
+            }
+            if (_mfd4Bitmap == null)
+            {
+                return null;
+            }
+            lock (_mfd4BitmapLock)
+            {
+                Util.ConvertPixelFormat(ref _mfd4Bitmap, PixelFormat.Format16bppRgb565);
+                toReturn = Util.BytesFromBitmap(_mfd4Bitmap, _compressionType, _imageFormat);
+                Interlocked.Exchange(ref _lastRetrievedMfd4ImageBytes, toReturn);
+            }
+            return toReturn;
+        }
+
+        public byte[] GetMfd3BitmapBytes()
+        {
+            byte[] toReturn = null;
+            if (!Extractor._simRunning)
+            {
+                return null;
+            }
+            if (_lastRetrievedMfd3ImageSequenceNum == _mfd3ImageSequenceNum)
+            {
+                return _lastRetrievedMfd3ImageBytes;
+            }
+            if (_mfd3Bitmap == null)
+            {
+                return null;
+            }
+            lock (_mfd3BitmapLock)
+            {
+                Util.ConvertPixelFormat(ref _mfd3Bitmap, PixelFormat.Format16bppRgb565);
+                toReturn = Util.BytesFromBitmap(_mfd3Bitmap, _compressionType, _imageFormat);
+                Interlocked.Exchange(ref _lastRetrievedMfd3ImageBytes, toReturn);
+            }
+            return toReturn;
+        }
+
+        public byte[] GetLeftMfdBitmapBytes()
+        {
+            byte[] toReturn = null;
+            if (!Extractor._simRunning)
+            {
+                return null;
+            }
+            if (_lastRetrievedLeftMfdImageSequenceNum == _leftMfdImageSequenceNum)
+            {
+                return _lastRetrievedLeftMfdImageBytes;
+            }
+            if (_leftMfdBitmap == null)
+            {
+                return null;
+            }
+            lock (_leftMfdBitmapLock)
+            {
+                Util.ConvertPixelFormat(ref _leftMfdBitmap, PixelFormat.Format16bppRgb565);
+                toReturn = Util.BytesFromBitmap(_leftMfdBitmap, _compressionType, _imageFormat);
+                Interlocked.Exchange(ref _lastRetrievedLeftMfdImageBytes, toReturn);
+            }
+            return toReturn;
+        }
+
+        public byte[] GetRightMfdBitmapBytes()
+        {
+            byte[] toReturn;
+
+            if (!Extractor._simRunning)
+            {
+                return null;
+            }
+            if (_lastRetrievedRightMfdImageSequenceNum == _rightMfdImageSequenceNum)
+            {
+                return _lastRetrievedRightMfdImageBytes;
+            }
+            if (_rightMfdBitmap == null)
+            {
+                return null;
+            }
+            lock (_rightMfdBitmapLock)
+            {
+                Util.ConvertPixelFormat(ref _rightMfdBitmap, PixelFormat.Format16bppRgb565);
+                toReturn = Util.BytesFromBitmap(_rightMfdBitmap, _compressionType, _imageFormat);
+                Interlocked.Exchange(ref _lastRetrievedRightMfdImageBytes, toReturn);
+            }
+            return toReturn;
+        }
+
+        public byte[] GetHudBitmapBytes()
+        {
+            byte[] toReturn = null;
+            if (!Extractor._simRunning)
+            {
+                return null;
+            }
+            if (_lastRetrievedHudImageSequenceNum == _hudImageSequenceNum)
+            {
+                return _lastRetrievedHudImageBytes;
+            }
+            if (_hudBitmap == null)
+            {
+                return null;
+            }
+            lock (_hudBitmapLock)
+            {
+                //TODO: check image format when OpenFalcon is set to 16-bit color, see if it's 565 or 555
+                Util.ConvertPixelFormat(ref _hudBitmap, PixelFormat.Format16bppRgb565);
+                toReturn = Util.BytesFromBitmap(_hudBitmap, _compressionType, _imageFormat);
+                Interlocked.Exchange(ref _lastRetrievedHudImageBytes, toReturn);
+            }
+            return toReturn;
+        }
+
+        public void SubmitMessageToServerFromClient(Message message)
+        {
+            if (_messagesToServerFromClient != null)
+            {
+                if (_messagesToServerFromClient.Count >= 1000)
+                {
+                    _messagesToServerFromClient.RemoveRange(999, _messagesToServerFromClient.Count - 1000);
+                }
+                if (message.MessageType == "RequestNewMapImage")
+                {
+                    //only allow one of these in the queue at a time
+                    ClearPendingMessagesToServerFromClientOfType(message.MessageType);
+                }
+                if (message != null)
+                {
+                    _messagesToServerFromClient.Add(message);
+                }
+            }
+        }
+
+        public void ClearPendingMessagesToClientFromServer()
+        {
+            if (_messagesToClientFromServer != null)
+            {
+                _messagesToClientFromServer.Clear();
+            }
+        }
+
+        public Message GetNextPendingMessageToClientFromServer()
+        {
+            Message toReturn = null;
+            if (_messagesToClientFromServer != null)
+            {
+                if (_messagesToClientFromServer.Count > 0)
+                {
+                    toReturn = _messagesToClientFromServer[0];
+                    _messagesToClientFromServer.RemoveAt(0);
+                }
+            }
+            return toReturn;
+        }
+
+        public bool TestConnection()
+        {
+            return _serviceEstablished;
+        }
 
         [DebuggerHidden]
         internal static void CreateService(string serviceName, int port, string compressionType, string imageFormat)
@@ -413,7 +606,7 @@ namespace MFDExtractor.Networking
             {
                 // Register as an available service with the name HelloWorld     
                 RemotingConfiguration.RegisterWellKnownServiceType(
-                    typeof(Networking.ExtractorServer), serviceName,
+                    typeof (ExtractorServer), serviceName,
                     WellKnownObjectMode.Singleton);
             }
             catch (Exception)
@@ -425,6 +618,7 @@ namespace MFDExtractor.Networking
             }
             _serviceEstablished = true;
         }
+
         [DebuggerHidden]
         internal static void TearDownService(int port)
         {
@@ -447,259 +641,127 @@ namespace MFDExtractor.Networking
             {
             }
         }
+
         internal static void SetFlightData(FlightData flightData)
         {
             lock (_flightDataLock)
             {
-                System.Threading.Interlocked.Exchange(ref _flightData, flightData);
+                Interlocked.Exchange(ref _flightData, flightData);
             }
-            System.Threading.Interlocked.Increment(ref _flightDataSequenceNum);
+            Interlocked.Increment(ref _flightDataSequenceNum);
         }
+
         internal static void SetMfd4Bitmap(Image bitmap)
         {
-            var cloned = Common.Imaging.Util.CloneBitmap(bitmap);
+            var cloned = Util.CloneBitmap(bitmap);
             lock (_mfd4BitmapLock)
             {
                 if (_mfd4Bitmap != null)
                 {
-                    Image oldRef = _mfd4Bitmap;
-                    System.Threading.Interlocked.Exchange(ref _mfd4Bitmap, cloned);
+                    var oldRef = _mfd4Bitmap;
+                    Interlocked.Exchange(ref _mfd4Bitmap, cloned);
                     Common.Util.DisposeObject(oldRef);
                 }
                 else
                 {
-                    System.Threading.Interlocked.Exchange(ref _mfd4Bitmap, cloned);
+                    Interlocked.Exchange(ref _mfd4Bitmap, cloned);
                 }
             }
-            System.Threading.Interlocked.Increment(ref _mfd4ImageSequenceNum);
+            Interlocked.Increment(ref _mfd4ImageSequenceNum);
         }
+
         internal static void SetMfd3Bitmap(Image bitmap)
         {
-            Image cloned = Common.Imaging.Util.CloneBitmap(bitmap);
+            var cloned = Util.CloneBitmap(bitmap);
             lock (_mfd3BitmapLock)
             {
                 if (_mfd3Bitmap != null)
                 {
-                    Image oldRef = _mfd3Bitmap;
-                    System.Threading.Interlocked.Exchange(ref _mfd3Bitmap, cloned);
+                    var oldRef = _mfd3Bitmap;
+                    Interlocked.Exchange(ref _mfd3Bitmap, cloned);
                     Common.Util.DisposeObject(oldRef);
                 }
                 else
                 {
-                    System.Threading.Interlocked.Exchange(ref _mfd3Bitmap, cloned);
+                    Interlocked.Exchange(ref _mfd3Bitmap, cloned);
                 }
             }
-            System.Threading.Interlocked.Increment(ref _mfd3ImageSequenceNum);
+            Interlocked.Increment(ref _mfd3ImageSequenceNum);
         }
+
         internal static void SetLeftMfdBitmap(Image bitmap)
         {
-            Image cloned = Common.Imaging.Util.CloneBitmap(bitmap);
+            var cloned = Util.CloneBitmap(bitmap);
             lock (_leftMfdBitmapLock)
             {
                 if (_leftMfdBitmap != null)
                 {
-                    Image oldRef = _leftMfdBitmap;
-                    System.Threading.Interlocked.Exchange(ref _leftMfdBitmap, cloned);
+                    var oldRef = _leftMfdBitmap;
+                    Interlocked.Exchange(ref _leftMfdBitmap, cloned);
                     Common.Util.DisposeObject(oldRef);
                 }
                 else
                 {
-                    System.Threading.Interlocked.Exchange(ref _leftMfdBitmap, cloned);
+                    Interlocked.Exchange(ref _leftMfdBitmap, cloned);
                 }
             }
-            System.Threading.Interlocked.Increment(ref _leftMfdImageSequenceNum);
+            Interlocked.Increment(ref _leftMfdImageSequenceNum);
         }
+
         internal static void SetRightMfdBitmap(Image bitmap)
         {
-            Image cloned = Common.Imaging.Util.CloneBitmap(bitmap);
+            var cloned = Util.CloneBitmap(bitmap);
             lock (_rightMfdBitmapLock)
             {
                 if (_rightMfdBitmap != null)
                 {
-                    Image oldRef = _rightMfdBitmap;
-                    System.Threading.Interlocked.Exchange(ref _rightMfdBitmap, cloned);
+                    var oldRef = _rightMfdBitmap;
+                    Interlocked.Exchange(ref _rightMfdBitmap, cloned);
                     Common.Util.DisposeObject(oldRef);
                 }
                 else
                 {
-                    System.Threading.Interlocked.Exchange(ref _rightMfdBitmap, cloned);
+                    Interlocked.Exchange(ref _rightMfdBitmap, cloned);
                 }
             }
-            System.Threading.Interlocked.Increment(ref _rightMfdImageSequenceNum);
+            Interlocked.Increment(ref _rightMfdImageSequenceNum);
         }
+
         internal static void SetHudBitmap(Image bitmap)
         {
-            Image cloned = Common.Imaging.Util.CloneBitmap(bitmap);
+            var cloned = Util.CloneBitmap(bitmap);
             lock (_hudBitmapLock)
             {
                 if (_hudBitmap != null)
                 {
-                    Image oldRef = _hudBitmap;
-                    System.Threading.Interlocked.Exchange(ref _hudBitmap, cloned);
+                    var oldRef = _hudBitmap;
+                    Interlocked.Exchange(ref _hudBitmap, cloned);
                     Common.Util.DisposeObject(oldRef);
                 }
                 else
                 {
-                    System.Threading.Interlocked.Exchange(ref _hudBitmap, cloned);
+                    Interlocked.Exchange(ref _hudBitmap, cloned);
                 }
             }
-            System.Threading.Interlocked.Increment(ref _hudImageSequenceNum);
-        }
-        public FlightData GetFlightData()
-        {
-            FlightData toReturn = null;
-            if (!Extractor._simRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedFlightDataSequenceNum == _flightDataSequenceNum)
-            {
-                return _lastRetrievedFlightData;
-            }
-            if (_flightData == null)
-            {
-                return null;
-            }
-            lock (_flightDataLock)
-            {
-                toReturn = _flightData;
-                System.Threading.Interlocked.Exchange(ref _lastRetrievedFlightData, toReturn);
-            }
-            return toReturn;
+            Interlocked.Increment(ref _hudImageSequenceNum);
         }
 
-        public byte[] GetMfd4BitmapBytes()
-        {
-            byte[] toReturn = null;
-            if (!Extractor._simRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedMfd4ImageSequenceNum == _mfd4ImageSequenceNum)
-            {
-                return _lastRetrievedMfd4ImageBytes;
-            }
-            if (_mfd4Bitmap == null)
-            {
-                return null;
-            }
-            lock (_mfd4BitmapLock)
-            {
-                Common.Imaging.Util.ConvertPixelFormat(ref _mfd4Bitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Common.Imaging.Util.BytesFromBitmap(_mfd4Bitmap, _compressionType, _imageFormat);
-                System.Threading.Interlocked.Exchange(ref _lastRetrievedMfd4ImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-        public byte[] GetMfd3BitmapBytes()
-        {
-            byte[] toReturn = null;
-            if (!Extractor._simRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedMfd3ImageSequenceNum == _mfd3ImageSequenceNum)
-            {
-                return _lastRetrievedMfd3ImageBytes;
-            }
-            if (_mfd3Bitmap == null)
-            {
-                return null;
-            }
-            lock (_mfd3BitmapLock)
-            {
-                Common.Imaging.Util.ConvertPixelFormat(ref _mfd3Bitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Common.Imaging.Util.BytesFromBitmap(_mfd3Bitmap, _compressionType, _imageFormat);
-                System.Threading.Interlocked.Exchange(ref _lastRetrievedMfd3ImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-        public byte[] GetLeftMfdBitmapBytes()
-        {
-            byte[] toReturn = null;
-            if (!Extractor._simRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedLeftMfdImageSequenceNum == _leftMfdImageSequenceNum)
-            {
-                return _lastRetrievedLeftMfdImageBytes;
-            }
-            if (_leftMfdBitmap == null)
-            {
-                return null;
-            }
-            lock (_leftMfdBitmapLock)
-            {
-                Common.Imaging.Util.ConvertPixelFormat(ref _leftMfdBitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Common.Imaging.Util.BytesFromBitmap(_leftMfdBitmap, _compressionType, _imageFormat);
-                System.Threading.Interlocked.Exchange(ref _lastRetrievedLeftMfdImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-        public byte[] GetRightMfdBitmapBytes()
-        {
-            byte[] toReturn = null;
-
-            if (!Extractor._simRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedRightMfdImageSequenceNum == _rightMfdImageSequenceNum)
-            {
-                return _lastRetrievedRightMfdImageBytes;
-            }
-            if (_rightMfdBitmap == null)
-            {
-                return null;
-            }
-            lock (_rightMfdBitmapLock)
-            {
-                Common.Imaging.Util.ConvertPixelFormat(ref _rightMfdBitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Common.Imaging.Util.BytesFromBitmap(_rightMfdBitmap, _compressionType, _imageFormat);
-                System.Threading.Interlocked.Exchange(ref _lastRetrievedRightMfdImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-        public byte[] GetHudBitmapBytes()
-        {
-            byte[] toReturn = null;
-            if (!Extractor._simRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedHudImageSequenceNum == _hudImageSequenceNum)
-            {
-                return _lastRetrievedHudImageBytes;
-            }
-            if (_hudBitmap == null)
-            {
-                return null;
-            }
-            lock (_hudBitmapLock)
-            {
-                //TODO: check image format when OpenFalcon is set to 16-bit color, see if it's 565 or 555
-                Common.Imaging.Util.ConvertPixelFormat(ref _hudBitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Common.Imaging.Util.BytesFromBitmap(_hudBitmap, _compressionType, _imageFormat);
-                System.Threading.Interlocked.Exchange(ref _lastRetrievedHudImageBytes, toReturn);
-            }
-            return toReturn;
-        }
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)
         {
-            List<Message> messagesToRemove = new List<Message>();
-            foreach (Message message in _messagesToServerFromClient)
+            var messagesToRemove = new List<Message>();
+            foreach (var message in _messagesToServerFromClient)
             {
                 if (message.MessageType == messageType)
                 {
                     messagesToRemove.Add(message);
                 }
             }
-            foreach (Message message in messagesToRemove)
+            foreach (var message in messagesToRemove)
             {
                 _messagesToServerFromClient.Remove(message);
             }
         }
+
         public static void ClearPendingMessagesToServerFromClient()
         {
             if (_messagesToServerFromClient != null)
@@ -707,36 +769,20 @@ namespace MFDExtractor.Networking
                 _messagesToServerFromClient.Clear();
             }
         }
-        public void SubmitMessageToServerFromClient(Message message)
-        {
-            if (_messagesToServerFromClient != null)
-            {
-                if (_messagesToServerFromClient.Count >= 1000)
-                {
-                    _messagesToServerFromClient.RemoveRange(999, _messagesToServerFromClient.Count - 1000);
-                }
-                if (message.MessageType == "RequestNewMapImage")
-                {
-                    //only allow one of these in the queue at a time
-                    ClearPendingMessagesToServerFromClientOfType(message.MessageType);
-                }
-                if (message != null)
-                {
-                    _messagesToServerFromClient.Add(message);
-                }
-            }
-        }
+
         public static void SubmitMessageToClientFromServer(Message message)
         {
             if (_messagesToClientFromServer != null)
             {
                 if (_messagesToClientFromServer.Count >= 1000)
                 {
-                    _messagesToClientFromServer.RemoveRange(999, _messagesToClientFromServer.Count - 1000); //limit the message queue size to 1000 messages
+                    _messagesToClientFromServer.RemoveRange(999, _messagesToClientFromServer.Count - 1000);
+                        //limit the message queue size to 1000 messages
                 }
                 _messagesToClientFromServer.Add(message);
             }
         }
+
         public static Message GetNextPendingMessageToServerFromClient()
         {
             Message toReturn = null;
@@ -749,30 +795,6 @@ namespace MFDExtractor.Networking
                 }
             }
             return toReturn;
-        }
-        public void ClearPendingMessagesToClientFromServer()
-        {
-            if (_messagesToClientFromServer != null)
-            {
-                _messagesToClientFromServer.Clear();
-            }
-        }
-        public Message GetNextPendingMessageToClientFromServer()
-        {
-            Message toReturn = null;
-            if (_messagesToClientFromServer != null)
-            {
-                if (_messagesToClientFromServer.Count > 0)
-                {
-                    toReturn = _messagesToClientFromServer[0];
-                    _messagesToClientFromServer.RemoveAt(0);
-                }
-            }
-            return toReturn;
-        }
-        public bool TestConnection()
-        {
-            return _serviceEstablished;
         }
     }
 }
