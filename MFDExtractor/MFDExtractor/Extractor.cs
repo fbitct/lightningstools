@@ -2864,10 +2864,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Returns the current MFD #4 image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
-        /// </summary>
-        /// <returns>a Bitmap containing the current MFD #4 image</returns>
         private Image GetMfd4Bitmap()
         {
             Image toReturn = null;
@@ -2906,10 +2902,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Returns the current MFD #3 image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
-        /// </summary>
-        /// <returns>a Bitmap containing the current MFD #3 image</returns>
         private Image GetMfd3Bitmap()
         {
             Image toReturn = null;
@@ -2948,10 +2940,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Returns the current Left MFD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
-        /// </summary>
-        /// <returns>a Bitmap containing the current Left MFD image</returns>
         private Image GetLeftMfdBitmap()
         {
             Image toReturn = null;
@@ -2990,10 +2978,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Returns the current Right MFD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
-        /// </summary>
-        /// <returns>a Bitmap containing the current Right MFD image</returns>
         private Image GetRightMfdBitmap()
         {
             Image toReturn = null;
@@ -3032,10 +3016,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Returns the current HUD image from the appropriate source (local screen capture, BMS's 3D shared memory, or from the remote (networked) image server
-        /// </summary>
-        /// <returns>a Bitmap containing the current HUD image</returns>
         private Image GetHudBitmap()
         {
             Image toReturn = null;
@@ -3074,10 +3054,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Reads the current HUD image from BMS's 3D Textures Shared Memory
-        /// </summary>
-        /// <returns>A Bitmap representing the current HUD image</returns>
         private Image Get3DHud()
         {
             Image toReturn = null;
@@ -3101,10 +3077,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Reads the current MFD #4 image from BMS's 3D Textures Shared Memory
-        /// </summary>
-        /// <returns>A Bitmap representing the current MFD #4 image</returns>
         private Image Get3DMFD4()
         {
             Image toReturn = null;
@@ -3128,10 +3100,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Reads the current MFD #3 image from BMS's 3D Textures Shared Memory
-        /// </summary>
-        /// <returns>A Bitmap representing the current MFD #3 image</returns>
         private Image Get3DMFD3()
         {
             Image toReturn = null;
@@ -3155,10 +3123,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Reads the current Left MFD image from BMS's 3D Textures Shared Memory
-        /// </summary>
-        /// <returns>A Bitmap representing the current Left MFD image</returns>
         private Image Get3DLeftMFD()
         {
             Image toReturn = null;
@@ -3182,10 +3146,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        /// <summary>
-        ///     Reads the current Right MFD image from BMS's 3D Textures Shared Memory
-        /// </summary>
-        /// <returns>A Bitmap representing the current Right MFD image</returns>
         private Image Get3DRightMFD()
         {
             Image toReturn = null;
@@ -3213,9 +3173,6 @@ namespace MFDExtractor
 
         #region MFD Capturing implementation methods
 
-        /// <summary>
-        ///     Captures and stores the current MFD #4 image
-        /// </summary>
         private void CaptureMfd4()
         {
             if (Settings.Default.EnableMfd4Output || _networkMode == NetworkMode.Server)
@@ -3241,9 +3198,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Captures and stores the current MFD #3 image
-        /// </summary>
         private void CaptureMfd3()
         {
             if (Settings.Default.EnableMfd3Output || _networkMode == NetworkMode.Server)
@@ -3269,9 +3223,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Captures and stores the current Left MFD image
-        /// </summary>
         private void CaptureLeftMfd()
         {
             if (Settings.Default.EnableLeftMFDOutput || _networkMode == NetworkMode.Server)
@@ -3297,9 +3248,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Captures and stores the current Right MFD image
-        /// </summary>
         private void CaptureRightMfd()
         {
             if (Settings.Default.EnableRightMFDOutput || _networkMode == NetworkMode.Server)
@@ -3325,9 +3273,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Captures and stores the current HUD image
-        /// </summary>
         private void CaptureHud()
         {
             if (Settings.Default.EnableHudOutput || _networkMode == NetworkMode.Server)
@@ -3370,10 +3315,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Stores the current Left MFD image and makes it available over the network to remote clients
-        /// </summary>
-        /// <param name="hudMfdImage">the current HUD image to store/send</param>
         private void SetHudImage(Image hudImage)
         {
             if (hudImage == null) return;
@@ -3781,9 +3722,6 @@ namespace MFDExtractor
 
         #region MFD Forms Setup
 
-        /// <summary>
-        ///     Sets up the MFD #4 image output window
-        /// </summary>
         private void SetupMfd4Form()
         {
             if (Settings.Default.EnableMfd4Output)
@@ -3822,9 +3760,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Sets up the MFD #3 image output window
-        /// </summary>
         private void SetupMfd3Form()
         {
             if (Settings.Default.EnableMfd3Output)
@@ -3863,9 +3798,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Sets up the Left MFD image output window
-        /// </summary>
         private void SetupLeftMfdForm()
         {
             if (Settings.Default.EnableLeftMFDOutput)
@@ -3904,9 +3836,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Sets up the Right MFD image output window
-        /// </summary>
         private void SetupRightMfdForm()
         {
             if (Settings.Default.EnableRightMFDOutput)
@@ -3945,9 +3874,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Sets up the HUD image output window
-        /// </summary>
         private void SetupHudForm()
         {
             if (Settings.Default.EnableHudOutput)
@@ -5292,411 +5218,205 @@ namespace MFDExtractor
 
         #region Instrument Form Disposal Event handlers
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the VVI form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _vviForm_Disposed(object sender, EventArgs e)
         {
             _vviForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the RPM 2 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _rpm2Form_Disposed(object sender, EventArgs e)
         {
             _rpm2Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the RPM 1 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _rpm1Form_Disposed(object sender, EventArgs e)
         {
             _rpm1Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Speedbrake form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _speedbrakeForm_Disposed(object sender, EventArgs e)
         {
             _speedbrakeForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the RWR form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _rwrForm_Disposed(object sender, EventArgs e)
         {
             _rwrForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Gear Lights form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _landingGearLightsForm_Disposed(object sender, EventArgs e)
         {
             _landingGearLightsForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the OIL 1 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _oilGauge1Form_Disposed(object sender, EventArgs e)
         {
             _oilGauge1Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the OIL 2 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _oilGauge2Form_Disposed(object sender, EventArgs e)
         {
             _oilGauge2Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the NOZ POS 1 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _nozPos1Form_Disposed(object sender, EventArgs e)
         {
             _nozPos1Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the NOZ POS 2 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _nozPos2Form_Disposed(object sender, EventArgs e)
         {
             _nozPos2Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the NWS Indexer form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _nwsIndexerForm_Disposed(object sender, EventArgs e)
         {
             _nwsIndexerForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the HSI form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _hsiForm_Disposed(object sender, EventArgs e)
         {
             _hsiForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the EHSI form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _ehsiForm_Disposed(object sender, EventArgs e)
         {
             _ehsiForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Fuel Quantity form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _fuelQuantityForm_Disposed(object sender, EventArgs e)
         {
             _fuelQuantityForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Fuel Flow form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _fuelFlowForm_Disposed(object sender, EventArgs e)
         {
             _fuelFlowForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the ISIS form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _isisForm_Disposed(object sender, EventArgs e)
         {
             _isisForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Accelerometer form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _accelerometerForm_Disposed(object sender, EventArgs e)
         {
             _accelerometerForm = null;
         }
-
-        /// <summary>
-        ///     Event handler for the Disposed event for the FTIT 2 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _ftit2Form_Disposed(object sender, EventArgs e)
         {
             _ftit2Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the FTIT 1 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _ftit1Form_Disposed(object sender, EventArgs e)
         {
             _ftit1Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the EPU Fuel form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _epuFuelForm_Disposed(object sender, EventArgs e)
         {
             _epuFuelForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the PFL form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _pflForm_Disposed(object sender, EventArgs e)
         {
             _pflForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the DED form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _dedForm_Disposed(object sender, EventArgs e)
         {
             _dedForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Compass form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _compassForm_Disposed(object sender, EventArgs e)
         {
             _compassForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the CMDS panel form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _cmdsPanelForm_Disposed(object sender, EventArgs e)
         {
             _cmdsPanelForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Caution Panel form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _cautionPanelForm_Disposed(object sender, EventArgs e)
         {
             _cautionPanelForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the AOA Indicator form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _aoaIndicatorForm_Disposed(object sender, EventArgs e)
         {
             _aoaIndicatorForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the AOA Indexer form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _aoaIndexerForm_Disposed(object sender, EventArgs e)
         {
             _aoaIndexerForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Altimeter form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _altimeterForm_Disposed(object sender, EventArgs e)
         {
             _altimeterForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the ASI form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _asiForm_Disposed(object sender, EventArgs e)
         {
             _asiForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the ADI form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _adiForm_Disposed(object sender, EventArgs e)
         {
             _adiForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Backup ADI form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _backupAdiForm_Disposed(object sender, EventArgs e)
         {
             _backupAdiForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the HYDA form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _hydAForm_Disposed(object sender, EventArgs e)
         {
             _hydAForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the HYDB form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _hydBForm_Disposed(object sender, EventArgs e)
         {
             _hydBForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Cabin Pressure Altitude Indicator form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _cabinPressForm_Disposed(object sender, EventArgs e)
         {
             _cabinPressForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Roll Trim Indicator form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _rollTrimForm_Disposed(object sender, EventArgs e)
         {
             _rollTrimForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Pitch Trim Indicator form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _pitchTrimForm_Disposed(object sender, EventArgs e)
         {
             _pitchTrimForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the MFD #4 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _mfd4Form_Disposed(object sender, EventArgs e)
         {
             _mfd4Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the MFD #3 form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _mfd3Form_Disposed(object sender, EventArgs e)
         {
             _mfd3Form = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Left MFD form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _leftMfdForm_Disposed(object sender, EventArgs e)
         {
             _leftMfdForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the Right MFD form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _rightMfdForm_Disposed(object sender, EventArgs e)
         {
             _rightMfdForm = null;
         }
 
-        /// <summary>
-        ///     Event handler for the Disposed event for the HUD form
-        /// </summary>
-        /// <param name="sender">Object raising this event</param>
-        /// <param name="e">Event arguments for the Form's Disposed event</param>
         private void _hudForm_Disposed(object sender, EventArgs e)
         {
             _hudForm = null;
@@ -5925,11 +5645,6 @@ namespace MFDExtractor
 
         #region Instrument Form Data-Changed Event Handlers
 
-        /// <summary>
-        ///     Handle change notifications when the Speedbrake output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _speedbrakeForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -5960,11 +5675,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the RWR output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _rwrForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -5995,11 +5705,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the RPM 2 output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _rpm2Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6030,11 +5735,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the VVI output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _vviForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6065,11 +5765,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the RPM 1 output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _rpm1Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6100,11 +5795,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Engine 1 - Oil Pressure Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _oilGauge1Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6135,11 +5825,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Engine 2 - Oil Pressure Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _oilGauge2Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6170,11 +5855,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Engine 2 - Nozzle Position Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _nozPos2Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6205,11 +5885,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Engine 1 - Nozzle Position Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _nozPos1Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6240,11 +5915,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the NWS Indexer output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _nwsIndexerForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6275,11 +5945,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Fuel Quantity output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _fuelQuantityForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6310,11 +5975,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Landing Gear Lights output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _landingGearLightsForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6345,11 +6005,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the HSI output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _hsiForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6380,11 +6035,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the EHSI output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _ehsiForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6415,11 +6065,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Fuel Flow output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _fuelFlowForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6450,11 +6095,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the ISIS output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _isisForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6485,11 +6125,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Accelerometer output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _accelerometerForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6520,11 +6155,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the FTIT 2 output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _ftit2Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6555,11 +6185,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the FTIT 1 output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _ftit1Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6590,11 +6215,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the EPU Fuel output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _epuFuelForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6625,11 +6245,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the PFL output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _pflForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6660,11 +6275,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the DED output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _dedForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6695,11 +6305,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Compass output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _compassForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6730,11 +6335,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the CMDS Panel output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _cmdsPanelForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6765,11 +6365,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Caution Panel output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _cautionPanelForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6800,11 +6395,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the AOA Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _aoaIndicatorForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6835,11 +6425,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the AOA Indexer output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _aoaIndexerForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6870,11 +6455,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Altimeter output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _altimeterForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6905,11 +6485,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the ASI output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _asiForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6940,11 +6515,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the ADI output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _adiForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -6975,11 +6545,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Backup ADI output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _backupAdiForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7010,11 +6575,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the HYDA output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _hydAForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7045,11 +6605,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the HYDB output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _hydBForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7080,11 +6635,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Cabin Pressure Altitude Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _cabinPressForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7116,11 +6666,6 @@ namespace MFDExtractor
         }
 
 
-        /// <summary>
-        ///     Handle change notifications when the Roll Trim Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _rollTrimForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7151,11 +6696,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Pitch Trim Indicator output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _pitchTrimForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7186,11 +6726,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the MFD #4 output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _mfd4Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7221,11 +6756,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the MFD #3 output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _mfd3Form_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7256,11 +6786,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Left MFD output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _leftMfdForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7291,11 +6816,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the Right MFD output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _rightMfdForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7326,11 +6846,6 @@ namespace MFDExtractor
             _settingsLoadScheduled = true;
         }
 
-        /// <summary>
-        ///     Handle change notifications when the HUD output window moves or when the user makes changes to the context-menu options for this form
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">Event arguments for the DataChanged event</param>
         private void _hudForm_DataChanged(object sender, EventArgs e)
         {
             Settings settings = Settings.Default;
@@ -7632,9 +7147,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Worker thread for coordinating the image capturing sequence
-        /// </summary>
         private void CaptureOrchestrationThreadWork()
         {
             var toWait = new List<WaitHandle>();
@@ -8850,9 +8362,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Worker thread method for monitoring whether the sim is running
-        /// </summary>
         private void SimStatusMonitorThreadWork()
         {
             try
@@ -8979,11 +8488,6 @@ namespace MFDExtractor
 
         #region Thread Teardown
 
-        /// <summary>
-        ///     Wait for a thread to end, then abort the thread
-        /// </summary>
-        /// <param name="t">thread to wait for end/abort</param>
-        /// <param name="timeout">amount of time to wait before forcefully aborting the thread</param>
         private void WaitForThreadEndThenAbort(ref Thread[] threads, TimeSpan timeout)
         {
             if (threads == null) return;
@@ -10598,19 +10102,12 @@ namespace MFDExtractor
 
         #region Object Disposal & Destructors
 
-        /// <summary>
-        ///     Public implementation of the IDisposable pattern
-        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        ///     Private implementation of the IDisposable pattern
-        /// </summary>
-        /// <param name="disposing"></param>
         private void Dispose(bool disposing)
         {
             if (!_disposed)
