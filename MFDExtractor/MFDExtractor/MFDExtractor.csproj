@@ -111,6 +111,8 @@
     </Compile>
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="Properties\Settings.cs" />
+    <Compile Include="RenderThreadSetupHelper.cs" />
+    <Compile Include="ThreadAbortion.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>
     </Compile>

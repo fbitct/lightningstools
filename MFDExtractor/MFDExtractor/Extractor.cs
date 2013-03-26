@@ -572,7 +572,7 @@ namespace MFDExtractor
         private readonly AutoResetEvent _hydBRenderStart = new AutoResetEvent(false);
 
         private readonly Dictionary<IInstrumentRenderer, InstrumentStateSnapshot> _instrumentStates =
-            new Dictionary<IInstrumentRenderer, InstrumentStateSnapshot>();
+            new Dictionary<IInstrumentRenderer, Extractor.InstrumentStateSnapshot>();
 
         private readonly AutoResetEvent _isisRenderEnd = new AutoResetEvent(false);
         private readonly AutoResetEvent _isisRenderStart = new AutoResetEvent(false);
@@ -708,6 +708,8 @@ namespace MFDExtractor
         private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
 
         private Thread _vviRenderThread;
+        private readonly RenderThreadSetupHelper _renderThreadSetupHelper;
+        private readonly ThreadAbortion _threadAbortion;
 
         #endregion
 
@@ -732,6 +734,8 @@ namespace MFDExtractor
             }
             _settingsSaverAsyncWorker.DoWork += _settingsSaverAsyncWorker_DoWork;
             _settingsLoaderAsyncWorker.DoWork += _settingsLoaderAsyncWorker_DoWork;
+            _renderThreadSetupHelper = new RenderThreadSetupHelper();
+            _threadAbortion = new ThreadAbortion();
         }
 
         private void ProcessKeyUpEvent(KeyEventArgs e)
@@ -9429,7 +9433,7 @@ namespace MFDExtractor
                 {
                     try
                     {
-                        AbortThread(ref t);
+                        _threadAbortion.AbortThread(ref t);
                     }
                     catch (Exception)
                     {
@@ -9486,7 +9490,7 @@ namespace MFDExtractor
             SetupSpeedbrakeRenderThread();
             SetupRPM1RenderThread();
             SetupRPM2RenderThread();
-            SetupVVIRenderThread();
+            _renderThreadSetupHelper.SetupThread(ref _vviRenderThread, _threadPriority, "VVIRenderThread", ()=> Settings.Default.EnableVVIOutput, VVIRenderThreadWork);
             SetupHYDARenderThread();
             SetupHYDBRenderThread();
             SetupCabinPressRenderThread();
@@ -9499,23 +9503,9 @@ namespace MFDExtractor
             _log.DebugFormat("Time taken setting up threads: {0}", elapsed.TotalMilliseconds);
         }
 
-        private void AbortThread(ref Thread t)
-        {
-            if (t == null) return;
-            try
-            {
-                t.Abort();
-            }
-            catch (Exception e)
-            {
-            }
-            Common.Util.DisposeObject(t);
-            t = null;
-        }
-
         private void SetupKeyboardWatcherThread()
         {
-            AbortThread(ref _keyboardWatcherThread);
+            _threadAbortion.AbortThread(ref _keyboardWatcherThread);
             _keyboardWatcherThread = new Thread(KeyboardWatcherThreadWork);
             _keyboardWatcherThread.SetApartmentState(ApartmentState.STA);
             _keyboardWatcherThread.Priority = ThreadPriority.Highest;
@@ -9525,28 +9515,16 @@ namespace MFDExtractor
 
         private void SetupCaptureOrchestrationThread()
         {
-            AbortThread(ref _captureOrchestrationThread);
+            _threadAbortion.AbortThread(ref _captureOrchestrationThread);
             _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork);
             _captureOrchestrationThread.Priority = _threadPriority;
             _captureOrchestrationThread.IsBackground = true;
             _captureOrchestrationThread.Name = "CaptureOrchestrationThread";
         }
 
-        private void SetupVVIRenderThread()
-        {
-            AbortThread(ref _vviRenderThread);
-            if (Settings.Default.EnableVVIOutput)
-            {
-                _vviRenderThread = new Thread(VVIRenderThreadWork);
-                _vviRenderThread.Priority = _threadPriority;
-                _vviRenderThread.IsBackground = true;
-                _vviRenderThread.Name = "VVIRenderThread";
-            }
-        }
-
         private void SetupRPM2RenderThread()
         {
-            AbortThread(ref _rpm2RenderThread);
+            _threadAbortion.AbortThread(ref _rpm2RenderThread);
             if (Settings.Default.EnableRPM2Output)
             {
                 _rpm2RenderThread = new Thread(RPM2RenderThreadWork);
@@ -9558,7 +9536,7 @@ namespace MFDExtractor
 
         private void SetupRPM1RenderThread()
         {
-            AbortThread(ref _rpm1RenderThread);
+            _threadAbortion.AbortThread(ref _rpm1RenderThread);
             if (Settings.Default.EnableRPM1Output)
             {
                 _rpm1RenderThread = new Thread(RPM1RenderThreadWork);
@@ -9570,7 +9548,7 @@ namespace MFDExtractor
 
         private void SetupSpeedbrakeRenderThread()
         {
-            AbortThread(ref _speedbrakeRenderThread);
+            _threadAbortion.AbortThread(ref _speedbrakeRenderThread);
             if (Settings.Default.EnableSpeedbrakeOutput)
             {
                 _speedbrakeRenderThread = new Thread(SpeedbrakeRenderThreadWork);
@@ -9582,7 +9560,7 @@ namespace MFDExtractor
 
         private void SetupRWRRenderThread()
         {
-            AbortThread(ref _rwrRenderThread);
+            _threadAbortion.AbortThread(ref _rwrRenderThread);
             if (Settings.Default.EnableRWROutput)
             {
                 _rwrRenderThread = new Thread(RWRRenderThreadWork);
@@ -9594,7 +9572,7 @@ namespace MFDExtractor
 
         private void SetupOIL2RenderThread()
         {
-            AbortThread(ref _oilGauge2RenderThread);
+            _threadAbortion.AbortThread(ref _oilGauge2RenderThread);
             if (Settings.Default.EnableOIL2Output)
             {
                 _oilGauge2RenderThread = new Thread(OilGauge2RenderThreadWork);
@@ -9606,7 +9584,7 @@ namespace MFDExtractor
 
         private void SetupOIL1RenderThread()
         {
-            AbortThread(ref _oilGauge1RenderThread);
+            _threadAbortion.AbortThread(ref _oilGauge1RenderThread);
             if (Settings.Default.EnableOIL1Output)
             {
                 _oilGauge1RenderThread = new Thread(OilGauge1RenderThreadWork);
@@ -9618,7 +9596,7 @@ namespace MFDExtractor
 
         private void SetupNOZ2RenderThread()
         {
-            AbortThread(ref _nozPos2RenderThread);
+            _threadAbortion.AbortThread(ref _nozPos2RenderThread);
             if (Settings.Default.EnableNOZ2Output)
             {
                 _nozPos2RenderThread = new Thread(NOZPos2RenderThreadWork);
@@ -9630,7 +9608,7 @@ namespace MFDExtractor
 
         private void SetupNOZ1RenderThread()
         {
-            AbortThread(ref _nozPos1RenderThread);
+            _threadAbortion.AbortThread(ref _nozPos1RenderThread);
             if (Settings.Default.EnableNOZ1Output)
             {
                 _nozPos1RenderThread = new Thread(NOZPos1RenderThreadWork);
@@ -9642,7 +9620,7 @@ namespace MFDExtractor
 
         private void SetupNWSIndexerRenderThread()
         {
-            AbortThread(ref _nwsIndexerRenderThread);
+            _threadAbortion.AbortThread(ref _nwsIndexerRenderThread);
             if (Settings.Default.EnableNWSIndexerOutput)
             {
                 _nwsIndexerRenderThread = new Thread(NWSIndexerRenderThreadWork);
@@ -9654,7 +9632,7 @@ namespace MFDExtractor
 
         private void SetupLandingGearLightsRenderThread()
         {
-            AbortThread(ref _landingGearLightsRenderThread);
+            _threadAbortion.AbortThread(ref _landingGearLightsRenderThread);
             if (Settings.Default.EnableGearLightsOutput)
             {
                 _landingGearLightsRenderThread = new Thread(LandingGearLightsRenderThreadWork);
@@ -9666,7 +9644,7 @@ namespace MFDExtractor
 
         private void SetupHSIRenderThread()
         {
-            AbortThread(ref _hsiRenderThread);
+            _threadAbortion.AbortThread(ref _hsiRenderThread);
             if (Settings.Default.EnableHSIOutput)
             {
                 _hsiRenderThread = new Thread(HSIRenderThreadWork);
@@ -9678,7 +9656,7 @@ namespace MFDExtractor
 
         private void SetupEHSIRenderThread()
         {
-            AbortThread(ref _ehsiRenderThread);
+            _threadAbortion.AbortThread(ref _ehsiRenderThread);
             if (Settings.Default.EnableEHSIOutput)
             {
                 _ehsiRenderThread = new Thread(EHSIRenderThreadWork);
@@ -9690,7 +9668,7 @@ namespace MFDExtractor
 
         private void SetupFuelQuantityRenderThread()
         {
-            AbortThread(ref _fuelQuantityRenderThread);
+            _threadAbortion.AbortThread(ref _fuelQuantityRenderThread);
             if (Settings.Default.EnableFuelQuantityOutput)
             {
                 _fuelQuantityRenderThread = new Thread(FuelQuantityRenderThreadWork);
@@ -9702,7 +9680,7 @@ namespace MFDExtractor
 
         private void SetupFuelFlowRenderThread()
         {
-            AbortThread(ref _fuelFlowRenderThread);
+            _threadAbortion.AbortThread(ref _fuelFlowRenderThread);
             if (Settings.Default.EnableFuelFlowOutput)
             {
                 _fuelFlowRenderThread = new Thread(FuelFlowRenderThreadWork);
@@ -9714,7 +9692,7 @@ namespace MFDExtractor
 
         private void SetupISISRenderThread()
         {
-            AbortThread(ref _isisRenderThread);
+            _threadAbortion.AbortThread(ref _isisRenderThread);
             if (Settings.Default.EnableISISOutput)
             {
                 _isisRenderThread = new Thread(ISISRenderThreadWork);
@@ -9726,7 +9704,7 @@ namespace MFDExtractor
 
         private void SetupAccelerometerRenderThread()
         {
-            AbortThread(ref _accelerometerRenderThread);
+            _threadAbortion.AbortThread(ref _accelerometerRenderThread);
             if (Settings.Default.EnableAccelerometerOutput)
             {
                 _accelerometerRenderThread = new Thread(AccelerometerRenderThreadWork);
@@ -9738,7 +9716,7 @@ namespace MFDExtractor
 
         private void SetupFTIT2RenderThread()
         {
-            AbortThread(ref _ftit2RenderThread);
+            _threadAbortion.AbortThread(ref _ftit2RenderThread);
             if (Settings.Default.EnableFTIT2Output)
             {
                 _ftit2RenderThread = new Thread(FTIT2RenderThreadWork);
@@ -9750,7 +9728,7 @@ namespace MFDExtractor
 
         private void SetupFTIT1RenderThread()
         {
-            AbortThread(ref _ftit1RenderThread);
+            _threadAbortion.AbortThread(ref _ftit1RenderThread);
             if (Settings.Default.EnableFTIT1Output)
             {
                 _ftit1RenderThread = new Thread(FTIT1RenderThreadWork);
@@ -9762,7 +9740,7 @@ namespace MFDExtractor
 
         private void SetupEPUFuelRenderThread()
         {
-            AbortThread(ref _epuFuelRenderThread);
+            _threadAbortion.AbortThread(ref _epuFuelRenderThread);
             if (Settings.Default.EnableEPUFuelOutput)
             {
                 _epuFuelRenderThread = new Thread(EPUFuelRenderThreadWork);
@@ -9774,7 +9752,7 @@ namespace MFDExtractor
 
         private void SetupPFLRenderThread()
         {
-            AbortThread(ref _pflRenderThread);
+            _threadAbortion.AbortThread(ref _pflRenderThread);
             if (Settings.Default.EnablePFLOutput)
             {
                 _pflRenderThread = new Thread(PFLRenderThreadWork);
@@ -9786,7 +9764,7 @@ namespace MFDExtractor
 
         private void SetupDEDRenderThread()
         {
-            AbortThread(ref _dedRenderThread);
+            _threadAbortion.AbortThread(ref _dedRenderThread);
             if (Settings.Default.EnableDEDOutput)
             {
                 _dedRenderThread = new Thread(DEDRenderThreadWork);
@@ -9798,7 +9776,7 @@ namespace MFDExtractor
 
         private void SetupCompassRenderThread()
         {
-            AbortThread(ref _compassRenderThread);
+            _threadAbortion.AbortThread(ref _compassRenderThread);
             if (Settings.Default.EnableCompassOutput)
             {
                 _compassRenderThread = new Thread(CompassRenderThreadWork);
@@ -9810,7 +9788,7 @@ namespace MFDExtractor
 
         private void SetupCMDSPanelRenderThread()
         {
-            AbortThread(ref _cmdsPanelRenderThread);
+            _threadAbortion.AbortThread(ref _cmdsPanelRenderThread);
             if (Settings.Default.EnableCMDSOutput)
             {
                 _cmdsPanelRenderThread = new Thread(CMDSPanelRenderThreadWork);
@@ -9822,7 +9800,7 @@ namespace MFDExtractor
 
         private void SetupCautionPanelRenderThread()
         {
-            AbortThread(ref _cautionPanelRenderThread);
+            _threadAbortion.AbortThread(ref _cautionPanelRenderThread);
             if (Settings.Default.EnableCautionPanelOutput)
             {
                 _cautionPanelRenderThread = new Thread(CautionPanelRenderThreadWork);
@@ -9834,7 +9812,7 @@ namespace MFDExtractor
 
         private void SetupAOAIndicatorRenderThread()
         {
-            AbortThread(ref _aoaIndicatorRenderThread);
+            _threadAbortion.AbortThread(ref _aoaIndicatorRenderThread);
             if (Settings.Default.EnableAOAIndicatorOutput)
             {
                 _aoaIndicatorRenderThread = new Thread(AOAIndicatorRenderThreadWork);
@@ -9846,7 +9824,7 @@ namespace MFDExtractor
 
         private void SetupAOAIndexerRenderThread()
         {
-            AbortThread(ref _aoaIndexerRenderThread);
+            _threadAbortion.AbortThread(ref _aoaIndexerRenderThread);
             if (Settings.Default.EnableAOAIndexerOutput)
             {
                 _aoaIndexerRenderThread = new Thread(AOAIndexerRenderThreadWork);
@@ -9858,7 +9836,7 @@ namespace MFDExtractor
 
         private void SetupAltimeterRenderThread()
         {
-            AbortThread(ref _altimeterRenderThread);
+            _threadAbortion.AbortThread(ref _altimeterRenderThread);
             if (Settings.Default.EnableAltimeterOutput)
             {
                 _altimeterRenderThread = new Thread(AltimeterRenderThreadWork);
@@ -9870,7 +9848,7 @@ namespace MFDExtractor
 
         private void SetupASIRenderThread()
         {
-            AbortThread(ref _asiRenderThread);
+            _threadAbortion.AbortThread(ref _asiRenderThread);
             if (Settings.Default.EnableASIOutput)
             {
                 _asiRenderThread = new Thread(ASIRenderThreadWork);
@@ -9882,7 +9860,7 @@ namespace MFDExtractor
 
         private void SetupADIRenderThread()
         {
-            AbortThread(ref _adiRenderThread);
+            _threadAbortion.AbortThread(ref _adiRenderThread);
             if (Settings.Default.EnableADIOutput)
             {
                 _adiRenderThread = new Thread(ADIRenderThreadWork);
@@ -9894,7 +9872,7 @@ namespace MFDExtractor
 
         private void SetupBackupADIRenderThread()
         {
-            AbortThread(ref _backupAdiRenderThread);
+            _threadAbortion.AbortThread(ref _backupAdiRenderThread);
             if (Settings.Default.EnableBackupADIOutput)
             {
                 _backupAdiRenderThread = new Thread(BackupADIRenderThreadWork);
@@ -9906,7 +9884,7 @@ namespace MFDExtractor
 
         private void SetupHYDARenderThread()
         {
-            AbortThread(ref _hydARenderThread);
+            _threadAbortion.AbortThread(ref _hydARenderThread);
             if (Settings.Default.EnableHYDAOutput)
             {
                 _hydARenderThread = new Thread(HYDARenderThreadWork);
@@ -9918,7 +9896,7 @@ namespace MFDExtractor
 
         private void SetupHYDBRenderThread()
         {
-            AbortThread(ref _hydBRenderThread);
+            _threadAbortion.AbortThread(ref _hydBRenderThread);
             if (Settings.Default.EnableHYDBOutput)
             {
                 _hydBRenderThread = new Thread(HYDBRenderThreadWork);
@@ -9930,7 +9908,7 @@ namespace MFDExtractor
 
         private void SetupCabinPressRenderThread()
         {
-            AbortThread(ref _cabinPressRenderThread);
+            _threadAbortion.AbortThread(ref _cabinPressRenderThread);
             if (Settings.Default.EnableCabinPressOutput)
             {
                 _cabinPressRenderThread = new Thread(CabinPressRenderThreadWork);
@@ -9942,7 +9920,7 @@ namespace MFDExtractor
 
         private void SetupRollTrimRenderThread()
         {
-            AbortThread(ref _rollTrimRenderThread);
+            _threadAbortion.AbortThread(ref _rollTrimRenderThread);
             if (Settings.Default.EnableRollTrimOutput)
             {
                 _rollTrimRenderThread = new Thread(RollTrimRenderThreadWork);
@@ -9954,7 +9932,7 @@ namespace MFDExtractor
 
         private void SetupPitchTrimRenderThread()
         {
-            AbortThread(ref _pitchTrimRenderThread);
+            _threadAbortion.AbortThread(ref _pitchTrimRenderThread);
             if (Settings.Default.EnablePitchTrimOutput)
             {
                 _pitchTrimRenderThread = new Thread(PitchTrimRenderThreadWork);
@@ -9966,7 +9944,7 @@ namespace MFDExtractor
 
         private void SetupHUDCaptureThread()
         {
-            AbortThread(ref _hudCaptureThread);
+            _threadAbortion.AbortThread(ref _hudCaptureThread);
             if (Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server)
             {
                 _hudCaptureThread = new Thread(HudCaptureThreadWork);
@@ -9978,7 +9956,7 @@ namespace MFDExtractor
 
         private void SetupRightMFDCaptureThread()
         {
-            AbortThread(ref _rightMfdCaptureThread);
+            _threadAbortion.AbortThread(ref _rightMfdCaptureThread);
             if (Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server)
             {
                 _rightMfdCaptureThread = new Thread(RightMfdCaptureThreadWork);
@@ -9990,7 +9968,7 @@ namespace MFDExtractor
 
         private void SetupLeftMFDCaptureThread()
         {
-            AbortThread(ref _leftMfdCaptureThread);
+            _threadAbortion.AbortThread(ref _leftMfdCaptureThread);
             if (Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server)
             {
                 _leftMfdCaptureThread = new Thread(LeftMfdCaptureThreadWork);
@@ -10002,7 +9980,7 @@ namespace MFDExtractor
 
         private void SetupMFD3CaptureThread()
         {
-            AbortThread(ref _mfd3CaptureThread);
+            _threadAbortion.AbortThread(ref _mfd3CaptureThread);
             if (Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server)
             {
                 _mfd3CaptureThread = new Thread(Mfd3CaptureThreadWork);
@@ -10014,7 +9992,7 @@ namespace MFDExtractor
 
         private void SetupMFD4CaptureThread()
         {
-            AbortThread(ref _mfd4CaptureThread);
+            _threadAbortion.AbortThread(ref _mfd4CaptureThread);
             if (Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server)
             {
                 _mfd4CaptureThread = new Thread(Mfd4CaptureThreadWork);
@@ -10026,7 +10004,7 @@ namespace MFDExtractor
 
         private void SetupSimStatusMonitorThread()
         {
-            AbortThread(ref _simStatusMonitorThread);
+            _threadAbortion.AbortThread(ref _simStatusMonitorThread);
             _simStatusMonitorThread = new Thread(SimStatusMonitorThreadWork);
             _simStatusMonitorThread.Priority = ThreadPriority.BelowNormal;
             _simStatusMonitorThread.IsBackground = true;
@@ -11131,7 +11109,7 @@ namespace MFDExtractor
                                            staleDataTimeout != Timeout.Infinite));
             if (stateIsStaleOrChanged)
             {
-                var toStore = new InstrumentStateSnapshot {DateTime = newStateDateTime, HashCode = newStateHash};
+                var toStore = new Extractor.InstrumentStateSnapshot {DateTime = newStateDateTime, HashCode = newStateHash};
                 if (_instrumentStates.ContainsKey(baseRenderer))
                 {
                     _instrumentStates[baseRenderer] = toStore;
