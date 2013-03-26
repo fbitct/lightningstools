@@ -418,12 +418,12 @@ namespace MFDExtractor
         private Thread _vviRenderThread;
         private readonly RenderThreadSetupHelper _renderThreadSetupHelper;
         private readonly ThreadAbortion _threadAbortion;
+        private readonly BMSSupport _bmsSupport;
 
         #endregion
 
         #endregion
 
-        #region Constructors
 
         private Extractor()
         {
@@ -437,8 +437,8 @@ namespace MFDExtractor
             _settingsLoaderAsyncWorker.DoWork += _settingsLoaderAsyncWorker_DoWork;
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
+            _bmsSupport = new BMSSupport();
         }
-
         private void ProcessKeyUpEvent(KeyEventArgs e)
         {
             if (_keySettingsLoaded == false) LoadKeySettings();
@@ -478,7 +478,6 @@ namespace MFDExtractor
                 NotifyEHSIRightKnobReleased(true);
             }
         }
-
         private void ProcessKeyDownEvent(KeyEventArgs e)
         {
             if (_keySettingsLoaded == false) LoadKeySettings();
@@ -541,8 +540,6 @@ namespace MFDExtractor
                 NotifyAccelerometerIsReset(true);
             }
         }
-
-
         private Keys UpdateKeyEventArgsWithExtendedKeyInfo(Keys keys)
         {
             if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
@@ -562,7 +559,6 @@ namespace MFDExtractor
             }
             return keys;
         }
-
         private void NotifyAzimuthIndicatorBrightnessIncreased(bool relayToListeners)
         {
             var newBrightness = (int) Math.Floor(
@@ -584,7 +580,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyAzimuthIndicatorBrightnessDecreased(bool relayToListeners)
         {
             var newBrightness = (int) Math.Floor(
@@ -606,7 +601,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyISISBrightButtonDepressed(bool relayToListeners)
         {
             int newBrightness = ((F16ISIS) _isisRenderer).InstrumentState.MaxBrightness;
@@ -624,7 +618,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyISISStandardButtonDepressed(bool relayToListeners)
         {
             var newBrightness = (int) Math.Floor(
@@ -644,7 +637,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSILeftKnobIncreasedByOne(bool relayToListeners)
         {
             FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
@@ -678,7 +670,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSILeftKnobDecreasedByOne(bool relayToListeners)
         {
             FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
@@ -712,7 +703,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSIRightKnobIncreasedByOne(bool relayToListeners)
         {
             _ehsiRightKnobLastActivityTime = DateTime.Now;
@@ -758,7 +748,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSIRightKnobDecreasedByOne(bool relayToListeners)
         {
             _ehsiRightKnobLastActivityTime = DateTime.Now;
@@ -804,7 +793,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSIRightKnobDepressed(bool relayToListeners)
         {
             _ehsiRightKnobDepressedTime = DateTime.Now;
@@ -823,7 +811,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSIRightKnobReleased(bool relayToListeners)
         {
             _ehsiRightKnobDepressedTime = null;
@@ -842,7 +829,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyEHSIMenuButtonDepressed(bool relayToListeners)
         {
             F16EHSI.F16EHSIInstrumentState.InstrumentModes currentMode =
@@ -890,7 +876,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyAirspeedIndexDecreasedByOne(bool relayToListeners)
         {
             ((F16AirspeedIndicator) _asiRenderer).InstrumentState.AirspeedIndexKnots -= 2.5F;
@@ -907,7 +892,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyAirspeedIndexIncreasedByOne(bool relayToListeners)
         {
             ((F16AirspeedIndicator) _asiRenderer).InstrumentState.AirspeedIndexKnots += 2.5F;
@@ -973,7 +957,6 @@ namespace MFDExtractor
                 pendingMessage = ExtractorServer.GetNextPendingMessageToServerFromClient();
             }
         }
-
         private void ProcessPendingMessagesToClientFromServer()
         {
             if (NetworkMode != NetworkMode.Client || _client == null) return;
@@ -1028,7 +1011,6 @@ namespace MFDExtractor
                 pendingMessage = _client.GetNextMessageToClientFromServer();
             }
         }
-
         private void NotifyAccelerometerIsReset(bool relayToListeners)
         {
             ((F16Accelerometer) _accelerometerRenderer).InstrumentState.ResetMinAndMaxGs();
@@ -1045,7 +1027,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void NotifyNightModeIsToggled(bool relayToListeners)
         {
             NightMode = !NightMode;
@@ -1058,7 +1039,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void Mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
         {
             if (_keySettingsLoaded == false) LoadKeySettings();
@@ -1127,12 +1107,10 @@ namespace MFDExtractor
                 NotifyAccelerometerIsReset(true);
             }
         }
-
         private bool EHSIRightKnobIsCurrentlyDepressed()
         {
             return _ehsiRightKnobDepressedTime.HasValue;
         }
-
         private bool DirectInputHotkeyIsTriggering(InputControlSelection hotkey)
         {
             if (hotkey == null || hotkey.DirectInputControl == null) return false;
@@ -1178,7 +1156,6 @@ namespace MFDExtractor
             }
             return false;
         }
-
         private bool DirectInputEventIsHotkey(PhysicalControlStateChangedEventArgs diEvent, InputControlSelection hotkey)
         {
             if (diEvent == null) return false;
@@ -1236,7 +1213,6 @@ namespace MFDExtractor
             }
             return false;
         }
-
         private bool KeyIsHotkey(InputControlSelection hotkey, Keys keyPressed)
         {
             if (hotkey == null) return false;
@@ -1253,7 +1229,6 @@ namespace MFDExtractor
             }
             return false;
         }
-
         private void LoadKeySettings()
         {
             LoadNvisKeySetting();
@@ -1272,7 +1247,6 @@ namespace MFDExtractor
             LoadAccelerometerResetKeySetting();
             _keySettingsLoaded = true;
         }
-
         private void LoadEHSIMenuButtonDepressedKeySetting()
         {
             string keyFromSettingsString = Settings.Default.EHSIMenuButtonKey;
@@ -1304,7 +1278,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadEHSIRightKnobDepressedKeySetting()
         {
             string keyFromSettingsString = Settings.Default.EHSICourseKnobDepressedKey;
@@ -1336,7 +1309,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadEHSIRightKnobIncreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.EHSICourseIncreaseKey;
@@ -1368,7 +1340,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadEHSIRightKnobDecreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.EHSICourseDecreaseKey;
@@ -1400,7 +1371,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadEHSILeftKnobIncreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.EHSIHeadingIncreaseKey;
@@ -1432,7 +1402,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadEHSILeftKnobDecreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.EHSIHeadingDecreaseKey;
@@ -1464,7 +1433,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadAirspeedIndexIncreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.AirspeedIndexIncreaseKey;
@@ -1496,7 +1464,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadAirspeedIndexDecreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.AirspeedIndexDecreaseKey;
@@ -1528,7 +1495,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadAccelerometerResetKeySetting()
         {
             string keyFromSettingsString = Settings.Default.AccelerometerResetKey;
@@ -1560,7 +1526,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadNvisKeySetting()
         {
             string keyFromSettingsString = Settings.Default.NVISKey;
@@ -1588,7 +1553,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadISISBrightButtonKeySetting()
         {
             string keyFromSettingsString = Settings.Default.ISISBrightButtonKey;
@@ -1620,7 +1584,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadISISStandardButtonKeySetting()
         {
             string keyFromSettingsString = Settings.Default.ISISStandardButtonKey;
@@ -1652,7 +1615,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadAzimuthIndicatorBrightnessIncreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.AzimuthIndicatorBrightnessIncreaseKey;
@@ -1684,7 +1646,6 @@ namespace MFDExtractor
                 }
             }
         }
-
         private void LoadAzimuthIndicatorBrightnessDecreaseKeySetting()
         {
             string keyFromSettingsString = Settings.Default.AzimuthIndicatorBrightnessDecreaseKey;
@@ -1717,13 +1678,6 @@ namespace MFDExtractor
             }
         }
 
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        ///     Starts the Extractor
-        /// </summary>
         public void Start()
         {
             //if we're already running, just ignore the Start command
@@ -1777,10 +1731,6 @@ namespace MFDExtractor
             TimeSpan timeElapsed = finishedTime.Subtract(startingTime);
             _log.DebugFormat("Total time taken to start the extractor: {0}", timeElapsed.TotalMilliseconds);
         }
-
-        /// <summary>
-        ///     Stops the Extractor engine
-        /// </summary>
         public void Stop()
         {
             _log.DebugFormat("Stopping the extractor at : {0}", DateTime.Now.ToString());
@@ -1908,14 +1858,6 @@ namespace MFDExtractor
             _log.DebugFormat("Total time taken to stop the extractor engine (in milliseconds): {0}",
                              totalElapsed.TotalMilliseconds);
         }
-
-        /// <summary>
-        ///     Calls Dispose() on the current Extractor instance
-        /// </summary>
-        /// <summary>
-        ///     Factory Method to create or return an instance of the Extractor.  Only one instance can be active within an AppDomain (Singleton pattern)
-        /// </summary>
-        /// <returns></returns>
         public static Extractor GetInstance()
         {
             if (_extractor == null)
@@ -1924,7 +1866,6 @@ namespace MFDExtractor
             }
             return _extractor;
         }
-
         public void LoadSettings()
         {
             Settings settings = Settings.Default;
@@ -2003,8 +1944,6 @@ namespace MFDExtractor
             }
         }
 
-        #endregion
-
         #region Public Properties
 
         public Form ApplicationForm
@@ -2012,24 +1951,20 @@ namespace MFDExtractor
             get { return _applicationForm; }
             set { _applicationForm = value; }
         }
-
         public IPEndPoint ServerEndpoint
         {
             get { return _serverEndpoint; }
             set { _serverEndpoint = value; }
         }
-
         public NetworkMode NetworkMode
         {
             get { return _networkMode; }
             set { _networkMode = value; }
         }
-
         public bool Running
         {
             get { return _running; }
         }
-
         public bool TestMode
         {
             get { return _testMode; }
@@ -2039,25 +1974,21 @@ namespace MFDExtractor
                 Settings.Default.TestMode = _testMode;
             }
         }
-
         public bool TwoDeePrimaryView
         {
             get { return _twoDeePrimaryView; }
             set { _twoDeePrimaryView = value; }
         }
-
         public bool ThreeDeeMode
         {
             get { return _threeDeeMode; }
             set { _threeDeeMode = value; }
         }
-
         public bool NightMode
         {
             get { return _nightMode; }
             set { _nightMode = value; }
         }
-
         public Mediator Mediator { get; set; }
 
         #endregion
@@ -8910,7 +8841,7 @@ namespace MFDExtractor
                                                 (_mfd3_3DInputRect == Rectangle.Empty) ||
                                                 (_mfd3_3DInputRect == Rectangle.Empty))
                                             {
-                                                Read3DCoordinatesFromCurrentBmsDatFile(ref _mfd4_3DInputRect,
+                                                BMSSupport.Read3DCoordinatesFromCurrentBmsDatFile(ref _mfd4_3DInputRect,
                                                                                        ref _mfd3_3DInputRect,
                                                                                        ref _leftMfd3DInputRect,
                                                                                        ref _rightMfd3DInputRect,
@@ -11421,368 +11352,6 @@ namespace MFDExtractor
         #endregion
 
         #endregion
-
-        #region BMS 2.0/OpenFalcon support functions
-
-        private static void Read3DCoordinatesFromCurrentBmsDatFile(ref Rectangle mfd4_3DImageSourceRectangle,
-                                                                   ref Rectangle mfd3_3DImageSourceRectangle,
-                                                                   ref Rectangle leftMfd3DImageSourceRectangle,
-                                                                   ref Rectangle rightMfd3DImageSourceRectangle,
-                                                                   ref Rectangle hud3DImageSourceRectangle)
-        {
-            FileInfo file = FindBms3DCockpitFile();
-            if (file == null)
-            {
-                return;
-            }
-            bool isDoubleResolution = IsDoubleResolutionRtt();
-            mfd4_3DImageSourceRectangle = new Rectangle();
-            mfd3_3DImageSourceRectangle = new Rectangle();
-            leftMfd3DImageSourceRectangle = new Rectangle();
-            rightMfd3DImageSourceRectangle = new Rectangle();
-            hud3DImageSourceRectangle = new Rectangle();
-
-            using (FileStream stream = file.OpenRead())
-            using (var reader = new StreamReader(stream))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string currentLine = reader.ReadLine();
-                    if (currentLine.ToLowerInvariant().StartsWith("hud"))
-                    {
-                        List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
-                        if (tokens.Count > 12)
-                        {
-                            try
-                            {
-                                hud3DImageSourceRectangle.X = Convert.ToInt32(tokens[10]);
-                                hud3DImageSourceRectangle.Y = Convert.ToInt32(tokens[11]);
-                                hud3DImageSourceRectangle.Width =
-                                    Math.Abs(Convert.ToInt32(tokens[12]) - hud3DImageSourceRectangle.X);
-
-                                hud3DImageSourceRectangle.Height =
-                                    Math.Abs(Convert.ToInt32(tokens[13]) - hud3DImageSourceRectangle.Y);
-                            }
-                            catch (Exception e)
-                            {
-                                _log.Error(e.Message, e);
-                            }
-                        }
-                    }
-                    else if (currentLine.ToLowerInvariant().StartsWith("mfd4"))
-                    {
-                        List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
-                        if (tokens.Count > 12)
-                        {
-                            try
-                            {
-                                mfd4_3DImageSourceRectangle.X = Convert.ToInt32(tokens[10]);
-                                mfd4_3DImageSourceRectangle.Y = Convert.ToInt32(tokens[11]);
-                                mfd4_3DImageSourceRectangle.Width =
-                                    Math.Abs(Convert.ToInt32(tokens[12]) - mfd4_3DImageSourceRectangle.X);
-                                mfd4_3DImageSourceRectangle.Height =
-                                    Math.Abs(Convert.ToInt32(tokens[13]) - mfd4_3DImageSourceRectangle.Y);
-                            }
-                            catch (Exception e)
-                            {
-                                _log.Error(e.Message, e);
-                            }
-                        }
-                    }
-                    else if (currentLine.ToLowerInvariant().StartsWith("mfd3"))
-                    {
-                        List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
-                        if (tokens.Count > 12)
-                        {
-                            try
-                            {
-                                mfd3_3DImageSourceRectangle.X = Convert.ToInt32(tokens[10]);
-                                mfd3_3DImageSourceRectangle.Y = Convert.ToInt32(tokens[11]);
-                                mfd3_3DImageSourceRectangle.Width =
-                                    Math.Abs(Convert.ToInt32(tokens[12]) - mfd3_3DImageSourceRectangle.X);
-                                mfd3_3DImageSourceRectangle.Height =
-                                    Math.Abs(Convert.ToInt32(tokens[13]) - mfd3_3DImageSourceRectangle.Y);
-                            }
-                            catch (Exception e)
-                            {
-                                _log.Error(e.Message, e);
-                            }
-                        }
-                    }
-                    else if (currentLine.ToLowerInvariant().StartsWith("mfdleft"))
-                    {
-                        List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
-                        if (tokens.Count > 12)
-                        {
-                            try
-                            {
-                                leftMfd3DImageSourceRectangle.X = Convert.ToInt32(tokens[10]);
-                                leftMfd3DImageSourceRectangle.Y = Convert.ToInt32(tokens[11]);
-                                leftMfd3DImageSourceRectangle.Width =
-                                    Math.Abs(Convert.ToInt32(tokens[12]) - leftMfd3DImageSourceRectangle.X);
-                                leftMfd3DImageSourceRectangle.Height =
-                                    Math.Abs(Convert.ToInt32(tokens[13]) - leftMfd3DImageSourceRectangle.Y);
-                            }
-                            catch (Exception e)
-                            {
-                                _log.Error(e.Message, e);
-                            }
-                        }
-                    }
-                    else if (currentLine.ToLowerInvariant().StartsWith("mfdright"))
-                    {
-                        List<string> tokens = Common.Strings.Util.Tokenize(currentLine);
-                        if (tokens.Count > 12)
-                        {
-                            try
-                            {
-                                rightMfd3DImageSourceRectangle.X = Convert.ToInt32(tokens[10]);
-                                rightMfd3DImageSourceRectangle.Y = Convert.ToInt32(tokens[11]);
-                                rightMfd3DImageSourceRectangle.Width =
-                                    Math.Abs(Convert.ToInt32(tokens[12]) - rightMfd3DImageSourceRectangle.X);
-                                rightMfd3DImageSourceRectangle.Height =
-                                    Math.Abs(Convert.ToInt32(tokens[13]) - rightMfd3DImageSourceRectangle.Y);
-                            }
-                            catch (Exception e)
-                            {
-                                _log.Error(e.Message, e);
-                            }
-                        }
-                    }
-                }
-            }
-            if (isDoubleResolution)
-            {
-                leftMfd3DImageSourceRectangle = MultiplyRectangle(leftMfd3DImageSourceRectangle, 2);
-                rightMfd3DImageSourceRectangle = MultiplyRectangle(rightMfd3DImageSourceRectangle, 2);
-                mfd3_3DImageSourceRectangle = MultiplyRectangle(mfd3_3DImageSourceRectangle, 2);
-                mfd4_3DImageSourceRectangle = MultiplyRectangle(mfd4_3DImageSourceRectangle, 2);
-                hud3DImageSourceRectangle = MultiplyRectangle(hud3DImageSourceRectangle, 2);
-            }
-        }
-
-        private static Rectangle MultiplyRectangle(Rectangle rect, int factor)
-        {
-            return new Rectangle(rect.X*factor, rect.Y*factor, rect.Width*factor,
-                                 rect.Height*factor);
-        }
-
-        private static string RunningBmsInstanceBasePath()
-        {
-            string toReturn = null;
-            string exePath = F4Utils.Process.Util.GetFalconExePath();
-            if (!string.IsNullOrEmpty(exePath))
-            {
-                toReturn = new FileInfo(exePath).Directory.FullName;
-            }
-            return toReturn;
-        }
-
-        private static bool IsDoubleResolutionRtt()
-        {
-            string bmsPath = RunningBmsInstanceBasePath();
-            if (string.IsNullOrEmpty(bmsPath)) return false;
-            var file = new FileInfo(Path.Combine(bmsPath, "FalconBMS.cfg"));
-            if (!file.Exists)
-            {
-                file = new FileInfo(Path.Combine(Path.Combine(bmsPath, "config"), "Falcon BMS.cfg"));
-                if (!file.Exists)
-                {
-                    file = new FileInfo(Path.Combine(Path.Combine(bmsPath, @"..\..\User\config"), "Falcon BMS.cfg"));
-                }
-            }
-
-            if (file.Exists)
-            {
-                var allLines = new List<string>();
-                using (var reader = new StreamReader(file.FullName))
-                {
-                    while (!reader.EndOfStream)
-                    {
-                        allLines.Add(reader.ReadLine());
-                    }
-                    reader.Close();
-                }
-
-                for (int i = 0; i < allLines.Count; i++)
-                {
-                    string currentLine = allLines[i];
-                    List<String> tokens = Common.Strings.Util.Tokenize(currentLine);
-                    if (tokens.Count > 2)
-                    {
-                        if (tokens[0].ToLowerInvariant() == "set" &&
-                            tokens[1].ToLowerInvariant() == "g_bDoubleRTTResolution".ToLowerInvariant() &&
-                            (tokens[2].ToLowerInvariant() == "1".ToLowerInvariant()))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        private static FileInfo FindBms3DCockpitFile()
-        {
-            string basePath = RunningBmsInstanceBasePath();
-            string path = null;
-            if (basePath != null)
-            {
-                path = basePath + @"\art\ckptartn";
-                var dir = new DirectoryInfo(path);
-                if (dir.Exists)
-                {
-                    DirectoryInfo[] subDirs = dir.GetDirectories();
-                    FileInfo file = null;
-                    foreach (DirectoryInfo thisDir in subDirs)
-                    {
-                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
-                        if (file.Exists)
-                        {
-                            try
-                            {
-                                using (
-                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
-                                                              FileShare.None))
-                                {
-                                    fs.Close();
-                                }
-                            }
-                            catch (IOException)
-                            {
-                                return file;
-                            }
-                        }
-                    }
-
-                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
-                    if (file.Exists)
-                    {
-                        try
-                        {
-                            using (
-                                FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
-                                                          FileShare.None))
-                            {
-                                fs.Close();
-                            }
-                        }
-                        catch (IOException)
-                        {
-                            return file;
-                        }
-                    }
-                }
-
-                path = basePath + @"\art\ckptart";
-                dir = new DirectoryInfo(path);
-                if (dir.Exists)
-                {
-                    DirectoryInfo[] subDirs = dir.GetDirectories();
-                    FileInfo file = null;
-                    foreach (DirectoryInfo thisDir in subDirs)
-                    {
-                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
-                        if (file.Exists)
-                        {
-                            try
-                            {
-                                using (
-                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
-                                                              FileShare.None))
-                                {
-                                    fs.Close();
-                                }
-                            }
-                            catch (IOException)
-                            {
-                                return file;
-                            }
-                        }
-                    }
-
-                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
-                    if (file.Exists)
-                    {
-                        return file;
-                    }
-                }
-
-
-                path = basePath + @"\..\..\Data\art\ckptartn";
-                dir = new DirectoryInfo(path);
-                if (dir.Exists)
-                {
-                    DirectoryInfo[] subDirs = dir.GetDirectories();
-                    FileInfo file = null;
-                    foreach (DirectoryInfo thisDir in subDirs)
-                    {
-                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
-                        if (file.Exists)
-                        {
-                            try
-                            {
-                                using (
-                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
-                                                              FileShare.None))
-                                {
-                                    fs.Close();
-                                }
-                            }
-                            catch (IOException)
-                            {
-                                return file;
-                            }
-                        }
-                    }
-
-                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
-                    if (file.Exists)
-                    {
-                        return file;
-                    }
-                }
-
-                path = basePath + @"\..\..\Data\art\ckptart";
-                dir = new DirectoryInfo(path);
-                if (dir.Exists)
-                {
-                    DirectoryInfo[] subDirs = dir.GetDirectories();
-                    FileInfo file = null;
-                    foreach (DirectoryInfo thisDir in subDirs)
-                    {
-                        file = new FileInfo(thisDir.FullName + @"\3dckpit.dat");
-                        if (file.Exists)
-                        {
-                            try
-                            {
-                                using (
-                                    FileStream fs = File.Open(file.FullName, FileMode.Open, FileAccess.ReadWrite,
-                                                              FileShare.None))
-                                {
-                                    fs.Close();
-                                }
-                            }
-                            catch (IOException)
-                            {
-                                return file;
-                            }
-                        }
-                    }
-
-                    file = new FileInfo(dir.FullName + @"\3dckpit.dat");
-                    if (file.Exists)
-                    {
-                        return file;
-                    }
-                }
-            }
-            return null;
-        }
-
-        #endregion
-
-      
 
         #region Object Disposal & Destructors
 
