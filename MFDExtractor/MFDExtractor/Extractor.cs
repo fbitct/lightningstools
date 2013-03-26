@@ -9448,8 +9448,6 @@ namespace MFDExtractor
 
         private void SetupThreads()
         {
-            DateTime startTime = DateTime.Now;
-            _log.DebugFormat("Starting setting up threads at: {0}", startTime.ToString());
             SetupSimStatusMonitorThread();
             SetupCaptureOrchestrationThread();
             SetupKeyboardWatcherThread();
@@ -9459,48 +9457,43 @@ namespace MFDExtractor
             SetupLeftMFDCaptureThread();
             SetupRightMFDCaptureThread();
             SetupHUDCaptureThread();
-
-            SetupADIRenderThread();
-            SetupBackupADIRenderThread();
-            SetupASIRenderThread();
-            SetupAltimeterRenderThread();
-            SetupAOAIndexerRenderThread();
-            SetupAOAIndicatorRenderThread();
-            SetupCautionPanelRenderThread();
-            SetupCMDSPanelRenderThread();
-            SetupCompassRenderThread();
-            SetupDEDRenderThread();
-            SetupPFLRenderThread();
-            SetupEPUFuelRenderThread();
-            SetupAccelerometerRenderThread();
-            SetupFTIT1RenderThread();
-            SetupFTIT2RenderThread();
-            SetupFuelFlowRenderThread();
-            SetupISISRenderThread();
-            SetupFuelQuantityRenderThread();
-            SetupHSIRenderThread();
-            SetupEHSIRenderThread();
-            SetupLandingGearLightsRenderThread();
-            SetupNWSIndexerRenderThread();
-            SetupNOZ1RenderThread();
-            SetupNOZ2RenderThread();
-            SetupOIL1RenderThread();
-            SetupOIL2RenderThread();
-            SetupRWRRenderThread();
-            SetupSpeedbrakeRenderThread();
-            SetupRPM1RenderThread();
-            SetupRPM2RenderThread();
+            _renderThreadSetupHelper.SetupThread(ref _adiRenderThread, _threadPriority, "ADIRenderThread", () => Settings.Default.EnableADIOutput, ADIRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _backupAdiRenderThread, _threadPriority, "StandbyADIRenderThread", () => Settings.Default.EnableBackupADIOutput, BackupADIRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _asiRenderThread, _threadPriority, "ASIRenderThread", () => Settings.Default.EnableASIOutput, ASIRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _altimeterRenderThread, _threadPriority, "AltimeterRenderThread", () => Settings.Default.EnableAltimeterOutput, AltimeterRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _aoaIndexerRenderThread, _threadPriority, "AOAIndexerRenderThread", () => Settings.Default.EnableAOAIndexerOutput, AOAIndexerRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _aoaIndicatorRenderThread, _threadPriority, "AOAIndicatorRenderThread", () => Settings.Default.EnableAOAIndicatorOutput, AOAIndicatorRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _cautionPanelRenderThread, _threadPriority, "CautionPanelRenderThread", () => Settings.Default.EnableCautionPanelOutput, CautionPanelRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _cmdsPanelRenderThread, _threadPriority, "CMDSPanelRenderThread", () => Settings.Default.EnableCMDSOutput, CMDSPanelRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _compassRenderThread, _threadPriority, "CompassRenderThread", () => Settings.Default.EnableCompassOutput, CompassRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _dedRenderThread, _threadPriority, "DEDRenderThread", () => Settings.Default.EnableDEDOutput, DEDRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _pflRenderThread, _threadPriority, "PFLRenderThread", () => Settings.Default.EnablePFLOutput, PFLRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _epuFuelRenderThread, _threadPriority, "EPUFuelRenderThread", () => Settings.Default.EnableEPUFuelOutput, EPUFuelRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _accelerometerRenderThread, _threadPriority, "AccelerometerRenderThread", () => Settings.Default.EnableAccelerometerOutput, AccelerometerRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _ftit1RenderThread, _threadPriority, "FTIT1RenderThread", () => Settings.Default.EnableFTIT1Output, FTIT1RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _ftit2RenderThread, _threadPriority, "FTIT2RenderThread", () => Settings.Default.EnableFTIT2Output, FTIT2RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _fuelFlowRenderThread, _threadPriority, "FuelFlowRenderThread", () => Settings.Default.EnableFuelFlowOutput, FuelFlowRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _isisRenderThread, _threadPriority, "ISISRenderThread", () => Settings.Default.EnableISISOutput, ISISRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _fuelQuantityRenderThread, _threadPriority, "FuelQuantityRenderThread", () => Settings.Default.EnableFuelQuantityOutput, FuelQuantityRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _hsiRenderThread, _threadPriority, "HSIRenderThread", () => Settings.Default.EnableHSIOutput, HSIRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _ehsiRenderThread, _threadPriority, "EHSIRenderThread", () => Settings.Default.EnableEHSIOutput, EHSIRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _landingGearLightsRenderThread, _threadPriority, "LandingGearLightsRenderThread", () => Settings.Default.EnableGearLightsOutput, LandingGearLightsRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _nwsIndexerRenderThread, _threadPriority, "NWSIndexerRenderThread", () => Settings.Default.EnableNWSIndexerOutput, NWSIndexerRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _nozPos1RenderThread, _threadPriority, "NOZ1RenderThread", () => Settings.Default.EnableNOZ1Output, NOZPos1RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _nozPos2RenderThread, _threadPriority, "NOZ2RenderThread", () => Settings.Default.EnableNOZ2Output, NOZPos2RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _oilGauge1RenderThread, _threadPriority, "OIL1RenderThread", () => Settings.Default.EnableOIL1Output, OilGauge1RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _oilGauge2RenderThread, _threadPriority, "OIL2RenderThread", () => Settings.Default.EnableOIL2Output, OilGauge2RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _rwrRenderThread, _threadPriority, "RWRRenderThread", () => Settings.Default.EnableRWROutput, RWRRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _speedbrakeRenderThread, _threadPriority, "SpeedbrakeRenderThread", () => Settings.Default.EnableSpeedbrakeOutput, SpeedbrakeRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _rpm1RenderThread, _threadPriority, "RPM1RenderThread", () => Settings.Default.EnableRPM1Output, RPM1RenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _rpm2RenderThread, _threadPriority, "RPM2RenderThread", () => Settings.Default.EnableRPM2Output, RPM2RenderThreadWork);
             _renderThreadSetupHelper.SetupThread(ref _vviRenderThread, _threadPriority, "VVIRenderThread", ()=> Settings.Default.EnableVVIOutput, VVIRenderThreadWork);
-            SetupHYDARenderThread();
-            SetupHYDBRenderThread();
-            SetupCabinPressRenderThread();
-            SetupRollTrimRenderThread();
-            SetupPitchTrimRenderThread();
+            _renderThreadSetupHelper.SetupThread(ref _hydARenderThread, _threadPriority, "HYDARenderThread", () => Settings.Default.EnableHYDAOutput, HYDARenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _hydBRenderThread, _threadPriority, "HYDBRenderThread", () => Settings.Default.EnableHYDBOutput, HYDBRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _cabinPressRenderThread, _threadPriority, "CabinPressRenderThread", () => Settings.Default.EnableCabinPressOutput, CabinPressRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _rollTrimRenderThread, _threadPriority, "RollTrimRenderThread", () => Settings.Default.EnableRollTrimOutput, RollTrimRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _pitchTrimRenderThread, _threadPriority, "PitchTrimRenderThread", () => Settings.Default.EnablePitchTrimOutput, PitchTrimRenderThreadWork);
 
-            DateTime endTime = DateTime.Now;
-            _log.DebugFormat("Finished setting up threads at: {0}", endTime.ToString());
-            TimeSpan elapsed = endTime.Subtract(startTime);
-            _log.DebugFormat("Time taken setting up threads: {0}", elapsed.TotalMilliseconds);
         }
 
         private void SetupKeyboardWatcherThread()
@@ -9522,425 +9515,6 @@ namespace MFDExtractor
             _captureOrchestrationThread.Name = "CaptureOrchestrationThread";
         }
 
-        private void SetupRPM2RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _rpm2RenderThread);
-            if (Settings.Default.EnableRPM2Output)
-            {
-                _rpm2RenderThread = new Thread(RPM2RenderThreadWork);
-                _rpm2RenderThread.Priority = _threadPriority;
-                _rpm2RenderThread.IsBackground = true;
-                _rpm2RenderThread.Name = "RPM2RenderThread";
-            }
-        }
-
-        private void SetupRPM1RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _rpm1RenderThread);
-            if (Settings.Default.EnableRPM1Output)
-            {
-                _rpm1RenderThread = new Thread(RPM1RenderThreadWork);
-                _rpm1RenderThread.Priority = _threadPriority;
-                _rpm1RenderThread.IsBackground = true;
-                _rpm1RenderThread.Name = "RPM1RenderThread";
-            }
-        }
-
-        private void SetupSpeedbrakeRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _speedbrakeRenderThread);
-            if (Settings.Default.EnableSpeedbrakeOutput)
-            {
-                _speedbrakeRenderThread = new Thread(SpeedbrakeRenderThreadWork);
-                _speedbrakeRenderThread.Priority = _threadPriority;
-                _speedbrakeRenderThread.IsBackground = true;
-                _speedbrakeRenderThread.Name = "SpeedbrakeRenderThread";
-            }
-        }
-
-        private void SetupRWRRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _rwrRenderThread);
-            if (Settings.Default.EnableRWROutput)
-            {
-                _rwrRenderThread = new Thread(RWRRenderThreadWork);
-                _rwrRenderThread.Priority = _threadPriority;
-                _rwrRenderThread.IsBackground = true;
-                _rwrRenderThread.Name = "RWRRenderThread";
-            }
-        }
-
-        private void SetupOIL2RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _oilGauge2RenderThread);
-            if (Settings.Default.EnableOIL2Output)
-            {
-                _oilGauge2RenderThread = new Thread(OilGauge2RenderThreadWork);
-                _oilGauge2RenderThread.Priority = _threadPriority;
-                _oilGauge2RenderThread.IsBackground = true;
-                _oilGauge2RenderThread.Name = "OilGauge2RenderThread";
-            }
-        }
-
-        private void SetupOIL1RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _oilGauge1RenderThread);
-            if (Settings.Default.EnableOIL1Output)
-            {
-                _oilGauge1RenderThread = new Thread(OilGauge1RenderThreadWork);
-                _oilGauge1RenderThread.Priority = _threadPriority;
-                _oilGauge1RenderThread.IsBackground = true;
-                _oilGauge1RenderThread.Name = "OilGauge1RenderThread";
-            }
-        }
-
-        private void SetupNOZ2RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _nozPos2RenderThread);
-            if (Settings.Default.EnableNOZ2Output)
-            {
-                _nozPos2RenderThread = new Thread(NOZPos2RenderThreadWork);
-                _nozPos2RenderThread.Priority = _threadPriority;
-                _nozPos2RenderThread.IsBackground = true;
-                _nozPos2RenderThread.Name = "NOZPos2RenderThread";
-            }
-        }
-
-        private void SetupNOZ1RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _nozPos1RenderThread);
-            if (Settings.Default.EnableNOZ1Output)
-            {
-                _nozPos1RenderThread = new Thread(NOZPos1RenderThreadWork);
-                _nozPos1RenderThread.Priority = _threadPriority;
-                _nozPos1RenderThread.IsBackground = true;
-                _nozPos1RenderThread.Name = "NOZPos1RenderThread";
-            }
-        }
-
-        private void SetupNWSIndexerRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _nwsIndexerRenderThread);
-            if (Settings.Default.EnableNWSIndexerOutput)
-            {
-                _nwsIndexerRenderThread = new Thread(NWSIndexerRenderThreadWork);
-                _nwsIndexerRenderThread.Priority = _threadPriority;
-                _nwsIndexerRenderThread.IsBackground = true;
-                _nwsIndexerRenderThread.Name = "NWSIndexerRenderThread";
-            }
-        }
-
-        private void SetupLandingGearLightsRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _landingGearLightsRenderThread);
-            if (Settings.Default.EnableGearLightsOutput)
-            {
-                _landingGearLightsRenderThread = new Thread(LandingGearLightsRenderThreadWork);
-                _landingGearLightsRenderThread.Priority = _threadPriority;
-                _landingGearLightsRenderThread.IsBackground = true;
-                _landingGearLightsRenderThread.Name = "LandingGearLightsRenderThread";
-            }
-        }
-
-        private void SetupHSIRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _hsiRenderThread);
-            if (Settings.Default.EnableHSIOutput)
-            {
-                _hsiRenderThread = new Thread(HSIRenderThreadWork);
-                _hsiRenderThread.Priority = _threadPriority;
-                _hsiRenderThread.IsBackground = true;
-                _hsiRenderThread.Name = "HSIRenderThread";
-            }
-        }
-
-        private void SetupEHSIRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _ehsiRenderThread);
-            if (Settings.Default.EnableEHSIOutput)
-            {
-                _ehsiRenderThread = new Thread(EHSIRenderThreadWork);
-                _ehsiRenderThread.Priority = _threadPriority;
-                _ehsiRenderThread.IsBackground = true;
-                _ehsiRenderThread.Name = "EHSIRenderThread";
-            }
-        }
-
-        private void SetupFuelQuantityRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _fuelQuantityRenderThread);
-            if (Settings.Default.EnableFuelQuantityOutput)
-            {
-                _fuelQuantityRenderThread = new Thread(FuelQuantityRenderThreadWork);
-                _fuelQuantityRenderThread.Priority = _threadPriority;
-                _fuelQuantityRenderThread.IsBackground = true;
-                _fuelQuantityRenderThread.Name = "FuelQuantityRenderThread";
-            }
-        }
-
-        private void SetupFuelFlowRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _fuelFlowRenderThread);
-            if (Settings.Default.EnableFuelFlowOutput)
-            {
-                _fuelFlowRenderThread = new Thread(FuelFlowRenderThreadWork);
-                _fuelFlowRenderThread.Priority = _threadPriority;
-                _fuelFlowRenderThread.IsBackground = true;
-                _fuelFlowRenderThread.Name = "FuelFlowRenderThread";
-            }
-        }
-
-        private void SetupISISRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _isisRenderThread);
-            if (Settings.Default.EnableISISOutput)
-            {
-                _isisRenderThread = new Thread(ISISRenderThreadWork);
-                _isisRenderThread.Priority = _threadPriority;
-                _isisRenderThread.IsBackground = true;
-                _isisRenderThread.Name = "ISISRenderThread";
-            }
-        }
-
-        private void SetupAccelerometerRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _accelerometerRenderThread);
-            if (Settings.Default.EnableAccelerometerOutput)
-            {
-                _accelerometerRenderThread = new Thread(AccelerometerRenderThreadWork);
-                _accelerometerRenderThread.Priority = _threadPriority;
-                _accelerometerRenderThread.IsBackground = true;
-                _accelerometerRenderThread.Name = "AccelerometerRenderThread";
-            }
-        }
-
-        private void SetupFTIT2RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _ftit2RenderThread);
-            if (Settings.Default.EnableFTIT2Output)
-            {
-                _ftit2RenderThread = new Thread(FTIT2RenderThreadWork);
-                _ftit2RenderThread.Priority = _threadPriority;
-                _ftit2RenderThread.IsBackground = true;
-                _ftit2RenderThread.Name = "FTIT2RenderThread";
-            }
-        }
-
-        private void SetupFTIT1RenderThread()
-        {
-            _threadAbortion.AbortThread(ref _ftit1RenderThread);
-            if (Settings.Default.EnableFTIT1Output)
-            {
-                _ftit1RenderThread = new Thread(FTIT1RenderThreadWork);
-                _ftit1RenderThread.Priority = _threadPriority;
-                _ftit1RenderThread.IsBackground = true;
-                _ftit1RenderThread.Name = "FTIT1RenderThread";
-            }
-        }
-
-        private void SetupEPUFuelRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _epuFuelRenderThread);
-            if (Settings.Default.EnableEPUFuelOutput)
-            {
-                _epuFuelRenderThread = new Thread(EPUFuelRenderThreadWork);
-                _epuFuelRenderThread.Priority = _threadPriority;
-                _epuFuelRenderThread.IsBackground = true;
-                _epuFuelRenderThread.Name = "EPUFuelRenderThread";
-            }
-        }
-
-        private void SetupPFLRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _pflRenderThread);
-            if (Settings.Default.EnablePFLOutput)
-            {
-                _pflRenderThread = new Thread(PFLRenderThreadWork);
-                _pflRenderThread.Priority = _threadPriority;
-                _pflRenderThread.IsBackground = true;
-                _pflRenderThread.Name = "PFLRenderThread";
-            }
-        }
-
-        private void SetupDEDRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _dedRenderThread);
-            if (Settings.Default.EnableDEDOutput)
-            {
-                _dedRenderThread = new Thread(DEDRenderThreadWork);
-                _dedRenderThread.Priority = _threadPriority;
-                _dedRenderThread.IsBackground = true;
-                _dedRenderThread.Name = "DEDRenderThread";
-            }
-        }
-
-        private void SetupCompassRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _compassRenderThread);
-            if (Settings.Default.EnableCompassOutput)
-            {
-                _compassRenderThread = new Thread(CompassRenderThreadWork);
-                _compassRenderThread.Priority = _threadPriority;
-                _compassRenderThread.IsBackground = true;
-                _compassRenderThread.Name = "CompassRenderThread";
-            }
-        }
-
-        private void SetupCMDSPanelRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _cmdsPanelRenderThread);
-            if (Settings.Default.EnableCMDSOutput)
-            {
-                _cmdsPanelRenderThread = new Thread(CMDSPanelRenderThreadWork);
-                _cmdsPanelRenderThread.Priority = _threadPriority;
-                _cmdsPanelRenderThread.IsBackground = true;
-                _cmdsPanelRenderThread.Name = "CMDSPanelRenderThread";
-            }
-        }
-
-        private void SetupCautionPanelRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _cautionPanelRenderThread);
-            if (Settings.Default.EnableCautionPanelOutput)
-            {
-                _cautionPanelRenderThread = new Thread(CautionPanelRenderThreadWork);
-                _cautionPanelRenderThread.Priority = _threadPriority;
-                _cautionPanelRenderThread.IsBackground = true;
-                _cautionPanelRenderThread.Name = "CautionPanelRenderThread";
-            }
-        }
-
-        private void SetupAOAIndicatorRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _aoaIndicatorRenderThread);
-            if (Settings.Default.EnableAOAIndicatorOutput)
-            {
-                _aoaIndicatorRenderThread = new Thread(AOAIndicatorRenderThreadWork);
-                _aoaIndicatorRenderThread.Priority = _threadPriority;
-                _aoaIndicatorRenderThread.IsBackground = true;
-                _aoaIndicatorRenderThread.Name = "AOAIndicatorRenderThread";
-            }
-        }
-
-        private void SetupAOAIndexerRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _aoaIndexerRenderThread);
-            if (Settings.Default.EnableAOAIndexerOutput)
-            {
-                _aoaIndexerRenderThread = new Thread(AOAIndexerRenderThreadWork);
-                _aoaIndexerRenderThread.Priority = _threadPriority;
-                _aoaIndexerRenderThread.IsBackground = true;
-                _aoaIndexerRenderThread.Name = "AOAIndexerRenderThread";
-            }
-        }
-
-        private void SetupAltimeterRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _altimeterRenderThread);
-            if (Settings.Default.EnableAltimeterOutput)
-            {
-                _altimeterRenderThread = new Thread(AltimeterRenderThreadWork);
-                _altimeterRenderThread.Priority = _threadPriority;
-                _altimeterRenderThread.IsBackground = true;
-                _altimeterRenderThread.Name = "AltimeterRenderThread";
-            }
-        }
-
-        private void SetupASIRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _asiRenderThread);
-            if (Settings.Default.EnableASIOutput)
-            {
-                _asiRenderThread = new Thread(ASIRenderThreadWork);
-                _asiRenderThread.Priority = _threadPriority;
-                _asiRenderThread.IsBackground = true;
-                _asiRenderThread.Name = "ASIRenderThread";
-            }
-        }
-
-        private void SetupADIRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _adiRenderThread);
-            if (Settings.Default.EnableADIOutput)
-            {
-                _adiRenderThread = new Thread(ADIRenderThreadWork);
-                _adiRenderThread.Priority = _threadPriority;
-                _adiRenderThread.IsBackground = true;
-                _adiRenderThread.Name = "ADIRenderThread";
-            }
-        }
-
-        private void SetupBackupADIRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _backupAdiRenderThread);
-            if (Settings.Default.EnableBackupADIOutput)
-            {
-                _backupAdiRenderThread = new Thread(BackupADIRenderThreadWork);
-                _backupAdiRenderThread.Priority = _threadPriority;
-                _backupAdiRenderThread.IsBackground = true;
-                _backupAdiRenderThread.Name = "BackupADIRenderThread";
-            }
-        }
-
-        private void SetupHYDARenderThread()
-        {
-            _threadAbortion.AbortThread(ref _hydARenderThread);
-            if (Settings.Default.EnableHYDAOutput)
-            {
-                _hydARenderThread = new Thread(HYDARenderThreadWork);
-                _hydARenderThread.Priority = _threadPriority;
-                _hydARenderThread.IsBackground = true;
-                _hydARenderThread.Name = "HydARenderThread";
-            }
-        }
-
-        private void SetupHYDBRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _hydBRenderThread);
-            if (Settings.Default.EnableHYDBOutput)
-            {
-                _hydBRenderThread = new Thread(HYDBRenderThreadWork);
-                _hydBRenderThread.Priority = _threadPriority;
-                _hydBRenderThread.IsBackground = true;
-                _hydBRenderThread.Name = "HydBRenderThread";
-            }
-        }
-
-        private void SetupCabinPressRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _cabinPressRenderThread);
-            if (Settings.Default.EnableCabinPressOutput)
-            {
-                _cabinPressRenderThread = new Thread(CabinPressRenderThreadWork);
-                _cabinPressRenderThread.Priority = _threadPriority;
-                _cabinPressRenderThread.IsBackground = true;
-                _cabinPressRenderThread.Name = "CabinPressRenderThread";
-            }
-        }
-
-        private void SetupRollTrimRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _rollTrimRenderThread);
-            if (Settings.Default.EnableRollTrimOutput)
-            {
-                _rollTrimRenderThread = new Thread(RollTrimRenderThreadWork);
-                _rollTrimRenderThread.Priority = _threadPriority;
-                _rollTrimRenderThread.IsBackground = true;
-                _rollTrimRenderThread.Name = "RollTrimRenderThread";
-            }
-        }
-
-        private void SetupPitchTrimRenderThread()
-        {
-            _threadAbortion.AbortThread(ref _pitchTrimRenderThread);
-            if (Settings.Default.EnablePitchTrimOutput)
-            {
-                _pitchTrimRenderThread = new Thread(PitchTrimRenderThreadWork);
-                _pitchTrimRenderThread.Priority = _threadPriority;
-                _pitchTrimRenderThread.IsBackground = true;
-                _pitchTrimRenderThread.Name = "PitchTrimRenderThread";
-            }
-        }
 
         private void SetupHUDCaptureThread()
         {
