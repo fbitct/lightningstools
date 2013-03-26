@@ -202,52 +202,9 @@ namespace MFDExtractor
 
         #endregion
 
-        #region WMI Performance Counters
 
-        private PerformanceCounter _accelerometerCounter;
-        private PerformanceCounter _adiCounter;
-        private PerformanceCounter _altimeterCounter;
-        private PerformanceCounter _aoaIndexerCounter;
-        private PerformanceCounter _aoaIndicatorCounter;
-        private PerformanceCounter _asiCounter;
-        private PerformanceCounter _backupAdiCounter;
-        private PerformanceCounter _cabinPressCounter;
-        private PerformanceCounter _cautionPanelCounter;
-        private PerformanceCounter _cmdsPanelCounter;
-        private PerformanceCounter _compassCounter;
-        private PerformanceCounter _dedCounter;
-        private PerformanceCounter _ehsiCounter;
-        private PerformanceCounter _epuFuelCounter;
-        private PerformanceCounter _ftit1Counter;
-        private PerformanceCounter _ftit2Counter;
-        private PerformanceCounter _fuelFlowCounter;
-        private PerformanceCounter _fuelQuantityCounter;
         private GDIPlusOptions _gdiPlusOptions = new GDIPlusOptions();
-        private PerformanceCounter _hsiCounter;
-        private PerformanceCounter _hudPerfCounter;
-        private PerformanceCounter _hydACounter;
-        private PerformanceCounter _hydBCounter;
-        private PerformanceCounter _isisCounter;
-        private PerformanceCounter _landingGearLightsCounter;
-        private PerformanceCounter _leftMfdPerfCounter;
-        private PerformanceCounter _mfd3PerfCounter;
-        private PerformanceCounter _mfd4PerfCounter;
-        private PerformanceCounter _nozPos1Counter;
-        private PerformanceCounter _nozPos2Counter;
-        private PerformanceCounter _nwsIndexerCounter;
-        private PerformanceCounter _oilGauge1Counter;
-        private PerformanceCounter _oilGauge2Counter;
-        private PerformanceCounter _pflCounter;
-        private PerformanceCounter _pitchTrimCounter;
-        private PerformanceCounter _rightMfdPerfCounter;
-        private PerformanceCounter _rollTrimCounter;
-        private PerformanceCounter _rpm1Counter;
-        private PerformanceCounter _rpm2Counter;
-        private PerformanceCounter _rwrCounter;
-        private PerformanceCounter _speedbrakeCounter;
-        private PerformanceCounter _vviCounter;
 
-        #endregion
 
         #region Public Property Backing Fields
 
@@ -3649,10 +3606,6 @@ namespace MFDExtractor
                         mfd4Image = Util.CloneBitmap(_mfd4BlankImage);
                     }
                     SetMfd4Image(mfd4Image);
-                    if (_mfd4PerfCounter != null)
-                    {
-                        _mfd4PerfCounter.Increment();
-                    }
                 }
                 catch (Exception e)
                 {
@@ -3681,10 +3634,6 @@ namespace MFDExtractor
                         mfd3Image = Util.CloneBitmap(_mfd3BlankImage);
                     }
                     SetMfd3Image(mfd3Image);
-                    if (_mfd3PerfCounter != null)
-                    {
-                        _mfd3PerfCounter.Increment();
-                    }
                 }
                 catch (Exception e)
                 {
@@ -3713,10 +3662,6 @@ namespace MFDExtractor
                         leftMfdImage = Util.CloneBitmap(_leftMfdBlankImage);
                     }
                     SetLeftMfdImage(leftMfdImage);
-                    if (_leftMfdPerfCounter != null)
-                    {
-                        _leftMfdPerfCounter.Increment();
-                    }
                 }
                 catch (Exception e)
                 {
@@ -3745,10 +3690,6 @@ namespace MFDExtractor
                         rightMfdImage = Util.CloneBitmap(_rightMfdBlankImage);
                     }
                     SetRightMfdImage(rightMfdImage);
-                    if (_rightMfdPerfCounter != null)
-                    {
-                        _rightMfdPerfCounter.Increment();
-                    }
                 }
                 catch (Exception e)
                 {
@@ -3777,10 +3718,6 @@ namespace MFDExtractor
                         hudImage = Util.CloneBitmap(_hudBlankImage);
                     }
                     SetHudImage(hudImage);
-                    if (_hudPerfCounter != null)
-                    {
-                        _hudPerfCounter.Increment();
-                    }
                 }
                 catch (Exception e)
                 {
@@ -11221,10 +11158,6 @@ namespace MFDExtractor
                         _adiForm,
                         Settings.Default.ADI_RotateFlipType,
                         Settings.Default.ADI_Monochrome);
-                    if (_adiCounter != null)
-                    {
-                        _adiCounter.Increment();
-                    }
                     _adiRenderEnd.Set();
                 }
             }
@@ -11248,10 +11181,6 @@ namespace MFDExtractor
                         _backupAdiForm,
                         Settings.Default.Backup_ADI_RotateFlipType,
                         Settings.Default.Backup_ADI_Monochrome);
-                    if (_backupAdiCounter != null)
-                    {
-                        _backupAdiCounter.Increment();
-                    }
                     _backupAdiRenderEnd.Set();
                 }
             }
@@ -11275,10 +11204,6 @@ namespace MFDExtractor
                         _asiForm,
                         Settings.Default.ASI_RotateFlipType,
                         Settings.Default.ASI_Monochrome);
-                    if (_asiCounter != null)
-                    {
-                        _asiCounter.Increment();
-                    }
                     _asiRenderEnd.Set();
                 }
             }
@@ -11302,10 +11227,6 @@ namespace MFDExtractor
                         _hydAForm,
                         Settings.Default.HYDA_RotateFlipType,
                         Settings.Default.HYDA_Monochrome);
-                    if (_hydACounter != null)
-                    {
-                        _hydACounter.Increment();
-                    }
                     _hydARenderEnd.Set();
                 }
             }
@@ -11329,10 +11250,6 @@ namespace MFDExtractor
                         _hydBForm,
                         Settings.Default.HYDB_RotateFlipType,
                         Settings.Default.HYDB_Monochrome);
-                    if (_hydBCounter != null)
-                    {
-                        _hydBCounter.Increment();
-                    }
                     _hydBRenderEnd.Set();
                 }
             }
@@ -11356,10 +11273,6 @@ namespace MFDExtractor
                         _cabinPressForm,
                         Settings.Default.CabinPress_RotateFlipType,
                         Settings.Default.CabinPress_Monochrome);
-                    if (_cabinPressCounter != null)
-                    {
-                        _cabinPressCounter.Increment();
-                    }
                     _cabinPressRenderEnd.Set();
                 }
             }
@@ -11384,10 +11297,6 @@ namespace MFDExtractor
                         _rollTrimForm,
                         Settings.Default.RollTrim_RotateFlipType,
                         Settings.Default.RollTrim_Monochrome);
-                    if (_rollTrimCounter != null)
-                    {
-                        _rollTrimCounter.Increment();
-                    }
                     _rollTrimRenderEnd.Set();
                 }
             }
@@ -11411,10 +11320,6 @@ namespace MFDExtractor
                         _pitchTrimForm,
                         Settings.Default.PitchTrim_RotateFlipType,
                         Settings.Default.PitchTrim_Monochrome);
-                    if (_pitchTrimCounter != null)
-                    {
-                        _pitchTrimCounter.Increment();
-                    }
                     _pitchTrimRenderEnd.Set();
                 }
             }
@@ -11438,10 +11343,6 @@ namespace MFDExtractor
                         _altimeterForm,
                         Settings.Default.Altimeter_RotateFlipType,
                         Settings.Default.Altimeter_Monochrome);
-                    if (_altimeterCounter != null)
-                    {
-                        _altimeterCounter.Increment();
-                    }
                     _altimeterRenderEnd.Set();
                 }
             }
@@ -11465,10 +11366,6 @@ namespace MFDExtractor
                         _aoaIndexerForm,
                         Settings.Default.AOAIndexer_RotateFlipType,
                         Settings.Default.AOAIndexer_Monochrome);
-                    if (_aoaIndexerCounter != null)
-                    {
-                        _aoaIndexerCounter.Increment();
-                    }
                     _aoaIndexerRenderEnd.Set();
                 }
             }
@@ -11492,10 +11389,6 @@ namespace MFDExtractor
                         _aoaIndicatorForm,
                         Settings.Default.AOAIndicator_RotateFlipType,
                         Settings.Default.AOAIndicator_Monochrome);
-                    if (_aoaIndicatorCounter != null)
-                    {
-                        _aoaIndicatorCounter.Increment();
-                    }
                     _aoaIndicatorRenderEnd.Set();
                 }
             }
@@ -11519,10 +11412,6 @@ namespace MFDExtractor
                         _cautionPanelForm,
                         Settings.Default.CautionPanel_RotateFlipType,
                         Settings.Default.CautionPanel_Monochrome);
-                    if (_cautionPanelCounter != null)
-                    {
-                        _cautionPanelCounter.Increment();
-                    }
                     _cautionPanelRenderEnd.Set();
                 }
             }
@@ -11546,10 +11435,6 @@ namespace MFDExtractor
                         _cmdsPanelForm,
                         Settings.Default.CMDS_RotateFlipType,
                         Settings.Default.CMDS_Monochrome);
-                    if (_cmdsPanelCounter != null)
-                    {
-                        _cmdsPanelCounter.Increment();
-                    }
                     _cmdsPanelRenderEnd.Set();
                 }
             }
@@ -11573,10 +11458,6 @@ namespace MFDExtractor
                         _compassForm,
                         Settings.Default.Compass_RotateFlipType,
                         Settings.Default.Compass_Monochrome);
-                    if (_compassCounter != null)
-                    {
-                        _compassCounter.Increment();
-                    }
                     _compassRenderEnd.Set();
                 }
             }
@@ -11600,10 +11481,6 @@ namespace MFDExtractor
                         _dedForm,
                         Settings.Default.DED_RotateFlipType,
                         Settings.Default.DED_Monochrome);
-                    if (_dedCounter != null)
-                    {
-                        _dedCounter.Increment();
-                    }
                     _dedRenderEnd.Set();
                 }
             }
@@ -11627,10 +11504,6 @@ namespace MFDExtractor
                         _pflForm,
                         Settings.Default.PFL_RotateFlipType,
                         Settings.Default.PFL_Monochrome);
-                    if (_pflCounter != null)
-                    {
-                        _pflCounter.Increment();
-                    }
                     _pflRenderEnd.Set();
                 }
             }
@@ -11654,10 +11527,6 @@ namespace MFDExtractor
                         _epuFuelForm,
                         Settings.Default.EPUFuel_RotateFlipType,
                         Settings.Default.EPUFuel_Monochrome);
-                    if (_epuFuelCounter != null)
-                    {
-                        _epuFuelCounter.Increment();
-                    }
                     _epuFuelRenderEnd.Set();
                 }
             }
@@ -11681,10 +11550,6 @@ namespace MFDExtractor
                         _accelerometerForm,
                         Settings.Default.Accelerometer_RotateFlipType,
                         Settings.Default.Accelerometer_Monochrome);
-                    if (_accelerometerCounter != null)
-                    {
-                        _accelerometerCounter.Increment();
-                    }
                     _accelerometerRenderEnd.Set();
                 }
             }
@@ -11708,10 +11573,6 @@ namespace MFDExtractor
                         _ftit1Form,
                         Settings.Default.FTIT1_RotateFlipType,
                         Settings.Default.FTIT1_Monochrome);
-                    if (_ftit1Counter != null)
-                    {
-                        _ftit1Counter.Increment();
-                    }
                     _ftit1RenderEnd.Set();
                 }
             }
@@ -11735,10 +11596,6 @@ namespace MFDExtractor
                         _ftit2Form,
                         Settings.Default.FTIT2_RotateFlipType,
                         Settings.Default.FTIT2_Monochrome);
-                    if (_ftit2Counter != null)
-                    {
-                        _ftit2Counter.Increment();
-                    }
                     _ftit2RenderEnd.Set();
                 }
             }
@@ -11762,10 +11619,6 @@ namespace MFDExtractor
                         _fuelFlowForm,
                         Settings.Default.FuelFlow_RotateFlipType,
                         Settings.Default.FuelFlow_Monochrome);
-                    if (_fuelFlowCounter != null)
-                    {
-                        _fuelFlowCounter.Increment();
-                    }
                     _fuelFlowRenderEnd.Set();
                 }
             }
@@ -11789,10 +11642,6 @@ namespace MFDExtractor
                         _isisForm,
                         Settings.Default.ISIS_RotateFlipType,
                         Settings.Default.ISIS_Monochrome);
-                    if (_isisCounter != null)
-                    {
-                        _isisCounter.Increment();
-                    }
                     _isisRenderEnd.Set();
                 }
             }
@@ -11816,10 +11665,6 @@ namespace MFDExtractor
                         _fuelQuantityForm,
                         Settings.Default.FuelQuantity_RotateFlipType,
                         Settings.Default.FuelQuantity_Monochrome);
-                    if (_fuelQuantityCounter != null)
-                    {
-                        _fuelQuantityCounter.Increment();
-                    }
                     _fuelQuantityRenderEnd.Set();
                 }
             }
@@ -11843,10 +11688,6 @@ namespace MFDExtractor
                         _hsiForm,
                         Settings.Default.HSI_RotateFlipType,
                         Settings.Default.HSI_Monochrome);
-                    if (_hsiCounter != null)
-                    {
-                        _hsiCounter.Increment();
-                    }
                     _hsiRenderEnd.Set();
                 }
             }
@@ -11871,10 +11712,6 @@ namespace MFDExtractor
                         _ehsiForm,
                         Settings.Default.EHSI_RotateFlipType,
                         Settings.Default.EHSI_Monochrome);
-                    if (_ehsiCounter != null)
-                    {
-                        _ehsiCounter.Increment();
-                    }
                     _ehsiRenderEnd.Set();
                 }
             }
@@ -11898,10 +11735,6 @@ namespace MFDExtractor
                         _landingGearLightsForm,
                         Settings.Default.GearLights_RotateFlipType,
                         Settings.Default.GearLights_Monochrome);
-                    if (_landingGearLightsCounter != null)
-                    {
-                        _landingGearLightsCounter.Increment();
-                    }
                     _landingGearLightsRenderEnd.Set();
                 }
             }
@@ -11925,10 +11758,6 @@ namespace MFDExtractor
                         _nwsIndexerForm,
                         Settings.Default.NWSIndexer_RotateFlipType,
                         Settings.Default.NWSIndexer_Monochrome);
-                    if (_nwsIndexerCounter != null)
-                    {
-                        _nwsIndexerCounter.Increment();
-                    }
                     _nwsIndexerRenderEnd.Set();
                 }
             }
@@ -11952,10 +11781,6 @@ namespace MFDExtractor
                         _nozPos1Form,
                         Settings.Default.NOZ1_RotateFlipType,
                         Settings.Default.NOZ1_Monochrome);
-                    if (_nozPos1Counter != null)
-                    {
-                        _nozPos1Counter.Increment();
-                    }
                     _nozPos1RenderEnd.Set();
                 }
             }
@@ -11979,10 +11804,6 @@ namespace MFDExtractor
                         _nozPos2Form,
                         Settings.Default.NOZ2_RotateFlipType,
                         Settings.Default.NOZ2_Monochrome);
-                    if (_nozPos2Counter != null)
-                    {
-                        _nozPos2Counter.Increment();
-                    }
                     _nozPos2RenderEnd.Set();
                 }
             }
@@ -12006,10 +11827,6 @@ namespace MFDExtractor
                         _oilGauge1Form,
                         Settings.Default.OIL1_RotateFlipType,
                         Settings.Default.OIL1_Monochrome);
-                    if (_oilGauge1Counter != null)
-                    {
-                        _oilGauge1Counter.Increment();
-                    }
                     _oilGauge1RenderEnd.Set();
                 }
             }
@@ -12033,10 +11850,6 @@ namespace MFDExtractor
                         _oilGauge2Form,
                         Settings.Default.OIL2_RotateFlipType,
                         Settings.Default.OIL2_Monochrome);
-                    if (_oilGauge2Counter != null)
-                    {
-                        _oilGauge2Counter.Increment();
-                    }
                     _oilGauge2RenderEnd.Set();
                 }
             }
@@ -12060,10 +11873,6 @@ namespace MFDExtractor
                         _rwrForm,
                         Settings.Default.RWR_RotateFlipType,
                         Settings.Default.RWR_Monochrome);
-                    if (_rwrCounter != null)
-                    {
-                        _rwrCounter.Increment();
-                    }
                     _rwrRenderEnd.Set();
                 }
             }
@@ -12087,10 +11896,6 @@ namespace MFDExtractor
                         _speedbrakeForm,
                         Settings.Default.Speedbrake_RotateFlipType,
                         Settings.Default.Speedbrake_Monochrome);
-                    if (_speedbrakeCounter != null)
-                    {
-                        _speedbrakeCounter.Increment();
-                    }
                     _speedbrakeRenderEnd.Set();
                 }
             }
@@ -12114,10 +11919,6 @@ namespace MFDExtractor
                         _rpm1Form,
                         Settings.Default.RPM1_RotateFlipType,
                         Settings.Default.RPM1_Monochrome);
-                    if (_rpm1Counter != null)
-                    {
-                        _rpm1Counter.Increment();
-                    }
                     _rpm1RenderEnd.Set();
                 }
             }
@@ -12141,10 +11942,6 @@ namespace MFDExtractor
                         _rpm2Form,
                         Settings.Default.RPM2_RotateFlipType,
                         Settings.Default.RPM2_Monochrome);
-                    if (_rpm2Counter != null)
-                    {
-                        _rpm2Counter.Increment();
-                    }
                     _rpm2RenderEnd.Set();
                 }
             }
@@ -12168,10 +11965,6 @@ namespace MFDExtractor
                         _vviForm,
                         Settings.Default.VVI_RotateFlipType,
                         Settings.Default.VVI_Monochrome);
-                    if (_vviCounter != null)
-                    {
-                        _vviCounter.Increment();
-                    }
                     _vviRenderEnd.Set();
                 }
             }
