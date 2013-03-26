@@ -419,6 +419,8 @@ namespace MFDExtractor
         private readonly RenderThreadSetupHelper _renderThreadSetupHelper;
         private readonly ThreadAbortion _threadAbortion;
         private readonly BMSSupport _bmsSupport;
+        private readonly IRenderThreadWorkHelper _adiRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _backupAdiRenderThreadWorkHelper;
 
         #endregion
 
@@ -438,6 +440,8 @@ namespace MFDExtractor
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
             _bmsSupport = new BMSSupport();
+            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(()=>_keepRunning, _adiRenderStart, _adiRenderEnd, _adiRenderer, _adiForm, ()=>Settings.Default.ADI_RotateFlipType,()=>Settings.Default.ADI_Monochrome, RenderInstrumentImage);
+            _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _backupAdiRenderer, _backupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
         }
         private void ProcessKeyUpEvent(KeyEventArgs e)
         {
@@ -9004,8 +9008,8 @@ namespace MFDExtractor
             SetupLeftMFDCaptureThread();
             SetupRightMFDCaptureThread();
             SetupHUDCaptureThread();
-            _renderThreadSetupHelper.SetupThread(ref _adiRenderThread, _threadPriority, "ADIRenderThread", () => Settings.Default.EnableADIOutput, ADIRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _backupAdiRenderThread, _threadPriority, "StandbyADIRenderThread", () => Settings.Default.EnableBackupADIOutput, BackupADIRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _adiRenderThread, _threadPriority, "ADIRenderThread", () => Settings.Default.EnableADIOutput, _adiRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _backupAdiRenderThread, _threadPriority, "StandbyADIRenderThread", () => Settings.Default.EnableBackupADIOutput, _backupAdiRenderThreadWorkHelper.DoWork);
             _renderThreadSetupHelper.SetupThread(ref _asiRenderThread, _threadPriority, "ASIRenderThread", () => Settings.Default.EnableASIOutput, ASIRenderThreadWork);
             _renderThreadSetupHelper.SetupThread(ref _altimeterRenderThread, _threadPriority, "AltimeterRenderThread", () => Settings.Default.EnableAltimeterOutput, AltimeterRenderThreadWork);
             _renderThreadSetupHelper.SetupThread(ref _aoaIndexerRenderThread, _threadPriority, "AOAIndexerRenderThread", () => Settings.Default.EnableAOAIndexerOutput, AOAIndexerRenderThreadWork);
@@ -10243,52 +10247,6 @@ namespace MFDExtractor
             InstrumentForm form = GetFormForRenderer(renderer);
             if (ShouldHighlightingBorderBeDisplayedOnTargetForm(form)) return true;
             return stateIsStaleOrChanged;
-        }
-
-        private void ADIRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _adiRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _adiRenderer,
-                        _adiForm,
-                        Settings.Default.ADI_RotateFlipType,
-                        Settings.Default.ADI_Monochrome);
-                    _adiRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void BackupADIRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _backupAdiRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _backupAdiRenderer,
-                        _backupAdiForm,
-                        Settings.Default.Backup_ADI_RotateFlipType,
-                        Settings.Default.Backup_ADI_Monochrome);
-                    _backupAdiRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
         }
 
         private void ASIRenderThreadWork()
