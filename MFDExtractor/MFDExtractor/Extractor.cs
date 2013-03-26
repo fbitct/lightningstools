@@ -421,7 +421,41 @@ namespace MFDExtractor
         private readonly BMSSupport _bmsSupport;
         private readonly IRenderThreadWorkHelper _adiRenderThreadWorkHelper;
         private readonly IRenderThreadWorkHelper _backupAdiRenderThreadWorkHelper;
-
+        private readonly IRenderThreadWorkHelper _asiRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _altimeterRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _aoaIndexerRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _aoaIndicatorRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _cautionPanelRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _cmdsPanelRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _compassRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _dedRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _pflRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _epuFuelRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _accelerometerRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _ftit1RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _ftit2RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _fuelFlowRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _isisRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _fuelQuantityRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _hsiRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _ehsiRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _landingGearLightsRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _nwsIndexerRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _nozPos1RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _nozPos2RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _oilGauge1RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _oilGauge2RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _rwrRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _speedbrakeRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _rpm1RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _rpm2RenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _vviRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _hydARenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _hydBRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _cabinPressRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _rollTrimRenderThreadWorkHelper;
+        private readonly IRenderThreadWorkHelper _pitchTrimRenderThreadWorkHelper;
+        
         #endregion
 
         #endregion
@@ -442,6 +476,40 @@ namespace MFDExtractor
             _bmsSupport = new BMSSupport();
             _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(()=>_keepRunning, _adiRenderStart, _adiRenderEnd, _adiRenderer, _adiForm, ()=>Settings.Default.ADI_RotateFlipType,()=>Settings.Default.ADI_Monochrome, RenderInstrumentImage);
             _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _backupAdiRenderer, _backupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
+            _asiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _asiRenderStart, _asiRenderEnd, _asiRenderer, _asiForm, () => Settings.Default.ASI_RotateFlipType, () => Settings.Default.ASI_Monochrome, RenderInstrumentImage);
+            _altimeterRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _altimeterRenderStart, _altimeterRenderEnd, _altimeterRenderer, _altimeterForm, () => Settings.Default.Altimeter_RotateFlipType, () => Settings.Default.Altimeter_Monochrome, RenderInstrumentImage);
+            _aoaIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndexerRenderStart, _aoaIndexerRenderEnd, _aoaIndexerRenderer, _aoaIndexerForm, () => Settings.Default.AOAIndexer_RotateFlipType, () => Settings.Default.AOAIndexer_Monochrome, RenderInstrumentImage);
+            _aoaIndicatorRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndicatorRenderStart, _aoaIndicatorRenderEnd, _aoaIndicatorRenderer, _aoaIndicatorForm, () => Settings.Default.AOAIndicator_RotateFlipType, () => Settings.Default.AOAIndicator_Monochrome, RenderInstrumentImage);
+            _cautionPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cautionPanelRenderStart, _cautionPanelRenderEnd, _cautionPanelRenderer, _cautionPanelForm, () => Settings.Default.CautionPanel_RotateFlipType, () => Settings.Default.CautionPanel_Monochrome, RenderInstrumentImage);
+            _cmdsPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cmdsPanelRenderStart, _cmdsPanelRenderEnd, _cmdsPanelRenderer, _cmdsPanelForm, () => Settings.Default.CMDS_RotateFlipType, () => Settings.Default.CMDS_Monochrome, RenderInstrumentImage);
+            _compassRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _compassRenderStart, _compassRenderEnd, _compassRenderer, _compassForm, () => Settings.Default.Compass_RotateFlipType, () => Settings.Default.Compass_Monochrome, RenderInstrumentImage);
+            _dedRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _dedRenderStart, _dedRenderEnd, _dedRenderer, _dedForm, () => Settings.Default.DED_RotateFlipType, () => Settings.Default.DED_Monochrome, RenderInstrumentImage);
+            _pflRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pflRenderStart, _pflRenderEnd, _pflRenderer, _pflForm, () => Settings.Default.PFL_RotateFlipType, () => Settings.Default.PFL_Monochrome, RenderInstrumentImage);
+            _epuFuelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _epuFuelRenderStart, _epuFuelRenderEnd, _epuFuelRenderer, _epuFuelForm, () => Settings.Default.EPUFuel_RotateFlipType, () => Settings.Default.EPUFuel_Monochrome, RenderInstrumentImage);
+            _accelerometerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _accelerometerRenderStart, _accelerometerRenderEnd, _accelerometerRenderer, _accelerometerForm, () => Settings.Default.Accelerometer_RotateFlipType, () => Settings.Default.Accelerometer_Monochrome, RenderInstrumentImage);
+            _ftit1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit1RenderStart, _ftit1RenderEnd, _ftit1Renderer, _ftit1Form, () => Settings.Default.FTIT1_RotateFlipType, () => Settings.Default.FTIT1_Monochrome, RenderInstrumentImage);
+            _ftit2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit2RenderStart, _ftit2RenderEnd, _ftit2Renderer, _ftit2Form, () => Settings.Default.FTIT2_RotateFlipType, () => Settings.Default.FTIT2_Monochrome, RenderInstrumentImage);
+            _fuelFlowRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelFlowRenderStart, _fuelFlowRenderEnd, _fuelFlowRenderer, _fuelFlowForm, () => Settings.Default.FuelFlow_RotateFlipType, () => Settings.Default.FuelFlow_Monochrome, RenderInstrumentImage);
+            _isisRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _isisRenderStart, _isisRenderEnd, _isisRenderer, _isisForm, () => Settings.Default.ISIS_RotateFlipType, () => Settings.Default.ISIS_Monochrome, RenderInstrumentImage);
+            _fuelQuantityRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelQuantityRenderStart, _fuelQuantityRenderEnd, _fuelQuantityRenderer, _fuelQuantityForm, () => Settings.Default.FuelQuantity_RotateFlipType, () => Settings.Default.FuelQuantity_Monochrome, RenderInstrumentImage);
+            _hsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hsiRenderStart, _hsiRenderEnd, _hsiRenderer, _hsiForm, () => Settings.Default.HSI_RotateFlipType, () => Settings.Default.HSI_Monochrome, RenderInstrumentImage);
+            _ehsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ehsiRenderStart, _ehsiRenderEnd, _ehsiRenderer, _ehsiForm, () => Settings.Default.EHSI_RotateFlipType, () => Settings.Default.EHSI_Monochrome, RenderInstrumentImage);
+            _landingGearLightsRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _landingGearLightsRenderStart, _landingGearLightsRenderEnd, _landingGearLightsRenderer, _landingGearLightsForm, () => Settings.Default.GearLights_RotateFlipType, () => Settings.Default.GearLights_Monochrome, RenderInstrumentImage);
+            _nwsIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nwsIndexerRenderStart, _nwsIndexerRenderEnd, _nwsIndexerRenderer, _nwsIndexerForm, () => Settings.Default.NWSIndexer_RotateFlipType, () => Settings.Default.NWSIndexer_Monochrome, RenderInstrumentImage);
+            _nozPos1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos1RenderStart, _nozPos1RenderEnd, _nozPos1Renderer, _nozPos1Form, () => Settings.Default.NOZ1_RotateFlipType, () => Settings.Default.NOZ1_Monochrome, RenderInstrumentImage);
+            _nozPos2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos2RenderStart, _nozPos2RenderEnd, _nozPos2Renderer, _nozPos2Form, () => Settings.Default.NOZ2_RotateFlipType, () => Settings.Default.NOZ2_Monochrome, RenderInstrumentImage);
+            _oilGauge1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge1RenderStart, _oilGauge1RenderEnd, _oilGauge1Renderer, _oilGauge1Form, () => Settings.Default.OIL1_RotateFlipType, () => Settings.Default.OIL1_Monochrome, RenderInstrumentImage);
+            _oilGauge2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge2RenderStart, _oilGauge2RenderEnd, _oilGauge2Renderer, _oilGauge2Form, () => Settings.Default.OIL2_RotateFlipType, () => Settings.Default.OIL2_Monochrome, RenderInstrumentImage);
+            _rwrRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rwrRenderStart, _rwrRenderEnd, _rwrRenderer, _rwrForm, () => Settings.Default.RWR_RotateFlipType, () => Settings.Default.RWR_Monochrome, RenderInstrumentImage);
+            _speedbrakeRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _speedbrakeRenderStart, _speedbrakeRenderEnd, _speedbrakeRenderer, _speedbrakeForm, () => Settings.Default.Speedbrake_RotateFlipType, () => Settings.Default.Speedbrake_Monochrome, RenderInstrumentImage);
+            _rpm1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm1RenderStart, _rpm1RenderEnd, _rpm1Renderer, _rpm1Form, () => Settings.Default.RPM1_RotateFlipType, () => Settings.Default.RPM1_Monochrome, RenderInstrumentImage);
+            _rpm2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm2RenderStart, _rpm2RenderEnd, _rpm2Renderer, _rpm2Form, () => Settings.Default.RPM2_RotateFlipType, () => Settings.Default.RPM2_Monochrome, RenderInstrumentImage);
+            _vviRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _vviRenderStart, _vviRenderEnd, _vviRenderer, _vviForm, () => Settings.Default.VVI_RotateFlipType, () => Settings.Default.VVI_Monochrome, RenderInstrumentImage);
+            _hydARenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydARenderStart, _hydARenderEnd, _hydARenderer, _hydAForm, () => Settings.Default.HYDA_RotateFlipType, () => Settings.Default.HYDA_Monochrome, RenderInstrumentImage);
+            _hydBRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydBRenderStart, _hydBRenderEnd, _hydBRenderer, _hydBForm, () => Settings.Default.HYDB_RotateFlipType, () => Settings.Default.HYDB_Monochrome, RenderInstrumentImage);
+            _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _cabinPressRenderer, _cabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
+            _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _rollTrimRenderer, _rollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
+            _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _pitchTrimRenderer, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
         }
         private void ProcessKeyUpEvent(KeyEventArgs e)
         {
@@ -9010,40 +9078,40 @@ namespace MFDExtractor
             SetupHUDCaptureThread();
             _renderThreadSetupHelper.SetupThread(ref _adiRenderThread, _threadPriority, "ADIRenderThread", () => Settings.Default.EnableADIOutput, _adiRenderThreadWorkHelper.DoWork);
             _renderThreadSetupHelper.SetupThread(ref _backupAdiRenderThread, _threadPriority, "StandbyADIRenderThread", () => Settings.Default.EnableBackupADIOutput, _backupAdiRenderThreadWorkHelper.DoWork);
-            _renderThreadSetupHelper.SetupThread(ref _asiRenderThread, _threadPriority, "ASIRenderThread", () => Settings.Default.EnableASIOutput, ASIRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _altimeterRenderThread, _threadPriority, "AltimeterRenderThread", () => Settings.Default.EnableAltimeterOutput, AltimeterRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _aoaIndexerRenderThread, _threadPriority, "AOAIndexerRenderThread", () => Settings.Default.EnableAOAIndexerOutput, AOAIndexerRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _aoaIndicatorRenderThread, _threadPriority, "AOAIndicatorRenderThread", () => Settings.Default.EnableAOAIndicatorOutput, AOAIndicatorRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _cautionPanelRenderThread, _threadPriority, "CautionPanelRenderThread", () => Settings.Default.EnableCautionPanelOutput, CautionPanelRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _cmdsPanelRenderThread, _threadPriority, "CMDSPanelRenderThread", () => Settings.Default.EnableCMDSOutput, CMDSPanelRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _compassRenderThread, _threadPriority, "CompassRenderThread", () => Settings.Default.EnableCompassOutput, CompassRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _dedRenderThread, _threadPriority, "DEDRenderThread", () => Settings.Default.EnableDEDOutput, DEDRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _pflRenderThread, _threadPriority, "PFLRenderThread", () => Settings.Default.EnablePFLOutput, PFLRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _epuFuelRenderThread, _threadPriority, "EPUFuelRenderThread", () => Settings.Default.EnableEPUFuelOutput, EPUFuelRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _accelerometerRenderThread, _threadPriority, "AccelerometerRenderThread", () => Settings.Default.EnableAccelerometerOutput, AccelerometerRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _ftit1RenderThread, _threadPriority, "FTIT1RenderThread", () => Settings.Default.EnableFTIT1Output, FTIT1RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _ftit2RenderThread, _threadPriority, "FTIT2RenderThread", () => Settings.Default.EnableFTIT2Output, FTIT2RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _fuelFlowRenderThread, _threadPriority, "FuelFlowRenderThread", () => Settings.Default.EnableFuelFlowOutput, FuelFlowRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _isisRenderThread, _threadPriority, "ISISRenderThread", () => Settings.Default.EnableISISOutput, ISISRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _fuelQuantityRenderThread, _threadPriority, "FuelQuantityRenderThread", () => Settings.Default.EnableFuelQuantityOutput, FuelQuantityRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _hsiRenderThread, _threadPriority, "HSIRenderThread", () => Settings.Default.EnableHSIOutput, HSIRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _ehsiRenderThread, _threadPriority, "EHSIRenderThread", () => Settings.Default.EnableEHSIOutput, EHSIRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _landingGearLightsRenderThread, _threadPriority, "LandingGearLightsRenderThread", () => Settings.Default.EnableGearLightsOutput, LandingGearLightsRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _nwsIndexerRenderThread, _threadPriority, "NWSIndexerRenderThread", () => Settings.Default.EnableNWSIndexerOutput, NWSIndexerRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _nozPos1RenderThread, _threadPriority, "NOZ1RenderThread", () => Settings.Default.EnableNOZ1Output, NOZPos1RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _nozPos2RenderThread, _threadPriority, "NOZ2RenderThread", () => Settings.Default.EnableNOZ2Output, NOZPos2RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _oilGauge1RenderThread, _threadPriority, "OIL1RenderThread", () => Settings.Default.EnableOIL1Output, OilGauge1RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _oilGauge2RenderThread, _threadPriority, "OIL2RenderThread", () => Settings.Default.EnableOIL2Output, OilGauge2RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _rwrRenderThread, _threadPriority, "RWRRenderThread", () => Settings.Default.EnableRWROutput, RWRRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _speedbrakeRenderThread, _threadPriority, "SpeedbrakeRenderThread", () => Settings.Default.EnableSpeedbrakeOutput, SpeedbrakeRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _rpm1RenderThread, _threadPriority, "RPM1RenderThread", () => Settings.Default.EnableRPM1Output, RPM1RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _rpm2RenderThread, _threadPriority, "RPM2RenderThread", () => Settings.Default.EnableRPM2Output, RPM2RenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _vviRenderThread, _threadPriority, "VVIRenderThread", ()=> Settings.Default.EnableVVIOutput, VVIRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _hydARenderThread, _threadPriority, "HYDARenderThread", () => Settings.Default.EnableHYDAOutput, HYDARenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _hydBRenderThread, _threadPriority, "HYDBRenderThread", () => Settings.Default.EnableHYDBOutput, HYDBRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _cabinPressRenderThread, _threadPriority, "CabinPressRenderThread", () => Settings.Default.EnableCabinPressOutput, CabinPressRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _rollTrimRenderThread, _threadPriority, "RollTrimRenderThread", () => Settings.Default.EnableRollTrimOutput, RollTrimRenderThreadWork);
-            _renderThreadSetupHelper.SetupThread(ref _pitchTrimRenderThread, _threadPriority, "PitchTrimRenderThread", () => Settings.Default.EnablePitchTrimOutput, PitchTrimRenderThreadWork);
+            _renderThreadSetupHelper.SetupThread(ref _asiRenderThread, _threadPriority, "ASIRenderThread", () => Settings.Default.EnableASIOutput, _asiRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _altimeterRenderThread, _threadPriority, "AltimeterRenderThread", () => Settings.Default.EnableAltimeterOutput, _altimeterRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _aoaIndexerRenderThread, _threadPriority, "AOAIndexerRenderThread", () => Settings.Default.EnableAOAIndexerOutput, _aoaIndexerRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _aoaIndicatorRenderThread, _threadPriority, "AOAIndicatorRenderThread", () => Settings.Default.EnableAOAIndicatorOutput, _aoaIndicatorRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _cautionPanelRenderThread, _threadPriority, "CautionPanelRenderThread", () => Settings.Default.EnableCautionPanelOutput, _cautionPanelRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _cmdsPanelRenderThread, _threadPriority, "CMDSPanelRenderThread", () => Settings.Default.EnableCMDSOutput, _cmdsPanelRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _compassRenderThread, _threadPriority, "CompassRenderThread", () => Settings.Default.EnableCompassOutput, _compassRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _dedRenderThread, _threadPriority, "DEDRenderThread", () => Settings.Default.EnableDEDOutput, _dedRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _pflRenderThread, _threadPriority, "PFLRenderThread", () => Settings.Default.EnablePFLOutput, _pflRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _epuFuelRenderThread, _threadPriority, "EPUFuelRenderThread", () => Settings.Default.EnableEPUFuelOutput, _epuFuelRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _accelerometerRenderThread, _threadPriority, "AccelerometerRenderThread", () => Settings.Default.EnableAccelerometerOutput, _accelerometerRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _ftit1RenderThread, _threadPriority, "FTIT1RenderThread", () => Settings.Default.EnableFTIT1Output, _ftit1RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _ftit2RenderThread, _threadPriority, "FTIT2RenderThread", () => Settings.Default.EnableFTIT2Output, _ftit2RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _fuelFlowRenderThread, _threadPriority, "FuelFlowRenderThread", () => Settings.Default.EnableFuelFlowOutput, _fuelFlowRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _isisRenderThread, _threadPriority, "ISISRenderThread", () => Settings.Default.EnableISISOutput, _isisRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _fuelQuantityRenderThread, _threadPriority, "FuelQuantityRenderThread", () => Settings.Default.EnableFuelQuantityOutput, _fuelQuantityRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _hsiRenderThread, _threadPriority, "HSIRenderThread", () => Settings.Default.EnableHSIOutput, _hsiRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _ehsiRenderThread, _threadPriority, "EHSIRenderThread", () => Settings.Default.EnableEHSIOutput, _ehsiRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _landingGearLightsRenderThread, _threadPriority, "LandingGearLightsRenderThread", () => Settings.Default.EnableGearLightsOutput, _landingGearLightsRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _nwsIndexerRenderThread, _threadPriority, "NWSIndexerRenderThread", () => Settings.Default.EnableNWSIndexerOutput, _nwsIndexerRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _nozPos1RenderThread, _threadPriority, "NOZ1RenderThread", () => Settings.Default.EnableNOZ1Output, _nozPos1RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _nozPos2RenderThread, _threadPriority, "NOZ2RenderThread", () => Settings.Default.EnableNOZ2Output, _nozPos2RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _oilGauge1RenderThread, _threadPriority, "OIL1RenderThread", () => Settings.Default.EnableOIL1Output, _oilGauge1RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _oilGauge2RenderThread, _threadPriority, "OIL2RenderThread", () => Settings.Default.EnableOIL2Output, _oilGauge2RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _rwrRenderThread, _threadPriority, "RWRRenderThread", () => Settings.Default.EnableRWROutput, _rwrRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _speedbrakeRenderThread, _threadPriority, "SpeedbrakeRenderThread", () => Settings.Default.EnableSpeedbrakeOutput, _speedbrakeRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _rpm1RenderThread, _threadPriority, "RPM1RenderThread", () => Settings.Default.EnableRPM1Output, _rpm1RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _rpm2RenderThread, _threadPriority, "RPM2RenderThread", () => Settings.Default.EnableRPM2Output, _rpm2RenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _vviRenderThread, _threadPriority, "VVIRenderThread", () => Settings.Default.EnableVVIOutput, _vviRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _hydARenderThread, _threadPriority, "HYDARenderThread", () => Settings.Default.EnableHYDAOutput, _hydARenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _hydBRenderThread, _threadPriority, "HYDBRenderThread", () => Settings.Default.EnableHYDBOutput, _hydBRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _cabinPressRenderThread, _threadPriority, "CabinPressRenderThread", () => Settings.Default.EnableCabinPressOutput, _cabinPressRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _rollTrimRenderThread, _threadPriority, "RollTrimRenderThread", () => Settings.Default.EnableRollTrimOutput, _rollTrimRenderThreadWorkHelper.DoWork);
+            _renderThreadSetupHelper.SetupThread(ref _pitchTrimRenderThread, _threadPriority, "PitchTrimRenderThread", () => Settings.Default.EnablePitchTrimOutput, _pitchTrimRenderThreadWorkHelper.DoWork);
 
         }
 
@@ -10249,789 +10317,6 @@ namespace MFDExtractor
             return stateIsStaleOrChanged;
         }
 
-        private void ASIRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _asiRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _asiRenderer,
-                        _asiForm,
-                        Settings.Default.ASI_RotateFlipType,
-                        Settings.Default.ASI_Monochrome);
-                    _asiRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void HYDARenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _hydARenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _hydARenderer,
-                        _hydAForm,
-                        Settings.Default.HYDA_RotateFlipType,
-                        Settings.Default.HYDA_Monochrome);
-                    _hydARenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void HYDBRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _hydBRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _hydBRenderer,
-                        _hydBForm,
-                        Settings.Default.HYDB_RotateFlipType,
-                        Settings.Default.HYDB_Monochrome);
-                    _hydBRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void CabinPressRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _cabinPressRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _cabinPressRenderer,
-                        _cabinPressForm,
-                        Settings.Default.CabinPress_RotateFlipType,
-                        Settings.Default.CabinPress_Monochrome);
-                    _cabinPressRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-
-        private void RollTrimRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _rollTrimRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _rollTrimRenderer,
-                        _rollTrimForm,
-                        Settings.Default.RollTrim_RotateFlipType,
-                        Settings.Default.RollTrim_Monochrome);
-                    _rollTrimRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void PitchTrimRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _pitchTrimRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _pitchTrimRenderer,
-                        _pitchTrimForm,
-                        Settings.Default.PitchTrim_RotateFlipType,
-                        Settings.Default.PitchTrim_Monochrome);
-                    _pitchTrimRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void AltimeterRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _altimeterRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _altimeterRenderer,
-                        _altimeterForm,
-                        Settings.Default.Altimeter_RotateFlipType,
-                        Settings.Default.Altimeter_Monochrome);
-                    _altimeterRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void AOAIndexerRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _aoaIndexerRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _aoaIndexerRenderer,
-                        _aoaIndexerForm,
-                        Settings.Default.AOAIndexer_RotateFlipType,
-                        Settings.Default.AOAIndexer_Monochrome);
-                    _aoaIndexerRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void AOAIndicatorRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _aoaIndicatorRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _aoaIndicatorRenderer,
-                        _aoaIndicatorForm,
-                        Settings.Default.AOAIndicator_RotateFlipType,
-                        Settings.Default.AOAIndicator_Monochrome);
-                    _aoaIndicatorRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void CautionPanelRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _cautionPanelRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _cautionPanelRenderer,
-                        _cautionPanelForm,
-                        Settings.Default.CautionPanel_RotateFlipType,
-                        Settings.Default.CautionPanel_Monochrome);
-                    _cautionPanelRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void CMDSPanelRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _cmdsPanelRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _cmdsPanelRenderer,
-                        _cmdsPanelForm,
-                        Settings.Default.CMDS_RotateFlipType,
-                        Settings.Default.CMDS_Monochrome);
-                    _cmdsPanelRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void CompassRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _compassRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _compassRenderer,
-                        _compassForm,
-                        Settings.Default.Compass_RotateFlipType,
-                        Settings.Default.Compass_Monochrome);
-                    _compassRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void DEDRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _dedRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _dedRenderer,
-                        _dedForm,
-                        Settings.Default.DED_RotateFlipType,
-                        Settings.Default.DED_Monochrome);
-                    _dedRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void PFLRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _pflRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _pflRenderer,
-                        _pflForm,
-                        Settings.Default.PFL_RotateFlipType,
-                        Settings.Default.PFL_Monochrome);
-                    _pflRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void EPUFuelRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _epuFuelRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _epuFuelRenderer,
-                        _epuFuelForm,
-                        Settings.Default.EPUFuel_RotateFlipType,
-                        Settings.Default.EPUFuel_Monochrome);
-                    _epuFuelRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void AccelerometerRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _accelerometerRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _accelerometerRenderer,
-                        _accelerometerForm,
-                        Settings.Default.Accelerometer_RotateFlipType,
-                        Settings.Default.Accelerometer_Monochrome);
-                    _accelerometerRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void FTIT1RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _ftit1RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _ftit1Renderer,
-                        _ftit1Form,
-                        Settings.Default.FTIT1_RotateFlipType,
-                        Settings.Default.FTIT1_Monochrome);
-                    _ftit1RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void FTIT2RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _ftit2RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _ftit2Renderer,
-                        _ftit2Form,
-                        Settings.Default.FTIT2_RotateFlipType,
-                        Settings.Default.FTIT2_Monochrome);
-                    _ftit2RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void FuelFlowRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _fuelFlowRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _fuelFlowRenderer,
-                        _fuelFlowForm,
-                        Settings.Default.FuelFlow_RotateFlipType,
-                        Settings.Default.FuelFlow_Monochrome);
-                    _fuelFlowRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void ISISRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _isisRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _isisRenderer,
-                        _isisForm,
-                        Settings.Default.ISIS_RotateFlipType,
-                        Settings.Default.ISIS_Monochrome);
-                    _isisRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void FuelQuantityRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _fuelQuantityRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _fuelQuantityRenderer,
-                        _fuelQuantityForm,
-                        Settings.Default.FuelQuantity_RotateFlipType,
-                        Settings.Default.FuelQuantity_Monochrome);
-                    _fuelQuantityRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void HSIRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _hsiRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _hsiRenderer,
-                        _hsiForm,
-                        Settings.Default.HSI_RotateFlipType,
-                        Settings.Default.HSI_Monochrome);
-                    _hsiRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void EHSIRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _ehsiRenderStart.WaitOne();
-
-                    RenderInstrumentImage(
-                        _ehsiRenderer,
-                        _ehsiForm,
-                        Settings.Default.EHSI_RotateFlipType,
-                        Settings.Default.EHSI_Monochrome);
-                    _ehsiRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void LandingGearLightsRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _landingGearLightsRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _landingGearLightsRenderer,
-                        _landingGearLightsForm,
-                        Settings.Default.GearLights_RotateFlipType,
-                        Settings.Default.GearLights_Monochrome);
-                    _landingGearLightsRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void NWSIndexerRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _nwsIndexerRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _nwsIndexerRenderer,
-                        _nwsIndexerForm,
-                        Settings.Default.NWSIndexer_RotateFlipType,
-                        Settings.Default.NWSIndexer_Monochrome);
-                    _nwsIndexerRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void NOZPos1RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _nozPos1RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _nozPos1Renderer,
-                        _nozPos1Form,
-                        Settings.Default.NOZ1_RotateFlipType,
-                        Settings.Default.NOZ1_Monochrome);
-                    _nozPos1RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void NOZPos2RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _nozPos2RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _nozPos2Renderer,
-                        _nozPos2Form,
-                        Settings.Default.NOZ2_RotateFlipType,
-                        Settings.Default.NOZ2_Monochrome);
-                    _nozPos2RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void OilGauge1RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _oilGauge1RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _oilGauge1Renderer,
-                        _oilGauge1Form,
-                        Settings.Default.OIL1_RotateFlipType,
-                        Settings.Default.OIL1_Monochrome);
-                    _oilGauge1RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void OilGauge2RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _oilGauge2RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _oilGauge2Renderer,
-                        _oilGauge2Form,
-                        Settings.Default.OIL2_RotateFlipType,
-                        Settings.Default.OIL2_Monochrome);
-                    _oilGauge2RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void RWRRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _rwrRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _rwrRenderer,
-                        _rwrForm,
-                        Settings.Default.RWR_RotateFlipType,
-                        Settings.Default.RWR_Monochrome);
-                    _rwrRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void SpeedbrakeRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _speedbrakeRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _speedbrakeRenderer,
-                        _speedbrakeForm,
-                        Settings.Default.Speedbrake_RotateFlipType,
-                        Settings.Default.Speedbrake_Monochrome);
-                    _speedbrakeRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void RPM1RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _rpm1RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _rpm1Renderer,
-                        _rpm1Form,
-                        Settings.Default.RPM1_RotateFlipType,
-                        Settings.Default.RPM1_Monochrome);
-                    _rpm1RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void RPM2RenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _rpm2RenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _rpm2Renderer,
-                        _rpm2Form,
-                        Settings.Default.RPM2_RotateFlipType,
-                        Settings.Default.RPM2_Monochrome);
-                    _rpm2RenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void VVIRenderThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _vviRenderStart.WaitOne();
-                    RenderInstrumentImage(
-                        _vviRenderer,
-                        _vviForm,
-                        Settings.Default.VVI_RotateFlipType,
-                        Settings.Default.VVI_Monochrome);
-                    _vviRenderEnd.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
 
         private void RenderInstrumentImage(IInstrumentRenderer renderer, InstrumentForm targetForm,
                                            RotateFlipType rotation, bool monochrome)
