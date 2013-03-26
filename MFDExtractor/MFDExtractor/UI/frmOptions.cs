@@ -15,6 +15,7 @@ using MFDExtractor.Properties;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using log4net;
+using Common.Networking;
 
 namespace MFDExtractor.UI
 {

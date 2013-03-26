@@ -30,6 +30,7 @@ using log4net;
 using Constants = Common.Math.Constants;
 using Message = MFDExtractor.Message;
 using Util = Common.Imaging.Util;
+using Common.Networking;
 
 namespace MFDExtractor
 {

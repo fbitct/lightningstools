@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using Common.Networking;
 using MFDExtractor.Properties;
 using Microsoft.DirectX.DirectInput;
 using log4net;

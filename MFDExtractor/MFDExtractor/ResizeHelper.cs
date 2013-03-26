@@ -27,7 +27,7 @@ namespace MFDExtractor
         #region IMessageFilter Members
 
         //[System.Diagnostics.DebuggerHidden()]
-        bool IMessageFilter.PreFilterMessage(ref Message m)
+        bool IMessageFilter.PreFilterMessage(ref System.Windows.Forms.Message message)
         {
             if (!_TheWindow.IsDisposed && _TheWindow.Visible && 0 == _TheWindow.OwnedForms.Length)
             {
@@ -120,13 +120,13 @@ namespace MFDExtractor
                             }
                         }
 
-                        if (m.Msg == NativeMethods.WM.WM_MOUSEMOVE)
+                        if (message.Msg == NativeMethods.WM.WM_MOUSEMOVE)
                         {
                             // the cursor is already set, we have nothing to do
                             _TheWindow.Cursor = cursor;
                             return true; // The message is handled
                         }
-                        else if (m.Msg == NativeMethods.WM.WM_LBUTTONDOWN)
+                        else if (message.Msg == NativeMethods.WM.WM_LBUTTONDOWN)
                         {
                             // Start resizing
                             NativeMethods.ReleaseCapture();
