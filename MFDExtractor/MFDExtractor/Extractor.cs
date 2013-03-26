@@ -39,60 +39,22 @@ namespace MFDExtractor
         #region Instance Variables
 
         private const int MIN_RENDERER_PASS_TIME_MILLSECONDS = 0;
-                          //minimum time each instrument render should take per cycle before trying to run again (introduced for throttling purposes)
-
         private const int MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER = 0;
-                          //minimum time after each individual instrument render that should be waited 
-
         private static readonly ILog _log = LogManager.GetLogger(typeof (Extractor));
-
-        /// <summary>
-        ///     Reference to an instance of this class -- this reference is required so that we
-        ///     can implement the Singleton pattern, which allows only a single instance of this
-        ///     class to be created as an object, per app-domain
-        /// </summary>
         private static Extractor _extractor;
-
         private bool _disposed;
-
         private long _renderCycleNum;
 
-        #region MFD & HUD Output Screens
-
-        /// <summary>
-        ///     Screen on which to output the HUD
-        /// </summary>
         private Screen _hudOutputScreen;
-
-        /// <summary>
-        ///     Screen on which to output the Left MFD
-        /// </summary>
         private Screen _leftMfdOutputScreen;
-
-        /// <summary>
-        ///     Screen on which to output MFD #3
-        /// </summary>
         private Screen _mfd3OutputScreen;
-
-        /// <summary>
-        ///     Screen on which to output MFD #4
-        /// </summary>
         private Screen _mfd4OutputScreen;
-
-        /// <summary>
-        ///     Screen on which to output the Right MFD
-        /// </summary>
         private Screen _rightMfdOutputScreen;
 
-        #endregion
-
-        #region Instrument Forms
 
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms =
             new Dictionary<IInstrumentRenderer, InstrumentForm>();
-
         private InstrumentForm _accelerometerForm;
-
         private InstrumentForm _adiForm;
         private InstrumentForm _altimeterForm;
         private InstrumentForm _aoaIndexerForm;
@@ -111,33 +73,14 @@ namespace MFDExtractor
         private InstrumentForm _fuelFlowForm;
         private InstrumentForm _fuelQuantityForm;
         private InstrumentForm _hsiForm;
-
-        /// <summary>
-        ///     Form that will display the HUD data
-        /// </summary>
         private InstrumentForm _hudForm;
-
         private InstrumentForm _hydAForm;
         private InstrumentForm _hydBForm;
         private InstrumentForm _isisForm;
-
         private InstrumentForm _landingGearLightsForm;
-
-        /// <summary>
-        ///     Form that will display the Left MFD data
-        /// </summary>
         private InstrumentForm _leftMfdForm;
-
-        /// <summary>
-        ///     Form that will display MFD #3 data
-        /// </summary>
         private InstrumentForm _mfd3Form;
-
-        /// <summary>
-        ///     Form that will display MFD #4 data
-        /// </summary>
         private InstrumentForm _mfd4Form;
-
         private InstrumentForm _nozPos1Form;
         private InstrumentForm _nozPos2Form;
         private InstrumentForm _nwsIndexerForm;
@@ -145,23 +88,13 @@ namespace MFDExtractor
         private InstrumentForm _oilGauge2Form;
         private InstrumentForm _pflForm;
         private InstrumentForm _pitchTrimForm;
-
-        /// <summary>
-        ///     Form that will display the Right MFD data
-        /// </summary>
         private InstrumentForm _rightMfdForm;
-
         private InstrumentForm _rollTrimForm;
-
         private InstrumentForm _rpm1Form;
         private InstrumentForm _rpm2Form;
         private InstrumentForm _rwrForm;
         private InstrumentForm _speedbrakeForm;
         private InstrumentForm _vviForm;
-
-        #endregion
-
-        #region Instrument Renderers
 
         private IInstrumentRenderer _accelerometerRenderer;
         private IInstrumentRenderer _adiRenderer;
@@ -200,132 +133,47 @@ namespace MFDExtractor
         private IInstrumentRenderer _speedbrakeRenderer;
         private IInstrumentRenderer _vviRenderer;
 
-        #endregion
-
 
         private GDIPlusOptions _gdiPlusOptions = new GDIPlusOptions();
 
 
-        #region Public Property Backing Fields
-
-        /// <summary>
-        ///     Reference to the application's main form (for supplying to DirectInput)
-        /// </summary>
         private Form _applicationForm;
-
-        /// <summary>
-        ///     Flag to trigger the Extractor engine's worker threads to keep running or stop
-        /// </summary>
         private volatile bool _keepRunning;
-
         private volatile bool _nightMode;
-
-        /// <summary>
-        ///     Flag to indicate if the Extractor engine is currently running
-        /// </summary>
         private volatile bool _running;
-
         private volatile bool _testMode;
-
-        /// <summary>
-        ///     3D-mode flag
-        /// </summary>
         private volatile bool _threeDeeMode;
-
-        /// <summary>
-        ///     2D-mode primary-view flag
-        /// </summary>
         private volatile bool _twoDeePrimaryView = true;
-
         private volatile bool _windowSizingOrMoving;
-
-        #endregion
 
         #region Capture Coordinates
 
         #region Primary 2D Mode Capture Coordinates
 
-        /// <summary>
-        ///     HUD 2D primary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _primaryHud2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Left MFD 2D primary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _primaryLeftMfd2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD 3 2D primary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _primaryMfd3_2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD 4 2D primary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _primaryMfd4_2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Right MFD 2D primary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _primaryRightMfd2DInputRect = new Rectangle(0, 0, 0, 0);
 
         #endregion
 
         #region Secondary 2D Mode Capture Coordinates
 
-        /// <summary>
-        ///     HUD 2D secondary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _secondaryHud2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Left MFD 2D secondary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _secondaryLeftMfd2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD #3 2D secondary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _secondaryMfd3_2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD #4 2D secondary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _secondaryMfd4_2DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Right MFD 2D secondary-view screen capture coordinates rectangle
-        /// </summary>
         private Rectangle _secondaryRightMfd2DInputRect = new Rectangle(0, 0, 0, 0);
 
         #endregion
 
         #region 3D Mode Image Source Coordinates
 
-        /// <summary>
-        ///     HUD 3D image coordinates rectangle (with respect to the entire textures shared memory image)
-        /// </summary>
         private Rectangle _hud3DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Left MFD 3D image coordinates rectangle (with respect to the entire textures shared memory image)
-        /// </summary>
         private Rectangle _leftMfd3DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD #3 3D image coordinates rectangle (with respect to the entire textures shared memory image)
-        /// </summary>
         private Rectangle _mfd3_3DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD #4 3D image coordinates rectangle (with respect to the entire textures shared memory image)
-        /// </summary>
         private Rectangle _mfd4_3DInputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Right MFD 3D image coordinates rectangle (with respect to the entire textures shared memory image)
-        /// </summary>
         private Rectangle _rightMfd3DInputRect = new Rectangle(0, 0, 0, 0);
 
         #endregion
@@ -334,193 +182,64 @@ namespace MFDExtractor
 
         #region Output Window Coordinates
 
-        /// <summary>
-        ///     Flag to indicate whether the sim is running
-        /// </summary>
         public static bool _simRunning = false;
-
         private readonly object _texSmReaderLock = new object();
-
-        /// <summary>
-        ///     Reference to a Reader object that can read values from Falcon's basic (non-textures) shared
-        ///     memory area.  This is used to detect whether Falcon is running and to provide flight data to rendered instruments
-        /// </summary>
         private Reader _falconSmReader;
-
         private FlightData _flightData;
-
-        /// <summary>
-        ///     HUD output form's screen position coordinates and size (specified as a Rectangle)
-        /// </summary>
         private Rectangle _hudOutputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Left MFD output form's screen position coordinates and size (specified as a Rectangle)
-        /// </summary>
         private Rectangle _leftMfdOutputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD #3 output form's screen position coordinates and size (specified as a Rectangle)
-        /// </summary>
         private Rectangle _mfd3_OutputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     MFD #4 output form's screen position coordinates and size (specified as a Rectangle)
-        /// </summary>
         private Rectangle _mfd4_OutputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Right MFD output form's screen position coordinates and size (specified as a Rectangle)
-        /// </summary>
         private Rectangle _rightMfdOutputRect = new Rectangle(0, 0, 0, 0);
-
-        /// <summary>
-        ///     Flag to indicate whether BMS's 3D textures shared memory area is available and has data
-        /// </summary>
         private bool _sim3DDataAvailable;
-
-        /// <summary>
-        ///     Flag to indicate if the Extractor engine is running in Test Mode
-        /// </summary>
 
         #endregion
 
         #region Falcon 4 Sharedmem Readers & status flags
         private TerrainBrowser _terrainBrowser = new TerrainBrowser(false);
 
-        /// <summary>
-        ///     Reference to a Reader object that can read images from BMS's "textures shared memory"
-        ///     area -- this reference is used to perform the actual 3D-mode image extraction
-        /// </summary>
         private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
-
-        /// <summary>
-        ///     Reference to a Reader object that can read images from BMS's "textures shared memory" area
-        ///     -- this reference is used to detect whether the 3D-mode shared
-        ///     memory images actually exist or not (can be recreated at certain
-        ///     intervals without affecting code using the other reference)
-        /// </summary>
         private F4TexSharedMem.Reader _texSmStatusReader = new F4TexSharedMem.Reader();
-
         private bool _useBMSAdvancedSharedmemValues;
-
         #endregion
 
         #region Blank Images
 
-        /// <summary>
-        ///     Reference to a bitmap to display when the HUD image data is not available
-        /// </summary>
         private readonly Image _hudBlankImage = Util.CloneBitmap(Resources.hudBlankImage);
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the Left MFD image data is not available
-        /// </summary>
         private readonly Image _leftMfdBlankImage = Util.CloneBitmap(Resources.leftMFDBlankImage);
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the MFD #3 image data is not available
-        /// </summary>
         private readonly Image _mfd3BlankImage = Util.CloneBitmap(Resources.leftMFDBlankImage); //TODO: change to MFD3
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the MFD #4 image data is not available
-        /// </summary>
         private readonly Image _mfd4BlankImage = Util.CloneBitmap(Resources.rightMFDBlankImage); //TODO: change to MFD4
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the Right MFD image data is not available
-        /// </summary>
         private readonly Image _rightMfdBlankImage = Util.CloneBitmap(Resources.rightMFDBlankImage);
 
         #endregion
 
         #region Test/Alignment Images
 
-        /// <summary>
-        ///     Reference to a bitmap to display when the HUD is in test/alignment mode
-        /// </summary>
         private readonly Image _hudTestAlignmentImage = Util.CloneBitmap(Resources.hudTestAlignmentImage);
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the Left MFD is in test/alignment mode
-        /// </summary>
         private readonly Image _leftMfdTestAlignmentImage = Util.CloneBitmap(Resources.leftMFDTestAlignmentImage);
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the MFD #3 is in test/alignment mode
-        /// </summary>
         private readonly Image _mfd3TestAlignmentImage = Util.CloneBitmap(Resources.leftMFDTestAlignmentImage);
-                               //TODO: change to MFD3
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the MFD #4 is in test/alignment mode
-        /// </summary>
         private readonly Image _mfd4TestAlignmentImage = Util.CloneBitmap(Resources.leftMFDTestAlignmentImage);
-                               //TODO: change to MFD4
-
-        /// <summary>
-        ///     Reference to a bitmap to display when the Right MFD is in test/alignment mode
-        /// </summary>
         private readonly Image _rightMfdTestAlignmentImage = Util.CloneBitmap(Resources.rightMFDTestAlignmentImage);
 
         #endregion
 
         #region Network Configuration
 
-        /// <summary>
-        ///     Service name to use for this instance of the Extractor engine, if running in Server mode
-        /// </summary>
         private const string _serviceName = "MFDExtractorService";
-
-        /// <summary>
-        ///     Reference to a Client object that can read data from a networked Extractor engine running
-        ///     in Server mode
-        /// </summary>
         private ExtractorClient _client;
-
         private string _compressionType = "None";
         private string _imageFormat = "PNG";
-
-        /// <summary>
-        ///     Setting that indicates which networking mode this instance of the Extractor is configured to
-        ///     operate under (server, client, stand-alone)
-        /// </summary>
         private NetworkMode _networkMode = NetworkMode.Standalone;
-
-        /// <summary>
-        ///     Endpoint address (IP address/port number/service name) of an Extractor engine
-        ///     running in Server mode
-        /// </summary>
         private IPEndPoint _serverEndpoint;
 
         #endregion
 
         #region Public Events
 
-        /// <summary>
-        ///     Event declaration for the DataChanged event
-        /// </summary>
         public event EventHandler DataChanged;
-
-        /// <summary>
-        ///     Event declaration for the Started event
-        /// </summary>
         public event EventHandler Started;
-
-        /// <summary>
-        ///     Event declaration for the Stopping event
-        /// </summary>
         public event EventHandler Stopping;
-
-        /// <summary>
-        ///     Event declaration for the Stopped event
-        /// </summary>
         public event EventHandler Stopped;
-
-        /// <summary>
-        ///     Event declaration for the Starting event
-        /// </summary>
         public event EventHandler Starting;
 
         #endregion
@@ -642,9 +361,6 @@ namespace MFDExtractor
         private Thread _backupAdiRenderThread;
         private Thread _cabinPressRenderThread;
 
-        /// <summary>
-        ///     Referencce to the thread that is responsible for orchestrating the image capture sequence
-        /// </summary>
         private Thread _captureOrchestrationThread;
 
         private Thread _cautionPanelRenderThread;
@@ -695,16 +411,8 @@ namespace MFDExtractor
         private volatile bool _settingsLoadScheduled;
         private volatile bool _settingsSaveScheduled;
 
-        /// <summary>
-        ///     Reference to the sim-is-running status monitor thread
-        /// </summary>
         private Thread _simStatusMonitorThread;
-
         private Thread _speedbrakeRenderThread;
-
-        /// <summary>
-        ///     Thread priority at which the Extractor worker threads should run
-        /// </summary>
         private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
 
         private Thread _vviRenderThread;
@@ -717,15 +425,8 @@ namespace MFDExtractor
 
         #region Constructors
 
-        /// <summary>
-        ///     Default constructor.  Private modifier hides this constructor, preventing instances
-        ///     of this class from being created arbitrarily.  User code must call the appropriate
-        ///     Factory method (i.e. the .GetInstance() method ) to obtain an object reference.
-        /// </summary>
         private Extractor()
         {
-            //load user settings when an instance of the Extractor engine is created by
-            //one of the Factory methods
             LoadSettings();
             _mediatorEventHandler = Mediator_PhysicalControlStateChanged;
             if (!Settings.Default.DisableDirectInputMediator)
@@ -2224,9 +1925,6 @@ namespace MFDExtractor
             return _extractor;
         }
 
-        /// <summary>
-        ///     Reads the user settings file from disk or the current in-memory user settings cache
-        /// </summary>
         public void LoadSettings()
         {
             Settings settings = Settings.Default;
@@ -2309,47 +2007,29 @@ namespace MFDExtractor
 
         #region Public Properties
 
-        /// <summary>
-        ///     Gets/sets a reference to the application's main form (if there is one) -- required for DirectInput event notifications
-        /// </summary>
         public Form ApplicationForm
         {
             get { return _applicationForm; }
             set { _applicationForm = value; }
         }
 
-        /// <summary>
-        ///     The IP Address of the Server that the Extractor should connect to when running in Client mode
-        /// </summary>
         public IPEndPoint ServerEndpoint
         {
             get { return _serverEndpoint; }
             set { _serverEndpoint = value; }
         }
 
-        /// <summary>
-        ///     A value from the <see cref="NetworkMode" /> enumeration, indicating which network mode the Extractor should run as
-        /// </summary>
         public NetworkMode NetworkMode
         {
             get { return _networkMode; }
             set { _networkMode = value; }
         }
 
-        /// <summary>
-        ///     Indicates whether the Extractor is currently running
-        /// </summary>
         public bool Running
         {
             get { return _running; }
         }
 
-        /// <summary>
-        ///     When read from, this proeprty indicates whether the Extractor is in Test mode; when written to, this property causes the Extrctor to enter Test mode (if
-        ///     <see
-        ///         langword="true" />
-        ///     ), or to exit test mode (if <see langword="false" />)
-        /// </summary>
         public bool TestMode
         {
             get { return _testMode; }
@@ -2360,33 +2040,18 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Controls whether the Extractor (in 2D cockpit extraction mode) uses the primary 2D view capture coordinates or the secondary 2D view capture coordinates
-        /// </summary>
         public bool TwoDeePrimaryView
         {
             get { return _twoDeePrimaryView; }
             set { _twoDeePrimaryView = value; }
         }
 
-        /// <summary>
-        ///     When read from, this proeprty indicates whether the Extractor is in 3D cockpit extraction mode; when written to, this property causes the Extrctor to enter 3D cockpit extraction mode (if
-        ///     <see
-        ///         langword="true" />
-        ///     ), or to exit 3D cockpit extraction mode [switching back to 2D cockpit extraction mode] (if
-        ///     <see
-        ///         langword="false" />
-        ///     )
-        /// </summary>
         public bool ThreeDeeMode
         {
             get { return _threeDeeMode; }
             set { _threeDeeMode = value; }
         }
 
-        /// <summary>
-        ///     Get/sets Night Vision Mode
-        /// </summary>
         public bool NightMode
         {
             get { return _nightMode; }
@@ -2419,9 +2084,6 @@ namespace MFDExtractor
             _log.DebugFormat("Time elapsed setting up networking: {0}", elapsed.TotalMilliseconds);
         }
 
-        /// <summary>
-        ///     Establishes a .NET Remoting-based connection to a remote MFD Extractor server
-        /// </summary>
         private void SetupNetworkingClient()
         {
             try
@@ -2434,17 +2096,11 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Opens a .NET Remoting-based network server channel that remote clients can connect to
-        /// </summary>
         private void SetupNetworkingServer()
         {
             ExtractorServer.CreateService(_serviceName, _serverEndpoint.Port, _compressionType, _imageFormat);
         }
 
-        /// <summary>
-        ///     Closes the .NET Remoting image server channel
-        /// </summary>
         private void TearDownImageServer()
         {
             ExtractorServer.TearDownService(_serverEndpoint.Port);
@@ -2464,10 +2120,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Makes an image representing the current MFD #4 display available to remote (networked) clients
-        /// </summary>
-        /// <param name="image">a Bitmap representing the current contents of MFD #4</param>
         private void SendMfd4Image(Image image)
         {
             if (_networkMode == NetworkMode.Server)
@@ -2476,10 +2128,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Makes an image representing the current MFD #3 display available to remote (networked) clients
-        /// </summary>
-        /// <param name="image">a Bitmap representing the current contents of MFD #3</param>
         private void SendMfd3Image(Image image)
         {
             if (_networkMode == NetworkMode.Server)
@@ -2488,10 +2136,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Makes an image representing the current Left MFD display available to remote (networked) clients
-        /// </summary>
-        /// <param name="image">a Bitmap representing the current contents of the Left MFD</param>
         private void SendLeftMfdImage(Image image)
         {
             if (_networkMode == NetworkMode.Server)
@@ -2500,10 +2144,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Makes an image representing the current Right MFD display available to remote (networked) clients
-        /// </summary>
-        /// <param name="image">a Bitmap representing the current contents of the Right MFD</param>
         private void SendRightMfdImage(Image image)
         {
             if (_networkMode == NetworkMode.Server)
@@ -2512,10 +2152,6 @@ namespace MFDExtractor
             }
         }
 
-        /// <summary>
-        ///     Makes an image representing the current HUD display available to remote (networked) clients
-        /// </summary>
-        /// <param name="image">a Bitmap representing the current contents of the HUD</param>
         private void SendHudImage(Image image)
         {
             if (_networkMode == NetworkMode.Server)
@@ -2542,10 +2178,6 @@ namespace MFDExtractor
             return retrieved;
         }
 
-        /// <summary>
-        ///     Reads the current MFD #4 image from the remote (networked) images server
-        /// </summary>
-        /// <returns>a Bitmap representing the currently-available MFD #4 image</returns>
         private Image ReadMfd4FromNetwork()
         {
             Image retrieved = null;
@@ -2560,10 +2192,6 @@ namespace MFDExtractor
             return retrieved;
         }
 
-        /// <summary>
-        ///     Reads the current MFD #3 image from the remote (networked) images server
-        /// </summary>
-        /// <returns>a Bitmap representing the currently-available MFD #3 image</returns>
         private Image ReadMfd3FromNetwork()
         {
             Image retrieved = null;
@@ -2578,10 +2206,6 @@ namespace MFDExtractor
             return retrieved;
         }
 
-        /// <summary>
-        ///     Reads the current Left MFD image from the remote (networked) images server
-        /// </summary>
-        /// <returns>a Bitmap representing the currently-available Left MFD image</returns>
         private Image ReadLeftMfdFromNetwork()
         {
             Image retrieved = null;
@@ -2596,10 +2220,6 @@ namespace MFDExtractor
             return retrieved;
         }
 
-        /// <summary>
-        ///     Reads the current Right MFD image from the remote (networked) images server
-        /// </summary>
-        /// <returns>a Bitmap representing the currently-available Right MFD image</returns>
         private Image ReadRightMfdFromNetwork()
         {
             Image retrieved = null;
@@ -2614,10 +2234,6 @@ namespace MFDExtractor
             return retrieved;
         }
 
-        /// <summary>
-        ///     Reads the current HUD image from the remote (networked) images server
-        /// </summary>
-        /// <returns>a Bitmap representing the currently-available HUD image</returns>
         private Image ReadHudFromNetwork()
         {
             Image retrieved = null;
