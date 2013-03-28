@@ -408,8 +408,8 @@ namespace MFDExtractor
         private Thread _rpm1RenderThread;
         private Thread _rpm2RenderThread;
         private Thread _rwrRenderThread;
-        private volatile bool _settingsLoadScheduled;
-        private volatile bool _settingsSaveScheduled;
+        public bool SettingsLoadScheduled { get; internal set; }
+        public bool SettingsSaveScheduled { get; internal set; }
 
         private Thread _simStatusMonitorThread;
         private Thread _speedbrakeRenderThread;
@@ -2231,7 +2231,7 @@ namespace MFDExtractor
         {
             if (_settingsLoaderAsyncWorker.IsBusy)
             {
-                _settingsLoadScheduled = true;
+                SettingsLoadScheduled = true;
             }
             else
             {
@@ -2243,7 +2243,7 @@ namespace MFDExtractor
         {
             if (_settingsSaverAsyncWorker.IsBusy)
             {
-                _settingsSaveScheduled = true;
+                SettingsSaveScheduled = true;
             }
             else
             {
@@ -2254,13 +2254,13 @@ namespace MFDExtractor
         private void _settingsLoaderAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             LoadSettings();
-            _settingsLoadScheduled = false;
+            SettingsLoadScheduled = false;
         }
 
         private void _settingsSaverAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             Settings.Default.Save();
-            _settingsSaveScheduled = false;
+            SettingsSaveScheduled = false;
         }
 
         #endregion
@@ -3713,7 +3713,21 @@ namespace MFDExtractor
                 {
                     graphics.DrawImage(_mfd4BlankImage, _mfd4Form.ClientRectangle);
                 }
-                _mfd4Form.DataChanged += _mfd4Form_DataChanged;
+                _mfd4Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _mfd4Form,
+                                                                                this,
+                                                                                x => Settings.Default.MFD4_OutputDisplay = x,
+                                                                                x => Settings.Default.MFD4_StretchToFit = x,
+                                                                                x => Settings.Default.MFD4_OutULX = x,
+                                                                                x => Settings.Default.MFD4_OutULY = x,
+                                                                                x => Settings.Default.MFD4_OutLRX = x,
+                                                                                x => Settings.Default.MFD4_OutLRY = x,
+                                                                                x => Settings.Default.EnableMfd4Output = x,
+                                                                                x => Settings.Default.MFD4_RotateFlipType = x,
+                                                                                x => Settings.Default.MFD4_AlwaysOnTop = x,
+                                                                                x => Settings.Default.MFD4_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _mfd4Form.Disposed += _mfd4Form_Disposed;
             }
         }
@@ -3751,7 +3765,21 @@ namespace MFDExtractor
                 {
                     graphics.DrawImage(_mfd3BlankImage, _mfd3Form.ClientRectangle);
                 }
-                _mfd3Form.DataChanged += _mfd3Form_DataChanged;
+                _mfd3Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _mfd3Form,
+                                                                                this,
+                                                                                x => Settings.Default.MFD3_OutputDisplay = x,
+                                                                                x => Settings.Default.MFD3_StretchToFit = x,
+                                                                                x => Settings.Default.MFD3_OutULX = x,
+                                                                                x => Settings.Default.MFD3_OutULY = x,
+                                                                                x => Settings.Default.MFD3_OutLRX = x,
+                                                                                x => Settings.Default.MFD3_OutLRY = x,
+                                                                                x => Settings.Default.EnableMfd3Output = x,
+                                                                                x => Settings.Default.MFD3_RotateFlipType = x,
+                                                                                x => Settings.Default.MFD3_AlwaysOnTop = x,
+                                                                                x => Settings.Default.MFD3_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _mfd3Form.Disposed += _mfd3Form_Disposed;
             }
         }
@@ -3789,7 +3817,21 @@ namespace MFDExtractor
                 {
                     graphics.DrawImage(_leftMfdBlankImage, _leftMfdForm.ClientRectangle);
                 }
-                _leftMfdForm.DataChanged += _leftMfdForm_DataChanged;
+                _leftMfdForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _leftMfdForm,
+                                                                                this,
+                                                                                x => Settings.Default.LMFD_OutputDisplay = x,
+                                                                                x => Settings.Default.LMFD_StretchToFit = x,
+                                                                                x => Settings.Default.LMFD_OutULX = x,
+                                                                                x => Settings.Default.LMFD_OutULY = x,
+                                                                                x => Settings.Default.LMFD_OutLRX = x,
+                                                                                x => Settings.Default.LMFD_OutLRY = x,
+                                                                                x => Settings.Default.EnableLeftMFDOutput = x,
+                                                                                x => Settings.Default.LMFD_RotateFlipType = x,
+                                                                                x => Settings.Default.LMFD_AlwaysOnTop = x,
+                                                                                x => Settings.Default.LMFD_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _leftMfdForm.Disposed += _leftMfdForm_Disposed;
             }
         }
@@ -3827,7 +3869,21 @@ namespace MFDExtractor
                 {
                     graphics.DrawImage(_rightMfdBlankImage, _rightMfdForm.ClientRectangle);
                 }
-                _rightMfdForm.DataChanged += _rightMfdForm_DataChanged;
+                _rightMfdForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _rightMfdForm,
+                                                                                this,
+                                                                                x => Settings.Default.RMFD_OutputDisplay = x,
+                                                                                x => Settings.Default.RMFD_StretchToFit = x,
+                                                                                x => Settings.Default.RMFD_OutULX = x,
+                                                                                x => Settings.Default.RMFD_OutULY = x,
+                                                                                x => Settings.Default.RMFD_OutLRX = x,
+                                                                                x => Settings.Default.RMFD_OutLRY = x,
+                                                                                x => Settings.Default.EnableRightMFDOutput = x,
+                                                                                x => Settings.Default.RMFD_RotateFlipType = x,
+                                                                                x => Settings.Default.RMFD_AlwaysOnTop = x,
+                                                                                x => Settings.Default.RMFD_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _rightMfdForm.Disposed += _rightMfdForm_Disposed;
             }
         }
@@ -3865,7 +3921,21 @@ namespace MFDExtractor
                 {
                     graphics.DrawImage(_hudBlankImage, _hudForm.ClientRectangle);
                 }
-                _hudForm.DataChanged += _hudForm_DataChanged;
+                _hudForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _hudForm,
+                                                                                this,
+                                                                                x => Settings.Default.HUD_OutputDisplay = x,
+                                                                                x => Settings.Default.HUD_StretchToFit = x,
+                                                                                x => Settings.Default.HUD_OutULX = x,
+                                                                                x => Settings.Default.HUD_OutULY = x,
+                                                                                x => Settings.Default.HUD_OutLRX = x,
+                                                                                x => Settings.Default.HUD_OutLRY = x,
+                                                                                x => Settings.Default.EnableHudOutput = x,
+                                                                                x => Settings.Default.HUD_RotateFlipType = x,
+                                                                                x => Settings.Default.HudAlwaysOnTop = x,
+                                                                                x => Settings.Default.HUD_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _hudForm.Disposed += _hudForm_Disposed;
             }
         }
@@ -3904,7 +3974,21 @@ namespace MFDExtractor
                 _vviForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_vviForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _vviForm.DataChanged += _vviForm_DataChanged;
+                _vviForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _vviForm, 
+                                                                                this, 
+                                                                                x=>Settings.Default.VVI_OutputDisplay=x, 
+                                                                                x=>Settings.Default.VVI_StretchToFit=x, 
+                                                                                x=>Settings.Default.VVI_OutULX=x, 
+                                                                                x=>Settings.Default.VVI_OutULY=x, 
+                                                                                x=>Settings.Default.VVI_OutLRX=x, 
+                                                                                x=>Settings.Default.VVI_OutLRY=x, 
+                                                                                x=>Settings.Default.EnableVVIOutput=x, 
+                                                                                x=>Settings.Default.VVI_RotateFlipType=x, 
+                                                                                x=>Settings.Default.VVI_AlwaysOnTop=x, 
+                                                                                x=>Settings.Default.VVI_Monochrome=x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _vviForm.Disposed += _vviForm_Disposed;
                 _outputForms.Add(_vviRenderer, _vviForm);
             }
@@ -3940,7 +4024,24 @@ namespace MFDExtractor
                 _rpm1Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_rpm1Form, _applicationForm, screen, location, size, true,
                                                              true);
-                _rpm1Form.DataChanged += _rpm1Form_DataChanged;
+                _rpm1Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _rpm1Form, 
+                                                                                this,
+                                                                                x => Settings.Default.RPM1_OutputDisplay = x,
+                                                                                x => Settings.Default.RPM1_StretchToFit = x,
+                                                                                x => Settings.Default.RPM1_OutULX = x,
+                                                                                x => Settings.Default.RPM1_OutULY = x,
+                                                                                x => Settings.Default.RPM1_OutLRX = x,
+                                                                                x => Settings.Default.RPM1_OutLRY = x,
+                                                                                x => Settings.Default.EnableRPM1Output = x,
+                                                                                x => Settings.Default.RPM1_RotateFlipType = x,
+                                                                                x => Settings.Default.RPM1_AlwaysOnTop = x,
+                                                                                x => Settings.Default.RPM1_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
+
+
+
                 _rpm1Form.Disposed += _rpm1Form_Disposed;
                 _outputForms.Add(_rpm1Renderer, _rpm1Form);
             }
@@ -3976,7 +4077,22 @@ namespace MFDExtractor
                 _rpm2Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_rpm2Form, _applicationForm, screen, location, size, true,
                                                              true);
-                _rpm2Form.DataChanged += _rpm2Form_DataChanged;
+                _rpm2Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _rpm2Form, 
+                                                                                this,
+                                                                                x => Settings.Default.RPM2_OutputDisplay = x,
+                                                                                x => Settings.Default.RPM2_StretchToFit = x,
+                                                                                x => Settings.Default.RPM2_OutULX = x,
+                                                                                x => Settings.Default.RPM2_OutULY = x,
+                                                                                x => Settings.Default.RPM2_OutLRX = x,
+                                                                                x => Settings.Default.RPM2_OutLRY = x,
+                                                                                x => Settings.Default.EnableRPM2Output = x,
+                                                                                x => Settings.Default.RPM2_RotateFlipType = x,
+                                                                                x => Settings.Default.RPM2_AlwaysOnTop = x,
+                                                                                x => Settings.Default.RPM2_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
+;
                 _rpm2Form.Disposed += _rpm2Form_Disposed;
                 _outputForms.Add(_rpm2Renderer, _rpm2Form);
             }
@@ -4012,7 +4128,22 @@ namespace MFDExtractor
                 _speedbrakeForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_speedbrakeForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _speedbrakeForm.DataChanged += _speedbrakeForm_DataChanged;
+                _speedbrakeForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _speedbrakeForm, 
+                                                                                this,
+                                                                                x => Settings.Default.Speedbrake_OutputDisplay = x,
+                                                                                x => Settings.Default.Speedbrake_StretchToFit = x,
+                                                                                x => Settings.Default.Speedbrake_OutULX = x,
+                                                                                x => Settings.Default.Speedbrake_OutULY = x,
+                                                                                x => Settings.Default.Speedbrake_OutLRX = x,
+                                                                                x => Settings.Default.Speedbrake_OutLRY = x,
+                                                                                x => Settings.Default.EnableSpeedbrakeOutput = x,
+                                                                                x => Settings.Default.Speedbrake_RotateFlipType = x,
+                                                                                x => Settings.Default.Speedbrake_AlwaysOnTop = x,
+                                                                                x => Settings.Default.Speedbrake_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
+;;
                 _speedbrakeForm.Disposed += _speedbrakeForm_Disposed;
                 _outputForms.Add(_speedbrakeRenderer, _speedbrakeForm);
             }
@@ -4048,7 +4179,21 @@ namespace MFDExtractor
                 _rwrForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_rwrForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _rwrForm.DataChanged += _rwrForm_DataChanged;
+                _rwrForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _rwrForm, 
+                                                                                this,
+                                                                                x => Settings.Default.RWR_OutputDisplay = x,
+                                                                                x => Settings.Default.RWR_StretchToFit = x,
+                                                                                x => Settings.Default.RWR_OutULX = x,
+                                                                                x => Settings.Default.RWR_OutULY = x,
+                                                                                x => Settings.Default.RWR_OutLRX = x,
+                                                                                x => Settings.Default.RWR_OutLRY = x,
+                                                                                x => Settings.Default.EnableRWROutput = x,
+                                                                                x => Settings.Default.RWR_RotateFlipType = x,
+                                                                                x => Settings.Default.RWR_AlwaysOnTop = x,
+                                                                                x => Settings.Default.RWR_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _rwrForm.Disposed += _rwrForm_Disposed;
                 _outputForms.Add(_rwrRenderer, _rwrForm);
             }
@@ -4084,7 +4229,21 @@ namespace MFDExtractor
                 _oilGauge2Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_oilGauge2Form, _applicationForm, screen, location, size,
                                                              true, true);
-                _oilGauge2Form.DataChanged += _oilGauge2Form_DataChanged;
+                _oilGauge2Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _oilGauge2Form, 
+                                                                                this,
+                                                                                x => Settings.Default.OIL2_OutputDisplay = x,
+                                                                                x => Settings.Default.OIL2_StretchToFit = x,
+                                                                                x => Settings.Default.OIL2_OutULX = x,
+                                                                                x => Settings.Default.OIL2_OutULY = x,
+                                                                                x => Settings.Default.OIL2_OutLRX = x,
+                                                                                x => Settings.Default.OIL2_OutLRY = x,
+                                                                                x => Settings.Default.EnableOIL2Output = x,
+                                                                                x => Settings.Default.OIL2_RotateFlipType = x,
+                                                                                x => Settings.Default.OIL2_AlwaysOnTop = x,
+                                                                                x => Settings.Default.OIL2_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _oilGauge2Form.Disposed += _oilGauge2Form_Disposed;
                 _outputForms.Add(_oilGauge2Renderer, _oilGauge2Form);
             }
@@ -4120,7 +4279,21 @@ namespace MFDExtractor
                 _oilGauge1Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_oilGauge1Form, _applicationForm, screen, location, size,
                                                              true, true);
-                _oilGauge1Form.DataChanged += _oilGauge1Form_DataChanged;
+                _oilGauge1Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _oilGauge1Form, 
+                                                                                this,
+                                                                                x => Settings.Default.OIL1_OutputDisplay = x,
+                                                                                x => Settings.Default.OIL1_StretchToFit = x,
+                                                                                x => Settings.Default.OIL1_OutULX = x,
+                                                                                x => Settings.Default.OIL1_OutULY = x,
+                                                                                x => Settings.Default.OIL1_OutLRX = x,
+                                                                                x => Settings.Default.OIL1_OutLRY = x,
+                                                                                x => Settings.Default.EnableOIL1Output = x,
+                                                                                x => Settings.Default.OIL1_RotateFlipType = x,
+                                                                                x => Settings.Default.OIL1_AlwaysOnTop = x,
+                                                                                x => Settings.Default.OIL1_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _oilGauge1Form.Disposed += _oilGauge1Form_Disposed;
                 _outputForms.Add(_oilGauge1Renderer, _oilGauge1Form);
             }
@@ -4156,7 +4329,21 @@ namespace MFDExtractor
                 _nozPos2Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_nozPos2Form, _applicationForm, screen, location, size,
                                                              true, true);
-                _nozPos2Form.DataChanged += _nozPos2Form_DataChanged;
+                _nozPos2Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _nozPos2Form, 
+                                                                                this,
+                                                                                x => Settings.Default.NOZ2_OutputDisplay = x,
+                                                                                x => Settings.Default.NOZ2_StretchToFit = x,
+                                                                                x => Settings.Default.NOZ2_OutULX = x,
+                                                                                x => Settings.Default.NOZ2_OutULY = x,
+                                                                                x => Settings.Default.NOZ2_OutLRX = x,
+                                                                                x => Settings.Default.NOZ2_OutLRY = x,
+                                                                                x => Settings.Default.EnableNOZ2Output = x,
+                                                                                x => Settings.Default.NOZ2_RotateFlipType = x,
+                                                                                x => Settings.Default.NOZ2_AlwaysOnTop = x,
+                                                                                x => Settings.Default.NOZ2_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _nozPos2Form.Disposed += _nozPos2Form_Disposed;
                 _outputForms.Add(_nozPos2Renderer, _nozPos2Form);
             }
@@ -4192,7 +4379,21 @@ namespace MFDExtractor
                 _nozPos1Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_nozPos1Form, _applicationForm, screen, location, size,
                                                              true, true);
-                _nozPos1Form.DataChanged += _nozPos1Form_DataChanged;
+                _nozPos1Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _nozPos1Form, 
+                                                                                this,
+                                                                                x => Settings.Default.NOZ1_OutputDisplay = x,
+                                                                                x => Settings.Default.NOZ1_StretchToFit = x,
+                                                                                x => Settings.Default.NOZ1_OutULX = x,
+                                                                                x => Settings.Default.NOZ1_OutULY = x,
+                                                                                x => Settings.Default.NOZ1_OutLRX = x,
+                                                                                x => Settings.Default.NOZ1_OutLRY = x,
+                                                                                x => Settings.Default.EnableNOZ1Output = x,
+                                                                                x => Settings.Default.NOZ1_RotateFlipType = x,
+                                                                                x => Settings.Default.NOZ1_AlwaysOnTop = x,
+                                                                                x => Settings.Default.NOZ1_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _nozPos1Form.Disposed += _nozPos1Form_Disposed;
                 _outputForms.Add(_nozPos1Renderer, _nozPos1Form);
             }
@@ -4228,7 +4429,21 @@ namespace MFDExtractor
                 _nwsIndexerForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_nwsIndexerForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _nwsIndexerForm.DataChanged += _nwsIndexerForm_DataChanged;
+                _nwsIndexerForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _nwsIndexerForm, 
+                                                                                this,
+                                                                                x => Settings.Default.NWSIndexer_OutputDisplay = x,
+                                                                                x => Settings.Default.NWSIndexer_StretchToFit = x,
+                                                                                x => Settings.Default.NWSIndexer_OutULX = x,
+                                                                                x => Settings.Default.NWSIndexer_OutULY = x,
+                                                                                x => Settings.Default.NWSIndexer_OutLRX = x,
+                                                                                x => Settings.Default.NWSIndexer_OutLRY = x,
+                                                                                x => Settings.Default.EnableNWSIndexerOutput = x,
+                                                                                x => Settings.Default.NWSIndexer_RotateFlipType = x,
+                                                                                x => Settings.Default.NWSIndexer_AlwaysOnTop = x,
+                                                                                x => Settings.Default.NWSIndexer_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _nwsIndexerForm.Disposed += _nwsIndexerForm_Disposed;
                 _outputForms.Add(_nwsIndexerRenderer, _nwsIndexerForm);
             }
@@ -4264,7 +4479,21 @@ namespace MFDExtractor
                 _landingGearLightsForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_landingGearLightsForm, _applicationForm, screen, location,
                                                              size, true, true);
-                _landingGearLightsForm.DataChanged += _landingGearLightsForm_DataChanged;
+                _landingGearLightsForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _landingGearLightsForm, 
+                                                                                this,
+                                                                                x => Settings.Default.GearLights_OutputDisplay = x,
+                                                                                x => Settings.Default.GearLights_StretchToFit = x,
+                                                                                x => Settings.Default.GearLights_OutULX = x,
+                                                                                x => Settings.Default.GearLights_OutULY = x,
+                                                                                x => Settings.Default.GearLights_OutLRX = x,
+                                                                                x => Settings.Default.GearLights_OutLRY = x,
+                                                                                x => Settings.Default.EnableGearLightsOutput = x,
+                                                                                x => Settings.Default.GearLights_RotateFlipType = x,
+                                                                                x => Settings.Default.GearLights_AlwaysOnTop = x,
+                                                                                x => Settings.Default.GearLights_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _landingGearLightsForm.Disposed += _landingGearLightsForm_Disposed;
                 _outputForms.Add(_landingGearLightsRenderer, _landingGearLightsForm);
             }
@@ -4300,7 +4529,21 @@ namespace MFDExtractor
                 _hsiForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_hsiForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _hsiForm.DataChanged += _hsiForm_DataChanged;
+                _hsiForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _hsiForm, 
+                                                                                this,
+                                                                                x => Settings.Default.HSI_OutputDisplay = x,
+                                                                                x => Settings.Default.HSI_StretchToFit = x,
+                                                                                x => Settings.Default.HSI_OutULX = x,
+                                                                                x => Settings.Default.HSI_OutULY = x,
+                                                                                x => Settings.Default.HSI_OutLRX = x,
+                                                                                x => Settings.Default.HSI_OutLRY = x,
+                                                                                x => Settings.Default.EnableHSIOutput = x,
+                                                                                x => Settings.Default.HSI_RotateFlipType = x,
+                                                                                x => Settings.Default.HSI_AlwaysOnTop = x,
+                                                                                x => Settings.Default.HSI_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _hsiForm.Disposed += _hsiForm_Disposed;
                 _outputForms.Add(_hsiRenderer, _hsiForm);
             }
@@ -4336,7 +4579,21 @@ namespace MFDExtractor
                 _ehsiForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_ehsiForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _ehsiForm.DataChanged += _ehsiForm_DataChanged;
+                _ehsiForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _ehsiForm, 
+                                                                                this,
+                                                                                x => Settings.Default.EHSI_OutputDisplay = x,
+                                                                                x => Settings.Default.EHSI_StretchToFit = x,
+                                                                                x => Settings.Default.EHSI_OutULX = x,
+                                                                                x => Settings.Default.EHSI_OutULY = x,
+                                                                                x => Settings.Default.EHSI_OutLRX = x,
+                                                                                x => Settings.Default.EHSI_OutLRY = x,
+                                                                                x => Settings.Default.EnableEHSIOutput = x,
+                                                                                x => Settings.Default.EHSI_RotateFlipType = x,
+                                                                                x => Settings.Default.EHSI_AlwaysOnTop = x,
+                                                                                x => Settings.Default.EHSI_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _ehsiForm.Disposed += _ehsiForm_Disposed;
                 _outputForms.Add(_ehsiRenderer, _ehsiForm);
             }
@@ -4372,7 +4629,21 @@ namespace MFDExtractor
                 _fuelQuantityForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_fuelQuantityForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _fuelQuantityForm.DataChanged += _fuelQuantityForm_DataChanged;
+                _fuelQuantityForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _fuelQuantityForm,
+                                                                                this,
+                                                                                x => Settings.Default.FuelQuantity_OutputDisplay = x,
+                                                                                x => Settings.Default.FuelQuantity_StretchToFit = x,
+                                                                                x => Settings.Default.FuelQuantity_OutULX = x,
+                                                                                x => Settings.Default.FuelQuantity_OutULY = x,
+                                                                                x => Settings.Default.FuelQuantity_OutLRX = x,
+                                                                                x => Settings.Default.FuelQuantity_OutLRY = x,
+                                                                                x => Settings.Default.EnableFuelQuantityOutput = x,
+                                                                                x => Settings.Default.FuelQuantity_RotateFlipType = x,
+                                                                                x => Settings.Default.FuelQuantity_AlwaysOnTop = x,
+                                                                                x => Settings.Default.FuelQuantity_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _fuelQuantityForm.Disposed += _fuelQuantityForm_Disposed;
                 _outputForms.Add(_fuelQuantityRenderer, _fuelQuantityForm);
             }
@@ -4408,7 +4679,21 @@ namespace MFDExtractor
                 _fuelFlowForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_fuelFlowForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _fuelFlowForm.DataChanged += _fuelFlowForm_DataChanged;
+                _fuelFlowForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _fuelFlowForm,
+                                                                                this,
+                                                                                x => Settings.Default.FuelFlow_OutputDisplay = x,
+                                                                                x => Settings.Default.FuelFlow_StretchToFit = x,
+                                                                                x => Settings.Default.FuelFlow_OutULX = x,
+                                                                                x => Settings.Default.FuelFlow_OutULY = x,
+                                                                                x => Settings.Default.FuelFlow_OutLRX = x,
+                                                                                x => Settings.Default.FuelFlow_OutLRY = x,
+                                                                                x => Settings.Default.EnableFuelFlowOutput = x,
+                                                                                x => Settings.Default.FuelFlow_RotateFlipType = x,
+                                                                                x => Settings.Default.FuelFlow_AlwaysOnTop = x,
+                                                                                x => Settings.Default.FuelFlow_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _fuelFlowForm.Disposed += _fuelFlowForm_Disposed;
                 _outputForms.Add(_fuelFlowRenderer, _fuelFlowForm);
             }
@@ -4444,7 +4729,21 @@ namespace MFDExtractor
                 _isisForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_isisForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _isisForm.DataChanged += _isisForm_DataChanged;
+                _isisForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _isisForm,
+                                                                                this,
+                                                                                x => Settings.Default.ISIS_OutputDisplay = x,
+                                                                                x => Settings.Default.ISIS_StretchToFit = x,
+                                                                                x => Settings.Default.ISIS_OutULX = x,
+                                                                                x => Settings.Default.ISIS_OutULY = x,
+                                                                                x => Settings.Default.ISIS_OutLRX = x,
+                                                                                x => Settings.Default.ISIS_OutLRY = x,
+                                                                                x => Settings.Default.EnableISISOutput = x,
+                                                                                x => Settings.Default.ISIS_RotateFlipType = x,
+                                                                                x => Settings.Default.ISIS_AlwaysOnTop = x,
+                                                                                x => Settings.Default.ISIS_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _isisForm.Disposed += _isisForm_Disposed;
                 _outputForms.Add(_isisRenderer, _isisForm);
             }
@@ -4480,7 +4779,21 @@ namespace MFDExtractor
                 _accelerometerForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_accelerometerForm, _applicationForm, screen, location,
                                                              size, true, true);
-                _accelerometerForm.DataChanged += _accelerometerForm_DataChanged;
+                _accelerometerForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _accelerometerForm,
+                                                                                this,
+                                                                                x => Settings.Default.Accelerometer_OutputDisplay = x,
+                                                                                x => Settings.Default.Accelerometer_StretchToFit = x,
+                                                                                x => Settings.Default.Accelerometer_OutULX = x,
+                                                                                x => Settings.Default.Accelerometer_OutULY = x,
+                                                                                x => Settings.Default.Accelerometer_OutLRX = x,
+                                                                                x => Settings.Default.Accelerometer_OutLRY = x,
+                                                                                x => Settings.Default.EnableAccelerometerOutput = x,
+                                                                                x => Settings.Default.Accelerometer_RotateFlipType = x,
+                                                                                x => Settings.Default.Accelerometer_AlwaysOnTop = x,
+                                                                                x => Settings.Default.Accelerometer_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _accelerometerForm.Disposed += _accelerometerForm_Disposed;
                 _outputForms.Add(_accelerometerRenderer, _accelerometerForm);
             }
@@ -4516,7 +4829,21 @@ namespace MFDExtractor
                 _ftit2Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_ftit2Form, _applicationForm, screen, location, size, true,
                                                              true);
-                _ftit2Form.DataChanged += _ftit2Form_DataChanged;
+                _ftit2Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _ftit2Form,
+                                                                                this,
+                                                                                x => Settings.Default.FTIT2_OutputDisplay = x,
+                                                                                x => Settings.Default.FTIT2_StretchToFit = x,
+                                                                                x => Settings.Default.FTIT2_OutULX = x,
+                                                                                x => Settings.Default.FTIT2_OutULY = x,
+                                                                                x => Settings.Default.FTIT2_OutLRX = x,
+                                                                                x => Settings.Default.FTIT2_OutLRY = x,
+                                                                                x => Settings.Default.EnableFTIT2Output = x,
+                                                                                x => Settings.Default.FTIT2_RotateFlipType = x,
+                                                                                x => Settings.Default.FTIT2_AlwaysOnTop = x,
+                                                                                x => Settings.Default.FTIT2_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _ftit2Form.Disposed += _ftit2Form_Disposed;
                 _outputForms.Add(_ftit2Renderer, _ftit2Form);
             }
@@ -4552,7 +4879,21 @@ namespace MFDExtractor
                 _ftit1Form.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_ftit1Form, _applicationForm, screen, location, size, true,
                                                              true);
-                _ftit1Form.DataChanged += _ftit1Form_DataChanged;
+                _ftit1Form.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _ftit1Form,
+                                                                                this,
+                                                                                x => Settings.Default.FTIT1_OutputDisplay = x,
+                                                                                x => Settings.Default.FTIT1_StretchToFit = x,
+                                                                                x => Settings.Default.FTIT1_OutULX = x,
+                                                                                x => Settings.Default.FTIT1_OutULY = x,
+                                                                                x => Settings.Default.FTIT1_OutLRX = x,
+                                                                                x => Settings.Default.FTIT1_OutLRY = x,
+                                                                                x => Settings.Default.EnableFTIT1Output = x,
+                                                                                x => Settings.Default.FTIT1_RotateFlipType = x,
+                                                                                x => Settings.Default.FTIT1_AlwaysOnTop = x,
+                                                                                x => Settings.Default.FTIT1_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _ftit1Form.Disposed += _ftit1Form_Disposed;
                 _outputForms.Add(_ftit1Renderer, _ftit1Form);
             }
@@ -4588,7 +4929,21 @@ namespace MFDExtractor
                 _epuFuelForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_epuFuelForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _epuFuelForm.DataChanged += _epuFuelForm_DataChanged;
+                _epuFuelForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _epuFuelForm,
+                                                                                this,
+                                                                                x => Settings.Default.EPUFuel_OutputDisplay = x,
+                                                                                x => Settings.Default.EPUFuel_StretchToFit = x,
+                                                                                x => Settings.Default.EPUFuel_OutULX = x,
+                                                                                x => Settings.Default.EPUFuel_OutULY = x,
+                                                                                x => Settings.Default.EPUFuel_OutLRX = x,
+                                                                                x => Settings.Default.EPUFuel_OutLRY = x,
+                                                                                x => Settings.Default.EnableEPUFuelOutput = x,
+                                                                                x => Settings.Default.EPUFuel_RotateFlipType = x,
+                                                                                x => Settings.Default.EPUFuel_AlwaysOnTop = x,
+                                                                                x => Settings.Default.EPUFuel_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _epuFuelForm.Disposed += _epuFuelForm_Disposed;
                 _outputForms.Add(_epuFuelRenderer, _epuFuelForm);
             }
@@ -4624,7 +4979,21 @@ namespace MFDExtractor
                 _pflForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_pflForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _pflForm.DataChanged += _pflForm_DataChanged;
+                _pflForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _pflForm,
+                                                                                this,
+                                                                                x => Settings.Default.PFL_OutputDisplay = x,
+                                                                                x => Settings.Default.PFL_StretchToFit = x,
+                                                                                x => Settings.Default.PFL_OutULX = x,
+                                                                                x => Settings.Default.PFL_OutULY = x,
+                                                                                x => Settings.Default.PFL_OutLRX = x,
+                                                                                x => Settings.Default.PFL_OutLRY = x,
+                                                                                x => Settings.Default.EnablePFLOutput = x,
+                                                                                x => Settings.Default.PFL_RotateFlipType = x,
+                                                                                x => Settings.Default.PFL_AlwaysOnTop = x,
+                                                                                x => Settings.Default.PFL_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _pflForm.Disposed += _pflForm_Disposed;
                 _outputForms.Add(_pflRenderer, _pflForm);
             }
@@ -4660,7 +5029,21 @@ namespace MFDExtractor
                 _dedForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_dedForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _dedForm.DataChanged += _dedForm_DataChanged;
+                _dedForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _dedForm,
+                                                                                this,
+                                                                                x => Settings.Default.DED_OutputDisplay = x,
+                                                                                x => Settings.Default.DED_StretchToFit = x,
+                                                                                x => Settings.Default.DED_OutULX = x,
+                                                                                x => Settings.Default.DED_OutULY = x,
+                                                                                x => Settings.Default.DED_OutLRX = x,
+                                                                                x => Settings.Default.DED_OutLRY = x,
+                                                                                x => Settings.Default.EnableDEDOutput = x,
+                                                                                x => Settings.Default.DED_RotateFlipType = x,
+                                                                                x => Settings.Default.DED_AlwaysOnTop = x,
+                                                                                x => Settings.Default.DED_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _dedForm.Disposed += _dedForm_Disposed;
                 _outputForms.Add(_dedRenderer, _dedForm);
             }
@@ -4696,7 +5079,21 @@ namespace MFDExtractor
                 _compassForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_compassForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _compassForm.DataChanged += _compassForm_DataChanged;
+                _compassForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _compassForm,
+                                                                                this,
+                                                                                x => Settings.Default.Compass_OutputDisplay = x,
+                                                                                x => Settings.Default.Compass_StretchToFit = x,
+                                                                                x => Settings.Default.Compass_OutULX = x,
+                                                                                x => Settings.Default.Compass_OutULY = x,
+                                                                                x => Settings.Default.Compass_OutLRX = x,
+                                                                                x => Settings.Default.Compass_OutLRY = x,
+                                                                                x => Settings.Default.EnableCompassOutput = x,
+                                                                                x => Settings.Default.Compass_RotateFlipType = x,
+                                                                                x => Settings.Default.Compass_AlwaysOnTop = x,
+                                                                                x => Settings.Default.Compass_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _compassForm.Disposed += _compassForm_Disposed;
                 _outputForms.Add(_compassRenderer, _compassForm);
             }
@@ -4732,7 +5129,21 @@ namespace MFDExtractor
                 _cmdsPanelForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_cmdsPanelForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _cmdsPanelForm.DataChanged += _cmdsPanelForm_DataChanged;
+                _cmdsPanelForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _cmdsPanelForm,
+                                                                                this,
+                                                                                x => Settings.Default.CMDS_OutputDisplay = x,
+                                                                                x => Settings.Default.CMDS_StretchToFit = x,
+                                                                                x => Settings.Default.CMDS_OutULX = x,
+                                                                                x => Settings.Default.CMDS_OutULY = x,
+                                                                                x => Settings.Default.CMDS_OutLRX = x,
+                                                                                x => Settings.Default.CMDS_OutLRY = x,
+                                                                                x => Settings.Default.EnableCMDSOutput = x,
+                                                                                x => Settings.Default.CMDS_RotateFlipType = x,
+                                                                                x => Settings.Default.CMDS_AlwaysOnTop = x,
+                                                                                x => Settings.Default.CMDS_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _cmdsPanelForm.Disposed += _cmdsPanelForm_Disposed;
                 _outputForms.Add(_cmdsPanelRenderer, _cmdsPanelForm);
             }
@@ -4768,7 +5179,21 @@ namespace MFDExtractor
                 _cautionPanelForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_cautionPanelForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _cautionPanelForm.DataChanged += _cautionPanelForm_DataChanged;
+                _cautionPanelForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _cautionPanelForm,
+                                                                                this,
+                                                                                x => Settings.Default.CautionPanel_OutputDisplay = x,
+                                                                                x => Settings.Default.CautionPanel_StretchToFit = x,
+                                                                                x => Settings.Default.CautionPanel_OutULX = x,
+                                                                                x => Settings.Default.CautionPanel_OutULY = x,
+                                                                                x => Settings.Default.CautionPanel_OutLRX = x,
+                                                                                x => Settings.Default.CautionPanel_OutLRY = x,
+                                                                                x => Settings.Default.EnableCautionPanelOutput = x,
+                                                                                x => Settings.Default.CautionPanel_RotateFlipType = x,
+                                                                                x => Settings.Default.CautionPanel_AlwaysOnTop = x,
+                                                                                x => Settings.Default.CautionPanel_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _cautionPanelForm.Disposed += _cautionPanelForm_Disposed;
                 _outputForms.Add(_cautionPanelRenderer, _cautionPanelForm);
             }
@@ -4804,7 +5229,21 @@ namespace MFDExtractor
                 _aoaIndicatorForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_aoaIndicatorForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _aoaIndicatorForm.DataChanged += _aoaIndicatorForm_DataChanged;
+                _aoaIndicatorForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _aoaIndicatorForm,
+                                                                                this,
+                                                                                x => Settings.Default.AOAIndicator_OutputDisplay = x,
+                                                                                x => Settings.Default.AOAIndicator_StretchToFit = x,
+                                                                                x => Settings.Default.AOAIndicator_OutULX = x,
+                                                                                x => Settings.Default.AOAIndicator_OutULY = x,
+                                                                                x => Settings.Default.AOAIndicator_OutLRX = x,
+                                                                                x => Settings.Default.AOAIndicator_OutLRY = x,
+                                                                                x => Settings.Default.EnableAOAIndicatorOutput = x,
+                                                                                x => Settings.Default.AOAIndicator_RotateFlipType = x,
+                                                                                x => Settings.Default.AOAIndicator_AlwaysOnTop = x,
+                                                                                x => Settings.Default.AOAIndicator_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _aoaIndicatorForm.Disposed += _aoaIndicatorForm_Disposed;
                 _outputForms.Add(_aoaIndicatorRenderer, _aoaIndicatorForm);
             }
@@ -4840,7 +5279,21 @@ namespace MFDExtractor
                 _aoaIndexerForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_aoaIndexerForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _aoaIndexerForm.DataChanged += _aoaIndexerForm_DataChanged;
+                _aoaIndexerForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _aoaIndexerForm,
+                                                                                this,
+                                                                                x => Settings.Default.AOAIndexer_OutputDisplay = x,
+                                                                                x => Settings.Default.AOAIndexer_StretchToFit = x,
+                                                                                x => Settings.Default.AOAIndexer_OutULX = x,
+                                                                                x => Settings.Default.AOAIndexer_OutULY = x,
+                                                                                x => Settings.Default.AOAIndexer_OutLRX = x,
+                                                                                x => Settings.Default.AOAIndexer_OutLRY = x,
+                                                                                x => Settings.Default.EnableAOAIndexerOutput = x,
+                                                                                x => Settings.Default.AOAIndexer_RotateFlipType = x,
+                                                                                x => Settings.Default.AOAIndexer_AlwaysOnTop = x,
+                                                                                x => Settings.Default.AOAIndexer_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _aoaIndexerForm.Disposed += _aoaIndexerForm_Disposed;
                 _outputForms.Add(_aoaIndexerRenderer, _aoaIndexerForm);
             }
@@ -4876,7 +5329,21 @@ namespace MFDExtractor
                 _altimeterForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_altimeterForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _altimeterForm.DataChanged += _altimeterForm_DataChanged;
+                _altimeterForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _altimeterForm,
+                                                                                this,
+                                                                                x => Settings.Default.Altimeter_OutputDisplay = x,
+                                                                                x => Settings.Default.Altimeter_StretchToFit = x,
+                                                                                x => Settings.Default.Altimeter_OutULX = x,
+                                                                                x => Settings.Default.Altimeter_OutULY = x,
+                                                                                x => Settings.Default.Altimeter_OutLRX = x,
+                                                                                x => Settings.Default.Altimeter_OutLRY = x,
+                                                                                x => Settings.Default.EnableAltimeterOutput = x,
+                                                                                x => Settings.Default.Altimeter_RotateFlipType = x,
+                                                                                x => Settings.Default.Altimeter_AlwaysOnTop = x,
+                                                                                x => Settings.Default.Altimeter_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _altimeterForm.Disposed += _altimeterForm_Disposed;
                 _outputForms.Add(_altimeterRenderer, _altimeterForm);
             }
@@ -4912,7 +5379,21 @@ namespace MFDExtractor
                 _cabinPressForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_cabinPressForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _cabinPressForm.DataChanged += _cabinPressForm_DataChanged;
+                _cabinPressForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _cabinPressForm,
+                                                                                this,
+                                                                                x => Settings.Default.CabinPress_OutputDisplay = x,
+                                                                                x => Settings.Default.CabinPress_StretchToFit = x,
+                                                                                x => Settings.Default.CabinPress_OutULX = x,
+                                                                                x => Settings.Default.CabinPress_OutULY = x,
+                                                                                x => Settings.Default.CabinPress_OutLRX = x,
+                                                                                x => Settings.Default.CabinPress_OutLRY = x,
+                                                                                x => Settings.Default.EnableCabinPressOutput = x,
+                                                                                x => Settings.Default.CabinPress_RotateFlipType = x,
+                                                                                x => Settings.Default.CabinPress_AlwaysOnTop = x,
+                                                                                x => Settings.Default.CabinPress_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _cabinPressForm.Disposed += _cabinPressForm_Disposed;
                 _outputForms.Add(_cabinPressRenderer, _cabinPressForm);
             }
@@ -4948,7 +5429,21 @@ namespace MFDExtractor
                 _rollTrimForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_rollTrimForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _rollTrimForm.DataChanged += _rollTrimForm_DataChanged;
+                _rollTrimForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _rollTrimForm,
+                                                                                this,
+                                                                                x => Settings.Default.RollTrim_OutputDisplay = x,
+                                                                                x => Settings.Default.RollTrim_StretchToFit = x,
+                                                                                x => Settings.Default.RollTrim_OutULX = x,
+                                                                                x => Settings.Default.RollTrim_OutULY = x,
+                                                                                x => Settings.Default.RollTrim_OutLRX = x,
+                                                                                x => Settings.Default.RollTrim_OutLRY = x,
+                                                                                x => Settings.Default.EnableRollTrimOutput = x,
+                                                                                x => Settings.Default.RollTrim_RotateFlipType = x,
+                                                                                x => Settings.Default.RollTrim_AlwaysOnTop = x,
+                                                                                x => Settings.Default.RollTrim_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _rollTrimForm.Disposed += _rollTrimForm_Disposed;
                 _outputForms.Add(_rollTrimRenderer, _rollTrimForm);
             }
@@ -4984,7 +5479,21 @@ namespace MFDExtractor
                 _pitchTrimForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_pitchTrimForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _pitchTrimForm.DataChanged += _pitchTrimForm_DataChanged;
+                _pitchTrimForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _pitchTrimForm,
+                                                                                this,
+                                                                                x => Settings.Default.PitchTrim_OutputDisplay = x,
+                                                                                x => Settings.Default.PitchTrim_StretchToFit = x,
+                                                                                x => Settings.Default.PitchTrim_OutULX = x,
+                                                                                x => Settings.Default.PitchTrim_OutULY = x,
+                                                                                x => Settings.Default.PitchTrim_OutLRX = x,
+                                                                                x => Settings.Default.PitchTrim_OutLRY = x,
+                                                                                x => Settings.Default.EnablePitchTrimOutput = x,
+                                                                                x => Settings.Default.PitchTrim_RotateFlipType = x,
+                                                                                x => Settings.Default.PitchTrim_AlwaysOnTop = x,
+                                                                                x => Settings.Default.PitchTrim_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _pitchTrimForm.Disposed += _pitchTrimForm_Disposed;
                 _outputForms.Add(_pitchTrimRenderer, _pitchTrimForm);
             }
@@ -5020,7 +5529,21 @@ namespace MFDExtractor
                 _hydAForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_hydAForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _hydAForm.DataChanged += _hydAForm_DataChanged;
+                _hydAForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _hydAForm,
+                                                                                this,
+                                                                                x => Settings.Default.HYDA_OutputDisplay = x,
+                                                                                x => Settings.Default.HYDA_StretchToFit = x,
+                                                                                x => Settings.Default.HYDA_OutULX = x,
+                                                                                x => Settings.Default.HYDA_OutULY = x,
+                                                                                x => Settings.Default.HYDA_OutLRX = x,
+                                                                                x => Settings.Default.HYDA_OutLRY = x,
+                                                                                x => Settings.Default.EnableHYDAOutput = x,
+                                                                                x => Settings.Default.HYDA_RotateFlipType = x,
+                                                                                x => Settings.Default.HYDA_AlwaysOnTop = x,
+                                                                                x => Settings.Default.HYDA_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _hydAForm.Disposed += _hydAForm_Disposed;
                 _outputForms.Add(_hydARenderer, _hydAForm);
             }
@@ -5056,7 +5579,21 @@ namespace MFDExtractor
                 _hydBForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_hydBForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _hydBForm.DataChanged += _hydBForm_DataChanged;
+                _hydBForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _hydBForm,
+                                                                                this,
+                                                                                x => Settings.Default.HYDB_OutputDisplay = x,
+                                                                                x => Settings.Default.HYDB_StretchToFit = x,
+                                                                                x => Settings.Default.HYDB_OutULX = x,
+                                                                                x => Settings.Default.HYDB_OutULY = x,
+                                                                                x => Settings.Default.HYDB_OutLRX = x,
+                                                                                x => Settings.Default.HYDB_OutLRY = x,
+                                                                                x => Settings.Default.EnableHYDBOutput = x,
+                                                                                x => Settings.Default.HYDB_RotateFlipType = x,
+                                                                                x => Settings.Default.HYDB_AlwaysOnTop = x,
+                                                                                x => Settings.Default.HYDB_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _hydBForm.Disposed += _hydBForm_Disposed;
                 _outputForms.Add(_hydBRenderer, _hydBForm);
             }
@@ -5092,7 +5629,21 @@ namespace MFDExtractor
                 _asiForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_asiForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _asiForm.DataChanged += _asiForm_DataChanged;
+                _asiForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _asiForm,
+                                                                                this,
+                                                                                x => Settings.Default.ASI_OutputDisplay = x,
+                                                                                x => Settings.Default.ASI_StretchToFit = x,
+                                                                                x => Settings.Default.ASI_OutULX = x,
+                                                                                x => Settings.Default.ASI_OutULY = x,
+                                                                                x => Settings.Default.ASI_OutLRX = x,
+                                                                                x => Settings.Default.ASI_OutLRY = x,
+                                                                                x => Settings.Default.EnableASIOutput = x,
+                                                                                x => Settings.Default.ASI_RotateFlipType = x,
+                                                                                x => Settings.Default.ASI_AlwaysOnTop = x,
+                                                                                x => Settings.Default.ASI_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _asiForm.Disposed += _asiForm_Disposed;
                 _outputForms.Add(_asiRenderer, _asiForm);
             }
@@ -5128,7 +5679,21 @@ namespace MFDExtractor
                 _adiForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_adiForm, _applicationForm, screen, location, size, true,
                                                              true);
-                _adiForm.DataChanged += _adiForm_DataChanged;
+                _adiForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _adiForm,
+                                                                                this,
+                                                                                x => Settings.Default.ADI_OutputDisplay = x,
+                                                                                x => Settings.Default.ADI_StretchToFit = x,
+                                                                                x => Settings.Default.ADI_OutULX = x,
+                                                                                x => Settings.Default.ADI_OutULY = x,
+                                                                                x => Settings.Default.ADI_OutLRX = x,
+                                                                                x => Settings.Default.ADI_OutLRY = x,
+                                                                                x => Settings.Default.EnableADIOutput = x,
+                                                                                x => Settings.Default.ADI_RotateFlipType = x,
+                                                                                x => Settings.Default.ADI_AlwaysOnTop = x,
+                                                                                x => Settings.Default.ADI_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;
                 _adiForm.Disposed += _adiForm_Disposed;
                 _outputForms.Add(_adiRenderer, _adiForm);
             }
@@ -5164,7 +5729,21 @@ namespace MFDExtractor
                 _backupAdiForm.WindowState = FormWindowState.Normal;
                 Common.Screen.Util.OpenFormOnSpecificMonitor(_backupAdiForm, _applicationForm, screen, location, size,
                                                              true, true);
-                _backupAdiForm.DataChanged += _backupAdiForm_DataChanged;
+                _backupAdiForm.DataChanged += new InstrumentFormDataChangedHandler(
+                                                                                _backupAdiForm,
+                                                                                this,
+                                                                                x => Settings.Default.Backup_ADI_OutputDisplay = x,
+                                                                                x => Settings.Default.Backup_ADI_StretchToFit = x,
+                                                                                x => Settings.Default.Backup_ADI_OutULX = x,
+                                                                                x => Settings.Default.Backup_ADI_OutULY = x,
+                                                                                x => Settings.Default.Backup_ADI_OutLRX = x,
+                                                                                x => Settings.Default.Backup_ADI_OutLRY = x,
+                                                                                x => Settings.Default.EnableBackupADIOutput = x,
+                                                                                x => Settings.Default.Backup_ADI_RotateFlipType = x,
+                                                                                x => Settings.Default.Backup_ADI_AlwaysOnTop = x,
+                                                                                x => Settings.Default.Backup_ADI_Monochrome = x
+                                                                             )
+                                                                            .HandleDataChangedEvent;;
                 _backupAdiForm.Disposed += _backupAdiForm_Disposed;
                 _outputForms.Add(_backupAdiRenderer, _backupAdiForm);
             }
@@ -5601,1242 +6180,6 @@ namespace MFDExtractor
 
         #endregion
 
-        #region Instrument Form Data-Changed Event Handlers
-
-        private void _speedbrakeForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _speedbrakeForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_speedbrakeForm.DesktopBounds);
-            settings.Speedbrake_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_speedbrakeForm.StretchToFill)
-            {
-                settings.Speedbrake_StretchToFit = true;
-            }
-            else
-            {
-                settings.Speedbrake_StretchToFit = false;
-                Size size = _speedbrakeForm.Size;
-                settings.Speedbrake_OutULX = location.X - screen.Bounds.Location.X;
-                settings.Speedbrake_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.Speedbrake_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.Speedbrake_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableSpeedbrakeOutput = _speedbrakeForm.Visible;
-            settings.Speedbrake_RotateFlipType = _speedbrakeForm.Rotation;
-            settings.Speedbrake_AlwaysOnTop = _speedbrakeForm.AlwaysOnTop;
-            settings.Speedbrake_Monochrome = _speedbrakeForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _rwrForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _rwrForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_rwrForm.DesktopBounds);
-            settings.RWR_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_rwrForm.StretchToFill)
-            {
-                settings.RWR_StretchToFit = true;
-            }
-            else
-            {
-                settings.RWR_StretchToFit = false;
-                Size size = _rwrForm.Size;
-                settings.RWR_OutULX = location.X - screen.Bounds.Location.X;
-                settings.RWR_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.RWR_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.RWR_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableRWROutput = _rwrForm.Visible;
-            settings.RWR_RotateFlipType = _rwrForm.Rotation;
-            settings.RWR_AlwaysOnTop = _rwrForm.AlwaysOnTop;
-            settings.RWR_Monochrome = _rwrForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _rpm2Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _rpm2Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_rpm2Form.DesktopBounds);
-            settings.RPM2_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_rpm2Form.StretchToFill)
-            {
-                settings.RPM2_StretchToFit = true;
-            }
-            else
-            {
-                settings.RPM2_StretchToFit = false;
-                Size size = _rpm2Form.Size;
-                settings.RPM2_OutULX = location.X - screen.Bounds.Location.X;
-                settings.RPM2_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.RPM2_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.RPM2_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableRPM2Output = _rpm2Form.Visible;
-            settings.RPM2_RotateFlipType = _rpm2Form.Rotation;
-            settings.RPM2_AlwaysOnTop = _rpm2Form.AlwaysOnTop;
-            settings.RPM2_Monochrome = _rpm2Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _vviForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _vviForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_vviForm.DesktopBounds);
-            settings.VVI_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_vviForm.StretchToFill)
-            {
-                settings.VVI_StretchToFit = true;
-            }
-            else
-            {
-                settings.VVI_StretchToFit = false;
-                Size size = _vviForm.Size;
-                settings.VVI_OutULX = location.X - screen.Bounds.Location.X;
-                settings.VVI_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.VVI_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.VVI_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableVVIOutput = _vviForm.Visible;
-            settings.VVI_RotateFlipType = _vviForm.Rotation;
-            settings.VVI_AlwaysOnTop = _vviForm.AlwaysOnTop;
-            settings.VVI_Monochrome = _vviForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _rpm1Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _rpm1Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_rpm1Form.DesktopBounds);
-            settings.RPM1_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_rpm1Form.StretchToFill)
-            {
-                settings.RPM1_StretchToFit = true;
-            }
-            else
-            {
-                settings.RPM1_StretchToFit = false;
-                Size size = _rpm1Form.Size;
-                settings.RPM1_OutULX = location.X - screen.Bounds.Location.X;
-                settings.RPM1_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.RPM1_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.RPM1_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableRPM1Output = _rpm1Form.Visible;
-            settings.RPM1_RotateFlipType = _rpm1Form.Rotation;
-            settings.RPM1_AlwaysOnTop = _rpm1Form.AlwaysOnTop;
-            settings.RPM1_Monochrome = _rpm1Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _oilGauge1Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _oilGauge1Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_oilGauge1Form.DesktopBounds);
-            settings.OIL1_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_oilGauge1Form.StretchToFill)
-            {
-                settings.OIL1_StretchToFit = true;
-            }
-            else
-            {
-                settings.OIL1_StretchToFit = false;
-                Size size = _oilGauge1Form.Size;
-                settings.OIL1_OutULX = location.X - screen.Bounds.Location.X;
-                settings.OIL1_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.OIL1_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.OIL1_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableOIL1Output = _oilGauge1Form.Visible;
-            settings.OIL1_RotateFlipType = _oilGauge1Form.Rotation;
-            settings.OIL1_AlwaysOnTop = _oilGauge1Form.AlwaysOnTop;
-            settings.OIL1_Monochrome = _oilGauge1Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _oilGauge2Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _oilGauge2Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_oilGauge2Form.DesktopBounds);
-            settings.OIL2_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_oilGauge2Form.StretchToFill)
-            {
-                settings.OIL2_StretchToFit = true;
-            }
-            else
-            {
-                settings.OIL2_StretchToFit = false;
-                Size size = _oilGauge2Form.Size;
-                settings.OIL2_OutULX = location.X - screen.Bounds.Location.X;
-                settings.OIL2_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.OIL2_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.OIL2_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableOIL2Output = _oilGauge2Form.Visible;
-            settings.OIL2_RotateFlipType = _oilGauge2Form.Rotation;
-            settings.OIL2_AlwaysOnTop = _oilGauge2Form.AlwaysOnTop;
-            settings.OIL2_Monochrome = _oilGauge2Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _nozPos2Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _nozPos2Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_nozPos2Form.DesktopBounds);
-            settings.NOZ2_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_nozPos2Form.StretchToFill)
-            {
-                settings.NOZ2_StretchToFit = true;
-            }
-            else
-            {
-                settings.NOZ2_StretchToFit = false;
-                Size size = _nozPos2Form.Size;
-                settings.NOZ2_OutULX = location.X - screen.Bounds.Location.X;
-                settings.NOZ2_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.NOZ2_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.NOZ2_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableNOZ2Output = _nozPos2Form.Visible;
-            settings.NOZ2_RotateFlipType = _nozPos2Form.Rotation;
-            settings.NOZ2_AlwaysOnTop = _nozPos2Form.AlwaysOnTop;
-            settings.NOZ2_Monochrome = _nozPos2Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _nozPos1Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _nozPos1Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_nozPos1Form.DesktopBounds);
-            settings.NOZ1_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_nozPos1Form.StretchToFill)
-            {
-                settings.NOZ1_StretchToFit = true;
-            }
-            else
-            {
-                settings.NOZ1_StretchToFit = false;
-                Size size = _nozPos1Form.Size;
-                settings.NOZ1_OutULX = location.X - screen.Bounds.Location.X;
-                settings.NOZ1_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.NOZ1_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.NOZ1_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableNOZ1Output = _nozPos1Form.Visible;
-            settings.NOZ1_RotateFlipType = _nozPos1Form.Rotation;
-            settings.NOZ1_AlwaysOnTop = _nozPos1Form.AlwaysOnTop;
-            settings.NOZ1_Monochrome = _nozPos1Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _nwsIndexerForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _nwsIndexerForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_nwsIndexerForm.DesktopBounds);
-            settings.NWSIndexer_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_nwsIndexerForm.StretchToFill)
-            {
-                settings.NWSIndexer_StretchToFit = true;
-            }
-            else
-            {
-                settings.NWSIndexer_StretchToFit = false;
-                Size size = _nwsIndexerForm.Size;
-                settings.NWSIndexer_OutULX = location.X - screen.Bounds.Location.X;
-                settings.NWSIndexer_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.NWSIndexer_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.NWSIndexer_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableNWSIndexerOutput = _nwsIndexerForm.Visible;
-            settings.NWSIndexer_RotateFlipType = _nwsIndexerForm.Rotation;
-            settings.NWSIndexer_AlwaysOnTop = _nwsIndexerForm.AlwaysOnTop;
-            settings.NWSIndexer_Monochrome = _nwsIndexerForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _fuelQuantityForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _fuelQuantityForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_fuelQuantityForm.DesktopBounds);
-            settings.FuelQuantity_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_fuelQuantityForm.StretchToFill)
-            {
-                settings.FuelQuantity_StretchToFit = true;
-            }
-            else
-            {
-                settings.FuelQuantity_StretchToFit = false;
-                Size size = _fuelQuantityForm.Size;
-                settings.FuelQuantity_OutULX = location.X - screen.Bounds.Location.X;
-                settings.FuelQuantity_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.FuelQuantity_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.FuelQuantity_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableFuelQuantityOutput = _fuelQuantityForm.Visible;
-            settings.FuelQuantity_RotateFlipType = _fuelQuantityForm.Rotation;
-            settings.FuelQuantity_AlwaysOnTop = _fuelQuantityForm.AlwaysOnTop;
-            settings.FuelQuantity_Monochrome = _fuelQuantityForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _landingGearLightsForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _landingGearLightsForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_landingGearLightsForm.DesktopBounds);
-            settings.GearLights_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_landingGearLightsForm.StretchToFill)
-            {
-                settings.GearLights_StretchToFit = true;
-            }
-            else
-            {
-                settings.GearLights_StretchToFit = false;
-                Size size = _landingGearLightsForm.Size;
-                settings.GearLights_OutULX = location.X - screen.Bounds.Location.X;
-                settings.GearLights_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.GearLights_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.GearLights_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableGearLightsOutput = _landingGearLightsForm.Visible;
-            settings.GearLights_RotateFlipType = _landingGearLightsForm.Rotation;
-            settings.GearLights_AlwaysOnTop = _landingGearLightsForm.AlwaysOnTop;
-            settings.GearLights_Monochrome = _landingGearLightsForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _hsiForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _hsiForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_hsiForm.DesktopBounds);
-            settings.HSI_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_hsiForm.StretchToFill)
-            {
-                settings.HSI_StretchToFit = true;
-            }
-            else
-            {
-                settings.HSI_StretchToFit = false;
-                Size size = _hsiForm.Size;
-                settings.HSI_OutULX = location.X - screen.Bounds.Location.X;
-                settings.HSI_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.HSI_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.HSI_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableHSIOutput = _hsiForm.Visible;
-            settings.HSI_RotateFlipType = _hsiForm.Rotation;
-            settings.HSI_AlwaysOnTop = _hsiForm.AlwaysOnTop;
-            settings.HSI_Monochrome = _hsiForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _ehsiForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _ehsiForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_ehsiForm.DesktopBounds);
-            settings.EHSI_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_ehsiForm.StretchToFill)
-            {
-                settings.EHSI_StretchToFit = true;
-            }
-            else
-            {
-                settings.EHSI_StretchToFit = false;
-                Size size = _ehsiForm.Size;
-                settings.EHSI_OutULX = location.X - screen.Bounds.Location.X;
-                settings.EHSI_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.EHSI_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.EHSI_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableEHSIOutput = _ehsiForm.Visible;
-            settings.EHSI_RotateFlipType = _ehsiForm.Rotation;
-            settings.EHSI_AlwaysOnTop = _ehsiForm.AlwaysOnTop;
-            settings.EHSI_Monochrome = _ehsiForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _fuelFlowForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _fuelFlowForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_fuelFlowForm.DesktopBounds);
-            settings.FuelFlow_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_fuelFlowForm.StretchToFill)
-            {
-                settings.FuelFlow_StretchToFit = true;
-            }
-            else
-            {
-                settings.FuelFlow_StretchToFit = false;
-                Size size = _fuelFlowForm.Size;
-                settings.FuelFlow_OutULX = location.X - screen.Bounds.Location.X;
-                settings.FuelFlow_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.FuelFlow_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.FuelFlow_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableFuelFlowOutput = _fuelFlowForm.Visible;
-            settings.FuelFlow_RotateFlipType = _fuelFlowForm.Rotation;
-            settings.FuelFlow_AlwaysOnTop = _fuelFlowForm.AlwaysOnTop;
-            settings.FuelFlow_Monochrome = _fuelFlowForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _isisForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _isisForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_isisForm.DesktopBounds);
-            settings.ISIS_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_isisForm.StretchToFill)
-            {
-                settings.ISIS_StretchToFit = true;
-            }
-            else
-            {
-                settings.ISIS_StretchToFit = false;
-                Size size = _isisForm.Size;
-                settings.ISIS_OutULX = location.X - screen.Bounds.Location.X;
-                settings.ISIS_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.ISIS_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.ISIS_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableISISOutput = _isisForm.Visible;
-            settings.ISIS_RotateFlipType = _isisForm.Rotation;
-            settings.ISIS_AlwaysOnTop = _isisForm.AlwaysOnTop;
-            settings.ISIS_Monochrome = _isisForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _accelerometerForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _accelerometerForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_accelerometerForm.DesktopBounds);
-            settings.Accelerometer_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_accelerometerForm.StretchToFill)
-            {
-                settings.Accelerometer_StretchToFit = true;
-            }
-            else
-            {
-                settings.Accelerometer_StretchToFit = false;
-                Size size = _accelerometerForm.Size;
-                settings.Accelerometer_OutULX = location.X - screen.Bounds.Location.X;
-                settings.Accelerometer_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.Accelerometer_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.Accelerometer_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableAccelerometerOutput = _accelerometerForm.Visible;
-            settings.Accelerometer_RotateFlipType = _accelerometerForm.Rotation;
-            settings.Accelerometer_AlwaysOnTop = _accelerometerForm.AlwaysOnTop;
-            settings.Accelerometer_Monochrome = _accelerometerForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _ftit2Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _ftit2Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_ftit2Form.DesktopBounds);
-            settings.FTIT2_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_ftit2Form.StretchToFill)
-            {
-                settings.FTIT2_StretchToFit = true;
-            }
-            else
-            {
-                settings.FTIT2_StretchToFit = false;
-                Size size = _ftit2Form.Size;
-                settings.FTIT2_OutULX = location.X - screen.Bounds.Location.X;
-                settings.FTIT2_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.FTIT2_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.FTIT2_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableFTIT2Output = _ftit2Form.Visible;
-            settings.FTIT2_RotateFlipType = _ftit2Form.Rotation;
-            settings.FTIT2_AlwaysOnTop = _ftit2Form.AlwaysOnTop;
-            settings.FTIT2_Monochrome = _ftit2Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _ftit1Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _ftit1Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_ftit1Form.DesktopBounds);
-            settings.FTIT1_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_ftit1Form.StretchToFill)
-            {
-                settings.FTIT1_StretchToFit = true;
-            }
-            else
-            {
-                settings.FTIT1_StretchToFit = false;
-                Size size = _ftit1Form.Size;
-                settings.FTIT1_OutULX = location.X - screen.Bounds.Location.X;
-                settings.FTIT1_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.FTIT1_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.FTIT1_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableFTIT1Output = _ftit1Form.Visible;
-            settings.FTIT1_RotateFlipType = _ftit1Form.Rotation;
-            settings.FTIT1_AlwaysOnTop = _ftit1Form.AlwaysOnTop;
-            settings.FTIT1_Monochrome = _ftit1Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _epuFuelForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _epuFuelForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_epuFuelForm.DesktopBounds);
-            settings.EPUFuel_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_epuFuelForm.StretchToFill)
-            {
-                settings.EPUFuel_StretchToFit = true;
-            }
-            else
-            {
-                settings.EPUFuel_StretchToFit = false;
-                Size size = _epuFuelForm.Size;
-                settings.EPUFuel_OutULX = location.X - screen.Bounds.Location.X;
-                settings.EPUFuel_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.EPUFuel_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.EPUFuel_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableEPUFuelOutput = _epuFuelForm.Visible;
-            settings.EPUFuel_RotateFlipType = _epuFuelForm.Rotation;
-            settings.EPUFuel_AlwaysOnTop = _epuFuelForm.AlwaysOnTop;
-            settings.EPUFuel_Monochrome = _epuFuelForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _pflForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _pflForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_pflForm.DesktopBounds);
-            settings.PFL_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_pflForm.StretchToFill)
-            {
-                settings.PFL_StretchToFit = true;
-            }
-            else
-            {
-                settings.PFL_StretchToFit = false;
-                Size size = _pflForm.Size;
-                settings.PFL_OutULX = location.X - screen.Bounds.Location.X;
-                settings.PFL_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.PFL_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.PFL_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnablePFLOutput = _pflForm.Visible;
-            settings.PFL_RotateFlipType = _pflForm.Rotation;
-            settings.PFL_AlwaysOnTop = _pflForm.AlwaysOnTop;
-            settings.PFL_Monochrome = _pflForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _dedForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _dedForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_dedForm.DesktopBounds);
-            settings.DED_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_dedForm.StretchToFill)
-            {
-                settings.DED_StretchToFit = true;
-            }
-            else
-            {
-                settings.DED_StretchToFit = false;
-                Size size = _dedForm.Size;
-                settings.DED_OutULX = location.X - screen.Bounds.Location.X;
-                settings.DED_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.DED_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.DED_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableDEDOutput = _dedForm.Visible;
-            settings.DED_RotateFlipType = _dedForm.Rotation;
-            settings.DED_AlwaysOnTop = _dedForm.AlwaysOnTop;
-            settings.DED_Monochrome = _dedForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _compassForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _compassForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_compassForm.DesktopBounds);
-            settings.Compass_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_compassForm.StretchToFill)
-            {
-                settings.Compass_StretchToFit = true;
-            }
-            else
-            {
-                settings.Compass_StretchToFit = false;
-                Size size = _compassForm.Size;
-                settings.Compass_OutULX = location.X - screen.Bounds.Location.X;
-                settings.Compass_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.Compass_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.Compass_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableCompassOutput = _compassForm.Visible;
-            settings.Compass_RotateFlipType = _compassForm.Rotation;
-            settings.Compass_AlwaysOnTop = _compassForm.AlwaysOnTop;
-            settings.Compass_Monochrome = _compassForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _cmdsPanelForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _cmdsPanelForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_cmdsPanelForm.DesktopBounds);
-            settings.CMDS_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_cmdsPanelForm.StretchToFill)
-            {
-                settings.CMDS_StretchToFit = true;
-            }
-            else
-            {
-                settings.CMDS_StretchToFit = false;
-                Size size = _cmdsPanelForm.Size;
-                settings.CMDS_OutULX = location.X - screen.Bounds.Location.X;
-                settings.CMDS_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.CMDS_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.CMDS_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableCMDSOutput = _cmdsPanelForm.Visible;
-            settings.CMDS_RotateFlipType = _cmdsPanelForm.Rotation;
-            settings.CMDS_AlwaysOnTop = _cmdsPanelForm.AlwaysOnTop;
-            settings.CMDS_Monochrome = _cmdsPanelForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _cautionPanelForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _cautionPanelForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_cautionPanelForm.DesktopBounds);
-            settings.CautionPanel_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_cautionPanelForm.StretchToFill)
-            {
-                settings.CautionPanel_StretchToFit = true;
-            }
-            else
-            {
-                settings.CautionPanel_StretchToFit = false;
-                Size size = _cautionPanelForm.Size;
-                settings.CautionPanel_OutULX = location.X - screen.Bounds.Location.X;
-                settings.CautionPanel_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.CautionPanel_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.CautionPanel_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableCautionPanelOutput = _cautionPanelForm.Visible;
-            settings.CautionPanel_RotateFlipType = _cautionPanelForm.Rotation;
-            settings.CautionPanel_AlwaysOnTop = _cautionPanelForm.AlwaysOnTop;
-            settings.CautionPanel_Monochrome = _cautionPanelForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _aoaIndicatorForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _aoaIndicatorForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_aoaIndicatorForm.DesktopBounds);
-            settings.AOAIndicator_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_aoaIndicatorForm.StretchToFill)
-            {
-                settings.AOAIndicator_StretchToFit = true;
-            }
-            else
-            {
-                settings.AOAIndicator_StretchToFit = false;
-                Size size = _aoaIndicatorForm.Size;
-                settings.AOAIndicator_OutULX = location.X - screen.Bounds.Location.X;
-                settings.AOAIndicator_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.AOAIndicator_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.AOAIndicator_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableAOAIndicatorOutput = _aoaIndicatorForm.Visible;
-            settings.AOAIndicator_RotateFlipType = _aoaIndicatorForm.Rotation;
-            settings.AOAIndicator_AlwaysOnTop = _aoaIndicatorForm.AlwaysOnTop;
-            settings.AOAIndicator_Monochrome = _aoaIndicatorForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _aoaIndexerForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _aoaIndexerForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_aoaIndexerForm.DesktopBounds);
-            settings.AOAIndexer_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_aoaIndexerForm.StretchToFill)
-            {
-                settings.AOAIndexer_StretchToFit = true;
-            }
-            else
-            {
-                settings.AOAIndexer_StretchToFit = false;
-                Size size = _aoaIndexerForm.Size;
-                settings.AOAIndexer_OutULX = location.X - screen.Bounds.Location.X;
-                settings.AOAIndexer_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.AOAIndexer_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.AOAIndexer_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableAOAIndexerOutput = _aoaIndexerForm.Visible;
-            settings.AOAIndexer_RotateFlipType = _aoaIndexerForm.Rotation;
-            settings.AOAIndexer_AlwaysOnTop = _aoaIndexerForm.AlwaysOnTop;
-            settings.AOAIndexer_Monochrome = _aoaIndexerForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _altimeterForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _altimeterForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_altimeterForm.DesktopBounds);
-            settings.Altimeter_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_altimeterForm.StretchToFill)
-            {
-                settings.Altimeter_StretchToFit = true;
-            }
-            else
-            {
-                settings.Altimeter_StretchToFit = false;
-                Size size = _altimeterForm.Size;
-                settings.Altimeter_OutULX = location.X - screen.Bounds.Location.X;
-                settings.Altimeter_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.Altimeter_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.Altimeter_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableAltimeterOutput = _altimeterForm.Visible;
-            settings.Altimeter_RotateFlipType = _altimeterForm.Rotation;
-            settings.Altimeter_AlwaysOnTop = _altimeterForm.AlwaysOnTop;
-            settings.Altimeter_Monochrome = _altimeterForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _asiForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _asiForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_asiForm.DesktopBounds);
-            settings.ASI_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_asiForm.StretchToFill)
-            {
-                settings.ASI_StretchToFit = true;
-            }
-            else
-            {
-                settings.ASI_StretchToFit = false;
-                Size size = _asiForm.Size;
-                settings.ASI_OutULX = location.X - screen.Bounds.Location.X;
-                settings.ASI_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.ASI_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.ASI_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableASIOutput = _asiForm.Visible;
-            settings.ASI_RotateFlipType = _asiForm.Rotation;
-            settings.ASI_AlwaysOnTop = _asiForm.AlwaysOnTop;
-            settings.ASI_Monochrome = _asiForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _adiForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _adiForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_adiForm.DesktopBounds);
-            settings.ADI_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_adiForm.StretchToFill)
-            {
-                settings.ADI_StretchToFit = true;
-            }
-            else
-            {
-                settings.ADI_StretchToFit = false;
-                Size size = _adiForm.Size;
-                settings.ADI_OutULX = location.X - screen.Bounds.Location.X;
-                settings.ADI_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.ADI_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.ADI_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableADIOutput = _adiForm.Visible;
-            settings.ADI_RotateFlipType = _adiForm.Rotation;
-            settings.ADI_AlwaysOnTop = _adiForm.AlwaysOnTop;
-            settings.ADI_Monochrome = _adiForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _backupAdiForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _backupAdiForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_backupAdiForm.DesktopBounds);
-            settings.Backup_ADI_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_backupAdiForm.StretchToFill)
-            {
-                settings.Backup_ADI_StretchToFit = true;
-            }
-            else
-            {
-                settings.Backup_ADI_StretchToFit = false;
-                Size size = _backupAdiForm.Size;
-                settings.Backup_ADI_OutULX = location.X - screen.Bounds.Location.X;
-                settings.Backup_ADI_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.Backup_ADI_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.Backup_ADI_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableBackupADIOutput = _backupAdiForm.Visible;
-            settings.Backup_ADI_RotateFlipType = _backupAdiForm.Rotation;
-            settings.Backup_ADI_AlwaysOnTop = _backupAdiForm.AlwaysOnTop;
-            settings.Backup_ADI_Monochrome = _backupAdiForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _hydAForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _hydAForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_hydAForm.DesktopBounds);
-            settings.HYDA_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_hydAForm.StretchToFill)
-            {
-                settings.HYDA_StretchToFit = true;
-            }
-            else
-            {
-                settings.HYDA_StretchToFit = false;
-                Size size = _hydAForm.Size;
-                settings.HYDA_OutULX = location.X - screen.Bounds.Location.X;
-                settings.HYDA_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.HYDA_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.HYDA_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableHYDAOutput = _hydAForm.Visible;
-            settings.HYDA_RotateFlipType = _hydAForm.Rotation;
-            settings.HYDA_AlwaysOnTop = _hydAForm.AlwaysOnTop;
-            settings.HYDA_Monochrome = _hydAForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _hydBForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _hydBForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_hydBForm.DesktopBounds);
-            settings.HYDB_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_hydBForm.StretchToFill)
-            {
-                settings.HYDB_StretchToFit = true;
-            }
-            else
-            {
-                settings.HYDB_StretchToFit = false;
-                Size size = _hydBForm.Size;
-                settings.HYDB_OutULX = location.X - screen.Bounds.Location.X;
-                settings.HYDB_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.HYDB_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.HYDB_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableHYDBOutput = _hydBForm.Visible;
-            settings.HYDB_RotateFlipType = _hydBForm.Rotation;
-            settings.HYDB_AlwaysOnTop = _hydBForm.AlwaysOnTop;
-            settings.HYDB_Monochrome = _hydBForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _cabinPressForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _cabinPressForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_cabinPressForm.DesktopBounds);
-            settings.CabinPress_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_cabinPressForm.StretchToFill)
-            {
-                settings.CabinPress_StretchToFit = true;
-            }
-            else
-            {
-                settings.CabinPress_StretchToFit = false;
-                Size size = _cabinPressForm.Size;
-                settings.CabinPress_OutULX = location.X - screen.Bounds.Location.X;
-                settings.CabinPress_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.CabinPress_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.CabinPress_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableCabinPressOutput = _cabinPressForm.Visible;
-            settings.CabinPress_RotateFlipType = _cabinPressForm.Rotation;
-            settings.CabinPress_AlwaysOnTop = _cabinPressForm.AlwaysOnTop;
-            settings.CabinPress_Monochrome = _cabinPressForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-
-        private void _rollTrimForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _rollTrimForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_rollTrimForm.DesktopBounds);
-            settings.RollTrim_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_rollTrimForm.StretchToFill)
-            {
-                settings.RollTrim_StretchToFit = true;
-            }
-            else
-            {
-                settings.RollTrim_StretchToFit = false;
-                Size size = _rollTrimForm.Size;
-                settings.RollTrim_OutULX = location.X - screen.Bounds.Location.X;
-                settings.RollTrim_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.RollTrim_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.RollTrim_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableRollTrimOutput = _rollTrimForm.Visible;
-            settings.RollTrim_RotateFlipType = _rollTrimForm.Rotation;
-            settings.RollTrim_AlwaysOnTop = _rollTrimForm.AlwaysOnTop;
-            settings.RollTrim_Monochrome = _rollTrimForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _pitchTrimForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _pitchTrimForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_pitchTrimForm.DesktopBounds);
-            settings.PitchTrim_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_pitchTrimForm.StretchToFill)
-            {
-                settings.PitchTrim_StretchToFit = true;
-            }
-            else
-            {
-                settings.PitchTrim_StretchToFit = false;
-                Size size = _pitchTrimForm.Size;
-                settings.PitchTrim_OutULX = location.X - screen.Bounds.Location.X;
-                settings.PitchTrim_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.PitchTrim_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.PitchTrim_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnablePitchTrimOutput = _pitchTrimForm.Visible;
-            settings.PitchTrim_RotateFlipType = _pitchTrimForm.Rotation;
-            settings.PitchTrim_AlwaysOnTop = _pitchTrimForm.AlwaysOnTop;
-            settings.PitchTrim_Monochrome = _pitchTrimForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _mfd4Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _mfd4Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_mfd4Form.DesktopBounds);
-            settings.MFD4_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_mfd4Form.StretchToFill)
-            {
-                settings.MFD4_StretchToFit = true;
-            }
-            else
-            {
-                settings.MFD4_StretchToFit = false;
-                Size size = _mfd4Form.Size;
-                settings.MFD4_OutULX = location.X - screen.Bounds.Location.X;
-                settings.MFD4_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.MFD4_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.MFD4_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableMfd4Output = _mfd4Form.Visible;
-            settings.MFD4_RotateFlipType = _mfd4Form.Rotation;
-            settings.MFD4_AlwaysOnTop = _mfd4Form.AlwaysOnTop;
-            settings.MFD4_Monochrome = _mfd4Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _mfd3Form_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _mfd3Form.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_mfd3Form.DesktopBounds);
-            settings.MFD3_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_mfd3Form.StretchToFill)
-            {
-                settings.MFD3_StretchToFit = true;
-            }
-            else
-            {
-                settings.MFD3_StretchToFit = false;
-                Size size = _mfd3Form.Size;
-                settings.MFD3_OutULX = location.X - screen.Bounds.Location.X;
-                settings.MFD3_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.MFD3_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.MFD3_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableMfd3Output = _mfd3Form.Visible;
-            settings.MFD3_RotateFlipType = _mfd3Form.Rotation;
-            settings.MFD3_AlwaysOnTop = _mfd3Form.AlwaysOnTop;
-            settings.MFD3_Monochrome = _mfd3Form.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _leftMfdForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _leftMfdForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_leftMfdForm.DesktopBounds);
-            settings.LMFD_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_leftMfdForm.StretchToFill)
-            {
-                settings.LMFD_StretchToFit = true;
-            }
-            else
-            {
-                settings.LMFD_StretchToFit = false;
-                Size size = _leftMfdForm.Size;
-                settings.LMFD_OutULX = location.X - screen.Bounds.Location.X;
-                settings.LMFD_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.LMFD_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.LMFD_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableLeftMFDOutput = _leftMfdForm.Visible;
-            settings.LMFD_RotateFlipType = _leftMfdForm.Rotation;
-            settings.LMFD_AlwaysOnTop = _leftMfdForm.AlwaysOnTop;
-            settings.LMFD_Monochrome = _leftMfdForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _rightMfdForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _rightMfdForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_rightMfdForm.DesktopBounds);
-            Size size = _rightMfdForm.Size;
-            settings.RMFD_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_rightMfdForm.StretchToFill)
-            {
-                settings.RMFD_StretchToFit = true;
-            }
-            else
-            {
-                settings.RMFD_StretchToFit = false;
-                settings.RMFD_OutULX = location.X - screen.Bounds.Location.X;
-                settings.RMFD_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.RMFD_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.RMFD_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableRightMFDOutput = _rightMfdForm.Visible;
-            settings.RMFD_RotateFlipType = _rightMfdForm.Rotation;
-            settings.RMFD_AlwaysOnTop = _rightMfdForm.AlwaysOnTop;
-            settings.RMFD_Monochrome = _rightMfdForm.Monochrome;
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        private void _hudForm_DataChanged(object sender, EventArgs e)
-        {
-            Settings settings = Settings.Default;
-            Point location = _hudForm.DesktopLocation;
-            Screen screen = Screen.FromRectangle(_hudForm.DesktopBounds);
-            Size size = _hudForm.Size;
-            settings.HUD_OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
-            if (_hudForm.StretchToFill)
-            {
-                settings.HUD_StretchToFit = true;
-            }
-            else
-            {
-                settings.HUD_StretchToFit = false;
-                settings.HUD_OutULX = location.X - screen.Bounds.Location.X;
-                settings.HUD_OutULY = location.Y - screen.Bounds.Location.Y;
-                settings.HUD_OutLRX = (location.X - screen.Bounds.Location.X) + size.Width;
-                settings.HUD_OutLRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
-            }
-            settings.EnableHudOutput = _hudForm.Visible;
-            settings.HUD_RotateFlipType = _hudForm.Rotation;
-            settings.HudAlwaysOnTop = _hudForm.AlwaysOnTop;
-            settings.HUD_Monochrome = _hudForm.Monochrome;
-
-            if (!_testMode)
-            {
-                _settingsSaveScheduled = true;
-            }
-            _settingsLoadScheduled = true;
-        }
-
-        #endregion
-
         #region Form and Renderer Matching
 
         private InstrumentForm GetFormForRenderer(IInstrumentRenderer renderer)
@@ -7114,11 +6457,11 @@ namespace MFDExtractor
                 {
                     _windowSizingOrMoving = WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
                     Application.DoEvents();
-                    if (_settingsSaveScheduled && !_windowSizingOrMoving)
+                    if (SettingsSaveScheduled && !_windowSizingOrMoving)
                     {
                         SaveSettingsAsync();
                     }
-                    if (_settingsLoadScheduled && !_windowSizingOrMoving)
+                    if (SettingsLoadScheduled && !_windowSizingOrMoving)
                     {
                         LoadSettingsAsync();
                     }

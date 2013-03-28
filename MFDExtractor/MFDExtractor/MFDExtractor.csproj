@@ -107,10 +107,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BMSSupport.cs" />
+    <Compile Include="DIHotkeyDetection.cs" />
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FlightDataExtension.cs" />
+    <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="RenderThreadSetupHelper.cs" />
     <Compile Include="RenderThreadWorkHelper.cs" />
