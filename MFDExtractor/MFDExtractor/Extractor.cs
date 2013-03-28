@@ -3936,7 +3936,10 @@ namespace MFDExtractor
                 .HandleDataChangedEvent;
 
             instrumentForm.Disposed += disposeHandler;
-            _outputForms.Add(renderer, instrumentForm);
+            if (renderer != null)
+            {
+                _outputForms.Add(renderer, instrumentForm);
+            }
             if (initialImage != null)
             {
                 using (var graphics = instrumentForm.CreateGraphics())

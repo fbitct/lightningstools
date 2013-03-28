@@ -136,7 +136,7 @@ namespace Common.Serialization
 
         public static T DeserializeFromXmlString<T>(string xml)
         {
-            if (xml == null) return default(T);
+            if (string.IsNullOrWhiteSpace(xml)) return default(T);
             var serializer = new XmlSerializer(typeof (T));
             using (var ms = new MemoryStream())
             using (var sw = new StreamWriter(ms, Encoding.UTF8))
@@ -210,7 +210,7 @@ namespace Common.Serialization
 
         public static object DeserializeFromXml(string xml, Type type)
         {
-            if (xml == null) return null;
+            if (string.IsNullOrWhiteSpace(xml)) return null;
             object toReturn;
             var serializer = new XmlSerializer(type);
             using (var ms = new MemoryStream())
