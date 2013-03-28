@@ -3682,262 +3682,157 @@ namespace MFDExtractor
 
         private void SetupMfd4Form()
         {
-            if (Settings.Default.EnableMfd4Output)
-            {
-                Point location;
-                var size = new Size();
-                _mfd4Form = new InstrumentForm();
-                _mfd4Form.ShowInTaskbar = false;
-                _mfd4Form.ShowIcon = false;
-                _mfd4Form.Text = "MFD #4";
-                if (Settings.Default.MFD4_StretchToFit)
-                {
-                    _mfd4Form.Size = _mfd4_OutputRect.Size;
-                    _mfd4Form.Location = _mfd4_OutputRect.Location;
-                    _mfd4Form.StretchToFill = true;
-                    location = new Point(0, 0);
-                    size = _mfd4OutputScreen.Bounds.Size;
-                }
-                else
-                {
-                    location = _mfd4_OutputRect.Location;
-                    size = _mfd4_OutputRect.Size;
-                }
-                _mfd4Form.AlwaysOnTop = Settings.Default.MFD4_AlwaysOnTop;
-                _mfd4Form.Monochrome = Settings.Default.MFD4_Monochrome;
-                _mfd4Form.Rotation = Settings.Default.MFD4_RotateFlipType;
-                _mfd4Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_mfd4Form, _applicationForm, _mfd4OutputScreen, location,
-                                                             size, true, true);
-                using (Graphics graphics = _mfd4Form.CreateGraphics())
-                {
-                    graphics.DrawImage(_mfd4BlankImage, _mfd4Form.ClientRectangle);
-                }
-                _mfd4Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _mfd4Form,
-                                                                                this,
-                                                                                x => Settings.Default.MFD4_OutputDisplay = x,
-                                                                                x => Settings.Default.MFD4_StretchToFit = x,
-                                                                                x => Settings.Default.MFD4_OutULX = x,
-                                                                                x => Settings.Default.MFD4_OutULY = x,
-                                                                                x => Settings.Default.MFD4_OutLRX = x,
-                                                                                x => Settings.Default.MFD4_OutLRY = x,
-                                                                                x => Settings.Default.EnableMfd4Output = x,
-                                                                                x => Settings.Default.MFD4_RotateFlipType = x,
-                                                                                x => Settings.Default.MFD4_AlwaysOnTop = x,
-                                                                                x => Settings.Default.MFD4_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _mfd4Form.Disposed += _mfd4Form_Disposed;
-            }
+            SetupInstrumentForm(
+                            "MFD 4",
+                            ref _mfd4Form,
+                            null,
+                            _mfd4Form_Disposed,
+                            Settings.Default.EnableMfd4Output,
+                            Settings.Default.MFD4_OutputDisplay,
+                            Settings.Default.MFD4_StretchToFit,
+                            Settings.Default.MFD4_OutULX,
+                            Settings.Default.MFD4_OutULY,
+                            Settings.Default.MFD4_OutLRX,
+                            Settings.Default.MFD4_OutLRY,
+                            Settings.Default.MFD4_AlwaysOnTop,
+                            Settings.Default.MFD4_Monochrome,
+                            Settings.Default.MFD4_RotateFlipType,
+                            x => Settings.Default.MFD4_OutputDisplay = x,
+                            x => Settings.Default.MFD4_StretchToFit = x,
+                            x => Settings.Default.MFD4_OutULX = x,
+                            x => Settings.Default.MFD4_OutULY = x,
+                            x => Settings.Default.MFD4_OutLRX = x,
+                            x => Settings.Default.MFD4_OutLRY = x,
+                            x => Settings.Default.EnableMfd4Output = x,
+                            x => Settings.Default.MFD4_RotateFlipType = x,
+                            x => Settings.Default.MFD4_AlwaysOnTop = x,
+                            x => Settings.Default.MFD4_Monochrome = x,
+                            _mfd4BlankImage
+                            );
         }
 
         private void SetupMfd3Form()
         {
-            if (Settings.Default.EnableMfd3Output)
-            {
-                Point location;
-                var size = new Size();
-                _mfd3Form = new InstrumentForm();
-                _mfd3Form.Text = "MFD #3";
-                _mfd3Form.ShowInTaskbar = false;
-                _mfd3Form.ShowIcon = false;
-                if (Settings.Default.MFD3_StretchToFit)
-                {
-                    _mfd3Form.Size = _mfd3_OutputRect.Size;
-                    _mfd3Form.Location = _mfd3_OutputRect.Location;
-                    _mfd3Form.StretchToFill = true;
-                    location = new Point(0, 0);
-                    size = _mfd3OutputScreen.Bounds.Size;
-                }
-                else
-                {
-                    location = _mfd3_OutputRect.Location;
-                    size = _mfd3_OutputRect.Size;
-                }
-                _mfd3Form.AlwaysOnTop = Settings.Default.MFD3_AlwaysOnTop;
-                _mfd3Form.Monochrome = Settings.Default.MFD3_Monochrome;
-                _mfd3Form.Rotation = Settings.Default.MFD3_RotateFlipType;
-                _mfd3Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_mfd3Form, _applicationForm, _mfd3OutputScreen, location,
-                                                             size, true, true);
-                using (Graphics graphics = _mfd3Form.CreateGraphics())
-                {
-                    graphics.DrawImage(_mfd3BlankImage, _mfd3Form.ClientRectangle);
-                }
-                _mfd3Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _mfd3Form,
-                                                                                this,
-                                                                                x => Settings.Default.MFD3_OutputDisplay = x,
-                                                                                x => Settings.Default.MFD3_StretchToFit = x,
-                                                                                x => Settings.Default.MFD3_OutULX = x,
-                                                                                x => Settings.Default.MFD3_OutULY = x,
-                                                                                x => Settings.Default.MFD3_OutLRX = x,
-                                                                                x => Settings.Default.MFD3_OutLRY = x,
-                                                                                x => Settings.Default.EnableMfd3Output = x,
-                                                                                x => Settings.Default.MFD3_RotateFlipType = x,
-                                                                                x => Settings.Default.MFD3_AlwaysOnTop = x,
-                                                                                x => Settings.Default.MFD3_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _mfd3Form.Disposed += _mfd3Form_Disposed;
-            }
+            SetupInstrumentForm(
+                            "MFD 3",
+                            ref _mfd3Form,
+                            null,
+                            _mfd3Form_Disposed,
+                            Settings.Default.EnableMfd3Output,
+                            Settings.Default.MFD3_OutputDisplay,
+                            Settings.Default.MFD3_StretchToFit,
+                            Settings.Default.MFD3_OutULX,
+                            Settings.Default.MFD3_OutULY,
+                            Settings.Default.MFD3_OutLRX,
+                            Settings.Default.MFD3_OutLRY,
+                            Settings.Default.MFD3_AlwaysOnTop,
+                            Settings.Default.MFD3_Monochrome,
+                            Settings.Default.MFD3_RotateFlipType,
+                            x => Settings.Default.MFD3_OutputDisplay = x,
+                            x => Settings.Default.MFD3_StretchToFit = x,
+                            x => Settings.Default.MFD3_OutULX = x,
+                            x => Settings.Default.MFD3_OutULY = x,
+                            x => Settings.Default.MFD3_OutLRX = x,
+                            x => Settings.Default.MFD3_OutLRY = x,
+                            x => Settings.Default.EnableMfd3Output = x,
+                            x => Settings.Default.MFD3_RotateFlipType = x,
+                            x => Settings.Default.MFD3_AlwaysOnTop = x,
+                            x => Settings.Default.MFD3_Monochrome = x,
+                            _mfd3BlankImage
+                            );
         }
 
         private void SetupLeftMfdForm()
         {
-            if (Settings.Default.EnableLeftMFDOutput)
-            {
-                Point location;
-                var size = new Size();
-                _leftMfdForm = new InstrumentForm();
-                _leftMfdForm.Text = "Left MFD";
-                _leftMfdForm.ShowInTaskbar = false;
-                _leftMfdForm.ShowIcon = false;
-                if (Settings.Default.LMFD_StretchToFit)
-                {
-                    _leftMfdForm.Size = _leftMfdOutputRect.Size;
-                    _leftMfdForm.Location = _leftMfdOutputRect.Location;
-                    _leftMfdForm.StretchToFill = true;
-                    location = new Point(0, 0);
-                    size = _leftMfdOutputScreen.Bounds.Size;
-                }
-                else
-                {
-                    location = _leftMfdOutputRect.Location;
-                    size = _leftMfdOutputRect.Size;
-                }
-                _leftMfdForm.AlwaysOnTop = Settings.Default.LMFD_AlwaysOnTop;
-                _leftMfdForm.Monochrome = Settings.Default.LMFD_Monochrome;
-                _leftMfdForm.Rotation = Settings.Default.LMFD_RotateFlipType;
-                _leftMfdForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_leftMfdForm, _applicationForm, _leftMfdOutputScreen,
-                                                             location, size, true, true);
-                using (Graphics graphics = _leftMfdForm.CreateGraphics())
-                {
-                    graphics.DrawImage(_leftMfdBlankImage, _leftMfdForm.ClientRectangle);
-                }
-                _leftMfdForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _leftMfdForm,
-                                                                                this,
-                                                                                x => Settings.Default.LMFD_OutputDisplay = x,
-                                                                                x => Settings.Default.LMFD_StretchToFit = x,
-                                                                                x => Settings.Default.LMFD_OutULX = x,
-                                                                                x => Settings.Default.LMFD_OutULY = x,
-                                                                                x => Settings.Default.LMFD_OutLRX = x,
-                                                                                x => Settings.Default.LMFD_OutLRY = x,
-                                                                                x => Settings.Default.EnableLeftMFDOutput = x,
-                                                                                x => Settings.Default.LMFD_RotateFlipType = x,
-                                                                                x => Settings.Default.LMFD_AlwaysOnTop = x,
-                                                                                x => Settings.Default.LMFD_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _leftMfdForm.Disposed += _leftMfdForm_Disposed;
-            }
+            SetupInstrumentForm(
+                            "Left MFD",
+                            ref _leftMfdForm,
+                            null,
+                            _leftMfdForm_Disposed,
+                            Settings.Default.EnableLeftMFDOutput,
+                            Settings.Default.LMFD_OutputDisplay,
+                            Settings.Default.LMFD_StretchToFit,
+                            Settings.Default.LMFD_OutULX,
+                            Settings.Default.LMFD_OutULY,
+                            Settings.Default.LMFD_OutLRX,
+                            Settings.Default.LMFD_OutLRY,
+                            Settings.Default.LMFD_AlwaysOnTop,
+                            Settings.Default.LMFD_Monochrome,
+                            Settings.Default.LMFD_RotateFlipType,
+                            x => Settings.Default.LMFD_OutputDisplay = x,
+                            x => Settings.Default.LMFD_StretchToFit = x,
+                            x => Settings.Default.LMFD_OutULX = x,
+                            x => Settings.Default.LMFD_OutULY = x,
+                            x => Settings.Default.LMFD_OutLRX = x,
+                            x => Settings.Default.LMFD_OutLRY = x,
+                            x => Settings.Default.EnableLeftMFDOutput = x,
+                            x => Settings.Default.LMFD_RotateFlipType = x,
+                            x => Settings.Default.LMFD_AlwaysOnTop = x,
+                            x => Settings.Default.LMFD_Monochrome = x,
+                            _leftMfdBlankImage
+                            );
         }
 
         private void SetupRightMfdForm()
         {
-            if (Settings.Default.EnableRightMFDOutput)
-            {
-                Point location;
-                var size = new Size();
-                _rightMfdForm = new InstrumentForm();
-                _rightMfdForm.Text = "Right MFD";
-                _rightMfdForm.ShowInTaskbar = false;
-                _rightMfdForm.ShowIcon = false;
-                if (Settings.Default.RMFD_StretchToFit)
-                {
-                    _rightMfdForm.Size = _rightMfdOutputRect.Size;
-                    _rightMfdForm.Location = _rightMfdOutputRect.Location;
-                    _rightMfdForm.StretchToFill = true;
-                    location = new Point(0, 0);
-                    size = _rightMfdOutputScreen.Bounds.Size;
-                }
-                else
-                {
-                    location = _rightMfdOutputRect.Location;
-                    size = _rightMfdOutputRect.Size;
-                }
-                _rightMfdForm.AlwaysOnTop = Settings.Default.RMFD_AlwaysOnTop;
-                _rightMfdForm.Monochrome = Settings.Default.RMFD_Monochrome;
-                _rightMfdForm.Rotation = Settings.Default.RMFD_RotateFlipType;
-                _rightMfdForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_rightMfdForm, _applicationForm, _rightMfdOutputScreen,
-                                                             location, size, true, true);
-                using (Graphics graphics = _rightMfdForm.CreateGraphics())
-                {
-                    graphics.DrawImage(_rightMfdBlankImage, _rightMfdForm.ClientRectangle);
-                }
-                _rightMfdForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _rightMfdForm,
-                                                                                this,
-                                                                                x => Settings.Default.RMFD_OutputDisplay = x,
-                                                                                x => Settings.Default.RMFD_StretchToFit = x,
-                                                                                x => Settings.Default.RMFD_OutULX = x,
-                                                                                x => Settings.Default.RMFD_OutULY = x,
-                                                                                x => Settings.Default.RMFD_OutLRX = x,
-                                                                                x => Settings.Default.RMFD_OutLRY = x,
-                                                                                x => Settings.Default.EnableRightMFDOutput = x,
-                                                                                x => Settings.Default.RMFD_RotateFlipType = x,
-                                                                                x => Settings.Default.RMFD_AlwaysOnTop = x,
-                                                                                x => Settings.Default.RMFD_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _rightMfdForm.Disposed += _rightMfdForm_Disposed;
-            }
+            SetupInstrumentForm(
+                            "Right MFD",
+                            ref _rightMfdForm,
+                            null,
+                            _rightMfdForm_Disposed,
+                            Settings.Default.EnableRightMFDOutput,
+                            Settings.Default.RMFD_OutputDisplay,
+                            Settings.Default.RMFD_StretchToFit,
+                            Settings.Default.RMFD_OutULX,
+                            Settings.Default.RMFD_OutULY,
+                            Settings.Default.RMFD_OutLRX,
+                            Settings.Default.RMFD_OutLRY,
+                            Settings.Default.RMFD_AlwaysOnTop,
+                            Settings.Default.RMFD_Monochrome,
+                            Settings.Default.RMFD_RotateFlipType,
+                            x => Settings.Default.RMFD_OutputDisplay = x,
+                            x => Settings.Default.RMFD_StretchToFit = x,
+                            x => Settings.Default.RMFD_OutULX = x,
+                            x => Settings.Default.RMFD_OutULY = x,
+                            x => Settings.Default.RMFD_OutLRX = x,
+                            x => Settings.Default.RMFD_OutLRY = x,
+                            x => Settings.Default.EnableRightMFDOutput = x,
+                            x => Settings.Default.RMFD_RotateFlipType = x,
+                            x => Settings.Default.RMFD_AlwaysOnTop = x,
+                            x => Settings.Default.RMFD_Monochrome = x,
+                            _rightMfdBlankImage
+                            );
         }
 
         private void SetupHudForm()
         {
-            if (Settings.Default.EnableHudOutput)
-            {
-                Point location;
-                var size = new Size();
-                _hudForm = new InstrumentForm();
-                _hudForm.Text = "HUD";
-                _hudForm.ShowInTaskbar = false;
-                _hudForm.ShowIcon = false;
-                if (Settings.Default.HUD_StretchToFit)
-                {
-                    _hudForm.Size = _hudOutputRect.Size;
-                    _hudForm.Location = _hudOutputRect.Location;
-                    _hudForm.StretchToFill = true;
-                    location = new Point(0, 0);
-                    size = _hudForm.Bounds.Size;
-                }
-                else
-                {
-                    location = _hudOutputRect.Location;
-                    size = _hudOutputRect.Size;
-                }
-                _hudForm.AlwaysOnTop = Settings.Default.HudAlwaysOnTop;
-                _hudForm.Monochrome = Settings.Default.HUD_Monochrome;
-                _hudForm.Rotation = Settings.Default.HUD_RotateFlipType;
-                _hudForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_hudForm, _applicationForm, _hudOutputScreen, location,
-                                                             size, true, true);
-                using (Graphics graphics = _hudForm.CreateGraphics())
-                {
-                    graphics.DrawImage(_hudBlankImage, _hudForm.ClientRectangle);
-                }
-                _hudForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _hudForm,
-                                                                                this,
-                                                                                x => Settings.Default.HUD_OutputDisplay = x,
-                                                                                x => Settings.Default.HUD_StretchToFit = x,
-                                                                                x => Settings.Default.HUD_OutULX = x,
-                                                                                x => Settings.Default.HUD_OutULY = x,
-                                                                                x => Settings.Default.HUD_OutLRX = x,
-                                                                                x => Settings.Default.HUD_OutLRY = x,
-                                                                                x => Settings.Default.EnableHudOutput = x,
-                                                                                x => Settings.Default.HUD_RotateFlipType = x,
-                                                                                x => Settings.Default.HudAlwaysOnTop = x,
-                                                                                x => Settings.Default.HUD_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _hudForm.Disposed += _hudForm_Disposed;
-            }
+            SetupInstrumentForm(
+                            "HUD",
+                            ref _hudForm,
+                            null,
+                            _hudForm_Disposed,
+                            Settings.Default.EnableHudOutput,
+                            Settings.Default.HUD_OutputDisplay,
+                            Settings.Default.HUD_StretchToFit,
+                            Settings.Default.HUD_OutULX,
+                            Settings.Default.HUD_OutULY,
+                            Settings.Default.HUD_OutLRX,
+                            Settings.Default.HUD_OutLRY,
+                            Settings.Default.HudAlwaysOnTop,
+                            Settings.Default.HUD_Monochrome,
+                            Settings.Default.HUD_RotateFlipType,
+                            x => Settings.Default.HUD_OutputDisplay = x,
+                            x => Settings.Default.HUD_StretchToFit = x,
+                            x => Settings.Default.HUD_OutULX = x,
+                            x => Settings.Default.HUD_OutULY = x,
+                            x => Settings.Default.HUD_OutLRX = x,
+                            x => Settings.Default.HUD_OutLRY = x,
+                            x => Settings.Default.EnableHudOutput = x,
+                            x => Settings.Default.HUD_RotateFlipType = x,
+                            x => Settings.Default.HudAlwaysOnTop = x,
+                            x => Settings.Default.HUD_Monochrome = x,
+                            _hudBlankImage
+                            );
         }
 
         #endregion
@@ -3946,1807 +3841,1160 @@ namespace MFDExtractor
 
         private void SetupVVIForm()
         {
-            if (Settings.Default.EnableVVIOutput)
+            SetupInstrumentForm(
+                            "VVI",
+                            ref _vviForm,
+                            _vviRenderer,
+                            _vviForm_Disposed,
+                            Settings.Default.EnableVVIOutput,
+                            Settings.Default.VVI_OutputDisplay,
+                            Settings.Default.VVI_StretchToFit,
+                            Settings.Default.VVI_OutULX,
+                            Settings.Default.VVI_OutULY,
+                            Settings.Default.VVI_OutLRX,
+                            Settings.Default.VVI_OutLRY,
+                            Settings.Default.VVI_AlwaysOnTop,
+                            Settings.Default.VVI_Monochrome,
+                            Settings.Default.VVI_RotateFlipType,
+                            x => Settings.Default.VVI_OutputDisplay = x,
+                            x => Settings.Default.VVI_StretchToFit = x,
+                            x => Settings.Default.VVI_OutULX = x,
+                            x => Settings.Default.VVI_OutULY = x,
+                            x => Settings.Default.VVI_OutLRX = x,
+                            x => Settings.Default.VVI_OutLRY = x,
+                            x => Settings.Default.EnableVVIOutput = x,
+                            x => Settings.Default.VVI_RotateFlipType = x,
+                            x => Settings.Default.VVI_AlwaysOnTop = x,
+                            x => Settings.Default.VVI_Monochrome = x
+                            );
+        }
+        private void SetupInstrumentForm
+        (
+            string formCaption,
+            ref InstrumentForm instrumentForm,
+            IInstrumentRenderer renderer,
+            EventHandler disposeHandler,
+            bool enableOutput,
+            string outputDisplay,
+            bool stretchToFit,
+            int outULX,
+            int outULY,
+            int outLRX,
+            int outLRY,
+            bool alwaysOnTop,
+            bool monochrome,
+            RotateFlipType rotateFlipType,
+            Action<string> setOutputDisplay,
+            Action<bool> setStretchToFit,
+            Action<int> setOutULX,
+            Action<int> setOutULY,
+            Action<int> setOutLRX,
+            Action<int> setOutLRY,
+            Action<bool> setEnableOutput,
+            Action<RotateFlipType> setRotateFlipType,
+            Action<bool> setAlwaysOnTop,
+            Action<bool> setMonochrome,
+            Image initialImage=null
+        )
+        {
+            if (!enableOutput) return;
+            Point location;
+            Size size;
+            var screen = Common.Screen.Util.FindScreen(outputDisplay);
+            instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false };
+            if (stretchToFit)
             {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.VVI_OutputDisplay);
-                _vviForm = new InstrumentForm();
-                _vviForm.Text = "Vertical Velocity Indicator (VVI)";
-                _vviForm.ShowInTaskbar = false;
-                _vviForm.ShowIcon = false;
-                if (Settings.Default.VVI_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _vviForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.VVI_OutULX, Settings.Default.VVI_OutULY);
-                    size = new Size(Settings.Default.VVI_OutLRX - Settings.Default.VVI_OutULX,
-                                    Settings.Default.VVI_OutLRY - Settings.Default.VVI_OutULY);
-                    _vviForm.StretchToFill = false;
-                }
-                _vviForm.AlwaysOnTop = Settings.Default.VVI_AlwaysOnTop;
-                _vviForm.Monochrome = Settings.Default.VVI_Monochrome;
-                _vviForm.Rotation = Settings.Default.VVI_RotateFlipType;
-                _vviForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_vviForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _vviForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _vviForm, 
-                                                                                this, 
-                                                                                x=>Settings.Default.VVI_OutputDisplay=x, 
-                                                                                x=>Settings.Default.VVI_StretchToFit=x, 
-                                                                                x=>Settings.Default.VVI_OutULX=x, 
-                                                                                x=>Settings.Default.VVI_OutULY=x, 
-                                                                                x=>Settings.Default.VVI_OutLRX=x, 
-                                                                                x=>Settings.Default.VVI_OutLRY=x, 
-                                                                                x=>Settings.Default.EnableVVIOutput=x, 
-                                                                                x=>Settings.Default.VVI_RotateFlipType=x, 
-                                                                                x=>Settings.Default.VVI_AlwaysOnTop=x, 
-                                                                                x=>Settings.Default.VVI_Monochrome=x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _vviForm.Disposed += _vviForm_Disposed;
-                _outputForms.Add(_vviRenderer, _vviForm);
+                location = new Point(0, 0);
+                size = screen.Bounds.Size;
+                instrumentForm.StretchToFill = true;
             }
+            else
+            {
+                location = new Point(outULX, outULY);
+                size = new Size(outLRX - outULX, outLRY - outULY);
+                instrumentForm.StretchToFill = false;
+            }
+            instrumentForm.AlwaysOnTop = alwaysOnTop;
+            instrumentForm.Monochrome = monochrome;
+            instrumentForm.Rotation = rotateFlipType;
+            instrumentForm.WindowState = FormWindowState.Normal;
+            Common.Screen.Util.OpenFormOnSpecificMonitor(instrumentForm, _applicationForm, screen, location, size, true, true);
+            instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(
+                instrumentForm,
+                _extractor,
+                setOutputDisplay,
+                setStretchToFit,
+                setOutULX,
+                setOutULY,
+                setOutLRX,
+                setOutLRY,
+                setEnableOutput,
+                setRotateFlipType,
+                setAlwaysOnTop,
+                setMonochrome
+                )
+                .HandleDataChangedEvent;
+
+            instrumentForm.Disposed += disposeHandler;
+            _outputForms.Add(renderer, instrumentForm);
+            if (initialImage != null)
+            {
+                using (var graphics = instrumentForm.CreateGraphics())
+                {
+                    graphics.DrawImage(initialImage, instrumentForm.ClientRectangle);
+                }
+            }
+
         }
 
         private void SetupRPM1Form()
         {
-            if (Settings.Default.EnableRPM1Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.RPM1_OutputDisplay);
-                _rpm1Form = new InstrumentForm();
-                _rpm1Form.Text = "Engine 1 - RPM";
-                _rpm1Form.ShowInTaskbar = false;
-                _rpm1Form.ShowIcon = false;
-                if (Settings.Default.RPM1_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _rpm1Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.RPM1_OutULX, Settings.Default.RPM1_OutULY);
-                    size = new Size(Settings.Default.RPM1_OutLRX - Settings.Default.RPM1_OutULX,
-                                    Settings.Default.RPM1_OutLRY - Settings.Default.RPM1_OutULY);
-                    _rpm1Form.StretchToFill = false;
-                }
-                _rpm1Form.AlwaysOnTop = Settings.Default.RPM1_AlwaysOnTop;
-                _rpm1Form.Monochrome = Settings.Default.RPM1_Monochrome;
-                _rpm1Form.Rotation = Settings.Default.RPM1_RotateFlipType;
-                _rpm1Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_rpm1Form, _applicationForm, screen, location, size, true,
-                                                             true);
-                _rpm1Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _rpm1Form, 
-                                                                                this,
-                                                                                x => Settings.Default.RPM1_OutputDisplay = x,
-                                                                                x => Settings.Default.RPM1_StretchToFit = x,
-                                                                                x => Settings.Default.RPM1_OutULX = x,
-                                                                                x => Settings.Default.RPM1_OutULY = x,
-                                                                                x => Settings.Default.RPM1_OutLRX = x,
-                                                                                x => Settings.Default.RPM1_OutLRY = x,
-                                                                                x => Settings.Default.EnableRPM1Output = x,
-                                                                                x => Settings.Default.RPM1_RotateFlipType = x,
-                                                                                x => Settings.Default.RPM1_AlwaysOnTop = x,
-                                                                                x => Settings.Default.RPM1_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-
-
-
-                _rpm1Form.Disposed += _rpm1Form_Disposed;
-                _outputForms.Add(_rpm1Renderer, _rpm1Form);
-            }
+            SetupInstrumentForm(
+                "Engine 1 - RPM",
+                ref _rpm1Form,
+                _rpm1Renderer,
+                _rpm1Form_Disposed,
+                Settings.Default.EnableRPM1Output,
+                Settings.Default.RPM1_OutputDisplay,
+                Settings.Default.RPM1_StretchToFit,
+                Settings.Default.RPM1_OutULX,
+                Settings.Default.RPM1_OutULY,
+                Settings.Default.RPM1_OutLRX,
+                Settings.Default.RPM1_OutLRY,
+                Settings.Default.RPM1_AlwaysOnTop,
+                Settings.Default.RPM1_Monochrome,
+                Settings.Default.RPM1_RotateFlipType,
+                x => Settings.Default.RPM1_OutputDisplay = x,
+                x => Settings.Default.RPM1_StretchToFit = x,
+                x => Settings.Default.RPM1_OutULX = x,
+                x => Settings.Default.RPM1_OutULY = x,
+                x => Settings.Default.RPM1_OutLRX = x,
+                x => Settings.Default.RPM1_OutLRY = x,
+                x => Settings.Default.EnableRPM1Output = x,
+                x => Settings.Default.RPM1_RotateFlipType = x,
+                x => Settings.Default.RPM1_AlwaysOnTop = x,
+                x => Settings.Default.RPM1_Monochrome = x
+                );
         }
 
         private void SetupRPM2Form()
         {
-            if (Settings.Default.EnableRPM2Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.RPM2_OutputDisplay);
-                _rpm2Form = new InstrumentForm();
-                _rpm2Form.Text = "Engine 2 - RPM";
-                _rpm2Form.ShowInTaskbar = false;
-                _rpm2Form.ShowIcon = false;
-                if (Settings.Default.RPM2_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _rpm2Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.RPM2_OutULX, Settings.Default.RPM2_OutULY);
-                    size = new Size(Settings.Default.RPM2_OutLRX - Settings.Default.RPM2_OutULX,
-                                    Settings.Default.RPM2_OutLRY - Settings.Default.RPM2_OutULY);
-                    _rpm2Form.StretchToFill = false;
-                }
-                _rpm2Form.AlwaysOnTop = Settings.Default.RPM2_AlwaysOnTop;
-                _rpm2Form.Monochrome = Settings.Default.RPM2_Monochrome;
-                _rpm2Form.Rotation = Settings.Default.RPM2_RotateFlipType;
-                _rpm2Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_rpm2Form, _applicationForm, screen, location, size, true,
-                                                             true);
-                _rpm2Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _rpm2Form, 
-                                                                                this,
-                                                                                x => Settings.Default.RPM2_OutputDisplay = x,
-                                                                                x => Settings.Default.RPM2_StretchToFit = x,
-                                                                                x => Settings.Default.RPM2_OutULX = x,
-                                                                                x => Settings.Default.RPM2_OutULY = x,
-                                                                                x => Settings.Default.RPM2_OutLRX = x,
-                                                                                x => Settings.Default.RPM2_OutLRY = x,
-                                                                                x => Settings.Default.EnableRPM2Output = x,
-                                                                                x => Settings.Default.RPM2_RotateFlipType = x,
-                                                                                x => Settings.Default.RPM2_AlwaysOnTop = x,
-                                                                                x => Settings.Default.RPM2_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-;
-                _rpm2Form.Disposed += _rpm2Form_Disposed;
-                _outputForms.Add(_rpm2Renderer, _rpm2Form);
-            }
+            SetupInstrumentForm(
+                            "Engine 2 - RPM",
+                            ref _rpm2Form,
+                            _rpm2Renderer,
+                            _rpm2Form_Disposed,
+                            Settings.Default.EnableRPM2Output,
+                            Settings.Default.RPM2_OutputDisplay,
+                            Settings.Default.RPM2_StretchToFit,
+                            Settings.Default.RPM2_OutULX,
+                            Settings.Default.RPM2_OutULY,
+                            Settings.Default.RPM2_OutLRX,
+                            Settings.Default.RPM2_OutLRY,
+                            Settings.Default.RPM2_AlwaysOnTop,
+                            Settings.Default.RPM2_Monochrome,
+                            Settings.Default.RPM2_RotateFlipType,
+                            x => Settings.Default.RPM2_OutputDisplay = x,
+                            x => Settings.Default.RPM2_StretchToFit = x,
+                            x => Settings.Default.RPM2_OutULX = x,
+                            x => Settings.Default.RPM2_OutULY = x,
+                            x => Settings.Default.RPM2_OutLRX = x,
+                            x => Settings.Default.RPM2_OutLRY = x,
+                            x => Settings.Default.EnableRPM2Output = x,
+                            x => Settings.Default.RPM2_RotateFlipType = x,
+                            x => Settings.Default.RPM2_AlwaysOnTop = x,
+                            x => Settings.Default.RPM2_Monochrome = x
+                            );
         }
 
         private void SetupSpeedbrakeForm()
         {
-            if (Settings.Default.EnableSpeedbrakeOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.Speedbrake_OutputDisplay);
-                _speedbrakeForm = new InstrumentForm();
-                _speedbrakeForm.Text = "Speedbrake";
-                _speedbrakeForm.ShowInTaskbar = false;
-                _speedbrakeForm.ShowIcon = false;
-                if (Settings.Default.Speedbrake_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _speedbrakeForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.Speedbrake_OutULX, Settings.Default.Speedbrake_OutULY);
-                    size = new Size(Settings.Default.Speedbrake_OutLRX - Settings.Default.Speedbrake_OutULX,
-                                    Settings.Default.Speedbrake_OutLRY - Settings.Default.Speedbrake_OutULY);
-                    _speedbrakeForm.StretchToFill = false;
-                }
-                _speedbrakeForm.AlwaysOnTop = Settings.Default.Speedbrake_AlwaysOnTop;
-                _speedbrakeForm.Monochrome = Settings.Default.Speedbrake_Monochrome;
-                _speedbrakeForm.Rotation = Settings.Default.Speedbrake_RotateFlipType;
-                _speedbrakeForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_speedbrakeForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _speedbrakeForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _speedbrakeForm, 
-                                                                                this,
-                                                                                x => Settings.Default.Speedbrake_OutputDisplay = x,
-                                                                                x => Settings.Default.Speedbrake_StretchToFit = x,
-                                                                                x => Settings.Default.Speedbrake_OutULX = x,
-                                                                                x => Settings.Default.Speedbrake_OutULY = x,
-                                                                                x => Settings.Default.Speedbrake_OutLRX = x,
-                                                                                x => Settings.Default.Speedbrake_OutLRY = x,
-                                                                                x => Settings.Default.EnableSpeedbrakeOutput = x,
-                                                                                x => Settings.Default.Speedbrake_RotateFlipType = x,
-                                                                                x => Settings.Default.Speedbrake_AlwaysOnTop = x,
-                                                                                x => Settings.Default.Speedbrake_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-;;
-                _speedbrakeForm.Disposed += _speedbrakeForm_Disposed;
-                _outputForms.Add(_speedbrakeRenderer, _speedbrakeForm);
-            }
+            SetupInstrumentForm(
+                "Speedbrake",
+                ref _speedbrakeForm,
+                _speedbrakeRenderer,
+                _speedbrakeForm_Disposed,
+                Settings.Default.EnableSpeedbrakeOutput,
+                Settings.Default.Speedbrake_OutputDisplay,
+                Settings.Default.Speedbrake_StretchToFit,
+                Settings.Default.Speedbrake_OutULX,
+                Settings.Default.Speedbrake_OutULY,
+                Settings.Default.Speedbrake_OutLRX,
+                Settings.Default.Speedbrake_OutLRY,
+                Settings.Default.Speedbrake_AlwaysOnTop,
+                Settings.Default.Speedbrake_Monochrome,
+                Settings.Default.Speedbrake_RotateFlipType,
+                x => Settings.Default.Speedbrake_OutputDisplay = x,
+                x => Settings.Default.Speedbrake_StretchToFit = x,
+                x => Settings.Default.Speedbrake_OutULX = x,
+                x => Settings.Default.Speedbrake_OutULY = x,
+                x => Settings.Default.Speedbrake_OutLRX = x,
+                x => Settings.Default.Speedbrake_OutLRY = x,
+                x => Settings.Default.EnableSpeedbrakeOutput = x,
+                x => Settings.Default.Speedbrake_RotateFlipType = x,
+                x => Settings.Default.Speedbrake_AlwaysOnTop = x,
+                x => Settings.Default.Speedbrake_Monochrome = x
+                );
         }
 
         private void SetupRWRForm()
         {
-            if (Settings.Default.EnableRWROutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.RWR_OutputDisplay);
-                _rwrForm = new InstrumentForm();
-                _rwrForm.Text = "RWR/Azimuth Indicator";
-                _rwrForm.ShowInTaskbar = false;
-                _rwrForm.ShowIcon = false;
-                if (Settings.Default.RWR_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _rwrForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.RWR_OutULX, Settings.Default.RWR_OutULY);
-                    size = new Size(Settings.Default.RWR_OutLRX - Settings.Default.RWR_OutULX,
-                                    Settings.Default.RWR_OutLRY - Settings.Default.RWR_OutULY);
-                    _rwrForm.StretchToFill = false;
-                }
-                _rwrForm.AlwaysOnTop = Settings.Default.RWR_AlwaysOnTop;
-                _rwrForm.Monochrome = Settings.Default.RWR_Monochrome;
-                _rwrForm.Rotation = Settings.Default.RWR_RotateFlipType;
-                _rwrForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_rwrForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _rwrForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _rwrForm, 
-                                                                                this,
-                                                                                x => Settings.Default.RWR_OutputDisplay = x,
-                                                                                x => Settings.Default.RWR_StretchToFit = x,
-                                                                                x => Settings.Default.RWR_OutULX = x,
-                                                                                x => Settings.Default.RWR_OutULY = x,
-                                                                                x => Settings.Default.RWR_OutLRX = x,
-                                                                                x => Settings.Default.RWR_OutLRY = x,
-                                                                                x => Settings.Default.EnableRWROutput = x,
-                                                                                x => Settings.Default.RWR_RotateFlipType = x,
-                                                                                x => Settings.Default.RWR_AlwaysOnTop = x,
-                                                                                x => Settings.Default.RWR_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _rwrForm.Disposed += _rwrForm_Disposed;
-                _outputForms.Add(_rwrRenderer, _rwrForm);
-            }
+            SetupInstrumentForm(
+                "RWR",
+                ref _rwrForm,
+                _rwrRenderer,
+                _rwrForm_Disposed,
+                Settings.Default.EnableRWROutput,
+                Settings.Default.RWR_OutputDisplay,
+                Settings.Default.RWR_StretchToFit,
+                Settings.Default.RWR_OutULX,
+                Settings.Default.RWR_OutULY,
+                Settings.Default.RWR_OutLRX,
+                Settings.Default.RWR_OutLRY,
+                Settings.Default.RWR_AlwaysOnTop,
+                Settings.Default.RWR_Monochrome,
+                Settings.Default.RWR_RotateFlipType,
+                x => Settings.Default.RWR_OutputDisplay = x,
+                x => Settings.Default.RWR_StretchToFit = x,
+                x => Settings.Default.RWR_OutULX = x,
+                x => Settings.Default.RWR_OutULY = x,
+                x => Settings.Default.RWR_OutLRX = x,
+                x => Settings.Default.RWR_OutLRY = x,
+                x => Settings.Default.EnableRWROutput = x,
+                x => Settings.Default.RWR_RotateFlipType = x,
+                x => Settings.Default.RWR_AlwaysOnTop = x,
+                x => Settings.Default.RWR_Monochrome = x
+                );
         }
 
         private void SetupOIL2Form()
         {
-            if (Settings.Default.EnableOIL2Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.OIL2_OutputDisplay);
-                _oilGauge2Form = new InstrumentForm();
-                _oilGauge2Form.Text = "Engine 2 - Oil Pressure Indicator";
-                _oilGauge2Form.ShowInTaskbar = false;
-                _oilGauge2Form.ShowIcon = false;
-                if (Settings.Default.OIL2_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _oilGauge2Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.OIL2_OutULX, Settings.Default.OIL2_OutULY);
-                    size = new Size(Settings.Default.OIL2_OutLRX - Settings.Default.OIL2_OutULX,
-                                    Settings.Default.OIL2_OutLRY - Settings.Default.OIL2_OutULY);
-                    _oilGauge2Form.StretchToFill = false;
-                }
-                _oilGauge2Form.AlwaysOnTop = Settings.Default.OIL2_AlwaysOnTop;
-                _oilGauge2Form.Monochrome = Settings.Default.OIL2_Monochrome;
-                _oilGauge2Form.Rotation = Settings.Default.OIL2_RotateFlipType;
-                _oilGauge2Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_oilGauge2Form, _applicationForm, screen, location, size,
-                                                             true, true);
-                _oilGauge2Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _oilGauge2Form, 
-                                                                                this,
-                                                                                x => Settings.Default.OIL2_OutputDisplay = x,
-                                                                                x => Settings.Default.OIL2_StretchToFit = x,
-                                                                                x => Settings.Default.OIL2_OutULX = x,
-                                                                                x => Settings.Default.OIL2_OutULY = x,
-                                                                                x => Settings.Default.OIL2_OutLRX = x,
-                                                                                x => Settings.Default.OIL2_OutLRY = x,
-                                                                                x => Settings.Default.EnableOIL2Output = x,
-                                                                                x => Settings.Default.OIL2_RotateFlipType = x,
-                                                                                x => Settings.Default.OIL2_AlwaysOnTop = x,
-                                                                                x => Settings.Default.OIL2_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _oilGauge2Form.Disposed += _oilGauge2Form_Disposed;
-                _outputForms.Add(_oilGauge2Renderer, _oilGauge2Form);
-            }
+            SetupInstrumentForm(
+                 "Engine 2 - Oil Pressure Indicator",
+                 ref _oilGauge2Form,
+                 _oilGauge2Renderer,
+                 _oilGauge2Form_Disposed,
+                 Settings.Default.EnableOIL2Output,
+                 Settings.Default.OIL2_OutputDisplay,
+                 Settings.Default.OIL2_StretchToFit,
+                 Settings.Default.OIL2_OutULX,
+                 Settings.Default.OIL2_OutULY,
+                 Settings.Default.OIL2_OutLRX,
+                 Settings.Default.OIL2_OutLRY,
+                 Settings.Default.OIL2_AlwaysOnTop,
+                 Settings.Default.OIL2_Monochrome,
+                 Settings.Default.OIL2_RotateFlipType,
+                 x => Settings.Default.OIL2_OutputDisplay = x,
+                 x => Settings.Default.OIL2_StretchToFit = x,
+                 x => Settings.Default.OIL2_OutULX = x,
+                 x => Settings.Default.OIL2_OutULY = x,
+                 x => Settings.Default.OIL2_OutLRX = x,
+                 x => Settings.Default.OIL2_OutLRY = x,
+                 x => Settings.Default.EnableOIL2Output = x,
+                 x => Settings.Default.OIL2_RotateFlipType = x,
+                 x => Settings.Default.OIL2_AlwaysOnTop = x,
+                 x => Settings.Default.OIL2_Monochrome = x
+                 );
         }
 
         private void SetupOIL1Form()
         {
-            if (Settings.Default.EnableOIL1Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.OIL1_OutputDisplay);
-                _oilGauge1Form = new InstrumentForm();
-                _oilGauge1Form.Text = "Engine 1 - Oil Pressure Indicator";
-                _oilGauge1Form.ShowInTaskbar = false;
-                _oilGauge1Form.ShowIcon = false;
-                if (Settings.Default.OIL1_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _oilGauge1Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.OIL1_OutULX, Settings.Default.OIL1_OutULY);
-                    size = new Size(Settings.Default.OIL1_OutLRX - Settings.Default.OIL1_OutULX,
-                                    Settings.Default.OIL1_OutLRY - Settings.Default.OIL1_OutULY);
-                    _oilGauge1Form.StretchToFill = false;
-                }
-                _oilGauge1Form.AlwaysOnTop = Settings.Default.OIL1_AlwaysOnTop;
-                _oilGauge1Form.Monochrome = Settings.Default.OIL1_Monochrome;
-                _oilGauge1Form.Rotation = Settings.Default.OIL1_RotateFlipType;
-                _oilGauge1Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_oilGauge1Form, _applicationForm, screen, location, size,
-                                                             true, true);
-                _oilGauge1Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _oilGauge1Form, 
-                                                                                this,
-                                                                                x => Settings.Default.OIL1_OutputDisplay = x,
-                                                                                x => Settings.Default.OIL1_StretchToFit = x,
-                                                                                x => Settings.Default.OIL1_OutULX = x,
-                                                                                x => Settings.Default.OIL1_OutULY = x,
-                                                                                x => Settings.Default.OIL1_OutLRX = x,
-                                                                                x => Settings.Default.OIL1_OutLRY = x,
-                                                                                x => Settings.Default.EnableOIL1Output = x,
-                                                                                x => Settings.Default.OIL1_RotateFlipType = x,
-                                                                                x => Settings.Default.OIL1_AlwaysOnTop = x,
-                                                                                x => Settings.Default.OIL1_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _oilGauge1Form.Disposed += _oilGauge1Form_Disposed;
-                _outputForms.Add(_oilGauge1Renderer, _oilGauge1Form);
-            }
+            SetupInstrumentForm(
+                "Engine 1 - Oil Pressure Indicator",
+                ref _oilGauge1Form,
+                _oilGauge1Renderer,
+                _oilGauge1Form_Disposed,
+                Settings.Default.EnableOIL1Output,
+                Settings.Default.OIL1_OutputDisplay,
+                Settings.Default.OIL1_StretchToFit,
+                Settings.Default.OIL1_OutULX,
+                Settings.Default.OIL1_OutULY,
+                Settings.Default.OIL1_OutLRX,
+                Settings.Default.OIL1_OutLRY,
+                Settings.Default.OIL1_AlwaysOnTop,
+                Settings.Default.OIL1_Monochrome,
+                Settings.Default.OIL1_RotateFlipType,
+                x => Settings.Default.OIL1_OutputDisplay = x,
+                x => Settings.Default.OIL1_StretchToFit = x,
+                x => Settings.Default.OIL1_OutULX = x,
+                x => Settings.Default.OIL1_OutULY = x,
+                x => Settings.Default.OIL1_OutLRX = x,
+                x => Settings.Default.OIL1_OutLRY = x,
+                x => Settings.Default.EnableOIL1Output = x,
+                x => Settings.Default.OIL1_RotateFlipType = x,
+                x => Settings.Default.OIL1_AlwaysOnTop = x,
+                x => Settings.Default.OIL1_Monochrome = x
+                );
         }
 
         private void SetupNOZ2Form()
         {
-            if (Settings.Default.EnableNOZ2Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.NOZ2_OutputDisplay);
-                _nozPos2Form = new InstrumentForm();
-                _nozPos2Form.Text = "Engine 2 - Nozzle Position Indicator";
-                _nozPos2Form.ShowInTaskbar = false;
-                _nozPos2Form.ShowIcon = false;
-                if (Settings.Default.NOZ2_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _nozPos2Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.NOZ2_OutULX, Settings.Default.NOZ2_OutULY);
-                    size = new Size(Settings.Default.NOZ2_OutLRX - Settings.Default.NOZ2_OutULX,
-                                    Settings.Default.NOZ2_OutLRY - Settings.Default.NOZ2_OutULY);
-                    _nozPos2Form.StretchToFill = false;
-                }
-                _nozPos2Form.AlwaysOnTop = Settings.Default.NOZ2_AlwaysOnTop;
-                _nozPos2Form.Monochrome = Settings.Default.NOZ2_Monochrome;
-                _nozPos2Form.Rotation = Settings.Default.NOZ2_RotateFlipType;
-                _nozPos2Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_nozPos2Form, _applicationForm, screen, location, size,
-                                                             true, true);
-                _nozPos2Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _nozPos2Form, 
-                                                                                this,
-                                                                                x => Settings.Default.NOZ2_OutputDisplay = x,
-                                                                                x => Settings.Default.NOZ2_StretchToFit = x,
-                                                                                x => Settings.Default.NOZ2_OutULX = x,
-                                                                                x => Settings.Default.NOZ2_OutULY = x,
-                                                                                x => Settings.Default.NOZ2_OutLRX = x,
-                                                                                x => Settings.Default.NOZ2_OutLRY = x,
-                                                                                x => Settings.Default.EnableNOZ2Output = x,
-                                                                                x => Settings.Default.NOZ2_RotateFlipType = x,
-                                                                                x => Settings.Default.NOZ2_AlwaysOnTop = x,
-                                                                                x => Settings.Default.NOZ2_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _nozPos2Form.Disposed += _nozPos2Form_Disposed;
-                _outputForms.Add(_nozPos2Renderer, _nozPos2Form);
-            }
+            SetupInstrumentForm(
+                "Engine 2 - Nozzle Position Indicator",
+                ref _nozPos2Form,
+                _nozPos2Renderer,
+                _nozPos2Form_Disposed,
+                Settings.Default.EnableNOZ2Output,
+                Settings.Default.NOZ2_OutputDisplay,
+                Settings.Default.NOZ2_StretchToFit,
+                Settings.Default.NOZ2_OutULX,
+                Settings.Default.NOZ2_OutULY,
+                Settings.Default.NOZ2_OutLRX,
+                Settings.Default.NOZ2_OutLRY,
+                Settings.Default.NOZ2_AlwaysOnTop,
+                Settings.Default.NOZ2_Monochrome,
+                Settings.Default.NOZ2_RotateFlipType,
+                x => Settings.Default.NOZ2_OutputDisplay = x,
+                x => Settings.Default.NOZ2_StretchToFit = x,
+                x => Settings.Default.NOZ2_OutULX = x,
+                x => Settings.Default.NOZ2_OutULY = x,
+                x => Settings.Default.NOZ2_OutLRX = x,
+                x => Settings.Default.NOZ2_OutLRY = x,
+                x => Settings.Default.EnableNOZ2Output = x,
+                x => Settings.Default.NOZ2_RotateFlipType = x,
+                x => Settings.Default.NOZ2_AlwaysOnTop = x,
+                x => Settings.Default.NOZ2_Monochrome = x
+                );
         }
 
         private void SetupNOZ1Form()
         {
-            if (Settings.Default.EnableNOZ1Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.NOZ1_OutputDisplay);
-                _nozPos1Form = new InstrumentForm();
-                _nozPos1Form.Text = "Engine 1 - Nozzle Position Indicator";
-                _nozPos1Form.ShowInTaskbar = false;
-                _nozPos1Form.ShowIcon = false;
-                if (Settings.Default.NOZ1_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _nozPos1Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.NOZ1_OutULX, Settings.Default.NOZ1_OutULY);
-                    size = new Size(Settings.Default.NOZ1_OutLRX - Settings.Default.NOZ1_OutULX,
-                                    Settings.Default.NOZ1_OutLRY - Settings.Default.NOZ1_OutULY);
-                    _nozPos1Form.StretchToFill = false;
-                }
-                _nozPos1Form.AlwaysOnTop = Settings.Default.NOZ1_AlwaysOnTop;
-                _nozPos1Form.Monochrome = Settings.Default.NOZ1_Monochrome;
-                _nozPos1Form.Rotation = Settings.Default.NOZ1_RotateFlipType;
-                _nozPos1Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_nozPos1Form, _applicationForm, screen, location, size,
-                                                             true, true);
-                _nozPos1Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _nozPos1Form, 
-                                                                                this,
-                                                                                x => Settings.Default.NOZ1_OutputDisplay = x,
-                                                                                x => Settings.Default.NOZ1_StretchToFit = x,
-                                                                                x => Settings.Default.NOZ1_OutULX = x,
-                                                                                x => Settings.Default.NOZ1_OutULY = x,
-                                                                                x => Settings.Default.NOZ1_OutLRX = x,
-                                                                                x => Settings.Default.NOZ1_OutLRY = x,
-                                                                                x => Settings.Default.EnableNOZ1Output = x,
-                                                                                x => Settings.Default.NOZ1_RotateFlipType = x,
-                                                                                x => Settings.Default.NOZ1_AlwaysOnTop = x,
-                                                                                x => Settings.Default.NOZ1_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _nozPos1Form.Disposed += _nozPos1Form_Disposed;
-                _outputForms.Add(_nozPos1Renderer, _nozPos1Form);
-            }
+            SetupInstrumentForm(
+                "Engine 1 - Nozzle Position Indicator",
+                ref _nozPos1Form,
+                _nozPos1Renderer,
+                _nozPos1Form_Disposed,
+                Settings.Default.EnableNOZ1Output,
+                Settings.Default.NOZ1_OutputDisplay,
+                Settings.Default.NOZ1_StretchToFit,
+                Settings.Default.NOZ1_OutULX,
+                Settings.Default.NOZ1_OutULY,
+                Settings.Default.NOZ1_OutLRX,
+                Settings.Default.NOZ1_OutLRY,
+                Settings.Default.NOZ1_AlwaysOnTop,
+                Settings.Default.NOZ1_Monochrome,
+                Settings.Default.NOZ1_RotateFlipType,
+                x => Settings.Default.NOZ1_OutputDisplay = x,
+                x => Settings.Default.NOZ1_StretchToFit = x,
+                x => Settings.Default.NOZ1_OutULX = x,
+                x => Settings.Default.NOZ1_OutULY = x,
+                x => Settings.Default.NOZ1_OutLRX = x,
+                x => Settings.Default.NOZ1_OutLRY = x,
+                x => Settings.Default.EnableNOZ1Output = x,
+                x => Settings.Default.NOZ1_RotateFlipType = x,
+                x => Settings.Default.NOZ1_AlwaysOnTop = x,
+                x => Settings.Default.NOZ1_Monochrome = x
+                );
         }
 
         private void SetupNWSIndexerForm()
         {
-            if (Settings.Default.EnableNWSIndexerOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.NWSIndexer_OutputDisplay);
-                _nwsIndexerForm = new InstrumentForm();
-                _nwsIndexerForm.Text = "NWS Indexer";
-                _nwsIndexerForm.ShowInTaskbar = false;
-                _nwsIndexerForm.ShowIcon = false;
-                if (Settings.Default.NWSIndexer_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _nwsIndexerForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.NWSIndexer_OutULX, Settings.Default.NWSIndexer_OutULY);
-                    size = new Size(Settings.Default.NWSIndexer_OutLRX - Settings.Default.NWSIndexer_OutULX,
-                                    Settings.Default.NWSIndexer_OutLRY - Settings.Default.NWSIndexer_OutULY);
-                    _nwsIndexerForm.StretchToFill = false;
-                }
-                _nwsIndexerForm.AlwaysOnTop = Settings.Default.NWSIndexer_AlwaysOnTop;
-                _nwsIndexerForm.Monochrome = Settings.Default.NWSIndexer_Monochrome;
-                _nwsIndexerForm.Rotation = Settings.Default.NWSIndexer_RotateFlipType;
-                _nwsIndexerForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_nwsIndexerForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _nwsIndexerForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _nwsIndexerForm, 
-                                                                                this,
-                                                                                x => Settings.Default.NWSIndexer_OutputDisplay = x,
-                                                                                x => Settings.Default.NWSIndexer_StretchToFit = x,
-                                                                                x => Settings.Default.NWSIndexer_OutULX = x,
-                                                                                x => Settings.Default.NWSIndexer_OutULY = x,
-                                                                                x => Settings.Default.NWSIndexer_OutLRX = x,
-                                                                                x => Settings.Default.NWSIndexer_OutLRY = x,
-                                                                                x => Settings.Default.EnableNWSIndexerOutput = x,
-                                                                                x => Settings.Default.NWSIndexer_RotateFlipType = x,
-                                                                                x => Settings.Default.NWSIndexer_AlwaysOnTop = x,
-                                                                                x => Settings.Default.NWSIndexer_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _nwsIndexerForm.Disposed += _nwsIndexerForm_Disposed;
-                _outputForms.Add(_nwsIndexerRenderer, _nwsIndexerForm);
-            }
+            SetupInstrumentForm(
+                "NWS Indexer",
+                ref _nwsIndexerForm,
+                _nwsIndexerRenderer,
+                _nwsIndexerForm_Disposed,
+                Settings.Default.EnableNWSIndexerOutput,
+                Settings.Default.NWSIndexer_OutputDisplay,
+                Settings.Default.NWSIndexer_StretchToFit,
+                Settings.Default.NWSIndexer_OutULX,
+                Settings.Default.NWSIndexer_OutULY,
+                Settings.Default.NWSIndexer_OutLRX,
+                Settings.Default.NWSIndexer_OutLRY,
+                Settings.Default.NWSIndexer_AlwaysOnTop,
+                Settings.Default.NWSIndexer_Monochrome,
+                Settings.Default.NWSIndexer_RotateFlipType,
+                x => Settings.Default.NWSIndexer_OutputDisplay = x,
+                x => Settings.Default.NWSIndexer_StretchToFit = x,
+                x => Settings.Default.NWSIndexer_OutULX = x,
+                x => Settings.Default.NWSIndexer_OutULY = x,
+                x => Settings.Default.NWSIndexer_OutLRX = x,
+                x => Settings.Default.NWSIndexer_OutLRY = x,
+                x => Settings.Default.EnableNWSIndexerOutput = x,
+                x => Settings.Default.NWSIndexer_RotateFlipType = x,
+                x => Settings.Default.NWSIndexer_AlwaysOnTop = x,
+                x => Settings.Default.NWSIndexer_Monochrome = x
+                );
         }
 
         private void SetupGearLightsForm()
         {
-            if (Settings.Default.EnableGearLightsOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.GearLights_OutputDisplay);
-                _landingGearLightsForm = new InstrumentForm();
-                _landingGearLightsForm.Text = "Landing Gear Lights";
-                _landingGearLightsForm.ShowInTaskbar = false;
-                _landingGearLightsForm.ShowIcon = false;
-                if (Settings.Default.GearLights_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _landingGearLightsForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.GearLights_OutULX, Settings.Default.GearLights_OutULY);
-                    size = new Size(Settings.Default.GearLights_OutLRX - Settings.Default.GearLights_OutULX,
-                                    Settings.Default.GearLights_OutLRY - Settings.Default.GearLights_OutULY);
-                    _landingGearLightsForm.StretchToFill = false;
-                }
-                _landingGearLightsForm.AlwaysOnTop = Settings.Default.GearLights_AlwaysOnTop;
-                _landingGearLightsForm.Monochrome = Settings.Default.GearLights_Monochrome;
-                _landingGearLightsForm.Rotation = Settings.Default.GearLights_RotateFlipType;
-                _landingGearLightsForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_landingGearLightsForm, _applicationForm, screen, location,
-                                                             size, true, true);
-                _landingGearLightsForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _landingGearLightsForm, 
-                                                                                this,
-                                                                                x => Settings.Default.GearLights_OutputDisplay = x,
-                                                                                x => Settings.Default.GearLights_StretchToFit = x,
-                                                                                x => Settings.Default.GearLights_OutULX = x,
-                                                                                x => Settings.Default.GearLights_OutULY = x,
-                                                                                x => Settings.Default.GearLights_OutLRX = x,
-                                                                                x => Settings.Default.GearLights_OutLRY = x,
-                                                                                x => Settings.Default.EnableGearLightsOutput = x,
-                                                                                x => Settings.Default.GearLights_RotateFlipType = x,
-                                                                                x => Settings.Default.GearLights_AlwaysOnTop = x,
-                                                                                x => Settings.Default.GearLights_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _landingGearLightsForm.Disposed += _landingGearLightsForm_Disposed;
-                _outputForms.Add(_landingGearLightsRenderer, _landingGearLightsForm);
-            }
+            SetupInstrumentForm(
+                           "Landing Gear Lights",
+                           ref _landingGearLightsForm,
+                           _landingGearLightsRenderer,
+                           _landingGearLightsForm_Disposed,
+                           Settings.Default.EnableGearLightsOutput,
+                           Settings.Default.GearLights_OutputDisplay,
+                           Settings.Default.GearLights_StretchToFit,
+                           Settings.Default.GearLights_OutULX,
+                           Settings.Default.GearLights_OutULY,
+                           Settings.Default.GearLights_OutLRX,
+                           Settings.Default.GearLights_OutLRY,
+                           Settings.Default.GearLights_AlwaysOnTop,
+                           Settings.Default.GearLights_Monochrome,
+                           Settings.Default.GearLights_RotateFlipType,
+                           x => Settings.Default.GearLights_OutputDisplay = x,
+                           x => Settings.Default.GearLights_StretchToFit = x,
+                           x => Settings.Default.GearLights_OutULX = x,
+                           x => Settings.Default.GearLights_OutULY = x,
+                           x => Settings.Default.GearLights_OutLRX = x,
+                           x => Settings.Default.GearLights_OutLRY = x,
+                           x => Settings.Default.EnableGearLightsOutput = x,
+                           x => Settings.Default.GearLights_RotateFlipType = x,
+                           x => Settings.Default.GearLights_AlwaysOnTop = x,
+                           x => Settings.Default.GearLights_Monochrome = x
+                           );
         }
 
         private void SetupHSIForm()
         {
-            if (Settings.Default.EnableHSIOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.HSI_OutputDisplay);
-                _hsiForm = new InstrumentForm();
-                _hsiForm.Text = "HSI";
-                _hsiForm.ShowInTaskbar = false;
-                _hsiForm.ShowIcon = false;
-                if (Settings.Default.HSI_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _hsiForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.HSI_OutULX, Settings.Default.HSI_OutULY);
-                    size = new Size(Settings.Default.HSI_OutLRX - Settings.Default.HSI_OutULX,
-                                    Settings.Default.HSI_OutLRY - Settings.Default.HSI_OutULY);
-                    _hsiForm.StretchToFill = false;
-                }
-                _hsiForm.AlwaysOnTop = Settings.Default.HSI_AlwaysOnTop;
-                _hsiForm.Monochrome = Settings.Default.HSI_Monochrome;
-                _hsiForm.Rotation = Settings.Default.HSI_RotateFlipType;
-                _hsiForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_hsiForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _hsiForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _hsiForm, 
-                                                                                this,
-                                                                                x => Settings.Default.HSI_OutputDisplay = x,
-                                                                                x => Settings.Default.HSI_StretchToFit = x,
-                                                                                x => Settings.Default.HSI_OutULX = x,
-                                                                                x => Settings.Default.HSI_OutULY = x,
-                                                                                x => Settings.Default.HSI_OutLRX = x,
-                                                                                x => Settings.Default.HSI_OutLRY = x,
-                                                                                x => Settings.Default.EnableHSIOutput = x,
-                                                                                x => Settings.Default.HSI_RotateFlipType = x,
-                                                                                x => Settings.Default.HSI_AlwaysOnTop = x,
-                                                                                x => Settings.Default.HSI_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _hsiForm.Disposed += _hsiForm_Disposed;
-                _outputForms.Add(_hsiRenderer, _hsiForm);
-            }
+            SetupInstrumentForm(
+                           "Horizontal Situation Indicator",
+                           ref _hsiForm,
+                           _hsiRenderer,
+                           _hsiForm_Disposed,
+                           Settings.Default.EnableHSIOutput,
+                           Settings.Default.HSI_OutputDisplay,
+                           Settings.Default.HSI_StretchToFit,
+                           Settings.Default.HSI_OutULX,
+                           Settings.Default.HSI_OutULY,
+                           Settings.Default.HSI_OutLRX,
+                           Settings.Default.HSI_OutLRY,
+                           Settings.Default.HSI_AlwaysOnTop,
+                           Settings.Default.HSI_Monochrome,
+                           Settings.Default.HSI_RotateFlipType,
+                           x => Settings.Default.HSI_OutputDisplay = x,
+                           x => Settings.Default.HSI_StretchToFit = x,
+                           x => Settings.Default.HSI_OutULX = x,
+                           x => Settings.Default.HSI_OutULY = x,
+                           x => Settings.Default.HSI_OutLRX = x,
+                           x => Settings.Default.HSI_OutLRY = x,
+                           x => Settings.Default.EnableHSIOutput = x,
+                           x => Settings.Default.HSI_RotateFlipType = x,
+                           x => Settings.Default.HSI_AlwaysOnTop = x,
+                           x => Settings.Default.HSI_Monochrome = x
+                           );
         }
 
         private void SetupEHSIForm()
         {
-            if (Settings.Default.EnableEHSIOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.EHSI_OutputDisplay);
-                _ehsiForm = new InstrumentForm();
-                _ehsiForm.Text = "EHSI";
-                _ehsiForm.ShowInTaskbar = false;
-                _ehsiForm.ShowIcon = false;
-                if (Settings.Default.EHSI_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _ehsiForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.EHSI_OutULX, Settings.Default.EHSI_OutULY);
-                    size = new Size(Settings.Default.EHSI_OutLRX - Settings.Default.EHSI_OutULX,
-                                    Settings.Default.EHSI_OutLRY - Settings.Default.EHSI_OutULY);
-                    _ehsiForm.StretchToFill = false;
-                }
-                _ehsiForm.AlwaysOnTop = Settings.Default.EHSI_AlwaysOnTop;
-                _ehsiForm.Monochrome = Settings.Default.EHSI_Monochrome;
-                _ehsiForm.Rotation = Settings.Default.EHSI_RotateFlipType;
-                _ehsiForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_ehsiForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _ehsiForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _ehsiForm, 
-                                                                                this,
-                                                                                x => Settings.Default.EHSI_OutputDisplay = x,
-                                                                                x => Settings.Default.EHSI_StretchToFit = x,
-                                                                                x => Settings.Default.EHSI_OutULX = x,
-                                                                                x => Settings.Default.EHSI_OutULY = x,
-                                                                                x => Settings.Default.EHSI_OutLRX = x,
-                                                                                x => Settings.Default.EHSI_OutLRY = x,
-                                                                                x => Settings.Default.EnableEHSIOutput = x,
-                                                                                x => Settings.Default.EHSI_RotateFlipType = x,
-                                                                                x => Settings.Default.EHSI_AlwaysOnTop = x,
-                                                                                x => Settings.Default.EHSI_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _ehsiForm.Disposed += _ehsiForm_Disposed;
-                _outputForms.Add(_ehsiRenderer, _ehsiForm);
-            }
+            SetupInstrumentForm(
+                                       "EHSI",
+                                       ref _ehsiForm,
+                                       _ehsiRenderer,
+                                       _ehsiForm_Disposed,
+                                       Settings.Default.EnableEHSIOutput,
+                                       Settings.Default.EHSI_OutputDisplay,
+                                       Settings.Default.EHSI_StretchToFit,
+                                       Settings.Default.EHSI_OutULX,
+                                       Settings.Default.EHSI_OutULY,
+                                       Settings.Default.EHSI_OutLRX,
+                                       Settings.Default.EHSI_OutLRY,
+                                       Settings.Default.EHSI_AlwaysOnTop,
+                                       Settings.Default.EHSI_Monochrome,
+                                       Settings.Default.EHSI_RotateFlipType,
+                                       x => Settings.Default.EHSI_OutputDisplay = x,
+                                       x => Settings.Default.EHSI_StretchToFit = x,
+                                       x => Settings.Default.EHSI_OutULX = x,
+                                       x => Settings.Default.EHSI_OutULY = x,
+                                       x => Settings.Default.EHSI_OutLRX = x,
+                                       x => Settings.Default.EHSI_OutLRY = x,
+                                       x => Settings.Default.EnableEHSIOutput = x,
+                                       x => Settings.Default.EHSI_RotateFlipType = x,
+                                       x => Settings.Default.EHSI_AlwaysOnTop = x,
+                                       x => Settings.Default.EHSI_Monochrome = x
+                                       );
         }
 
         private void SetupFuelQuantityForm()
         {
-            if (Settings.Default.EnableFuelQuantityOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.FuelQuantity_OutputDisplay);
-                _fuelQuantityForm = new InstrumentForm();
-                _fuelQuantityForm.Text = "Fuel Quantity";
-                _fuelQuantityForm.ShowInTaskbar = false;
-                _fuelQuantityForm.ShowIcon = false;
-                if (Settings.Default.FuelQuantity_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _fuelQuantityForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.FuelQuantity_OutULX, Settings.Default.FuelQuantity_OutULY);
-                    size = new Size(Settings.Default.FuelQuantity_OutLRX - Settings.Default.FuelQuantity_OutULX,
-                                    Settings.Default.FuelQuantity_OutLRY - Settings.Default.FuelQuantity_OutULY);
-                    _fuelQuantityForm.StretchToFill = false;
-                }
-                _fuelQuantityForm.AlwaysOnTop = Settings.Default.FuelQuantity_AlwaysOnTop;
-                _fuelQuantityForm.Monochrome = Settings.Default.FuelQuantity_Monochrome;
-                _fuelQuantityForm.Rotation = Settings.Default.FuelQuantity_RotateFlipType;
-                _fuelQuantityForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_fuelQuantityForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _fuelQuantityForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _fuelQuantityForm,
-                                                                                this,
-                                                                                x => Settings.Default.FuelQuantity_OutputDisplay = x,
-                                                                                x => Settings.Default.FuelQuantity_StretchToFit = x,
-                                                                                x => Settings.Default.FuelQuantity_OutULX = x,
-                                                                                x => Settings.Default.FuelQuantity_OutULY = x,
-                                                                                x => Settings.Default.FuelQuantity_OutLRX = x,
-                                                                                x => Settings.Default.FuelQuantity_OutLRY = x,
-                                                                                x => Settings.Default.EnableFuelQuantityOutput = x,
-                                                                                x => Settings.Default.FuelQuantity_RotateFlipType = x,
-                                                                                x => Settings.Default.FuelQuantity_AlwaysOnTop = x,
-                                                                                x => Settings.Default.FuelQuantity_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _fuelQuantityForm.Disposed += _fuelQuantityForm_Disposed;
-                _outputForms.Add(_fuelQuantityRenderer, _fuelQuantityForm);
-            }
+            SetupInstrumentForm(
+                                       "Fuel Quantity",
+                                       ref _fuelQuantityForm,
+                                       _fuelQuantityRenderer,
+                                       _fuelQuantityForm_Disposed,
+                                       Settings.Default.EnableFuelQuantityOutput,
+                                       Settings.Default.FuelQuantity_OutputDisplay,
+                                       Settings.Default.FuelQuantity_StretchToFit,
+                                       Settings.Default.FuelQuantity_OutULX,
+                                       Settings.Default.FuelQuantity_OutULY,
+                                       Settings.Default.FuelQuantity_OutLRX,
+                                       Settings.Default.FuelQuantity_OutLRY,
+                                       Settings.Default.FuelQuantity_AlwaysOnTop,
+                                       Settings.Default.FuelQuantity_Monochrome,
+                                       Settings.Default.FuelQuantity_RotateFlipType,
+                                       x => Settings.Default.FuelQuantity_OutputDisplay = x,
+                                       x => Settings.Default.FuelQuantity_StretchToFit = x,
+                                       x => Settings.Default.FuelQuantity_OutULX = x,
+                                       x => Settings.Default.FuelQuantity_OutULY = x,
+                                       x => Settings.Default.FuelQuantity_OutLRX = x,
+                                       x => Settings.Default.FuelQuantity_OutLRY = x,
+                                       x => Settings.Default.EnableFuelQuantityOutput = x,
+                                       x => Settings.Default.FuelQuantity_RotateFlipType = x,
+                                       x => Settings.Default.FuelQuantity_AlwaysOnTop = x,
+                                       x => Settings.Default.FuelQuantity_Monochrome = x
+                                       );
         }
 
         private void SetupFuelFlowForm()
         {
-            if (Settings.Default.EnableFuelFlowOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.FuelFlow_OutputDisplay);
-                _fuelFlowForm = new InstrumentForm();
-                _fuelFlowForm.Text = "Fuel Flow Indicator";
-                _fuelFlowForm.ShowInTaskbar = false;
-                _fuelFlowForm.ShowIcon = false;
-                if (Settings.Default.FuelFlow_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _fuelFlowForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.FuelFlow_OutULX, Settings.Default.FuelFlow_OutULY);
-                    size = new Size(Settings.Default.FuelFlow_OutLRX - Settings.Default.FuelFlow_OutULX,
-                                    Settings.Default.FuelFlow_OutLRY - Settings.Default.FuelFlow_OutULY);
-                    _fuelFlowForm.StretchToFill = false;
-                }
-                _fuelFlowForm.AlwaysOnTop = Settings.Default.FuelFlow_AlwaysOnTop;
-                _fuelFlowForm.Monochrome = Settings.Default.FuelFlow_Monochrome;
-                _fuelFlowForm.Rotation = Settings.Default.FuelFlow_RotateFlipType;
-                _fuelFlowForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_fuelFlowForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _fuelFlowForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _fuelFlowForm,
-                                                                                this,
-                                                                                x => Settings.Default.FuelFlow_OutputDisplay = x,
-                                                                                x => Settings.Default.FuelFlow_StretchToFit = x,
-                                                                                x => Settings.Default.FuelFlow_OutULX = x,
-                                                                                x => Settings.Default.FuelFlow_OutULY = x,
-                                                                                x => Settings.Default.FuelFlow_OutLRX = x,
-                                                                                x => Settings.Default.FuelFlow_OutLRY = x,
-                                                                                x => Settings.Default.EnableFuelFlowOutput = x,
-                                                                                x => Settings.Default.FuelFlow_RotateFlipType = x,
-                                                                                x => Settings.Default.FuelFlow_AlwaysOnTop = x,
-                                                                                x => Settings.Default.FuelFlow_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _fuelFlowForm.Disposed += _fuelFlowForm_Disposed;
-                _outputForms.Add(_fuelFlowRenderer, _fuelFlowForm);
-            }
+            SetupInstrumentForm(
+                                      "Fuel Flow Indicator",
+                                      ref _fuelFlowForm,
+                                      _fuelFlowRenderer,
+                                      _fuelFlowForm_Disposed,
+                                      Settings.Default.EnableFuelFlowOutput,
+                                      Settings.Default.FuelFlow_OutputDisplay,
+                                      Settings.Default.FuelFlow_StretchToFit,
+                                      Settings.Default.FuelFlow_OutULX,
+                                      Settings.Default.FuelFlow_OutULY,
+                                      Settings.Default.FuelFlow_OutLRX,
+                                      Settings.Default.FuelFlow_OutLRY,
+                                      Settings.Default.FuelFlow_AlwaysOnTop,
+                                      Settings.Default.FuelFlow_Monochrome,
+                                      Settings.Default.FuelFlow_RotateFlipType,
+                                      x => Settings.Default.FuelFlow_OutputDisplay = x,
+                                      x => Settings.Default.FuelFlow_StretchToFit = x,
+                                      x => Settings.Default.FuelFlow_OutULX = x,
+                                      x => Settings.Default.FuelFlow_OutULY = x,
+                                      x => Settings.Default.FuelFlow_OutLRX = x,
+                                      x => Settings.Default.FuelFlow_OutLRY = x,
+                                      x => Settings.Default.EnableFuelFlowOutput = x,
+                                      x => Settings.Default.FuelFlow_RotateFlipType = x,
+                                      x => Settings.Default.FuelFlow_AlwaysOnTop = x,
+                                      x => Settings.Default.FuelFlow_Monochrome = x
+                                      );
         }
 
         private void SetupISISForm()
         {
-            if (Settings.Default.EnableISISOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.ISIS_OutputDisplay);
-                _isisForm = new InstrumentForm();
-                _isisForm.Text = "ISIS";
-                _isisForm.ShowInTaskbar = false;
-                _isisForm.ShowIcon = false;
-                if (Settings.Default.ISIS_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _isisForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.ISIS_OutULX, Settings.Default.ISIS_OutULY);
-                    size = new Size(Settings.Default.ISIS_OutLRX - Settings.Default.ISIS_OutULX,
-                                    Settings.Default.ISIS_OutLRY - Settings.Default.ISIS_OutULY);
-                    _isisForm.StretchToFill = false;
-                }
-                _isisForm.AlwaysOnTop = Settings.Default.ISIS_AlwaysOnTop;
-                _isisForm.Monochrome = Settings.Default.ISIS_Monochrome;
-                _isisForm.Rotation = Settings.Default.ISIS_RotateFlipType;
-                _isisForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_isisForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _isisForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _isisForm,
-                                                                                this,
-                                                                                x => Settings.Default.ISIS_OutputDisplay = x,
-                                                                                x => Settings.Default.ISIS_StretchToFit = x,
-                                                                                x => Settings.Default.ISIS_OutULX = x,
-                                                                                x => Settings.Default.ISIS_OutULY = x,
-                                                                                x => Settings.Default.ISIS_OutLRX = x,
-                                                                                x => Settings.Default.ISIS_OutLRY = x,
-                                                                                x => Settings.Default.EnableISISOutput = x,
-                                                                                x => Settings.Default.ISIS_RotateFlipType = x,
-                                                                                x => Settings.Default.ISIS_AlwaysOnTop = x,
-                                                                                x => Settings.Default.ISIS_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _isisForm.Disposed += _isisForm_Disposed;
-                _outputForms.Add(_isisRenderer, _isisForm);
-            }
+            SetupInstrumentForm(
+                                      "ISIS",
+                                      ref _isisForm,
+                                      _isisRenderer,
+                                      _isisForm_Disposed,
+                                      Settings.Default.EnableISISOutput,
+                                      Settings.Default.ISIS_OutputDisplay,
+                                      Settings.Default.ISIS_StretchToFit,
+                                      Settings.Default.ISIS_OutULX,
+                                      Settings.Default.ISIS_OutULY,
+                                      Settings.Default.ISIS_OutLRX,
+                                      Settings.Default.ISIS_OutLRY,
+                                      Settings.Default.ISIS_AlwaysOnTop,
+                                      Settings.Default.ISIS_Monochrome,
+                                      Settings.Default.ISIS_RotateFlipType,
+                                      x => Settings.Default.ISIS_OutputDisplay = x,
+                                      x => Settings.Default.ISIS_StretchToFit = x,
+                                      x => Settings.Default.ISIS_OutULX = x,
+                                      x => Settings.Default.ISIS_OutULY = x,
+                                      x => Settings.Default.ISIS_OutLRX = x,
+                                      x => Settings.Default.ISIS_OutLRY = x,
+                                      x => Settings.Default.EnableISISOutput = x,
+                                      x => Settings.Default.ISIS_RotateFlipType = x,
+                                      x => Settings.Default.ISIS_AlwaysOnTop = x,
+                                      x => Settings.Default.ISIS_Monochrome = x
+                                      );
         }
 
         private void SetupAccelerometerForm()
         {
-            if (Settings.Default.EnableAccelerometerOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.Accelerometer_OutputDisplay);
-                _accelerometerForm = new InstrumentForm();
-                _accelerometerForm.Text = "Accelerometer (G-Meter)";
-                _accelerometerForm.ShowInTaskbar = false;
-                _accelerometerForm.ShowIcon = false;
-                if (Settings.Default.Accelerometer_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _accelerometerForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.Accelerometer_OutULX, Settings.Default.Accelerometer_OutULY);
-                    size = new Size(Settings.Default.Accelerometer_OutLRX - Settings.Default.Accelerometer_OutULX,
-                                    Settings.Default.Accelerometer_OutLRY - Settings.Default.Accelerometer_OutULY);
-                    _accelerometerForm.StretchToFill = false;
-                }
-                _accelerometerForm.AlwaysOnTop = Settings.Default.Accelerometer_AlwaysOnTop;
-                _accelerometerForm.Monochrome = Settings.Default.Accelerometer_Monochrome;
-                _accelerometerForm.Rotation = Settings.Default.Accelerometer_RotateFlipType;
-                _accelerometerForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_accelerometerForm, _applicationForm, screen, location,
-                                                             size, true, true);
-                _accelerometerForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _accelerometerForm,
-                                                                                this,
-                                                                                x => Settings.Default.Accelerometer_OutputDisplay = x,
-                                                                                x => Settings.Default.Accelerometer_StretchToFit = x,
-                                                                                x => Settings.Default.Accelerometer_OutULX = x,
-                                                                                x => Settings.Default.Accelerometer_OutULY = x,
-                                                                                x => Settings.Default.Accelerometer_OutLRX = x,
-                                                                                x => Settings.Default.Accelerometer_OutLRY = x,
-                                                                                x => Settings.Default.EnableAccelerometerOutput = x,
-                                                                                x => Settings.Default.Accelerometer_RotateFlipType = x,
-                                                                                x => Settings.Default.Accelerometer_AlwaysOnTop = x,
-                                                                                x => Settings.Default.Accelerometer_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _accelerometerForm.Disposed += _accelerometerForm_Disposed;
-                _outputForms.Add(_accelerometerRenderer, _accelerometerForm);
-            }
+            SetupInstrumentForm(
+                                      "Accelerometer",
+                                      ref _accelerometerForm,
+                                      _accelerometerRenderer,
+                                      _accelerometerForm_Disposed,
+                                      Settings.Default.EnableAccelerometerOutput,
+                                      Settings.Default.Accelerometer_OutputDisplay,
+                                      Settings.Default.Accelerometer_StretchToFit,
+                                      Settings.Default.Accelerometer_OutULX,
+                                      Settings.Default.Accelerometer_OutULY,
+                                      Settings.Default.Accelerometer_OutLRX,
+                                      Settings.Default.Accelerometer_OutLRY,
+                                      Settings.Default.Accelerometer_AlwaysOnTop,
+                                      Settings.Default.Accelerometer_Monochrome,
+                                      Settings.Default.Accelerometer_RotateFlipType,
+                                      x => Settings.Default.Accelerometer_OutputDisplay = x,
+                                      x => Settings.Default.Accelerometer_StretchToFit = x,
+                                      x => Settings.Default.Accelerometer_OutULX = x,
+                                      x => Settings.Default.Accelerometer_OutULY = x,
+                                      x => Settings.Default.Accelerometer_OutLRX = x,
+                                      x => Settings.Default.Accelerometer_OutLRY = x,
+                                      x => Settings.Default.EnableAccelerometerOutput = x,
+                                      x => Settings.Default.Accelerometer_RotateFlipType = x,
+                                      x => Settings.Default.Accelerometer_AlwaysOnTop = x,
+                                      x => Settings.Default.Accelerometer_Monochrome = x
+                                      );
         }
 
         private void SetupFTIT2Form()
         {
-            if (Settings.Default.EnableFTIT2Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.FTIT2_OutputDisplay);
-                _ftit2Form = new InstrumentForm();
-                _ftit2Form.Text = "Engine 2 - FTIT";
-                _ftit2Form.ShowInTaskbar = false;
-                _ftit2Form.ShowIcon = false;
-                if (Settings.Default.FTIT2_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _ftit2Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.FTIT2_OutULX, Settings.Default.FTIT2_OutULY);
-                    size = new Size(Settings.Default.FTIT2_OutLRX - Settings.Default.FTIT2_OutULX,
-                                    Settings.Default.FTIT2_OutLRY - Settings.Default.FTIT2_OutULY);
-                    _ftit2Form.StretchToFill = false;
-                }
-                _ftit2Form.AlwaysOnTop = Settings.Default.FTIT2_AlwaysOnTop;
-                _ftit2Form.Monochrome = Settings.Default.FTIT2_Monochrome;
-                _ftit2Form.Rotation = Settings.Default.FTIT2_RotateFlipType;
-                _ftit2Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_ftit2Form, _applicationForm, screen, location, size, true,
-                                                             true);
-                _ftit2Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _ftit2Form,
-                                                                                this,
-                                                                                x => Settings.Default.FTIT2_OutputDisplay = x,
-                                                                                x => Settings.Default.FTIT2_StretchToFit = x,
-                                                                                x => Settings.Default.FTIT2_OutULX = x,
-                                                                                x => Settings.Default.FTIT2_OutULY = x,
-                                                                                x => Settings.Default.FTIT2_OutLRX = x,
-                                                                                x => Settings.Default.FTIT2_OutLRY = x,
-                                                                                x => Settings.Default.EnableFTIT2Output = x,
-                                                                                x => Settings.Default.FTIT2_RotateFlipType = x,
-                                                                                x => Settings.Default.FTIT2_AlwaysOnTop = x,
-                                                                                x => Settings.Default.FTIT2_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _ftit2Form.Disposed += _ftit2Form_Disposed;
-                _outputForms.Add(_ftit2Renderer, _ftit2Form);
-            }
+            SetupInstrumentForm(
+                                      "FTIT 2",
+                                      ref _ftit2Form,
+                                      _ftit2Renderer,
+                                      _ftit2Form_Disposed,
+                                      Settings.Default.EnableFTIT2Output,
+                                      Settings.Default.FTIT2_OutputDisplay,
+                                      Settings.Default.FTIT2_StretchToFit,
+                                      Settings.Default.FTIT2_OutULX,
+                                      Settings.Default.FTIT2_OutULY,
+                                      Settings.Default.FTIT2_OutLRX,
+                                      Settings.Default.FTIT2_OutLRY,
+                                      Settings.Default.FTIT2_AlwaysOnTop,
+                                      Settings.Default.FTIT2_Monochrome,
+                                      Settings.Default.FTIT2_RotateFlipType,
+                                      x => Settings.Default.FTIT2_OutputDisplay = x,
+                                      x => Settings.Default.FTIT2_StretchToFit = x,
+                                      x => Settings.Default.FTIT2_OutULX = x,
+                                      x => Settings.Default.FTIT2_OutULY = x,
+                                      x => Settings.Default.FTIT2_OutLRX = x,
+                                      x => Settings.Default.FTIT2_OutLRY = x,
+                                      x => Settings.Default.EnableFTIT2Output = x,
+                                      x => Settings.Default.FTIT2_RotateFlipType = x,
+                                      x => Settings.Default.FTIT2_AlwaysOnTop = x,
+                                      x => Settings.Default.FTIT2_Monochrome = x
+                                      );
         }
 
         private void SetupFTIT1Form()
         {
-            if (Settings.Default.EnableFTIT1Output)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.FTIT1_OutputDisplay);
-                _ftit1Form = new InstrumentForm();
-                _ftit1Form.Text = "Engine 1 - FTIT";
-                _ftit1Form.ShowInTaskbar = false;
-                _ftit1Form.ShowIcon = false;
-                if (Settings.Default.FTIT1_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _ftit1Form.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.FTIT1_OutULX, Settings.Default.FTIT1_OutULY);
-                    size = new Size(Settings.Default.FTIT1_OutLRX - Settings.Default.FTIT1_OutULX,
-                                    Settings.Default.FTIT1_OutLRY - Settings.Default.FTIT1_OutULY);
-                    _ftit1Form.StretchToFill = false;
-                }
-                _ftit1Form.AlwaysOnTop = Settings.Default.FTIT1_AlwaysOnTop;
-                _ftit1Form.Monochrome = Settings.Default.FTIT1_Monochrome;
-                _ftit1Form.Rotation = Settings.Default.FTIT1_RotateFlipType;
-                _ftit1Form.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_ftit1Form, _applicationForm, screen, location, size, true,
-                                                             true);
-                _ftit1Form.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _ftit1Form,
-                                                                                this,
-                                                                                x => Settings.Default.FTIT1_OutputDisplay = x,
-                                                                                x => Settings.Default.FTIT1_StretchToFit = x,
-                                                                                x => Settings.Default.FTIT1_OutULX = x,
-                                                                                x => Settings.Default.FTIT1_OutULY = x,
-                                                                                x => Settings.Default.FTIT1_OutLRX = x,
-                                                                                x => Settings.Default.FTIT1_OutLRY = x,
-                                                                                x => Settings.Default.EnableFTIT1Output = x,
-                                                                                x => Settings.Default.FTIT1_RotateFlipType = x,
-                                                                                x => Settings.Default.FTIT1_AlwaysOnTop = x,
-                                                                                x => Settings.Default.FTIT1_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _ftit1Form.Disposed += _ftit1Form_Disposed;
-                _outputForms.Add(_ftit1Renderer, _ftit1Form);
-            }
+            SetupInstrumentForm(
+                                       "FTIT 1",
+                                       ref _ftit1Form,
+                                       _ftit1Renderer,
+                                       _ftit1Form_Disposed,
+                                       Settings.Default.EnableFTIT1Output,
+                                       Settings.Default.FTIT1_OutputDisplay,
+                                       Settings.Default.FTIT1_StretchToFit,
+                                       Settings.Default.FTIT1_OutULX,
+                                       Settings.Default.FTIT1_OutULY,
+                                       Settings.Default.FTIT1_OutLRX,
+                                       Settings.Default.FTIT1_OutLRY,
+                                       Settings.Default.FTIT1_AlwaysOnTop,
+                                       Settings.Default.FTIT1_Monochrome,
+                                       Settings.Default.FTIT1_RotateFlipType,
+                                       x => Settings.Default.FTIT1_OutputDisplay = x,
+                                       x => Settings.Default.FTIT1_StretchToFit = x,
+                                       x => Settings.Default.FTIT1_OutULX = x,
+                                       x => Settings.Default.FTIT1_OutULY = x,
+                                       x => Settings.Default.FTIT1_OutLRX = x,
+                                       x => Settings.Default.FTIT1_OutLRY = x,
+                                       x => Settings.Default.EnableFTIT1Output = x,
+                                       x => Settings.Default.FTIT1_RotateFlipType = x,
+                                       x => Settings.Default.FTIT1_AlwaysOnTop = x,
+                                       x => Settings.Default.FTIT1_Monochrome = x
+                                       );
         }
 
         private void SetupEPUFuelForm()
         {
-            if (Settings.Default.EnableEPUFuelOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.EPUFuel_OutputDisplay);
-                _epuFuelForm = new InstrumentForm();
-                _epuFuelForm.Text = "EPU Fuel";
-                _epuFuelForm.ShowInTaskbar = false;
-                _epuFuelForm.ShowIcon = false;
-                if (Settings.Default.EPUFuel_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _epuFuelForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.EPUFuel_OutULX, Settings.Default.EPUFuel_OutULY);
-                    size = new Size(Settings.Default.EPUFuel_OutLRX - Settings.Default.EPUFuel_OutULX,
-                                    Settings.Default.EPUFuel_OutLRY - Settings.Default.EPUFuel_OutULY);
-                    _epuFuelForm.StretchToFill = false;
-                }
-                _epuFuelForm.AlwaysOnTop = Settings.Default.EPUFuel_AlwaysOnTop;
-                _epuFuelForm.Monochrome = Settings.Default.EPUFuel_Monochrome;
-                _epuFuelForm.Rotation = Settings.Default.EPUFuel_RotateFlipType;
-                _epuFuelForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_epuFuelForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _epuFuelForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _epuFuelForm,
-                                                                                this,
-                                                                                x => Settings.Default.EPUFuel_OutputDisplay = x,
-                                                                                x => Settings.Default.EPUFuel_StretchToFit = x,
-                                                                                x => Settings.Default.EPUFuel_OutULX = x,
-                                                                                x => Settings.Default.EPUFuel_OutULY = x,
-                                                                                x => Settings.Default.EPUFuel_OutLRX = x,
-                                                                                x => Settings.Default.EPUFuel_OutLRY = x,
-                                                                                x => Settings.Default.EnableEPUFuelOutput = x,
-                                                                                x => Settings.Default.EPUFuel_RotateFlipType = x,
-                                                                                x => Settings.Default.EPUFuel_AlwaysOnTop = x,
-                                                                                x => Settings.Default.EPUFuel_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _epuFuelForm.Disposed += _epuFuelForm_Disposed;
-                _outputForms.Add(_epuFuelRenderer, _epuFuelForm);
-            }
+            SetupInstrumentForm(
+                                       "EPU Fuel",
+                                       ref _epuFuelForm,
+                                       _epuFuelRenderer,
+                                       _epuFuelForm_Disposed,
+                                       Settings.Default.EnableEPUFuelOutput,
+                                       Settings.Default.EPUFuel_OutputDisplay,
+                                       Settings.Default.EPUFuel_StretchToFit,
+                                       Settings.Default.EPUFuel_OutULX,
+                                       Settings.Default.EPUFuel_OutULY,
+                                       Settings.Default.EPUFuel_OutLRX,
+                                       Settings.Default.EPUFuel_OutLRY,
+                                       Settings.Default.EPUFuel_AlwaysOnTop,
+                                       Settings.Default.EPUFuel_Monochrome,
+                                       Settings.Default.EPUFuel_RotateFlipType,
+                                       x => Settings.Default.EPUFuel_OutputDisplay = x,
+                                       x => Settings.Default.EPUFuel_StretchToFit = x,
+                                       x => Settings.Default.EPUFuel_OutULX = x,
+                                       x => Settings.Default.EPUFuel_OutULY = x,
+                                       x => Settings.Default.EPUFuel_OutLRX = x,
+                                       x => Settings.Default.EPUFuel_OutLRY = x,
+                                       x => Settings.Default.EnableEPUFuelOutput = x,
+                                       x => Settings.Default.EPUFuel_RotateFlipType = x,
+                                       x => Settings.Default.EPUFuel_AlwaysOnTop = x,
+                                       x => Settings.Default.EPUFuel_Monochrome = x
+                                       );
         }
 
         private void SetupPFLForm()
         {
-            if (Settings.Default.EnablePFLOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.PFL_OutputDisplay);
-                _pflForm = new InstrumentForm();
-                _pflForm.Text = "Pilot Fault List (PFL)";
-                _pflForm.ShowInTaskbar = false;
-                _pflForm.ShowIcon = false;
-                if (Settings.Default.PFL_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _pflForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.PFL_OutULX, Settings.Default.PFL_OutULY);
-                    size = new Size(Settings.Default.PFL_OutLRX - Settings.Default.PFL_OutULX,
-                                    Settings.Default.PFL_OutLRY - Settings.Default.PFL_OutULY);
-                    _pflForm.StretchToFill = false;
-                }
-                _pflForm.AlwaysOnTop = Settings.Default.PFL_AlwaysOnTop;
-                _pflForm.Monochrome = Settings.Default.PFL_Monochrome;
-                _pflForm.Rotation = Settings.Default.PFL_RotateFlipType;
-                _pflForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_pflForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _pflForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _pflForm,
-                                                                                this,
-                                                                                x => Settings.Default.PFL_OutputDisplay = x,
-                                                                                x => Settings.Default.PFL_StretchToFit = x,
-                                                                                x => Settings.Default.PFL_OutULX = x,
-                                                                                x => Settings.Default.PFL_OutULY = x,
-                                                                                x => Settings.Default.PFL_OutLRX = x,
-                                                                                x => Settings.Default.PFL_OutLRY = x,
-                                                                                x => Settings.Default.EnablePFLOutput = x,
-                                                                                x => Settings.Default.PFL_RotateFlipType = x,
-                                                                                x => Settings.Default.PFL_AlwaysOnTop = x,
-                                                                                x => Settings.Default.PFL_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _pflForm.Disposed += _pflForm_Disposed;
-                _outputForms.Add(_pflRenderer, _pflForm);
-            }
+            SetupInstrumentForm(
+                                                   "PFL",
+                                                   ref _pflForm,
+                                                   _pflRenderer,
+                                                   _pflForm_Disposed,
+                                                   Settings.Default.EnablePFLOutput,
+                                                   Settings.Default.PFL_OutputDisplay,
+                                                   Settings.Default.PFL_StretchToFit,
+                                                   Settings.Default.PFL_OutULX,
+                                                   Settings.Default.PFL_OutULY,
+                                                   Settings.Default.PFL_OutLRX,
+                                                   Settings.Default.PFL_OutLRY,
+                                                   Settings.Default.PFL_AlwaysOnTop,
+                                                   Settings.Default.PFL_Monochrome,
+                                                   Settings.Default.PFL_RotateFlipType,
+                                                   x => Settings.Default.PFL_OutputDisplay = x,
+                                                   x => Settings.Default.PFL_StretchToFit = x,
+                                                   x => Settings.Default.PFL_OutULX = x,
+                                                   x => Settings.Default.PFL_OutULY = x,
+                                                   x => Settings.Default.PFL_OutLRX = x,
+                                                   x => Settings.Default.PFL_OutLRY = x,
+                                                   x => Settings.Default.EnablePFLOutput = x,
+                                                   x => Settings.Default.PFL_RotateFlipType = x,
+                                                   x => Settings.Default.PFL_AlwaysOnTop = x,
+                                                   x => Settings.Default.PFL_Monochrome = x
+                                                   );
         }
 
         private void SetupDEDForm()
         {
-            if (Settings.Default.EnableDEDOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.DED_OutputDisplay);
-                _dedForm = new InstrumentForm();
-                _dedForm.Text = "Data Entry Display (DED)";
-                _dedForm.ShowInTaskbar = false;
-                _dedForm.ShowIcon = false;
-                if (Settings.Default.DED_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _dedForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.DED_OutULX, Settings.Default.DED_OutULY);
-                    size = new Size(Settings.Default.DED_OutLRX - Settings.Default.DED_OutULX,
-                                    Settings.Default.DED_OutLRY - Settings.Default.DED_OutULY);
-                    _dedForm.StretchToFill = false;
-                }
-                _dedForm.AlwaysOnTop = Settings.Default.DED_AlwaysOnTop;
-                _dedForm.Monochrome = Settings.Default.DED_Monochrome;
-                _dedForm.Rotation = Settings.Default.DED_RotateFlipType;
-                _dedForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_dedForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _dedForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _dedForm,
-                                                                                this,
-                                                                                x => Settings.Default.DED_OutputDisplay = x,
-                                                                                x => Settings.Default.DED_StretchToFit = x,
-                                                                                x => Settings.Default.DED_OutULX = x,
-                                                                                x => Settings.Default.DED_OutULY = x,
-                                                                                x => Settings.Default.DED_OutLRX = x,
-                                                                                x => Settings.Default.DED_OutLRY = x,
-                                                                                x => Settings.Default.EnableDEDOutput = x,
-                                                                                x => Settings.Default.DED_RotateFlipType = x,
-                                                                                x => Settings.Default.DED_AlwaysOnTop = x,
-                                                                                x => Settings.Default.DED_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _dedForm.Disposed += _dedForm_Disposed;
-                _outputForms.Add(_dedRenderer, _dedForm);
-            }
+            SetupInstrumentForm(
+                                                   "DED",
+                                                   ref _dedForm,
+                                                   _dedRenderer,
+                                                   _dedForm_Disposed,
+                                                   Settings.Default.EnableDEDOutput,
+                                                   Settings.Default.DED_OutputDisplay,
+                                                   Settings.Default.DED_StretchToFit,
+                                                   Settings.Default.DED_OutULX,
+                                                   Settings.Default.DED_OutULY,
+                                                   Settings.Default.DED_OutLRX,
+                                                   Settings.Default.DED_OutLRY,
+                                                   Settings.Default.DED_AlwaysOnTop,
+                                                   Settings.Default.DED_Monochrome,
+                                                   Settings.Default.DED_RotateFlipType,
+                                                   x => Settings.Default.DED_OutputDisplay = x,
+                                                   x => Settings.Default.DED_StretchToFit = x,
+                                                   x => Settings.Default.DED_OutULX = x,
+                                                   x => Settings.Default.DED_OutULY = x,
+                                                   x => Settings.Default.DED_OutLRX = x,
+                                                   x => Settings.Default.DED_OutLRY = x,
+                                                   x => Settings.Default.EnableDEDOutput = x,
+                                                   x => Settings.Default.DED_RotateFlipType = x,
+                                                   x => Settings.Default.DED_AlwaysOnTop = x,
+                                                   x => Settings.Default.DED_Monochrome = x
+                                                   );
         }
 
         private void SetupCompassForm()
         {
-            if (Settings.Default.EnableCompassOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.Compass_OutputDisplay);
-                _compassForm = new InstrumentForm();
-                _compassForm.Text = "Compass";
-                _compassForm.ShowInTaskbar = false;
-                _compassForm.ShowIcon = false;
-                if (Settings.Default.Compass_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _compassForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.Compass_OutULX, Settings.Default.Compass_OutULY);
-                    size = new Size(Settings.Default.Compass_OutLRX - Settings.Default.Compass_OutULX,
-                                    Settings.Default.Compass_OutLRY - Settings.Default.Compass_OutULY);
-                    _compassForm.StretchToFill = false;
-                }
-                _compassForm.AlwaysOnTop = Settings.Default.Compass_AlwaysOnTop;
-                _compassForm.Monochrome = Settings.Default.Compass_Monochrome;
-                _compassForm.Rotation = Settings.Default.Compass_RotateFlipType;
-                _compassForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_compassForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _compassForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _compassForm,
-                                                                                this,
-                                                                                x => Settings.Default.Compass_OutputDisplay = x,
-                                                                                x => Settings.Default.Compass_StretchToFit = x,
-                                                                                x => Settings.Default.Compass_OutULX = x,
-                                                                                x => Settings.Default.Compass_OutULY = x,
-                                                                                x => Settings.Default.Compass_OutLRX = x,
-                                                                                x => Settings.Default.Compass_OutLRY = x,
-                                                                                x => Settings.Default.EnableCompassOutput = x,
-                                                                                x => Settings.Default.Compass_RotateFlipType = x,
-                                                                                x => Settings.Default.Compass_AlwaysOnTop = x,
-                                                                                x => Settings.Default.Compass_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _compassForm.Disposed += _compassForm_Disposed;
-                _outputForms.Add(_compassRenderer, _compassForm);
-            }
+            SetupInstrumentForm(
+                                                   "Compass",
+                                                   ref _compassForm,
+                                                   _compassRenderer,
+                                                   _compassForm_Disposed,
+                                                   Settings.Default.EnableCompassOutput,
+                                                   Settings.Default.Compass_OutputDisplay,
+                                                   Settings.Default.Compass_StretchToFit,
+                                                   Settings.Default.Compass_OutULX,
+                                                   Settings.Default.Compass_OutULY,
+                                                   Settings.Default.Compass_OutLRX,
+                                                   Settings.Default.Compass_OutLRY,
+                                                   Settings.Default.Compass_AlwaysOnTop,
+                                                   Settings.Default.Compass_Monochrome,
+                                                   Settings.Default.Compass_RotateFlipType,
+                                                   x => Settings.Default.Compass_OutputDisplay = x,
+                                                   x => Settings.Default.Compass_StretchToFit = x,
+                                                   x => Settings.Default.Compass_OutULX = x,
+                                                   x => Settings.Default.Compass_OutULY = x,
+                                                   x => Settings.Default.Compass_OutLRX = x,
+                                                   x => Settings.Default.Compass_OutLRY = x,
+                                                   x => Settings.Default.EnableCompassOutput = x,
+                                                   x => Settings.Default.Compass_RotateFlipType = x,
+                                                   x => Settings.Default.Compass_AlwaysOnTop = x,
+                                                   x => Settings.Default.Compass_Monochrome = x
+                                                   );
         }
 
         private void SetupCMDSPanelForm()
         {
-            if (Settings.Default.EnableCMDSOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.CMDS_OutputDisplay);
-                _cmdsPanelForm = new InstrumentForm();
-                _cmdsPanelForm.Text = "CMDS Panel";
-                _cmdsPanelForm.ShowInTaskbar = false;
-                _cmdsPanelForm.ShowIcon = false;
-                if (Settings.Default.CMDS_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _cmdsPanelForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.CMDS_OutULX, Settings.Default.CMDS_OutULY);
-                    size = new Size(Settings.Default.CMDS_OutLRX - Settings.Default.CMDS_OutULX,
-                                    Settings.Default.CMDS_OutLRY - Settings.Default.CMDS_OutULY);
-                    _cmdsPanelForm.StretchToFill = false;
-                }
-                _cmdsPanelForm.AlwaysOnTop = Settings.Default.CMDS_AlwaysOnTop;
-                _cmdsPanelForm.Monochrome = Settings.Default.CMDS_Monochrome;
-                _cmdsPanelForm.Rotation = Settings.Default.CMDS_RotateFlipType;
-                _cmdsPanelForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_cmdsPanelForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _cmdsPanelForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _cmdsPanelForm,
-                                                                                this,
-                                                                                x => Settings.Default.CMDS_OutputDisplay = x,
-                                                                                x => Settings.Default.CMDS_StretchToFit = x,
-                                                                                x => Settings.Default.CMDS_OutULX = x,
-                                                                                x => Settings.Default.CMDS_OutULY = x,
-                                                                                x => Settings.Default.CMDS_OutLRX = x,
-                                                                                x => Settings.Default.CMDS_OutLRY = x,
-                                                                                x => Settings.Default.EnableCMDSOutput = x,
-                                                                                x => Settings.Default.CMDS_RotateFlipType = x,
-                                                                                x => Settings.Default.CMDS_AlwaysOnTop = x,
-                                                                                x => Settings.Default.CMDS_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _cmdsPanelForm.Disposed += _cmdsPanelForm_Disposed;
-                _outputForms.Add(_cmdsPanelRenderer, _cmdsPanelForm);
-            }
+            SetupInstrumentForm(
+                                                   "CMDS",
+                                                   ref _cmdsPanelForm,
+                                                   _cmdsPanelRenderer,
+                                                   _cmdsPanelForm_Disposed,
+                                                   Settings.Default.EnableCMDSOutput,
+                                                   Settings.Default.CMDS_OutputDisplay,
+                                                   Settings.Default.CMDS_StretchToFit,
+                                                   Settings.Default.CMDS_OutULX,
+                                                   Settings.Default.CMDS_OutULY,
+                                                   Settings.Default.CMDS_OutLRX,
+                                                   Settings.Default.CMDS_OutLRY,
+                                                   Settings.Default.CMDS_AlwaysOnTop,
+                                                   Settings.Default.CMDS_Monochrome,
+                                                   Settings.Default.CMDS_RotateFlipType,
+                                                   x => Settings.Default.CMDS_OutputDisplay = x,
+                                                   x => Settings.Default.CMDS_StretchToFit = x,
+                                                   x => Settings.Default.CMDS_OutULX = x,
+                                                   x => Settings.Default.CMDS_OutULY = x,
+                                                   x => Settings.Default.CMDS_OutLRX = x,
+                                                   x => Settings.Default.CMDS_OutLRY = x,
+                                                   x => Settings.Default.EnableCMDSOutput = x,
+                                                   x => Settings.Default.CMDS_RotateFlipType = x,
+                                                   x => Settings.Default.CMDS_AlwaysOnTop = x,
+                                                   x => Settings.Default.CMDS_Monochrome = x
+                                                   );
         }
 
         private void SetupCautionPanelForm()
         {
-            if (Settings.Default.EnableCautionPanelOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.CautionPanel_OutputDisplay);
-                _cautionPanelForm = new InstrumentForm();
-                _cautionPanelForm.Text = "Caution Panel";
-                _cautionPanelForm.ShowInTaskbar = false;
-                _cautionPanelForm.ShowIcon = false;
-                if (Settings.Default.CautionPanel_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _cautionPanelForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.CautionPanel_OutULX, Settings.Default.CautionPanel_OutULY);
-                    size = new Size(Settings.Default.CautionPanel_OutLRX - Settings.Default.CautionPanel_OutULX,
-                                    Settings.Default.CautionPanel_OutLRY - Settings.Default.CautionPanel_OutULY);
-                    _cautionPanelForm.StretchToFill = false;
-                }
-                _cautionPanelForm.AlwaysOnTop = Settings.Default.CautionPanel_AlwaysOnTop;
-                _cautionPanelForm.Monochrome = Settings.Default.CautionPanel_Monochrome;
-                _cautionPanelForm.Rotation = Settings.Default.CautionPanel_RotateFlipType;
-                _cautionPanelForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_cautionPanelForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _cautionPanelForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _cautionPanelForm,
-                                                                                this,
-                                                                                x => Settings.Default.CautionPanel_OutputDisplay = x,
-                                                                                x => Settings.Default.CautionPanel_StretchToFit = x,
-                                                                                x => Settings.Default.CautionPanel_OutULX = x,
-                                                                                x => Settings.Default.CautionPanel_OutULY = x,
-                                                                                x => Settings.Default.CautionPanel_OutLRX = x,
-                                                                                x => Settings.Default.CautionPanel_OutLRY = x,
-                                                                                x => Settings.Default.EnableCautionPanelOutput = x,
-                                                                                x => Settings.Default.CautionPanel_RotateFlipType = x,
-                                                                                x => Settings.Default.CautionPanel_AlwaysOnTop = x,
-                                                                                x => Settings.Default.CautionPanel_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _cautionPanelForm.Disposed += _cautionPanelForm_Disposed;
-                _outputForms.Add(_cautionPanelRenderer, _cautionPanelForm);
-            }
+            SetupInstrumentForm(
+                                                   "Caution Panel",
+                                                   ref _cautionPanelForm,
+                                                   _cautionPanelRenderer,
+                                                   _cautionPanelForm_Disposed,
+                                                   Settings.Default.EnableCautionPanelOutput,
+                                                   Settings.Default.CautionPanel_OutputDisplay,
+                                                   Settings.Default.CautionPanel_StretchToFit,
+                                                   Settings.Default.CautionPanel_OutULX,
+                                                   Settings.Default.CautionPanel_OutULY,
+                                                   Settings.Default.CautionPanel_OutLRX,
+                                                   Settings.Default.CautionPanel_OutLRY,
+                                                   Settings.Default.CautionPanel_AlwaysOnTop,
+                                                   Settings.Default.CautionPanel_Monochrome,
+                                                   Settings.Default.CautionPanel_RotateFlipType,
+                                                   x => Settings.Default.CautionPanel_OutputDisplay = x,
+                                                   x => Settings.Default.CautionPanel_StretchToFit = x,
+                                                   x => Settings.Default.CautionPanel_OutULX = x,
+                                                   x => Settings.Default.CautionPanel_OutULY = x,
+                                                   x => Settings.Default.CautionPanel_OutLRX = x,
+                                                   x => Settings.Default.CautionPanel_OutLRY = x,
+                                                   x => Settings.Default.EnableCautionPanelOutput = x,
+                                                   x => Settings.Default.CautionPanel_RotateFlipType = x,
+                                                   x => Settings.Default.CautionPanel_AlwaysOnTop = x,
+                                                   x => Settings.Default.CautionPanel_Monochrome = x
+                                                   );
         }
 
         private void SetupAOAIndicatorForm()
         {
-            if (Settings.Default.EnableAOAIndicatorOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.AOAIndicator_OutputDisplay);
-                _aoaIndicatorForm = new InstrumentForm();
-                _aoaIndicatorForm.Text = "AOA Indicator";
-                _aoaIndicatorForm.ShowInTaskbar = false;
-                _aoaIndicatorForm.ShowIcon = false;
-                if (Settings.Default.AOAIndicator_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _aoaIndicatorForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.AOAIndicator_OutULX, Settings.Default.AOAIndicator_OutULY);
-                    size = new Size(Settings.Default.AOAIndicator_OutLRX - Settings.Default.AOAIndicator_OutULX,
-                                    Settings.Default.AOAIndicator_OutLRY - Settings.Default.AOAIndicator_OutULY);
-                    _aoaIndicatorForm.StretchToFill = false;
-                }
-                _aoaIndicatorForm.AlwaysOnTop = Settings.Default.AOAIndicator_AlwaysOnTop;
-                _aoaIndicatorForm.Monochrome = Settings.Default.AOAIndicator_Monochrome;
-                _aoaIndicatorForm.Rotation = Settings.Default.AOAIndicator_RotateFlipType;
-                _aoaIndicatorForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_aoaIndicatorForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _aoaIndicatorForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _aoaIndicatorForm,
-                                                                                this,
-                                                                                x => Settings.Default.AOAIndicator_OutputDisplay = x,
-                                                                                x => Settings.Default.AOAIndicator_StretchToFit = x,
-                                                                                x => Settings.Default.AOAIndicator_OutULX = x,
-                                                                                x => Settings.Default.AOAIndicator_OutULY = x,
-                                                                                x => Settings.Default.AOAIndicator_OutLRX = x,
-                                                                                x => Settings.Default.AOAIndicator_OutLRY = x,
-                                                                                x => Settings.Default.EnableAOAIndicatorOutput = x,
-                                                                                x => Settings.Default.AOAIndicator_RotateFlipType = x,
-                                                                                x => Settings.Default.AOAIndicator_AlwaysOnTop = x,
-                                                                                x => Settings.Default.AOAIndicator_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _aoaIndicatorForm.Disposed += _aoaIndicatorForm_Disposed;
-                _outputForms.Add(_aoaIndicatorRenderer, _aoaIndicatorForm);
-            }
+            SetupInstrumentForm(
+                                                               "AOA Indicator",
+                                                               ref _aoaIndicatorForm,
+                                                               _aoaIndicatorRenderer,
+                                                               _aoaIndicatorForm_Disposed,
+                                                               Settings.Default.EnableAOAIndicatorOutput,
+                                                               Settings.Default.AOAIndicator_OutputDisplay,
+                                                               Settings.Default.AOAIndicator_StretchToFit,
+                                                               Settings.Default.AOAIndicator_OutULX,
+                                                               Settings.Default.AOAIndicator_OutULY,
+                                                               Settings.Default.AOAIndicator_OutLRX,
+                                                               Settings.Default.AOAIndicator_OutLRY,
+                                                               Settings.Default.AOAIndicator_AlwaysOnTop,
+                                                               Settings.Default.AOAIndicator_Monochrome,
+                                                               Settings.Default.AOAIndicator_RotateFlipType,
+                                                               x => Settings.Default.AOAIndicator_OutputDisplay = x,
+                                                               x => Settings.Default.AOAIndicator_StretchToFit = x,
+                                                               x => Settings.Default.AOAIndicator_OutULX = x,
+                                                               x => Settings.Default.AOAIndicator_OutULY = x,
+                                                               x => Settings.Default.AOAIndicator_OutLRX = x,
+                                                               x => Settings.Default.AOAIndicator_OutLRY = x,
+                                                               x => Settings.Default.EnableAOAIndicatorOutput = x,
+                                                               x => Settings.Default.AOAIndicator_RotateFlipType = x,
+                                                               x => Settings.Default.AOAIndicator_AlwaysOnTop = x,
+                                                               x => Settings.Default.AOAIndicator_Monochrome = x
+                                                               );
         }
 
         private void SetupAOAIndexerForm()
         {
-            if (Settings.Default.EnableAOAIndexerOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.AOAIndexer_OutputDisplay);
-                _aoaIndexerForm = new InstrumentForm();
-                _aoaIndexerForm.Text = "AOA Indexer";
-                _aoaIndexerForm.ShowInTaskbar = false;
-                _aoaIndexerForm.ShowIcon = false;
-                if (Settings.Default.AOAIndexer_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _aoaIndexerForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.AOAIndexer_OutULX, Settings.Default.AOAIndexer_OutULY);
-                    size = new Size(Settings.Default.AOAIndexer_OutLRX - Settings.Default.AOAIndexer_OutULX,
-                                    Settings.Default.AOAIndexer_OutLRY - Settings.Default.AOAIndexer_OutULY);
-                    _aoaIndexerForm.StretchToFill = false;
-                }
-                _aoaIndexerForm.AlwaysOnTop = Settings.Default.AOAIndexer_AlwaysOnTop;
-                _aoaIndexerForm.Monochrome = Settings.Default.AOAIndexer_Monochrome;
-                _aoaIndexerForm.Rotation = Settings.Default.AOAIndexer_RotateFlipType;
-                _aoaIndexerForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_aoaIndexerForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _aoaIndexerForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _aoaIndexerForm,
-                                                                                this,
-                                                                                x => Settings.Default.AOAIndexer_OutputDisplay = x,
-                                                                                x => Settings.Default.AOAIndexer_StretchToFit = x,
-                                                                                x => Settings.Default.AOAIndexer_OutULX = x,
-                                                                                x => Settings.Default.AOAIndexer_OutULY = x,
-                                                                                x => Settings.Default.AOAIndexer_OutLRX = x,
-                                                                                x => Settings.Default.AOAIndexer_OutLRY = x,
-                                                                                x => Settings.Default.EnableAOAIndexerOutput = x,
-                                                                                x => Settings.Default.AOAIndexer_RotateFlipType = x,
-                                                                                x => Settings.Default.AOAIndexer_AlwaysOnTop = x,
-                                                                                x => Settings.Default.AOAIndexer_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _aoaIndexerForm.Disposed += _aoaIndexerForm_Disposed;
-                _outputForms.Add(_aoaIndexerRenderer, _aoaIndexerForm);
-            }
+            SetupInstrumentForm(
+                                                               "AOA Indexer",
+                                                               ref _aoaIndexerForm,
+                                                               _aoaIndexerRenderer,
+                                                               _aoaIndexerForm_Disposed,
+                                                               Settings.Default.EnableAOAIndexerOutput,
+                                                               Settings.Default.AOAIndexer_OutputDisplay,
+                                                               Settings.Default.AOAIndexer_StretchToFit,
+                                                               Settings.Default.AOAIndexer_OutULX,
+                                                               Settings.Default.AOAIndexer_OutULY,
+                                                               Settings.Default.AOAIndexer_OutLRX,
+                                                               Settings.Default.AOAIndexer_OutLRY,
+                                                               Settings.Default.AOAIndexer_AlwaysOnTop,
+                                                               Settings.Default.AOAIndexer_Monochrome,
+                                                               Settings.Default.AOAIndexer_RotateFlipType,
+                                                               x => Settings.Default.AOAIndexer_OutputDisplay = x,
+                                                               x => Settings.Default.AOAIndexer_StretchToFit = x,
+                                                               x => Settings.Default.AOAIndexer_OutULX = x,
+                                                               x => Settings.Default.AOAIndexer_OutULY = x,
+                                                               x => Settings.Default.AOAIndexer_OutLRX = x,
+                                                               x => Settings.Default.AOAIndexer_OutLRY = x,
+                                                               x => Settings.Default.EnableAOAIndexerOutput = x,
+                                                               x => Settings.Default.AOAIndexer_RotateFlipType = x,
+                                                               x => Settings.Default.AOAIndexer_AlwaysOnTop = x,
+                                                               x => Settings.Default.AOAIndexer_Monochrome = x
+                                                               );
         }
 
         private void SetupAltimeterForm()
         {
-            if (Settings.Default.EnableAltimeterOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.Altimeter_OutputDisplay);
-                _altimeterForm = new InstrumentForm();
-                _altimeterForm.Text = "Altimeter";
-                _altimeterForm.ShowInTaskbar = false;
-                _altimeterForm.ShowIcon = false;
-                if (Settings.Default.Altimeter_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _altimeterForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.Altimeter_OutULX, Settings.Default.Altimeter_OutULY);
-                    size = new Size(Settings.Default.Altimeter_OutLRX - Settings.Default.Altimeter_OutULX,
-                                    Settings.Default.Altimeter_OutLRY - Settings.Default.Altimeter_OutULY);
-                    _altimeterForm.StretchToFill = false;
-                }
-                _altimeterForm.AlwaysOnTop = Settings.Default.Altimeter_AlwaysOnTop;
-                _altimeterForm.Monochrome = Settings.Default.Altimeter_Monochrome;
-                _altimeterForm.Rotation = Settings.Default.Altimeter_RotateFlipType;
-                _altimeterForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_altimeterForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _altimeterForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _altimeterForm,
-                                                                                this,
-                                                                                x => Settings.Default.Altimeter_OutputDisplay = x,
-                                                                                x => Settings.Default.Altimeter_StretchToFit = x,
-                                                                                x => Settings.Default.Altimeter_OutULX = x,
-                                                                                x => Settings.Default.Altimeter_OutULY = x,
-                                                                                x => Settings.Default.Altimeter_OutLRX = x,
-                                                                                x => Settings.Default.Altimeter_OutLRY = x,
-                                                                                x => Settings.Default.EnableAltimeterOutput = x,
-                                                                                x => Settings.Default.Altimeter_RotateFlipType = x,
-                                                                                x => Settings.Default.Altimeter_AlwaysOnTop = x,
-                                                                                x => Settings.Default.Altimeter_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _altimeterForm.Disposed += _altimeterForm_Disposed;
-                _outputForms.Add(_altimeterRenderer, _altimeterForm);
-            }
+            SetupInstrumentForm(
+                                                               "Altimeter",
+                                                               ref _altimeterForm,
+                                                               _altimeterRenderer,
+                                                               _altimeterForm_Disposed,
+                                                               Settings.Default.EnableAltimeterOutput,
+                                                               Settings.Default.Altimeter_OutputDisplay,
+                                                               Settings.Default.Altimeter_StretchToFit,
+                                                               Settings.Default.Altimeter_OutULX,
+                                                               Settings.Default.Altimeter_OutULY,
+                                                               Settings.Default.Altimeter_OutLRX,
+                                                               Settings.Default.Altimeter_OutLRY,
+                                                               Settings.Default.Altimeter_AlwaysOnTop,
+                                                               Settings.Default.Altimeter_Monochrome,
+                                                               Settings.Default.Altimeter_RotateFlipType,
+                                                               x => Settings.Default.Altimeter_OutputDisplay = x,
+                                                               x => Settings.Default.Altimeter_StretchToFit = x,
+                                                               x => Settings.Default.Altimeter_OutULX = x,
+                                                               x => Settings.Default.Altimeter_OutULY = x,
+                                                               x => Settings.Default.Altimeter_OutLRX = x,
+                                                               x => Settings.Default.Altimeter_OutLRY = x,
+                                                               x => Settings.Default.EnableAltimeterOutput = x,
+                                                               x => Settings.Default.Altimeter_RotateFlipType = x,
+                                                               x => Settings.Default.Altimeter_AlwaysOnTop = x,
+                                                               x => Settings.Default.Altimeter_Monochrome = x
+                                                               );
         }
 
         private void SetupCabinPressForm()
         {
-            if (Settings.Default.EnableCabinPressOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.CabinPress_OutputDisplay);
-                _cabinPressForm = new InstrumentForm();
-                _cabinPressForm.Text = "Cabin Pressure Altitude Indicator";
-                _cabinPressForm.ShowInTaskbar = false;
-                _cabinPressForm.ShowIcon = false;
-                if (Settings.Default.CabinPress_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _cabinPressForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.CabinPress_OutULX, Settings.Default.CabinPress_OutULY);
-                    size = new Size(Settings.Default.CabinPress_OutLRX - Settings.Default.CabinPress_OutULX,
-                                    Settings.Default.CabinPress_OutLRY - Settings.Default.CabinPress_OutULY);
-                    _cabinPressForm.StretchToFill = false;
-                }
-                _cabinPressForm.AlwaysOnTop = Settings.Default.CabinPress_AlwaysOnTop;
-                _cabinPressForm.Monochrome = Settings.Default.CabinPress_Monochrome;
-                _cabinPressForm.Rotation = Settings.Default.CabinPress_RotateFlipType;
-                _cabinPressForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_cabinPressForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _cabinPressForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _cabinPressForm,
-                                                                                this,
-                                                                                x => Settings.Default.CabinPress_OutputDisplay = x,
-                                                                                x => Settings.Default.CabinPress_StretchToFit = x,
-                                                                                x => Settings.Default.CabinPress_OutULX = x,
-                                                                                x => Settings.Default.CabinPress_OutULY = x,
-                                                                                x => Settings.Default.CabinPress_OutLRX = x,
-                                                                                x => Settings.Default.CabinPress_OutLRY = x,
-                                                                                x => Settings.Default.EnableCabinPressOutput = x,
-                                                                                x => Settings.Default.CabinPress_RotateFlipType = x,
-                                                                                x => Settings.Default.CabinPress_AlwaysOnTop = x,
-                                                                                x => Settings.Default.CabinPress_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _cabinPressForm.Disposed += _cabinPressForm_Disposed;
-                _outputForms.Add(_cabinPressRenderer, _cabinPressForm);
-            }
+            SetupInstrumentForm(
+                                                               "Cabin Pressure Indicator",
+                                                               ref _cabinPressForm,
+                                                               _cabinPressRenderer,
+                                                               _cabinPressForm_Disposed,
+                                                               Settings.Default.EnableCabinPressOutput,
+                                                               Settings.Default.CabinPress_OutputDisplay,
+                                                               Settings.Default.CabinPress_StretchToFit,
+                                                               Settings.Default.CabinPress_OutULX,
+                                                               Settings.Default.CabinPress_OutULY,
+                                                               Settings.Default.CabinPress_OutLRX,
+                                                               Settings.Default.CabinPress_OutLRY,
+                                                               Settings.Default.CabinPress_AlwaysOnTop,
+                                                               Settings.Default.CabinPress_Monochrome,
+                                                               Settings.Default.CabinPress_RotateFlipType,
+                                                               x => Settings.Default.CabinPress_OutputDisplay = x,
+                                                               x => Settings.Default.CabinPress_StretchToFit = x,
+                                                               x => Settings.Default.CabinPress_OutULX = x,
+                                                               x => Settings.Default.CabinPress_OutULY = x,
+                                                               x => Settings.Default.CabinPress_OutLRX = x,
+                                                               x => Settings.Default.CabinPress_OutLRY = x,
+                                                               x => Settings.Default.EnableCabinPressOutput = x,
+                                                               x => Settings.Default.CabinPress_RotateFlipType = x,
+                                                               x => Settings.Default.CabinPress_AlwaysOnTop = x,
+                                                               x => Settings.Default.CabinPress_Monochrome = x
+                                                               );
         }
 
         private void SetupRollTrimForm()
         {
-            if (Settings.Default.EnableRollTrimOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.RollTrim_OutputDisplay);
-                _rollTrimForm = new InstrumentForm();
-                _rollTrimForm.Text = "Roll Trim Indicator";
-                _rollTrimForm.ShowInTaskbar = false;
-                _rollTrimForm.ShowIcon = false;
-                if (Settings.Default.RollTrim_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _rollTrimForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.RollTrim_OutULX, Settings.Default.RollTrim_OutULY);
-                    size = new Size(Settings.Default.RollTrim_OutLRX - Settings.Default.RollTrim_OutULX,
-                                    Settings.Default.RollTrim_OutLRY - Settings.Default.RollTrim_OutULY);
-                    _rollTrimForm.StretchToFill = false;
-                }
-                _rollTrimForm.AlwaysOnTop = Settings.Default.RollTrim_AlwaysOnTop;
-                _rollTrimForm.Monochrome = Settings.Default.RollTrim_Monochrome;
-                _rollTrimForm.Rotation = Settings.Default.RollTrim_RotateFlipType;
-                _rollTrimForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_rollTrimForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _rollTrimForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _rollTrimForm,
-                                                                                this,
-                                                                                x => Settings.Default.RollTrim_OutputDisplay = x,
-                                                                                x => Settings.Default.RollTrim_StretchToFit = x,
-                                                                                x => Settings.Default.RollTrim_OutULX = x,
-                                                                                x => Settings.Default.RollTrim_OutULY = x,
-                                                                                x => Settings.Default.RollTrim_OutLRX = x,
-                                                                                x => Settings.Default.RollTrim_OutLRY = x,
-                                                                                x => Settings.Default.EnableRollTrimOutput = x,
-                                                                                x => Settings.Default.RollTrim_RotateFlipType = x,
-                                                                                x => Settings.Default.RollTrim_AlwaysOnTop = x,
-                                                                                x => Settings.Default.RollTrim_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _rollTrimForm.Disposed += _rollTrimForm_Disposed;
-                _outputForms.Add(_rollTrimRenderer, _rollTrimForm);
-            }
+            SetupInstrumentForm(
+                                                               "Roll Trim Indicator",
+                                                               ref _rollTrimForm,
+                                                               _rollTrimRenderer,
+                                                               _rollTrimForm_Disposed,
+                                                               Settings.Default.EnableRollTrimOutput,
+                                                               Settings.Default.RollTrim_OutputDisplay,
+                                                               Settings.Default.RollTrim_StretchToFit,
+                                                               Settings.Default.RollTrim_OutULX,
+                                                               Settings.Default.RollTrim_OutULY,
+                                                               Settings.Default.RollTrim_OutLRX,
+                                                               Settings.Default.RollTrim_OutLRY,
+                                                               Settings.Default.RollTrim_AlwaysOnTop,
+                                                               Settings.Default.RollTrim_Monochrome,
+                                                               Settings.Default.RollTrim_RotateFlipType,
+                                                               x => Settings.Default.RollTrim_OutputDisplay = x,
+                                                               x => Settings.Default.RollTrim_StretchToFit = x,
+                                                               x => Settings.Default.RollTrim_OutULX = x,
+                                                               x => Settings.Default.RollTrim_OutULY = x,
+                                                               x => Settings.Default.RollTrim_OutLRX = x,
+                                                               x => Settings.Default.RollTrim_OutLRY = x,
+                                                               x => Settings.Default.EnableRollTrimOutput = x,
+                                                               x => Settings.Default.RollTrim_RotateFlipType = x,
+                                                               x => Settings.Default.RollTrim_AlwaysOnTop = x,
+                                                               x => Settings.Default.RollTrim_Monochrome = x
+                                                               );
         }
 
         private void SetupPitchTrimForm()
         {
-            if (Settings.Default.EnablePitchTrimOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.PitchTrim_OutputDisplay);
-                _pitchTrimForm = new InstrumentForm();
-                _pitchTrimForm.Text = "Pitch Trim Indicator";
-                _pitchTrimForm.ShowInTaskbar = false;
-                _pitchTrimForm.ShowIcon = false;
-                if (Settings.Default.PitchTrim_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _pitchTrimForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.PitchTrim_OutULX, Settings.Default.PitchTrim_OutULY);
-                    size = new Size(Settings.Default.PitchTrim_OutLRX - Settings.Default.PitchTrim_OutULX,
-                                    Settings.Default.PitchTrim_OutLRY - Settings.Default.PitchTrim_OutULY);
-                    _pitchTrimForm.StretchToFill = false;
-                }
-                _pitchTrimForm.AlwaysOnTop = Settings.Default.PitchTrim_AlwaysOnTop;
-                _pitchTrimForm.Monochrome = Settings.Default.PitchTrim_Monochrome;
-                _pitchTrimForm.Rotation = Settings.Default.PitchTrim_RotateFlipType;
-                _pitchTrimForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_pitchTrimForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _pitchTrimForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _pitchTrimForm,
-                                                                                this,
-                                                                                x => Settings.Default.PitchTrim_OutputDisplay = x,
-                                                                                x => Settings.Default.PitchTrim_StretchToFit = x,
-                                                                                x => Settings.Default.PitchTrim_OutULX = x,
-                                                                                x => Settings.Default.PitchTrim_OutULY = x,
-                                                                                x => Settings.Default.PitchTrim_OutLRX = x,
-                                                                                x => Settings.Default.PitchTrim_OutLRY = x,
-                                                                                x => Settings.Default.EnablePitchTrimOutput = x,
-                                                                                x => Settings.Default.PitchTrim_RotateFlipType = x,
-                                                                                x => Settings.Default.PitchTrim_AlwaysOnTop = x,
-                                                                                x => Settings.Default.PitchTrim_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _pitchTrimForm.Disposed += _pitchTrimForm_Disposed;
-                _outputForms.Add(_pitchTrimRenderer, _pitchTrimForm);
-            }
+            SetupInstrumentForm(
+                                                               "Pitch Trim Indicator",
+                                                               ref _pitchTrimForm,
+                                                               _pitchTrimRenderer,
+                                                               _pitchTrimForm_Disposed,
+                                                               Settings.Default.EnablePitchTrimOutput,
+                                                               Settings.Default.PitchTrim_OutputDisplay,
+                                                               Settings.Default.PitchTrim_StretchToFit,
+                                                               Settings.Default.PitchTrim_OutULX,
+                                                               Settings.Default.PitchTrim_OutULY,
+                                                               Settings.Default.PitchTrim_OutLRX,
+                                                               Settings.Default.PitchTrim_OutLRY,
+                                                               Settings.Default.PitchTrim_AlwaysOnTop,
+                                                               Settings.Default.PitchTrim_Monochrome,
+                                                               Settings.Default.PitchTrim_RotateFlipType,
+                                                               x => Settings.Default.PitchTrim_OutputDisplay = x,
+                                                               x => Settings.Default.PitchTrim_StretchToFit = x,
+                                                               x => Settings.Default.PitchTrim_OutULX = x,
+                                                               x => Settings.Default.PitchTrim_OutULY = x,
+                                                               x => Settings.Default.PitchTrim_OutLRX = x,
+                                                               x => Settings.Default.PitchTrim_OutLRY = x,
+                                                               x => Settings.Default.EnablePitchTrimOutput = x,
+                                                               x => Settings.Default.PitchTrim_RotateFlipType = x,
+                                                               x => Settings.Default.PitchTrim_AlwaysOnTop = x,
+                                                               x => Settings.Default.PitchTrim_Monochrome = x
+                                                               );
         }
 
         private void SetupHydAForm()
         {
-            if (Settings.Default.EnableHYDAOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.HYDA_OutputDisplay);
-                _hydAForm = new InstrumentForm();
-                _hydAForm.Text = "Hydraulic Pressure Indicator A";
-                _hydAForm.ShowInTaskbar = false;
-                _hydAForm.ShowIcon = false;
-                if (Settings.Default.HYDA_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _hydAForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.HYDA_OutULX, Settings.Default.HYDA_OutULY);
-                    size = new Size(Settings.Default.HYDA_OutLRX - Settings.Default.HYDA_OutULX,
-                                    Settings.Default.HYDA_OutLRY - Settings.Default.HYDA_OutULY);
-                    _hydAForm.StretchToFill = false;
-                }
-                _hydAForm.AlwaysOnTop = Settings.Default.HYDA_AlwaysOnTop;
-                _hydAForm.Monochrome = Settings.Default.HYDA_Monochrome;
-                _hydAForm.Rotation = Settings.Default.HYDA_RotateFlipType;
-                _hydAForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_hydAForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _hydAForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _hydAForm,
-                                                                                this,
-                                                                                x => Settings.Default.HYDA_OutputDisplay = x,
-                                                                                x => Settings.Default.HYDA_StretchToFit = x,
-                                                                                x => Settings.Default.HYDA_OutULX = x,
-                                                                                x => Settings.Default.HYDA_OutULY = x,
-                                                                                x => Settings.Default.HYDA_OutLRX = x,
-                                                                                x => Settings.Default.HYDA_OutLRY = x,
-                                                                                x => Settings.Default.EnableHYDAOutput = x,
-                                                                                x => Settings.Default.HYDA_RotateFlipType = x,
-                                                                                x => Settings.Default.HYDA_AlwaysOnTop = x,
-                                                                                x => Settings.Default.HYDA_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _hydAForm.Disposed += _hydAForm_Disposed;
-                _outputForms.Add(_hydARenderer, _hydAForm);
-            }
+            SetupInstrumentForm(
+                                                               "Hydraulic Pressure Indicator A",
+                                                               ref _hydAForm,
+                                                               _hydARenderer,
+                                                               _hydAForm_Disposed,
+                                                               Settings.Default.EnableHYDAOutput,
+                                                               Settings.Default.HYDA_OutputDisplay,
+                                                               Settings.Default.HYDA_StretchToFit,
+                                                               Settings.Default.HYDA_OutULX,
+                                                               Settings.Default.HYDA_OutULY,
+                                                               Settings.Default.HYDA_OutLRX,
+                                                               Settings.Default.HYDA_OutLRY,
+                                                               Settings.Default.HYDA_AlwaysOnTop,
+                                                               Settings.Default.HYDA_Monochrome,
+                                                               Settings.Default.HYDA_RotateFlipType,
+                                                               x => Settings.Default.HYDA_OutputDisplay = x,
+                                                               x => Settings.Default.HYDA_StretchToFit = x,
+                                                               x => Settings.Default.HYDA_OutULX = x,
+                                                               x => Settings.Default.HYDA_OutULY = x,
+                                                               x => Settings.Default.HYDA_OutLRX = x,
+                                                               x => Settings.Default.HYDA_OutLRY = x,
+                                                               x => Settings.Default.EnableHYDAOutput = x,
+                                                               x => Settings.Default.HYDA_RotateFlipType = x,
+                                                               x => Settings.Default.HYDA_AlwaysOnTop = x,
+                                                               x => Settings.Default.HYDA_Monochrome = x
+                                                               );
         }
 
         private void SetupHydBForm()
         {
-            if (Settings.Default.EnableHYDBOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.HYDB_OutputDisplay);
-                _hydBForm = new InstrumentForm();
-                _hydBForm.Text = "Hydraulic Pressure Indicator B";
-                _hydBForm.ShowInTaskbar = false;
-                _hydBForm.ShowIcon = false;
-                if (Settings.Default.HYDB_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _hydBForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.HYDB_OutULX, Settings.Default.HYDB_OutULY);
-                    size = new Size(Settings.Default.HYDB_OutLRX - Settings.Default.HYDB_OutULX,
-                                    Settings.Default.HYDB_OutLRY - Settings.Default.HYDB_OutULY);
-                    _hydBForm.StretchToFill = false;
-                }
-                _hydBForm.AlwaysOnTop = Settings.Default.HYDB_AlwaysOnTop;
-                _hydBForm.Monochrome = Settings.Default.HYDB_Monochrome;
-                _hydBForm.Rotation = Settings.Default.HYDB_RotateFlipType;
-                _hydBForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_hydBForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _hydBForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _hydBForm,
-                                                                                this,
-                                                                                x => Settings.Default.HYDB_OutputDisplay = x,
-                                                                                x => Settings.Default.HYDB_StretchToFit = x,
-                                                                                x => Settings.Default.HYDB_OutULX = x,
-                                                                                x => Settings.Default.HYDB_OutULY = x,
-                                                                                x => Settings.Default.HYDB_OutLRX = x,
-                                                                                x => Settings.Default.HYDB_OutLRY = x,
-                                                                                x => Settings.Default.EnableHYDBOutput = x,
-                                                                                x => Settings.Default.HYDB_RotateFlipType = x,
-                                                                                x => Settings.Default.HYDB_AlwaysOnTop = x,
-                                                                                x => Settings.Default.HYDB_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _hydBForm.Disposed += _hydBForm_Disposed;
-                _outputForms.Add(_hydBRenderer, _hydBForm);
-            }
+            SetupInstrumentForm(
+                                                               "Hydraulic Pressure Indicator B",
+                                                               ref _hydBForm,
+                                                               _hydBRenderer,
+                                                               _hydBForm_Disposed,
+                                                               Settings.Default.EnableHYDBOutput,
+                                                               Settings.Default.HYDB_OutputDisplay,
+                                                               Settings.Default.HYDB_StretchToFit,
+                                                               Settings.Default.HYDB_OutULX,
+                                                               Settings.Default.HYDB_OutULY,
+                                                               Settings.Default.HYDB_OutLRX,
+                                                               Settings.Default.HYDB_OutLRY,
+                                                               Settings.Default.HYDB_AlwaysOnTop,
+                                                               Settings.Default.HYDB_Monochrome,
+                                                               Settings.Default.HYDB_RotateFlipType,
+                                                               x => Settings.Default.HYDB_OutputDisplay = x,
+                                                               x => Settings.Default.HYDB_StretchToFit = x,
+                                                               x => Settings.Default.HYDB_OutULX = x,
+                                                               x => Settings.Default.HYDB_OutULY = x,
+                                                               x => Settings.Default.HYDB_OutLRX = x,
+                                                               x => Settings.Default.HYDB_OutLRY = x,
+                                                               x => Settings.Default.EnableHYDBOutput = x,
+                                                               x => Settings.Default.HYDB_RotateFlipType = x,
+                                                               x => Settings.Default.HYDB_AlwaysOnTop = x,
+                                                               x => Settings.Default.HYDB_Monochrome = x
+                                                               );
         }
 
         private void SetupASIForm()
         {
-            if (Settings.Default.EnableASIOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.ASI_OutputDisplay);
-                _asiForm = new InstrumentForm();
-                _asiForm.Text = "Airspeed Indicator";
-                _asiForm.ShowInTaskbar = false;
-                _asiForm.ShowIcon = false;
-                if (Settings.Default.ASI_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _asiForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.ASI_OutULX, Settings.Default.ASI_OutULY);
-                    size = new Size(Settings.Default.ASI_OutLRX - Settings.Default.ASI_OutULX,
-                                    Settings.Default.ASI_OutLRY - Settings.Default.ASI_OutULY);
-                    _asiForm.StretchToFill = false;
-                }
-                _asiForm.AlwaysOnTop = Settings.Default.ASI_AlwaysOnTop;
-                _asiForm.Monochrome = Settings.Default.ASI_Monochrome;
-                _asiForm.Rotation = Settings.Default.ASI_RotateFlipType;
-                _asiForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_asiForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _asiForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _asiForm,
-                                                                                this,
-                                                                                x => Settings.Default.ASI_OutputDisplay = x,
-                                                                                x => Settings.Default.ASI_StretchToFit = x,
-                                                                                x => Settings.Default.ASI_OutULX = x,
-                                                                                x => Settings.Default.ASI_OutULY = x,
-                                                                                x => Settings.Default.ASI_OutLRX = x,
-                                                                                x => Settings.Default.ASI_OutLRY = x,
-                                                                                x => Settings.Default.EnableASIOutput = x,
-                                                                                x => Settings.Default.ASI_RotateFlipType = x,
-                                                                                x => Settings.Default.ASI_AlwaysOnTop = x,
-                                                                                x => Settings.Default.ASI_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _asiForm.Disposed += _asiForm_Disposed;
-                _outputForms.Add(_asiRenderer, _asiForm);
-            }
+            SetupInstrumentForm(
+                                                   "Airspeed Indicator",
+                                                   ref _asiForm,
+                                                   _asiRenderer,
+                                                   _asiForm_Disposed,
+                                                   Settings.Default.EnableASIOutput,
+                                                   Settings.Default.ASI_OutputDisplay,
+                                                   Settings.Default.ASI_StretchToFit,
+                                                   Settings.Default.ASI_OutULX,
+                                                   Settings.Default.ASI_OutULY,
+                                                   Settings.Default.ASI_OutLRX,
+                                                   Settings.Default.ASI_OutLRY,
+                                                   Settings.Default.ASI_AlwaysOnTop,
+                                                   Settings.Default.ASI_Monochrome,
+                                                   Settings.Default.ASI_RotateFlipType,
+                                                   x => Settings.Default.ASI_OutputDisplay = x,
+                                                   x => Settings.Default.ASI_StretchToFit = x,
+                                                   x => Settings.Default.ASI_OutULX = x,
+                                                   x => Settings.Default.ASI_OutULY = x,
+                                                   x => Settings.Default.ASI_OutLRX = x,
+                                                   x => Settings.Default.ASI_OutLRY = x,
+                                                   x => Settings.Default.EnableASIOutput = x,
+                                                   x => Settings.Default.ASI_RotateFlipType = x,
+                                                   x => Settings.Default.ASI_AlwaysOnTop = x,
+                                                   x => Settings.Default.ASI_Monochrome = x
+                                                   );
         }
 
         private void SetupADIForm()
         {
-            if (Settings.Default.EnableADIOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.ADI_OutputDisplay);
-                _adiForm = new InstrumentForm();
-                _adiForm.Text = "Attitude Indicator";
-                _adiForm.ShowInTaskbar = false;
-                _adiForm.ShowIcon = false;
-                if (Settings.Default.ADI_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _adiForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.ADI_OutULX, Settings.Default.ADI_OutULY);
-                    size = new Size(Settings.Default.ADI_OutLRX - Settings.Default.ADI_OutULX,
-                                    Settings.Default.ADI_OutLRY - Settings.Default.ADI_OutULY);
-                    _adiForm.StretchToFill = false;
-                }
-                _adiForm.AlwaysOnTop = Settings.Default.ADI_AlwaysOnTop;
-                _adiForm.Monochrome = Settings.Default.ADI_Monochrome;
-                _adiForm.Rotation = Settings.Default.ADI_RotateFlipType;
-                _adiForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_adiForm, _applicationForm, screen, location, size, true,
-                                                             true);
-                _adiForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _adiForm,
-                                                                                this,
-                                                                                x => Settings.Default.ADI_OutputDisplay = x,
-                                                                                x => Settings.Default.ADI_StretchToFit = x,
-                                                                                x => Settings.Default.ADI_OutULX = x,
-                                                                                x => Settings.Default.ADI_OutULY = x,
-                                                                                x => Settings.Default.ADI_OutLRX = x,
-                                                                                x => Settings.Default.ADI_OutLRY = x,
-                                                                                x => Settings.Default.EnableADIOutput = x,
-                                                                                x => Settings.Default.ADI_RotateFlipType = x,
-                                                                                x => Settings.Default.ADI_AlwaysOnTop = x,
-                                                                                x => Settings.Default.ADI_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;
-                _adiForm.Disposed += _adiForm_Disposed;
-                _outputForms.Add(_adiRenderer, _adiForm);
-            }
+            SetupInstrumentForm(
+                                                   "Attitude Indicator",
+                                                   ref _adiForm,
+                                                   _adiRenderer,
+                                                   _adiForm_Disposed,
+                                                   Settings.Default.EnableADIOutput,
+                                                   Settings.Default.ADI_OutputDisplay,
+                                                   Settings.Default.ADI_StretchToFit,
+                                                   Settings.Default.ADI_OutULX,
+                                                   Settings.Default.ADI_OutULY,
+                                                   Settings.Default.ADI_OutLRX,
+                                                   Settings.Default.ADI_OutLRY,
+                                                   Settings.Default.ADI_AlwaysOnTop,
+                                                   Settings.Default.ADI_Monochrome,
+                                                   Settings.Default.ADI_RotateFlipType,
+                                                   x => Settings.Default.ADI_OutputDisplay = x,
+                                                   x => Settings.Default.ADI_StretchToFit = x,
+                                                   x => Settings.Default.ADI_OutULX = x,
+                                                   x => Settings.Default.ADI_OutULY = x,
+                                                   x => Settings.Default.ADI_OutLRX = x,
+                                                   x => Settings.Default.ADI_OutLRY = x,
+                                                   x => Settings.Default.EnableADIOutput = x,
+                                                   x => Settings.Default.ADI_RotateFlipType = x,
+                                                   x => Settings.Default.ADI_AlwaysOnTop = x,
+                                                   x => Settings.Default.ADI_Monochrome = x
+                                                   );
         }
 
         private void SetupBackupADIForm()
         {
-            if (Settings.Default.EnableBackupADIOutput)
-            {
-                Point location;
-                var size = new Size();
-                Screen screen = Common.Screen.Util.FindScreen(Settings.Default.Backup_ADI_OutputDisplay);
-                _backupAdiForm = new InstrumentForm();
-                _backupAdiForm.Text = "Standby Attitude Indicator";
-                _backupAdiForm.ShowInTaskbar = false;
-                _backupAdiForm.ShowIcon = false;
-                if (Settings.Default.Backup_ADI_StretchToFit)
-                {
-                    location = new Point(0, 0);
-                    size = screen.Bounds.Size;
-                    _backupAdiForm.StretchToFill = true;
-                }
-                else
-                {
-                    location = new Point(Settings.Default.Backup_ADI_OutULX, Settings.Default.Backup_ADI_OutULY);
-                    size = new Size(Settings.Default.Backup_ADI_OutLRX - Settings.Default.Backup_ADI_OutULX,
-                                    Settings.Default.Backup_ADI_OutLRY - Settings.Default.Backup_ADI_OutULY);
-                    _backupAdiForm.StretchToFill = false;
-                }
-                _backupAdiForm.AlwaysOnTop = Settings.Default.Backup_ADI_AlwaysOnTop;
-                _backupAdiForm.Monochrome = Settings.Default.Backup_ADI_Monochrome;
-                _backupAdiForm.Rotation = Settings.Default.Backup_ADI_RotateFlipType;
-                _backupAdiForm.WindowState = FormWindowState.Normal;
-                Common.Screen.Util.OpenFormOnSpecificMonitor(_backupAdiForm, _applicationForm, screen, location, size,
-                                                             true, true);
-                _backupAdiForm.DataChanged += new InstrumentFormDataChangedHandler(
-                                                                                _backupAdiForm,
-                                                                                this,
-                                                                                x => Settings.Default.Backup_ADI_OutputDisplay = x,
-                                                                                x => Settings.Default.Backup_ADI_StretchToFit = x,
-                                                                                x => Settings.Default.Backup_ADI_OutULX = x,
-                                                                                x => Settings.Default.Backup_ADI_OutULY = x,
-                                                                                x => Settings.Default.Backup_ADI_OutLRX = x,
-                                                                                x => Settings.Default.Backup_ADI_OutLRY = x,
-                                                                                x => Settings.Default.EnableBackupADIOutput = x,
-                                                                                x => Settings.Default.Backup_ADI_RotateFlipType = x,
-                                                                                x => Settings.Default.Backup_ADI_AlwaysOnTop = x,
-                                                                                x => Settings.Default.Backup_ADI_Monochrome = x
-                                                                             )
-                                                                            .HandleDataChangedEvent;;
-                _backupAdiForm.Disposed += _backupAdiForm_Disposed;
-                _outputForms.Add(_backupAdiRenderer, _backupAdiForm);
-            }
+            SetupInstrumentForm(
+                                                   "Standby Attitude Indicator",
+                                                   ref _backupAdiForm,
+                                                   _backupAdiRenderer,
+                                                   _backupAdiForm_Disposed,
+                                                   Settings.Default.EnableBackupADIOutput,
+                                                   Settings.Default.Backup_ADI_OutputDisplay,
+                                                   Settings.Default.Backup_ADI_StretchToFit,
+                                                   Settings.Default.Backup_ADI_OutULX,
+                                                   Settings.Default.Backup_ADI_OutULY,
+                                                   Settings.Default.Backup_ADI_OutLRX,
+                                                   Settings.Default.Backup_ADI_OutLRY,
+                                                   Settings.Default.Backup_ADI_AlwaysOnTop,
+                                                   Settings.Default.Backup_ADI_Monochrome,
+                                                   Settings.Default.Backup_ADI_RotateFlipType,
+                                                   x => Settings.Default.Backup_ADI_OutputDisplay = x,
+                                                   x => Settings.Default.Backup_ADI_StretchToFit = x,
+                                                   x => Settings.Default.Backup_ADI_OutULX = x,
+                                                   x => Settings.Default.Backup_ADI_OutULY = x,
+                                                   x => Settings.Default.Backup_ADI_OutLRX = x,
+                                                   x => Settings.Default.Backup_ADI_OutLRY = x,
+                                                   x => Settings.Default.EnableBackupADIOutput = x,
+                                                   x => Settings.Default.Backup_ADI_RotateFlipType = x,
+                                                   x => Settings.Default.Backup_ADI_AlwaysOnTop = x,
+                                                   x => Settings.Default.Backup_ADI_Monochrome = x
+                                                   );
         }
 
         #endregion
