@@ -455,7 +455,8 @@ namespace MFDExtractor
         private readonly IRenderThreadWorkHelper _cabinPressRenderThreadWorkHelper;
         private readonly IRenderThreadWorkHelper _rollTrimRenderThreadWorkHelper;
         private readonly IRenderThreadWorkHelper _pitchTrimRenderThreadWorkHelper;
-        
+        private readonly DIHotkeyDetection _diHotkeyDetection;
+
         #endregion
 
         #endregion
@@ -510,6 +511,7 @@ namespace MFDExtractor
             _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _cabinPressRenderer, _cabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
             _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _rollTrimRenderer, _rollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
             _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _pitchTrimRenderer, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
+            _diHotkeyDetection = new DIHotkeyDetection(Mediator);
         }
         private void ProcessKeyUpEvent(KeyEventArgs e)
         {
@@ -1151,7 +1153,7 @@ namespace MFDExtractor
                 NotifyEHSIMenuButtonDepressed(true);
             }
             else if (
-                !DirectInputHotkeyIsTriggering(_ehsiCourseDepressedKey)
+                !_diHotkeyDetection.DirectInputHotkeyIsTriggering(_ehsiCourseDepressedKey)
                 &&
                 EHSIRightKnobIsCurrentlyDepressed()
                 )
@@ -1183,51 +1185,7 @@ namespace MFDExtractor
         {
             return _ehsiRightKnobDepressedTime.HasValue;
         }
-        private bool DirectInputHotkeyIsTriggering(InputControlSelection hotkey)
-        {
-            if (hotkey == null || hotkey.DirectInputControl == null) return false;
-            int? currentVal = Mediator.GetPhysicalControlValue(hotkey.DirectInputControl, StateType.Current);
-            int? prevVal = Mediator.GetPhysicalControlValue(hotkey.DirectInputControl, StateType.Previous);
 
-            switch (hotkey.ControlType)
-            {
-                case ControlType.Unknown:
-                    break;
-                case ControlType.Axis:
-                    if (currentVal.HasValue && !prevVal.HasValue)
-                    {
-                        return true;
-                    }
-                    else if (!currentVal.HasValue && prevVal.HasValue)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return (currentVal.Value != prevVal.Value);
-                    }
-                    break;
-                case ControlType.Button:
-                    return (currentVal.HasValue && currentVal.Value == 1);
-                    break;
-                case ControlType.Pov:
-                    if (currentVal.HasValue)
-                    {
-                        return Common.InputSupport.Util.GetPovDirection(currentVal.Value) == hotkey.PovDirection;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                    break;
-                case ControlType.Key:
-                    return (currentVal.HasValue && currentVal.Value == 1);
-                    break;
-                default:
-                    break;
-            }
-            return false;
-        }
         private bool DirectInputEventIsHotkey(PhysicalControlStateChangedEventArgs diEvent, InputControlSelection hotkey)
         {
             if (diEvent == null) return false;
