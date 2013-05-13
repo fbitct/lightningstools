@@ -157,8 +157,8 @@ namespace MFDExtractor
                 _flightDataAdapterSet.RPM2.Adapt(renderers.RPM2, flightData);
                 UpdateFTIT1andFTIT2(renderers, flightData);
                 UpdateNOZ1andNOZ2(renderers, flightData);
-                UpdateOIL1(renderers, flightData);
-                UpdateOIL2(renderers, flightData);
+                _flightDataAdapterSet.OIL1.Adapt(renderers.OIL1, flightData);
+                _flightDataAdapterSet.OIL2.Adapt(renderers.OIL2, flightData);
                 UpdateAccelerometer(renderers, flightData);
             }
             else //Falcon's not running
@@ -360,15 +360,7 @@ namespace MFDExtractor
             renderers.Accelerometer.InstrumentState.AccelerationInGs = gs;
         }
 
-        private static void UpdateOIL2(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.OIL2.InstrumentState.OilPressurePercent = fromFalcon.oilPressure2;
-        }
-
-        private static void UpdateOIL1(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.OIL1.InstrumentState.OilPressurePercent = fromFalcon.oilPressure;
-        }
+        
 
         private static void UpdateNOZ1andNOZ2(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {

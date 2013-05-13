@@ -24,6 +24,8 @@
         IRollTrimIndicatorFlightDataAdapter RollTrim { get; }
         IPitchTrimIndicatorFlightDataAdapter PitchTrim { get; }
         IFuelFlowFlightDataAdapter FuelFlow { get; }
+        IOIL1FlightDataAdapter OIL1 { get; }
+        IOIL2FlightDataAdapter OIL2 { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -52,6 +54,8 @@
             RollTrim = new RollTrimIndicatorFlightDataAdapter();
             PitchTrim = new PitchTrimIndicatorFlightDataAdapter();
             FuelFlow = new FuelFlowFlightDataAdapter();
+            OIL1 = new OIL1FlightDataAdapter();
+            OIL1 = new OIL2FlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -76,5 +80,7 @@
         public IRollTrimIndicatorFlightDataAdapter RollTrim { get; private set; }
         public IPitchTrimIndicatorFlightDataAdapter PitchTrim { get; private set; }
         public IFuelFlowFlightDataAdapter FuelFlow { get; private set; }
+        public IOIL1FlightDataAdapter OIL1 { get; private set; }
+        public IOIL2FlightDataAdapter OIL2 { get; private set; }
     }
 }
