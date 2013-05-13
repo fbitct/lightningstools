@@ -148,8 +148,8 @@ namespace MFDExtractor
                 UpdateCautionPanel(renderers, flightData);
                 _flightDataAdapterSet.CMDS.Adapt(renderers.CMDSPanel, flightData);
                 _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
-                UpdatePFL(renderers, flightData);
-                UpdateEPUFuel(renderers, flightData);
+                _flightDataAdapterSet.PFL.Adapt(renderers.PFL, flightData);
+                _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);
                 UpdateFuelFlow(renderers, flightData);
                 UpdateFuelQTY(renderers, flightData);
                 UpdateLandingGearLights(renderers, flightData);
@@ -467,31 +467,6 @@ namespace MFDExtractor
         private static void UpdateFuelFlow(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
             renderers.FuelFlow.InstrumentState.FuelFlowPoundsPerHour = fromFalcon.fuelFlow;
-        }
-
-        private static void UpdateEPUFuel(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.EPUFuel.InstrumentState.FuelRemainingPercent = fromFalcon.epuFuel;
-        }
-
-        private static void UpdatePFL(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            if (fromFalcon.PFLLines != null)
-            {
-                renderers.PFL.InstrumentState.Line1 =Encoding.Default.GetBytes(fromFalcon.PFLLines[0] ?? "");
-                renderers.PFL.InstrumentState.Line2 =Encoding.Default.GetBytes(fromFalcon.PFLLines[1] ?? "");
-                renderers.PFL.InstrumentState.Line3 =Encoding.Default.GetBytes(fromFalcon.PFLLines[2] ?? "");
-                renderers.PFL.InstrumentState.Line4 =Encoding.Default.GetBytes(fromFalcon.PFLLines[3] ?? "");
-                renderers.PFL.InstrumentState.Line5 =Encoding.Default.GetBytes(fromFalcon.PFLLines[4] ?? "");
-            }
-            if (fromFalcon.PFLInvert != null)
-            {
-                renderers.PFL.InstrumentState.Line1Invert =Encoding.Default.GetBytes(fromFalcon.PFLInvert[0] ?? "");
-                renderers.PFL.InstrumentState.Line2Invert =Encoding.Default.GetBytes(fromFalcon.PFLInvert[1] ?? "");
-                renderers.PFL.InstrumentState.Line3Invert =Encoding.Default.GetBytes(fromFalcon.PFLInvert[2] ?? "");
-                renderers.PFL.InstrumentState.Line4Invert =Encoding.Default.GetBytes(fromFalcon.PFLInvert[3] ?? "");
-                renderers.PFL.InstrumentState.Line5Invert =Encoding.Default.GetBytes(fromFalcon.PFLInvert[4] ?? "");
-            }
         }
 
 

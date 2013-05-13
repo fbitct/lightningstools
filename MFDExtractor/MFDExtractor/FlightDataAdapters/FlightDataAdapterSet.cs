@@ -5,33 +5,34 @@
         ICMDSFlightDataAdapter CMDS { get; }
         INWSFlightDataAdapter NWS { get; }
         IDEDFlightDataAdapter DED { get; }
+        IPFLFlightDataAdapter PFL { get; }
         ISpeedbrakeFlightDataAdapter Speedbrake { get; }
         IVVIFlightDataAdapter VVI { get; }
         IAltimeterFlightDataAdapter Altimeter { get; }
+        IEPUFuelFlightDataAdapter EPUFuel { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
     {
-        private readonly ICMDSFlightDataAdapter _cmds;
-        private readonly INWSFlightDataAdapter _nws;
-        private readonly IDEDFlightDataAdapter _ded;
-        private readonly ISpeedbrakeFlightDataAdapter _speedbrake;
-        private readonly IVVIFlightDataAdapter _vvi;
-        private readonly IAltimeterFlightDataAdapter _altimeter;
         public FlightDataAdapterSet()
         {
-            _cmds = new CMDSFlightDataAdapter();
-            _nws = new NWSFlightDataAdapter();
-            _ded = new DEDFlightDataAdapter();
-            _speedbrake = new SpeedbrakeFlightDataAdapter();
-            _vvi = new VVIFlightDataAdapter();
-            _altimeter = new AltimeterFlightDataAdapter();
+            CMDS = new CMDSFlightDataAdapter();
+            NWS = new NWSFlightDataAdapter();
+            DED = new DEDFlightDataAdapter();
+            PFL = new PFLFlightDataAdapter();
+            Speedbrake = new SpeedbrakeFlightDataAdapter();
+            VVI = new VVIFlightDataAdapter();
+            Altimeter = new AltimeterFlightDataAdapter();
+            EPUFuel = new EPUFuelFlightDataAdapter();
         }
-        public ICMDSFlightDataAdapter CMDS { get { return _cmds; } }
-        public INWSFlightDataAdapter NWS { get { return _nws; } }
-        public IDEDFlightDataAdapter DED { get { return _ded; } }
-        public ISpeedbrakeFlightDataAdapter Speedbrake { get { return _speedbrake; } }
-        public IVVIFlightDataAdapter VVI { get { return _vvi; } }
-        public IAltimeterFlightDataAdapter Altimeter { get { return _altimeter; } }
+
+        public ICMDSFlightDataAdapter CMDS { get; private set; }
+        public INWSFlightDataAdapter NWS { get; private set; }
+        public IDEDFlightDataAdapter DED { get; private set; }
+        public ISpeedbrakeFlightDataAdapter Speedbrake { get; private set; }
+        public IVVIFlightDataAdapter VVI { get; private set; }
+        public IAltimeterFlightDataAdapter Altimeter { get; private set; }
+        public IPFLFlightDataAdapter PFL { get; private set; }
+        public IEPUFuelFlightDataAdapter EPUFuel { get; private set; }
     }
 }
