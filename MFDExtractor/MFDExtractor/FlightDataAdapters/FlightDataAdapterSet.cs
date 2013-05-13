@@ -26,6 +26,7 @@
         IFuelFlowFlightDataAdapter FuelFlow { get; }
         IOIL1FlightDataAdapter OIL1 { get; }
         IOIL2FlightDataAdapter OIL2 { get; }
+        IAccelerometerFlightDataAdapter Accelerometer { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -55,7 +56,8 @@
             PitchTrim = new PitchTrimIndicatorFlightDataAdapter();
             FuelFlow = new FuelFlowFlightDataAdapter();
             OIL1 = new OIL1FlightDataAdapter();
-            OIL1 = new OIL2FlightDataAdapter();
+            OIL2 = new OIL2FlightDataAdapter();
+            Accelerometer = new AccelerometerFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -82,5 +84,6 @@
         public IFuelFlowFlightDataAdapter FuelFlow { get; private set; }
         public IOIL1FlightDataAdapter OIL1 { get; private set; }
         public IOIL2FlightDataAdapter OIL2 { get; private set; }
+        public IAccelerometerFlightDataAdapter Accelerometer { get; private set; }
     }
 }

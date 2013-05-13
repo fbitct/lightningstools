@@ -8,7 +8,7 @@ namespace MFDExtractor.FlightDataAdapters
         void Adapt(IF16OilPressureGauge oil2, FlightData flightData);
     }
 
-    class OIL2FlightDataAdapter : IOIL1FlightDataAdapter
+    class OIL2FlightDataAdapter : IOIL2FlightDataAdapter
     {
         public void Adapt(IF16OilPressureGauge oil2, FlightData flightData)
         {

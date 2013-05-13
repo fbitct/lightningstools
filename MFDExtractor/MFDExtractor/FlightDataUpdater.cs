@@ -159,7 +159,7 @@ namespace MFDExtractor
                 UpdateNOZ1andNOZ2(renderers, flightData);
                 _flightDataAdapterSet.OIL1.Adapt(renderers.OIL1, flightData);
                 _flightDataAdapterSet.OIL2.Adapt(renderers.OIL2, flightData);
-                UpdateAccelerometer(renderers, flightData);
+                _flightDataAdapterSet.Accelerometer.Adapt(renderers.Accelerometer, flightData);
             }
             else //Falcon's not running
             {
@@ -349,18 +349,6 @@ namespace MFDExtractor
             renderers.HSI.InstrumentState.BearingToBeaconDegrees = 0;
             renderers.HSI.InstrumentState.DistanceToBeaconNauticalMiles = 0;
         }
-
-        private static void UpdateAccelerometer(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            float gs = fromFalcon.gs;
-            if (gs == 0) //ignore exactly zero g's
-            {
-                gs = 1;
-            }
-            renderers.Accelerometer.InstrumentState.AccelerationInGs = gs;
-        }
-
-        
 
         private static void UpdateNOZ1andNOZ2(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
