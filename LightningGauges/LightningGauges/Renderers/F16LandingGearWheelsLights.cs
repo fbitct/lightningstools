@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16LandingGearWheelsLights : InstrumentRendererBase, IDisposable
+    public interface IF16LandingGearWheelsLights : IInstrumentRenderer
+    {
+        F16LandingGearWheelsLights.F16LandingGearWheelsLightsInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16LandingGearWheelsLights : InstrumentRendererBase, IF16LandingGearWheelsLights
     {
         #region Image Location Constants
 
@@ -35,7 +40,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _leftGearLight;
         private static ImageMaskPair _rightGearLight;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -98,15 +102,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -165,24 +160,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16LandingGearWheelsLights()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_noseGearLight);
-                    //Common.Util.DisposeObject(_leftGearLight);
-                    //Common.Util.DisposeObject(_rightGearLight);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

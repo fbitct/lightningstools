@@ -12,10 +12,6 @@ namespace LightningGauges
         private readonly Bitmap _font;
         private bool _disposed;
 
-        private FontGraphic()
-        {
-        }
-
         public FontGraphic(string fileName)
         {
             _font = (Bitmap) Util.LoadBitmapFromFile(fileName);

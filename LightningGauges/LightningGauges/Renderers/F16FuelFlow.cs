@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16FuelFlow : InstrumentRendererBase, IDisposable
+    public interface IF16FuelFlow : IInstrumentRenderer
+    {
+        F16FuelFlow.F16FuelFlowInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16FuelFlow : InstrumentRendererBase, IF16FuelFlow
     {
         #region Image Location Constants
 
@@ -32,7 +37,6 @@ namespace LightningGauges.Renderers
         private static Bitmap _thousandsDigits;
         private static Bitmap _tenThousandsDigits;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -111,15 +115,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -194,25 +189,5 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-
-        ~F16FuelFlow()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_hundredsDigits);
-                    //Common.Util.DisposeObject(_thousandsDigits);
-                    //Common.Util.DisposeObject(_tenThousandsDigits);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

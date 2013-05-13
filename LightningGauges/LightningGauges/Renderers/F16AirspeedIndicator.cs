@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16AirspeedIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16AirspeedIndicator:IInstrumentRenderer,  IDisposable
+    {
+        F16AirspeedIndicator.F16AirspeedIndicatorInstrumentState InstrumentState { get; set; }
+        float GetMachAngle(float machNumber);
+    }
+
+    public class F16AirspeedIndicator : InstrumentRendererBase, IF16AirspeedIndicator
     {
         #region Image Location Constants
 
@@ -33,7 +39,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _speedBug;
         private static ImageMaskPair _airspeedPointerWheel;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -154,16 +159,6 @@ namespace LightningGauges.Renderers
                     _neverExceedSpeedKnots = vne;
                 }
             }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -445,24 +440,5 @@ namespace LightningGauges.Renderers
             return angle;
         }
 
-        ~F16AirspeedIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_machWheel);
-                    //Common.Util.DisposeObject(_speedBug);
-                    //Common.Util.DisposeObject(_airspeedPointerWheel);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

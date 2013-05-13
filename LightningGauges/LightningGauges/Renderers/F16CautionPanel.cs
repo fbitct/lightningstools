@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16CautionPanel : InstrumentRendererBase, IDisposable
+    public interface IF16CautionPanel : IInstrumentRenderer
+    {
+        F16CautionPanel.F16CautionPanelInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16CautionPanel : InstrumentRendererBase, IF16CautionPanel
     {
         #region Image Location Constants
 
@@ -89,7 +94,6 @@ namespace LightningGauges.Renderers
         private static Bitmap _slot31;
         private static Bitmap _slot32;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -418,16 +422,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -741,55 +735,6 @@ namespace LightningGauges.Renderers
                 }
                 //restore the canvas's transform and clip settings to what they were when we entered this method
                 g.Restore(initialState);
-            }
-        }
-
-        ~F16CautionPanel()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_flcsFault);
-                    //Common.Util.DisposeObject(_engineFault);
-                    //Common.Util.DisposeObject(_avionicsFault);
-                    //Common.Util.DisposeObject(_seatNotArmed);
-                    //Common.Util.DisposeObject(_elecSys);
-                    //Common.Util.DisposeObject(_sec);
-                    //Common.Util.DisposeObject(_equipHot);
-                    //Common.Util.DisposeObject(_nwsFail);
-                    //Common.Util.DisposeObject(_probeHeat);
-                    //Common.Util.DisposeObject(_fuelOilHot);
-                    //Common.Util.DisposeObject(_radarAlt);
-                    //Common.Util.DisposeObject(_antiSkid);
-                    //Common.Util.DisposeObject(_CADC);
-                    //Common.Util.DisposeObject(_inletIcing);
-                    //Common.Util.DisposeObject(_iff);
-                    //Common.Util.DisposeObject(_hook);
-                    //Common.Util.DisposeObject(_storesConfig);
-                    //Common.Util.DisposeObject(_overheat);
-                    //Common.Util.DisposeObject(_nuclear);
-                    //Common.Util.DisposeObject(_oxyLow);
-                    //Common.Util.DisposeObject(_atfNotEngaged);
-                    //Common.Util.DisposeObject(_EEC);
-                    //Common.Util.DisposeObject(_ECM);
-                    //Common.Util.DisposeObject(_cabinPress);
-                    //Common.Util.DisposeObject(_fwdFuelLow);
-                    //Common.Util.DisposeObject(_BUC);
-                    //Common.Util.DisposeObject(_slot27);
-                    //Common.Util.DisposeObject(_slot28);
-                    //Common.Util.DisposeObject(_aftFuelLow);
-                    //Common.Util.DisposeObject(_slot30);
-                    //Common.Util.DisposeObject(_slot31);
-                    //Common.Util.DisposeObject(_slot32);
-                }
-                _disposed = true;
             }
         }
     }

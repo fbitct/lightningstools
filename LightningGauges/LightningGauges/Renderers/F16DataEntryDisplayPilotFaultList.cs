@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16DataEntryDisplayPilotFaultList : InstrumentRendererBase, IDisposable
+    public interface IF16DataEntryDisplayPilotFaultList : IInstrumentRenderer
+    {
+        F16DataEntryDisplayPilotFaultList.F16DataEntryDisplayPilotFaultListInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16DataEntryDisplayPilotFaultList : InstrumentRendererBase, IF16DataEntryDisplayPilotFaultList
     {
         #region Image Location Constants
 
@@ -27,7 +32,6 @@ namespace LightningGauges.Renderers
         private static DEDPFLFont _font;
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -83,16 +87,6 @@ namespace LightningGauges.Renderers
             public byte[] Line4Invert { get; set; }
             public byte[] Line5Invert { get; set; }
             public bool PowerOn { get; set; }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -190,22 +184,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16DataEntryDisplayPilotFaultList()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_font);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

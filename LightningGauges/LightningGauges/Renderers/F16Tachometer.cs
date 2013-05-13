@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16Tachometer : InstrumentRendererBase, IDisposable
+    public interface IF16Tachometer : IInstrumentRenderer
+    {
+        F16Tachometer.F16TachometerInstrumentState InstrumentState { get; set; }
+        F16Tachometer.F16TachometerOptions Options { get; set; }
+    }
+
+    public class F16Tachometer : InstrumentRendererBase, IF16Tachometer
     {
         #region Image Location Constants
 
@@ -30,7 +36,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _needle;
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -110,16 +115,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -186,23 +181,5 @@ namespace LightningGauges.Renderers
             return angle;
         }
 
-        ~F16Tachometer()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_background2);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

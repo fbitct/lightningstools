@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16AngleOfAttackIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16AngleOfAttackIndicator:IInstrumentRenderer
+
+    {
+        F16AngleOfAttackIndicator.F16AngleOfAttackIndicatorInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16AngleOfAttackIndicator : InstrumentRendererBase, IF16AngleOfAttackIndicator
     {
         #region Image Location Constants
 
@@ -34,7 +40,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _indicatorLine;
         private static Bitmap _numberTape;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -115,16 +120,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -194,24 +189,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16AngleOfAttackIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_offFlag);
-                    //Common.Util.DisposeObject(_indicatorLine);
-                    //Common.Util.DisposeObject(_numberTape);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

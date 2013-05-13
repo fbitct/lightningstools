@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16HorizontalSituationIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16HorizontalSituationIndicator : IInstrumentRenderer
+    {
+        F16HorizontalSituationIndicator.F16HSIInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16HorizontalSituationIndicator : InstrumentRendererBase, IF16HorizontalSituationIndicator
     {
         #region Image Location Constants
 
@@ -62,7 +67,6 @@ namespace LightningGauges.Renderers
 
         private static FontGraphic _rangeFont;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -325,15 +329,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -542,35 +537,6 @@ namespace LightningGauges.Renderers
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
                 g.Restore(initialState);
-            }
-        }
-
-        ~F16HorizontalSituationIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_hsiBackground);
-                    //Common.Util.DisposeObject(_hsiBearingToBeaconNeedle);
-                    //Common.Util.DisposeObject(_hsiCDIFlag);
-                    //Common.Util.DisposeObject(_compassRose);
-                    //Common.Util.DisposeObject(_hsiCourseDeviationIndicator);
-                    //Common.Util.DisposeObject(_hsiHeadingBug);
-                    //Common.Util.DisposeObject(_hsiInnerWheel);
-                    //Common.Util.DisposeObject(_airplaneSymbol);
-                    //Common.Util.DisposeObject(_hsiRangeFlag);
-                    //Common.Util.DisposeObject(_toFlag);
-                    //Common.Util.DisposeObject(_fromFlag);
-                    //Common.Util.DisposeObject(_hsiOffFlag);
-                    //Common.Util.DisposeObject(_rangeFont);
-                }
-                _disposed = true;
             }
         }
     }

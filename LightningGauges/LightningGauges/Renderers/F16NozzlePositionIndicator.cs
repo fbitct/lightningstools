@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16NozzlePositionIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16NozzlePositionIndicator : IInstrumentRenderer
+    {
+        F16NozzlePositionIndicator.F16NozzlePositionIndicatorOptions Options { get; set; }
+        F16NozzlePositionIndicator.F16NozzlePositionIndicatorInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16NozzlePositionIndicator : InstrumentRendererBase, IF16NozzlePositionIndicator
     {
         #region Image Location Constants
 
@@ -30,7 +36,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _needle;
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -114,15 +119,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -176,23 +172,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16NozzlePositionIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_background2);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

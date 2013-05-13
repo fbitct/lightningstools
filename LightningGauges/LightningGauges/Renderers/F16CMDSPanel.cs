@@ -8,7 +8,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16CMDSPanel : InstrumentRendererBase, IDisposable
+    public interface IF16CMDSPanel : IInstrumentRenderer
+    {
+        F16CMDSPanel.F16CMDSPanelInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16CMDSPanel : InstrumentRendererBase, IF16CMDSPanel
     {
         #region Image Location Constants
 
@@ -33,7 +38,6 @@ namespace LightningGauges.Renderers
         private readonly Font _legendFont;
         private readonly FontFamily dotMatrixFontFamily;
         private readonly PrivateFontCollection pfc = new PrivateFontCollection();
-        private bool _disposed;
 
         #endregion
 
@@ -142,16 +146,6 @@ namespace LightningGauges.Renderers
             public bool Go { get; set; }
             public bool NoGo { get; set; }
             public bool DispenseReady { get; set; }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -269,21 +263,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16CMDSPanel()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16HydraulicPressureGauge : InstrumentRendererBase, IDisposable
+    public interface IF16HydraulicPressureGauge : IInstrumentRenderer
+    {
+        F16HydraulicPressureGauge.F16HydraulicPressureGaugeInstrumentState InstrumentState { get; set; }
+        F16HydraulicPressureGauge.F16HydraulicPressureGaugeOptions Options { get; set; }
+    }
+
+    public class F16HydraulicPressureGauge : InstrumentRendererBase, IDisposable, IF16HydraulicPressureGauge
     {
         #region Image Location Constants
 
@@ -28,7 +34,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _needle;
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -103,16 +108,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -156,23 +151,5 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-
-        ~F16HydraulicPressureGauge()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

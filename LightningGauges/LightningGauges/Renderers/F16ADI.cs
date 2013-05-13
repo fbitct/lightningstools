@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16ADI : InstrumentRendererBase, IDisposable
+    public interface IF16ADI:IInstrumentRenderer
+    {
+        F16ADI.F16ADIInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16ADI : InstrumentRendererBase, IF16ADI
     {
         #region Image Location Constants
 
@@ -54,7 +59,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _airplaneSymbol;
         private static ImageMaskPair _slipIndicatorBall;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -290,16 +294,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -445,31 +439,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16ADI()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_ball);
-                    //Common.Util.DisposeObject(_arrows);
-                    //Common.Util.DisposeObject(_auxFlag);
-                    //Common.Util.DisposeObject(_glideslopeFlag);
-                    //Common.Util.DisposeObject(_localizerFlag);
-                    //Common.Util.DisposeObject(_offFlag);
-                    //Common.Util.DisposeObject(_horizontalBar);
-                    //Common.Util.DisposeObject(_verticalBar);
-                    //Common.Util.DisposeObject(_airplaneSymbol);
-                    //Common.Util.DisposeObject(_slipIndicatorBall);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

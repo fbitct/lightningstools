@@ -13,7 +13,13 @@ using Util = Common.Imaging.Util;
 
 namespace LightningGauges.Renderers
 {
-    public class F16EHSI : InstrumentRendererBase, IDisposable
+    public interface IF16EHSI : IInstrumentRenderer
+    {
+        F16EHSI.F16EHSIInstrumentState InstrumentState { get; set; }
+        F16EHSI.F16EHSIOptions Options { get; set; }
+    }
+
+    public class F16EHSI : InstrumentRendererBase, IDisposable, IF16EHSI
     {
         #region Image Location Constants
 
@@ -32,7 +38,6 @@ namespace LightningGauges.Renderers
         private static bool _imagesLoaded;
         private static ImageMaskPair _noData;
         private readonly PrivateFontCollection _fonts = new PrivateFontCollection();
-        private bool _disposed;
 
         #endregion
 
@@ -271,16 +276,6 @@ namespace LightningGauges.Renderers
             }
 
             public bool ShowBrightnessLabel { get; set; }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         #endregion
@@ -1059,22 +1054,5 @@ namespace LightningGauges.Renderers
             }
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);
         }
-
-        ~F16EHSI()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-//                    Common.Util.DisposeObject(_noData);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16NosewheelSteeringIndexer : InstrumentRendererBase, IDisposable
+    public interface IF16NosewheelSteeringIndexer : IInstrumentRenderer
+    {
+        F16NosewheelSteeringIndexer.F16NosewheelSteeringIndexerInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16NosewheelSteeringIndexer : InstrumentRendererBase, IF16NosewheelSteeringIndexer
     {
         #region Image Location Constants
 
@@ -34,7 +39,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _nws;
         private static ImageMaskPair _rdy;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -95,16 +99,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -161,25 +155,5 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-
-        ~F16NosewheelSteeringIndexer()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_disc);
-                    //Common.Util.DisposeObject(_nws);
-                    //Common.Util.DisposeObject(_rdy);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

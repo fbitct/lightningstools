@@ -13,10 +13,6 @@ namespace LightningGauges
         private readonly Bitmap[] _invertCharBitmaps = new Bitmap[256];
         private bool _disposed;
 
-        private DEDPFLFont()
-        {
-        }
-
         public DEDPFLFont(string fileName)
         {
             _font = (Bitmap) Util.LoadBitmapFromFile(fileName);

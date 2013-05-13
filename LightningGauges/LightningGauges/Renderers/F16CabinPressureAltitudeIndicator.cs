@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16CabinPressureAltitudeIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16CabinPressureAltitudeIndicator : IInstrumentRenderer
+    {
+        F16CabinPressureAltitudeIndicator.F16CabinPressureAltitudeIndicatorInstrumentState InstrumentState { get; set; }
+        F16CabinPressureAltitudeIndicator.F16CabinPressureAltitudeIndicatorOptions Options { get; set; }
+    }
+
+    public class F16CabinPressureAltitudeIndicator : InstrumentRendererBase, IF16CabinPressureAltitudeIndicator
     {
         #region Image Location Constants
 
@@ -28,7 +34,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _needle;
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -103,16 +108,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -157,22 +152,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16CabinPressureAltitudeIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

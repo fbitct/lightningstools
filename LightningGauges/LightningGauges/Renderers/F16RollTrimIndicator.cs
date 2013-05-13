@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16RollTrimIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16RollTrimIndicator : IInstrumentRenderer
+    {
+        F16RollTrimIndicator.F16RollTrimIndicatorInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16RollTrimIndicator : InstrumentRendererBase, IF16RollTrimIndicator
     {
         #region Image Location Constants
 
@@ -27,8 +32,6 @@ namespace LightningGauges.Renderers
         private static Bitmap _background;
         private static Bitmap _needle;
         private static bool _imagesLoaded;
-
-        private bool _disposed;
 
         #endregion
 
@@ -93,15 +96,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -149,23 +143,5 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-
-        ~F16RollTrimIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

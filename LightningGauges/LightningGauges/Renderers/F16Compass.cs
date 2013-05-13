@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16Compass : InstrumentRendererBase, IDisposable
+    public interface IF16Compass : IInstrumentRenderer
+    {
+        F16Compass.F16CompassInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16Compass : InstrumentRendererBase, IF16Compass
     {
         #region Image Location Constants
 
@@ -30,7 +35,6 @@ namespace LightningGauges.Renderers
         private static Bitmap _tape;
         private static ImageMaskPair _needle;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -93,16 +97,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -158,23 +152,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16Compass()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_tape);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

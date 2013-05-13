@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16FanTurbineInletTemperature : InstrumentRendererBase, IDisposable
+    public interface IF16FanTurbineInletTemperature : IInstrumentRenderer
+    {
+        F16FanTurbineInletTemperature.F16FanTurbineInletTemperatureInstrumentState InstrumentState { get; set; }
+        F16FanTurbineInletTemperature.F16FanTurbineInletTemperatureOptions Options { get; set; }
+    }
+
+    public class F16FanTurbineInletTemperature : InstrumentRendererBase, IDisposable, IF16FanTurbineInletTemperature
     {
         #region Image Location Constants
 
@@ -30,7 +36,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _needle;
         private static bool _imagesLoaded;
         private static readonly object _imagesLock = new object();
-        private bool _disposed;
 
         #endregion
 
@@ -112,16 +117,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -199,24 +194,5 @@ namespace LightningGauges.Renderers
 
             return angle;
         }
-
-        ~F16FanTurbineInletTemperature()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_background2);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16VerticalVelocityIndicatorEU : InstrumentRendererBase, IDisposable
+    public interface IF16VerticalVelocityIndicatorEU : IInstrumentRenderer
+    {
+        F16VerticalVelocityIndicatorEU.F16VerticalVelocityIndicatorEUInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16VerticalVelocityIndicatorEU : InstrumentRendererBase, IF16VerticalVelocityIndicatorEU
     {
         #region Image Location Constants
 
@@ -30,7 +35,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _offFlag;
         private static ImageMaskPair _needle;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -186,23 +190,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-        ~F16VerticalVelocityIndicatorEU()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_offFlag);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

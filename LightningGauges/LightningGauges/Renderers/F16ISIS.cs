@@ -15,7 +15,13 @@ using Util = Common.Imaging.Util;
 
 namespace LightningGauges.Renderers
 {
-    public class F16ISIS : InstrumentRendererBase, IDisposable
+    public interface IF16ISIS : IInstrumentRenderer
+    {
+        F16ISIS.F16ISISOptions Options { get; set; }
+        F16ISIS.F16ISISInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16ISIS : InstrumentRendererBase, IF16ISIS
     {
         #region Image Location Constants
 
@@ -33,7 +39,6 @@ namespace LightningGauges.Renderers
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
         private static Bitmap _markerDiamond;
-        private bool _disposed;
 
         #endregion
 
@@ -69,16 +74,6 @@ namespace LightningGauges.Renderers
 
         public F16ISISOptions Options { get; set; }
         public F16ISISInstrumentState InstrumentState { get; set; }
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -1234,22 +1229,6 @@ namespace LightningGauges.Renderers
 
             g.Transform = startingTransform;
             g.Clip = startingClip;
-        }
-
-        ~F16ISIS()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                }
-                _disposed = true;
-            }
         }
 
         #region Options Class

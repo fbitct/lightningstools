@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16SpeedbrakeIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16SpeedbrakeIndicator : IInstrumentRenderer
+    {
+        F16SpeedbrakeIndicator.F16SpeedbrakeIndicatorInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16SpeedbrakeIndicator : InstrumentRendererBase, IF16SpeedbrakeIndicator
     {
         #region Image Location Constants
 
@@ -31,7 +36,6 @@ namespace LightningGauges.Renderers
         private static Bitmap _powerLoss;
         private static Bitmap _open;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -107,15 +111,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -184,25 +179,5 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-
-        ~F16SpeedbrakeIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_closed);
-                    //Common.Util.DisposeObject(_powerLoss);
-                    //Common.Util.DisposeObject(_open);              
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }

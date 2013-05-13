@@ -11,7 +11,14 @@ using Util = Common.Imaging.Util;
 
 namespace LightningGauges.Renderers
 {
-    public class F16AzimuthIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16AzimuthIndicator : IInstrumentRenderer
+
+    {
+        F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState InstrumentState { get; set; }
+        F16AzimuthIndicator.F16AzimuthIndicatorOptions Options { get; set; }
+    }
+
+    public class F16AzimuthIndicator : InstrumentRendererBase, IF16AzimuthIndicator
     {
         #region EWMSMode enum
 
@@ -77,7 +84,6 @@ namespace LightningGauges.Renderers
         private static readonly Color _osbLegendColor = Color.White;
         private static readonly Brush _osbLegendBrush = new SolidBrush(_osbLegendColor);
         private static readonly GraphicsPath fontPath = new GraphicsPath();
-        private bool _disposed;
 
         #endregion
 
@@ -182,15 +188,6 @@ namespace LightningGauges.Renderers
         public F16AzimuthIndicatorInstrumentState InstrumentState { get; set; }
         public F16AzimuthIndicatorOptions Options { get; set; }
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         private void DrawString(Graphics g, string s, Font font, Brush brush, RectangleF layoutRectangle,
                                 StringFormat format)
@@ -1827,26 +1824,6 @@ namespace LightningGauges.Renderers
             return category;
         }
 
-        ~F16AzimuthIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_backgroundIP1310ALR);
-                    //Common.Util.DisposeObject(_backgroundOlder);
-                    //Common.Util.DisposeObject(_backgroundTTD);
-                    //Common.Util.DisposeObject(_heartbeatUp);
-                    //Common.Util.DisposeObject(_heartbeatDown);
-                }
-                _disposed = true;
-            }
-        }
 
         #region Instrument State
 

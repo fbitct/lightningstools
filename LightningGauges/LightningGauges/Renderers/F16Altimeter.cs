@@ -8,7 +8,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16Altimeter : InstrumentRendererBase, IDisposable
+    public interface IF16Altimeter:IInstrumentRenderer
+    {
+        F16Altimeter.F16AltimeterInstrumentState InstrumentState { get; set; }
+        F16Altimeter.F16AltimeterOptions Options { get; set; }
+    }
+
+    public class F16Altimeter : InstrumentRendererBase, IF16Altimeter
     {
         #region Image Location Constants
 
@@ -43,7 +49,6 @@ namespace LightningGauges.Renderers
         private static Bitmap _thousandsDigitsElectroMechanical;
         private static Bitmap _hundredsDigitsElectroMechanical;
         private readonly PrivateFontCollection _fonts = new PrivateFontCollection();
-        private bool _disposed;
         private bool _imagesLoaded;
 
         #endregion
@@ -209,15 +214,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -461,28 +457,6 @@ namespace LightningGauges.Renderers
                 //restore the canvas's transform and clip settings to what they were when we entered this method
                 g.Restore(initialState);
             }
-        }
-
-        ~F16Altimeter()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-            if (disposing)
-            {
-                //Common.Util.DisposeObject(_backgroundElectromechanical);
-                //Common.Util.DisposeObject(_backgroundElectromechanicalNoFlag);
-                //Common.Util.DisposeObject(_backgroundElectronic);
-                //Common.Util.DisposeObject(_backgroundElectronicNoFlag);
-                //Common.Util.DisposeObject(_needle);
-                //Common.Util.DisposeObject(_tenThousandsDigitsElectroMechanical );
-                //Common.Util.DisposeObject(_thousandsDigitsElectroMechanical);
-                //Common.Util.DisposeObject(_hundredsDigitsElectroMechanical);
-            }
-            _disposed = true;
         }
     }
 }

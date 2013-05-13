@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16FuelQuantityIndicator : InstrumentRendererBase, IDisposable
+    public interface IF16FuelQuantityIndicator : IInstrumentRenderer
+    {
+        F16FuelQuantityIndicator.F16FuelQuantityIndicatorInstrumentState InstrumentState { get; set; }
+        F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions Options { get; set; }
+    }
+
+    public class F16FuelQuantityIndicator : InstrumentRendererBase, IF16FuelQuantityIndicator
     {
         #region Image Location Constants
 
@@ -42,7 +48,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _aftLeftArrowDModel;
         private static Bitmap _digits;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -182,16 +187,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
         public override void Render(Graphics g, Rectangle bounds)
         {
             if (!_imagesLoaded)
@@ -324,26 +319,5 @@ namespace LightningGauges.Renderers
             return (fuelQuantityPounds/100.00f)*5.48f;
         }
 
-        ~F16FuelQuantityIndicator()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_foreRightArrowCModel);
-                    //Common.Util.DisposeObject(_foreRightArrowDModel);
-                    //Common.Util.DisposeObject(_aftLeftArrowCModel);
-                    //Common.Util.DisposeObject(_aftLeftArrowDModel);
-                    //Common.Util.DisposeObject(_digits);
-                }
-                _disposed = true;
-            }
-        }
     }
 }

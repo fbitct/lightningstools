@@ -7,7 +7,13 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16Accelerometer : InstrumentRendererBase, IDisposable
+    public interface IF16Accelerometer:IInstrumentRenderer
+    {
+        F16Accelerometer.F16AccelerometerInstrumentState InstrumentState { get; set; }
+        F16Accelerometer.F16AccelerometerOptions Options { get; set; }
+    }
+
+    public class F16Accelerometer : InstrumentRendererBase, IF16Accelerometer
     {
         #region Image Location Constants
 
@@ -29,7 +35,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _needle;
         private static ImageMaskPair _needle2;
         private static readonly object _imagesLock = new object();
-        private bool _disposed;
 
         #endregion
 
@@ -126,19 +131,8 @@ namespace LightningGauges.Renderers
         public class F16AccelerometerOptions
         {
         }
-
         #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
-
+        
         public override void Render(Graphics g, Rectangle bounds)
         {
             lock (_imagesLock)
@@ -202,17 +196,6 @@ namespace LightningGauges.Renderers
             Dispose(false);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_needle);
-                }
-                _disposed = true;
-            }
-        }
+        
     }
 }

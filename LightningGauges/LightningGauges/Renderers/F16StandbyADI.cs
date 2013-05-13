@@ -7,7 +7,12 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public class F16StandbyADI : InstrumentRendererBase, IDisposable
+    public interface IF16StandbyADI : IInstrumentRenderer
+    {
+        F16StandbyADI.F16StandbyADIInstrumentState InstrumentState { get; set; }
+    }
+
+    public class F16StandbyADI : InstrumentRendererBase, IF16StandbyADI
     {
         #region Image Location Constants
 
@@ -36,7 +41,6 @@ namespace LightningGauges.Renderers
         private static ImageMaskPair _offFlag;
         private static ImageMaskPair _airplaneSymbol;
         private static bool _imagesLoaded;
-        private bool _disposed;
 
         #endregion
 
@@ -148,15 +152,6 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -236,26 +231,5 @@ namespace LightningGauges.Renderers
                 g.Restore(initialState);
             }
         }
-
-        ~F16StandbyADI()
-        {
-            Dispose(false);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    //Common.Util.DisposeObject(_background);
-                    //Common.Util.DisposeObject(_ball);
-                    //Common.Util.DisposeObject(_arrows);
-                    //Common.Util.DisposeObject(_offFlag);
-                    //Common.Util.DisposeObject(_airplaneSymbol);
-                }
-                _disposed = true;
-            }
-        }
-    }
+   }
 }
