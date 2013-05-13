@@ -45,12 +45,6 @@ namespace MFDExtractor
         private bool _disposed;
         private long _renderCycleNum;
 
-        private Screen _hudOutputScreen;
-        private Screen _leftMfdOutputScreen;
-        private Screen _mfd3OutputScreen;
-        private Screen _mfd4OutputScreen;
-        private Screen _rightMfdOutputScreen;
-
 
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms =
             new Dictionary<IInstrumentRenderer, InstrumentForm>();
@@ -96,42 +90,7 @@ namespace MFDExtractor
         private InstrumentForm _speedbrakeForm;
         private InstrumentForm _vviForm;
 
-        private IInstrumentRenderer _accelerometerRenderer;
-        private IInstrumentRenderer _adiRenderer;
-        private IInstrumentRenderer _altimeterRenderer;
-        private IInstrumentRenderer _aoaIndexerRenderer;
-        private IInstrumentRenderer _aoaIndicatorRenderer;
-        private IInstrumentRenderer _asiRenderer;
-        private IInstrumentRenderer _backupAdiRenderer;
-        private IInstrumentRenderer _cabinPressRenderer;
-        private IInstrumentRenderer _cautionPanelRenderer;
-        private IInstrumentRenderer _cmdsPanelRenderer;
-        private IInstrumentRenderer _compassRenderer;
-        private IInstrumentRenderer _dedRenderer;
-        private IInstrumentRenderer _ehsiRenderer;
-        private IInstrumentRenderer _epuFuelRenderer;
-        private IInstrumentRenderer _ftit1Renderer;
-        private IInstrumentRenderer _ftit2Renderer;
-        private IInstrumentRenderer _fuelFlowRenderer;
-        private IInstrumentRenderer _fuelQuantityRenderer;
-        private IInstrumentRenderer _hsiRenderer;
-        private IInstrumentRenderer _hydARenderer;
-        private IInstrumentRenderer _hydBRenderer;
-        private IInstrumentRenderer _isisRenderer;
-        private IInstrumentRenderer _landingGearLightsRenderer;
-        private IInstrumentRenderer _nozPos1Renderer;
-        private IInstrumentRenderer _nozPos2Renderer;
-        private IInstrumentRenderer _nwsIndexerRenderer;
-        private IInstrumentRenderer _oilGauge1Renderer;
-        private IInstrumentRenderer _oilGauge2Renderer;
-        private IInstrumentRenderer _pflRenderer;
-        private IInstrumentRenderer _pitchTrimRenderer;
-        private IInstrumentRenderer _rollTrimRenderer;
-        private IInstrumentRenderer _rpm1Renderer;
-        private IInstrumentRenderer _rpm2Renderer;
-        private IInstrumentRenderer _rwrRenderer;
-        private IInstrumentRenderer _speedbrakeRenderer;
-        private IInstrumentRenderer _vviRenderer;
+        private IInstrumentRendererSet _renderers = new InstrumentRendererSet();
 
 
         private GDIPlusOptions _gdiPlusOptions = new GDIPlusOptions();
@@ -475,42 +434,42 @@ namespace MFDExtractor
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
             _bmsSupport = new BMSSupport();
-            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(()=>_keepRunning, _adiRenderStart, _adiRenderEnd, _adiRenderer, _adiForm, ()=>Settings.Default.ADI_RotateFlipType,()=>Settings.Default.ADI_Monochrome, RenderInstrumentImage);
-            _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _backupAdiRenderer, _backupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
-            _asiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _asiRenderStart, _asiRenderEnd, _asiRenderer, _asiForm, () => Settings.Default.ASI_RotateFlipType, () => Settings.Default.ASI_Monochrome, RenderInstrumentImage);
-            _altimeterRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _altimeterRenderStart, _altimeterRenderEnd, _altimeterRenderer, _altimeterForm, () => Settings.Default.Altimeter_RotateFlipType, () => Settings.Default.Altimeter_Monochrome, RenderInstrumentImage);
-            _aoaIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndexerRenderStart, _aoaIndexerRenderEnd, _aoaIndexerRenderer, _aoaIndexerForm, () => Settings.Default.AOAIndexer_RotateFlipType, () => Settings.Default.AOAIndexer_Monochrome, RenderInstrumentImage);
-            _aoaIndicatorRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndicatorRenderStart, _aoaIndicatorRenderEnd, _aoaIndicatorRenderer, _aoaIndicatorForm, () => Settings.Default.AOAIndicator_RotateFlipType, () => Settings.Default.AOAIndicator_Monochrome, RenderInstrumentImage);
-            _cautionPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cautionPanelRenderStart, _cautionPanelRenderEnd, _cautionPanelRenderer, _cautionPanelForm, () => Settings.Default.CautionPanel_RotateFlipType, () => Settings.Default.CautionPanel_Monochrome, RenderInstrumentImage);
-            _cmdsPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cmdsPanelRenderStart, _cmdsPanelRenderEnd, _cmdsPanelRenderer, _cmdsPanelForm, () => Settings.Default.CMDS_RotateFlipType, () => Settings.Default.CMDS_Monochrome, RenderInstrumentImage);
-            _compassRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _compassRenderStart, _compassRenderEnd, _compassRenderer, _compassForm, () => Settings.Default.Compass_RotateFlipType, () => Settings.Default.Compass_Monochrome, RenderInstrumentImage);
-            _dedRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _dedRenderStart, _dedRenderEnd, _dedRenderer, _dedForm, () => Settings.Default.DED_RotateFlipType, () => Settings.Default.DED_Monochrome, RenderInstrumentImage);
-            _pflRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pflRenderStart, _pflRenderEnd, _pflRenderer, _pflForm, () => Settings.Default.PFL_RotateFlipType, () => Settings.Default.PFL_Monochrome, RenderInstrumentImage);
-            _epuFuelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _epuFuelRenderStart, _epuFuelRenderEnd, _epuFuelRenderer, _epuFuelForm, () => Settings.Default.EPUFuel_RotateFlipType, () => Settings.Default.EPUFuel_Monochrome, RenderInstrumentImage);
-            _accelerometerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _accelerometerRenderStart, _accelerometerRenderEnd, _accelerometerRenderer, _accelerometerForm, () => Settings.Default.Accelerometer_RotateFlipType, () => Settings.Default.Accelerometer_Monochrome, RenderInstrumentImage);
-            _ftit1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit1RenderStart, _ftit1RenderEnd, _ftit1Renderer, _ftit1Form, () => Settings.Default.FTIT1_RotateFlipType, () => Settings.Default.FTIT1_Monochrome, RenderInstrumentImage);
-            _ftit2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit2RenderStart, _ftit2RenderEnd, _ftit2Renderer, _ftit2Form, () => Settings.Default.FTIT2_RotateFlipType, () => Settings.Default.FTIT2_Monochrome, RenderInstrumentImage);
-            _fuelFlowRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelFlowRenderStart, _fuelFlowRenderEnd, _fuelFlowRenderer, _fuelFlowForm, () => Settings.Default.FuelFlow_RotateFlipType, () => Settings.Default.FuelFlow_Monochrome, RenderInstrumentImage);
-            _isisRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _isisRenderStart, _isisRenderEnd, _isisRenderer, _isisForm, () => Settings.Default.ISIS_RotateFlipType, () => Settings.Default.ISIS_Monochrome, RenderInstrumentImage);
-            _fuelQuantityRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelQuantityRenderStart, _fuelQuantityRenderEnd, _fuelQuantityRenderer, _fuelQuantityForm, () => Settings.Default.FuelQuantity_RotateFlipType, () => Settings.Default.FuelQuantity_Monochrome, RenderInstrumentImage);
-            _hsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hsiRenderStart, _hsiRenderEnd, _hsiRenderer, _hsiForm, () => Settings.Default.HSI_RotateFlipType, () => Settings.Default.HSI_Monochrome, RenderInstrumentImage);
-            _ehsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ehsiRenderStart, _ehsiRenderEnd, _ehsiRenderer, _ehsiForm, () => Settings.Default.EHSI_RotateFlipType, () => Settings.Default.EHSI_Monochrome, RenderInstrumentImage);
-            _landingGearLightsRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _landingGearLightsRenderStart, _landingGearLightsRenderEnd, _landingGearLightsRenderer, _landingGearLightsForm, () => Settings.Default.GearLights_RotateFlipType, () => Settings.Default.GearLights_Monochrome, RenderInstrumentImage);
-            _nwsIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nwsIndexerRenderStart, _nwsIndexerRenderEnd, _nwsIndexerRenderer, _nwsIndexerForm, () => Settings.Default.NWSIndexer_RotateFlipType, () => Settings.Default.NWSIndexer_Monochrome, RenderInstrumentImage);
-            _nozPos1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos1RenderStart, _nozPos1RenderEnd, _nozPos1Renderer, _nozPos1Form, () => Settings.Default.NOZ1_RotateFlipType, () => Settings.Default.NOZ1_Monochrome, RenderInstrumentImage);
-            _nozPos2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos2RenderStart, _nozPos2RenderEnd, _nozPos2Renderer, _nozPos2Form, () => Settings.Default.NOZ2_RotateFlipType, () => Settings.Default.NOZ2_Monochrome, RenderInstrumentImage);
-            _oilGauge1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge1RenderStart, _oilGauge1RenderEnd, _oilGauge1Renderer, _oilGauge1Form, () => Settings.Default.OIL1_RotateFlipType, () => Settings.Default.OIL1_Monochrome, RenderInstrumentImage);
-            _oilGauge2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge2RenderStart, _oilGauge2RenderEnd, _oilGauge2Renderer, _oilGauge2Form, () => Settings.Default.OIL2_RotateFlipType, () => Settings.Default.OIL2_Monochrome, RenderInstrumentImage);
-            _rwrRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rwrRenderStart, _rwrRenderEnd, _rwrRenderer, _rwrForm, () => Settings.Default.RWR_RotateFlipType, () => Settings.Default.RWR_Monochrome, RenderInstrumentImage);
-            _speedbrakeRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _speedbrakeRenderStart, _speedbrakeRenderEnd, _speedbrakeRenderer, _speedbrakeForm, () => Settings.Default.Speedbrake_RotateFlipType, () => Settings.Default.Speedbrake_Monochrome, RenderInstrumentImage);
-            _rpm1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm1RenderStart, _rpm1RenderEnd, _rpm1Renderer, _rpm1Form, () => Settings.Default.RPM1_RotateFlipType, () => Settings.Default.RPM1_Monochrome, RenderInstrumentImage);
-            _rpm2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm2RenderStart, _rpm2RenderEnd, _rpm2Renderer, _rpm2Form, () => Settings.Default.RPM2_RotateFlipType, () => Settings.Default.RPM2_Monochrome, RenderInstrumentImage);
-            _vviRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _vviRenderStart, _vviRenderEnd, _vviRenderer, _vviForm, () => Settings.Default.VVI_RotateFlipType, () => Settings.Default.VVI_Monochrome, RenderInstrumentImage);
-            _hydARenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydARenderStart, _hydARenderEnd, _hydARenderer, _hydAForm, () => Settings.Default.HYDA_RotateFlipType, () => Settings.Default.HYDA_Monochrome, RenderInstrumentImage);
-            _hydBRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydBRenderStart, _hydBRenderEnd, _hydBRenderer, _hydBForm, () => Settings.Default.HYDB_RotateFlipType, () => Settings.Default.HYDB_Monochrome, RenderInstrumentImage);
-            _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _cabinPressRenderer, _cabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
-            _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _rollTrimRenderer, _rollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
-            _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _pitchTrimRenderer, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
+            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(()=>_keepRunning, _adiRenderStart, _adiRenderEnd, _renderers._adiRenderer, _adiForm, ()=>Settings.Default.ADI_RotateFlipType,()=>Settings.Default.ADI_Monochrome, RenderInstrumentImage);
+            _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _renderers._backupAdiRenderer, _backupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
+            _asiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _asiRenderStart, _asiRenderEnd, _renderers._asiRenderer, _asiForm, () => Settings.Default.ASI_RotateFlipType, () => Settings.Default.ASI_Monochrome, RenderInstrumentImage);
+            _altimeterRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _altimeterRenderStart, _altimeterRenderEnd, _renderers._altimeterRenderer, _altimeterForm, () => Settings.Default.Altimeter_RotateFlipType, () => Settings.Default.Altimeter_Monochrome, RenderInstrumentImage);
+            _aoaIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndexerRenderStart, _aoaIndexerRenderEnd, _renderers._aoaIndexerRenderer, _aoaIndexerForm, () => Settings.Default.AOAIndexer_RotateFlipType, () => Settings.Default.AOAIndexer_Monochrome, RenderInstrumentImage);
+            _aoaIndicatorRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndicatorRenderStart, _aoaIndicatorRenderEnd, _renderers._aoaIndicatorRenderer, _aoaIndicatorForm, () => Settings.Default.AOAIndicator_RotateFlipType, () => Settings.Default.AOAIndicator_Monochrome, RenderInstrumentImage);
+            _cautionPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cautionPanelRenderStart, _cautionPanelRenderEnd, _renderers._cautionPanelRenderer, _cautionPanelForm, () => Settings.Default.CautionPanel_RotateFlipType, () => Settings.Default.CautionPanel_Monochrome, RenderInstrumentImage);
+            _cmdsPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cmdsPanelRenderStart, _cmdsPanelRenderEnd, _renderers._cmdsPanelRenderer, _cmdsPanelForm, () => Settings.Default.CMDS_RotateFlipType, () => Settings.Default.CMDS_Monochrome, RenderInstrumentImage);
+            _compassRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _compassRenderStart, _compassRenderEnd, _renderers._compassRenderer, _compassForm, () => Settings.Default.Compass_RotateFlipType, () => Settings.Default.Compass_Monochrome, RenderInstrumentImage);
+            _dedRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _dedRenderStart, _dedRenderEnd, _renderers._dedRenderer, _dedForm, () => Settings.Default.DED_RotateFlipType, () => Settings.Default.DED_Monochrome, RenderInstrumentImage);
+            _pflRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pflRenderStart, _pflRenderEnd, _renderers._pflRenderer, _pflForm, () => Settings.Default.PFL_RotateFlipType, () => Settings.Default.PFL_Monochrome, RenderInstrumentImage);
+            _epuFuelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _epuFuelRenderStart, _epuFuelRenderEnd, _renderers._epuFuelRenderer, _epuFuelForm, () => Settings.Default.EPUFuel_RotateFlipType, () => Settings.Default.EPUFuel_Monochrome, RenderInstrumentImage);
+            _accelerometerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _accelerometerRenderStart, _accelerometerRenderEnd, _renderers._accelerometerRenderer, _accelerometerForm, () => Settings.Default.Accelerometer_RotateFlipType, () => Settings.Default.Accelerometer_Monochrome, RenderInstrumentImage);
+            _ftit1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit1RenderStart, _ftit1RenderEnd, _renderers._ftit1Renderer, _ftit1Form, () => Settings.Default.FTIT1_RotateFlipType, () => Settings.Default.FTIT1_Monochrome, RenderInstrumentImage);
+            _ftit2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit2RenderStart, _ftit2RenderEnd, _renderers._ftit2Renderer, _ftit2Form, () => Settings.Default.FTIT2_RotateFlipType, () => Settings.Default.FTIT2_Monochrome, RenderInstrumentImage);
+            _fuelFlowRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelFlowRenderStart, _fuelFlowRenderEnd, _renderers._fuelFlowRenderer, _fuelFlowForm, () => Settings.Default.FuelFlow_RotateFlipType, () => Settings.Default.FuelFlow_Monochrome, RenderInstrumentImage);
+            _isisRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _isisRenderStart, _isisRenderEnd, _renderers._isisRenderer, _isisForm, () => Settings.Default.ISIS_RotateFlipType, () => Settings.Default.ISIS_Monochrome, RenderInstrumentImage);
+            _fuelQuantityRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelQuantityRenderStart, _fuelQuantityRenderEnd, _renderers._fuelQuantityRenderer, _fuelQuantityForm, () => Settings.Default.FuelQuantity_RotateFlipType, () => Settings.Default.FuelQuantity_Monochrome, RenderInstrumentImage);
+            _hsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hsiRenderStart, _hsiRenderEnd, _renderers._hsiRenderer, _hsiForm, () => Settings.Default.HSI_RotateFlipType, () => Settings.Default.HSI_Monochrome, RenderInstrumentImage);
+            _ehsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ehsiRenderStart, _ehsiRenderEnd, _renderers._ehsiRenderer, _ehsiForm, () => Settings.Default.EHSI_RotateFlipType, () => Settings.Default.EHSI_Monochrome, RenderInstrumentImage);
+            _landingGearLightsRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _landingGearLightsRenderStart, _landingGearLightsRenderEnd, _renderers._landingGearLightsRenderer, _landingGearLightsForm, () => Settings.Default.GearLights_RotateFlipType, () => Settings.Default.GearLights_Monochrome, RenderInstrumentImage);
+            _nwsIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nwsIndexerRenderStart, _nwsIndexerRenderEnd, _renderers._nwsIndexerRenderer, _nwsIndexerForm, () => Settings.Default.NWSIndexer_RotateFlipType, () => Settings.Default.NWSIndexer_Monochrome, RenderInstrumentImage);
+            _nozPos1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos1RenderStart, _nozPos1RenderEnd, _renderers._nozPos1Renderer, _nozPos1Form, () => Settings.Default.NOZ1_RotateFlipType, () => Settings.Default.NOZ1_Monochrome, RenderInstrumentImage);
+            _nozPos2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos2RenderStart, _nozPos2RenderEnd, _renderers._nozPos2Renderer, _nozPos2Form, () => Settings.Default.NOZ2_RotateFlipType, () => Settings.Default.NOZ2_Monochrome, RenderInstrumentImage);
+            _oilGauge1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge1RenderStart, _oilGauge1RenderEnd, _renderers._oilGauge1Renderer, _oilGauge1Form, () => Settings.Default.OIL1_RotateFlipType, () => Settings.Default.OIL1_Monochrome, RenderInstrumentImage);
+            _oilGauge2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge2RenderStart, _oilGauge2RenderEnd, _renderers._oilGauge2Renderer, _oilGauge2Form, () => Settings.Default.OIL2_RotateFlipType, () => Settings.Default.OIL2_Monochrome, RenderInstrumentImage);
+            _rwrRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rwrRenderStart, _rwrRenderEnd, _renderers._rwrRenderer, _rwrForm, () => Settings.Default.RWR_RotateFlipType, () => Settings.Default.RWR_Monochrome, RenderInstrumentImage);
+            _speedbrakeRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _speedbrakeRenderStart, _speedbrakeRenderEnd, _renderers._speedbrakeRenderer, _speedbrakeForm, () => Settings.Default.Speedbrake_RotateFlipType, () => Settings.Default.Speedbrake_Monochrome, RenderInstrumentImage);
+            _rpm1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm1RenderStart, _rpm1RenderEnd, _renderers._rpm1Renderer, _rpm1Form, () => Settings.Default.RPM1_RotateFlipType, () => Settings.Default.RPM1_Monochrome, RenderInstrumentImage);
+            _rpm2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm2RenderStart, _rpm2RenderEnd, _renderers._rpm2Renderer, _rpm2Form, () => Settings.Default.RPM2_RotateFlipType, () => Settings.Default.RPM2_Monochrome, RenderInstrumentImage);
+            _vviRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _vviRenderStart, _vviRenderEnd, _renderers._vviRenderer, _vviForm, () => Settings.Default.VVI_RotateFlipType, () => Settings.Default.VVI_Monochrome, RenderInstrumentImage);
+            _hydARenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydARenderStart, _hydARenderEnd, _renderers._hydARenderer, _hydAForm, () => Settings.Default.HYDA_RotateFlipType, () => Settings.Default.HYDA_Monochrome, RenderInstrumentImage);
+            _hydBRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydBRenderStart, _hydBRenderEnd, _renderers._hydBRenderer, _hydBForm, () => Settings.Default.HYDB_RotateFlipType, () => Settings.Default.HYDB_Monochrome, RenderInstrumentImage);
+            _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _renderers._cabinPressRenderer, _cabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
+            _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _renderers._rollTrimRenderer, _rollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
+            _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _renderers._pitchTrimRenderer, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
             _diHotkeyDetection = new DIHotkeyDetection(Mediator);
         }
         private void ProcessKeyUpEvent(KeyEventArgs e)
@@ -636,9 +595,9 @@ namespace MFDExtractor
         private void NotifyAzimuthIndicatorBrightnessIncreased(bool relayToListeners)
         {
             var newBrightness = (int) Math.Floor(
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Brightness +
-                ((((F16AzimuthIndicator) _rwrRenderer).InstrumentState.MaxBrightness)*(1.0f/32.0f)));
-            ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Brightness = newBrightness;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Brightness +
+                ((((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
+            ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Brightness = newBrightness;
             Settings.Default.AzimuthIndicatorBrightness = newBrightness;
 
             if (relayToListeners)
@@ -657,9 +616,9 @@ namespace MFDExtractor
         private void NotifyAzimuthIndicatorBrightnessDecreased(bool relayToListeners)
         {
             var newBrightness = (int) Math.Floor(
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Brightness -
-                ((((F16AzimuthIndicator) _rwrRenderer).InstrumentState.MaxBrightness)*(1.0f/32.0f)));
-            ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Brightness = newBrightness;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Brightness -
+                ((((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
+            ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Brightness = newBrightness;
             Settings.Default.AzimuthIndicatorBrightness = newBrightness;
 
             if (relayToListeners)
@@ -677,8 +636,8 @@ namespace MFDExtractor
         }
         private void NotifyISISBrightButtonDepressed(bool relayToListeners)
         {
-            int newBrightness = ((F16ISIS) _isisRenderer).InstrumentState.MaxBrightness;
-            ((F16ISIS) _isisRenderer).InstrumentState.Brightness = newBrightness;
+            int newBrightness = ((F16ISIS)_renderers._isisRenderer).InstrumentState.MaxBrightness;
+            ((F16ISIS)_renderers._isisRenderer).InstrumentState.Brightness = newBrightness;
             if (relayToListeners)
             {
                 var msg = new Message(MessageTypes.ISISBrightButtonDepressed.ToString(), null);
@@ -695,9 +654,9 @@ namespace MFDExtractor
         private void NotifyISISStandardButtonDepressed(bool relayToListeners)
         {
             var newBrightness = (int) Math.Floor(
-                (((F16ISIS) _isisRenderer).InstrumentState.MaxBrightness)*0.5f
+                (((F16ISIS)_renderers._isisRenderer).InstrumentState.MaxBrightness) * 0.5f
                                           );
-            ((F16ISIS) _isisRenderer).InstrumentState.Brightness = newBrightness;
+            ((F16ISIS)_renderers._isisRenderer).InstrumentState.Brightness = newBrightness;
             if (relayToListeners)
             {
                 var msg = new Message(MessageTypes.ISISStandardButtonDepressed.ToString(), null);
@@ -780,12 +739,12 @@ namespace MFDExtractor
         private void NotifyEHSIRightKnobIncreasedByOne(bool relayToListeners)
         {
             _ehsiRightKnobLastActivityTime = DateTime.Now;
-            if (((F16EHSI) _ehsiRenderer).InstrumentState.ShowBrightnessLabel)
+            if (((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowBrightnessLabel)
             {
                 var newBrightness = (int) Math.Floor(
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.Brightness +
-                    ((((F16EHSI) _ehsiRenderer).InstrumentState.MaxBrightness)*(1.0f/32.0f)));
-                ((F16EHSI) _ehsiRenderer).InstrumentState.Brightness = newBrightness;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.Brightness +
+                    ((((F16EHSI)_renderers._ehsiRenderer).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
+                ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.Brightness = newBrightness;
                 Settings.Default.EHSIBrightness = newBrightness;
             }
             else
@@ -825,12 +784,12 @@ namespace MFDExtractor
         private void NotifyEHSIRightKnobDecreasedByOne(bool relayToListeners)
         {
             _ehsiRightKnobLastActivityTime = DateTime.Now;
-            if (((F16EHSI) _ehsiRenderer).InstrumentState.ShowBrightnessLabel)
+            if (((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowBrightnessLabel)
             {
                 var newBrightness = (int) Math.Floor(
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.Brightness -
-                    ((((F16EHSI) _ehsiRenderer).InstrumentState.MaxBrightness)*(1.0f/32.0f)));
-                ((F16EHSI) _ehsiRenderer).InstrumentState.Brightness = newBrightness;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.Brightness -
+                    ((((F16EHSI)_renderers._ehsiRenderer).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
+                ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.Brightness = newBrightness;
                 Settings.Default.EHSIBrightness = newBrightness;
             }
             else
@@ -906,7 +865,7 @@ namespace MFDExtractor
         private void NotifyEHSIMenuButtonDepressed(bool relayToListeners)
         {
             F16EHSI.F16EHSIInstrumentState.InstrumentModes currentMode =
-                ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode;
+                ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.InstrumentMode;
             F16EHSI.F16EHSIInstrumentState.InstrumentModes? newMode = null;
             switch (currentMode)
             {
@@ -924,12 +883,10 @@ namespace MFDExtractor
                 case F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav:
                     newMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan;
                     break;
-                default:
-                    break;
             }
             if (newMode.HasValue)
             {
-                ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode = newMode.Value;
+                ((F16EHSI) _renderers._ehsiRenderer).InstrumentState.InstrumentMode = newMode.Value;
             }
             if (NetworkMode == NetworkMode.Standalone || NetworkMode == NetworkMode.Server)
             {
@@ -952,7 +909,7 @@ namespace MFDExtractor
         }
         private void NotifyAirspeedIndexDecreasedByOne(bool relayToListeners)
         {
-            ((F16AirspeedIndicator) _asiRenderer).InstrumentState.AirspeedIndexKnots -= 2.5F;
+            ((F16AirspeedIndicator)_renderers._asiRenderer).InstrumentState.AirspeedIndexKnots -= 2.5F;
             if (relayToListeners)
             {
                 var msg = new Message(MessageTypes.AirspeedIndexDecrease.ToString(), null);
@@ -968,7 +925,7 @@ namespace MFDExtractor
         }
         private void NotifyAirspeedIndexIncreasedByOne(bool relayToListeners)
         {
-            ((F16AirspeedIndicator) _asiRenderer).InstrumentState.AirspeedIndexKnots += 2.5F;
+            ((F16AirspeedIndicator)_renderers._asiRenderer).InstrumentState.AirspeedIndexKnots += 2.5F;
             if (relayToListeners)
             {
                 var msg = new Message(MessageTypes.AirspeedIndexIncrease.ToString(), null);
@@ -1079,15 +1036,13 @@ namespace MFDExtractor
                     case MessageTypes.DisableBMSAdvancedSharedmemValues:
                         _useBMSAdvancedSharedmemValues = false;
                         break;
-                    default:
-                        break;
                 }
                 pendingMessage = _client.GetNextMessageToClientFromServer();
             }
         }
         private void NotifyAccelerometerIsReset(bool relayToListeners)
         {
-            ((F16Accelerometer) _accelerometerRenderer).InstrumentState.ResetMinAndMaxGs();
+            ((F16Accelerometer)_renderers._accelerometerRenderer).InstrumentState.ResetMinAndMaxGs();
             if (relayToListeners)
             {
                 var msg = new Message(MessageTypes.AccelerometerIsReset.ToString(), null);
@@ -1959,11 +1914,7 @@ namespace MFDExtractor
             _hudOutputRect = Rectangle.FromLTRB(settings.HUD_OutULX, settings.HUD_OutULY, settings.HUD_OutLRX,
                                                 settings.HUD_OutLRY);
 
-            _mfd4OutputScreen = Common.Screen.Util.FindScreen(settings.MFD4_OutputDisplay);
-            _mfd3OutputScreen = Common.Screen.Util.FindScreen(settings.MFD3_OutputDisplay);
-            _leftMfdOutputScreen = Common.Screen.Util.FindScreen(settings.LMFD_OutputDisplay);
-            _rightMfdOutputScreen = Common.Screen.Util.FindScreen(settings.RMFD_OutputDisplay);
-            _hudOutputScreen = Common.Screen.Util.FindScreen(settings.HUD_OutputDisplay);
+
             _testMode = settings.TestMode;
             _threadPriority = settings.ThreadPriority;
             _compressionType = settings.CompressionType;
@@ -2429,243 +2380,241 @@ namespace MFDExtractor
             switch (vviStyle)
             {
                 case VVIStyles.Tape:
-                    _vviRenderer = new F16VerticalVelocityIndicatorUSA();
+                    _renderers._vviRenderer = new F16VerticalVelocityIndicatorUSA();
                     break;
                 case VVIStyles.Needle:
-                    _vviRenderer = new F16VerticalVelocityIndicatorEU();
-                    break;
-                default:
+                    _renderers._vviRenderer = new F16VerticalVelocityIndicatorEU();
                     break;
             }
         }
 
         private void SetupRPM2Renderer()
         {
-            _rpm2Renderer = new F16Tachometer();
-            ((F16Tachometer) _rpm2Renderer).Options.IsSecondary = true;
+            _renderers._rpm2Renderer = new F16Tachometer();
+            ((F16Tachometer)_renderers._rpm2Renderer).Options.IsSecondary = true;
         }
 
         private void SetupRPM1Renderer()
         {
-            _rpm1Renderer = new F16Tachometer();
-            ((F16Tachometer) _rpm1Renderer).Options.IsSecondary = false;
+            _renderers._rpm1Renderer = new F16Tachometer();
+            ((F16Tachometer)_renderers._rpm1Renderer).Options.IsSecondary = false;
         }
 
         private void SetupSpeedbrakeRenderer()
         {
-            _speedbrakeRenderer = new F16SpeedbrakeIndicator();
+            _renderers._speedbrakeRenderer = new F16SpeedbrakeIndicator();
         }
 
         private void SetupRWRRenderer()
         {
-            _rwrRenderer = new F16AzimuthIndicator();
+            _renderers._rwrRenderer = new F16AzimuthIndicator();
             string styleString = Settings.Default.AzimuthIndicatorType;
             var style =
                 (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle)
                 Enum.Parse(typeof (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), styleString);
-            ((F16AzimuthIndicator) _rwrRenderer).Options.Style = style;
-            ((F16AzimuthIndicator) _rwrRenderer).Options.HideBezel = !Settings.Default.AzimuthIndicator_ShowBezel;
-            ((F16AzimuthIndicator) _rwrRenderer).Options.GDIPlusOptions = _gdiPlusOptions;
+            ((F16AzimuthIndicator)_renderers._rwrRenderer).Options.Style = style;
+            ((F16AzimuthIndicator)_renderers._rwrRenderer).Options.HideBezel = !Settings.Default.AzimuthIndicator_ShowBezel;
+            ((F16AzimuthIndicator)_renderers._rwrRenderer).Options.GDIPlusOptions = _gdiPlusOptions;
         }
 
         private void SetupOil2Renderer()
         {
-            _oilGauge2Renderer = new F16OilPressureGauge();
-            ((F16OilPressureGauge) _oilGauge2Renderer).Options.IsSecondary = true;
+            _renderers._oilGauge2Renderer = new F16OilPressureGauge();
+            ((F16OilPressureGauge)_renderers._oilGauge2Renderer).Options.IsSecondary = true;
         }
 
         private void SetupOil1Renderer()
         {
-            _oilGauge1Renderer = new F16OilPressureGauge();
-            ((F16OilPressureGauge) _oilGauge1Renderer).Options.IsSecondary = false;
+            _renderers._oilGauge1Renderer = new F16OilPressureGauge();
+            ((F16OilPressureGauge)_renderers._oilGauge1Renderer).Options.IsSecondary = false;
         }
 
         private void SetupNOZ2Renderer()
         {
-            _nozPos2Renderer = new F16NozzlePositionIndicator();
-            ((F16NozzlePositionIndicator) _nozPos2Renderer).Options.IsSecondary = true;
+            _renderers._nozPos2Renderer = new F16NozzlePositionIndicator();
+            ((F16NozzlePositionIndicator)_renderers._nozPos2Renderer).Options.IsSecondary = true;
         }
 
         private void SetupNOZ1Renderer()
         {
-            _nozPos1Renderer = new F16NozzlePositionIndicator();
-            ((F16NozzlePositionIndicator) _nozPos1Renderer).Options.IsSecondary = false;
+            _renderers._nozPos1Renderer = new F16NozzlePositionIndicator();
+            ((F16NozzlePositionIndicator)_renderers._nozPos1Renderer).Options.IsSecondary = false;
         }
 
         private void SetupNWSIndexerRenderer()
         {
-            _nwsIndexerRenderer = new F16NosewheelSteeringIndexer();
+            _renderers._nwsIndexerRenderer = new F16NosewheelSteeringIndexer();
         }
 
         private void SetupLandingGearLightsRenderer()
         {
-            _landingGearLightsRenderer = new F16LandingGearWheelsLights();
+            _renderers._landingGearLightsRenderer = new F16LandingGearWheelsLights();
         }
 
         private void SetupHSIRenderer()
         {
-            _hsiRenderer = new F16HorizontalSituationIndicator();
+            _renderers._hsiRenderer = new F16HorizontalSituationIndicator();
         }
 
         private void SetupEHSIRenderer()
         {
-            _ehsiRenderer = new F16EHSI();
-            ((F16EHSI) _ehsiRenderer).Options.GDIPlusOptions = _gdiPlusOptions;
+            _renderers._ehsiRenderer = new F16EHSI();
+            ((F16EHSI)_renderers._ehsiRenderer).Options.GDIPlusOptions = _gdiPlusOptions;
         }
 
         private void SetupFuelQuantityRenderer()
         {
-            _fuelQuantityRenderer = new F16FuelQuantityIndicator();
+            _renderers._fuelQuantityRenderer = new F16FuelQuantityIndicator();
             if (Settings.Default.FuelQuantityIndicator_NeedleCModel)
             {
-                ((F16FuelQuantityIndicator) _fuelQuantityRenderer).Options.NeedleType =
+                ((F16FuelQuantityIndicator)_renderers._fuelQuantityRenderer).Options.NeedleType =
                     F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel;
             }
             else
             {
-                ((F16FuelQuantityIndicator) _fuelQuantityRenderer).Options.NeedleType =
+                ((F16FuelQuantityIndicator)_renderers._fuelQuantityRenderer).Options.NeedleType =
                     F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel;
             }
         }
 
         private void SetupFuelFlowRenderer()
         {
-            _fuelFlowRenderer = new F16FuelFlow();
+            _renderers._fuelFlowRenderer = new F16FuelFlow();
         }
 
         private void SetupISISRenderer()
         {
-            _isisRenderer = new F16ISIS();
-            string pressureUnitsString = Settings.Default.ISIS_PressureUnits;
+            _renderers._isisRenderer = new F16ISIS();
+            var pressureUnitsString = Settings.Default.ISIS_PressureUnits;
             if (!string.IsNullOrEmpty(pressureUnitsString))
             {
                 try
                 {
-                    ((F16ISIS) _isisRenderer).Options.PressureAltitudeUnits =
+                    ((F16ISIS)_renderers._isisRenderer).Options.PressureAltitudeUnits =
                         (F16ISIS.F16ISISOptions.PressureUnits)
                         Enum.Parse(typeof (F16ISIS.F16ISISOptions.PressureUnits), pressureUnitsString);
                 }
                 catch (Exception e)
                 {
-                    ((F16ISIS) _isisRenderer).Options.PressureAltitudeUnits =
+                    ((F16ISIS)_renderers._isisRenderer).Options.PressureAltitudeUnits =
                         F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
                 }
             }
-            ((F16ISIS) _isisRenderer).Options.GDIPlusOptions = _gdiPlusOptions;
+            ((F16ISIS)_renderers._isisRenderer).Options.GDIPlusOptions = _gdiPlusOptions;
         }
 
         private void SetupAccelerometerRenderer()
         {
-            _accelerometerRenderer = new F16Accelerometer();
+            _renderers._accelerometerRenderer = new F16Accelerometer();
         }
 
         private void SetupFTIT2Renderer()
         {
-            _ftit2Renderer = new F16FanTurbineInletTemperature();
-            ((F16FanTurbineInletTemperature) _ftit2Renderer).Options.IsSecondary = true;
+            _renderers._ftit2Renderer = new F16FanTurbineInletTemperature();
+            ((F16FanTurbineInletTemperature)_renderers._ftit2Renderer).Options.IsSecondary = true;
         }
 
         private void SetupFTIT1Renderer()
         {
-            _ftit1Renderer = new F16FanTurbineInletTemperature();
-            ((F16FanTurbineInletTemperature) _ftit1Renderer).Options.IsSecondary = false;
+            _renderers._ftit1Renderer = new F16FanTurbineInletTemperature();
+            ((F16FanTurbineInletTemperature)_renderers._ftit1Renderer).Options.IsSecondary = false;
         }
 
         private void SetupEPUFuelRenderer()
         {
-            _epuFuelRenderer = new F16EPUFuelGauge();
+            _renderers._epuFuelRenderer = new F16EPUFuelGauge();
         }
 
         private void SetupPFLRenderer()
         {
-            _pflRenderer = new F16DataEntryDisplayPilotFaultList();
+            _renderers._pflRenderer = new F16DataEntryDisplayPilotFaultList();
         }
 
         private void SetupDEDRenderer()
         {
-            _dedRenderer = new F16DataEntryDisplayPilotFaultList();
+            _renderers._dedRenderer = new F16DataEntryDisplayPilotFaultList();
         }
 
         private void SetupCompassRenderer()
         {
-            _compassRenderer = new F16Compass();
+            _renderers._compassRenderer = new F16Compass();
         }
 
         private void SetupCMDSPanelRenderer()
         {
-            _cmdsPanelRenderer = new F16CMDSPanel();
+            _renderers._cmdsPanelRenderer = new F16CMDSPanel();
         }
 
         private void SetupCautionPanelRenderer()
         {
-            _cautionPanelRenderer = new F16CautionPanel();
+            _renderers._cautionPanelRenderer = new F16CautionPanel();
         }
 
         private void SetupAOAIndicatorRenderer()
         {
-            _aoaIndicatorRenderer = new F16AngleOfAttackIndicator();
+            _renderers._aoaIndicatorRenderer = new F16AngleOfAttackIndicator();
         }
 
         private void SetupAOAIndexerRenderer()
         {
-            _aoaIndexerRenderer = new F16AngleOfAttackIndexer();
+            _renderers._aoaIndexerRenderer = new F16AngleOfAttackIndexer();
         }
 
         private void SetupAltimeterRenderer()
         {
-            _altimeterRenderer = new F16Altimeter();
+            _renderers._altimeterRenderer = new F16Altimeter();
 
-            string altimeterSyleString = Settings.Default.Altimeter_Style;
+            var altimeterSyleString = Settings.Default.Altimeter_Style;
             var altimeterStyle =
                 (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)
                 Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterSyleString);
-            ((F16Altimeter) _altimeterRenderer).Options.Style = altimeterStyle;
+            ((F16Altimeter)_renderers._altimeterRenderer).Options.Style = altimeterStyle;
 
-            string pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
+            var pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
             var pressureUnits =
                 (F16Altimeter.F16AltimeterOptions.PressureUnits)
                 Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
-            ((F16Altimeter) _altimeterRenderer).Options.PressureAltitudeUnits = pressureUnits;
+            ((F16Altimeter)_renderers._altimeterRenderer).Options.PressureAltitudeUnits = pressureUnits;
         }
 
         private void SetupASIRenderer()
         {
-            _asiRenderer = new F16AirspeedIndicator();
+            _renderers._asiRenderer = new F16AirspeedIndicator();
         }
 
         private void SetupADIRenderer()
         {
-            _adiRenderer = new F16ADI();
+            _renderers._adiRenderer = new F16ADI();
         }
 
         private void SetupBackupADIRenderer()
         {
-            _backupAdiRenderer = new F16StandbyADI();
+            _renderers._backupAdiRenderer = new F16StandbyADI();
         }
 
         private void SetupHydARenderer()
         {
-            _hydARenderer = new F16HydraulicPressureGauge();
+            _renderers._hydARenderer = new F16HydraulicPressureGauge();
         }
 
         private void SetupHydBRenderer()
         {
-            _hydBRenderer = new F16HydraulicPressureGauge();
+            _renderers._hydBRenderer = new F16HydraulicPressureGauge();
         }
 
         private void SetupCabinPressRenderer()
         {
-            _cabinPressRenderer = new F16CabinPressureAltitudeIndicator();
+            _renderers._cabinPressRenderer = new F16CabinPressureAltitudeIndicator();
         }
 
         private void SetupRollTrimRenderer()
         {
-            _rollTrimRenderer = new F16RollTrimIndicator();
+            _renderers._rollTrimRenderer = new F16RollTrimIndicator();
         }
 
         private void SetupPitchTrimRenderer()
         {
-            _pitchTrimRenderer = new F16PitchTrimIndicator();
+            _renderers._pitchTrimRenderer = new F16PitchTrimIndicator();
         }
 
         #endregion
@@ -3844,7 +3793,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                             "VVI",
                             ref _vviForm,
-                            _vviRenderer,
+                            _renderers._vviRenderer,
                             _vviForm_Disposed,
                             Settings.Default.EnableVVIOutput,
                             Settings.Default.VVI_OutputDisplay,
@@ -3955,7 +3904,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "Engine 1 - RPM",
                 ref _rpm1Form,
-                _rpm1Renderer,
+                _renderers._rpm1Renderer,
                 _rpm1Form_Disposed,
                 Settings.Default.EnableRPM1Output,
                 Settings.Default.RPM1_OutputDisplay,
@@ -3985,7 +3934,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                             "Engine 2 - RPM",
                             ref _rpm2Form,
-                            _rpm2Renderer,
+                            _renderers._rpm2Renderer,
                             _rpm2Form_Disposed,
                             Settings.Default.EnableRPM2Output,
                             Settings.Default.RPM2_OutputDisplay,
@@ -4015,7 +3964,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "Speedbrake",
                 ref _speedbrakeForm,
-                _speedbrakeRenderer,
+                _renderers._speedbrakeRenderer,
                 _speedbrakeForm_Disposed,
                 Settings.Default.EnableSpeedbrakeOutput,
                 Settings.Default.Speedbrake_OutputDisplay,
@@ -4045,7 +3994,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "RWR",
                 ref _rwrForm,
-                _rwrRenderer,
+                _renderers._rwrRenderer,
                 _rwrForm_Disposed,
                 Settings.Default.EnableRWROutput,
                 Settings.Default.RWR_OutputDisplay,
@@ -4075,7 +4024,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                  "Engine 2 - Oil Pressure Indicator",
                  ref _oilGauge2Form,
-                 _oilGauge2Renderer,
+                 _renderers._oilGauge2Renderer,
                  _oilGauge2Form_Disposed,
                  Settings.Default.EnableOIL2Output,
                  Settings.Default.OIL2_OutputDisplay,
@@ -4105,7 +4054,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "Engine 1 - Oil Pressure Indicator",
                 ref _oilGauge1Form,
-                _oilGauge1Renderer,
+                _renderers._oilGauge1Renderer,
                 _oilGauge1Form_Disposed,
                 Settings.Default.EnableOIL1Output,
                 Settings.Default.OIL1_OutputDisplay,
@@ -4135,7 +4084,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "Engine 2 - Nozzle Position Indicator",
                 ref _nozPos2Form,
-                _nozPos2Renderer,
+                _renderers._nozPos2Renderer,
                 _nozPos2Form_Disposed,
                 Settings.Default.EnableNOZ2Output,
                 Settings.Default.NOZ2_OutputDisplay,
@@ -4165,7 +4114,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "Engine 1 - Nozzle Position Indicator",
                 ref _nozPos1Form,
-                _nozPos1Renderer,
+                _renderers._nozPos1Renderer,
                 _nozPos1Form_Disposed,
                 Settings.Default.EnableNOZ1Output,
                 Settings.Default.NOZ1_OutputDisplay,
@@ -4195,7 +4144,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                 "NWS Indexer",
                 ref _nwsIndexerForm,
-                _nwsIndexerRenderer,
+                _renderers._nwsIndexerRenderer,
                 _nwsIndexerForm_Disposed,
                 Settings.Default.EnableNWSIndexerOutput,
                 Settings.Default.NWSIndexer_OutputDisplay,
@@ -4225,7 +4174,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                            "Landing Gear Lights",
                            ref _landingGearLightsForm,
-                           _landingGearLightsRenderer,
+                           _renderers._landingGearLightsRenderer,
                            _landingGearLightsForm_Disposed,
                            Settings.Default.EnableGearLightsOutput,
                            Settings.Default.GearLights_OutputDisplay,
@@ -4255,7 +4204,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                            "Horizontal Situation Indicator",
                            ref _hsiForm,
-                           _hsiRenderer,
+                           _renderers._hsiRenderer,
                            _hsiForm_Disposed,
                            Settings.Default.EnableHSIOutput,
                            Settings.Default.HSI_OutputDisplay,
@@ -4285,7 +4234,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                        "EHSI",
                                        ref _ehsiForm,
-                                       _ehsiRenderer,
+                                       _renderers._ehsiRenderer,
                                        _ehsiForm_Disposed,
                                        Settings.Default.EnableEHSIOutput,
                                        Settings.Default.EHSI_OutputDisplay,
@@ -4315,7 +4264,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                        "Fuel Quantity",
                                        ref _fuelQuantityForm,
-                                       _fuelQuantityRenderer,
+                                       _renderers._fuelQuantityRenderer,
                                        _fuelQuantityForm_Disposed,
                                        Settings.Default.EnableFuelQuantityOutput,
                                        Settings.Default.FuelQuantity_OutputDisplay,
@@ -4345,7 +4294,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                       "Fuel Flow Indicator",
                                       ref _fuelFlowForm,
-                                      _fuelFlowRenderer,
+                                      _renderers._fuelFlowRenderer,
                                       _fuelFlowForm_Disposed,
                                       Settings.Default.EnableFuelFlowOutput,
                                       Settings.Default.FuelFlow_OutputDisplay,
@@ -4375,7 +4324,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                       "ISIS",
                                       ref _isisForm,
-                                      _isisRenderer,
+                                      _renderers._isisRenderer,
                                       _isisForm_Disposed,
                                       Settings.Default.EnableISISOutput,
                                       Settings.Default.ISIS_OutputDisplay,
@@ -4405,7 +4354,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                       "Accelerometer",
                                       ref _accelerometerForm,
-                                      _accelerometerRenderer,
+                                      _renderers._accelerometerRenderer,
                                       _accelerometerForm_Disposed,
                                       Settings.Default.EnableAccelerometerOutput,
                                       Settings.Default.Accelerometer_OutputDisplay,
@@ -4435,7 +4384,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                       "FTIT 2",
                                       ref _ftit2Form,
-                                      _ftit2Renderer,
+                                      _renderers._ftit2Renderer,
                                       _ftit2Form_Disposed,
                                       Settings.Default.EnableFTIT2Output,
                                       Settings.Default.FTIT2_OutputDisplay,
@@ -4465,7 +4414,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                        "FTIT 1",
                                        ref _ftit1Form,
-                                       _ftit1Renderer,
+                                       _renderers._ftit1Renderer,
                                        _ftit1Form_Disposed,
                                        Settings.Default.EnableFTIT1Output,
                                        Settings.Default.FTIT1_OutputDisplay,
@@ -4495,7 +4444,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                        "EPU Fuel",
                                        ref _epuFuelForm,
-                                       _epuFuelRenderer,
+                                       _renderers._epuFuelRenderer,
                                        _epuFuelForm_Disposed,
                                        Settings.Default.EnableEPUFuelOutput,
                                        Settings.Default.EPUFuel_OutputDisplay,
@@ -4525,7 +4474,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "PFL",
                                                    ref _pflForm,
-                                                   _pflRenderer,
+                                                  _renderers._pflRenderer,
                                                    _pflForm_Disposed,
                                                    Settings.Default.EnablePFLOutput,
                                                    Settings.Default.PFL_OutputDisplay,
@@ -4555,7 +4504,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "DED",
                                                    ref _dedForm,
-                                                   _dedRenderer,
+                                                   _renderers._dedRenderer,
                                                    _dedForm_Disposed,
                                                    Settings.Default.EnableDEDOutput,
                                                    Settings.Default.DED_OutputDisplay,
@@ -4585,7 +4534,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "Compass",
                                                    ref _compassForm,
-                                                   _compassRenderer,
+                                                   _renderers._compassRenderer,
                                                    _compassForm_Disposed,
                                                    Settings.Default.EnableCompassOutput,
                                                    Settings.Default.Compass_OutputDisplay,
@@ -4615,7 +4564,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "CMDS",
                                                    ref _cmdsPanelForm,
-                                                   _cmdsPanelRenderer,
+                                                   _renderers._cmdsPanelRenderer,
                                                    _cmdsPanelForm_Disposed,
                                                    Settings.Default.EnableCMDSOutput,
                                                    Settings.Default.CMDS_OutputDisplay,
@@ -4645,7 +4594,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "Caution Panel",
                                                    ref _cautionPanelForm,
-                                                   _cautionPanelRenderer,
+                                                   _renderers._cautionPanelRenderer,
                                                    _cautionPanelForm_Disposed,
                                                    Settings.Default.EnableCautionPanelOutput,
                                                    Settings.Default.CautionPanel_OutputDisplay,
@@ -4675,7 +4624,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "AOA Indicator",
                                                                ref _aoaIndicatorForm,
-                                                               _aoaIndicatorRenderer,
+                                                              _renderers._aoaIndicatorRenderer,
                                                                _aoaIndicatorForm_Disposed,
                                                                Settings.Default.EnableAOAIndicatorOutput,
                                                                Settings.Default.AOAIndicator_OutputDisplay,
@@ -4705,7 +4654,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "AOA Indexer",
                                                                ref _aoaIndexerForm,
-                                                               _aoaIndexerRenderer,
+                                                               _renderers._aoaIndexerRenderer,
                                                                _aoaIndexerForm_Disposed,
                                                                Settings.Default.EnableAOAIndexerOutput,
                                                                Settings.Default.AOAIndexer_OutputDisplay,
@@ -4735,7 +4684,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "Altimeter",
                                                                ref _altimeterForm,
-                                                               _altimeterRenderer,
+                                                               _renderers._altimeterRenderer,
                                                                _altimeterForm_Disposed,
                                                                Settings.Default.EnableAltimeterOutput,
                                                                Settings.Default.Altimeter_OutputDisplay,
@@ -4765,7 +4714,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "Cabin Pressure Indicator",
                                                                ref _cabinPressForm,
-                                                               _cabinPressRenderer,
+                                                               _renderers._cabinPressRenderer,
                                                                _cabinPressForm_Disposed,
                                                                Settings.Default.EnableCabinPressOutput,
                                                                Settings.Default.CabinPress_OutputDisplay,
@@ -4795,7 +4744,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "Roll Trim Indicator",
                                                                ref _rollTrimForm,
-                                                               _rollTrimRenderer,
+                                                               _renderers._rollTrimRenderer,
                                                                _rollTrimForm_Disposed,
                                                                Settings.Default.EnableRollTrimOutput,
                                                                Settings.Default.RollTrim_OutputDisplay,
@@ -4825,7 +4774,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "Pitch Trim Indicator",
                                                                ref _pitchTrimForm,
-                                                               _pitchTrimRenderer,
+                                                               _renderers._pitchTrimRenderer,
                                                                _pitchTrimForm_Disposed,
                                                                Settings.Default.EnablePitchTrimOutput,
                                                                Settings.Default.PitchTrim_OutputDisplay,
@@ -4855,7 +4804,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "Hydraulic Pressure Indicator A",
                                                                ref _hydAForm,
-                                                               _hydARenderer,
+                                                               _renderers._hydARenderer,
                                                                _hydAForm_Disposed,
                                                                Settings.Default.EnableHYDAOutput,
                                                                Settings.Default.HYDA_OutputDisplay,
@@ -4885,7 +4834,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                                "Hydraulic Pressure Indicator B",
                                                                ref _hydBForm,
-                                                               _hydBRenderer,
+                                                               _renderers._hydBRenderer,
                                                                _hydBForm_Disposed,
                                                                Settings.Default.EnableHYDBOutput,
                                                                Settings.Default.HYDB_OutputDisplay,
@@ -4915,7 +4864,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "Airspeed Indicator",
                                                    ref _asiForm,
-                                                   _asiRenderer,
+                                                   _renderers._asiRenderer,
                                                    _asiForm_Disposed,
                                                    Settings.Default.EnableASIOutput,
                                                    Settings.Default.ASI_OutputDisplay,
@@ -4945,7 +4894,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "Attitude Indicator",
                                                    ref _adiForm,
-                                                   _adiRenderer,
+                                                   _renderers._adiRenderer,
                                                    _adiForm_Disposed,
                                                    Settings.Default.EnableADIOutput,
                                                    Settings.Default.ADI_OutputDisplay,
@@ -4975,7 +4924,7 @@ namespace MFDExtractor
             SetupInstrumentForm(
                                                    "Standby Attitude Indicator",
                                                    ref _backupAdiForm,
-                                                   _backupAdiRenderer,
+                                                   _renderers._backupAdiRenderer,
                                                    _backupAdiForm_Disposed,
                                                    Settings.Default.EnableBackupADIOutput,
                                                    Settings.Default.Backup_ADI_OutputDisplay,
@@ -5724,8 +5673,8 @@ namespace MFDExtractor
                     {
                         _renderCycleNum = 0;
                     }
-                    DateTime thisLoopStartTime = DateTime.Now;
-                    bool setNullImages = true;
+                    var thisLoopStartTime = DateTime.Now;
+                    var setNullImages = true;
 
                     if (NetworkMode == NetworkMode.Client)
                     {
@@ -5852,7 +5801,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_rwrRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._rwrRenderer)) ||
                     (_rwrForm != null && _rwrForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RWR_RenderEveryN == Settings.Default.RWR_RenderOnN - 1) ||
@@ -5908,7 +5857,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_cmdsPanelRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._cmdsPanelRenderer)) ||
                     (_cmdsPanelForm != null && _cmdsPanelForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.CMDS_RenderEveryN == Settings.Default.CMDS_RenderOnN - 1) ||
@@ -5942,7 +5891,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_cautionPanelRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._cautionPanelRenderer)) ||
                     (_cautionPanelForm != null && _cautionPanelForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.CautionPanel_RenderEveryN ==
@@ -5977,7 +5926,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_landingGearLightsRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._landingGearLightsRenderer)) ||
                     (_landingGearLightsForm != null && _landingGearLightsForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.GearLights_RenderEveryN ==
@@ -6003,7 +5952,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_speedbrakeRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._speedbrakeRenderer)) ||
                     (_speedbrakeForm != null && _speedbrakeForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Speedbrake_RenderEveryN ==
@@ -6038,7 +5987,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_dedRenderer) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._dedRenderer) ||
                      (_dedForm != null && _dedForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.DED_RenderEveryN == Settings.Default.DED_RenderOnN - 1) ||
@@ -6063,7 +6012,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_pflRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._pflRenderer)) ||
                     (_pflForm != null && _pflForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.PFL_RenderEveryN == Settings.Default.PFL_RenderOnN - 1) ||
@@ -6097,7 +6046,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_fuelFlowRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._fuelFlowRenderer)) ||
                     (_fuelFlowForm != null && _fuelFlowForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FuelFlow_RenderEveryN ==
@@ -6123,7 +6072,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_fuelQuantityRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._fuelQuantityRenderer)) ||
                     (_fuelQuantityForm != null && _fuelQuantityForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FuelQuantity_RenderEveryN ==
@@ -6149,7 +6098,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_epuFuelRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._epuFuelRenderer)) ||
                     (_epuFuelForm != null && _epuFuelForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.EPUFuel_RenderEveryN == Settings.Default.EPUFuel_RenderOnN - 1) ||
@@ -6183,7 +6132,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_aoaIndexerRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._aoaIndexerRenderer)) ||
                     (_aoaIndexerForm != null && _aoaIndexerForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.AOAIndexer_RenderEveryN ==
@@ -6209,7 +6158,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_nwsIndexerRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._nwsIndexerRenderer)) ||
                     (_nwsIndexerForm != null && _nwsIndexerForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.NWSIndexer_RenderEveryN ==
@@ -6244,7 +6193,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_ftit1Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._ftit1Renderer)) ||
                     (_ftit1Form != null && _ftit1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FTIT1_RenderEveryN == Settings.Default.FTIT1_RenderOnN - 1) ||
@@ -6269,7 +6218,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_nozPos1Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._nozPos1Renderer)) ||
                     (_nozPos1Form != null && _nozPos1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.NOZ1_RenderEveryN == Settings.Default.NOZ1_RenderOnN - 1) ||
@@ -6294,7 +6243,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_oilGauge1Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._oilGauge1Renderer)) ||
                     (_oilGauge1Form != null && _oilGauge1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.OIL1_RenderEveryN == Settings.Default.OIL1_RenderOnN - 1) ||
@@ -6319,7 +6268,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_rpm1Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._rpm1Renderer)) ||
                     (_rpm1Form != null && _rpm1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RPM1_RenderEveryN == Settings.Default.RPM1_RenderOnN - 1) ||
@@ -6353,7 +6302,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_ftit2Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._ftit2Renderer)) ||
                     (_ftit2Form != null && _ftit2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FTIT2_RenderEveryN == Settings.Default.FTIT2_RenderOnN - 1) ||
@@ -6378,7 +6327,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_nozPos2Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._nozPos2Renderer)) ||
                     (_nozPos2Form != null && _nozPos2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.NOZ2_RenderEveryN == Settings.Default.NOZ2_RenderOnN - 1) ||
@@ -6403,7 +6352,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_oilGauge2Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._oilGauge2Renderer)) ||
                     (_oilGauge2Form != null && _oilGauge2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.OIL2_RenderEveryN == Settings.Default.OIL2_RenderOnN - 1) ||
@@ -6428,7 +6377,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_rpm2Renderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._rpm2Renderer)) ||
                     (_rpm2Form != null && _rpm2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RPM2_RenderEveryN == Settings.Default.RPM2_RenderOnN - 1) ||
@@ -6462,7 +6411,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_hydARenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._hydARenderer)) ||
                     (_hydAForm != null && _hydAForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.HYDA_RenderEveryN == Settings.Default.HYDA_RenderOnN - 1) ||
@@ -6487,7 +6436,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_hydBRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._hydBRenderer)) ||
                     (_hydBForm != null && _hydBForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.HYDB_RenderEveryN == Settings.Default.HYDB_RenderOnN - 1) ||
@@ -6512,7 +6461,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_cabinPressRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._cabinPressRenderer)) ||
                     (_cabinPressForm != null && _cabinPressForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.CabinPress_RenderEveryN ==
@@ -6547,7 +6496,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_rollTrimRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._rollTrimRenderer)) ||
                     (_rollTrimForm != null && _rollTrimForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RollTrim_RenderEveryN ==
@@ -6573,7 +6522,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_pitchTrimRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._pitchTrimRenderer)) ||
                     (_pitchTrimForm != null && _pitchTrimForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.PitchTrim_RenderEveryN ==
@@ -6609,7 +6558,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_adiRenderer) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._adiRenderer) ||
                      (_adiForm != null && _adiForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.ADI_RenderEveryN == Settings.Default.ADI_RenderOnN - 1) ||
@@ -6634,7 +6583,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_isisRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._isisRenderer)) ||
                     (_isisForm != null && _isisForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.ISIS_RenderEveryN == Settings.Default.ISIS_RenderOnN - 1) ||
@@ -6659,7 +6608,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_hsiRenderer) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._hsiRenderer) ||
                      (_hsiForm != null && _hsiForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.HSI_RenderEveryN == Settings.Default.HSI_RenderOnN - 1) ||
@@ -6684,7 +6633,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_ehsiRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._ehsiRenderer)) ||
                     (_ehsiForm != null && _ehsiForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.EHSI_RenderEveryN == Settings.Default.EHSI_RenderOnN - 1) ||
@@ -6709,7 +6658,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_altimeterRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._altimeterRenderer)) ||
                     (_altimeterForm != null && _altimeterForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Altimeter_RenderEveryN ==
@@ -6735,7 +6684,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_asiRenderer) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._asiRenderer) ||
                      (_asiForm != null && _asiForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.ASI_RenderEveryN == Settings.Default.ASI_RenderOnN - 1) ||
@@ -6760,7 +6709,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_backupAdiRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._backupAdiRenderer)) ||
                     (_backupAdiForm != null && _backupAdiForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Backup_ADI_RenderEveryN ==
@@ -6786,7 +6735,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_vviRenderer) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._vviRenderer) ||
                      (_vviForm != null && _vviForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.VVI_RenderEveryN == Settings.Default.VVI_RenderOnN - 1) ||
@@ -6811,7 +6760,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_aoaIndicatorRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._aoaIndicatorRenderer)) ||
                     (_aoaIndicatorForm != null && _aoaIndicatorForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.AOAIndicator_RenderEveryN ==
@@ -6837,7 +6786,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_compassRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._compassRenderer)) ||
                     (_compassForm != null && _compassForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Compass_RenderEveryN == Settings.Default.Compass_RenderOnN - 1) ||
@@ -6862,7 +6811,7 @@ namespace MFDExtractor
             {
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_accelerometerRenderer)) ||
+                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers._accelerometerRenderer)) ||
                     (_accelerometerForm != null && _accelerometerForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Accelerometer_RenderEveryN ==
@@ -7282,63 +7231,63 @@ namespace MFDExtractor
                 bool commandBarsOn = false;
 
                 //*** UPDATE ISIS ***
-                ((F16ISIS) _isisRenderer).InstrumentState.AirspeedKnots = fromFalcon.kias;
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.AirspeedKnots = fromFalcon.kias;
 
                 if (fromFalcon.DataFormat == FalconDataFormats.BMS4 && _useBMSAdvancedSharedmemValues)
                 {
-                    ((F16ISIS) _isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
                     //((F16ISIS)_isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude (-fromFalcon.z, ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure, ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits == F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury);
 
                     if (fromFalcon.VersionNum >= 111)
                     {
                         if (((altbits & AltBits.CalType) == AltBits.CalType)) //13-08-12 added by Falcas
                         {
-                            ((F16ISIS) _isisRenderer).Options.PressureAltitudeUnits =
+                            ((F16ISIS)_renderers._isisRenderer).Options.PressureAltitudeUnits =
                                 F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
                         }
                         else
                         {
-                            ((F16ISIS) _isisRenderer).Options.PressureAltitudeUnits =
+                            ((F16ISIS)_renderers._isisRenderer).Options.PressureAltitudeUnits =
                                 F16ISIS.F16ISISOptions.PressureUnits.Millibars;
                         }
 
-                        ((F16ISIS) _isisRenderer).InstrumentState.BarometricPressure = fromFalcon.AltCalReading;
+                        ((F16ISIS)_renderers._isisRenderer).InstrumentState.BarometricPressure = fromFalcon.AltCalReading;
                             //13-08-12 added by Falcas
                     }
                     else
                     {
-                        ((F16ISIS) _isisRenderer).InstrumentState.BarometricPressure = 2992f;
+                        ((F16ISIS)_renderers._isisRenderer).InstrumentState.BarometricPressure = 2992f;
                             //14-0-12 Falcas removed the point
-                        ((F16ISIS) _isisRenderer).Options.PressureAltitudeUnits =
+                        ((F16ISIS)_renderers._isisRenderer).Options.PressureAltitudeUnits =
                             F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; //14-08-12 added by Falcas
                     }
                 }
                 else
                 {
                     //((F16ISIS)_isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude(-fromFalcon.z, ((F16ISIS)_isisRenderer).InstrumentState.BarometricPressure, ((F16ISIS)_isisRenderer).Options.PressureAltitudeUnits == F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury);
-                    ((F16ISIS) _isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
-                    ((F16ISIS) _isisRenderer).InstrumentState.BarometricPressure = 2992f;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.BarometricPressure = 2992f;
                         //14-0-12 Falcas removed the point
-                    ((F16ISIS) _isisRenderer).Options.PressureAltitudeUnits =
+                    ((F16ISIS)_renderers._isisRenderer).Options.PressureAltitudeUnits =
                         F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; //14-08-12 added by Falcas
                 }
                 if (extensionData != null)
                 {
-                    ((F16ISIS) _isisRenderer).InstrumentState.RadarAltitudeAGL = extensionData.RadarAltitudeFeetAGL;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.RadarAltitudeAGL = extensionData.RadarAltitudeFeetAGL;
                 }
-                ((F16ISIS) _isisRenderer).InstrumentState.MachNumber = fromFalcon.mach;
-                ((F16ISIS) _isisRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.MachNumber = fromFalcon.mach;
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
                                                                                     (fromFalcon.yaw/
                                                                                      Constants.RADIANS_PER_DEGREE))%360;
-                ((F16ISIS) _isisRenderer).InstrumentState.NeverExceedSpeedKnots = 850;
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.NeverExceedSpeedKnots = 850;
 
-                ((F16ISIS) _isisRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch/Constants.RADIANS_PER_DEGREE));
-                ((F16ISIS) _isisRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll/Constants.RADIANS_PER_DEGREE));
-                ((F16ISIS) _isisRenderer).InstrumentState.VerticalVelocityFeetPerMinute = -fromFalcon.zDot*60.0f;
-                ((F16ISIS) _isisRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
-                ((F16ISIS) _isisRenderer).InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
-                ((F16ISIS) _isisRenderer).InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
-                ((F16ISIS) _isisRenderer).InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) ==
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch / Constants.RADIANS_PER_DEGREE));
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll / Constants.RADIANS_PER_DEGREE));
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.VerticalVelocityFeetPerMinute = -fromFalcon.zDot * 60.0f;
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) ==
                                                                            HsiBits.ADI_LOC);
 
 
@@ -7353,18 +7302,18 @@ namespace MFDExtractor
                     verticalVelocity = -fromFalcon.zDot*60.0f;
                 }
 
-                if (_vviRenderer is F16VerticalVelocityIndicatorEU)
+                if (_renderers._vviRenderer is F16VerticalVelocityIndicatorEU)
                 {
-                    ((F16VerticalVelocityIndicatorEU) _vviRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==
+                    ((F16VerticalVelocityIndicatorEU)_renderers._vviRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==
                                                                                                HsiBits.VVI);
-                    ((F16VerticalVelocityIndicatorEU) _vviRenderer).InstrumentState.VerticalVelocityFeet =
+                    ((F16VerticalVelocityIndicatorEU)_renderers._vviRenderer).InstrumentState.VerticalVelocityFeet =
                         verticalVelocity;
                 }
-                else if (_vviRenderer is F16VerticalVelocityIndicatorUSA)
+                else if (_renderers._vviRenderer is F16VerticalVelocityIndicatorUSA)
                 {
-                    ((F16VerticalVelocityIndicatorUSA) _vviRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==
+                    ((F16VerticalVelocityIndicatorUSA)_renderers._vviRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==
                                                                                                 HsiBits.VVI);
-                    ((F16VerticalVelocityIndicatorUSA) _vviRenderer).InstrumentState.VerticalVelocityFeetPerMinute =
+                    ((F16VerticalVelocityIndicatorUSA)_renderers._vviRenderer).InstrumentState.VerticalVelocityFeetPerMinute =
                         verticalVelocity;
                 }
 
@@ -7375,55 +7324,55 @@ namespace MFDExtractor
                 {
                     if (((altbits & AltBits.CalType) == AltBits.CalType)) //13-08-12 added by Falcas
                     {
-                        ((F16Altimeter) _altimeterRenderer).Options.PressureAltitudeUnits =
+                        ((F16Altimeter)_renderers._altimeterRenderer).Options.PressureAltitudeUnits =
                             F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury;
                     }
                     else
                     {
-                        ((F16Altimeter) _altimeterRenderer).Options.PressureAltitudeUnits =
+                        ((F16Altimeter)_renderers._altimeterRenderer).Options.PressureAltitudeUnits =
                             F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars;
                     }
                     //((F16Altimeter)_altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude (- fromFalcon.z,((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure, ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits == F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury) ;
-                    ((F16Altimeter) _altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
+                    ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
                     if (fromFalcon.VersionNum >= 111)
                     {
-                        ((F16Altimeter) _altimeterRenderer).InstrumentState.BarometricPressure =
+                        ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.BarometricPressure =
                             fromFalcon.AltCalReading; //12-08-12 added by Falcas
-                        ((F16Altimeter) _altimeterRenderer).InstrumentState.PneumaticModeFlag = ((altbits &
+                        ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.PneumaticModeFlag = ((altbits &
                                                                                                   AltBits.PneuFlag) ==
                                                                                                  AltBits.PneuFlag);
                             //12-08-12 added by Falcas
                     }
                     else
                     {
-                        ((F16Altimeter) _altimeterRenderer).InstrumentState.BarometricPressure = 2992f;
+                        ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.BarometricPressure = 2992f;
                             //12-08-12 added by Falcas
-                        ((F16Altimeter) _altimeterRenderer).InstrumentState.PneumaticModeFlag = false;
+                        ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.PneumaticModeFlag = false;
                             //12-08-12 added by Falcas
-                        ((F16Altimeter) _altimeterRenderer).Options.PressureAltitudeUnits =
+                        ((F16Altimeter)_renderers._altimeterRenderer).Options.PressureAltitudeUnits =
                             F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury; //12-08-12 added by Falcas
                     }
                 }
                 else
                 {
                     //((F16Altimeter)_altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude(-fromFalcon.z, ((F16Altimeter)_altimeterRenderer).InstrumentState.BarometricPressure, ((F16Altimeter)_altimeterRenderer).Options.PressureAltitudeUnits == F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury);
-                    ((F16Altimeter) _altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
-                    ((F16Altimeter) _altimeterRenderer).InstrumentState.BarometricPressure = 2992f;
+                    ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
+                    ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.BarometricPressure = 2992f;
                         //12-08-12 added by Falcas
-                    ((F16Altimeter) _altimeterRenderer).InstrumentState.PneumaticModeFlag = false;
+                    ((F16Altimeter)_renderers._altimeterRenderer).InstrumentState.PneumaticModeFlag = false;
                         //12-08-12 added by Falcas
-                    ((F16Altimeter) _altimeterRenderer).Options.PressureAltitudeUnits =
+                    ((F16Altimeter)_renderers._altimeterRenderer).Options.PressureAltitudeUnits =
                         F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury; //12-08-12 added by Falcas
                 }
                 //*************************
 
                 //*** UPDATE ASI ***
-                ((F16AirspeedIndicator) _asiRenderer).InstrumentState.AirspeedKnots = fromFalcon.kias;
-                ((F16AirspeedIndicator) _asiRenderer).InstrumentState.MachNumber = fromFalcon.mach;
+                ((F16AirspeedIndicator)_renderers._asiRenderer).InstrumentState.AirspeedKnots = fromFalcon.kias;
+                ((F16AirspeedIndicator)_renderers._asiRenderer).InstrumentState.MachNumber = fromFalcon.mach;
                 //*************************
 
                 //**** UPDATE COMPASS
-                ((F16Compass) _compassRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
+                ((F16Compass)_renderers._compassRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
                                                                                           (fromFalcon.yaw/
                                                                                            Constants.RADIANS_PER_DEGREE))%
                                                                                          360;
@@ -7432,54 +7381,54 @@ namespace MFDExtractor
                 //**** UPDATE AOA INDICATOR***
                 if (((hsibits & HsiBits.AOA) == HsiBits.AOA))
                 {
-                    ((F16AngleOfAttackIndicator) _aoaIndicatorRenderer).InstrumentState.OffFlag = true;
-                    ((F16AngleOfAttackIndicator) _aoaIndicatorRenderer).InstrumentState.AngleOfAttackDegrees = 0;
+                    ((F16AngleOfAttackIndicator)_renderers._aoaIndicatorRenderer).InstrumentState.OffFlag = true;
+                    ((F16AngleOfAttackIndicator)_renderers._aoaIndicatorRenderer).InstrumentState.AngleOfAttackDegrees = 0;
                 }
                 else
                 {
-                    ((F16AngleOfAttackIndicator) _aoaIndicatorRenderer).InstrumentState.OffFlag = false;
-                    ((F16AngleOfAttackIndicator) _aoaIndicatorRenderer).InstrumentState.AngleOfAttackDegrees =
+                    ((F16AngleOfAttackIndicator)_renderers._aoaIndicatorRenderer).InstrumentState.OffFlag = false;
+                    ((F16AngleOfAttackIndicator)_renderers._aoaIndicatorRenderer).InstrumentState.AngleOfAttackDegrees =
                         fromFalcon.alpha;
                 }
                 //*******************
 
                 //**** UPDATE AOA INDEXER***
-                float aoa = ((F16AngleOfAttackIndicator) _aoaIndicatorRenderer).InstrumentState.AngleOfAttackDegrees;
-                ((F16AngleOfAttackIndexer) _aoaIndexerRenderer).InstrumentState.AoaBelow = ((fromFalcon.lightBits &
+                float aoa = ((F16AngleOfAttackIndicator)_renderers._aoaIndicatorRenderer).InstrumentState.AngleOfAttackDegrees;
+                ((F16AngleOfAttackIndexer)_renderers._aoaIndexerRenderer).InstrumentState.AoaBelow = ((fromFalcon.lightBits &
                                                                                              (int) LightBits.AOABelow) ==
                                                                                             (int) LightBits.AOABelow);
-                ((F16AngleOfAttackIndexer) _aoaIndexerRenderer).InstrumentState.AoaOn = ((fromFalcon.lightBits &
+                ((F16AngleOfAttackIndexer)_renderers._aoaIndexerRenderer).InstrumentState.AoaOn = ((fromFalcon.lightBits &
                                                                                           (int) LightBits.AOAOn) ==
                                                                                          (int) LightBits.AOAOn);
-                ((F16AngleOfAttackIndexer) _aoaIndexerRenderer).InstrumentState.AoaAbove = ((fromFalcon.lightBits &
+                ((F16AngleOfAttackIndexer)_renderers._aoaIndexerRenderer).InstrumentState.AoaAbove = ((fromFalcon.lightBits &
                                                                                              (int) LightBits.AOAAbove) ==
                                                                                             (int) LightBits.AOAAbove);
                 //**************************
 
 
                 //***** UPDATE ADI *****
-                ((F16ADI) _adiRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
-                ((F16ADI) _adiRenderer).InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
-                ((F16ADI) _adiRenderer).InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
-                ((F16ADI) _adiRenderer).InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
+                ((F16ADI)_renderers._adiRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
+                ((F16ADI)_renderers._adiRenderer).InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
+                ((F16ADI)_renderers._adiRenderer).InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
+                ((F16ADI)_renderers._adiRenderer).InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
                 //**********************
 
                 //***** UPDATE BACKUP ADI *****
-                ((F16StandbyADI) _backupAdiRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.BUP_ADI_OFF) ==
+                ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.BUP_ADI_OFF) ==
                                                                                 HsiBits.BUP_ADI_OFF);
                 //**********************
 
                 //***** UPDATE HSI ***** 
-                ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==
+                ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==
                                                                                             HsiBits.HSI_OFF);
-                ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
+                ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
                                                                                                            (fromFalcon
                                                                                                                 .yaw/
                                                                                                             Constants
                                                                                                                 .RADIANS_PER_DEGREE))%
                                                                                                           360;
-                ((F16EHSI) _ehsiRenderer).InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
-                ((F16EHSI) _ehsiRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
+                ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
+                ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
                                                                                     (fromFalcon.yaw/
                                                                                      Constants.RADIANS_PER_DEGREE))%360;
                 //**********************
@@ -7487,17 +7436,17 @@ namespace MFDExtractor
                 if (((hsibits & HsiBits.BUP_ADI_OFF) == HsiBits.BUP_ADI_OFF))
                 {
                     //if the standby ADI is off
-                    ((F16StandbyADI) _backupAdiRenderer).InstrumentState.PitchDegrees = 0;
-                    ((F16StandbyADI) _backupAdiRenderer).InstrumentState.RollDegrees = 0;
-                    ((F16StandbyADI) _backupAdiRenderer).InstrumentState.OffFlag = true;
+                    ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.PitchDegrees = 0;
+                    ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.RollDegrees = 0;
+                    ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.OffFlag = true;
                 }
                 else
                 {
-                    ((F16StandbyADI) _backupAdiRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch/
+                    ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch /
                                                                                           Constants.RADIANS_PER_DEGREE));
-                    ((F16StandbyADI) _backupAdiRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll/
+                    ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll /
                                                                                          Constants.RADIANS_PER_DEGREE));
-                    ((F16StandbyADI) _backupAdiRenderer).InstrumentState.OffFlag = false;
+                    ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.OffFlag = false;
                 }
 
 
@@ -7505,27 +7454,27 @@ namespace MFDExtractor
                 if (((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF))
                 {
                     //if the ADI is off
-                    ((F16ADI) _adiRenderer).InstrumentState.PitchDegrees = 0;
-                    ((F16ADI) _adiRenderer).InstrumentState.RollDegrees = 0;
-                    ((F16ADI) _adiRenderer).InstrumentState.GlideslopeDeviationDegrees = 0;
-                    ((F16ADI) _adiRenderer).InstrumentState.LocalizerDeviationDegrees = 0;
-                    ((F16ADI) _adiRenderer).InstrumentState.ShowCommandBars = false;
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.PitchDegrees = 0;
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.RollDegrees = 0;
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.GlideslopeDeviationDegrees = 0;
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.LocalizerDeviationDegrees = 0;
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.ShowCommandBars = false;
 
-                    ((F16ISIS) _isisRenderer).InstrumentState.PitchDegrees = 0;
-                    ((F16ISIS) _isisRenderer).InstrumentState.RollDegrees = 0;
-                    ((F16ISIS) _isisRenderer).InstrumentState.GlideslopeDeviationDegrees = 0;
-                    ((F16ISIS) _isisRenderer).InstrumentState.LocalizerDeviationDegrees = 0;
-                    ((F16ISIS) _isisRenderer).InstrumentState.ShowCommandBars = false;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.PitchDegrees = 0;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.RollDegrees = 0;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.GlideslopeDeviationDegrees = 0;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.LocalizerDeviationDegrees = 0;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.ShowCommandBars = false;
                 }
                 else
                 {
-                    ((F16ADI) _adiRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch/
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch /
                                                                              Constants.RADIANS_PER_DEGREE));
-                    ((F16ADI) _adiRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll/Constants.RADIANS_PER_DEGREE));
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll / Constants.RADIANS_PER_DEGREE));
 
-                    ((F16ISIS) _isisRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch/
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.PitchDegrees = ((fromFalcon.pitch /
                                                                                Constants.RADIANS_PER_DEGREE));
-                    ((F16ISIS) _isisRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll/
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll /
                                                                               Constants.RADIANS_PER_DEGREE));
 
                     //The following floating data is also crossed up in the flightData.h File:
@@ -7540,14 +7489,14 @@ namespace MFDExtractor
                     {
                         commandBarsOn = false;
                     }
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = true;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = true;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = true;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = true;
 
                     //if the TOTALFLAGS flag is off, then we're most likely in NAV mode
                     if ((hsibits & HsiBits.TotalFlags) != HsiBits.TotalFlags)
                     {
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = false;
-                        ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = false;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = false;
+                        ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = false;
                     }
                         //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
                     else if (
@@ -7560,8 +7509,8 @@ namespace MFDExtractor
                     {
                         if (!commandBarsOn) //better make sure we're not in any ILS mode too though
                         {
-                            ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = true;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = true;
+                            ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = true;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = true;
                         }
                     }
 
@@ -7573,25 +7522,25 @@ namespace MFDExtractor
                         ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
                         )
                     {
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = false;
-                        ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = false;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = false;
+                        ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = false;
                     }
                     if (commandBarsOn)
                     {
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = false;
-                        ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = false;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = false;
+                        ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = false;
                     }
 
-                    ((F16ADI) _adiRenderer).InstrumentState.ShowCommandBars = commandBarsOn;
-                    ((F16ADI) _adiRenderer).InstrumentState.GlideslopeDeviationDegrees = fromFalcon.AdiIlsVerPos/
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.ShowCommandBars = commandBarsOn;
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.GlideslopeDeviationDegrees = fromFalcon.AdiIlsVerPos /
                                                                                          Constants.RADIANS_PER_DEGREE;
-                    ((F16ADI) _adiRenderer).InstrumentState.LocalizerDeviationDegrees = fromFalcon.AdiIlsHorPos/
+                    ((F16ADI)_renderers._adiRenderer).InstrumentState.LocalizerDeviationDegrees = fromFalcon.AdiIlsHorPos /
                                                                                         Constants.RADIANS_PER_DEGREE;
 
-                    ((F16ISIS) _isisRenderer).InstrumentState.ShowCommandBars = commandBarsOn;
-                    ((F16ISIS) _isisRenderer).InstrumentState.GlideslopeDeviationDegrees = fromFalcon.AdiIlsVerPos/
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.ShowCommandBars = commandBarsOn;
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.GlideslopeDeviationDegrees = fromFalcon.AdiIlsVerPos /
                                                                                            Constants.RADIANS_PER_DEGREE;
-                    ((F16ISIS) _isisRenderer).InstrumentState.LocalizerDeviationDegrees = fromFalcon.AdiIlsHorPos/
+                    ((F16ISIS)_renderers._isisRenderer).InstrumentState.LocalizerDeviationDegrees = fromFalcon.AdiIlsHorPos /
                                                                                           Constants.RADIANS_PER_DEGREE;
                 }
 
@@ -7606,91 +7555,89 @@ namespace MFDExtractor
                     switch (bmsNavMode)
                     {
                         case 0: //NavModes.PlsTcn:
-                            ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = false;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = false;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode =
+                            ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = false;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = false;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.InstrumentMode =
                                 F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsTacan;
                             break;
                         case 1: //NavModes.Tcn:
-                            ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = true;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = true;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode =
+                            ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = true;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = true;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.InstrumentMode =
                                 F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan;
-                            ((F16ADI) _adiRenderer).InstrumentState.ShowCommandBars = false;
-                            ((F16ISIS) _isisRenderer).InstrumentState.ShowCommandBars = false;
+                            ((F16ADI)_renderers._adiRenderer).InstrumentState.ShowCommandBars = false;
+                            ((F16ISIS)_renderers._isisRenderer).InstrumentState.ShowCommandBars = false;
                             break;
                         case 2: //NavModes.Nav:
-                            ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = false;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = false;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode =
+                            ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = false;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = false;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.InstrumentMode =
                                 F16EHSI.F16EHSIInstrumentState.InstrumentModes.Nav;
-                            ((F16ADI) _adiRenderer).InstrumentState.ShowCommandBars = false;
-                            ((F16ISIS) _isisRenderer).InstrumentState.ShowCommandBars = false;
+                            ((F16ADI)_renderers._adiRenderer).InstrumentState.ShowCommandBars = false;
+                            ((F16ISIS)_renderers._isisRenderer).InstrumentState.ShowCommandBars = false;
                             break;
                         case 3: //NavModes.PlsNav:
-                            ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ShowToFromFlag = false;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.ShowToFromFlag = false;
-                            ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode =
+                            ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ShowToFromFlag = false;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowToFromFlag = false;
+                            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.InstrumentMode =
                                 F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav;
-                            break;
-                        default:
                             break;
                     }
                 }
                 else
                 {
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.InstrumentMode =
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.InstrumentMode =
                         F16EHSI.F16EHSIInstrumentState.InstrumentModes.Unknown;
                 }
                 if (((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF))
                 {
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DmeInvalidFlag = true;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DeviationInvalidFlag = false;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationLimitDegrees = 0;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationDegrees = 0;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.BearingToBeaconDegrees = 0;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles = 0;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DmeInvalidFlag = true;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DeviationInvalidFlag = false;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.CourseDeviationLimitDegrees = 0;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.CourseDeviationDegrees = 0;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.BearingToBeaconDegrees = 0;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles = 0;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DmeInvalidFlag = true;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DeviationInvalidFlag = false;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationLimitDegrees = 0;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationDegrees = 0;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.BearingToBeaconDegrees = 0;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles = 0;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DmeInvalidFlag = true;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DeviationInvalidFlag = false;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.CourseDeviationLimitDegrees = 0;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.CourseDeviationDegrees = 0;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.BearingToBeaconDegrees = 0;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles = 0;
                 }
                 else
                 {
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DmeInvalidFlag = ((hsibits &
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DmeInvalidFlag = ((hsibits &
                                                                                                         HsiBits
                                                                                                             .CourseWarning) ==
                                                                                                        HsiBits
                                                                                                            .CourseWarning);
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DeviationInvalidFlag = ((hsibits &
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DeviationInvalidFlag = ((hsibits &
                                                                                                               HsiBits
                                                                                                                   .IlsWarning) ==
                                                                                                              HsiBits
                                                                                                                  .IlsWarning);
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationLimitDegrees =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationLimitDegrees =
                         fromFalcon.deviationLimit;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationDegrees =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationDegrees =
                         fromFalcon.courseDeviation;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DesiredCourseDegrees =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DesiredCourseDegrees =
                         (int) fromFalcon.desiredCourse;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DesiredHeadingDegrees =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DesiredHeadingDegrees =
                         (int) fromFalcon.desiredHeading;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.BearingToBeaconDegrees =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.BearingToBeaconDegrees =
                         fromFalcon.bearingToBeacon;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles =
                         fromFalcon.distanceToBeacon;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DmeInvalidFlag = ((hsibits & HsiBits.CourseWarning) ==
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DmeInvalidFlag = ((hsibits & HsiBits.CourseWarning) ==
                                                                                 HsiBits.CourseWarning);
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DeviationInvalidFlag = ((hsibits & HsiBits.IlsWarning) ==
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DeviationInvalidFlag = ((hsibits & HsiBits.IlsWarning) ==
                                                                                       HsiBits.IlsWarning);
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.CourseDeviationLimitDegrees = fromFalcon.deviationLimit;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.CourseDeviationDegrees = fromFalcon.courseDeviation;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DesiredCourseDegrees = (int) fromFalcon.desiredCourse;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DesiredHeadingDegrees = (int) fromFalcon.desiredHeading;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.BearingToBeaconDegrees = fromFalcon.bearingToBeacon;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles =
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.CourseDeviationLimitDegrees = fromFalcon.deviationLimit;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.CourseDeviationDegrees = fromFalcon.courseDeviation;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DesiredCourseDegrees = (int)fromFalcon.desiredCourse;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DesiredHeadingDegrees = (int)fromFalcon.desiredHeading;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.BearingToBeaconDegrees = fromFalcon.bearingToBeacon;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.DistanceToBeaconNauticalMiles =
                         fromFalcon.distanceToBeacon;
                 }
 
@@ -7698,13 +7645,13 @@ namespace MFDExtractor
                 {
                     //compute course deviation and TO/FROM
                     float deviationLimitDecimalDegrees =
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationLimitDegrees%180;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationLimitDegrees % 180;
                     float desiredCourseInDegrees =
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.DesiredCourseDegrees;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.DesiredCourseDegrees;
                     float courseDeviationDecimalDegrees =
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationDegrees;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationDegrees;
                     float bearingToBeaconInDegrees =
-                        ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.BearingToBeaconDegrees;
+                        ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.BearingToBeaconDegrees;
                     float myCourseDeviationDecimalDegrees = Common.Math.Util.AngleDelta(desiredCourseInDegrees,
                                                                                         bearingToBeaconInDegrees);
                     bool toFlag = false;
@@ -7738,13 +7685,13 @@ namespace MFDExtractor
                         courseDeviationDecimalDegrees = Math.Sign(courseDeviationDecimalDegrees)*
                                                         deviationLimitDecimalDegrees;
 
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.CourseDeviationDegrees =
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.CourseDeviationDegrees =
                         courseDeviationDecimalDegrees;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.ToFlag = toFlag;
-                    ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.FromFlag = fromFlag;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.CourseDeviationDegrees = courseDeviationDecimalDegrees;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.ToFlag = toFlag;
-                    ((F16EHSI) _ehsiRenderer).InstrumentState.FromFlag = fromFlag;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.ToFlag = toFlag;
+                    ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.FromFlag = fromFlag;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.CourseDeviationDegrees = courseDeviationDecimalDegrees;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ToFlag = toFlag;
+                    ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.FromFlag = fromFlag;
                 }
 
                 //**************************
@@ -7762,46 +7709,46 @@ namespace MFDExtractor
                 bool epuGen = ((fromFalcon.lightBits3 & (int) LightBits3.EpuGen) == (int) LightBits3.EpuGen);
                 bool epuOn = ((fromFalcon.lightBits2 & (int) LightBits2.EPUOn) == (int) LightBits2.EPUOn);
                 float epuFuel = fromFalcon.epuFuel;
-                ((F16HydraulicPressureGauge) _hydARenderer).InstrumentState.HydraulicPressurePoundsPerSquareInch =
+                ((F16HydraulicPressureGauge)_renderers._hydARenderer).InstrumentState.HydraulicPressurePoundsPerSquareInch =
                     NonImplementedGaugeCalculations.HydA(rpm, mainGen, stbyGen, epuGen, epuOn, epuFuel);
-                ((F16HydraulicPressureGauge) _hydBRenderer).InstrumentState.HydraulicPressurePoundsPerSquareInch =
+                ((F16HydraulicPressureGauge)_renderers._hydBRenderer).InstrumentState.HydraulicPressurePoundsPerSquareInch =
                     NonImplementedGaugeCalculations.HydB(rpm, mainGen, stbyGen, epuGen, epuOn, epuFuel);
                 //**************************
 
                 //**  UPDATE CABIN PRESSURE ALTITUDE INDICATOR****
                 float z = fromFalcon.z;
                 float origCabinAlt =
-                    ((F16CabinPressureAltitudeIndicator) _cabinPressRenderer).InstrumentState.CabinPressureAltitudeFeet;
+                    ((F16CabinPressureAltitudeIndicator)_renderers._cabinPressRenderer).InstrumentState.CabinPressureAltitudeFeet;
                 bool pressurization = ((fromFalcon.lightBits & (int) LightBits.CabinPress) == (int) LightBits.CabinPress);
-                ((F16CabinPressureAltitudeIndicator) _cabinPressRenderer).InstrumentState.CabinPressureAltitudeFeet =
+                ((F16CabinPressureAltitudeIndicator)_renderers._cabinPressRenderer).InstrumentState.CabinPressureAltitudeFeet =
                     NonImplementedGaugeCalculations.CabinAlt(origCabinAlt, z, pressurization);
                 //**************************
 
                 //**  UPDATE ROLL TRIM INDICATOR****
                 float rolltrim = fromFalcon.TrimRoll;
-                ((F16RollTrimIndicator) _rollTrimRenderer).InstrumentState.RollTrimPercent = rolltrim*2.0f*100.0f;
+                ((F16RollTrimIndicator)_renderers._rollTrimRenderer).InstrumentState.RollTrimPercent = rolltrim * 2.0f * 100.0f;
                 //**************************
 
                 //**  UPDATE PITCH TRIM INDICATOR****
                 float pitchTrim = fromFalcon.TrimPitch;
-                ((F16PitchTrimIndicator) _pitchTrimRenderer).InstrumentState.PitchTrimPercent = pitchTrim*2.0f*100.0f;
+                ((F16PitchTrimIndicator)_renderers._pitchTrimRenderer).InstrumentState.PitchTrimPercent = pitchTrim * 2.0f * 100.0f;
                 //**************************
 
 
                 //**  UPDATE RWR ****
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.MagneticHeadingDegrees = (360 +
                                                                                                (fromFalcon.yaw/
                                                                                                 Constants
                                                                                                     .RADIANS_PER_DEGREE))%
                                                                                               360;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll/
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.RollDegrees = ((fromFalcon.roll /
                                                                                      Constants.RADIANS_PER_DEGREE));
                 int rwrObjectCount = fromFalcon.RwrObjectCount;
                 if (fromFalcon.RWRsymbol != null)
                 {
                     var blips =
                         new F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState.Blip[fromFalcon.RWRsymbol.Length];
-                    ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Blips = blips;
+                    ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Blips = blips;
                     //for (int i = 0; i < rwrObjectCount; i++)
                     if (fromFalcon.RWRsymbol != null)
                     {
@@ -7838,20 +7785,20 @@ namespace MFDExtractor
                         }
                     }
                 }
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Activity = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Activity = ((fromFalcon.lightBits2 &
                                                                                   (int) LightBits2.AuxAct) ==
                                                                                  (int) LightBits2.AuxAct);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.ChaffCount = (int) fromFalcon.ChaffCount;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.ChaffLow = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.ChaffCount = (int)fromFalcon.ChaffCount;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.ChaffLow = ((fromFalcon.lightBits2 &
                                                                                   (int) LightBits2.ChaffLo) ==
                                                                                  (int) LightBits2.ChaffLo);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.EWSDegraded = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.EWSDegraded = ((fromFalcon.lightBits2 &
                                                                                      (int) LightBits2.Degr) ==
                                                                                     (int) LightBits2.Degr);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.EWSDispenseReady = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.EWSDispenseReady = ((fromFalcon.lightBits2 &
                                                                                           (int) LightBits2.Rdy) ==
                                                                                          (int) LightBits2.Rdy);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.EWSNoGo = (
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.EWSNoGo = (
                                                                                    ((fromFalcon.lightBits2 &
                                                                                      (int) LightBits2.NoGo) ==
                                                                                     (int) LightBits2.NoGo)
@@ -7860,7 +7807,7 @@ namespace MFDExtractor
                                                                                      (int) LightBits2.Degr) ==
                                                                                     (int) LightBits2.Degr)
                                                                                );
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.EWSGo =
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.EWSGo =
                     (
                         ((fromFalcon.lightBits2 & (int) LightBits2.Go) == (int) LightBits2.Go)
                         &&
@@ -7874,39 +7821,39 @@ namespace MFDExtractor
                     );
 
 
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.FlareCount = (int) fromFalcon.FlareCount;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.FlareLow = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.FlareCount = (int)fromFalcon.FlareCount;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.FlareLow = ((fromFalcon.lightBits2 &
                                                                                   (int) LightBits2.FlareLo) ==
                                                                                  (int) LightBits2.FlareLo);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Handoff = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Handoff = ((fromFalcon.lightBits2 &
                                                                                  (int) LightBits2.HandOff) ==
                                                                                 (int) LightBits2.HandOff);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Launch = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Launch = ((fromFalcon.lightBits2 &
                                                                                 (int) LightBits2.Launch) ==
                                                                                (int) LightBits2.Launch);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.LowAltitudeMode = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.LowAltitudeMode = ((fromFalcon.lightBits2 &
                                                                                          (int) LightBits2.AuxLow) ==
                                                                                         (int) LightBits2.AuxLow);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.NavalMode = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.NavalMode = ((fromFalcon.lightBits2 &
                                                                                    (int) LightBits2.Naval) ==
                                                                                   (int) LightBits2.Naval);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Other1Count = 0;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Other1Low = true;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Other2Count = 0;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.Other2Low = true;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.RWRPowerOn = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Other1Count = 0;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Other1Low = true;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Other2Count = 0;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.Other2Low = true;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.RWRPowerOn = ((fromFalcon.lightBits2 &
                                                                                     (int) LightBits2.AuxPwr) ==
                                                                                    (int) LightBits2.AuxPwr);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.PriorityMode = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.PriorityMode = ((fromFalcon.lightBits2 &
                                                                                       (int) LightBits2.PriMode) ==
                                                                                      (int) LightBits2.PriMode);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.SearchMode = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.SearchMode = ((fromFalcon.lightBits2 &
                                                                                     (int) LightBits2.AuxSrch) ==
                                                                                    (int) LightBits2.AuxSrch);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.SeparateMode = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.SeparateMode = ((fromFalcon.lightBits2 &
                                                                                       (int) LightBits2.TgtSep) ==
                                                                                      (int) LightBits2.TgtSep);
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.UnknownThreatScanMode = ((fromFalcon.lightBits2 &
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.UnknownThreatScanMode = ((fromFalcon.lightBits2 &
                                                                                                (int) LightBits2.Unk) ==
                                                                                               (int) LightBits2.Unk);
                 //********************
@@ -7914,76 +7861,76 @@ namespace MFDExtractor
                 //** UPDATE CAUTION PANEL
                 //TODO: implement all-lights-on when test is detected
                 F16CautionPanel.F16CautionPanelInstrumentState myState =
-                    ((F16CautionPanel) _cautionPanelRenderer).InstrumentState;
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.AftFuelLow = ((fromFalcon.lightBits2 &
+                    ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState;
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.AftFuelLow = ((fromFalcon.lightBits2 &
                                                                                          (int) LightBits2.AftFuelLow) ==
                                                                                         (int) LightBits2.AftFuelLow);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.AntiSkid = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.AntiSkid = ((fromFalcon.lightBits2 &
                                                                                        (int) LightBits2.ANTI_SKID) ==
                                                                                       (int) LightBits2.ANTI_SKID);
                 //((F16CautionPanel)_cautionPanelRenderer).InstrumentState.ATFNotEngaged = ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.TFR_ENGAGED) == (int)F4SharedMem.Headers.LightBits2.TFR_ENGAGED);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.AvionicsFault = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.AvionicsFault = ((fromFalcon.lightBits &
                                                                                             (int) LightBits.Avionics) ==
                                                                                            (int) LightBits.Avionics);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.BUC = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.BUC = ((fromFalcon.lightBits2 &
                                                                                   (int) LightBits2.BUC) ==
                                                                                  (int) LightBits2.BUC);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.CabinPress = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.CabinPress = ((fromFalcon.lightBits &
                                                                                          (int) LightBits.CabinPress) ==
                                                                                         (int) LightBits.CabinPress);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.CADC = ((fromFalcon.lightBits3 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.CADC = ((fromFalcon.lightBits3 &
                                                                                    (int) Bms4LightBits3.cadc) ==
                                                                                   (int) Bms4LightBits3.cadc);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.ECM = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.ECM = ((fromFalcon.lightBits &
                                                                                   (int) LightBits.ECM) ==
                                                                                  (int) LightBits.ECM);
-                //((F16CautionPanel)_cautionPanelRenderer).InstrumentState.EEC = ((fromFalcon.lightBits & (int)F4SharedMem.Headers.LightBits.ee) == (int)F4SharedMem.Headers.LightBits.ECM);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.ElecSys = ((fromFalcon.lightBits3 &
+                //((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.EEC = ((fromFalcon.lightBits & (int)F4SharedMem.Headers.LightBits.ee) == (int)F4SharedMem.Headers.LightBits.ECM);
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.ElecSys = ((fromFalcon.lightBits3 &
                                                                                       (int) LightBits3.Elec_Fault) ==
                                                                                      (int) LightBits3.Elec_Fault);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.EngineFault = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.EngineFault = ((fromFalcon.lightBits &
                                                                                           (int) LightBits.EngineFault) ==
                                                                                          (int) LightBits.EngineFault);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.EquipHot = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.EquipHot = ((fromFalcon.lightBits &
                                                                                        (int) LightBits.EQUIP_HOT) ==
                                                                                       (int) LightBits.EQUIP_HOT);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.FLCSFault = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.FLCSFault = ((fromFalcon.lightBits &
                                                                                         (int) LightBits.FltControlSys) ==
                                                                                        (int) LightBits.FltControlSys);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.FuelOilHot = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.FuelOilHot = ((fromFalcon.lightBits2 &
                                                                                          (int) LightBits2.FUEL_OIL_HOT) ==
                                                                                         (int) LightBits2.FUEL_OIL_HOT);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.FwdFuelLow = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.FwdFuelLow = ((fromFalcon.lightBits2 &
                                                                                          (int) LightBits2.FwdFuelLow) ==
                                                                                         (int) LightBits2.FwdFuelLow);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.Hook = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.Hook = ((fromFalcon.lightBits &
                                                                                    (int) LightBits.Hook) ==
                                                                                   (int) LightBits.Hook);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.IFF = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.IFF = ((fromFalcon.lightBits &
                                                                                   (int) LightBits.IFF) ==
                                                                                  (int) LightBits.IFF);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.NWSFail = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.NWSFail = ((fromFalcon.lightBits &
                                                                                       (int) LightBits.NWSFail) ==
                                                                                      (int) LightBits.NWSFail);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.Overheat = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.Overheat = ((fromFalcon.lightBits &
                                                                                        (int) LightBits.Overheat) ==
                                                                                       (int) LightBits.Overheat);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.OxyLow = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.OxyLow = ((fromFalcon.lightBits2 &
                                                                                      (int) LightBits2.OXY_LOW) ==
                                                                                     (int) LightBits2.OXY_LOW);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.ProbeHeat = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.ProbeHeat = ((fromFalcon.lightBits2 &
                                                                                         (int) LightBits2.PROBEHEAT) ==
                                                                                        (int) LightBits2.PROBEHEAT);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.RadarAlt = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.RadarAlt = ((fromFalcon.lightBits &
                                                                                        (int) LightBits.RadarAlt) ==
                                                                                       (int) LightBits.RadarAlt);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.SeatNotArmed = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.SeatNotArmed = ((fromFalcon.lightBits2 &
                                                                                            (int) LightBits2.SEAT_ARM) ==
                                                                                           (int) LightBits2.SEAT_ARM);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.SEC = ((fromFalcon.lightBits2 &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.SEC = ((fromFalcon.lightBits2 &
                                                                                   (int) LightBits2.SEC) ==
                                                                                  (int) LightBits2.SEC);
-                ((F16CautionPanel) _cautionPanelRenderer).InstrumentState.StoresConfig = ((fromFalcon.lightBits &
+                ((F16CautionPanel)_renderers._cautionPanelRenderer).InstrumentState.StoresConfig = ((fromFalcon.lightBits &
                                                                                            (int) LightBits.CONFIG) ==
                                                                                           (int) LightBits.CONFIG);
 
@@ -7992,21 +7939,21 @@ namespace MFDExtractor
                 //***********************
 
                 //**  UPDATE CMDS PANEL
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.Degraded = ((fromFalcon.lightBits2 &
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.Degraded = ((fromFalcon.lightBits2 &
                                                                                  (int) LightBits2.Degr) ==
                                                                                 (int) LightBits2.Degr);
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.ChaffCount = (int) fromFalcon.ChaffCount;
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.ChaffLow = ((fromFalcon.lightBits2 &
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.ChaffCount = (int)fromFalcon.ChaffCount;
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.ChaffLow = ((fromFalcon.lightBits2 &
                                                                                  (int) LightBits2.ChaffLo) ==
                                                                                 (int) LightBits2.ChaffLo);
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.DispenseReady = ((fromFalcon.lightBits2 &
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.DispenseReady = ((fromFalcon.lightBits2 &
                                                                                       (int) LightBits2.Rdy) ==
                                                                                      (int) LightBits2.Rdy);
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.FlareCount = (int) fromFalcon.FlareCount;
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.FlareLow = ((fromFalcon.lightBits2 &
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.FlareCount = (int)fromFalcon.FlareCount;
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.FlareLow = ((fromFalcon.lightBits2 &
                                                                                  (int) LightBits2.FlareLo) ==
                                                                                 (int) LightBits2.FlareLo);
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.Go =
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.Go =
                     (
                         ((fromFalcon.lightBits2 & (int) LightBits2.Go) == (int) LightBits2.Go)
                     //Falcas 04/09/2012 to match what you see in BMS
@@ -8020,44 +7967,44 @@ namespace MFDExtractor
                     //)
                     );
 
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.NoGo =
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.NoGo =
                     (
                         ((fromFalcon.lightBits2 & (int) LightBits2.NoGo) == (int) LightBits2.NoGo)
                     //Falcas 04/09/2012 to match what you see in BMS
                     //         ||
                     //((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
                     );
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.Other1Count = 0;
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.Other1Low = true;
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.Other2Count = 0;
-                ((F16CMDSPanel) _cmdsPanelRenderer).InstrumentState.Other2Low = true;
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.Other1Count = 0;
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.Other1Low = true;
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.Other2Count = 0;
+                ((F16CMDSPanel)_renderers._cmdsPanelRenderer).InstrumentState.Other2Low = true;
                 //**********************
 
                 //** UPDATE DED 
                 if (fromFalcon.DEDLines != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line1 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line1 =
                         Encoding.Default.GetBytes(fromFalcon.DEDLines[0] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line2 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line2 =
                         Encoding.Default.GetBytes(fromFalcon.DEDLines[1] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line3 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line3 =
                         Encoding.Default.GetBytes(fromFalcon.DEDLines[2] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line4 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line4 =
                         Encoding.Default.GetBytes(fromFalcon.DEDLines[3] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line5 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line5 =
                         Encoding.Default.GetBytes(fromFalcon.DEDLines[4] ?? "");
                 }
                 if (fromFalcon.Invert != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line1Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line1Invert =
                         Encoding.Default.GetBytes(fromFalcon.Invert[0] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line2Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line2Invert =
                         Encoding.Default.GetBytes(fromFalcon.Invert[1] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line3Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line3Invert =
                         Encoding.Default.GetBytes(fromFalcon.Invert[2] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line4Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line4Invert =
                         Encoding.Default.GetBytes(fromFalcon.Invert[3] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _dedRenderer).InstrumentState.Line5Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._dedRenderer).InstrumentState.Line5Invert =
                         Encoding.Default.GetBytes(fromFalcon.Invert[4] ?? "");
                 }
                 //*************************
@@ -8066,46 +8013,46 @@ namespace MFDExtractor
                 //** UPDATE PFL
                 if (fromFalcon.PFLLines != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line1 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line1 =
                         Encoding.Default.GetBytes(fromFalcon.PFLLines[0] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line2 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line2 =
                         Encoding.Default.GetBytes(fromFalcon.PFLLines[1] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line3 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line3 =
                         Encoding.Default.GetBytes(fromFalcon.PFLLines[2] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line4 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line4 =
                         Encoding.Default.GetBytes(fromFalcon.PFLLines[3] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line5 =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line5 =
                         Encoding.Default.GetBytes(fromFalcon.PFLLines[4] ?? "");
                 }
                 if (fromFalcon.PFLInvert != null)
                 {
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line1Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line1Invert =
                         Encoding.Default.GetBytes(fromFalcon.PFLInvert[0] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line2Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line2Invert =
                         Encoding.Default.GetBytes(fromFalcon.PFLInvert[1] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line3Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line3Invert =
                         Encoding.Default.GetBytes(fromFalcon.PFLInvert[2] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line4Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line4Invert =
                         Encoding.Default.GetBytes(fromFalcon.PFLInvert[3] ?? "");
-                    ((F16DataEntryDisplayPilotFaultList) _pflRenderer).InstrumentState.Line5Invert =
+                    ((F16DataEntryDisplayPilotFaultList)_renderers._pflRenderer).InstrumentState.Line5Invert =
                         Encoding.Default.GetBytes(fromFalcon.PFLInvert[4] ?? "");
                 }
                 //*************************
 
                 //** UPDATE EPU FUEL
-                ((F16EPUFuelGauge) _epuFuelRenderer).InstrumentState.FuelRemainingPercent = fromFalcon.epuFuel;
+                ((F16EPUFuelGauge)_renderers._epuFuelRenderer).InstrumentState.FuelRemainingPercent = fromFalcon.epuFuel;
                 //******************
 
                 //** UPDATE FUEL FLOW
-                ((F16FuelFlow) _fuelFlowRenderer).InstrumentState.FuelFlowPoundsPerHour = fromFalcon.fuelFlow;
+                ((F16FuelFlow)_renderers._fuelFlowRenderer).InstrumentState.FuelFlowPoundsPerHour = fromFalcon.fuelFlow;
                 //******************
 
                 //** UPDATE FUEL QTY
-                ((F16FuelQuantityIndicator) _fuelQuantityRenderer).InstrumentState.AftLeftFuelQuantityPounds =
+                ((F16FuelQuantityIndicator)_renderers._fuelQuantityRenderer).InstrumentState.AftLeftFuelQuantityPounds =
                     fromFalcon.aft/10.0f;
-                ((F16FuelQuantityIndicator) _fuelQuantityRenderer).InstrumentState.ForeRightFuelQuantityPounds =
+                ((F16FuelQuantityIndicator)_renderers._fuelQuantityRenderer).InstrumentState.ForeRightFuelQuantityPounds =
                     fromFalcon.fwd/10.0f;
-                ((F16FuelQuantityIndicator) _fuelQuantityRenderer).InstrumentState.TotalFuelQuantityPounds =
+                ((F16FuelQuantityIndicator)_renderers._fuelQuantityRenderer).InstrumentState.TotalFuelQuantityPounds =
                     fromFalcon.total;
                 //******************
 
@@ -8114,20 +8061,20 @@ namespace MFDExtractor
                 if (fromFalcon.DataFormat == FalconDataFormats.OpenFalcon ||
                     fromFalcon.DataFormat == FalconDataFormats.BMS4)
                 {
-                    ((F16LandingGearWheelsLights) _landingGearLightsRenderer).InstrumentState.LeftGearDown =
+                    ((F16LandingGearWheelsLights)_renderers._landingGearLightsRenderer).InstrumentState.LeftGearDown =
                         ((fromFalcon.lightBits3 & (int) LightBits3.LeftGearDown) == (int) LightBits3.LeftGearDown);
-                    ((F16LandingGearWheelsLights) _landingGearLightsRenderer).InstrumentState.NoseGearDown =
+                    ((F16LandingGearWheelsLights)_renderers._landingGearLightsRenderer).InstrumentState.NoseGearDown =
                         ((fromFalcon.lightBits3 & (int) LightBits3.NoseGearDown) == (int) LightBits3.NoseGearDown);
-                    ((F16LandingGearWheelsLights) _landingGearLightsRenderer).InstrumentState.RightGearDown =
+                    ((F16LandingGearWheelsLights)_renderers._landingGearLightsRenderer).InstrumentState.RightGearDown =
                         ((fromFalcon.lightBits3 & (int) LightBits3.RightGearDown) == (int) LightBits3.RightGearDown);
                 }
                 else
                 {
-                    ((F16LandingGearWheelsLights) _landingGearLightsRenderer).InstrumentState.LeftGearDown =
+                    ((F16LandingGearWheelsLights)_renderers._landingGearLightsRenderer).InstrumentState.LeftGearDown =
                         ((fromFalcon.LeftGearPos == 1.0f));
-                    ((F16LandingGearWheelsLights) _landingGearLightsRenderer).InstrumentState.NoseGearDown =
+                    ((F16LandingGearWheelsLights)_renderers._landingGearLightsRenderer).InstrumentState.NoseGearDown =
                         ((fromFalcon.NoseGearPos == 1.0f));
-                    ((F16LandingGearWheelsLights) _landingGearLightsRenderer).InstrumentState.RightGearDown =
+                    ((F16LandingGearWheelsLights)_renderers._landingGearLightsRenderer).InstrumentState.RightGearDown =
                         ((fromFalcon.RightGearPos == 1.0f));
                 }
 
@@ -8135,24 +8082,24 @@ namespace MFDExtractor
                 //******************
 
                 //** UPDATE NWS
-                ((F16NosewheelSteeringIndexer) _nwsIndexerRenderer).InstrumentState.DISC = ((fromFalcon.lightBits &
+                ((F16NosewheelSteeringIndexer)_renderers._nwsIndexerRenderer).InstrumentState.DISC = ((fromFalcon.lightBits &
                                                                                              (int) LightBits.RefuelDSC) ==
                                                                                             (int) LightBits.RefuelDSC);
-                ((F16NosewheelSteeringIndexer) _nwsIndexerRenderer).InstrumentState.AR_NWS = ((fromFalcon.lightBits &
+                ((F16NosewheelSteeringIndexer)_renderers._nwsIndexerRenderer).InstrumentState.AR_NWS = ((fromFalcon.lightBits &
                                                                                                (int) LightBits.RefuelAR) ==
                                                                                               (int) LightBits.RefuelAR);
-                ((F16NosewheelSteeringIndexer) _nwsIndexerRenderer).InstrumentState.RDY = ((fromFalcon.lightBits &
+                ((F16NosewheelSteeringIndexer)_renderers._nwsIndexerRenderer).InstrumentState.RDY = ((fromFalcon.lightBits &
                                                                                             (int) LightBits.RefuelRDY) ==
                                                                                            (int) LightBits.RefuelRDY);
                 //******************
 
                 //** UPDATE SPEEDBRAKE
-                ((F16SpeedbrakeIndicator) _speedbrakeRenderer).InstrumentState.PercentOpen = fromFalcon.speedBrake*
+                ((F16SpeedbrakeIndicator)_renderers._speedbrakeRenderer).InstrumentState.PercentOpen = fromFalcon.speedBrake *
                                                                                              100.0f;
 
                 if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
                 {
-                    ((F16SpeedbrakeIndicator) _speedbrakeRenderer).InstrumentState.PowerLoss = ((fromFalcon.lightBits3 &
+                    ((F16SpeedbrakeIndicator)_renderers._speedbrakeRenderer).InstrumentState.PowerLoss = ((fromFalcon.lightBits3 &
                                                                                                  (int)
                                                                                                  Bms4LightBits3
                                                                                                      .Power_Off) ==
@@ -8161,7 +8108,7 @@ namespace MFDExtractor
                 }
                 else
                 {
-                    ((F16SpeedbrakeIndicator) _speedbrakeRenderer).InstrumentState.PowerLoss = ((fromFalcon.lightBits3 &
+                    ((F16SpeedbrakeIndicator)_renderers._speedbrakeRenderer).InstrumentState.PowerLoss = ((fromFalcon.lightBits3 &
                                                                                                  (int)
                                                                                                  LightBits3.Power_Off) ==
                                                                                                 (int)
@@ -8170,22 +8117,22 @@ namespace MFDExtractor
                 //******************
 
                 //** UPDATE RPM1
-                ((F16Tachometer) _rpm1Renderer).InstrumentState.RPMPercent = fromFalcon.rpm;
+                ((F16Tachometer)_renderers._rpm1Renderer).InstrumentState.RPMPercent = fromFalcon.rpm;
                 //******************
 
                 //** UPDATE RPM2
-                ((F16Tachometer) _rpm2Renderer).InstrumentState.RPMPercent = fromFalcon.rpm2;
+                ((F16Tachometer)_renderers._rpm2Renderer).InstrumentState.RPMPercent = fromFalcon.rpm2;
                 //******************
 
                 if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
                 {
                     //Only BMS4 has a valid FTIT value in sharedmem
                     //** UPDATE FTIT1
-                    ((F16FanTurbineInletTemperature) _ftit1Renderer).InstrumentState.InletTemperatureDegreesCelcius =
+                    ((F16FanTurbineInletTemperature)_renderers._ftit1Renderer).InstrumentState.InletTemperatureDegreesCelcius =
                         fromFalcon.ftit*100.0f;
                     //******************
                     //** UPDATE FTIT2
-                    ((F16FanTurbineInletTemperature) _ftit2Renderer).InstrumentState.InletTemperatureDegreesCelcius =
+                    ((F16FanTurbineInletTemperature)_renderers._ftit2Renderer).InstrumentState.InletTemperatureDegreesCelcius =
                         fromFalcon.ftit2*100.0f;
                     //******************
                 }
@@ -8193,16 +8140,16 @@ namespace MFDExtractor
                 {
                     //FTIT is hosed in AF, RedViper, FF5, OF
                     //** UPDATE FTIT1
-                    ((F16FanTurbineInletTemperature) _ftit1Renderer).InstrumentState.InletTemperatureDegreesCelcius =
+                    ((F16FanTurbineInletTemperature)_renderers._ftit1Renderer).InstrumentState.InletTemperatureDegreesCelcius =
                         NonImplementedGaugeCalculations.Ftit(
-                            ((F16FanTurbineInletTemperature) _ftit1Renderer).InstrumentState
+                            ((F16FanTurbineInletTemperature)_renderers._ftit1Renderer).InstrumentState
                                                                             .InletTemperatureDegreesCelcius,
                             fromFalcon.rpm);
                     //******************
                     //** UPDATE FTIT2
-                    ((F16FanTurbineInletTemperature) _ftit2Renderer).InstrumentState.InletTemperatureDegreesCelcius =
+                    ((F16FanTurbineInletTemperature)_renderers._ftit2Renderer).InstrumentState.InletTemperatureDegreesCelcius =
                         NonImplementedGaugeCalculations.Ftit(
-                            ((F16FanTurbineInletTemperature) _ftit2Renderer).InstrumentState
+                            ((F16FanTurbineInletTemperature)_renderers._ftit2Renderer).InstrumentState
                                                                             .InletTemperatureDegreesCelcius,
                             fromFalcon.rpm2);
                     //******************
@@ -8212,22 +8159,22 @@ namespace MFDExtractor
                 {
                     //NOZ is hosed in OF
                     //** UPDATE NOZ1
-                    ((F16NozzlePositionIndicator) _nozPos1Renderer).InstrumentState.NozzlePositionPercent =
+                    ((F16NozzlePositionIndicator)_renderers._nozPos1Renderer).InstrumentState.NozzlePositionPercent =
                         NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm, fromFalcon.z, fromFalcon.fuelFlow);
                     //******************
                     //** UPDATE NOZ2
-                    ((F16NozzlePositionIndicator) _nozPos2Renderer).InstrumentState.NozzlePositionPercent =
+                    ((F16NozzlePositionIndicator)_renderers._nozPos2Renderer).InstrumentState.NozzlePositionPercent =
                         NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm2, fromFalcon.z, fromFalcon.fuelFlow);
                     //******************
                 }
                 else if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
                 {
                     //** UPDATE NOZ1
-                    ((F16NozzlePositionIndicator) _nozPos1Renderer).InstrumentState.NozzlePositionPercent =
+                    ((F16NozzlePositionIndicator)_renderers._nozPos1Renderer).InstrumentState.NozzlePositionPercent =
                         fromFalcon.nozzlePos*100.0f;
                     //******************
                     //** UPDATE NOZ2
-                    ((F16NozzlePositionIndicator) _nozPos2Renderer).InstrumentState.NozzlePositionPercent =
+                    ((F16NozzlePositionIndicator)_renderers._nozPos2Renderer).InstrumentState.NozzlePositionPercent =
                         fromFalcon.nozzlePos2*100.0f;
                     //******************
                 }
@@ -8235,21 +8182,21 @@ namespace MFDExtractor
                 {
                     //NOZ is OK in AF, RedViper, FF5
                     //** UPDATE NOZ1
-                    ((F16NozzlePositionIndicator) _nozPos1Renderer).InstrumentState.NozzlePositionPercent =
+                    ((F16NozzlePositionIndicator)_renderers._nozPos1Renderer).InstrumentState.NozzlePositionPercent =
                         fromFalcon.nozzlePos;
                     //******************
                     //** UPDATE NOZ2
-                    ((F16NozzlePositionIndicator) _nozPos2Renderer).InstrumentState.NozzlePositionPercent =
+                    ((F16NozzlePositionIndicator)_renderers._nozPos2Renderer).InstrumentState.NozzlePositionPercent =
                         fromFalcon.nozzlePos2;
                     //******************
                 }
 
                 //** UPDATE OIL1
-                ((F16OilPressureGauge) _oilGauge1Renderer).InstrumentState.OilPressurePercent = fromFalcon.oilPressure;
+                ((F16OilPressureGauge)_renderers._oilGauge1Renderer).InstrumentState.OilPressurePercent = fromFalcon.oilPressure;
                 //******************
 
                 //** UPDATE OIL2
-                ((F16OilPressureGauge) _oilGauge2Renderer).InstrumentState.OilPressurePercent = fromFalcon.oilPressure2;
+                ((F16OilPressureGauge)_renderers._oilGauge2Renderer).InstrumentState.OilPressurePercent = fromFalcon.oilPressure2;
                 //******************
 
                 //** UPDATE ACCELEROMETER
@@ -8258,27 +8205,27 @@ namespace MFDExtractor
                 {
                     gs = 1;
                 }
-                ((F16Accelerometer) _accelerometerRenderer).InstrumentState.AccelerationInGs = gs;
+                ((F16Accelerometer)_renderers._accelerometerRenderer).InstrumentState.AccelerationInGs = gs;
                 //******************
             }
             else //Falcon's not running
             {
-                if (_vviRenderer is F16VerticalVelocityIndicatorEU)
+                if (_renderers._vviRenderer is F16VerticalVelocityIndicatorEU)
                 {
-                    ((F16VerticalVelocityIndicatorEU) _vviRenderer).InstrumentState.OffFlag = true;
+                    ((F16VerticalVelocityIndicatorEU)_renderers._vviRenderer).InstrumentState.OffFlag = true;
                 }
-                else if (_vviRenderer is F16VerticalVelocityIndicatorUSA)
+                else if (_renderers._vviRenderer is F16VerticalVelocityIndicatorUSA)
                 {
-                    ((F16VerticalVelocityIndicatorUSA) _vviRenderer).InstrumentState.OffFlag = true;
+                    ((F16VerticalVelocityIndicatorUSA)_renderers._vviRenderer).InstrumentState.OffFlag = true;
                 }
-                ((F16AngleOfAttackIndicator) _aoaIndicatorRenderer).InstrumentState.OffFlag = true;
-                ((F16HorizontalSituationIndicator) _hsiRenderer).InstrumentState.OffFlag = true;
-                ((F16EHSI) _ehsiRenderer).InstrumentState.NoDataFlag = true;
-                ((F16ADI) _adiRenderer).InstrumentState.OffFlag = true;
-                ((F16StandbyADI) _backupAdiRenderer).InstrumentState.OffFlag = true;
-                ((F16AzimuthIndicator) _rwrRenderer).InstrumentState.RWRPowerOn = false;
-                ((F16ISIS) _isisRenderer).InstrumentState.RadarAltitudeAGL = 0;
-                ((F16ISIS) _isisRenderer).InstrumentState.OffFlag = true;
+                ((F16AngleOfAttackIndicator)_renderers._aoaIndicatorRenderer).InstrumentState.OffFlag = true;
+                ((F16HorizontalSituationIndicator)_renderers._hsiRenderer).InstrumentState.OffFlag = true;
+                ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.NoDataFlag = true;
+                ((F16ADI)_renderers._adiRenderer).InstrumentState.OffFlag = true;
+                ((F16StandbyADI)_renderers._backupAdiRenderer).InstrumentState.OffFlag = true;
+                ((F16AzimuthIndicator)_renderers._rwrRenderer).InstrumentState.RWRPowerOn = false;
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.RadarAltitudeAGL = 0;
+                ((F16ISIS)_renderers._isisRenderer).InstrumentState.OffFlag = true;
                 UpdateEHSIBrightnessLabelVisibility();
             }
         }
@@ -8321,39 +8268,39 @@ namespace MFDExtractor
                     TimeSpan howLongAgoLastActivity = DateTime.Now.Subtract(lastActivity.Value);
                     if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
                     {
-                        showBrightnessLabel = ((F16EHSI) _ehsiRenderer).InstrumentState.ShowBrightnessLabel;
+                        showBrightnessLabel = ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowBrightnessLabel;
                     }
                 }
             }
-            ((F16EHSI) _ehsiRenderer).InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
+            ((F16EHSI)_renderers._ehsiRenderer).InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
         }
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(IInstrumentRenderer renderer)
         {
-            int staleDataTimeout = 500; //Timeout.Infinite;
+            var staleDataTimeout = 500; //Timeout.Infinite;
             var baseRenderer = renderer as InstrumentRendererBase;
             if (baseRenderer == null) return true;
-            int oldStateHash = 0;
-            DateTime oldStateDateTime = DateTime.MinValue;
-            bool oldHashWasFound = false;
+            var oldStateHash = 0;
+            var oldStateDateTime = DateTime.MinValue;
+            var oldHashWasFound = false;
             if (_instrumentStates.ContainsKey(baseRenderer))
             {
                 oldStateHash = _instrumentStates[baseRenderer].HashCode;
                 oldStateDateTime = _instrumentStates[baseRenderer].DateTime;
                 oldHashWasFound = true;
             }
-            InstrumentStateBase newState = baseRenderer.GetState();
-            int newStateHash = newState != null ? newState.GetHashCode() : 0;
-            DateTime newStateDateTime = DateTime.Now;
+            var newState = baseRenderer.GetState();
+            var newStateHash = newState != null ? newState.GetHashCode() : 0;
+            var newStateDateTime = DateTime.Now;
 
-            bool hashesAreDifferent = !oldHashWasFound || (oldStateHash != newStateHash);
+            var hashesAreDifferent = !oldHashWasFound || (oldStateHash != newStateHash);
 
-            int timeSinceHashChanged = Int32.MaxValue;
+            var timeSinceHashChanged = Int32.MaxValue;
             if (oldStateDateTime != DateTime.MinValue)
             {
                 timeSinceHashChanged = (int) Math.Floor(DateTime.Now.Subtract(oldStateDateTime).TotalMilliseconds);
             }
-            bool stateIsStaleOrChanged = (hashesAreDifferent ||
+            var stateIsStaleOrChanged = (hashesAreDifferent ||
                                           (timeSinceHashChanged > staleDataTimeout &&
                                            staleDataTimeout != Timeout.Infinite));
             if (stateIsStaleOrChanged)
@@ -8377,7 +8324,7 @@ namespace MFDExtractor
         private void RenderInstrumentImage(IInstrumentRenderer renderer, InstrumentForm targetForm,
                                            RotateFlipType rotation, bool monochrome)
         {
-            DateTime startTime = DateTime.Now;
+            var startTime = DateTime.Now;
             if (renderer == null || targetForm == null) return;
             if (DateTime.Now.Subtract(targetForm.LastRenderedOn).TotalMilliseconds < Settings.Default.PollingDelay)
             {
@@ -8480,8 +8427,8 @@ namespace MFDExtractor
             {
                 Common.Util.DisposeObject(image);
             }
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime.Subtract(startTime);
+            var endTime = DateTime.Now;
+            var elapsed = endTime.Subtract(startTime);
             if (elapsed.TotalMilliseconds < MIN_RENDERER_PASS_TIME_MILLSECONDS)
             {
                 var toWait = new TimeSpan(0, 0, 0, 0,
@@ -8504,7 +8451,7 @@ namespace MFDExtractor
 
         private bool WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow()
         {
-            bool retVal = false;
+            var retVal = false;
             try
             {
                 foreach (Form form in Application.OpenForms)
