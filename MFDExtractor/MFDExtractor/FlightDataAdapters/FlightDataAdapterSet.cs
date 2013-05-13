@@ -12,6 +12,11 @@
         IEPUFuelFlightDataAdapter EPUFuel { get; }
         ICautionPanelFlightDataAdapter CautionPanel { get; }
         ILandingGearLightsFlightDataAdapter LandingGearLights { get; }
+        IAzimuthIndicatorFlightDataAdapter AzimuthIndicator { get; }
+        IAirspeedIndicatorFlightDataAdapter AirspeedIndicator { get; }
+        ICompassFlightDataAdapter Compass { get; }
+        IAngleOfAttackIndicatorFlightDataAdapter AOAIndicator { get; }
+        IAngleOfAttackIndexerFlightDataAdapter AOAIndexer { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -28,6 +33,12 @@
             EPUFuel = new EPUFuelFlightDataAdapter();
             CautionPanel = new CautionPanelFlightDataAdapter();
             LandingGearLights = new LandingGearLightsFlightDataAdapter();
+            AzimuthIndicator = new AzimuthIndicatorFlightDataAdapter();
+            AirspeedIndicator = new AirspeedIndicatorFlightDataAdapter();
+            Compass = new CompassFlightDataAdapter();
+            AOAIndicator = new AngleOfAttackIndicatorFlightDataAdapter();
+            AOAIndexer = new AngleOfAttackIndexerFlightDataAdapter(); 
+
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -40,5 +51,10 @@
         public IEPUFuelFlightDataAdapter EPUFuel { get; private set; }
         public ICautionPanelFlightDataAdapter CautionPanel { get; private set; }
         public ILandingGearLightsFlightDataAdapter LandingGearLights { get; private set; }
+        public IAzimuthIndicatorFlightDataAdapter AzimuthIndicator { get; private set; }
+        public IAirspeedIndicatorFlightDataAdapter AirspeedIndicator { get; private set; }
+        public ICompassFlightDataAdapter Compass { get; private set; }
+        public IAngleOfAttackIndicatorFlightDataAdapter AOAIndicator { get; private set; }
+        public IAngleOfAttackIndexerFlightDataAdapter AOAIndexer { get; private set; }
     }
 }

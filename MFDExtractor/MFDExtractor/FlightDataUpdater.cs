@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using Common.Math;
 using Common.Networking;
 using F4SharedMem;
@@ -51,10 +50,10 @@ namespace MFDExtractor
                 UpdateISIS(renderers, useBMSAdvancedSharedmemValues, flightData, altbits, extensionData, hsibits);
                 _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
                 _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData, useBMSAdvancedSharedmemValues);
-                UpdateAirspeedIndicator(renderers, flightData);
-                UpdateCompass(renderers, flightData);
-                UpdateAOAIndicator(renderers, hsibits, flightData);
-                UpdateAOAIndexer(renderers, flightData);
+                _flightDataAdapterSet.AirspeedIndicator.Adapt(renderers.ASI, flightData);
+                _flightDataAdapterSet.Compass.Adapt(renderers.Compass, flightData);
+                _flightDataAdapterSet.AOAIndicator.Adapt(renderers.AOAIndicator, flightData);
+                _flightDataAdapterSet.AOAIndexer.Adapt(renderers.AOAIndexer, flightData);
                 UpdateADI(renderers, hsibits);
                 UpdateBackupADI(renderers, hsibits, flightData);
                 UpdateHSI(renderers, hsibits, flightData);
@@ -144,7 +143,7 @@ namespace MFDExtractor
                 UpdateCabinPress(renderers, flightData);
                 UpdateRollTrim(renderers, flightData);
                 UpdatePitchTrim(renderers, flightData);
-                UpdateRWR(renderers, flightData);
+                _flightDataAdapterSet.AzimuthIndicator.Adapt(renderers.RWR, flightData);
                 _flightDataAdapterSet.CautionPanel.Adapt(renderers.CautionPanel, flightData);
                 _flightDataAdapterSet.CMDS.Adapt(renderers.CMDSPanel, flightData);
                 _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
@@ -376,32 +375,18 @@ namespace MFDExtractor
         {
             if (fromFalcon.DataFormat == FalconDataFormats.OpenFalcon)
             {
-                //NOZ is hosed in OF
-                //** UPDATE NOZ1
                 renderers.NOZ1.InstrumentState.NozzlePositionPercent = NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm, fromFalcon.z, fromFalcon.fuelFlow);
-                //******************
-                //** UPDATE NOZ2
                 renderers.NOZ2.InstrumentState.NozzlePositionPercent =NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm2, fromFalcon.z, fromFalcon.fuelFlow);
-                //******************
             }
             else if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
             {
-                //** UPDATE NOZ1
                 renderers.NOZ1.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos*100.0f;
-                //******************
-                //** UPDATE NOZ2
                 renderers.NOZ2.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos2*100.0f;
-                //******************
             }
             else
             {
-                //NOZ is OK in AF, RedViper, FF5
-                //** UPDATE NOZ1
                 renderers.NOZ1.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos;
-                //******************
-                //** UPDATE NOZ2
                 renderers.NOZ2.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos2;
-                //******************
             }
         }
 
@@ -409,23 +394,13 @@ namespace MFDExtractor
         {
             if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
             {
-                //Only BMS4 has a valid FTIT value in sharedmem
-                //** UPDATE FTIT1
                 renderers.FTIT1.InstrumentState.InletTemperatureDegreesCelcius =fromFalcon.ftit*100.0f;
-                //******************
-                //** UPDATE FTIT2
                 renderers.FTIT2.InstrumentState.InletTemperatureDegreesCelcius =fromFalcon.ftit2*100.0f;
-                //******************
             }
             else
             {
-                //FTIT is hosed in AF, RedViper, FF5, OF
-                //** UPDATE FTIT1
                 renderers.FTIT1.InstrumentState.InletTemperatureDegreesCelcius =NonImplementedGaugeCalculations.Ftit(renderers.FTIT1.InstrumentState.InletTemperatureDegreesCelcius,fromFalcon.rpm);
-                //******************
-                //** UPDATE FTIT2
                 renderers.FTIT2.InstrumentState.InletTemperatureDegreesCelcius =NonImplementedGaugeCalculations.Ftit(renderers.FTIT2.InstrumentState.InletTemperatureDegreesCelcius,fromFalcon.rpm2);
-                //******************
             }
         }
 
@@ -449,93 +424,6 @@ namespace MFDExtractor
         private static void UpdateFuelFlow(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
             renderers.FuelFlow.InstrumentState.FuelFlowPoundsPerHour = fromFalcon.fuelFlow;
-        }
-
-
-
-        private static void UpdateRWR(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.RWR.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
-            renderers.RWR.InstrumentState.RollDegrees = ((fromFalcon.roll/Constants.RADIANS_PER_DEGREE));
-            var rwrObjectCount = fromFalcon.RwrObjectCount;
-            if (fromFalcon.RWRsymbol != null)
-            {
-                var blips = new F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState.Blip[fromFalcon.RWRsymbol.Length];
-                renderers.RWR.InstrumentState.Blips = blips;
-                if (fromFalcon.RWRsymbol != null)
-                {
-                    for (var i = 0; i < fromFalcon.RWRsymbol.Length; i++)
-                    {
-                        var thisBlip = new F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState.Blip();
-                        if (i < rwrObjectCount) thisBlip.Visible = true;
-                        if (fromFalcon.bearing != null)
-                        {
-                            thisBlip.BearingDegrees = (fromFalcon.bearing[i]/Constants.RADIANS_PER_DEGREE);
-                        }
-                        if (fromFalcon.lethality != null)
-                        {
-                            thisBlip.Lethality = fromFalcon.lethality[i];
-                        }
-                        if (fromFalcon.missileActivity != null)
-                        {
-                            thisBlip.MissileActivity = fromFalcon.missileActivity[i];
-                        }
-                        if (fromFalcon.missileLaunch != null)
-                        {
-                            thisBlip.MissileLaunch = fromFalcon.missileLaunch[i];
-                        }
-                        if (fromFalcon.newDetection != null)
-                        {
-                            thisBlip.NewDetection = fromFalcon.newDetection[i];
-                        }
-                        if (fromFalcon.selected != null)
-                        {
-                            thisBlip.Selected = fromFalcon.selected[i];
-                        }
-                        thisBlip.SymbolID = fromFalcon.RWRsymbol[i];
-                        blips[i] = thisBlip;
-                    }
-                }
-            }
-            renderers.RWR.InstrumentState.Activity = ((fromFalcon.lightBits2 & (int) LightBits2.AuxAct) ==(int) LightBits2.AuxAct);
-            renderers.RWR.InstrumentState.ChaffCount = (int) fromFalcon.ChaffCount;
-            renderers.RWR.InstrumentState.ChaffLow = ((fromFalcon.lightBits2 & (int) LightBits2.ChaffLo) ==(int) LightBits2.ChaffLo);
-            renderers.RWR.InstrumentState.EWSDegraded = ((fromFalcon.lightBits2 & (int) LightBits2.Degr) ==(int) LightBits2.Degr);
-            renderers.RWR.InstrumentState.EWSDispenseReady = ((fromFalcon.lightBits2 & (int) LightBits2.Rdy) ==(int) LightBits2.Rdy);
-            renderers.RWR.InstrumentState.EWSNoGo = (
-                ((fromFalcon.lightBits2 & (int) LightBits2.NoGo) == (int) LightBits2.NoGo)
-                    ||
-                ((fromFalcon.lightBits2 & (int) LightBits2.Degr) == (int) LightBits2.Degr)
-                );
-            renderers.RWR.InstrumentState.EWSGo =
-                (
-                    ((fromFalcon.lightBits2 & (int) LightBits2.Go) == (int) LightBits2.Go)
-                        &&
-                    !(
-                        ((fromFalcon.lightBits2 & (int) LightBits2.NoGo) == (int) LightBits2.NoGo)
-                            ||
-                        ((fromFalcon.lightBits2 & (int) LightBits2.Degr) == (int) LightBits2.Degr)
-                            ||
-                        ((fromFalcon.lightBits2 & (int) LightBits2.Rdy) == (int) LightBits2.Rdy)
-                        )
-                    );
-
-
-            renderers.RWR.InstrumentState.FlareCount = (int) fromFalcon.FlareCount;
-            renderers.RWR.InstrumentState.FlareLow = ((fromFalcon.lightBits2 &(int) LightBits2.FlareLo) == (int) LightBits2.FlareLo);
-            renderers.RWR.InstrumentState.Handoff = ((fromFalcon.lightBits2 &(int) LightBits2.HandOff) == (int) LightBits2.HandOff);
-            renderers.RWR.InstrumentState.Launch = ((fromFalcon.lightBits2 &(int) LightBits2.Launch) == (int) LightBits2.Launch);
-            renderers.RWR.InstrumentState.LowAltitudeMode = ((fromFalcon.lightBits2 &(int) LightBits2.AuxLow) == (int) LightBits2.AuxLow);
-            renderers.RWR.InstrumentState.NavalMode = ((fromFalcon.lightBits2 &(int) LightBits2.Naval) == (int) LightBits2.Naval);
-            renderers.RWR.InstrumentState.Other1Count = 0;
-            renderers.RWR.InstrumentState.Other1Low = true;
-            renderers.RWR.InstrumentState.Other2Count = 0;
-            renderers.RWR.InstrumentState.Other2Low = true;
-            renderers.RWR.InstrumentState.RWRPowerOn = ((fromFalcon.lightBits2 &(int) LightBits2.AuxPwr) == (int) LightBits2.AuxPwr);
-            renderers.RWR.InstrumentState.PriorityMode = ((fromFalcon.lightBits2 &(int) LightBits2.PriMode) == (int) LightBits2.PriMode);
-            renderers.RWR.InstrumentState.SearchMode = ((fromFalcon.lightBits2 &(int) LightBits2.AuxSrch) == (int) LightBits2.AuxSrch);
-            renderers.RWR.InstrumentState.SeparateMode = ((fromFalcon.lightBits2 &(int) LightBits2.TgtSep) == (int) LightBits2.TgtSep);
-            renderers.RWR.InstrumentState.UnknownThreatScanMode = ((fromFalcon.lightBits2 &(int) LightBits2.Unk) == (int) LightBits2.Unk);
         }
 
         private static void UpdatePitchTrim(IInstrumentRendererSet renderers, FlightData fromFalcon)
@@ -609,38 +497,6 @@ namespace MFDExtractor
             renderers.ADI.InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
         }
 
-        private static void UpdateAOAIndexer(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.AOAIndexer.InstrumentState.AoaBelow = ((fromFalcon.lightBits & (int) LightBits.AOABelow) ==(int) LightBits.AOABelow);
-            renderers.AOAIndexer.InstrumentState.AoaOn = ((fromFalcon.lightBits & (int) LightBits.AOAOn) ==(int) LightBits.AOAOn);
-            renderers.AOAIndexer.InstrumentState.AoaAbove = ((fromFalcon.lightBits & (int) LightBits.AOAAbove) ==(int) LightBits.AOAAbove);
-        }
-
-        private static void UpdateAOAIndicator(IInstrumentRendererSet renderers, HsiBits hsibits, FlightData fromFalcon)
-        {
-            if (((hsibits & HsiBits.AOA) == HsiBits.AOA))
-            {
-                renderers.AOAIndicator.InstrumentState.OffFlag = true;
-                renderers.AOAIndicator.InstrumentState.AngleOfAttackDegrees = 0;
-            }
-            else
-            {
-                renderers.AOAIndicator.InstrumentState.OffFlag = false;
-                renderers.AOAIndicator.InstrumentState.AngleOfAttackDegrees = fromFalcon.alpha;
-            }
-        }
-
-        private static void UpdateCompass(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.Compass.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
-        }
-
-        private static void UpdateAirspeedIndicator(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.ASI.InstrumentState.AirspeedKnots = fromFalcon.kias;
-            renderers.ASI.InstrumentState.MachNumber = fromFalcon.mach;
-        }
-
         private static void UpdateISIS(IInstrumentRendererSet renderers, bool useBMSAdvancedSharedmemValues,
             FlightData fromFalcon, AltBits altbits, FlightDataExtension extensionData, HsiBits hsibits)
         {
@@ -649,11 +505,9 @@ namespace MFDExtractor
             if (fromFalcon.DataFormat == FalconDataFormats.BMS4 && useBMSAdvancedSharedmemValues)
             {
                 renderers.ISIS.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
-                //((F16ISIS)ISIS).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude (-fromFalcon.z, ((F16ISIS)ISIS).InstrumentState.BarometricPressure, ((F16ISIS)ISIS).Options.PressureAltitudeUnits == F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury);
-
                 if (fromFalcon.VersionNum >= 111)
                 {
-                    if (((altbits & AltBits.CalType) == AltBits.CalType)) //13-08-12 added by Falcas
+                    if (((altbits & AltBits.CalType) == AltBits.CalType))
                     {
                         renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
                     }
@@ -663,22 +517,18 @@ namespace MFDExtractor
                     }
 
                     renderers.ISIS.InstrumentState.BarometricPressure = fromFalcon.AltCalReading;
-                    //13-08-12 added by Falcas
                 }
                 else
                 {
                     renderers.ISIS.InstrumentState.BarometricPressure = 2992f;
-                    //14-0-12 Falcas removed the point
-                    renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; //14-08-12 added by Falcas
+                    renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; 
                 }
             }
             else
             {
-                //((F16ISIS)ISIS).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude(-fromFalcon.z, ((F16ISIS)ISIS).InstrumentState.BarometricPressure, ((F16ISIS)ISIS).Options.PressureAltitudeUnits == F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury);
                 renderers.ISIS.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
                 renderers.ISIS.InstrumentState.BarometricPressure = 2992f;
-                //14-0-12 Falcas removed the point
-                renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; //14-08-12 added by Falcas
+                renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
             }
             if (extensionData != null)
             {
@@ -687,7 +537,6 @@ namespace MFDExtractor
             renderers.ISIS.InstrumentState.MachNumber = fromFalcon.mach;
             renderers.ISIS.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
             renderers.ISIS.InstrumentState.NeverExceedSpeedKnots = 850;
-
             renderers.ISIS.InstrumentState.PitchDegrees = ((fromFalcon.pitch/Constants.RADIANS_PER_DEGREE));
             renderers.ISIS.InstrumentState.RollDegrees = ((fromFalcon.roll/Constants.RADIANS_PER_DEGREE));
             renderers.ISIS.InstrumentState.VerticalVelocityFeetPerMinute = -fromFalcon.zDot*60.0f;

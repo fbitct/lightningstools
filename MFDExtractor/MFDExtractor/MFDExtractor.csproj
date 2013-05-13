@@ -111,14 +111,20 @@
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FlightDataAdapters\AirspeedIndicatorFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\AltimeterFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\AngleOfAttackIndexerFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\AngleOfAttackIndicatorFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CautionPanelFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CMDSFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\CompassFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\DEDFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\EPUFuelFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FlightDataAdapterSet.cs" />
+    <Compile Include="FlightDataAdapters\LandingGearLightsFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\NWSFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\PFLFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\AzimuthIndicatorFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\SpeedbrakeFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\VVIFlightDataAdapter.cs" />
     <Compile Include="FlightDataExtension.cs" />
