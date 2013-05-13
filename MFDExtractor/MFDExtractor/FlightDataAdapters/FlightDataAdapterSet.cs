@@ -11,6 +11,7 @@
         IAltimeterFlightDataAdapter Altimeter { get; }
         IEPUFuelFlightDataAdapter EPUFuel { get; }
         ICautionPanelFlightDataAdapter CautionPanel { get; }
+        ILandingGearLightsFlightDataAdapter LandingGearLights { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -26,6 +27,7 @@
             Altimeter = new AltimeterFlightDataAdapter();
             EPUFuel = new EPUFuelFlightDataAdapter();
             CautionPanel = new CautionPanelFlightDataAdapter();
+            LandingGearLights = new LandingGearLightsFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -37,5 +39,6 @@
         public IPFLFlightDataAdapter PFL { get; private set; }
         public IEPUFuelFlightDataAdapter EPUFuel { get; private set; }
         public ICautionPanelFlightDataAdapter CautionPanel { get; private set; }
+        public ILandingGearLightsFlightDataAdapter LandingGearLights { get; private set; }
     }
 }

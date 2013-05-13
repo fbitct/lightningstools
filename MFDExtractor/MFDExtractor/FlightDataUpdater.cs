@@ -152,7 +152,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);
                 UpdateFuelFlow(renderers, flightData);
                 UpdateFuelQTY(renderers, flightData);
-                UpdateLandingGearLights(renderers, flightData);
+                _flightDataAdapterSet.LandingGearLights.Adapt(renderers.LandingGearLights, flightData);
                 _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
                 _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
                 UpdateRPM1(renderers, flightData);
@@ -437,24 +437,6 @@ namespace MFDExtractor
         private static void UpdateRPM1(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
             renderers.RPM1.InstrumentState.RPMPercent = fromFalcon.rpm;
-        }
-
-       
-
-        private static void UpdateLandingGearLights(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            if (fromFalcon.DataFormat == FalconDataFormats.OpenFalcon ||fromFalcon.DataFormat == FalconDataFormats.BMS4)
-            {
-                renderers.LandingGearLights.InstrumentState.LeftGearDown =((fromFalcon.lightBits3 & (int) LightBits3.LeftGearDown) == (int) LightBits3.LeftGearDown);
-                renderers.LandingGearLights.InstrumentState.NoseGearDown =((fromFalcon.lightBits3 & (int) LightBits3.NoseGearDown) == (int) LightBits3.NoseGearDown);
-                renderers.LandingGearLights.InstrumentState.RightGearDown =((fromFalcon.lightBits3 & (int) LightBits3.RightGearDown) == (int) LightBits3.RightGearDown);
-            }
-            else
-            {
-                renderers.LandingGearLights.InstrumentState.LeftGearDown =((fromFalcon.LeftGearPos == 1.0f));
-                renderers.LandingGearLights.InstrumentState.NoseGearDown =((fromFalcon.NoseGearPos == 1.0f));
-                renderers.LandingGearLights.InstrumentState.RightGearDown =((fromFalcon.RightGearPos == 1.0f));
-            }
         }
 
         private static void UpdateFuelQTY(IInstrumentRendererSet renderers, FlightData fromFalcon)
