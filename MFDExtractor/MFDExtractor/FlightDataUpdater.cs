@@ -47,7 +47,7 @@ namespace MFDExtractor
                 var hsibits = ((HsiBits) flightData.hsiBits);
                 var altbits = ((AltBits) flightData.altBits); //12-08-12 added by Falcas 
 
-                UpdateISIS(renderers, useBMSAdvancedSharedmemValues, flightData, altbits, extensionData, hsibits);
+                _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData, useBMSAdvancedSharedmemValues);
                 _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
                 _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData, useBMSAdvancedSharedmemValues);
                 _flightDataAdapterSet.AirspeedIndicator.Adapt(renderers.ASI, flightData);
@@ -497,53 +497,6 @@ namespace MFDExtractor
             renderers.ADI.InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
         }
 
-        private static void UpdateISIS(IInstrumentRendererSet renderers, bool useBMSAdvancedSharedmemValues,
-            FlightData fromFalcon, AltBits altbits, FlightDataExtension extensionData, HsiBits hsibits)
-        {
-            renderers.ISIS.InstrumentState.AirspeedKnots = fromFalcon.kias;
-
-            if (fromFalcon.DataFormat == FalconDataFormats.BMS4 && useBMSAdvancedSharedmemValues)
-            {
-                renderers.ISIS.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
-                if (fromFalcon.VersionNum >= 111)
-                {
-                    if (((altbits & AltBits.CalType) == AltBits.CalType))
-                    {
-                        renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
-                    }
-                    else
-                    {
-                        renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.Millibars;
-                    }
-
-                    renderers.ISIS.InstrumentState.BarometricPressure = fromFalcon.AltCalReading;
-                }
-                else
-                {
-                    renderers.ISIS.InstrumentState.BarometricPressure = 2992f;
-                    renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; 
-                }
-            }
-            else
-            {
-                renderers.ISIS.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
-                renderers.ISIS.InstrumentState.BarometricPressure = 2992f;
-                renderers.ISIS.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
-            }
-            if (extensionData != null)
-            {
-                renderers.ISIS.InstrumentState.RadarAltitudeAGL = extensionData.RadarAltitudeFeetAGL;
-            }
-            renderers.ISIS.InstrumentState.MachNumber = fromFalcon.mach;
-            renderers.ISIS.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
-            renderers.ISIS.InstrumentState.NeverExceedSpeedKnots = 850;
-            renderers.ISIS.InstrumentState.PitchDegrees = ((fromFalcon.pitch/Constants.RADIANS_PER_DEGREE));
-            renderers.ISIS.InstrumentState.RollDegrees = ((fromFalcon.roll/Constants.RADIANS_PER_DEGREE));
-            renderers.ISIS.InstrumentState.VerticalVelocityFeetPerMinute = -fromFalcon.zDot*60.0f;
-            renderers.ISIS.InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
-            renderers.ISIS.InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
-            renderers.ISIS.InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
-            renderers.ISIS.InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) ==HsiBits.ADI_LOC);
-        }
+       
     }
 }

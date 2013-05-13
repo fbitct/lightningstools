@@ -17,6 +17,7 @@
         ICompassFlightDataAdapter Compass { get; }
         IAngleOfAttackIndicatorFlightDataAdapter AOAIndicator { get; }
         IAngleOfAttackIndexerFlightDataAdapter AOAIndexer { get; }
+        IISISFlightDataAdapter ISIS { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -38,7 +39,7 @@
             Compass = new CompassFlightDataAdapter();
             AOAIndicator = new AngleOfAttackIndicatorFlightDataAdapter();
             AOAIndexer = new AngleOfAttackIndexerFlightDataAdapter(); 
-
+            ISIS = new ISISFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -56,5 +57,6 @@
         public ICompassFlightDataAdapter Compass { get; private set; }
         public IAngleOfAttackIndicatorFlightDataAdapter AOAIndicator { get; private set; }
         public IAngleOfAttackIndexerFlightDataAdapter AOAIndexer { get; private set; }
+        public IISISFlightDataAdapter ISIS { get; private set; }
     }
 }
