@@ -141,8 +141,8 @@ namespace MFDExtractor
                 UpdateEHSI(UpdateEHSIBrightnessLabelVisibility);
                 UpdateHYDAandHYDB(renderers, flightData);
                 _flightDataAdapterSet.CabinPress.Adapt(renderers.CabinPress, flightData);
-                UpdateRollTrim(renderers, flightData);
-                UpdatePitchTrim(renderers, flightData);
+                _flightDataAdapterSet.RollTrim.Adapt(renderers.RollTrim, flightData);
+                _flightDataAdapterSet.PitchTrim.Adapt(renderers.PitchTrim, flightData);
                 _flightDataAdapterSet.AzimuthIndicator.Adapt(renderers.RWR, flightData);
                 _flightDataAdapterSet.CautionPanel.Adapt(renderers.CautionPanel, flightData);
                 _flightDataAdapterSet.CMDS.Adapt(renderers.CMDSPanel, flightData);
@@ -415,19 +415,6 @@ namespace MFDExtractor
         {
             renderers.FuelFlow.InstrumentState.FuelFlowPoundsPerHour = fromFalcon.fuelFlow;
         }
-
-        private static void UpdatePitchTrim(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            float pitchTrim = fromFalcon.TrimPitch;
-            renderers.PitchTrim.InstrumentState.PitchTrimPercent = pitchTrim*2.0f*100.0f;
-        }
-
-        private static void UpdateRollTrim(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            var rolltrim = fromFalcon.TrimRoll;
-            renderers.RollTrim.InstrumentState.RollTrimPercent = rolltrim*2.0f*100.0f;
-        }
-
 
         private static void UpdateHYDAandHYDB(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {

@@ -115,6 +115,7 @@
     <Compile Include="FlightDataAdapters\AltimeterFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\AngleOfAttackIndexerFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\AngleOfAttackIndicatorFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\CabinPressureAltitudeIndicatorFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CautionPanelFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CMDSFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CompassFlightDataAdapter.cs" />
@@ -126,6 +127,10 @@
     <Compile Include="FlightDataAdapters\NWSFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\PFLFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\AzimuthIndicatorFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\PitchTrimIndicatorFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\RollTrimIndicatorFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\RPM1FlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\RPM2FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\SpeedbrakeFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\VVIFlightDataAdapter.cs" />
     <Compile Include="FlightDataExtension.cs" />
