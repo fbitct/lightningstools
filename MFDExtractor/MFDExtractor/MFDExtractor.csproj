@@ -112,6 +112,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FlightDataAdapters\CMDSFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\DEDFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\FlightDataAdapterSet.cs" />
     <Compile Include="FlightDataAdapters\NWSFlightDataAdapter.cs" />
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataUpdater.cs" />

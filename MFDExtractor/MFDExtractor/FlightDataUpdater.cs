@@ -4,6 +4,7 @@ using Common.Math;
 using Common.Networking;
 using F4SharedMem;
 using F4SharedMem.Headers;
+using F4Utils.Campaign;
 using F4Utils.SimSupport;
 using LightningGauges.Renderers;
 using MFDExtractor.FlightDataAdapters;
@@ -23,14 +24,10 @@ namespace MFDExtractor
 
     internal class FlightDataUpdater : IFlightDataUpdater
     {
-        private readonly ICMDSFlightDataAdapter _cmdsFlightDataAdapter;
-        private readonly INWSFlightDataAdapter _nwsFlightDataAdapter;
-        public FlightDataUpdater(
-            ICMDSFlightDataAdapter cmdsFlightDataAdapter = null,
-            INWSFlightDataAdapter nwsFlightDataAdapter = null)
+        private readonly IFlightDataAdapterSet _flightDataAdapterSet;
+        public FlightDataUpdater(IFlightDataAdapterSet flightDataAdapterSet = null)
         {
-            _cmdsFlightDataAdapter = cmdsFlightDataAdapter ?? new CMDSFlightDataAdapter();
-            _nwsFlightDataAdapter = nwsFlightDataAdapter ?? new NWSFlightDataAdapter();
+            _flightDataAdapterSet = flightDataAdapterSet ?? new FlightDataAdapterSet();
         }
         public void UpdateRendererStatesFromFlightData(
             IInstrumentRendererSet renderers,
@@ -150,14 +147,14 @@ namespace MFDExtractor
                 UpdatePitchTrim(renderers, flightData);
                 UpdateRWR(renderers, flightData);
                 UpdateCautionPanel(renderers, flightData);
-                _cmdsFlightDataAdapter.Adapt(renderers.CMDSPanel, flightData);
-                UpdateDED(renderers, flightData);
+                _flightDataAdapterSet.CMDS.Adapt(renderers.CMDSPanel, flightData);
+                _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
                 UpdatePFL(renderers, flightData);
                 UpdateEPUFuel(renderers, flightData);
                 UpdateFuelFlow(renderers, flightData);
                 UpdateFuelQTY(renderers, flightData);
                 UpdateLandingGearLights(renderers, flightData);
-                _nwsFlightDataAdapter.Adapt(renderers.NWSIndexer, flightData);
+                _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
                 UpdateSpeedbrake(renderers, flightData);
                 UpdateRPM1(renderers, flightData);
                 UpdateRPM2(renderers, flightData);
@@ -510,27 +507,6 @@ namespace MFDExtractor
             }
         }
 
-        private static void UpdateDED(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            if (fromFalcon.DEDLines != null)
-            {
-                renderers.DED.InstrumentState.Line1 =Encoding.Default.GetBytes(fromFalcon.DEDLines[0] ?? "");
-                renderers.DED.InstrumentState.Line2 =Encoding.Default.GetBytes(fromFalcon.DEDLines[1] ?? "");
-                renderers.DED.InstrumentState.Line3 =Encoding.Default.GetBytes(fromFalcon.DEDLines[2] ?? "");
-                renderers.DED.InstrumentState.Line4 =Encoding.Default.GetBytes(fromFalcon.DEDLines[3] ?? "");
-                renderers.DED.InstrumentState.Line5 =Encoding.Default.GetBytes(fromFalcon.DEDLines[4] ?? "");
-            }
-            if (fromFalcon.Invert != null)
-            {
-                renderers.DED.InstrumentState.Line1Invert =Encoding.Default.GetBytes(fromFalcon.Invert[0] ?? "");
-                renderers.DED.InstrumentState.Line2Invert =Encoding.Default.GetBytes(fromFalcon.Invert[1] ?? "");
-                renderers.DED.InstrumentState.Line3Invert =Encoding.Default.GetBytes(fromFalcon.Invert[2] ?? "");
-                renderers.DED.InstrumentState.Line4Invert =Encoding.Default.GetBytes(fromFalcon.Invert[3] ?? "");
-                renderers.DED.InstrumentState.Line5Invert =Encoding.Default.GetBytes(fromFalcon.Invert[4] ?? "");
-            }
-        }
-
-      
 
         private static void UpdateCautionPanel(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
