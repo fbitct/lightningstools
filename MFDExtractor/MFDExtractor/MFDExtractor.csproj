@@ -111,10 +111,13 @@
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FlightDataAdapters\AltimeterFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CMDSFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\DEDFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FlightDataAdapterSet.cs" />
     <Compile Include="FlightDataAdapters\NWSFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\SpeedbrakeFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\VVIFlightDataAdapter.cs" />
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataUpdater.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />

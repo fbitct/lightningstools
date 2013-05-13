@@ -4,7 +4,6 @@ using Common.Math;
 using Common.Networking;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using F4Utils.Campaign;
 using F4Utils.SimSupport;
 using LightningGauges.Renderers;
 using MFDExtractor.FlightDataAdapters;
@@ -50,8 +49,8 @@ namespace MFDExtractor
                 var altbits = ((AltBits) flightData.altBits); //12-08-12 added by Falcas 
 
                 UpdateISIS(renderers, useBMSAdvancedSharedmemValues, flightData, altbits, extensionData, hsibits);
-                UpdateVVI(renderers, hsibits, flightData);
-                UpdateAltimeter(renderers, useBMSAdvancedSharedmemValues, flightData, altbits);
+                _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
+                _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData, useBMSAdvancedSharedmemValues);
                 UpdateAirspeedIndicator(renderers, flightData);
                 UpdateCompass(renderers, flightData);
                 UpdateAOAIndicator(renderers, hsibits, flightData);
@@ -155,7 +154,7 @@ namespace MFDExtractor
                 UpdateFuelQTY(renderers, flightData);
                 UpdateLandingGearLights(renderers, flightData);
                 _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
-                UpdateSpeedbrake(renderers, flightData);
+                _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
                 UpdateRPM1(renderers, flightData);
                 UpdateRPM2(renderers, flightData);
                 UpdateFTIT1andFTIT2(renderers, flightData);
@@ -440,19 +439,7 @@ namespace MFDExtractor
             renderers.RPM1.InstrumentState.RPMPercent = fromFalcon.rpm;
         }
 
-        private static void UpdateSpeedbrake(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.Speedbrake.InstrumentState.PercentOpen = fromFalcon.speedBrake*100.0f;
-
-            if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
-            {
-                renderers.Speedbrake.InstrumentState.PowerLoss = ((fromFalcon.lightBits3 &(int) Bms4LightBits3.Power_Off) == (int) Bms4LightBits3.Power_Off);
-            }
-            else
-            {
-                renderers.Speedbrake.InstrumentState.PowerLoss = ((fromFalcon.lightBits3 &(int) LightBits3.Power_Off) == (int) LightBits3.Power_Off);
-            }
-        }
+       
 
         private static void UpdateLandingGearLights(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
@@ -726,72 +713,6 @@ namespace MFDExtractor
         {
             renderers.ASI.InstrumentState.AirspeedKnots = fromFalcon.kias;
             renderers.ASI.InstrumentState.MachNumber = fromFalcon.mach;
-        }
-
-        private static void UpdateAltimeter(IInstrumentRendererSet renderers, bool useBMSAdvancedSharedmemValues,
-            FlightData fromFalcon, AltBits altbits)
-        {
-            if (fromFalcon.DataFormat == FalconDataFormats.BMS4 && useBMSAdvancedSharedmemValues)
-            {
-                if (((altbits & AltBits.CalType) == AltBits.CalType)) //13-08-12 added by Falcas
-                {
-                    renderers.Altimeter.Options.PressureAltitudeUnits =F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury;
-                }
-                else
-                {
-                    renderers.Altimeter.Options.PressureAltitudeUnits =F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars;
-                }
-                //((F16Altimeter)Altimeter).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude (- fromFalcon.z,((F16Altimeter)Altimeter).InstrumentState.BarometricPressure, ((F16Altimeter)Altimeter).Options.PressureAltitudeUnits == F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury) ;
-                renderers.Altimeter.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
-                if (fromFalcon.VersionNum >= 111)
-                {
-                    renderers.Altimeter.InstrumentState.BarometricPressure =fromFalcon.AltCalReading; //12-08-12 added by Falcas
-                    renderers.Altimeter.InstrumentState.PneumaticModeFlag = ((altbits &AltBits.PneuFlag) ==AltBits.PneuFlag);
-                    //12-08-12 added by Falcas
-                }
-                else
-                {
-                    renderers.Altimeter.InstrumentState.BarometricPressure = 2992f;
-                    //12-08-12 added by Falcas
-                    renderers.Altimeter.InstrumentState.PneumaticModeFlag = false;
-                    //12-08-12 added by Falcas
-                    renderers.Altimeter.Options.PressureAltitudeUnits =F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury; //12-08-12 added by Falcas
-                }
-            }
-            else
-            {
-                //((F16Altimeter)Altimeter).InstrumentState.IndicatedAltitudeFeetMSL = GetIndicatedAltitude(-fromFalcon.z, ((F16Altimeter)Altimeter).InstrumentState.BarometricPressure, ((F16Altimeter)Altimeter).Options.PressureAltitudeUnits == F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury);
-                renderers.Altimeter.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
-                renderers.Altimeter.InstrumentState.BarometricPressure = 2992f;
-                //12-08-12 added by Falcas
-                renderers.Altimeter.InstrumentState.PneumaticModeFlag = false;
-                //12-08-12 added by Falcas
-                renderers.Altimeter.Options.PressureAltitudeUnits =F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury; //12-08-12 added by Falcas
-            }
-        }
-
-        private static void UpdateVVI(IInstrumentRendererSet renderers, HsiBits hsibits, FlightData fromFalcon)
-        {
-            float verticalVelocity = 0;
-            if (((hsibits & HsiBits.VVI) == HsiBits.VVI))
-            {
-                verticalVelocity = 0;
-            }
-            else
-            {
-                verticalVelocity = -fromFalcon.zDot*60.0f;
-            }
-
-            if (renderers.VVI is F16VerticalVelocityIndicatorEU)
-            {
-                ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==HsiBits.VVI);
-                ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.VerticalVelocityFeet = verticalVelocity;
-            }
-            else if (renderers.VVI is F16VerticalVelocityIndicatorUSA)
-            {
-                ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==HsiBits.VVI);
-                ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.VerticalVelocityFeet =verticalVelocity;
-            }
         }
 
         private static void UpdateISIS(IInstrumentRendererSet renderers, bool useBMSAdvancedSharedmemValues,
