@@ -324,27 +324,25 @@ namespace Common.Imaging
             return toReturn;
         }
 
-        public static ColorMatrix GetGreyscaleColorMatrix()
-        {
-            //ColorMatrix cm = new ColorMatrix(new float[][]{   new float[]{0.3f,0.3f,0.3f,0,0},
-            //                      new float[]{0.59f,0.59f,0.59f,0,0},
-            //                      new float[]{0.11f,0.11f,0.11f,0,0},
-            //                      new float[]{0,0,0,1,0,0},
-            //                      new float[]{0,0,0,0,1,0},
-            //                      new float[]{0,0,0,0,0,1}});
-            var cm = new ColorMatrix(new[]
-                                         {
-                                             new[] {0.33f, 0.33f, 0.33f, 0, 0},
-                                             new[] {0.33f, 0.33f, 0.33f, 0, 0},
-                                             new[] {0.33f, 0.33f, 0.33f, 0, 0},
-                                             new float[] {0, 0, 0, 1, 0, 0},
-                                             new float[] {0, 0, 0, 0, 1, 0},
-                                             new float[] {0, 0, 0, 0, 0, 1}
-                                         });
-            return cm;
-        }
+	    public static ColorMatrix GreyscaleColorMatrix
+	    {
+		    get
+		    {
+			    {
+				    return new ColorMatrix(new[]
+				    {
+					    new[] {0.33f, 0.33f, 0.33f, 0, 0},
+					    new[] {0.33f, 0.33f, 0.33f, 0, 0},
+					    new[] {0.33f, 0.33f, 0.33f, 0, 0},
+					    new float[] {0, 0, 0, 1, 0, 0},
+					    new float[] {0, 0, 0, 0, 1, 0},
+					    new float[] {0, 0, 0, 0, 0, 1}
+				    });
+			    }
+		    }
+	    }
 
-        public static ColorMatrix GetNVISColorMatrix(int brightnessLevel, int maxBrightnessLevel)
+	    public static ColorMatrix GetNVISColorMatrix(int brightnessLevel, int maxBrightnessLevel)
         {
             var cm = new ColorMatrix
                 (

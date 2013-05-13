@@ -141,7 +141,9 @@
     <Compile Include="FlightDataUpdater.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
+    <Compile Include="InputControlSelectionSettingReader.cs" />
     <Compile Include="Properties\Settings.cs" />
+    <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="RenderThreadSetupHelper.cs" />
     <Compile Include="RenderThreadWorkHelper.cs" />
     <Compile Include="ThreadAbortion.cs" />
@@ -231,15 +233,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="mfdextractoricon.ICO" />
-    <Content Include="Direct3D Proxy DLLs\ddraw.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Direct3D Proxy DLLs\detoured.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Direct3D Proxy DLLs\readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="docs\Falcon_MFD_Extractor_v0.2.0.2_User_Manual_Revised_24_June_2008.doc" />
     <None Include="Resources\restore.PNG" />
     <None Include="Resources\mfd4TestAlignmentImage.bmp" />

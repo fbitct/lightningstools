@@ -2811,7 +2811,7 @@ namespace MFDExtractor
                         if (Settings.Default.HUD_Monochrome)
                         {
                             var ia = new ImageAttributes();
-                            ia.SetColorMatrix(GetGreyscaleColorMatrix());
+							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(hudImage))
                             {
                                 graphics.DrawImage(compatible, _hudForm.ClientRectangle, 0, 0, hudImage.Width,
@@ -2828,26 +2828,7 @@ namespace MFDExtractor
             }
         }
 
-        private ColorMatrix GetGreyscaleColorMatrix()
-        {
-            //ColorMatrix cm = new ColorMatrix(new float[][]{   new float[]{0.3f,0.3f,0.3f,0,0},
-            //                      new float[]{0.59f,0.59f,0.59f,0,0},
-            //                      new float[]{0.11f,0.11f,0.11f,0,0},
-            //                      new float[]{0,0,0,1,0,0},
-            //                      new float[]{0,0,0,0,1,0},
-            //                      new float[]{0,0,0,0,0,1}});
-            var cm = new ColorMatrix(new[]
-                {
-                    new[] {0.33f, 0.33f, 0.33f, 0, 0},
-                    new[] {0.33f, 0.33f, 0.33f, 0, 0},
-                    new[] {0.33f, 0.33f, 0.33f, 0, 0},
-                    new float[] {0, 0, 0, 1, 0, 0},
-                    new float[] {0, 0, 0, 0, 1, 0},
-                    new float[] {0, 0, 0, 0, 0, 1}
-                });
-            return cm;
-        }
-
+        
         /// <summary>
         ///     Stores the current MFD #4 image and makes it available over the network to remote clients
         /// </summary>
@@ -2872,7 +2853,7 @@ namespace MFDExtractor
                         if (Settings.Default.MFD4_Monochrome)
                         {
                             var ia = new ImageAttributes();
-                            ia.SetColorMatrix(GetGreyscaleColorMatrix());
+							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(mfd4Image))
                             {
                                 graphics.DrawImage(compatible, _mfd4Form.ClientRectangle, 0, 0, mfd4Image.Width,
@@ -2913,7 +2894,7 @@ namespace MFDExtractor
                         if (Settings.Default.MFD3_Monochrome)
                         {
                             var ia = new ImageAttributes();
-                            ia.SetColorMatrix(GetGreyscaleColorMatrix());
+							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(mfd3Image))
                             {
                                 graphics.DrawImage(compatible, _mfd3Form.ClientRectangle, 0, 0, mfd3Image.Width,
@@ -2954,7 +2935,7 @@ namespace MFDExtractor
                         if (Settings.Default.LMFD_Monochrome)
                         {
                             var ia = new ImageAttributes();
-                            ia.SetColorMatrix(GetGreyscaleColorMatrix());
+							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(leftMfdImage))
                             {
                                 graphics.DrawImage(compatible, _leftMfdForm.ClientRectangle, 0, 0, leftMfdImage.Width,
@@ -2995,7 +2976,7 @@ namespace MFDExtractor
                         if (Settings.Default.RMFD_Monochrome)
                         {
                             var ia = new ImageAttributes();
-                            ia.SetColorMatrix(GetGreyscaleColorMatrix());
+							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(rightMfdImage))
                             {
                                 graphics.DrawImage(compatible, _rightMfdForm.ClientRectangle, 0, 0, rightMfdImage.Width,
@@ -6945,8 +6926,8 @@ namespace MFDExtractor
                     else if (monochrome)
                     {
                         var monochromeImageAttribs = new ImageAttributes();
-                        ColorMatrix cm = GetGreyscaleColorMatrix();
-                        monochromeImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
+						var greyscaleColorMatrix = Util.GreyscaleColorMatrix;
+                        monochromeImageAttribs.SetColorMatrix(greyscaleColorMatrix, ColorMatrixFlag.Default);
                         graphics.DrawImage(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height,
                                            GraphicsUnit.Pixel, monochromeImageAttribs);
                     }

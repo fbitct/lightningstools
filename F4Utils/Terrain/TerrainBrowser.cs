@@ -19,8 +19,13 @@ using Microsoft.Win32;
 
 namespace F4Utils.Terrain
 {
-    public class TerrainBrowser : IDisposable
-    {
+	public interface ITerrainHeightProvider
+	{
+		float GetTerrainHeight(float feetNorth, float feetEast);
+	}
+
+	public class TerrainBrowser : IDisposable, ITerrainHeightProvider
+	{
         private static readonly ILog Log = LogManager.GetLogger(typeof (TerrainBrowser));
         private readonly bool _loadAllLods;
 

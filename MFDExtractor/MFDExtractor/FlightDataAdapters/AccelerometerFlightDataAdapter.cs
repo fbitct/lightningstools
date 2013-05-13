@@ -5,12 +5,12 @@ namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IAccelerometerFlightDataAdapter
     {
-        void Adapt(F16Accelerometer accelerometer, FlightData flightData);
+        void Adapt(IF16Accelerometer accelerometer, FlightData flightData);
     }
 
     class AccelerometerFlightDataAdapter : IAccelerometerFlightDataAdapter
     {
-        public void Adapt(F16Accelerometer accelerometer, FlightData flightData)
+        public void Adapt(IF16Accelerometer accelerometer, FlightData flightData)
         {
             var gs = flightData.gs;
             if (gs == 0) //ignore exactly zero g's
