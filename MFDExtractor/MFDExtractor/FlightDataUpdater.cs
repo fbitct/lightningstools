@@ -154,8 +154,8 @@ namespace MFDExtractor
                 _flightDataAdapterSet.LandingGearLights.Adapt(renderers.LandingGearLights, flightData);
                 _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
                 _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
-                UpdateRPM1(renderers, flightData);
-                UpdateRPM2(renderers, flightData);
+                _flightDataAdapterSet.RPM1.Adapt(renderers.RPM1, flightData);
+                _flightDataAdapterSet.RPM2.Adapt(renderers.RPM2, flightData);
                 UpdateFTIT1andFTIT2(renderers, flightData);
                 UpdateNOZ1andNOZ2(renderers, flightData);
                 UpdateOIL1(renderers, flightData);
@@ -404,16 +404,6 @@ namespace MFDExtractor
             }
         }
 
-        private static void UpdateRPM2(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.RPM2.InstrumentState.RPMPercent = fromFalcon.rpm2;
-        }
-
-        private static void UpdateRPM1(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.RPM1.InstrumentState.RPMPercent = fromFalcon.rpm;
-        }
-
         private static void UpdateFuelQTY(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
             renderers.FuelQuantity.InstrumentState.AftLeftFuelQuantityPounds =fromFalcon.aft/10.0f;
@@ -434,25 +424,25 @@ namespace MFDExtractor
 
         private static void UpdateRollTrim(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
-            float rolltrim = fromFalcon.TrimRoll;
+            var rolltrim = fromFalcon.TrimRoll;
             renderers.RollTrim.InstrumentState.RollTrimPercent = rolltrim*2.0f*100.0f;
         }
 
         private static void UpdateCabinPress(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
-            float z = fromFalcon.z;
-            float origCabinAlt = renderers.CabinPress.InstrumentState.CabinPressureAltitudeFeet;
-            bool pressurization = ((fromFalcon.lightBits & (int) LightBits.CabinPress) == (int) LightBits.CabinPress);
+            var z = fromFalcon.z;
+            var origCabinAlt = renderers.CabinPress.InstrumentState.CabinPressureAltitudeFeet;
+            var pressurization = ((fromFalcon.lightBits & (int) LightBits.CabinPress) == (int) LightBits.CabinPress);
             renderers.CabinPress.InstrumentState.CabinPressureAltitudeFeet =NonImplementedGaugeCalculations.CabinAlt(origCabinAlt, z, pressurization);
         }
 
         private static void UpdateHYDAandHYDB(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
-            float rpm = fromFalcon.rpm;
-            bool mainGen = ((fromFalcon.lightBits3 & (int) LightBits3.MainGen) == (int) LightBits3.MainGen);
-            bool stbyGen = ((fromFalcon.lightBits3 & (int) LightBits3.StbyGen) == (int) LightBits3.StbyGen);
-            bool epuGen = ((fromFalcon.lightBits3 & (int) LightBits3.EpuGen) == (int) LightBits3.EpuGen);
-            bool epuOn = ((fromFalcon.lightBits2 & (int) LightBits2.EPUOn) == (int) LightBits2.EPUOn);
+            var rpm = fromFalcon.rpm;
+            var mainGen = ((fromFalcon.lightBits3 & (int) LightBits3.MainGen) == (int) LightBits3.MainGen);
+            var stbyGen = ((fromFalcon.lightBits3 & (int) LightBits3.StbyGen) == (int) LightBits3.StbyGen);
+            var epuGen = ((fromFalcon.lightBits3 & (int) LightBits3.EpuGen) == (int) LightBits3.EpuGen);
+            var epuOn = ((fromFalcon.lightBits2 & (int) LightBits2.EPUOn) == (int) LightBits2.EPUOn);
             float epuFuel = fromFalcon.epuFuel;
             renderers.HYDA.InstrumentState.HydraulicPressurePoundsPerSquareInch =NonImplementedGaugeCalculations.HydA(rpm, mainGen, stbyGen, epuGen, epuOn, epuFuel);
             renderers.HYDB.InstrumentState.HydraulicPressurePoundsPerSquareInch =NonImplementedGaugeCalculations.HydB(rpm, mainGen, stbyGen, epuGen, epuOn, epuFuel);
