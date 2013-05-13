@@ -122,6 +122,7 @@
     <Compile Include="FlightDataAdapters\DEDFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\EPUFuelFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FlightDataAdapterSet.cs" />
+    <Compile Include="FlightDataAdapters\FuelFlowFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\ISISFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\LandingGearLightsFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\NWSFlightDataAdapter.cs" />

@@ -23,6 +23,7 @@
         ICabinPressureAltitudeIndicatorFlightDataAdapter CabinPress { get; }
         IRollTrimIndicatorFlightDataAdapter RollTrim { get; }
         IPitchTrimIndicatorFlightDataAdapter PitchTrim { get; }
+        IFuelFlowFlightDataAdapter FuelFlow { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -50,6 +51,7 @@
             CabinPress = new CabinPressureAltitudeIndicatorFlightDataAdapter();
             RollTrim = new RollTrimIndicatorFlightDataAdapter();
             PitchTrim = new PitchTrimIndicatorFlightDataAdapter();
+            FuelFlow = new FuelFlowFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -73,5 +75,6 @@
         public ICabinPressureAltitudeIndicatorFlightDataAdapter CabinPress { get; private set; }
         public IRollTrimIndicatorFlightDataAdapter RollTrim { get; private set; }
         public IPitchTrimIndicatorFlightDataAdapter PitchTrim { get; private set; }
+        public IFuelFlowFlightDataAdapter FuelFlow { get; private set; }
     }
 }

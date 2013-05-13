@@ -45,7 +45,6 @@ namespace MFDExtractor
             if (simRunning || networkMode == NetworkMode.Client)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
-                var altbits = ((AltBits) flightData.altBits); //12-08-12 added by Falcas 
 
                 _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData, useBMSAdvancedSharedmemValues);
                 _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
@@ -149,7 +148,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
                 _flightDataAdapterSet.PFL.Adapt(renderers.PFL, flightData);
                 _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);
-                UpdateFuelFlow(renderers, flightData);
+                _flightDataAdapterSet.FuelFlow.Adapt(renderers.FuelFlow, flightData);
                 UpdateFuelQTY(renderers, flightData);
                 _flightDataAdapterSet.LandingGearLights.Adapt(renderers.LandingGearLights, flightData);
                 _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
@@ -409,11 +408,6 @@ namespace MFDExtractor
             renderers.FuelQuantity.InstrumentState.AftLeftFuelQuantityPounds =fromFalcon.aft/10.0f;
             renderers.FuelQuantity.InstrumentState.ForeRightFuelQuantityPounds =fromFalcon.fwd/10.0f;
             renderers.FuelQuantity.InstrumentState.TotalFuelQuantityPounds =fromFalcon.total;
-        }
-
-        private static void UpdateFuelFlow(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.FuelFlow.InstrumentState.FuelFlowPoundsPerHour = fromFalcon.fuelFlow;
         }
 
         private static void UpdateHYDAandHYDB(IInstrumentRendererSet renderers, FlightData fromFalcon)
