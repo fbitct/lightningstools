@@ -93,7 +93,27 @@ namespace MFDExtractor.UI
                 OnDataChanged(new EventArgs());
             }
         }
-
+	    public bool SizingOrMovingCursorsAreDisplayed
+	    {
+		    get
+		    {
+			    return (
+				    (
+					    Cursor == Cursors.SizeAll
+						    ||
+					    Cursor == Cursors.SizeNESW
+						    ||
+					    Cursor == Cursors.SizeNS
+						    ||
+					    Cursor == Cursors.SizeNWSE
+						    ||
+					    Cursor == Cursors.SizeWE
+					    )
+					    ||
+				    new Rectangle(Location, Size).Contains(Cursor.Position)
+				    );
+		    }
+	    }
         public event EventHandler DataChanged;
 
         protected void ApplyRotationCheck()

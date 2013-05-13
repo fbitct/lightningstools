@@ -41,9 +41,8 @@ namespace MFDExtractor
         private bool _disposed;
         private long _renderCycleNum;
 
-	    private IInputControlSelectionSettingReader _inputControlSelectionSettingReader =
-		    new InputControlSelectionSettingReader();
-
+	    private readonly IInputControlSelectionSettingReader _inputControlSelectionSettingReader = new InputControlSelectionSettingReader();
+		private readonly IInstrumentStateSnapshotCache _instrumentStateSnapshotCache= new InstrumentStateSnapshotCache();
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms =
             new Dictionary<IInstrumentRenderer, InstrumentForm>();
         private InstrumentForm _accelerometerForm;
@@ -248,9 +247,6 @@ namespace MFDExtractor
         private readonly AutoResetEvent _hydBRenderEnd = new AutoResetEvent(false);
         private readonly AutoResetEvent _hydBRenderStart = new AutoResetEvent(false);
 
-        private readonly Dictionary<IInstrumentRenderer, InstrumentStateSnapshot> _instrumentStates =
-            new Dictionary<IInstrumentRenderer, Extractor.InstrumentStateSnapshot>();
-
         private readonly AutoResetEvent _isisRenderEnd = new AutoResetEvent(false);
         private readonly AutoResetEvent _isisRenderStart = new AutoResetEvent(false);
         private readonly AutoResetEvent _landingGearLightsRenderEnd = new AutoResetEvent(false);
@@ -291,11 +287,7 @@ namespace MFDExtractor
         private AutoResetEvent _mfd4CaptureEnd = new AutoResetEvent(false);
         private AutoResetEvent _rightMfdCaptureEnd = new AutoResetEvent(false);
 
-        private struct InstrumentStateSnapshot
-        {
-            public DateTime DateTime;
-            public int HashCode;
-        }
+       
 
         #endregion
 
@@ -6811,47 +6803,9 @@ namespace MFDExtractor
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(IInstrumentRenderer renderer)
         {
-            var staleDataTimeout = 500; //Timeout.Infinite;
-            var baseRenderer = renderer as InstrumentRendererBase;
-            if (baseRenderer == null) return true;
-            var oldStateHash = 0;
-            var oldStateDateTime = DateTime.MinValue;
-            var oldHashWasFound = false;
-            if (_instrumentStates.ContainsKey(baseRenderer))
-            {
-                oldStateHash = _instrumentStates[baseRenderer].HashCode;
-                oldStateDateTime = _instrumentStates[baseRenderer].DateTime;
-                oldHashWasFound = true;
-            }
-            var newState = baseRenderer.GetState();
-            var newStateHash = newState != null ? newState.GetHashCode() : 0;
-            var newStateDateTime = DateTime.Now;
-
-            var hashesAreDifferent = !oldHashWasFound || (oldStateHash != newStateHash);
-
-            var timeSinceHashChanged = Int32.MaxValue;
-            if (oldStateDateTime != DateTime.MinValue)
-            {
-                timeSinceHashChanged = (int) Math.Floor(DateTime.Now.Subtract(oldStateDateTime).TotalMilliseconds);
-            }
-            var stateIsStaleOrChanged = (hashesAreDifferent ||
-                                          (timeSinceHashChanged > staleDataTimeout &&
-                                           staleDataTimeout != Timeout.Infinite));
-            if (stateIsStaleOrChanged)
-            {
-                var toStore = new Extractor.InstrumentStateSnapshot {DateTime = newStateDateTime, HashCode = newStateHash};
-                if (_instrumentStates.ContainsKey(baseRenderer))
-                {
-                    _instrumentStates[baseRenderer] = toStore;
-                }
-                else
-                {
-                    _instrumentStates.Add(baseRenderer, toStore);
-                }
-            }
-            InstrumentForm form = GetFormForRenderer(renderer);
-            if (ShouldHighlightingBorderBeDisplayedOnTargetForm(form)) return true;
-            return stateIsStaleOrChanged;
+            var instrumentForm = GetFormForRenderer(renderer);
+	        var stateIsStale = _instrumentStateSnapshotCache.CaptureInstrumentStateSnapshotAndCheckIfStale(renderer, instrumentForm);
+            return stateIsStale || HighlightingBorderShouldBeDisplayedOnTargetForm(instrumentForm);
         }
 
 
@@ -6883,7 +6837,7 @@ namespace MFDExtractor
                     {
                         renderer.Render(g, new Rectangle(0, 0, image.Width, image.Height));
                         targetForm.LastRenderedOn = DateTime.Now;
-                        if (ShouldHighlightingBorderBeDisplayedOnTargetForm(targetForm))
+                        if (HighlightingBorderShouldBeDisplayedOnTargetForm(targetForm))
                         {
                             Color scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
                             var scopeGreenPen = new Pen(scopeGreenColor);
@@ -6975,11 +6929,9 @@ namespace MFDExtractor
             }
         }
 
-        private static bool ShouldHighlightingBorderBeDisplayedOnTargetForm(InstrumentForm targetForm)
+        private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
         {
-            return SizingOrMovingCursorsAreDisplayed(targetForm)
-                   &&
-                   Settings.Default.HighlightOutputWindows
+			return targetForm.SizingOrMovingCursorsAreDisplayed  && Settings.Default.HighlightOutputWindows
                 ;
         }
 
@@ -7014,25 +6966,6 @@ namespace MFDExtractor
             {
             }
             return retVal;
-        }
-
-        private static bool SizingOrMovingCursorsAreDisplayed(InstrumentForm targetForm)
-        {
-            return (
-                       (
-                           targetForm.Cursor == Cursors.SizeAll
-                           ||
-                           targetForm.Cursor == Cursors.SizeNESW
-                           ||
-                           targetForm.Cursor == Cursors.SizeNS
-                           ||
-                           targetForm.Cursor == Cursors.SizeNWSE
-                           ||
-                           targetForm.Cursor == Cursors.SizeWE
-                       )
-                       ||
-                       new Rectangle(targetForm.Location, targetForm.Size).Contains(Cursor.Position)
-                   );
         }
 
         #endregion

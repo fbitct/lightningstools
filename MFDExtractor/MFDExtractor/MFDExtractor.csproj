@@ -142,6 +142,7 @@
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="InputControlSelectionSettingReader.cs" />
+    <Compile Include="InstrumentStateSnapshotCache.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="RenderThreadSetupHelper.cs" />
