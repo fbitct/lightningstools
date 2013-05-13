@@ -6,6 +6,7 @@ using F4SharedMem;
 using F4SharedMem.Headers;
 using F4Utils.SimSupport;
 using LightningGauges.Renderers;
+using MFDExtractor.FlightDataAdapters;
 
 namespace MFDExtractor
 {
@@ -22,6 +23,15 @@ namespace MFDExtractor
 
     internal class FlightDataUpdater : IFlightDataUpdater
     {
+        private readonly ICMDSFlightDataAdapter _cmdsFlightDataAdapter;
+        private readonly INWSFlightDataAdapter _nwsFlightDataAdapter;
+        public FlightDataUpdater(
+            ICMDSFlightDataAdapter cmdsFlightDataAdapter = null,
+            INWSFlightDataAdapter nwsFlightDataAdapter = null)
+        {
+            _cmdsFlightDataAdapter = cmdsFlightDataAdapter ?? new CMDSFlightDataAdapter();
+            _nwsFlightDataAdapter = nwsFlightDataAdapter ?? new NWSFlightDataAdapter();
+        }
         public void UpdateRendererStatesFromFlightData(
             IInstrumentRendererSet renderers,
             FlightData flightData,
@@ -140,14 +150,14 @@ namespace MFDExtractor
                 UpdatePitchTrim(renderers, flightData);
                 UpdateRWR(renderers, flightData);
                 UpdateCautionPanel(renderers, flightData);
-                UpdateCMDS(renderers, flightData);
+                _cmdsFlightDataAdapter.Adapt(renderers.CMDSPanel, flightData);
                 UpdateDED(renderers, flightData);
                 UpdatePFL(renderers, flightData);
                 UpdateEPUFuel(renderers, flightData);
                 UpdateFuelFlow(renderers, flightData);
                 UpdateFuelQTY(renderers, flightData);
                 UpdateLandingGearLights(renderers, flightData);
-                UpdateNWS(renderers, flightData);
+                _nwsFlightDataAdapter.Adapt(renderers.NWSIndexer, flightData);
                 UpdateSpeedbrake(renderers, flightData);
                 UpdateRPM1(renderers, flightData);
                 UpdateRPM2(renderers, flightData);
@@ -447,13 +457,6 @@ namespace MFDExtractor
             }
         }
 
-        private static void UpdateNWS(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.NWSIndexer.InstrumentState.DISC = ((fromFalcon.lightBits &(int) LightBits.RefuelDSC) ==(int) LightBits.RefuelDSC);
-            renderers.NWSIndexer.InstrumentState.AR_NWS = ((fromFalcon.lightBits &(int) LightBits.RefuelAR) ==(int) LightBits.RefuelAR);
-            renderers.NWSIndexer.InstrumentState.RDY = ((fromFalcon.lightBits &(int) LightBits.RefuelRDY) ==(int) LightBits.RefuelRDY);
-        }
-
         private static void UpdateLandingGearLights(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
             if (fromFalcon.DataFormat == FalconDataFormats.OpenFalcon ||fromFalcon.DataFormat == FalconDataFormats.BMS4)
@@ -527,40 +530,7 @@ namespace MFDExtractor
             }
         }
 
-        private static void UpdateCMDS(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.CMDSPanel.InstrumentState.Degraded = ((fromFalcon.lightBits2 &(int) LightBits2.Degr) ==(int) LightBits2.Degr);
-            renderers.CMDSPanel.InstrumentState.ChaffCount = (int) fromFalcon.ChaffCount;
-            renderers.CMDSPanel.InstrumentState.ChaffLow = ((fromFalcon.lightBits2 &(int) LightBits2.ChaffLo) ==(int) LightBits2.ChaffLo);
-            renderers.CMDSPanel.InstrumentState.DispenseReady = ((fromFalcon.lightBits2 &(int) LightBits2.Rdy) ==(int) LightBits2.Rdy);
-            renderers.CMDSPanel.InstrumentState.FlareCount = (int) fromFalcon.FlareCount;
-            renderers.CMDSPanel.InstrumentState.FlareLow = ((fromFalcon.lightBits2 &(int) LightBits2.FlareLo) ==(int) LightBits2.FlareLo);
-            renderers.CMDSPanel.InstrumentState.Go =
-                (
-                    ((fromFalcon.lightBits2 & (int) LightBits2.Go) == (int) LightBits2.Go)
-                    //Falcas 04/09/2012 to match what you see in BMS
-                    //    &&
-                    //!(
-                    //    ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.NoGo) == (int)F4SharedMem.Headers.LightBits2.NoGo)
-                    //             ||
-                    //    ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
-                    //             ||
-                    //    ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Rdy) == (int)F4SharedMem.Headers.LightBits2.Rdy)
-                    //)
-                    );
-
-            renderers.CMDSPanel.InstrumentState.NoGo =
-                (
-                    ((fromFalcon.lightBits2 & (int) LightBits2.NoGo) == (int) LightBits2.NoGo)
-                    //Falcas 04/09/2012 to match what you see in BMS
-                    //         ||
-                    //((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.Degr) == (int)F4SharedMem.Headers.LightBits2.Degr)
-                    );
-            renderers.CMDSPanel.InstrumentState.Other1Count = 0;
-            renderers.CMDSPanel.InstrumentState.Other1Low = true;
-            renderers.CMDSPanel.InstrumentState.Other2Count = 0;
-            renderers.CMDSPanel.InstrumentState.Other2Low = true;
-        }
+      
 
         private static void UpdateCautionPanel(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
