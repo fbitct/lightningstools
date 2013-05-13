@@ -19,7 +19,8 @@
         IAngleOfAttackIndexerFlightDataAdapter AOAIndexer { get; }
         IISISFlightDataAdapter ISIS { get; }
         IRPM1FlightDataAdapter RPM1 { get; }
-        IRPM1FlightDataAdapter RPM2 { get; }
+        IRPM2FlightDataAdapter RPM2 { get; }
+        ICabinPressureAltitudeIndicatorFlightDataAdapter CabinPress { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -44,6 +45,7 @@
             ISIS = new ISISFlightDataAdapter();
             RPM1 = new RPM1FlightDataAdapter();
             RPM2 = new RPM2FlightDataAdapter();
+            CabinPress = new CabinPressureAltitudeIndicatorFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -64,5 +66,6 @@
         public IISISFlightDataAdapter ISIS { get; private set; }
         public IRPM1FlightDataAdapter RPM1 { get; private set; }
         public IRPM2FlightDataAdapter RPM2 { get; private set; }
+        public ICabinPressureAltitudeIndicatorFlightDataAdapter CabinPress { get; private set; }
     }
 }

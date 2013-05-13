@@ -140,7 +140,7 @@ namespace MFDExtractor
                 UpdateHSIAndEHSICourseDeviationAndToFromFlags(renderers);
                 UpdateEHSI(UpdateEHSIBrightnessLabelVisibility);
                 UpdateHYDAandHYDB(renderers, flightData);
-                UpdateCabinPress(renderers, flightData);
+                _flightDataAdapterSet.CabinPress.Adapt(renderers.CabinPress, flightData);
                 UpdateRollTrim(renderers, flightData);
                 UpdatePitchTrim(renderers, flightData);
                 _flightDataAdapterSet.AzimuthIndicator.Adapt(renderers.RWR, flightData);
@@ -428,13 +428,6 @@ namespace MFDExtractor
             renderers.RollTrim.InstrumentState.RollTrimPercent = rolltrim*2.0f*100.0f;
         }
 
-        private static void UpdateCabinPress(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            var z = fromFalcon.z;
-            var origCabinAlt = renderers.CabinPress.InstrumentState.CabinPressureAltitudeFeet;
-            var pressurization = ((fromFalcon.lightBits & (int) LightBits.CabinPress) == (int) LightBits.CabinPress);
-            renderers.CabinPress.InstrumentState.CabinPressureAltitudeFeet =NonImplementedGaugeCalculations.CabinAlt(origCabinAlt, z, pressurization);
-        }
 
         private static void UpdateHYDAandHYDB(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
