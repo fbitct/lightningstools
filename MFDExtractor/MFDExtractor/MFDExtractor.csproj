@@ -112,6 +112,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FlightDataExtension.cs" />
+    <Compile Include="FlightDataUpdater.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="Properties\Settings.cs" />
