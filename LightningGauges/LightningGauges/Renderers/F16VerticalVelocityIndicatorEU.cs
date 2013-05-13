@@ -7,12 +7,9 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public interface IF16VerticalVelocityIndicatorEU : IInstrumentRenderer
-    {
-        F16VerticalVelocityIndicatorEU.F16VerticalVelocityIndicatorEUInstrumentState InstrumentState { get; set; }
-    }
+    public interface IF16VerticalVelocityIndicatorEU : IF16VerticalVelocityIndicator{}
 
-    public class F16VerticalVelocityIndicatorEU : InstrumentRendererBase, IF16VerticalVelocityIndicatorEU
+    public class F16VerticalVelocityIndicatorEU : InstrumentRendererBase, IF16VerticalVelocityIndicator
     {
         #region Image Location Constants
 
@@ -40,7 +37,7 @@ namespace LightningGauges.Renderers
 
         public F16VerticalVelocityIndicatorEU()
         {
-            InstrumentState = new F16VerticalVelocityIndicatorEUInstrumentState();
+            InstrumentState = new F16VerticalVelocityIndicatorInstrumentState();
         }
 
         #region Initialization Code
@@ -74,49 +71,9 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public F16VerticalVelocityIndicatorEUInstrumentState InstrumentState { get; set; }
+        public F16VerticalVelocityIndicatorInstrumentState InstrumentState { get; set; }
 
-        #region Instrument State
 
-        [Serializable]
-        public class F16VerticalVelocityIndicatorEUInstrumentState : InstrumentStateBase
-        {
-            private const float MAX_VELOCITY = 6000;
-            private const float MIN_VELOCITY = -6000;
-            private float _verticalVelocityFeet;
-
-            public F16VerticalVelocityIndicatorEUInstrumentState()
-            {
-                OffFlag = false;
-                VerticalVelocityFeet = 0.0f;
-            }
-
-            public float VerticalVelocityFeet
-            {
-                get { return _verticalVelocityFeet; }
-                set
-                {
-                    var vv = value;
-                    if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
-                    if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
-                    _verticalVelocityFeet = vv;
-                }
-            }
-
-            public bool OffFlag { get; set; }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
 
         public override void Render(Graphics g, Rectangle bounds)
         {

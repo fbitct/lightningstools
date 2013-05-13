@@ -7,12 +7,9 @@ using Common.SimSupport;
 
 namespace LightningGauges.Renderers
 {
-    public interface IF16VerticalVelocityIndicatorUSA : IInstrumentRenderer
-    {
-        F16VerticalVelocityIndicatorUSA.F16VerticalVelocityIndicatorUSAInstrumentState InstrumentState { get; set; }
-    }
+    public interface IF16VerticalVelocityIndicatorUSA:IF16VerticalVelocityIndicator{}
 
-    public class F16VerticalVelocityIndicatorUSA : InstrumentRendererBase, IF16VerticalVelocityIndicatorUSA
+    public class F16VerticalVelocityIndicatorUSA : InstrumentRendererBase, IF16VerticalVelocityIndicator, IF16VerticalVelocityIndicatorUSA
     {
         #region Image Location Constants
 
@@ -44,7 +41,7 @@ namespace LightningGauges.Renderers
 
         public F16VerticalVelocityIndicatorUSA()
         {
-            InstrumentState = new F16VerticalVelocityIndicatorUSAInstrumentState();
+            InstrumentState = new F16VerticalVelocityIndicatorInstrumentState();
         }
 
         #region Initialization Code
@@ -84,39 +81,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public F16VerticalVelocityIndicatorUSAInstrumentState InstrumentState { get; set; }
-
-        #region Instrument State
-
-        [Serializable]
-        public class F16VerticalVelocityIndicatorUSAInstrumentState : InstrumentStateBase
-        {
-            private const float MAX_VELOCITY = 6000;
-            private const float MIN_VELOCITY = -6000;
-            private float _verticalVelocityFeetPerMinute;
-
-            public F16VerticalVelocityIndicatorUSAInstrumentState()
-            {
-                OffFlag = false;
-                VerticalVelocityFeetPerMinute = 0.0f;
-            }
-
-            public float VerticalVelocityFeetPerMinute
-            {
-                get { return _verticalVelocityFeetPerMinute; }
-                set
-                {
-                    var vv = value;
-                    if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
-                    if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
-                    _verticalVelocityFeetPerMinute = vv;
-                }
-            }
-
-            public bool OffFlag { get; set; }
-        }
-
-        #endregion
+        public F16VerticalVelocityIndicatorInstrumentState InstrumentState { get; set; }
 
         public override void Render(Graphics g, Rectangle bounds)
         {
@@ -150,7 +115,7 @@ namespace LightningGauges.Renderers
                     float translateX = 110;
                     float translateY = 236;
                     var pixelsPerHundredFeet = 4.75f;
-                    var vv = InstrumentState.VerticalVelocityFeetPerMinute;
+                    var vv = InstrumentState.VerticalVelocityFeet;
                     if (Math.Abs(vv) > 6000.0) vv = Math.Sign(vv)*6000.0f;
                     var verticalVelocityThousands = vv/1000.0f;
                     translateY -= (-pixelsPerHundredFeet*verticalVelocityThousands*10.0f);
