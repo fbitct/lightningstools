@@ -997,17 +997,13 @@ namespace MFDExtractor
 
             if (renderers.VVI is F16VerticalVelocityIndicatorEU)
             {
-                ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==
-                    HsiBits.VVI);
-                ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.VerticalVelocityFeet =
-                    verticalVelocity;
+                ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) == HsiBits.VVI);
+                ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.VerticalVelocityFeet = verticalVelocity;
             }
             else if (renderers.VVI is F16VerticalVelocityIndicatorUSA)
             {
-                ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) ==
-                    HsiBits.VVI);
-                ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.VerticalVelocityFeetPerMinute =
-                    verticalVelocity;
+                ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.OffFlag = ((hsibits & HsiBits.VVI) == HsiBits.VVI);
+                ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.VerticalVelocityFeet = verticalVelocity;
             }
         }
 

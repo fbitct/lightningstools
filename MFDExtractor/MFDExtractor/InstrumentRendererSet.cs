@@ -1,87 +1,86 @@
 ﻿using Common.SimSupport;
+using LightningGauges.Renderers;
 
 namespace MFDExtractor
 {
     public interface IInstrumentRendererSet
     {
-         IInstrumentRenderer Accelerometer { get; set; }
-         IInstrumentRenderer ADI { get; set; }
-         IInstrumentRenderer Altimeter { get; set; }
-         IInstrumentRenderer AOAIndexer { get; set; }
-         IInstrumentRenderer AOAIndicator { get; set; }
-         IInstrumentRenderer ASI { get; set; }
-         IInstrumentRenderer BackupADI { get; set; }
-         IInstrumentRenderer CabinPress { get; set; }
-         IInstrumentRenderer CautionPanel { get; set; }
-         IInstrumentRenderer CMDSPanel { get; set; }
-         IInstrumentRenderer Compass{ get; set; }
-         IInstrumentRenderer DED{ get; set; }
-         IInstrumentRenderer EHSI{ get; set; }
-         IInstrumentRenderer EPUFuel{ get; set; }
-         IInstrumentRenderer FTIT1{ get; set; }
-         IInstrumentRenderer FTIT2{ get; set; }
-         IInstrumentRenderer FuelFlow{ get; set; }
-         IInstrumentRenderer FuelQuantity{ get; set; }
-         IInstrumentRenderer HSI{ get; set; }
-         IInstrumentRenderer HYDA{ get; set; }
-         IInstrumentRenderer HYDB{ get; set; }
-         IInstrumentRenderer ISIS{ get; set; }
-         IInstrumentRenderer LandingGearLights{ get; set; }
-         IInstrumentRenderer NOZ1{ get; set; }
-         IInstrumentRenderer NOZ2{ get; set; }
-         IInstrumentRenderer NWSIndexer{ get; set; }
-         IInstrumentRenderer OIL1{ get; set; }
-         IInstrumentRenderer OIL2{ get; set; }
-         IInstrumentRenderer PFL{ get; set; }
-         IInstrumentRenderer PitchTrim{ get; set; }
-         IInstrumentRenderer RollTrim{ get; set; }
-         IInstrumentRenderer RPM1{ get; set; }
-         IInstrumentRenderer RPM2{ get; set; }
-         IInstrumentRenderer RWR{ get; set; }
-         IInstrumentRenderer Speedbrake{ get; set; }
-         IInstrumentRenderer VVI{ get; set; }
+         IF16Accelerometer Accelerometer { get; set; }
+         IF16ADI ADI { get; set; }
+         IF16Altimeter Altimeter { get; set; }
+         IF16AngleOfAttackIndexer AOAIndexer { get; set; }
+         IF16AngleOfAttackIndicator AOAIndicator { get; set; }
+         IF16AirspeedIndicator ASI { get; set; }
+         IF16StandbyADI BackupADI { get; set; }
+         IF16CabinPressureAltitudeIndicator CabinPress { get; set; }
+         IF16CautionPanel CautionPanel { get; set; }
+         IF16CMDSPanel CMDSPanel { get; set; }
+         IF16Compass Compass{ get; set; }
+         IF16DataEntryDisplayPilotFaultList DED{ get; set; }
+         IF16EHSI EHSI{ get; set; }
+         IF16EPUFuelGauge EPUFuel{ get; set; }
+         IF16FanTurbineInletTemperature FTIT1{ get; set; }
+         IF16FanTurbineInletTemperature FTIT2{ get; set; }
+         IF16FuelFlow FuelFlow{ get; set; }
+         IF16FuelQuantityIndicator FuelQuantity{ get; set; }
+         IF16HorizontalSituationIndicator HSI{ get; set; }
+         IF16HydraulicPressureGauge HYDA{ get; set; }
+         IF16HydraulicPressureGauge HYDB{ get; set; }
+         IF16ISIS ISIS{ get; set; }
+         IF16LandingGearWheelsLights LandingGearLights{ get; set; }
+         IF16NozzlePositionIndicator NOZ1{ get; set; }
+         IF16NozzlePositionIndicator NOZ2{ get; set; }
+         IF16NosewheelSteeringIndexer NWSIndexer{ get; set; }
+         IF16OilPressureGauge OIL1{ get; set; }
+         IF16OilPressureGauge OIL2{ get; set; }
+         IF16DataEntryDisplayPilotFaultList PFL{ get; set; }
+         IF16PitchTrimIndicator PitchTrim{ get; set; }
+         IF16RollTrimIndicator RollTrim{ get; set; }
+         IF16Tachometer RPM1 { get; set; }
+         IF16Tachometer RPM2 { get; set; }
+         IF16AzimuthIndicator RWR{ get; set; }
+         IF16SpeedbrakeIndicator Speedbrake{ get; set; }
+         IF16VerticalVelocityIndicator VVI{ get; set; }
 
     }
 
     public class InstrumentRendererSet : IInstrumentRendererSet
     {
-        public IInstrumentRenderer Accelerometer { get; set; }
-        public IInstrumentRenderer ADI { get; set; }
-        public IInstrumentRenderer Altimeter { get; set; }
-        public IInstrumentRenderer AOAIndexer { get; set; }
-        public IInstrumentRenderer AOAIndicator { get; set; }
-        public IInstrumentRenderer ASI { get; set; }
-        public IInstrumentRenderer BackupADI { get; set; }
-        public IInstrumentRenderer CabinPress { get; set; }
-        public IInstrumentRenderer CautionPanel { get; set; }
-        public IInstrumentRenderer CMDSPanel { get; set; }
-        public IInstrumentRenderer Compass { get; set; }
-        public IInstrumentRenderer DED { get; set; }
-        public IInstrumentRenderer EHSI { get; set; }
-        public IInstrumentRenderer EPUFuel { get; set; }
-        public IInstrumentRenderer FTIT1 { get; set; }
-        public IInstrumentRenderer FTIT2 { get; set; }
-        public IInstrumentRenderer FuelFlow { get; set; }
-        public IInstrumentRenderer FuelQuantity { get; set; }
-        public IInstrumentRenderer HSI { get; set; }
-        public IInstrumentRenderer HYDA { get; set; }
-        public IInstrumentRenderer HYDB { get; set; }
-        public IInstrumentRenderer ISIS { get; set; }
-        public IInstrumentRenderer LandingGearLights { get; set; }
-        public IInstrumentRenderer NOZ1 { get; set; }
-        public IInstrumentRenderer NOZ2 { get; set; }
-        public IInstrumentRenderer NWSIndexer { get; set; }
-        public IInstrumentRenderer OIL1 { get; set; }
-        public IInstrumentRenderer OIL2 { get; set; }
-        public IInstrumentRenderer PFL { get; set; }
-        public IInstrumentRenderer PitchTrim { get; set; }
-        public IInstrumentRenderer RollTrim { get; set; }
-        public IInstrumentRenderer RPM1 { get; set; }
-        public IInstrumentRenderer RPM2 { get; set; }
-        public IInstrumentRenderer RWR { get; set; }
-        public IInstrumentRenderer Speedbrake { get; set; }
-        public IInstrumentRenderer VVI { get; set; }
-
-
+        public IF16Accelerometer Accelerometer { get; set; }
+        public IF16ADI ADI { get; set; }
+        public IF16Altimeter Altimeter { get; set; }
+        public IF16AngleOfAttackIndexer AOAIndexer { get; set; }
+        public IF16AngleOfAttackIndicator AOAIndicator { get; set; }
+        public IF16AirspeedIndicator ASI { get; set; }
+        public IF16StandbyADI BackupADI { get; set; }
+        public IF16CabinPressureAltitudeIndicator CabinPress { get; set; }
+        public IF16CautionPanel CautionPanel { get; set; }
+        public IF16CMDSPanel CMDSPanel { get; set; }
+        public IF16Compass Compass { get; set; }
+        public IF16DataEntryDisplayPilotFaultList DED { get; set; }
+        public IF16EHSI EHSI { get; set; }
+        public IF16EPUFuelGauge EPUFuel { get; set; }
+        public IF16FanTurbineInletTemperature FTIT1 { get; set; }
+        public IF16FanTurbineInletTemperature FTIT2 { get; set; }
+        public IF16FuelFlow FuelFlow { get; set; }
+        public IF16FuelQuantityIndicator FuelQuantity { get; set; }
+        public IF16HorizontalSituationIndicator HSI { get; set; }
+        public IF16HydraulicPressureGauge HYDA { get; set; }
+        public IF16HydraulicPressureGauge HYDB { get; set; }
+        public IF16ISIS ISIS { get; set; }
+        public IF16LandingGearWheelsLights LandingGearLights { get; set; }
+        public IF16NozzlePositionIndicator NOZ1 { get; set; }
+        public IF16NozzlePositionIndicator NOZ2 { get; set; }
+        public IF16NosewheelSteeringIndexer NWSIndexer { get; set; }
+        public IF16OilPressureGauge OIL1 { get; set; }
+        public IF16OilPressureGauge OIL2 { get; set; }
+        public IF16DataEntryDisplayPilotFaultList PFL { get; set; }
+        public IF16PitchTrimIndicator PitchTrim { get; set; }
+        public IF16RollTrimIndicator RollTrim { get; set; }
+        public IF16Tachometer RPM1 { get; set; }
+        public IF16Tachometer RPM2 { get; set; }
+        public IF16AzimuthIndicator RWR { get; set; }
+        public IF16SpeedbrakeIndicator Speedbrake { get; set; }
+        public IF16VerticalVelocityIndicator VVI { get; set; }
     }
 }
