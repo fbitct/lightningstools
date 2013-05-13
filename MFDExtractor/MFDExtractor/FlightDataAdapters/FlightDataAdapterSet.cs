@@ -10,6 +10,7 @@
         IVVIFlightDataAdapter VVI { get; }
         IAltimeterFlightDataAdapter Altimeter { get; }
         IEPUFuelFlightDataAdapter EPUFuel { get; }
+        ICautionPanelFlightDataAdapter CautionPanel { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -24,6 +25,7 @@
             VVI = new VVIFlightDataAdapter();
             Altimeter = new AltimeterFlightDataAdapter();
             EPUFuel = new EPUFuelFlightDataAdapter();
+            CautionPanel = new CautionPanelFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -34,5 +36,6 @@
         public IAltimeterFlightDataAdapter Altimeter { get; private set; }
         public IPFLFlightDataAdapter PFL { get; private set; }
         public IEPUFuelFlightDataAdapter EPUFuel { get; private set; }
+        public ICautionPanelFlightDataAdapter CautionPanel { get; private set; }
     }
 }

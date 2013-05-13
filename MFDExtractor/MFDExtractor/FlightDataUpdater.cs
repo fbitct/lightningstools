@@ -145,7 +145,7 @@ namespace MFDExtractor
                 UpdateRollTrim(renderers, flightData);
                 UpdatePitchTrim(renderers, flightData);
                 UpdateRWR(renderers, flightData);
-                UpdateCautionPanel(renderers, flightData);
+                _flightDataAdapterSet.CautionPanel.Adapt(renderers.CautionPanel, flightData);
                 _flightDataAdapterSet.CMDS.Adapt(renderers.CMDSPanel, flightData);
                 _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
                 _flightDataAdapterSet.PFL.Adapt(renderers.PFL, flightData);
@@ -470,37 +470,6 @@ namespace MFDExtractor
         }
 
 
-        private static void UpdateCautionPanel(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-//TODO: implement all-lights-on when test is detected
-            renderers.CautionPanel.InstrumentState.AftFuelLow = ((fromFalcon.lightBits2 &(int) LightBits2.AftFuelLow) ==(int) LightBits2.AftFuelLow);
-            renderers.CautionPanel.InstrumentState.AntiSkid = ((fromFalcon.lightBits2 &(int) LightBits2.ANTI_SKID) ==(int) LightBits2.ANTI_SKID);
-            //((F16CautionPanel)CautionPanel).InstrumentState.ATFNotEngaged = ((fromFalcon.lightBits2 & (int)F4SharedMem.Headers.LightBits2.TFR_ENGAGED) == (int)F4SharedMem.Headers.LightBits2.TFR_ENGAGED);
-            renderers.CautionPanel.InstrumentState.AvionicsFault = ((fromFalcon.lightBits &(int) LightBits.Avionics) ==(int) LightBits.Avionics);
-            renderers.CautionPanel.InstrumentState.BUC = ((fromFalcon.lightBits2 &(int) LightBits2.BUC) ==(int) LightBits2.BUC);
-            renderers.CautionPanel.InstrumentState.CabinPress = ((fromFalcon.lightBits &(int) LightBits.CabinPress) ==(int) LightBits.CabinPress);
-            renderers.CautionPanel.InstrumentState.CADC = ((fromFalcon.lightBits3 &(int) Bms4LightBits3.cadc) ==(int) Bms4LightBits3.cadc);
-            renderers.CautionPanel.InstrumentState.ECM = ((fromFalcon.lightBits &(int) LightBits.ECM) ==(int) LightBits.ECM);
-            //((F16CautionPanel)renderers.CautionPanel).InstrumentState.EEC = ((fromFalcon.lightBits & (int)F4SharedMem.Headers.LightBits.ee) == (int)F4SharedMem.Headers.LightBits.ECM);
-            renderers.CautionPanel.InstrumentState.ElecSys = ((fromFalcon.lightBits3 &(int) LightBits3.Elec_Fault) ==(int) LightBits3.Elec_Fault);
-            renderers.CautionPanel.InstrumentState.EngineFault = ((fromFalcon.lightBits &(int) LightBits.EngineFault) ==(int) LightBits.EngineFault);
-            renderers.CautionPanel.InstrumentState.EquipHot = ((fromFalcon.lightBits &(int) LightBits.EQUIP_HOT) ==(int) LightBits.EQUIP_HOT);
-            renderers.CautionPanel.InstrumentState.FLCSFault = ((fromFalcon.lightBits &(int) LightBits.FltControlSys) ==(int) LightBits.FltControlSys);
-            renderers.CautionPanel.InstrumentState.FuelOilHot = ((fromFalcon.lightBits2 &(int) LightBits2.FUEL_OIL_HOT) ==(int) LightBits2.FUEL_OIL_HOT);
-            renderers.CautionPanel.InstrumentState.FwdFuelLow = ((fromFalcon.lightBits2 &(int) LightBits2.FwdFuelLow) ==(int) LightBits2.FwdFuelLow);
-            renderers.CautionPanel.InstrumentState.Hook = ((fromFalcon.lightBits &(int) LightBits.Hook) ==(int) LightBits.Hook);
-            renderers.CautionPanel.InstrumentState.IFF = ((fromFalcon.lightBits &(int) LightBits.IFF) ==(int) LightBits.IFF);
-            renderers.CautionPanel.InstrumentState.NWSFail = ((fromFalcon.lightBits &(int) LightBits.NWSFail) ==(int) LightBits.NWSFail);
-            renderers.CautionPanel.InstrumentState.Overheat = ((fromFalcon.lightBits &(int) LightBits.Overheat) ==(int) LightBits.Overheat);
-            renderers.CautionPanel.InstrumentState.OxyLow = ((fromFalcon.lightBits2 &(int) LightBits2.OXY_LOW) ==(int) LightBits2.OXY_LOW);
-            renderers.CautionPanel.InstrumentState.ProbeHeat = ((fromFalcon.lightBits2 &(int) LightBits2.PROBEHEAT) ==(int) LightBits2.PROBEHEAT);
-            renderers.CautionPanel.InstrumentState.RadarAlt = ((fromFalcon.lightBits &(int) LightBits.RadarAlt) ==(int) LightBits.RadarAlt);
-            renderers.CautionPanel.InstrumentState.SeatNotArmed = ((fromFalcon.lightBits2 &(int) LightBits2.SEAT_ARM) ==(int) LightBits2.SEAT_ARM);
-            renderers.CautionPanel.InstrumentState.SEC = ((fromFalcon.lightBits2 &(int) LightBits2.SEC) ==(int) LightBits2.SEC);
-            renderers.CautionPanel.InstrumentState.StoresConfig = ((fromFalcon.lightBits &(int) LightBits.CONFIG) ==(int) LightBits.CONFIG);
-
-            //TODO: implement MLU cautions
-        }
 
         private static void UpdateRWR(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
