@@ -1047,7 +1047,7 @@ namespace MFDExtractor
         }
         private void NotifyNightModeIsToggled(bool relayToListeners)
         {
-            NightMode = !NightMode;
+			State.NightMode = !State.NightMode;
             if (relayToListeners)
             {
                 if (NetworkMode == NetworkMode.Server)
@@ -1224,84 +1224,40 @@ namespace MFDExtractor
         
         public void Start()
         {
-            //if we're already running, just ignore the Start command
             if (_running)
             {
                 return;
             }
             KeyFileUtils.ResetCurrentKeyFile();
-            DateTime startingTime = DateTime.Now;
-            _log.DebugFormat("Starting the extractor at : {0}", startingTime.ToString());
-
-            DateTime beginStartingEventTime = DateTime.Now;
-            //Fire the Starting event to all listeners
             if (Starting != null)
             {
                 Starting.Invoke(this, new EventArgs());
             }
-            DateTime endStartingEventTime = DateTime.Now;
-            TimeSpan startingEventTimeElapsed = endStartingEventTime.Subtract(beginStartingEventTime);
-            _log.DebugFormat("Total time taken to invoke the Starting event on the extractor: {0}",
-                             startingEventTimeElapsed.TotalMilliseconds);
-
             if (_keySettingsLoaded == false) LoadKeySettings();
             if (Mediator != null)
             {
                 Mediator.PhysicalControlStateChanged += _mediatorEventHandler;
             }
-            DateTime beginSendNullImagesTime = DateTime.Now;
             SendMfd4Image(null);
             SendMfd3Image(null);
             SendLeftMfdImage(null);
             SendRightMfdImage(null);
             SendHudImage(null);
-            DateTime endSendNullImagesTime = DateTime.Now;
-            TimeSpan sendNullImagesTimeElapsed = endSendNullImagesTime.Subtract(beginSendNullImagesTime);
-            _log.DebugFormat("Total time taken to send null images on the extractor: {0}",
-                             sendNullImagesTimeElapsed.TotalMilliseconds);
 
-            DateTime beginRunThreadsTime = DateTime.Now;
-            _log.DebugFormat("About to call RunThreads() at: {0}", beginRunThreadsTime.ToString());
-            //launch worker thread(s) to do the extraction process
             RunThreads();
-            DateTime endRunThreadsTime = DateTime.Now;
-            _log.DebugFormat("Finished calling RunThreads() at: {0}", endRunThreadsTime.ToString());
-            TimeSpan runThreadsTotalTime = endRunThreadsTime.Subtract(beginRunThreadsTime);
-            _log.DebugFormat("Time taken calling RunThreads(): {0}", runThreadsTotalTime.TotalMilliseconds);
-
-
-            DateTime finishedTime = DateTime.Now;
-            _log.DebugFormat("Finished starting the extractor at : {0}", finishedTime.ToString());
-            TimeSpan timeElapsed = finishedTime.Subtract(startingTime);
-            _log.DebugFormat("Total time taken to start the extractor: {0}", timeElapsed.TotalMilliseconds);
         }
         public void Stop()
         {
-            _log.DebugFormat("Stopping the extractor at : {0}", DateTime.Now.ToString());
-
-            DateTime beginStoppingTime = DateTime.Now;
-
-            DateTime beginStoppingEventInvokeTime = DateTime.Now;
-            //Raise the Stopping event to signal listeners that the Extractor engine is stopping.
-            if (Stopping != null) //verify that event listeners exist for the Stopping event
+            if (Stopping != null)
             {
-                Stopping.Invoke(this, new EventArgs()); //fire the Stopping event to all listeners
+                Stopping.Invoke(this, new EventArgs());
             }
-            DateTime endStoppingEventInvokeTime = DateTime.Now;
-            TimeSpan stoppingEventTimeElapsed = endStoppingEventInvokeTime.Subtract(beginStoppingEventInvokeTime);
-            _log.DebugFormat("Total time taken to invoke the Stopping event on the extractor: {0}",
-                             stoppingEventTimeElapsed.TotalMilliseconds);
-
-
-            //clear global flag that worker threads use to determine if their work loops should continue
             _keepRunning = false;
             if (Mediator != null)
             {
                 Mediator.PhysicalControlStateChanged -= _mediatorEventHandler;
             }
             _keySettingsLoaded = false;
-
-            DateTime beginEndingThreadsTime = DateTime.Now;
 
             var threadsToKill = new[]
                 {
@@ -1353,54 +1309,17 @@ namespace MFDExtractor
 
             WaitForThreadEndThenAbort(ref threadsToKill, new TimeSpan(0, 0, 1));
 
-            DateTime endEndingThreadsTime = DateTime.Now;
-            TimeSpan endingThreadsTimeElapsed = endEndingThreadsTime.Subtract(beginEndingThreadsTime);
-            _log.DebugFormat("Total time taken to end threads on the extractor: {0}",
-                             endingThreadsTimeElapsed.TotalMilliseconds);
-
-
-            DateTime beginClosingOutputWindowFormsTime = DateTime.Now;
             CloseOutputWindowForms();
-            DateTime endClosingOutputWindowFormsTime = DateTime.Now;
-            TimeSpan closingOutputWindowFormsTimeElapsed =
-                endClosingOutputWindowFormsTime.Subtract(beginClosingOutputWindowFormsTime);
-            _log.DebugFormat("Total time taken to close output windows on the extractor: {0}",
-                             closingOutputWindowFormsTimeElapsed.TotalMilliseconds);
-
-
-            DateTime beginTearDownImageServerTime = DateTime.Now;
-            //if we're in Server mode, tear down the .NET Remoting channel
             if (_networkMode == NetworkMode.Server)
             {
                 TearDownImageServer();
             }
-            DateTime endTearDownImageServerTime = DateTime.Now;
-            TimeSpan tearDownImageServerTimeElapsed = endTearDownImageServerTime.Subtract(beginTearDownImageServerTime);
-            _log.DebugFormat("Total time taken to tear down the image server on the extractor: {0}",
-                             tearDownImageServerTimeElapsed.TotalMilliseconds);
-
             CloseAndDisposeSharedmemReaders();
-
-            //set the Running flag to false
             _running = false;
-
-            DateTime beginStoppedEventTime = DateTime.Now;
-            //fire the Stopped event to all listeners
             if (Stopped != null)
             {
                 Stopped.Invoke(this, new EventArgs());
             }
-            DateTime endStoppedEventTime = DateTime.Now;
-            TimeSpan stoppedEventElapsedTime = endStoppedEventTime.Subtract(beginStoppedEventTime);
-            _log.DebugFormat("Total time taken to invoke the Stopped event on the extractor: {0}",
-                             stoppedEventElapsedTime.TotalMilliseconds);
-
-
-            DateTime endStoppingTime = DateTime.Now;
-            TimeSpan totalElapsed = endStoppingTime.Subtract(beginStoppingTime);
-            _log.DebugFormat("Extractor engine stopped at : {0}", DateTime.Now.ToString());
-            _log.DebugFormat("Total time taken to stop the extractor engine (in milliseconds): {0}",
-                             totalElapsed.TotalMilliseconds);
         }
         public static Extractor GetInstance()
         {
@@ -1412,7 +1331,7 @@ namespace MFDExtractor
         }
         public void LoadSettings()
         {
-            Settings settings = Settings.Default;
+            var settings = Settings.Default;
             LoadGDIPlusSettings();
             _networkMode = (NetworkMode) settings.NetworkingMode;
             if (_networkMode == NetworkMode.Server)
@@ -1486,11 +1405,7 @@ namespace MFDExtractor
 
         #region Public Properties
 
-        public Form ApplicationForm
-        {
-            get { return _applicationForm; }
-            set { _applicationForm = value; }
-        }
+        
         public IPEndPoint ServerEndpoint
         {
             get { return _serverEndpoint; }
@@ -1501,34 +1416,7 @@ namespace MFDExtractor
             get { return _networkMode; }
             set { _networkMode = value; }
         }
-        public bool Running
-        {
-            get { return _running; }
-        }
-        public bool TestMode
-        {
-            get { return _testMode; }
-            set
-            {
-                _testMode = value;
-                Settings.Default.TestMode = _testMode;
-            }
-        }
-        public bool TwoDeePrimaryView
-        {
-            get { return _twoDeePrimaryView; }
-            set { _twoDeePrimaryView = value; }
-        }
-        public bool ThreeDeeMode
-        {
-            get { return _threeDeeMode; }
-            set { _threeDeeMode = value; }
-        }
-        public bool NightMode
-        {
-            get { return _nightMode; }
-            set { _nightMode = value; }
-        }
+		public ExtractorState State { get; set; }
         public Mediator Mediator { get; set; }
 
         #endregion
@@ -4904,7 +4792,7 @@ namespace MFDExtractor
         {
             try
             {
-                int count = 0;
+                var count = 0;
 
                 while (_keepRunning)
                 {
@@ -4920,9 +4808,6 @@ namespace MFDExtractor
                             Common.Util.DisposeObject(_texSmStatusReader);
                             _texSmStatusReader = new F4TexSharedMem.Reader();
 
-#if SIMRUNNING
-                            _simRunning = true;
-#else
                             try
                             {
                                 _simRunning = NetworkMode == NetworkMode.Client ||
@@ -4932,7 +4817,6 @@ namespace MFDExtractor
                             {
                                 _log.Error(ex.Message, ex);
                             }
-#endif
                             _sim3DDataAvailable = _simRunning &&
                                                   (NetworkMode == NetworkMode.Client ||
                                                    _texSmStatusReader.IsDataAvailable);
@@ -5364,13 +5248,13 @@ namespace MFDExtractor
                 {
                     image.RotateFlip(rotation);
                 }
-                using (Graphics graphics = targetForm.CreateGraphics())
+                using (var graphics = targetForm.CreateGraphics())
                 {
-                    if (NightMode)
+					if (State.NightMode)
                     {
                         var nvisImageAttribs = new ImageAttributes();
-                        ColorMatrix cm = Util.GetNVISColorMatrix(255, 255);
-                        nvisImageAttribs.SetColorMatrix(cm, ColorMatrixFlag.Default);
+                        var nvisColorMatrix = Util.GetNVISColorMatrix(255, 255);
+                        nvisImageAttribs.SetColorMatrix(nvisColorMatrix, ColorMatrixFlag.Default);
                         graphics.DrawImage(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height,
                                            GraphicsUnit.Pixel, nvisImageAttribs);
                     }

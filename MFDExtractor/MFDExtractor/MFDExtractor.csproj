@@ -111,6 +111,7 @@
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExtractorState.cs" />
     <Compile Include="FlightDataAdapters\AccelerometerFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\AirspeedIndicatorFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\AltimeterFlightDataAdapter.cs" />

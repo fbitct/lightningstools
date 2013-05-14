@@ -152,9 +152,9 @@ namespace MFDExtractor.UI
                         )
                     {
                         //if 2D primary view mode hotkey is pressed, then set the global 3D-mode flag to FALSE (i.e., switch to 2D primary view mode)
-                        Extractor.GetInstance().ThreeDeeMode = false;
+                        Extractor.GetInstance().State.ThreeDeeMode = false;
                         //tell the Extractor to use the primary-view coordiantes
-                        Extractor.GetInstance().TwoDeePrimaryView = true;
+						Extractor.GetInstance().State.TwoDeePrimaryView = true;
                     }
                 }
                 else if (keystate[_twoDSecondaryViewKeyCode]) //if the 2D mode (secondary view) hotkey is pressed
@@ -198,9 +198,9 @@ namespace MFDExtractor.UI
                         )
                     {
                         //if 2D secondary view mode hotkey is pressed, then set the global 3D-mode flag to FALSE (i.e., switch to 2D secondary view mode)
-                        Extractor.GetInstance().ThreeDeeMode = false;
+						Extractor.GetInstance().State.ThreeDeeMode = false;
                         //tell the Extractor to use the secondary-view coordiantes
-                        Extractor.GetInstance().TwoDeePrimaryView = false;
+						Extractor.GetInstance().State.TwoDeePrimaryView = false;
                     }
                 }
                 else if (keystate[_threeDKeyCode]) //if the 3D hotkey is pressed
@@ -244,7 +244,7 @@ namespace MFDExtractor.UI
                         )
                     {
                         //switch the MFD Extractor to 3D mode
-                        Extractor.GetInstance().ThreeDeeMode = true;
+						Extractor.GetInstance().State.ThreeDeeMode = true;
                     }
                 }
             }
@@ -305,7 +305,7 @@ namespace MFDExtractor.UI
 
             //configure an instance of the main Extractor engine 
             Extractor extractor = Extractor.GetInstance();
-            extractor.ApplicationForm = this; //register the main form with the Extractor engine so that
+			extractor.State.ApplicationForm = this; //register the main form with the Extractor engine so that
             //the Extractor can inform the main form of any updates to
             //the position of visible forms
 
