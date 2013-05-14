@@ -120,6 +120,12 @@
     <Compile Include="FlightDataAdapters\CautionPanelFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CMDSFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\CompassFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\FTIT1FlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\FTIT2FlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\HYDAFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\HYDBFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\NOZ1FlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\NOZ2FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\OIL2FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\DEDFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\EPUFuelFlightDataAdapter.cs" />
