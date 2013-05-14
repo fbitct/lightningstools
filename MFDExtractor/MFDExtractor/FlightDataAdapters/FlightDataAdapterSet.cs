@@ -33,6 +33,8 @@
         IHYDBFlightDataAdapter HYDB { get; }
         IFTIT1FlightDataAdapter FTIT1 { get; }
         IFTIT2FlightDataAdapter FTIT2 { get; }
+        IFuelQuantityFlightDataAdapter FuelQuantity { get; }
+        IStandbyADIFlightDataAdapter StandbyADI { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -70,6 +72,8 @@
             HYDB = new HYDBFlightDataAdapter();
             FTIT1 = new FTIT1FlightDataAdapter();
             FTIT2 = new FTIT2FlightDataAdapter();
+            FuelQuantity = new FuelQuantityFlightDataAdapter();
+            StandbyADI = new StandbyADIFlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -103,6 +107,7 @@
         public IHYDBFlightDataAdapter HYDB { get; private set; }
         public IFTIT1FlightDataAdapter FTIT1 { get; private set; }
         public IFTIT2FlightDataAdapter FTIT2 { get; private set; }
-
+        public IFuelQuantityFlightDataAdapter FuelQuantity { get; private set; }
+        public IStandbyADIFlightDataAdapter StandbyADI { get; private set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Common.SimSupport;
-using LightningGauges.Renderers;
+﻿using LightningGauges.Renderers;
 
 namespace MFDExtractor
 {

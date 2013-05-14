@@ -40,8 +40,6 @@ namespace MFDExtractor
                 flightData = new FlightData {hsiBits = Int32.MaxValue};
             }
 
-            var extensionData = ((FlightDataExtension) flightData.ExtensionData);
-
             if (simRunning || networkMode == NetworkMode.Client)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
@@ -54,7 +52,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.AOAIndicator.Adapt(renderers.AOAIndicator, flightData);
                 _flightDataAdapterSet.AOAIndexer.Adapt(renderers.AOAIndexer, flightData);
                 UpdateADI(renderers, hsibits);
-                UpdateBackupADI(renderers, hsibits, flightData);
+                _flightDataAdapterSet.StandbyADI.Adapt(renderers.BackupADI, flightData);
                 UpdateHSI(renderers, hsibits, flightData);
 
 
@@ -150,7 +148,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.PFL.Adapt(renderers.PFL, flightData);
                 _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);
                 _flightDataAdapterSet.FuelFlow.Adapt(renderers.FuelFlow, flightData);
-                UpdateFuelQTY(renderers, flightData);
+                _flightDataAdapterSet.FuelQuantity.Adapt(renderers.FuelQuantity, flightData);
                 _flightDataAdapterSet.LandingGearLights.Adapt(renderers.LandingGearLights, flightData);
                 _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
                 _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
@@ -353,16 +351,6 @@ namespace MFDExtractor
             renderers.HSI.InstrumentState.DistanceToBeaconNauticalMiles = 0;
         }
 
-      
-        private static void UpdateFuelQTY(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            renderers.FuelQuantity.InstrumentState.AftLeftFuelQuantityPounds =fromFalcon.aft/10.0f;
-            renderers.FuelQuantity.InstrumentState.ForeRightFuelQuantityPounds =fromFalcon.fwd/10.0f;
-            renderers.FuelQuantity.InstrumentState.TotalFuelQuantityPounds =fromFalcon.total;
-        }
-
-     
-
         private static void UpdateEHSI(Action UpdateEHSIBrightnessLabelVisibility)
         {
             UpdateEHSIBrightnessLabelVisibility();
@@ -374,24 +362,6 @@ namespace MFDExtractor
             renderers.HSI.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
             renderers.EHSI.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
             renderers.EHSI.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
-        }
-
-        private static void UpdateBackupADI(IInstrumentRendererSet renderers, HsiBits hsibits, FlightData fromFalcon)
-        {
-            renderers.BackupADI.InstrumentState.OffFlag = ((hsibits & HsiBits.BUP_ADI_OFF) == HsiBits.BUP_ADI_OFF);
-            if (((hsibits & HsiBits.BUP_ADI_OFF) == HsiBits.BUP_ADI_OFF))
-            {
-                //if the standby ADI is off
-                renderers.BackupADI.InstrumentState.PitchDegrees = 0;
-                renderers.BackupADI.InstrumentState.RollDegrees = 0;
-                renderers.BackupADI.InstrumentState.OffFlag = true;
-            }
-            else
-            {
-                renderers.BackupADI.InstrumentState.PitchDegrees = ((fromFalcon.pitch/Constants.RADIANS_PER_DEGREE));
-                renderers.BackupADI.InstrumentState.RollDegrees = ((fromFalcon.roll/Constants.RADIANS_PER_DEGREE));
-                renderers.BackupADI.InstrumentState.OffFlag = false;
-            }
         }
 
         private static void UpdateADI(IInstrumentRendererSet renderers, HsiBits hsibits)

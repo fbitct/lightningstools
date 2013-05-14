@@ -122,6 +122,7 @@
     <Compile Include="FlightDataAdapters\CompassFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FTIT1FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FTIT2FlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\FuelQTYFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\HYDAFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\HYDBFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\NOZ1FlightDataAdapter.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="FlightDataAdapters\RPM1FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\RPM2FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\SpeedbrakeFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\StandbyADIFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\VVIFlightDataAdapter.cs" />
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataUpdater.cs" />
