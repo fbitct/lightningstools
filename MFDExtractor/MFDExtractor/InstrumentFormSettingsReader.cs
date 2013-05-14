@@ -30,7 +30,7 @@ namespace MFDExtractor
 				LRY = (int)_settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_LRY", instrumentName)),
 				AlwaysOnTop = (bool)_settingReader.ReadSetting(defaultValue: false, settingName: String.Format("{0}_AlwaysOnTop", instrumentName)),
 				Monochrome = (bool)_settingReader.ReadSetting(defaultValue: false, settingName: String.Format("{0}_Monochrome", instrumentName)),
-				RotateFlipType = (RotateFlipType) Enum.Parse(typeof (RotateFlipType), (string) _settingReader.ReadSetting(defaultValue: RotateFlipType.RotateNoneFlipNone, settingName: String.Format("{0}_RotateFlipType", instrumentName))),
+				RotateFlipType = (RotateFlipType) _settingReader.ReadSetting(defaultValue: RotateFlipType.RotateNoneFlipNone, settingName: String.Format("{0}_RotateFlipType", instrumentName)),
 			};
 			return toReturn;
 		}

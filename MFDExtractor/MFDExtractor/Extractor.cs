@@ -373,42 +373,42 @@ namespace MFDExtractor
         private readonly RenderThreadSetupHelper _renderThreadSetupHelper;
         private readonly ThreadAbortion _threadAbortion;
         private readonly BMSSupport _bmsSupport;
-        private readonly IRenderThreadWorkHelper _adiRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _backupAdiRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _asiRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _altimeterRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _aoaIndexerRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _aoaIndicatorRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _cautionPanelRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _cmdsPanelRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _compassRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _dedRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _pflRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _epuFuelRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _accelerometerRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _ftit1RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _ftit2RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _fuelFlowRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _isisRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _fuelQuantityRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _hsiRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _ehsiRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _landingGearLightsRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _nwsIndexerRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _nozPos1RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _nozPos2RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _oilGauge1RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _oilGauge2RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _rwrRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _speedbrakeRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _rpm1RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _rpm2RenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _vviRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _hydARenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _hydBRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _cabinPressRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _rollTrimRenderThreadWorkHelper;
-        private readonly IRenderThreadWorkHelper _pitchTrimRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _adiRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _backupAdiRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _asiRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _altimeterRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _aoaIndexerRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _aoaIndicatorRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _cautionPanelRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _cmdsPanelRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _compassRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _dedRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _pflRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _epuFuelRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _accelerometerRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _ftit1RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _ftit2RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _fuelFlowRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _isisRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _fuelQuantityRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _hsiRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _ehsiRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _landingGearLightsRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _nwsIndexerRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _nozPos1RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _nozPos2RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _oilGauge1RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _oilGauge2RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _rwrRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _speedbrakeRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _rpm1RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _rpm2RenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _vviRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _hydARenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _hydBRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _cabinPressRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _rollTrimRenderThreadWorkHelper;
+        private IRenderThreadWorkHelper _pitchTrimRenderThreadWorkHelper;
         private readonly DIHotkeyDetection _diHotkeyDetection;
 
         #endregion
@@ -429,7 +429,11 @@ namespace MFDExtractor
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
             _bmsSupport = new BMSSupport();
-            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(()=>_keepRunning, _adiRenderStart, _adiRenderEnd, _renderers.ADI, _adiForm, ()=>Settings.Default.ADI_RotateFlipType,()=>Settings.Default.ADI_Monochrome, RenderInstrumentImage);
+            _diHotkeyDetection = new DIHotkeyDetection(Mediator);
+        }
+        private void SetupRenderThreadWorkHelpers()
+        {
+            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _adiRenderStart, _adiRenderEnd, _renderers.ADI, _adiForm, () => Settings.Default.ADI_RotateFlipType, () => Settings.Default.ADI_Monochrome, RenderInstrumentImage);
             _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _renderers.BackupADI, _backupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
             _asiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _asiRenderStart, _asiRenderEnd, _renderers.ASI, _asiForm, () => Settings.Default.ASI_RotateFlipType, () => Settings.Default.ASI_Monochrome, RenderInstrumentImage);
             _altimeterRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _altimeterRenderStart, _altimeterRenderEnd, _renderers.Altimeter, _altimeterForm, () => Settings.Default.Altimeter_RotateFlipType, () => Settings.Default.Altimeter_Monochrome, RenderInstrumentImage);
@@ -465,7 +469,7 @@ namespace MFDExtractor
             _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _renderers.CabinPress, _cabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
             _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _renderers.RollTrim, _rollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
             _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _renderers.PitchTrim, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
-            _diHotkeyDetection = new DIHotkeyDetection(Mediator);
+
         }
         private void ProcessKeyUpEvent(KeyEventArgs e)
         {
@@ -5565,6 +5569,8 @@ namespace MFDExtractor
             SetupLeftMFDCaptureThread();
             SetupRightMFDCaptureThread();
             SetupHUDCaptureThread();
+
+            SetupRenderThreadWorkHelpers();
             _renderThreadSetupHelper.SetupThread(ref _adiRenderThread, _threadPriority, "ADIRenderThread", () => Settings.Default.EnableADIOutput, _adiRenderThreadWorkHelper.DoWork);
             _renderThreadSetupHelper.SetupThread(ref _backupAdiRenderThread, _threadPriority, "StandbyADIRenderThread", () => Settings.Default.EnableBackupADIOutput, _backupAdiRenderThreadWorkHelper.DoWork);
             _renderThreadSetupHelper.SetupThread(ref _asiRenderThread, _threadPriority, "ASIRenderThread", () => Settings.Default.EnableASIOutput, _asiRenderThreadWorkHelper.DoWork);

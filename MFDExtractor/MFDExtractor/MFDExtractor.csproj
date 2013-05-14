@@ -147,6 +147,7 @@
     <Compile Include="FlightDataAdapters\VVIFlightDataAdapter.cs" />
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataUpdater.cs" />
+    <Compile Include="Instrument.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="InstrumentFormSettings.cs" />
     <Compile Include="InstrumentFormSettingsReader.cs" />

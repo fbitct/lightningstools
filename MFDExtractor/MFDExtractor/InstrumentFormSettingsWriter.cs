@@ -27,7 +27,7 @@ namespace MFDExtractor
 			_settingWriter.WriteSetting(value:instrumentFormSettings.LRY, settingName: String.Format("{0}_LRY", instrumentName));
 			_settingWriter.WriteSetting(value:instrumentFormSettings.AlwaysOnTop, settingName: String.Format("{0}_AlwaysOnTop", instrumentName));
 			_settingWriter.WriteSetting(value:instrumentFormSettings.Monochrome, settingName: String.Format("{0}_Monochrome", instrumentName));
-			_settingWriter.WriteSetting(value:instrumentFormSettings.RotateFlipType.ToString(), settingName: String.Format("{0}_RotateFlipType", instrumentName));
+			_settingWriter.WriteSetting(value:instrumentFormSettings.RotateFlipType, settingName: String.Format("{0}_RotateFlipType", instrumentName));
 		}
 	}
 }
