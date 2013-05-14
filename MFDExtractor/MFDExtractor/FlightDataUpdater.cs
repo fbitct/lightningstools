@@ -138,7 +138,8 @@ namespace MFDExtractor
 
                 UpdateHSIAndEHSICourseDeviationAndToFromFlags(renderers);
                 UpdateEHSI(UpdateEHSIBrightnessLabelVisibility);
-                UpdateHYDAandHYDB(renderers, flightData);
+                _flightDataAdapterSet.HYDA.Adapt(renderers.HYDA, flightData);
+                _flightDataAdapterSet.HYDB.Adapt(renderers.HYDB, flightData);
                 _flightDataAdapterSet.CabinPress.Adapt(renderers.CabinPress, flightData);
                 _flightDataAdapterSet.RollTrim.Adapt(renderers.RollTrim, flightData);
                 _flightDataAdapterSet.PitchTrim.Adapt(renderers.PitchTrim, flightData);
@@ -155,8 +156,10 @@ namespace MFDExtractor
                 _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
                 _flightDataAdapterSet.RPM1.Adapt(renderers.RPM1, flightData);
                 _flightDataAdapterSet.RPM2.Adapt(renderers.RPM2, flightData);
-                UpdateFTIT1andFTIT2(renderers, flightData);
-                UpdateNOZ1andNOZ2(renderers, flightData);
+                _flightDataAdapterSet.FTIT1.Adapt(renderers.FTIT1, flightData);
+                _flightDataAdapterSet.FTIT2.Adapt(renderers.FTIT2, flightData);
+                _flightDataAdapterSet.NOZ1.Adapt(renderers.NOZ1, flightData);
+                _flightDataAdapterSet.NOZ2.Adapt(renderers.NOZ2, flightData);
                 _flightDataAdapterSet.OIL1.Adapt(renderers.OIL1, flightData);
                 _flightDataAdapterSet.OIL2.Adapt(renderers.OIL2, flightData);
                 _flightDataAdapterSet.Accelerometer.Adapt(renderers.Accelerometer, flightData);
@@ -350,39 +353,7 @@ namespace MFDExtractor
             renderers.HSI.InstrumentState.DistanceToBeaconNauticalMiles = 0;
         }
 
-        private static void UpdateNOZ1andNOZ2(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            if (fromFalcon.DataFormat == FalconDataFormats.OpenFalcon)
-            {
-                renderers.NOZ1.InstrumentState.NozzlePositionPercent = NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm, fromFalcon.z, fromFalcon.fuelFlow);
-                renderers.NOZ2.InstrumentState.NozzlePositionPercent =NonImplementedGaugeCalculations.NOZ(fromFalcon.rpm2, fromFalcon.z, fromFalcon.fuelFlow);
-            }
-            else if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
-            {
-                renderers.NOZ1.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos*100.0f;
-                renderers.NOZ2.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos2*100.0f;
-            }
-            else
-            {
-                renderers.NOZ1.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos;
-                renderers.NOZ2.InstrumentState.NozzlePositionPercent =fromFalcon.nozzlePos2;
-            }
-        }
-
-        private static void UpdateFTIT1andFTIT2(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            if (fromFalcon.DataFormat == FalconDataFormats.BMS4)
-            {
-                renderers.FTIT1.InstrumentState.InletTemperatureDegreesCelcius =fromFalcon.ftit*100.0f;
-                renderers.FTIT2.InstrumentState.InletTemperatureDegreesCelcius =fromFalcon.ftit2*100.0f;
-            }
-            else
-            {
-                renderers.FTIT1.InstrumentState.InletTemperatureDegreesCelcius =NonImplementedGaugeCalculations.Ftit(renderers.FTIT1.InstrumentState.InletTemperatureDegreesCelcius,fromFalcon.rpm);
-                renderers.FTIT2.InstrumentState.InletTemperatureDegreesCelcius =NonImplementedGaugeCalculations.Ftit(renderers.FTIT2.InstrumentState.InletTemperatureDegreesCelcius,fromFalcon.rpm2);
-            }
-        }
-
+      
         private static void UpdateFuelQTY(IInstrumentRendererSet renderers, FlightData fromFalcon)
         {
             renderers.FuelQuantity.InstrumentState.AftLeftFuelQuantityPounds =fromFalcon.aft/10.0f;
@@ -390,17 +361,7 @@ namespace MFDExtractor
             renderers.FuelQuantity.InstrumentState.TotalFuelQuantityPounds =fromFalcon.total;
         }
 
-        private static void UpdateHYDAandHYDB(IInstrumentRendererSet renderers, FlightData fromFalcon)
-        {
-            var rpm = fromFalcon.rpm;
-            var mainGen = ((fromFalcon.lightBits3 & (int) LightBits3.MainGen) == (int) LightBits3.MainGen);
-            var stbyGen = ((fromFalcon.lightBits3 & (int) LightBits3.StbyGen) == (int) LightBits3.StbyGen);
-            var epuGen = ((fromFalcon.lightBits3 & (int) LightBits3.EpuGen) == (int) LightBits3.EpuGen);
-            var epuOn = ((fromFalcon.lightBits2 & (int) LightBits2.EPUOn) == (int) LightBits2.EPUOn);
-            float epuFuel = fromFalcon.epuFuel;
-            renderers.HYDA.InstrumentState.HydraulicPressurePoundsPerSquareInch =NonImplementedGaugeCalculations.HydA(rpm, mainGen, stbyGen, epuGen, epuOn, epuFuel);
-            renderers.HYDB.InstrumentState.HydraulicPressurePoundsPerSquareInch =NonImplementedGaugeCalculations.HydB(rpm, mainGen, stbyGen, epuGen, epuOn, epuFuel);
-        }
+     
 
         private static void UpdateEHSI(Action UpdateEHSIBrightnessLabelVisibility)
         {

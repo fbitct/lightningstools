@@ -27,6 +27,12 @@
         IOIL1FlightDataAdapter OIL1 { get; }
         IOIL2FlightDataAdapter OIL2 { get; }
         IAccelerometerFlightDataAdapter Accelerometer { get; }
+        INOZ1FlightDataAdapter NOZ1 { get; }
+        INOZ2FlightDataAdapter NOZ2 { get; }
+        IHYDAFlightDataAdapter HYDA { get; }
+        IHYDBFlightDataAdapter HYDB { get; }
+        IFTIT1FlightDataAdapter FTIT1 { get; }
+        IFTIT2FlightDataAdapter FTIT2 { get; }
     }
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
@@ -58,6 +64,12 @@
             OIL1 = new OIL1FlightDataAdapter();
             OIL2 = new OIL2FlightDataAdapter();
             Accelerometer = new AccelerometerFlightDataAdapter();
+            NOZ1 = new NOZ1FlightDataAdapter();
+            NOZ2 = new NOZ2FlightDataAdapter();
+            HYDA = new HYDAFlightDataAdapter();
+            HYDB = new HYDBFlightDataAdapter();
+            FTIT1 = new FTIT1FlightDataAdapter();
+            FTIT2 = new FTIT2FlightDataAdapter();
         }
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
@@ -85,5 +97,12 @@
         public IOIL1FlightDataAdapter OIL1 { get; private set; }
         public IOIL2FlightDataAdapter OIL2 { get; private set; }
         public IAccelerometerFlightDataAdapter Accelerometer { get; private set; }
+        public INOZ1FlightDataAdapter NOZ1 { get; private set; }
+        public INOZ2FlightDataAdapter NOZ2 { get; private set; }
+        public IHYDAFlightDataAdapter HYDA { get; private set; }
+        public IHYDBFlightDataAdapter HYDB { get; private set; }
+        public IFTIT1FlightDataAdapter FTIT1 { get; private set; }
+        public IFTIT2FlightDataAdapter FTIT2 { get; private set; }
+
     }
 }
