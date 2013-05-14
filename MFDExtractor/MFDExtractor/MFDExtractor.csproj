@@ -157,6 +157,7 @@
     <Compile Include="InstrumentStateSnapshotCache.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="RadarAltitudeCalculator.cs" />
+    <Compile Include="RendererSetInitializer.cs" />
     <Compile Include="RenderThreadSetupHelper.cs" />
     <Compile Include="RenderThreadWorkHelper.cs" />
     <Compile Include="SettingReader.cs" />
