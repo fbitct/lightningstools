@@ -411,6 +411,7 @@ namespace MFDExtractor
 
         private Extractor()
         {
+			State = new ExtractorState();
             _rendererSetInitializer = new RendererSetInitializer(_renderers);
             LoadSettings();
             _mediatorEventHandler = Mediator_PhysicalControlStateChanged;
