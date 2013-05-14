@@ -298,8 +298,6 @@ namespace MFDExtractor
         #region Threads
 
         private readonly Mediator.PhysicalControlStateChangedEventHandler _mediatorEventHandler;
-        private readonly BackgroundWorker _settingsLoaderAsyncWorker = new BackgroundWorker();
-        private readonly BackgroundWorker _settingsSaverAsyncWorker = new BackgroundWorker();
         private Thread _accelerometerRenderThread;
         private InputControlSelection _accelerometerResetKey;
 
@@ -362,8 +360,6 @@ namespace MFDExtractor
         private Thread _rpm1RenderThread;
         private Thread _rpm2RenderThread;
         private Thread _rwrRenderThread;
-        public bool SettingsLoadScheduled { get; internal set; }
-        public bool SettingsSaveScheduled { get; internal set; }
 
         private Thread _simStatusMonitorThread;
         private Thread _speedbrakeRenderThread;
@@ -424,8 +420,6 @@ namespace MFDExtractor
             {
                 Mediator = new Mediator(null);
             }
-            _settingsSaverAsyncWorker.DoWork += _settingsSaverAsyncWorker_DoWork;
-            _settingsLoaderAsyncWorker.DoWork += _settingsLoaderAsyncWorker_DoWork;
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
             _bmsSupport = new BMSSupport();
@@ -1747,42 +1741,7 @@ namespace MFDExtractor
             _gdiPlusOptions.TextRenderingHint = Settings.Default.TextRenderingHint;
         }
 
-        private void LoadSettingsAsync()
-        {
-            if (_settingsLoaderAsyncWorker.IsBusy)
-            {
-                SettingsLoadScheduled = true;
-            }
-            else
-            {
-                _settingsLoaderAsyncWorker.RunWorkerAsync();
-            }
-        }
-
-        private void SaveSettingsAsync()
-        {
-            if (_settingsSaverAsyncWorker.IsBusy)
-            {
-                SettingsSaveScheduled = true;
-            }
-            else
-            {
-                _settingsSaverAsyncWorker.RunWorkerAsync();
-            }
-        }
-
-        private void _settingsLoaderAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            LoadSettings();
-            SettingsLoadScheduled = false;
-        }
-
-        private void _settingsSaverAsyncWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Settings.Default.Save();
-            SettingsSaveScheduled = false;
-        }
-
+        
         #endregion
 
         #region Instrument Renderer Setup
@@ -4145,14 +4104,6 @@ namespace MFDExtractor
                 {
                     _windowSizingOrMoving = WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
                     Application.DoEvents();
-                    if (SettingsSaveScheduled && !_windowSizingOrMoving)
-                    {
-                        SaveSettingsAsync();
-                    }
-                    if (SettingsLoadScheduled && !_windowSizingOrMoving)
-                    {
-                        LoadSettingsAsync();
-                    }
                     if (_renderCycleNum < long.MaxValue)
                     {
                         _renderCycleNum++;
@@ -6029,8 +5980,6 @@ namespace MFDExtractor
                 if (disposing)
                 {
                     Stop();
-                    _settingsSaverAsyncWorker.DoWork -= _settingsSaverAsyncWorker_DoWork;
-                    _settingsLoaderAsyncWorker.DoWork -= _settingsLoaderAsyncWorker_DoWork;
                     Common.Util.DisposeObject(_asiForm);
                     Common.Util.DisposeObject(_adiForm);
                     Common.Util.DisposeObject(_backupAdiForm);

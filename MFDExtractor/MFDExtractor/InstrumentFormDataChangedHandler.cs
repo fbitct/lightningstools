@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using MFDExtractor.Properties;
 using MFDExtractor.UI;
 
 namespace MFDExtractor
@@ -51,11 +54,14 @@ namespace MFDExtractor
             settings.AlwaysOnTop = _instrumentForm.AlwaysOnTop;
             settings.Monochrome = _instrumentForm.Monochrome;
 			_instrumentFormSettingsWriter.Write(_instrumentName, settings);
-            if (!_extractor.TestMode)
-            {
-                _extractor.SettingsSaveScheduled = true;
-            }
-            _extractor.SettingsSaveScheduled = true;
+            
+            SaveSettings();
+
+        }
+
+        private static void SaveSettings()
+        {
+            new TaskFactory().StartNew(()=> Settings.Default.Save());
         }
     }
 }
