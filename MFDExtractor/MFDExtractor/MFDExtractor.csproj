@@ -140,6 +140,9 @@
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataUpdater.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
+    <Compile Include="InstrumentFormSettings.cs" />
+    <Compile Include="InstrumentFormSettingsReader.cs" />
+    <Compile Include="InstrumentFormSettingsWriter.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="InputControlSelectionSettingReader.cs" />
     <Compile Include="InstrumentStateSnapshotCache.cs" />
@@ -147,6 +150,8 @@
     <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="RenderThreadSetupHelper.cs" />
     <Compile Include="RenderThreadWorkHelper.cs" />
+    <Compile Include="SettingReader.cs" />
+    <Compile Include="SettingsWriter.cs" />
     <Compile Include="ThreadAbortion.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>

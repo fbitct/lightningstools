@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using MFDExtractor.UI;
 
@@ -10,72 +9,48 @@ namespace MFDExtractor
         void HandleDataChangedEvent(object sender, EventArgs e);
     }
 
-    public class InstrumentFormDataChangedHandler : IInstrumentFormDataChangedHandler
+    internal class InstrumentFormDataChangedHandler : IInstrumentFormDataChangedHandler
     {
+	    private readonly string _instrumentName;
         private readonly  InstrumentForm _instrumentForm;
         private readonly Extractor _extractor;
-        private readonly Action<string> _setOutputDisplay;
-        private readonly Action<bool> _setStretchToFit;
-        private readonly Action<int> _setOutULX;
-        private readonly Action<int> _setOutULY;
-        private readonly Action<int> _setOutLRX;
-        private readonly Action<int> _setOutLRY;
-        private readonly Action<bool> _setEnableOutput;
-        private readonly Action<RotateFlipType> _setRotateFlipType;
-        private readonly Action<bool> _setAlwaysOnTop;
-        private readonly Action<bool> _setMonochrome;
-
+	    private readonly IInstrumentFormSettingsWriter _instrumentFormSettingsWriter;
         public InstrumentFormDataChangedHandler(
+			string instrumentName,
             InstrumentForm instrumentForm, 
             Extractor extractor,
-            Action<string> setOutputDisplay,
-            Action<bool> setStretchToFit,
-            Action<int> setOutULX,
-            Action<int> setOutULY,
-            Action<int> setOutLRX,
-            Action<int> setOutLRY,
-            Action<bool> setEnableOutput,
-            Action<RotateFlipType> setRotateFlipType,
-            Action<bool> setAlwaysOnTop,
-            Action<bool> setMonochrome
-
+			IInstrumentFormSettingsWriter instrumentFormSettingsWriter = null
             )
         {
+	        _instrumentName = instrumentName;
             _instrumentForm = instrumentForm;
             _extractor = extractor;
-            _setOutputDisplay = setOutputDisplay;
-            _setStretchToFit = setStretchToFit;
-            _setOutULX = setOutULX;
-            _setOutULY = setOutULY;
-            _setOutLRX = setOutLRX;
-            _setOutLRY = setOutLRY;
-            _setEnableOutput = setEnableOutput;
-            _setRotateFlipType = setRotateFlipType;
-            _setAlwaysOnTop = setAlwaysOnTop;
-            _setMonochrome = setMonochrome;
+	        _instrumentFormSettingsWriter = instrumentFormSettingsWriter ?? new InstrumentFormSettingsWriter();
         }
         public void HandleDataChangedEvent(object sender, EventArgs e)
         {
             var location = _instrumentForm.DesktopLocation;
             var screen = Screen.FromRectangle(_instrumentForm.DesktopBounds);
-            _setOutputDisplay(Common.Screen.Util.CleanDeviceName(screen.DeviceName));
+	        var settings = new InstrumentFormSettings();
+	        settings.OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
             if (_instrumentForm.StretchToFill)
             {
-                _setStretchToFit(true);
+	            settings.StretchToFit = true;
             }
             else
             {
-                _setStretchToFit(false);
+				settings.StretchToFit = false;
                 var size = _instrumentForm.Size;
-                _setOutULX(location.X - screen.Bounds.Location.X);
-                _setOutULY(location.Y - screen.Bounds.Location.Y);
-                _setOutLRX((location.X - screen.Bounds.Location.X) + size.Width);
-                _setOutLRY((location.Y - screen.Bounds.Location.Y) + size.Height);
+	            settings.ULX = location.X - screen.Bounds.Location.X;
+	            settings.ULY = location.Y - screen.Bounds.Location.Y;
+	            settings.LRX = (location.X - screen.Bounds.Location.X) + size.Width;
+                settings.LRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
             }
-            _setEnableOutput(_instrumentForm.Visible);
-            _setRotateFlipType(_instrumentForm.Rotation);
-            _setAlwaysOnTop(_instrumentForm.AlwaysOnTop);
-            _setMonochrome( _instrumentForm.Monochrome);
+			settings.Enabled = _instrumentForm.Visible;
+            settings.RotateFlipType = _instrumentForm.Rotation;
+            settings.AlwaysOnTop = _instrumentForm.AlwaysOnTop;
+            settings.Monochrome = _instrumentForm.Monochrome;
+			_instrumentFormSettingsWriter.Write(_instrumentName, settings);
             if (!_extractor.TestMode)
             {
                 _extractor.SettingsSaveScheduled = true;
