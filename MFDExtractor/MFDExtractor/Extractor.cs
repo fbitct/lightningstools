@@ -511,12 +511,7 @@ namespace MFDExtractor
             {
                 Mediator.PhysicalControlStateChanged += _mediatorEventHandler.HandleStateChange;
             }
-            SendMfd4Image(null);
-            SendMfd3Image(null);
-            SendLeftMfdImage(null);
-            SendRightMfdImage(null);
-            SendHudImage(null);
-
+            
             RunThreads();
         }
         public void Stop()
@@ -700,8 +695,6 @@ namespace MFDExtractor
 
         private void SetupNetworking()
         {
-            DateTime startTime = DateTime.Now;
-            _log.DebugFormat("Starting setting up networking at: {0}", startTime.ToString());
             if (_networkMode == NetworkMode.Client)
             {
                 SetupNetworkingClient();
@@ -710,10 +703,6 @@ namespace MFDExtractor
             {
                 SetupNetworkingServer();
             }
-            DateTime endTime = DateTime.Now;
-            _log.DebugFormat("Finished setting up networking at: {0}", endTime.ToString());
-            TimeSpan elapsed = endTime.Subtract(startTime);
-            _log.DebugFormat("Time elapsed setting up networking: {0}", elapsed.TotalMilliseconds);
         }
 
         private void SetupNetworkingClient()
@@ -740,63 +729,7 @@ namespace MFDExtractor
 
         #endregion
 
-        #region MFD Network Image Transfer Code
-
-        #region Outbound Transfer
-
-        private void SendFlightData(FlightData flightData)
-        {
-            if (_networkMode == NetworkMode.Server)
-            {
-                ExtractorServer.SetFlightData(flightData);
-            }
-        }
-
-        private void SendMfd4Image(Image image)
-        {
-            if (_networkMode == NetworkMode.Server)
-            {
-                ExtractorServer.SetMfd4Bitmap(image);
-            }
-        }
-
-        private void SendMfd3Image(Image image)
-        {
-            if (_networkMode == NetworkMode.Server)
-            {
-                ExtractorServer.SetMfd3Bitmap(image);
-            }
-        }
-
-        private void SendLeftMfdImage(Image image)
-        {
-            if (_networkMode == NetworkMode.Server)
-            {
-                ExtractorServer.SetLeftMfdBitmap(image);
-            }
-        }
-
-        private void SendRightMfdImage(Image image)
-        {
-            if (_networkMode == NetworkMode.Server)
-            {
-                ExtractorServer.SetRightMfdBitmap(image);
-            }
-        }
-
-        private void SendHudImage(Image image)
-        {
-            if (_networkMode == NetworkMode.Server)
-            {
-                ExtractorServer.SetHudBitmap(image);
-            }
-        }
-
-        #endregion
-
         
-
-        #endregion
 
         #endregion
 
@@ -821,9 +754,7 @@ namespace MFDExtractor
                     if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                     {
                         FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
-#if (ALLIEDFORCE)
-                        format = FalconDataFormats.AlliedForce;
-#endif
+
                         //set automatic 3D mode for BMS
                         if (format.HasValue && format.Value == FalconDataFormats.BMS4) _threeDeeMode = true;
 
@@ -861,23 +792,7 @@ namespace MFDExtractor
                                 newReader = false;
                             }
                         }
-                        if (newReader)
-                        {
-                            string exePath = F4Utils.Process.Util.GetFalconExePath();
-                            FileVersionInfo verInfo = null;
-                            if (exePath != null) verInfo = FileVersionInfo.GetVersionInfo(exePath);
-                            //12-08-12 Falcas change verInfo.ProductMinorPart >= 6826 to verInfo.ProductMinorPart >= 32
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4 && verInfo != null &&
-                                ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 32) ||
-                                 (verInfo.ProductMajorPart > 4)))
-                            {
-                                EnableBMSAdvancedSharedmemValues();
-                            }
-                            else
-                            {
-                                DisableBMSAdvancedSharedmemValues();
-                            }
-                        }
+                        
                         if (doMore)
                         {
                             toReturn = _falconSmReader.GetCurrentData();
@@ -939,25 +854,7 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        private void DisableBMSAdvancedSharedmemValues()
-        {
-            _useBMSAdvancedSharedmemValues = false;
-            if (NetworkMode == NetworkMode.Server)
-            {
-                var msg = new Message(MessageTypes.DisableBMSAdvancedSharedmemValues.ToString(), null);
-                ExtractorServer.SubmitMessageToClientFromServer(msg);
-            }
-        }
-
-        private void EnableBMSAdvancedSharedmemValues()
-        {
-            _useBMSAdvancedSharedmemValues = true;
-            if (NetworkMode == NetworkMode.Server)
-            {
-                var msg = new Message(MessageTypes.EnableBMSAdvancedSharedmemValues.ToString(), null);
-                ExtractorServer.SubmitMessageToClientFromServer(msg);
-            }
-        }
+ 
 
         private Image GetMfd4Bitmap()
         {
@@ -1405,7 +1302,7 @@ namespace MFDExtractor
                 _flightData = flightData;
                 if (_networkMode == NetworkMode.Server)
                 {
-                    SendFlightData(flightData);
+                    ExtractorServer.SetFlightData(flightData);
                 }
             }
         }
@@ -1417,7 +1314,7 @@ namespace MFDExtractor
             {
                 if (_networkMode == NetworkMode.Server)
                 {
-                    SendHudImage(hudImage);
+                    ExtractorServer.SetHudBitmap(hudImage);
                 }
                 if (_hudForm != null)
                 {
@@ -1425,13 +1322,13 @@ namespace MFDExtractor
                     {
                         hudImage.RotateFlip(Settings.Default.HUD_RotateFlipType);
                     }
-                    using (Graphics graphics = _hudForm.CreateGraphics())
+                    using (var graphics = _hudForm.CreateGraphics())
                     {
                         if (Settings.Default.HUD_Monochrome)
                         {
                             var ia = new ImageAttributes();
 							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                            using (Image compatible = Util.CopyBitmap(hudImage))
+                            using (var compatible = Util.CopyBitmap(hudImage))
                             {
                                 graphics.DrawImage(compatible, _hudForm.ClientRectangle, 0, 0, hudImage.Width,
                                                    hudImage.Height, GraphicsUnit.Pixel, ia);
@@ -1459,7 +1356,7 @@ namespace MFDExtractor
             {
                 if (_networkMode == NetworkMode.Server)
                 {
-                    SendMfd4Image(mfd4Image);
+                    ExtractorServer.SetMfd4Bitmap(mfd4Image);
                 }
                 if (_mfd4Form != null)
                 {
@@ -1500,7 +1397,7 @@ namespace MFDExtractor
             {
                 if (_networkMode == NetworkMode.Server)
                 {
-                    SendMfd3Image(mfd3Image);
+                    ExtractorServer.SetMfd3Bitmap(mfd3Image);
                 }
                 if (_mfd3Form != null)
                 {
@@ -1541,7 +1438,7 @@ namespace MFDExtractor
             {
                 if (_networkMode == NetworkMode.Server)
                 {
-                    SendLeftMfdImage(leftMfdImage);
+                    ExtractorServer.SetLeftMfdBitmap(leftMfdImage);
                 }
                 if (_leftMfdForm != null)
                 {
@@ -1582,7 +1479,7 @@ namespace MFDExtractor
             {
                 if (_networkMode == NetworkMode.Server)
                 {
-                    SendRightMfdImage(rightMfdImage);
+                    ExtractorServer.SetRightMfdBitmap(rightMfdImage);
                 }
                 if (_rightMfdForm != null)
                 {
