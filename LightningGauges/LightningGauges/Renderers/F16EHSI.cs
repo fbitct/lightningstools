@@ -72,7 +72,7 @@ namespace LightningGauges.Renderers
 
         public class F16EHSIOptions
         {
-            public GDIPlusOptions GDIPlusOptions { get; set; }
+            public GdiPlusOptions GDIPlusOptions { get; set; }
         }
 
         #endregion

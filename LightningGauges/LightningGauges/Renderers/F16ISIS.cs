@@ -1263,7 +1263,7 @@ namespace LightningGauges.Renderers
 
             public AltitudeUnits RadarAltitudeUnits { get; set; }
             public PressureUnits PressureAltitudeUnits { get; set; }
-            public GDIPlusOptions GDIPlusOptions { get; set; }
+            public GdiPlusOptions GDIPlusOptions { get; set; }
         }
 
         #endregion

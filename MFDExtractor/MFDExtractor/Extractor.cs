@@ -7,25 +7,25 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using Common.InputSupport;
 using Common.InputSupport.DirectInput;
 using Common.InputSupport.UI;
 using Common.SimSupport;
 using Common.UI;
 using Common.Win32;
-using F4KeyFile;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using F4Utils.Process;
 using F4Utils.Terrain;
-using LightningGauges.Renderers;
+using MFDExtractor.EventSystem;
+using MFDExtractor.Networking;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
-using Microsoft.DirectX.DirectInput;
 using log4net;
 using Constants = Common.Math.Constants;
 using Util = Common.Imaging.Util;
 using Common.Networking;
+using MFDExtractor.Configuration;
+using MFDExtractor.EventSystem.Handlers;
 
 namespace MFDExtractor
 {
@@ -45,7 +45,8 @@ namespace MFDExtractor
 		private readonly IInstrumentFormSettingsReader _instrumentFormSettingsReader = new InstrumentFormSettingsReader();
 
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms = new Dictionary<IInstrumentRenderer, InstrumentForm>();
-
+	    private KeySettings _keySettings;
+	    private IKeySettingsReader _keySettingsReader = new KeySettingsReader();
         private InstrumentForm _accelerometerForm;
         private InstrumentForm _adiForm;
         private InstrumentForm _altimeterForm;
@@ -91,7 +92,7 @@ namespace MFDExtractor
         private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
         private readonly IRendererSetInitializer _rendererSetInitializer;
 
-        private GDIPlusOptions _gdiPlusOptions = new GDIPlusOptions();
+        private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
 
 
         private Form _applicationForm;
@@ -294,7 +295,7 @@ namespace MFDExtractor
 
         #region Threads
 
-        private readonly Mediator.PhysicalControlStateChangedEventHandler _mediatorEventHandler;
+        private readonly IMediatorStateChangeHandler _mediatorEventHandler;
         private Thread _accelerometerRenderThread;
         private InputControlSelection _accelerometerResetKey;
 
@@ -323,9 +324,6 @@ namespace MFDExtractor
         private InputControlSelection _ehsiHeadingIncreaseKey;
         private InputControlSelection _ehsiMenuButtonDepressedKey;
         private Thread _ehsiRenderThread;
-        private DateTime? _ehsiRightKnobDepressedTime;
-        private DateTime? _ehsiRightKnobLastActivityTime;
-        private DateTime? _ehsiRightKnobReleasedTime;
         private Thread _epuFuelRenderThread;
         private Thread _ftit1RenderThread;
         private Thread _ftit2RenderThread;
@@ -338,7 +336,6 @@ namespace MFDExtractor
         private InputControlSelection _isisBrightButtonKey;
         private Thread _isisRenderThread;
         private InputControlSelection _isisStandardButtonKey;
-        private bool _keySettingsLoaded;
         private Thread _keyboardWatcherThread;
         private Thread _landingGearLightsRenderThread;
         private Thread _leftMfdCaptureThread;
@@ -403,18 +400,92 @@ namespace MFDExtractor
         private IRenderThreadWorkHelper _rollTrimRenderThreadWorkHelper;
         private IRenderThreadWorkHelper _pitchTrimRenderThreadWorkHelper;
         private readonly DIHotkeyDetection _diHotkeyDetection;
+	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
+	    private IEHSIStateTracker _ehsiStateTracker;
+
+		private readonly IInputEventHandler
+			_nightVisionModeIsToggled,
+			_airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne,
+			_ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne,
+			_ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne,
+			_ehsiRightKnobDepressed, _ehsiRightKnobReleased,
+			_ehsiMenuButtonDepressed,
+			_isisBrightButtonDepressed, _isisStandardButtonDepressed,
+			_azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased,
+			_accelerometerIsReset;
+
+	    private readonly IKeyDownEventHandler _keyDownEventHandler;
+	    private readonly IKeyUpEventHandler _keyUpEventHandler;
+	    private readonly IKeyboardWatcher _keyboardWatcher;
+	    private readonly IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
+		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
+	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
+		#endregion
 
         #endregion
 
-        #endregion
 
-
-        private Extractor()
+        private Extractor(
+			IKeyDownEventHandler keyDownEventHandler = null, 
+			IKeyDownEventHandler keyUpEventHandler=null,
+			IKeyboardWatcher keyboardWatcher = null,
+			IInputEventHandler nightVisionModeIsToggled=null,
+			IInputEventHandler airspeedIndexDecreasedByOne = null, IInputEventHandler airspeedIndexIncreasedByOne = null,
+			IInputEventHandler ehsiLeftKnobDecreasedByOne = null, IInputEventHandler ehsiLeftKnobIncreasedByOne = null,
+			IInputEventHandler ehsiRightKnobDecreasedByOne = null, IInputEventHandler ehsiRightKnobIncreasedByOne = null,
+			IInputEventHandler ehsiRightKnobDepressed = null, IInputEventHandler ehsiRightKnobReleased = null,
+			IInputEventHandler ehsiMenuButtonDepressed = null,
+			IInputEventHandler isisBrightButtonDepressed = null, IInputEventHandler isisStandardButtonDepressed = null,
+			IInputEventHandler azimuthIndicatorBrightnessIncreased = null, IInputEventHandler azimuthIndicatorBrightnessDecreased = null,
+			IInputEventHandler accelerometerIsReset = null,
+			IDirectInputEventHotkeyFilter directInputEventHotkeyFilter= null, 
+			IEHSIStateTracker ehsiStateTracker =null, 
+			IClientSideIncomingMessageDispatcher clientSideIncomingMessageDispatcher = null,
+			IServerSideIncomingMessageDispatcher serverSideIncomingMessageDispatcher = null, 
+			IGdiPlusOptionsReader gdiPlusOptionsReader=null)
         {
-			State = new ExtractorState();
-            _rendererSetInitializer = new RendererSetInitializer(_renderers);
+	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
-            _mediatorEventHandler = Mediator_PhysicalControlStateChanged;
+			_rendererSetInitializer = new RendererSetInitializer(_renderers);
+			_rendererSetInitializer.Initialize(_gdiPlusOptions);
+			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_renderers.EHSI);
+			_directInputEventHotkeyFilter = directInputEventHotkeyFilter ?? new DirectInputEventHotkeyFilter();
+			State = new ExtractorState();
+
+			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
+			_nightVisionModeIsToggled = nightVisionModeIsToggled ?? new NightVisionModeIsToggled(this);
+			_airspeedIndexIncreasedByOne = airspeedIndexIncreasedByOne ?? new AirspeedIndexIncreasedByOne(_renderers.ASI);
+			_airspeedIndexDecreasedByOne = airspeedIndexDecreasedByOne ?? new AirspeedIndexDecreasedByOne(_renderers.ASI);
+			_ehsiLeftKnobDecreasedByOne = ehsiLeftKnobDecreasedByOne ?? new EHSILeftKnobDecreasedByOne();
+			_ehsiLeftKnobIncreasedByOne = ehsiLeftKnobIncreasedByOne ?? new EHSILeftKnobIncreasedByOne();
+			_ehsiRightKnobDecreasedByOne = ehsiRightKnobDecreasedByOne ?? new EHSIRightKnobDecreasedByOne(_renderers.EHSI);
+			_ehsiRightKnobIncreasedByOne = ehsiRightKnobIncreasedByOne ?? new EHSIRightKnobIncreasedByOne(_ehsiStateTracker, _renderers.EHSI);
+	        _ehsiRightKnobDepressed = ehsiRightKnobDepressed ?? new EHSIRightKnobDepressed(_ehsiStateTracker);
+			_ehsiRightKnobReleased = ehsiRightKnobReleased ?? new EHSIRightKnobReleased(_ehsiStateTracker);
+			_ehsiMenuButtonDepressed = ehsiMenuButtonDepressed ?? new EHSIMenuButtonDepressed(_renderers.EHSI);
+			_isisBrightButtonDepressed = isisBrightButtonDepressed ?? new ISISBrightButtonDepressed(_renderers.ISIS);
+			_isisStandardButtonDepressed = isisStandardButtonDepressed ?? new ISISStandardButtonDepressed(_renderers.ISIS);
+			_azimuthIndicatorBrightnessIncreased = azimuthIndicatorBrightnessIncreased ?? new AzimuthIndicatorBrightnessIncreased(_renderers.RWR);
+			_azimuthIndicatorBrightnessDecreased = azimuthIndicatorBrightnessDecreased ?? new AzimuthIndicatorBrightnessDecreased(_renderers.RWR);
+			_accelerometerIsReset = accelerometerIsReset ?? new AccelerometerIsReset(_renderers.Accelerometer);
+	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,
+		        _diHotkeyDetection, _ehsiStateTracker,
+		        _nightVisionModeIsToggled,
+		        _airspeedIndexDecreasedByOne,
+		        _airspeedIndexIncreasedByOne,
+		        _ehsiLeftKnobDecreasedByOne,
+		        _ehsiLeftKnobIncreasedByOne,
+		        _ehsiRightKnobDecreasedByOne,
+		        _ehsiRightKnobIncreasedByOne,
+		        _ehsiRightKnobDepressed,
+		        _ehsiRightKnobReleased,
+		        _ehsiMenuButtonDepressed,
+		        _isisBrightButtonDepressed,
+		        _isisStandardButtonDepressed,
+		        _azimuthIndicatorBrightnessIncreased,
+		        _azimuthIndicatorBrightnessDecreased,
+		        _accelerometerIsReset
+		        );
             if (!Settings.Default.DisableDirectInputMediator)
             {
                 Mediator = new Mediator(null);
@@ -422,7 +493,19 @@ namespace MFDExtractor
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
             _bmsSupport = new BMSSupport();
-            _diHotkeyDetection = new DIHotkeyDetection(Mediator);
+	        _keyDownEventHandler = keyDownEventHandler ??
+		        new KeyDownEventHandler(_ehsiStateTracker, _nightVisionModeIsToggled, _airspeedIndexDecreasedByOne,
+			        _airspeedIndexIncreasedByOne, _ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne,
+			        _ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne, _ehsiRightKnobDepressed, _ehsiRightKnobReleased,
+			        _ehsiMenuButtonDepressed, _isisBrightButtonDepressed, _isisStandardButtonDepressed,
+			        _azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased, _accelerometerIsReset,
+			        _keySettings);
+
+			_keyUpEventHandler = new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _ehsiRightKnobReleased);
+			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, _log);
+			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_nightVisionModeIsToggled, _airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne, _ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne, _ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne, _ehsiRightKnobDepressed, _ehsiRightKnobReleased, _ehsiMenuButtonDepressed, _accelerometerIsReset, _client);
+			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_nightVisionModeIsToggled, _airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne, _ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne, _ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne, _ehsiRightKnobDepressed, _ehsiRightKnobReleased, _ehsiMenuButtonDepressed, _isisBrightButtonDepressed, _isisStandardButtonDepressed, _azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased, _accelerometerIsReset);
+
         }
         private void SetupRenderThreadWorkHelpers()
         {
@@ -464,764 +547,7 @@ namespace MFDExtractor
             _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _renderers.PitchTrim, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
 
         }
-        private void ProcessKeyUpEvent(KeyEventArgs e)
-        {
-            if (_keySettingsLoaded == false) LoadKeySettings();
-            if (_ehsiCourseDepressedKey == null) return;
-            Keys modifiersPressedRightNow = UpdateKeyEventArgsWithExtendedKeyInfo(Keys.None);
-            Keys modifiersInHotkey = (_ehsiCourseDepressedKey.Keys & Keys.Modifiers);
-
-            if (
-                EHSIRightKnobIsCurrentlyDepressed()
-                &&
-                (_ehsiCourseDepressedKey.ControlType == ControlType.Key)
-                &&
-                (
-                    (e.KeyData & Keys.KeyCode) == (_ehsiCourseDepressedKey.Keys & Keys.KeyCode)
-                    ||
-                    ((e.KeyData & Keys.KeyCode) & ~Keys.LControlKey & ~Keys.RControlKey & ~Keys.LShiftKey & ~Keys.LMenu &
-                     ~Keys.RMenu) == Keys.None
-                )
-                &&
-                (
-                    (
-                        modifiersInHotkey == Keys.None
-                    )
-                    ||
-                    (
-                        ((modifiersInHotkey & Keys.Alt) == Keys.Alt && (modifiersPressedRightNow & Keys.Alt) != Keys.Alt)
-                        ||
-                        ((modifiersInHotkey & Keys.Control) == Keys.Control &&
-                         (modifiersPressedRightNow & Keys.Control) != Keys.Control)
-                        ||
-                        ((modifiersInHotkey & Keys.Shift) == Keys.Shift &&
-                         (modifiersPressedRightNow & Keys.Shift) != Keys.Shift)
-                    )
-                )
-                )
-            {
-                NotifyEHSIRightKnobReleased(true);
-            }
-        }
-        private void ProcessKeyDownEvent(KeyEventArgs e)
-        {
-            if (_keySettingsLoaded == false) LoadKeySettings();
-            Keys keys = UpdateKeyEventArgsWithExtendedKeyInfo(e.KeyData);
-
-            if (KeyIsHotkey(_nvisKey, keys))
-            {
-                NotifyNightModeIsToggled(true);
-            }
-            else if (KeyIsHotkey(_airspeedIndexIncreaseKey, keys))
-            {
-                NotifyAirspeedIndexIncreasedByOne(true);
-            }
-            else if (KeyIsHotkey(_airspeedIndexDecreaseKey, keys))
-            {
-                NotifyAirspeedIndexDecreasedByOne(true);
-            }
-            else if (KeyIsHotkey(_ehsiHeadingDecreaseKey, keys))
-            {
-                NotifyEHSILeftKnobDecreasedByOne(true);
-            }
-            else if (KeyIsHotkey(_ehsiHeadingIncreaseKey, keys))
-            {
-                NotifyEHSILeftKnobIncreasedByOne(true);
-            }
-            else if (KeyIsHotkey(_ehsiCourseDecreaseKey, keys))
-            {
-                NotifyEHSIRightKnobDecreasedByOne(true);
-            }
-            else if (KeyIsHotkey(_ehsiCourseIncreaseKey, keys))
-            {
-                NotifyEHSIRightKnobIncreasedByOne(true);
-            }
-            else if (KeyIsHotkey(_ehsiCourseDepressedKey, keys) && !EHSIRightKnobIsCurrentlyDepressed())
-            {
-                NotifyEHSIRightKnobDepressed(true);
-            }
-            else if (KeyIsHotkey(_ehsiMenuButtonDepressedKey, keys))
-            {
-                NotifyEHSIMenuButtonDepressed(true);
-            }
-            else if (KeyIsHotkey(_isisBrightButtonKey, keys))
-            {
-                NotifyISISBrightButtonDepressed(true);
-            }
-            else if (KeyIsHotkey(_isisStandardButtonKey, keys))
-            {
-                NotifyISISStandardButtonDepressed(true);
-            }
-            else if (KeyIsHotkey(_azimuthIndicatorBrightnessIncreaseKey, keys))
-            {
-                NotifyAzimuthIndicatorBrightnessIncreased(true);
-            }
-            else if (KeyIsHotkey(_azimuthIndicatorBrightnessDecreaseKey, keys))
-            {
-                NotifyAzimuthIndicatorBrightnessDecreased(true);
-            }
-            else if (KeyIsHotkey(_accelerometerResetKey, keys))
-            {
-                NotifyAccelerometerIsReset(true);
-            }
-        }
-        private Keys UpdateKeyEventArgsWithExtendedKeyInfo(Keys keys)
-        {
-            if ((NativeMethods.GetKeyState(NativeMethods.VK_SHIFT) & 0x8000) != 0)
-            {
-                keys |= Keys.Shift;
-                //SHIFT is pressed
-            }
-            if ((NativeMethods.GetKeyState(NativeMethods.VK_CONTROL) & 0x8000) != 0)
-            {
-                keys |= Keys.Control;
-                //CONTROL is pressed
-            }
-            if ((NativeMethods.GetKeyState(NativeMethods.VK_MENU) & 0x8000) != 0)
-            {
-                keys |= Keys.Alt;
-                //ALT is pressed
-            }
-            return keys;
-        }
-        private void NotifyAzimuthIndicatorBrightnessIncreased(bool relayToListeners)
-        {
-            var newBrightness = (int) Math.Floor(
-                ((F16AzimuthIndicator)_renderers.RWR).InstrumentState.Brightness +
-                ((((F16AzimuthIndicator)_renderers.RWR).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
-            ((F16AzimuthIndicator)_renderers.RWR).InstrumentState.Brightness = newBrightness;
-            Settings.Default.AzimuthIndicatorBrightness = newBrightness;
-
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.AzimuthIndicatorBrightnessIncrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyAzimuthIndicatorBrightnessDecreased(bool relayToListeners)
-        {
-            var newBrightness = (int) Math.Floor(
-                ((F16AzimuthIndicator)_renderers.RWR).InstrumentState.Brightness -
-                ((((F16AzimuthIndicator)_renderers.RWR).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
-            ((F16AzimuthIndicator)_renderers.RWR).InstrumentState.Brightness = newBrightness;
-            Settings.Default.AzimuthIndicatorBrightness = newBrightness;
-
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.AzimuthIndicatorBrightnessDecrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyISISBrightButtonDepressed(bool relayToListeners)
-        {
-            int newBrightness = ((F16ISIS)_renderers.ISIS).InstrumentState.MaxBrightness;
-            ((F16ISIS)_renderers.ISIS).InstrumentState.Brightness = newBrightness;
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.ISISBrightButtonDepressed.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyISISStandardButtonDepressed(bool relayToListeners)
-        {
-            var newBrightness = (int) Math.Floor((((F16ISIS)_renderers.ISIS).InstrumentState.MaxBrightness) * 0.5f);
-            ((F16ISIS)_renderers.ISIS).InstrumentState.Brightness = newBrightness;
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.ISISStandardButtonDepressed.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSILeftKnobIncreasedByOne(bool relayToListeners)
-        {
-            FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
-            bool useIncrementByOne = false;
-            if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-            {
-                KeyBinding incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgIncBy1");
-                if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                {
-                    useIncrementByOne = true;
-                }
-            }
-            if (useIncrementByOne)
-            {
-                KeyFileUtils.SendCallbackToFalcon("SimHsiHdgIncBy1");
-            }
-            else
-            {
-                KeyFileUtils.SendCallbackToFalcon("SimHsiHeadingInc");
-            }
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSILeftKnobIncrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSILeftKnobDecreasedByOne(bool relayToListeners)
-        {
-            FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
-            bool useDecrementByOne = false;
-            if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-            {
-                KeyBinding decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiHdgDecBy1");
-                if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                {
-                    useDecrementByOne = true;
-                }
-            }
-            if (useDecrementByOne)
-            {
-                KeyFileUtils.SendCallbackToFalcon("SimHsiHdgDecBy1");
-            }
-            else
-            {
-                KeyFileUtils.SendCallbackToFalcon("SimHsiHeadingDec");
-            }
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSILeftKnobDecrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSIRightKnobIncreasedByOne(bool relayToListeners)
-        {
-            _ehsiRightKnobLastActivityTime = DateTime.Now;
-            if (((F16EHSI)_renderers.EHSI).InstrumentState.ShowBrightnessLabel)
-            {
-                var newBrightness = (int) Math.Floor(
-                    ((F16EHSI)_renderers.EHSI).InstrumentState.Brightness +
-                    ((((F16EHSI)_renderers.EHSI).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
-                ((F16EHSI)_renderers.EHSI).InstrumentState.Brightness = newBrightness;
-                Settings.Default.EHSIBrightness = newBrightness;
-            }
-            else
-            {
-                FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
-                bool useIncrementByOne = false;
-                if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-                {
-                    KeyBinding incByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsIncBy1");
-                    if (incByOneCallback != null && incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                    {
-                        useIncrementByOne = true;
-                    }
-                }
-                if (useIncrementByOne)
-                {
-                    KeyFileUtils.SendCallbackToFalcon("SimHsiCrsIncBy1");
-                }
-                else
-                {
-                    KeyFileUtils.SendCallbackToFalcon("SimHsiCourseInc");
-                }
-            }
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSIRightKnobIncrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSIRightKnobDecreasedByOne(bool relayToListeners)
-        {
-            _ehsiRightKnobLastActivityTime = DateTime.Now;
-            if (((F16EHSI)_renderers.EHSI).InstrumentState.ShowBrightnessLabel)
-            {
-                var newBrightness = (int) Math.Floor(
-                    ((F16EHSI)_renderers.EHSI).InstrumentState.Brightness -
-                    ((((F16EHSI)_renderers.EHSI).InstrumentState.MaxBrightness) * (1.0f / 32.0f)));
-                ((F16EHSI)_renderers.EHSI).InstrumentState.Brightness = newBrightness;
-                Settings.Default.EHSIBrightness = newBrightness;
-            }
-            else
-            {
-                FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
-                bool useDecrementByOne = false;
-                if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-                {
-                    KeyBinding decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
-                    if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                    {
-                        useDecrementByOne = true;
-                    }
-                }
-                if (useDecrementByOne)
-                {
-                    KeyFileUtils.SendCallbackToFalcon("SimHsiCrsDecBy1");
-                }
-                else
-                {
-                    KeyFileUtils.SendCallbackToFalcon("SimHsiCourseDec");
-                }
-            }
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSIRightKnobDecrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSIRightKnobDepressed(bool relayToListeners)
-        {
-            _ehsiRightKnobDepressedTime = DateTime.Now;
-            _ehsiRightKnobReleasedTime = null;
-            _ehsiRightKnobLastActivityTime = DateTime.Now;
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSIRightKnobDepressed.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSIRightKnobReleased(bool relayToListeners)
-        {
-            _ehsiRightKnobDepressedTime = null;
-            _ehsiRightKnobReleasedTime = DateTime.Now;
-            _ehsiRightKnobLastActivityTime = DateTime.Now;
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSIRightKnobReleased.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyEHSIMenuButtonDepressed(bool relayToListeners)
-        {
-            F16EHSI.F16EHSIInstrumentState.InstrumentModes currentMode =
-                ((F16EHSI)_renderers.EHSI).InstrumentState.InstrumentMode;
-            F16EHSI.F16EHSIInstrumentState.InstrumentModes? newMode = null;
-            switch (currentMode)
-            {
-                case F16EHSI.F16EHSIInstrumentState.InstrumentModes.Unknown:
-                    break;
-                case F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsTacan:
-                    newMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Nav;
-                    break;
-                case F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan:
-                    newMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsTacan;
-                    break;
-                case F16EHSI.F16EHSIInstrumentState.InstrumentModes.Nav:
-                    newMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav;
-                    break;
-                case F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav:
-                    newMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan;
-                    break;
-            }
-            if (newMode.HasValue)
-            {
-                ((F16EHSI) _renderers.EHSI).InstrumentState.InstrumentMode = newMode.Value;
-            }
-            if (NetworkMode == NetworkMode.Standalone || NetworkMode == NetworkMode.Server)
-            {
-                KeyFileUtils.SendCallbackToFalcon("SimStepHSIMode");
-            }
-
-
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.EHSIMenuButtonDepressed.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyAirspeedIndexDecreasedByOne(bool relayToListeners)
-        {
-            ((F16AirspeedIndicator)_renderers.ASI).InstrumentState.AirspeedIndexKnots -= 2.5F;
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.AirspeedIndexDecrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyAirspeedIndexIncreasedByOne(bool relayToListeners)
-        {
-            ((F16AirspeedIndicator)_renderers.ASI).InstrumentState.AirspeedIndexKnots += 2.5F;
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.AirspeedIndexIncrease.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-
-        private void ProcessPendingMessagesToServerFromClient()
-        {
-            if (NetworkMode != NetworkMode.Server) return;
-            Message pendingMessage = ExtractorServer.GetNextPendingMessageToServerFromClient();
-            while (pendingMessage != null)
-            {
-                var messageType = (MessageTypes) Enum.Parse(typeof (MessageTypes), pendingMessage.MessageType);
-                switch (messageType)
-                {
-                    case MessageTypes.ToggleNightMode:
-                        NotifyNightModeIsToggled(false);
-                        break;
-                    case MessageTypes.AirspeedIndexIncrease:
-                        NotifyAirspeedIndexIncreasedByOne(false);
-                        break;
-                    case MessageTypes.AirspeedIndexDecrease:
-                        NotifyAirspeedIndexDecreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSILeftKnobIncrease:
-                        NotifyEHSILeftKnobIncreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSILeftKnobDecrease:
-                        NotifyEHSILeftKnobDecreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobIncrease:
-                        NotifyEHSIRightKnobIncreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobDecrease:
-                        NotifyEHSIRightKnobDecreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobDepressed:
-                        NotifyEHSIRightKnobDepressed(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobReleased:
-                        NotifyEHSIRightKnobReleased(false);
-                        break;
-                    case MessageTypes.EHSIMenuButtonDepressed:
-                        NotifyEHSIMenuButtonDepressed(false);
-                        break;
-                    case MessageTypes.AccelerometerIsReset:
-                        NotifyAccelerometerIsReset(false);
-                        break;
-                    default:
-                        break;
-                }
-                pendingMessage = ExtractorServer.GetNextPendingMessageToServerFromClient();
-            }
-        }
-        private void ProcessPendingMessagesToClientFromServer()
-        {
-            if (NetworkMode != NetworkMode.Client || _client == null) return;
-            Message pendingMessage = _client.GetNextMessageToClientFromServer();
-            while (pendingMessage != null)
-            {
-                var messageType = (MessageTypes) Enum.Parse(typeof (MessageTypes), pendingMessage.MessageType);
-                switch (messageType)
-                {
-                    case MessageTypes.ToggleNightMode:
-                        NotifyNightModeIsToggled(false);
-                        break;
-                    case MessageTypes.AirspeedIndexIncrease:
-                        NotifyAirspeedIndexIncreasedByOne(false);
-                        break;
-                    case MessageTypes.AirspeedIndexDecrease:
-                        NotifyAirspeedIndexDecreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSILeftKnobIncrease:
-                        NotifyEHSILeftKnobIncreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSILeftKnobDecrease:
-                        NotifyEHSILeftKnobDecreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobIncrease:
-                        NotifyEHSIRightKnobIncreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobDecrease:
-                        NotifyEHSIRightKnobDecreasedByOne(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobDepressed:
-                        NotifyEHSIRightKnobDepressed(false);
-                        break;
-                    case MessageTypes.EHSIRightKnobReleased:
-                        NotifyEHSIRightKnobReleased(false);
-                        break;
-                    case MessageTypes.EHSIMenuButtonDepressed:
-                        NotifyEHSIMenuButtonDepressed(false);
-                        break;
-                    case MessageTypes.AccelerometerIsReset:
-                        NotifyAccelerometerIsReset(false);
-                        break;
-                    case MessageTypes.EnableBMSAdvancedSharedmemValues:
-                        _useBMSAdvancedSharedmemValues = true;
-                        break;
-                    case MessageTypes.DisableBMSAdvancedSharedmemValues:
-                        _useBMSAdvancedSharedmemValues = false;
-                        break;
-                }
-                pendingMessage = _client.GetNextMessageToClientFromServer();
-            }
-        }
-        private void NotifyAccelerometerIsReset(bool relayToListeners)
-        {
-            ((F16Accelerometer)_renderers.Accelerometer).InstrumentState.ResetMinAndMaxGs();
-            if (relayToListeners)
-            {
-                var msg = new Message(MessageTypes.AccelerometerIsReset.ToString(), null);
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-                else if (NetworkMode == NetworkMode.Client && _client != null)
-                {
-                    _client.SendMessageToServer(msg);
-                }
-            }
-        }
-        private void NotifyNightModeIsToggled(bool relayToListeners)
-        {
-			State.NightMode = !State.NightMode;
-            if (relayToListeners)
-            {
-                if (NetworkMode == NetworkMode.Server)
-                {
-                    var msg = new Message(MessageTypes.ToggleNightMode.ToString(), null);
-                    ExtractorServer.SubmitMessageToClientFromServer(msg);
-                }
-            }
-        }
-        private void Mediator_PhysicalControlStateChanged(object sender, PhysicalControlStateChangedEventArgs e)
-        {
-            if (_keySettingsLoaded == false) LoadKeySettings();
-            if (DirectInputEventIsHotkey(e, _nvisKey))
-            {
-                NotifyNightModeIsToggled(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _airspeedIndexIncreaseKey))
-            {
-                NotifyAirspeedIndexIncreasedByOne(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _airspeedIndexDecreaseKey))
-            {
-                NotifyAirspeedIndexDecreasedByOne(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _ehsiHeadingDecreaseKey))
-            {
-                NotifyEHSILeftKnobDecreasedByOne(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _ehsiHeadingIncreaseKey))
-            {
-                NotifyEHSILeftKnobIncreasedByOne(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _ehsiCourseDecreaseKey))
-            {
-                NotifyEHSIRightKnobDecreasedByOne(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _ehsiCourseIncreaseKey))
-            {
-                NotifyEHSIRightKnobIncreasedByOne(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _ehsiCourseDepressedKey))
-            {
-                NotifyEHSIRightKnobDepressed(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _ehsiMenuButtonDepressedKey))
-            {
-                NotifyEHSIMenuButtonDepressed(true);
-            }
-            else if (
-                !_diHotkeyDetection.DirectInputHotkeyIsTriggering(_ehsiCourseDepressedKey)
-                &&
-                EHSIRightKnobIsCurrentlyDepressed()
-                )
-            {
-                NotifyEHSIRightKnobReleased(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _isisBrightButtonKey))
-            {
-                NotifyISISBrightButtonDepressed(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _isisStandardButtonKey))
-            {
-                NotifyISISStandardButtonDepressed(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _azimuthIndicatorBrightnessIncreaseKey))
-            {
-                NotifyAzimuthIndicatorBrightnessIncreased(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _azimuthIndicatorBrightnessDecreaseKey))
-            {
-                NotifyAzimuthIndicatorBrightnessDecreased(true);
-            }
-            else if (DirectInputEventIsHotkey(e, _accelerometerResetKey))
-            {
-                NotifyAccelerometerIsReset(true);
-            }
-        }
-        private bool EHSIRightKnobIsCurrentlyDepressed()
-        {
-            return _ehsiRightKnobDepressedTime.HasValue;
-        }
-
-        private bool DirectInputEventIsHotkey(PhysicalControlStateChangedEventArgs diEvent, InputControlSelection hotkey)
-        {
-            if (diEvent == null) return false;
-            if (diEvent.Control == null) return false;
-            if (hotkey == null) return false;
-            if (
-                hotkey.ControlType != ControlType.Axis
-                &&
-                hotkey.ControlType != ControlType.Button
-                &&
-                hotkey.ControlType != ControlType.Pov
-                )
-            {
-                return false;
-            }
-            if (hotkey.DirectInputControl == null) return false;
-            if (hotkey.DirectInputDevice == null) return false;
-
-            if (
-                diEvent.Control.ControlType == hotkey.DirectInputControl.ControlType
-                &&
-                diEvent.Control.ControlNum == hotkey.DirectInputControl.ControlNum
-                &&
-                (
-                    (diEvent.Control.ControlType == ControlType.Axis &&
-                     diEvent.Control.AxisType == hotkey.DirectInputControl.AxisType)
-                    ||
-                    (diEvent.Control.ControlType != ControlType.Axis)
-                )
-                &&
-                Equals(diEvent.Control.Parent.Key, hotkey.DirectInputDevice.Key)
-                &&
-                (
-                    diEvent.Control.ControlType != ControlType.Pov
-                    ||
-                    (
-                        hotkey.ControlType == ControlType.Pov
-                        &&
-                        hotkey.PovDirection == Common.InputSupport.Util.GetPovDirection(diEvent.CurrentState)
-                    )
-                )
-                &&
-                (
-                    diEvent.Control.ControlType != ControlType.Button
-                    ||
-                    (
-                        diEvent.Control.ControlType == ControlType.Button
-                        &&
-                        diEvent.CurrentState == 1
-                    )
-                )
-                )
-            {
-                return true;
-            }
-            return false;
-        }
-        private bool KeyIsHotkey(InputControlSelection hotkey, Keys keyPressed)
-        {
-            if (hotkey == null) return false;
-            if (hotkey.ControlType == ControlType.Key)
-            {
-                if (
-                    (hotkey.Keys & Keys.KeyCode) == (keyPressed & Keys.KeyCode)
-                    &&
-                    (hotkey.Keys & Keys.Modifiers) == (keyPressed & Keys.Modifiers)
-                    )
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        private void LoadKeySettings()
-        {
-			_nvisKey = _inputControlSelectionSettingReader.Read(Settings.Default.NVISKey);
-	        _airspeedIndexIncreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.AirspeedIndexIncreaseKey);
-	        _airspeedIndexDecreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.AirspeedIndexDecreaseKey);
-	        _ehsiHeadingIncreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.EHSIHeadingIncreaseKey);
-	        _ehsiHeadingDecreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.EHSIHeadingDecreaseKey);
-			_ehsiCourseDecreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.EHSICourseDecreaseKey);
-			_ehsiCourseDepressedKey = _inputControlSelectionSettingReader.Read(Settings.Default.EHSICourseKnobDepressedKey);
-			_ehsiMenuButtonDepressedKey = _inputControlSelectionSettingReader.Read(Settings.Default.EHSIMenuButtonKey);
-	        _ehsiCourseIncreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.EHSICourseIncreaseKey);
-			_isisBrightButtonKey = _inputControlSelectionSettingReader.Read(Settings.Default.ISISBrightButtonKey);
-			_isisStandardButtonKey = _inputControlSelectionSettingReader.Read(Settings.Default.ISISStandardButtonKey);
-			_azimuthIndicatorBrightnessIncreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.AzimuthIndicatorBrightnessIncreaseKey);
-			_azimuthIndicatorBrightnessDecreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.AzimuthIndicatorBrightnessDecreaseKey);
-	        _accelerometerResetKey = _inputControlSelectionSettingReader.Read(Settings.Default.AccelerometerResetKey);
-            _keySettingsLoaded = true;
-        }
+        
         
         public void Start()
         {
@@ -1234,10 +560,10 @@ namespace MFDExtractor
             {
                 Starting.Invoke(this, new EventArgs());
             }
-            if (_keySettingsLoaded == false) LoadKeySettings();
+	        _keySettings = _keySettingsReader.Read();
             if (Mediator != null)
             {
-                Mediator.PhysicalControlStateChanged += _mediatorEventHandler;
+                Mediator.PhysicalControlStateChanged += _mediatorEventHandler.HandleStateChange;
             }
             SendMfd4Image(null);
             SendMfd3Image(null);
@@ -1256,9 +582,8 @@ namespace MFDExtractor
             _keepRunning = false;
             if (Mediator != null)
             {
-                Mediator.PhysicalControlStateChanged -= _mediatorEventHandler;
+                Mediator.PhysicalControlStateChanged -= _mediatorEventHandler.HandleStateChange;
             }
-            _keySettingsLoaded = false;
 
             var threadsToKill = new[]
                 {
@@ -1333,7 +658,8 @@ namespace MFDExtractor
         public void LoadSettings()
         {
             var settings = Settings.Default;
-            LoadGDIPlusSettings();
+	        _keySettings = _keySettingsReader.Read();
+            _gdiPlusOptions= _gdiPlusOptionsReader.Read();
             _networkMode = (NetworkMode) settings.NetworkingMode;
             if (_networkMode == NetworkMode.Server)
             {
@@ -1522,112 +848,13 @@ namespace MFDExtractor
 
         #endregion
 
-        #region Inbound Transfer
-
-        private FlightData ReadFlightDataFromNetwork()
-        {
-            FlightData retrieved = null;
-            try
-            {
-                retrieved = _client.GetFlightData();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            return retrieved;
-        }
-
-        private Image ReadMfd4FromNetwork()
-        {
-            Image retrieved = null;
-            try
-            {
-                retrieved = _client.GetMfd4Bitmap();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            return retrieved;
-        }
-
-        private Image ReadMfd3FromNetwork()
-        {
-            Image retrieved = null;
-            try
-            {
-                retrieved = _client.GetMfd3Bitmap();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            return retrieved;
-        }
-
-        private Image ReadLeftMfdFromNetwork()
-        {
-            Image retrieved = null;
-            try
-            {
-                retrieved = _client.GetLeftMfdBitmap();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            return retrieved;
-        }
-
-        private Image ReadRightMfdFromNetwork()
-        {
-            Image retrieved = null;
-            try
-            {
-                retrieved = _client.GetRightMfdBitmap();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            return retrieved;
-        }
-
-        private Image ReadHudFromNetwork()
-        {
-            Image retrieved = null;
-            try
-            {
-                retrieved = _client.GetHudBitmap();
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            return retrieved;
-        }
-
-        #endregion
-
-        #endregion
-
-        #endregion
-
-        #region Settings Loaders and Savers
-
-        private void LoadGDIPlusSettings()
-        {
-            _gdiPlusOptions = new GDIPlusOptions();
-            _gdiPlusOptions.CompositingQuality = Settings.Default.CompositingQuality;
-            _gdiPlusOptions.InterpolationMode = Settings.Default.InterpolationMode;
-            _gdiPlusOptions.PixelOffsetMode = Settings.Default.PixelOffsetMode;
-            _gdiPlusOptions.SmoothingMode = Settings.Default.SmoothingMode;
-            _gdiPlusOptions.TextRenderingHint = Settings.Default.TextRenderingHint;
-        }
-
         
+
         #endregion
+
+        #endregion
+
+       
 
         #region Instrument Renderer Setup
 
@@ -1754,7 +981,7 @@ namespace MFDExtractor
                     }
                     else if (_networkMode == NetworkMode.Client)
                     {
-                        toReturn = ReadFlightDataFromNetwork();
+	                    toReturn = _client.GetFlightData();
                     }
                 }
             }
@@ -1816,7 +1043,7 @@ namespace MFDExtractor
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
-                            toReturn = ReadMfd4FromNetwork();
+	                        toReturn = _client.GetMfd4Bitmap();
                         }
                     }
                 }
@@ -1854,7 +1081,7 @@ namespace MFDExtractor
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
-                            toReturn = ReadMfd3FromNetwork();
+	                        toReturn = _client.GetMfd3Bitmap();
                         }
                     }
                 }
@@ -1892,7 +1119,7 @@ namespace MFDExtractor
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
-                            toReturn = ReadLeftMfdFromNetwork();
+	                        toReturn = _client.GetLeftMfdBitmap();
                         }
                     }
                 }
@@ -1930,7 +1157,7 @@ namespace MFDExtractor
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
-                            toReturn = ReadRightMfdFromNetwork();
+	                        toReturn = _client.GetRightMfdBitmap();
                         }
                     }
                 }
@@ -1968,7 +1195,7 @@ namespace MFDExtractor
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
-                            toReturn = ReadHudFromNetwork();
+	                        toReturn = _client.GetHudBitmap();
                         }
                     }
                 }
@@ -3501,86 +2728,7 @@ namespace MFDExtractor
             }
         }
 
-        private void KeyboardWatcherThreadWork()
-        {
-            AutoResetEvent resetEvent = null;
-            Device device = null;
-            try
-            {
-                resetEvent = new AutoResetEvent(false);
-                device = new Device(SystemGuid.Keyboard);
-                device.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-                device.SetEventNotification(resetEvent);
-                device.Properties.BufferSize = 255;
-                device.Acquire();
-                var lastKeyboardState = new bool[Enum.GetValues(typeof (Key)).Length];
-                var currentKeyboardState = new bool[Enum.GetValues(typeof (Key)).Length];
-                while (_keepRunning)
-                {
-                    try
-                    {
-                        resetEvent.WaitOne(50);
-                    }
-                    catch (TimeoutException)
-                    {
-                    }
-                    try
-                    {
-                        KeyboardState curState = device.GetCurrentKeyboardState();
-                        Array possibleKeys = Enum.GetValues(typeof (Key));
-
-                        int i = 0;
-                        foreach (Key thisKey in possibleKeys)
-                        {
-                            currentKeyboardState[i] = curState[thisKey];
-                            i++;
-                        }
-
-                        i = 0;
-                        foreach (Key thisKey in possibleKeys)
-                        {
-                            bool isPressedNow = currentKeyboardState[i];
-                            bool wasPressedBefore = lastKeyboardState[i];
-                            var winFormsKey =
-                                (Keys) NativeMethods.MapVirtualKey((uint) thisKey, NativeMethods.MAPVK_VSC_TO_VK_EX);
-                            if (isPressedNow && !wasPressedBefore)
-                            {
-                                ProcessKeyDownEvent(new KeyEventArgs(winFormsKey));
-                            }
-                            else if (wasPressedBefore && !isPressedNow)
-                            {
-                                ProcessKeyUpEvent(new KeyEventArgs(winFormsKey));
-                            }
-                            i++;
-                        }
-                        Array.Copy(currentKeyboardState, lastKeyboardState, currentKeyboardState.Length);
-                    }
-                    catch (Exception e)
-                    {
-                        _log.Debug(e.Message, e);
-                    }
-                }
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
-            finally
-            {
-                if (device != null)
-                {
-                    device.Unacquire();
-                }
-                Common.Util.DisposeObject(device);
-                device = null;
-            }
-        }
+       
 
         private void CaptureOrchestrationThreadWork()
         {
@@ -3604,11 +2752,11 @@ namespace MFDExtractor
 
                     if (NetworkMode == NetworkMode.Client)
                     {
-                        ProcessPendingMessagesToClientFromServer();
+						_clientSideIncomingMessageDispatcher.ProcessPendingMessages();
                     }
                     else if (NetworkMode == NetworkMode.Server)
                     {
-                        ProcessPendingMessagesToServerFromClient();
+                        _serverSideIncomingMessageDispatcher.ProcessPendingMessages();
                     }
 
 
@@ -3616,7 +2764,7 @@ namespace MFDExtractor
                     {
                         var currentFlightData = GetFlightData();
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _simRunning, _useBMSAdvancedSharedmemValues, UpdateEHSIBrightnessLabelVisibility, _networkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _simRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         try
                         {
                         }
@@ -3636,7 +2784,7 @@ namespace MFDExtractor
                         var flightDataToSet = new FlightData();
                         flightDataToSet.hsiBits = Int32.MaxValue;
                         SetFlightData(flightDataToSet);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _simRunning, _useBMSAdvancedSharedmemValues, UpdateEHSIBrightnessLabelVisibility, _networkMode);
+						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _simRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
                         SetMfd3Image(Util.CloneBitmap(_mfd3BlankImage));
                         SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));
@@ -5047,7 +4195,7 @@ namespace MFDExtractor
         private void SetupKeyboardWatcherThread()
         {
             _threadAbortion.AbortThread(ref _keyboardWatcherThread);
-            _keyboardWatcherThread = new Thread(KeyboardWatcherThreadWork);
+			_keyboardWatcherThread = new Thread(_keyboardWatcher.Start);
             _keyboardWatcherThread.SetApartmentState(ApartmentState.STA);
             _keyboardWatcherThread.Priority = ThreadPriority.Highest;
             _keyboardWatcherThread.IsBackground = true;
@@ -5151,37 +4299,7 @@ namespace MFDExtractor
             return altitudeCorrection + trueAltitude;
         }
 
-        private void UpdateEHSIBrightnessLabelVisibility()
-        {
-            bool showBrightnessLabel = false;
-            if (EHSIRightKnobIsCurrentlyDepressed())
-            {
-                DateTime? whenPressed = _ehsiRightKnobDepressedTime;
-                if (whenPressed.HasValue)
-                {
-                    TimeSpan howLongPressed = DateTime.Now.Subtract(whenPressed.Value);
-                    if (howLongPressed.TotalMilliseconds > 2000)
-                    {
-                        showBrightnessLabel = true;
-                    }
-                }
-            }
-            else
-            {
-                DateTime? whenReleased = _ehsiRightKnobReleasedTime;
-                DateTime? lastActivity = _ehsiRightKnobLastActivityTime;
-                if (whenReleased.HasValue && lastActivity.HasValue)
-                {
-                    TimeSpan howLongAgoReleased = DateTime.Now.Subtract(whenReleased.Value);
-                    TimeSpan howLongAgoLastActivity = DateTime.Now.Subtract(lastActivity.Value);
-                    if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
-                    {
-                        showBrightnessLabel = ((F16EHSI)_renderers.EHSI).InstrumentState.ShowBrightnessLabel;
-                    }
-                }
-            }
-            ((F16EHSI)_renderers.EHSI).InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
-        }
+       
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(IInstrumentRenderer renderer)
         {

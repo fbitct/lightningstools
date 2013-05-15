@@ -8,7 +8,7 @@ namespace MFDExtractor
 {
     internal interface IRendererSetInitializer
     {
-        void Initialize(GDIPlusOptions gdiPlusOptions);
+        void Initialize(GdiPlusOptions gdiPlusOptions);
     }
 
     class RendererSetInitializer : IRendererSetInitializer
@@ -18,7 +18,7 @@ namespace MFDExtractor
         {
             _renderers = renderers ?? new InstrumentRendererSet();
         }
-        public void Initialize(GDIPlusOptions gdiPlusOptions)
+        public void Initialize(GdiPlusOptions gdiPlusOptions)
         {
             SetupADIRenderer();
             SetupBackupADIRenderer();
@@ -90,7 +90,7 @@ namespace MFDExtractor
             _renderers.Speedbrake = new F16SpeedbrakeIndicator();
         }
 
-        private void SetupRWRRenderer(GDIPlusOptions gdiPlusOptions)
+        private void SetupRWRRenderer(GdiPlusOptions gdiPlusOptions)
         {
             _renderers.RWR = new F16AzimuthIndicator();
             var styleString = Settings.Default.AzimuthIndicatorType;
@@ -140,7 +140,7 @@ namespace MFDExtractor
             _renderers.HSI = new F16HorizontalSituationIndicator();
         }
 
-        private void SetupEHSIRenderer(GDIPlusOptions gdiPlusOptions)
+        private void SetupEHSIRenderer(GdiPlusOptions gdiPlusOptions)
         {
             _renderers.EHSI = new F16EHSI();
             ((F16EHSI)_renderers.EHSI).Options.GDIPlusOptions = gdiPlusOptions;
@@ -166,7 +166,7 @@ namespace MFDExtractor
             _renderers.FuelFlow = new F16FuelFlow();
         }
 
-        private void SetupISISRenderer(GDIPlusOptions gdiPlusOptions)
+        private void SetupISISRenderer(GdiPlusOptions gdiPlusOptions)
         {
             _renderers.ISIS = new F16ISIS();
             var pressureUnitsString = Settings.Default.ISIS_PressureUnits;

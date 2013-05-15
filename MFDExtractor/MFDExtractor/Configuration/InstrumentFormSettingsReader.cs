@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace MFDExtractor
+namespace MFDExtractor.Configuration
 {
 	internal interface IInstrumentFormSettingsReader
 	{

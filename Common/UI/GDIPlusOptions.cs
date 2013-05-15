@@ -5,9 +5,9 @@ using System.Drawing.Text;
 namespace Common.UI
 {
     [Serializable]
-    public class GDIPlusOptions
+    public class GdiPlusOptions
     {
-        public GDIPlusOptions()
+        public GdiPlusOptions()
         {
             InterpolationMode = InterpolationMode.Default;
             SmoothingMode = SmoothingMode.Default;

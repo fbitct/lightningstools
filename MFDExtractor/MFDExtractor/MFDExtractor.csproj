@@ -107,7 +107,36 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BMSSupport.cs" />
+    <Compile Include="Configuration\GdiPlusOptionsReader.cs" />
+    <Compile Include="Configuration\InstrumentFormSettingsReader.cs" />
+    <Compile Include="Configuration\InstrumentFormSettingsWriter.cs" />
+    <Compile Include="Configuration\KeySettingsReader.cs" />
     <Compile Include="DIHotkeyDetection.cs" />
+    <Compile Include="EventSystem\Handlers\AccelerometerIsReset.cs" />
+    <Compile Include="EventSystem\Handlers\AirspeedIndexDecreasedByOne.cs" />
+    <Compile Include="EventSystem\Handlers\AirspeedIndexIncreasedByOne.cs" />
+    <Compile Include="EventSystem\Handlers\AzimuthIndicatorBrightnessDecreased.cs" />
+    <Compile Include="EventSystem\Handlers\AzimuthIndicatorBrightnessIncreased.cs" />
+    <Compile Include="EventSystem\DirectInputEventIsHotkey.cs" />
+    <Compile Include="EventSystem\Handlers\EHSILeftKnobDecreasedByOne.cs" />
+    <Compile Include="EventSystem\Handlers\EHSILeftKnobIncreasedByOne.cs" />
+    <Compile Include="EventSystem\Handlers\EHSIMenuButtonDepressed.cs" />
+    <Compile Include="EventSystem\Handlers\EHSIRightKnobDecreasedByOne.cs" />
+    <Compile Include="EventSystem\Handlers\EHSIRightKnobDepressed.cs" />
+    <Compile Include="EventSystem\Handlers\EHSIRightKnobIncreasedByOne.cs" />
+    <Compile Include="EventSystem\Handlers\EHSIRightKnobReleased.cs" />
+    <Compile Include="EventSystem\EHSIStateTracker.cs" />
+    <Compile Include="EventSystem\Handlers\IInputEventHandler.cs" />
+    <Compile Include="EventSystem\Handlers\ISISBrightButtonDepressed.cs" />
+    <Compile Include="EventSystem\Handlers\ISISStandardButtonDepressed.cs" />
+    <Compile Include="EventSystem\KeyboardWatcher.cs" />
+    <Compile Include="EventSystem\KeyDownEventHandler.cs" />
+    <Compile Include="EventSystem\KeyEventArgsAugmenter.cs" />
+    <Compile Include="Configuration\KeySettings.cs" />
+    <Compile Include="EventSystem\KeyUpEventHandler.cs" />
+    <Compile Include="EventSystem\MediatorStateChangeHandler.cs" />
+    <Compile Include="EventSystem\MessagePublisher.cs" />
+    <Compile Include="EventSystem\Handlers\NightVisionModeIsToggled.cs" />
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -151,11 +180,11 @@
     <Compile Include="Instrument.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="InstrumentFormSettings.cs" />
-    <Compile Include="InstrumentFormSettingsReader.cs" />
-    <Compile Include="InstrumentFormSettingsWriter.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
-    <Compile Include="InputControlSelectionSettingReader.cs" />
+    <Compile Include="Configuration\InputControlSelectionSettingReader.cs" />
     <Compile Include="InstrumentStateSnapshotCache.cs" />
+    <Compile Include="Networking\ClientSideIncomingMessageDispatcher.cs" />
+    <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="RendererSetInitializer.cs" />

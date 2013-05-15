@@ -3,9 +3,9 @@ using System.Windows.Forms;
 using Common.InputSupport;
 using Common.InputSupport.UI;
 
-namespace MFDExtractor
+namespace MFDExtractor.Configuration
 {
-	internal interface IInputControlSelectionSettingReader
+	public interface IInputControlSelectionSettingReader
 	{
 		InputControlSelection Read(string xmlSerializedSetting);
 	}

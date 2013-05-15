@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MFDExtractor
+namespace MFDExtractor.Configuration
 {
 	internal interface IInstrumentFormSettingsWriter
 	{

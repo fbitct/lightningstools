@@ -2043,7 +2043,7 @@ namespace LightningGauges.Renderers
 
             public InstrumentStyle Style { get; set; }
             public bool HideBezel { get; set; }
-            public GDIPlusOptions GDIPlusOptions { get; set; }
+            public GdiPlusOptions GDIPlusOptions { get; set; }
         }
 
         #endregion
