@@ -232,6 +232,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\InstrumentForms.cs" />
     <EmbeddedResource Include="UI\DraggableForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DraggableForm.cs</DependentUpon>

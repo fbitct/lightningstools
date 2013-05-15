@@ -29,7 +29,11 @@ using MFDExtractor.EventSystem.Handlers;
 
 namespace MFDExtractor
 {
-    public sealed class Extractor : IDisposable
+	public class AllForms
+	{
+		
+	}
+	public sealed class Extractor : AllForms, IDisposable
     {
         #region Instance Variables
 
@@ -47,55 +51,15 @@ namespace MFDExtractor
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms = new Dictionary<IInstrumentRenderer, InstrumentForm>();
 	    private KeySettings _keySettings;
 	    private IKeySettingsReader _keySettingsReader = new KeySettingsReader();
-        private InstrumentForm _accelerometerForm;
-        private InstrumentForm _adiForm;
-        private InstrumentForm _altimeterForm;
-        private InstrumentForm _aoaIndexerForm;
-        private InstrumentForm _aoaIndicatorForm;
-        private InstrumentForm _asiForm;
-        private InstrumentForm _backupAdiForm;
-        private InstrumentForm _cabinPressForm;
-        private InstrumentForm _cautionPanelForm;
-        private InstrumentForm _cmdsPanelForm;
-        private InstrumentForm _compassForm;
-        private InstrumentForm _dedForm;
-        private InstrumentForm _ehsiForm;
-        private InstrumentForm _epuFuelForm;
-        private InstrumentForm _ftit1Form;
-        private InstrumentForm _ftit2Form;
-        private InstrumentForm _fuelFlowForm;
-        private InstrumentForm _fuelQuantityForm;
-        private InstrumentForm _hsiForm;
-        private InstrumentForm _hudForm;
-        private InstrumentForm _hydAForm;
-        private InstrumentForm _hydBForm;
-        private InstrumentForm _isisForm;
-        private InstrumentForm _landingGearLightsForm;
-        private InstrumentForm _leftMfdForm;
-        private InstrumentForm _mfd3Form;
-        private InstrumentForm _mfd4Form;
-        private InstrumentForm _nozPos1Form;
-        private InstrumentForm _nozPos2Form;
-        private InstrumentForm _nwsIndexerForm;
-        private InstrumentForm _oilGauge1Form;
-        private InstrumentForm _oilGauge2Form;
-        private InstrumentForm _pflForm;
-        private InstrumentForm _pitchTrimForm;
-        private InstrumentForm _rightMfdForm;
-        private InstrumentForm _rollTrimForm;
-        private InstrumentForm _rpm1Form;
-        private InstrumentForm _rpm2Form;
-        private InstrumentForm _rwrForm;
-        private InstrumentForm _speedbrakeForm;
-        private InstrumentForm _vviForm;
 
-        private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
+		private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
         private readonly IRendererSetInitializer _rendererSetInitializer;
 
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
 
 
         private Form _applicationForm;
+		private InstrumentForms _forms;
         private volatile bool _keepRunning;
         private volatile bool _nightMode;
         private volatile bool _running;
@@ -428,6 +392,7 @@ namespace MFDExtractor
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null)
         {
+			_forms = new InstrumentForms();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
 			_rendererSetInitializer = new RendererSetInitializer(_renderers);
@@ -455,42 +420,42 @@ namespace MFDExtractor
         }
         private void SetupRenderThreadWorkHelpers()
         {
-            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _adiRenderStart, _adiRenderEnd, _renderers.ADI, _adiForm, () => Settings.Default.ADI_RotateFlipType, () => Settings.Default.ADI_Monochrome, RenderInstrumentImage);
-            _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _renderers.BackupADI, _backupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
-            _asiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _asiRenderStart, _asiRenderEnd, _renderers.ASI, _asiForm, () => Settings.Default.ASI_RotateFlipType, () => Settings.Default.ASI_Monochrome, RenderInstrumentImage);
-            _altimeterRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _altimeterRenderStart, _altimeterRenderEnd, _renderers.Altimeter, _altimeterForm, () => Settings.Default.Altimeter_RotateFlipType, () => Settings.Default.Altimeter_Monochrome, RenderInstrumentImage);
-            _aoaIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndexerRenderStart, _aoaIndexerRenderEnd, _renderers.AOAIndexer, _aoaIndexerForm, () => Settings.Default.AOAIndexer_RotateFlipType, () => Settings.Default.AOAIndexer_Monochrome, RenderInstrumentImage);
-            _aoaIndicatorRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndicatorRenderStart, _aoaIndicatorRenderEnd, _renderers.AOAIndicator, _aoaIndicatorForm, () => Settings.Default.AOAIndicator_RotateFlipType, () => Settings.Default.AOAIndicator_Monochrome, RenderInstrumentImage);
-            _cautionPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cautionPanelRenderStart, _cautionPanelRenderEnd, _renderers.CautionPanel, _cautionPanelForm, () => Settings.Default.CautionPanel_RotateFlipType, () => Settings.Default.CautionPanel_Monochrome, RenderInstrumentImage);
-            _cmdsPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cmdsPanelRenderStart, _cmdsPanelRenderEnd, _renderers.CMDSPanel, _cmdsPanelForm, () => Settings.Default.CMDS_RotateFlipType, () => Settings.Default.CMDS_Monochrome, RenderInstrumentImage);
-            _compassRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _compassRenderStart, _compassRenderEnd, _renderers.Compass, _compassForm, () => Settings.Default.Compass_RotateFlipType, () => Settings.Default.Compass_Monochrome, RenderInstrumentImage);
-            _dedRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _dedRenderStart, _dedRenderEnd, _renderers.DED, _dedForm, () => Settings.Default.DED_RotateFlipType, () => Settings.Default.DED_Monochrome, RenderInstrumentImage);
-            _pflRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pflRenderStart, _pflRenderEnd, _renderers.PFL, _pflForm, () => Settings.Default.PFL_RotateFlipType, () => Settings.Default.PFL_Monochrome, RenderInstrumentImage);
-            _epuFuelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _epuFuelRenderStart, _epuFuelRenderEnd, _renderers.EPUFuel, _epuFuelForm, () => Settings.Default.EPUFuel_RotateFlipType, () => Settings.Default.EPUFuel_Monochrome, RenderInstrumentImage);
-            _accelerometerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _accelerometerRenderStart, _accelerometerRenderEnd, _renderers.Accelerometer, _accelerometerForm, () => Settings.Default.Accelerometer_RotateFlipType, () => Settings.Default.Accelerometer_Monochrome, RenderInstrumentImage);
-            _ftit1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit1RenderStart, _ftit1RenderEnd, _renderers.FTIT1, _ftit1Form, () => Settings.Default.FTIT1_RotateFlipType, () => Settings.Default.FTIT1_Monochrome, RenderInstrumentImage);
-            _ftit2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit2RenderStart, _ftit2RenderEnd, _renderers.FTIT2, _ftit2Form, () => Settings.Default.FTIT2_RotateFlipType, () => Settings.Default.FTIT2_Monochrome, RenderInstrumentImage);
-            _fuelFlowRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelFlowRenderStart, _fuelFlowRenderEnd, _renderers.FuelFlow, _fuelFlowForm, () => Settings.Default.FuelFlow_RotateFlipType, () => Settings.Default.FuelFlow_Monochrome, RenderInstrumentImage);
-            _isisRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _isisRenderStart, _isisRenderEnd, _renderers.ISIS, _isisForm, () => Settings.Default.ISIS_RotateFlipType, () => Settings.Default.ISIS_Monochrome, RenderInstrumentImage);
-            _fuelQuantityRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelQuantityRenderStart, _fuelQuantityRenderEnd, _renderers.FuelQuantity, _fuelQuantityForm, () => Settings.Default.FuelQuantity_RotateFlipType, () => Settings.Default.FuelQuantity_Monochrome, RenderInstrumentImage);
-            _hsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hsiRenderStart, _hsiRenderEnd, _renderers.HSI, _hsiForm, () => Settings.Default.HSI_RotateFlipType, () => Settings.Default.HSI_Monochrome, RenderInstrumentImage);
-            _ehsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ehsiRenderStart, _ehsiRenderEnd, _renderers.EHSI, _ehsiForm, () => Settings.Default.EHSI_RotateFlipType, () => Settings.Default.EHSI_Monochrome, RenderInstrumentImage);
-            _landingGearLightsRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _landingGearLightsRenderStart, _landingGearLightsRenderEnd, _renderers.LandingGearLights, _landingGearLightsForm, () => Settings.Default.GearLights_RotateFlipType, () => Settings.Default.GearLights_Monochrome, RenderInstrumentImage);
-            _nwsIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nwsIndexerRenderStart, _nwsIndexerRenderEnd, _renderers.NWSIndexer, _nwsIndexerForm, () => Settings.Default.NWSIndexer_RotateFlipType, () => Settings.Default.NWSIndexer_Monochrome, RenderInstrumentImage);
-            _nozPos1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos1RenderStart, _nozPos1RenderEnd, _renderers.NOZ1, _nozPos1Form, () => Settings.Default.NOZ1_RotateFlipType, () => Settings.Default.NOZ1_Monochrome, RenderInstrumentImage);
-            _nozPos2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos2RenderStart, _nozPos2RenderEnd, _renderers.NOZ2, _nozPos2Form, () => Settings.Default.NOZ2_RotateFlipType, () => Settings.Default.NOZ2_Monochrome, RenderInstrumentImage);
-            _oilGauge1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge1RenderStart, _oilGauge1RenderEnd, _renderers.OIL1, _oilGauge1Form, () => Settings.Default.OIL1_RotateFlipType, () => Settings.Default.OIL1_Monochrome, RenderInstrumentImage);
-            _oilGauge2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge2RenderStart, _oilGauge2RenderEnd, _renderers.OIL2, _oilGauge2Form, () => Settings.Default.OIL2_RotateFlipType, () => Settings.Default.OIL2_Monochrome, RenderInstrumentImage);
-            _rwrRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rwrRenderStart, _rwrRenderEnd, _renderers.RWR, _rwrForm, () => Settings.Default.RWR_RotateFlipType, () => Settings.Default.RWR_Monochrome, RenderInstrumentImage);
-            _speedbrakeRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _speedbrakeRenderStart, _speedbrakeRenderEnd, _renderers.Speedbrake, _speedbrakeForm, () => Settings.Default.Speedbrake_RotateFlipType, () => Settings.Default.Speedbrake_Monochrome, RenderInstrumentImage);
-            _rpm1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm1RenderStart, _rpm1RenderEnd, _renderers.RPM1, _rpm1Form, () => Settings.Default.RPM1_RotateFlipType, () => Settings.Default.RPM1_Monochrome, RenderInstrumentImage);
-            _rpm2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm2RenderStart, _rpm2RenderEnd, _renderers.RPM2, _rpm2Form, () => Settings.Default.RPM2_RotateFlipType, () => Settings.Default.RPM2_Monochrome, RenderInstrumentImage);
-            _vviRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _vviRenderStart, _vviRenderEnd, _renderers.VVI, _vviForm, () => Settings.Default.VVI_RotateFlipType, () => Settings.Default.VVI_Monochrome, RenderInstrumentImage);
-            _hydARenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydARenderStart, _hydARenderEnd, _renderers.HYDA, _hydAForm, () => Settings.Default.HYDA_RotateFlipType, () => Settings.Default.HYDA_Monochrome, RenderInstrumentImage);
-            _hydBRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydBRenderStart, _hydBRenderEnd, _renderers.HYDB, _hydBForm, () => Settings.Default.HYDB_RotateFlipType, () => Settings.Default.HYDB_Monochrome, RenderInstrumentImage);
-            _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _renderers.CabinPress, _cabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
-            _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _renderers.RollTrim, _rollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
-            _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _renderers.PitchTrim, _pitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
+            _adiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _adiRenderStart, _adiRenderEnd, _renderers.ADI, _forms.ADIForm, () => Settings.Default.ADI_RotateFlipType, () => Settings.Default.ADI_Monochrome, RenderInstrumentImage);
+            _backupAdiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _backupAdiRenderStart, _backupAdiRenderEnd, _renderers.BackupADI, _forms.BackupAdiForm, () => Settings.Default.Backup_ADI_RotateFlipType, () => Settings.Default.Backup_ADI_Monochrome, RenderInstrumentImage);
+            _asiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _asiRenderStart, _asiRenderEnd, _renderers.ASI, _forms.ASIForm, () => Settings.Default.ASI_RotateFlipType, () => Settings.Default.ASI_Monochrome, RenderInstrumentImage);
+            _altimeterRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _altimeterRenderStart, _altimeterRenderEnd, _renderers.Altimeter, _forms.AltimeterForm, () => Settings.Default.Altimeter_RotateFlipType, () => Settings.Default.Altimeter_Monochrome, RenderInstrumentImage);
+            _aoaIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndexerRenderStart, _aoaIndexerRenderEnd, _renderers.AOAIndexer, _forms.AOAIndexerForm, () => Settings.Default.AOAIndexer_RotateFlipType, () => Settings.Default.AOAIndexer_Monochrome, RenderInstrumentImage);
+            _aoaIndicatorRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _aoaIndicatorRenderStart, _aoaIndicatorRenderEnd, _renderers.AOAIndicator, _forms.AOAIndicatorForm, () => Settings.Default.AOAIndicator_RotateFlipType, () => Settings.Default.AOAIndicator_Monochrome, RenderInstrumentImage);
+            _cautionPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cautionPanelRenderStart, _cautionPanelRenderEnd, _renderers.CautionPanel, _forms.CautionPanelForm, () => Settings.Default.CautionPanel_RotateFlipType, () => Settings.Default.CautionPanel_Monochrome, RenderInstrumentImage);
+            _cmdsPanelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cmdsPanelRenderStart, _cmdsPanelRenderEnd, _renderers.CMDSPanel, _forms.CMDSPanelForm, () => Settings.Default.CMDS_RotateFlipType, () => Settings.Default.CMDS_Monochrome, RenderInstrumentImage);
+            _compassRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _compassRenderStart, _compassRenderEnd, _renderers.Compass, _forms.CompassForm, () => Settings.Default.Compass_RotateFlipType, () => Settings.Default.Compass_Monochrome, RenderInstrumentImage);
+            _dedRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _dedRenderStart, _dedRenderEnd, _renderers.DED, _forms.DEDForm, () => Settings.Default.DED_RotateFlipType, () => Settings.Default.DED_Monochrome, RenderInstrumentImage);
+            _pflRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pflRenderStart, _pflRenderEnd, _renderers.PFL, _forms.PFLForm, () => Settings.Default.PFL_RotateFlipType, () => Settings.Default.PFL_Monochrome, RenderInstrumentImage);
+            _epuFuelRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _epuFuelRenderStart, _epuFuelRenderEnd, _renderers.EPUFuel, _forms.EPUFuelForm, () => Settings.Default.EPUFuel_RotateFlipType, () => Settings.Default.EPUFuel_Monochrome, RenderInstrumentImage);
+            _accelerometerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _accelerometerRenderStart, _accelerometerRenderEnd, _renderers.Accelerometer, _forms.AccelerometerForm, () => Settings.Default.Accelerometer_RotateFlipType, () => Settings.Default.Accelerometer_Monochrome, RenderInstrumentImage);
+            _ftit1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit1RenderStart, _ftit1RenderEnd, _renderers.FTIT1, _forms.FTIT1Form, () => Settings.Default.FTIT1_RotateFlipType, () => Settings.Default.FTIT1_Monochrome, RenderInstrumentImage);
+            _ftit2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ftit2RenderStart, _ftit2RenderEnd, _renderers.FTIT2, _forms.FTIT2Form, () => Settings.Default.FTIT2_RotateFlipType, () => Settings.Default.FTIT2_Monochrome, RenderInstrumentImage);
+            _fuelFlowRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelFlowRenderStart, _fuelFlowRenderEnd, _renderers.FuelFlow, _forms.FuelFlowForm, () => Settings.Default.FuelFlow_RotateFlipType, () => Settings.Default.FuelFlow_Monochrome, RenderInstrumentImage);
+            _isisRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _isisRenderStart, _isisRenderEnd, _renderers.ISIS, _forms.ISISForm, () => Settings.Default.ISIS_RotateFlipType, () => Settings.Default.ISIS_Monochrome, RenderInstrumentImage);
+            _fuelQuantityRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _fuelQuantityRenderStart, _fuelQuantityRenderEnd, _renderers.FuelQuantity, _forms.FuelQuantityForm, () => Settings.Default.FuelQuantity_RotateFlipType, () => Settings.Default.FuelQuantity_Monochrome, RenderInstrumentImage);
+            _hsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hsiRenderStart, _hsiRenderEnd, _renderers.HSI, _forms.HSIForm, () => Settings.Default.HSI_RotateFlipType, () => Settings.Default.HSI_Monochrome, RenderInstrumentImage);
+            _ehsiRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _ehsiRenderStart, _ehsiRenderEnd, _renderers.EHSI, _forms.EHSIForm, () => Settings.Default.EHSI_RotateFlipType, () => Settings.Default.EHSI_Monochrome, RenderInstrumentImage);
+            _landingGearLightsRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _landingGearLightsRenderStart, _landingGearLightsRenderEnd, _renderers.LandingGearLights, _forms.LandingGearLightsForm, () => Settings.Default.GearLights_RotateFlipType, () => Settings.Default.GearLights_Monochrome, RenderInstrumentImage);
+            _nwsIndexerRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nwsIndexerRenderStart, _nwsIndexerRenderEnd, _renderers.NWSIndexer, _forms.NWSIndexerForm, () => Settings.Default.NWSIndexer_RotateFlipType, () => Settings.Default.NWSIndexer_Monochrome, RenderInstrumentImage);
+            _nozPos1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos1RenderStart, _nozPos1RenderEnd, _renderers.NOZ1, _forms.NOZPos1Form, () => Settings.Default.NOZ1_RotateFlipType, () => Settings.Default.NOZ1_Monochrome, RenderInstrumentImage);
+            _nozPos2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _nozPos2RenderStart, _nozPos2RenderEnd, _renderers.NOZ2, _forms.NOZPos2Form, () => Settings.Default.NOZ2_RotateFlipType, () => Settings.Default.NOZ2_Monochrome, RenderInstrumentImage);
+            _oilGauge1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge1RenderStart, _oilGauge1RenderEnd, _renderers.OIL1, _forms.OILGauge1Form, () => Settings.Default.OIL1_RotateFlipType, () => Settings.Default.OIL1_Monochrome, RenderInstrumentImage);
+            _oilGauge2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _oilGauge2RenderStart, _oilGauge2RenderEnd, _renderers.OIL2, _forms.OILGauge2Form, () => Settings.Default.OIL2_RotateFlipType, () => Settings.Default.OIL2_Monochrome, RenderInstrumentImage);
+            _rwrRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rwrRenderStart, _rwrRenderEnd, _renderers.RWR, _forms.RWRForm, () => Settings.Default.RWR_RotateFlipType, () => Settings.Default.RWR_Monochrome, RenderInstrumentImage);
+            _speedbrakeRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _speedbrakeRenderStart, _speedbrakeRenderEnd, _renderers.Speedbrake, _forms.SpeedbrakeForm, () => Settings.Default.Speedbrake_RotateFlipType, () => Settings.Default.Speedbrake_Monochrome, RenderInstrumentImage);
+            _rpm1RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm1RenderStart, _rpm1RenderEnd, _renderers.RPM1, _forms.RPM1Form, () => Settings.Default.RPM1_RotateFlipType, () => Settings.Default.RPM1_Monochrome, RenderInstrumentImage);
+            _rpm2RenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rpm2RenderStart, _rpm2RenderEnd, _renderers.RPM2, _forms.RPM2Form, () => Settings.Default.RPM2_RotateFlipType, () => Settings.Default.RPM2_Monochrome, RenderInstrumentImage);
+            _vviRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _vviRenderStart, _vviRenderEnd, _renderers.VVI, _forms.VVIForm, () => Settings.Default.VVI_RotateFlipType, () => Settings.Default.VVI_Monochrome, RenderInstrumentImage);
+            _hydARenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydARenderStart, _hydARenderEnd, _renderers.HYDA, _forms.HydAForm, () => Settings.Default.HYDA_RotateFlipType, () => Settings.Default.HYDA_Monochrome, RenderInstrumentImage);
+            _hydBRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _hydBRenderStart, _hydBRenderEnd, _renderers.HYDB, _forms.HydBForm, () => Settings.Default.HYDB_RotateFlipType, () => Settings.Default.HYDB_Monochrome, RenderInstrumentImage);
+            _cabinPressRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _cabinPressRenderStart, _cabinPressRenderEnd, _renderers.CabinPress, _forms.CabinPressForm, () => Settings.Default.CabinPress_RotateFlipType, () => Settings.Default.CabinPress_Monochrome, RenderInstrumentImage);
+            _rollTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _rollTrimRenderStart, _rollTrimRenderEnd, _renderers.RollTrim, _forms.RollTrimForm, () => Settings.Default.RollTrim_RotateFlipType, () => Settings.Default.RollTrim_Monochrome, RenderInstrumentImage);
+            _pitchTrimRenderThreadWorkHelper = new RenderThreadWorkHelper(() => _keepRunning, _pitchTrimRenderStart, _pitchTrimRenderEnd, _renderers.PitchTrim, _forms.PitchTrimForm, () => Settings.Default.PitchTrim_RotateFlipType, () => Settings.Default.PitchTrim_Monochrome, RenderInstrumentImage);
 
         }
         
@@ -1316,13 +1281,13 @@ namespace MFDExtractor
                 {
                     ExtractorServer.SetHudBitmap(hudImage);
                 }
-                if (_hudForm != null)
+                if (_forms.HUDForm != null)
                 {
                     if (Settings.Default.HUD_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
                     {
                         hudImage.RotateFlip(Settings.Default.HUD_RotateFlipType);
                     }
-                    using (var graphics = _hudForm.CreateGraphics())
+                    using (var graphics = _forms.HUDForm.CreateGraphics())
                     {
                         if (Settings.Default.HUD_Monochrome)
                         {
@@ -1330,13 +1295,13 @@ namespace MFDExtractor
 							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (var compatible = Util.CopyBitmap(hudImage))
                             {
-                                graphics.DrawImage(compatible, _hudForm.ClientRectangle, 0, 0, hudImage.Width,
+                                graphics.DrawImage(compatible, _forms.HUDForm.ClientRectangle, 0, 0, hudImage.Width,
                                                    hudImage.Height, GraphicsUnit.Pixel, ia);
                             }
                         }
                         else
                         {
-                            graphics.DrawImage(hudImage, _hudForm.ClientRectangle);
+                            graphics.DrawImage(hudImage, _forms.HUDForm.ClientRectangle);
                         }
                     }
                 }
@@ -1358,13 +1323,13 @@ namespace MFDExtractor
                 {
                     ExtractorServer.SetMfd4Bitmap(mfd4Image);
                 }
-                if (_mfd4Form != null)
+                if (_forms.MFD4Form != null)
                 {
                     if (Settings.Default.MFD4_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
                     {
                         mfd4Image.RotateFlip(Settings.Default.MFD4_RotateFlipType);
                     }
-                    using (Graphics graphics = _mfd4Form.CreateGraphics())
+                    using (Graphics graphics = _forms.MFD4Form.CreateGraphics())
                     {
                         if (Settings.Default.MFD4_Monochrome)
                         {
@@ -1372,13 +1337,13 @@ namespace MFDExtractor
 							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(mfd4Image))
                             {
-                                graphics.DrawImage(compatible, _mfd4Form.ClientRectangle, 0, 0, mfd4Image.Width,
+                                graphics.DrawImage(compatible, _forms.MFD4Form.ClientRectangle, 0, 0, mfd4Image.Width,
                                                    mfd4Image.Height, GraphicsUnit.Pixel, ia);
                             }
                         }
                         else
                         {
-                            graphics.DrawImage(mfd4Image, _mfd4Form.ClientRectangle);
+                            graphics.DrawImage(mfd4Image, _forms.MFD4Form.ClientRectangle);
                         }
                     }
                 }
@@ -1399,13 +1364,13 @@ namespace MFDExtractor
                 {
                     ExtractorServer.SetMfd3Bitmap(mfd3Image);
                 }
-                if (_mfd3Form != null)
+                if (_forms.MFD3Form != null)
                 {
                     if (Settings.Default.MFD3_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
                     {
                         mfd3Image.RotateFlip(Settings.Default.MFD3_RotateFlipType);
                     }
-                    using (Graphics graphics = _mfd3Form.CreateGraphics())
+                    using (Graphics graphics = _forms.MFD3Form.CreateGraphics())
                     {
                         if (Settings.Default.MFD3_Monochrome)
                         {
@@ -1413,13 +1378,13 @@ namespace MFDExtractor
 							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(mfd3Image))
                             {
-                                graphics.DrawImage(compatible, _mfd3Form.ClientRectangle, 0, 0, mfd3Image.Width,
+                                graphics.DrawImage(compatible, _forms.MFD3Form.ClientRectangle, 0, 0, mfd3Image.Width,
                                                    mfd3Image.Height, GraphicsUnit.Pixel, ia);
                             }
                         }
                         else
                         {
-                            graphics.DrawImage(mfd3Image, _mfd3Form.ClientRectangle);
+                            graphics.DrawImage(mfd3Image, _forms.MFD3Form.ClientRectangle);
                         }
                     }
                 }
@@ -1440,13 +1405,13 @@ namespace MFDExtractor
                 {
                     ExtractorServer.SetLeftMfdBitmap(leftMfdImage);
                 }
-                if (_leftMfdForm != null)
+                if (_forms.LeftMFDForm != null)
                 {
                     if (Settings.Default.LMFD_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
                     {
                         leftMfdImage.RotateFlip(Settings.Default.LMFD_RotateFlipType);
                     }
-                    using (Graphics graphics = _leftMfdForm.CreateGraphics())
+                    using (Graphics graphics = _forms.LeftMFDForm.CreateGraphics())
                     {
                         if (Settings.Default.LMFD_Monochrome)
                         {
@@ -1454,13 +1419,13 @@ namespace MFDExtractor
 							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(leftMfdImage))
                             {
-                                graphics.DrawImage(compatible, _leftMfdForm.ClientRectangle, 0, 0, leftMfdImage.Width,
+                                graphics.DrawImage(compatible, _forms.LeftMFDForm.ClientRectangle, 0, 0, leftMfdImage.Width,
                                                    leftMfdImage.Height, GraphicsUnit.Pixel, ia);
                             }
                         }
                         else
                         {
-                            graphics.DrawImage(leftMfdImage, _leftMfdForm.ClientRectangle);
+                            graphics.DrawImage(leftMfdImage, _forms.LeftMFDForm.ClientRectangle);
                         }
                     }
                 }
@@ -1481,13 +1446,13 @@ namespace MFDExtractor
                 {
                     ExtractorServer.SetRightMfdBitmap(rightMfdImage);
                 }
-                if (_rightMfdForm != null)
+                if (_forms.RightMfdForm != null)
                 {
                     if (Settings.Default.RMFD_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
                     {
                         rightMfdImage.RotateFlip(Settings.Default.RMFD_RotateFlipType);
                     }
-                    using (Graphics graphics = _rightMfdForm.CreateGraphics())
+                    using (Graphics graphics = _forms.RightMfdForm.CreateGraphics())
                     {
                         if (Settings.Default.RMFD_Monochrome)
                         {
@@ -1495,13 +1460,13 @@ namespace MFDExtractor
 							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
                             using (Image compatible = Util.CopyBitmap(rightMfdImage))
                             {
-                                graphics.DrawImage(compatible, _rightMfdForm.ClientRectangle, 0, 0, rightMfdImage.Width,
+                                graphics.DrawImage(compatible, _forms.RightMfdForm.ClientRectangle, 0, 0, rightMfdImage.Width,
                                                    rightMfdImage.Height, GraphicsUnit.Pixel, ia);
                             }
                         }
                         else
                         {
-                            graphics.DrawImage(rightMfdImage, _rightMfdForm.ClientRectangle);
+                            graphics.DrawImage(rightMfdImage, _forms.RightMfdForm.ClientRectangle);
                         }
                     }
                 }
@@ -1697,27 +1662,27 @@ namespace MFDExtractor
 
         private void SetupMfd4Form()
         {
-            SetupInstrumentForm("MFD4","MFD 4",ref _mfd4Form,null,_mfd4Form_Disposed,_mfd4BlankImage);
+            _forms.MFD4Form = SetupInstrumentForm("MFD4","MFD 4",null,_mfd4Form_Disposed,_mfd4BlankImage);
         }
 
         private void SetupMfd3Form()
         {
-            SetupInstrumentForm("MFD3","MFD 3",ref _mfd3Form,null,_mfd3Form_Disposed,_mfd3BlankImage);
+            _forms.MFD3Form = SetupInstrumentForm("MFD3","MFD 3",null,_mfd3Form_Disposed,_mfd3BlankImage);
         }
 
         private void SetupLeftMfdForm()
         {
-            SetupInstrumentForm("LMFD","Left MFD",ref _leftMfdForm,null,_leftMfdForm_Disposed,_leftMfdBlankImage);
+            _forms.LeftMFDForm = SetupInstrumentForm("LMFD","Left MFD",null,_leftMfdForm_Disposed,_leftMfdBlankImage);
         }
 
         private void SetupRightMfdForm()
         {
-            SetupInstrumentForm("RMFD","Right MFD",ref _rightMfdForm,null,_rightMfdForm_Disposed,_rightMfdBlankImage);
+            _forms.RightMfdForm = SetupInstrumentForm("RMFD","Right MFD",null,_rightMfdForm_Disposed,_rightMfdBlankImage);
         }
 
         private void SetupHudForm()
         {
-            SetupInstrumentForm("HUD","HUD",ref _hudForm,null,_hudForm_Disposed,_hudBlankImage);
+            _forms.HUDForm = SetupInstrumentForm("HUD","HUD",null,_hudForm_Disposed,_hudBlankImage);
         }
 
         #endregion
@@ -1726,24 +1691,23 @@ namespace MFDExtractor
 
         private void SetupVVIForm()
         {
-            SetupInstrumentForm("VVI","VVI",ref _vviForm,_renderers.VVI,_vviForm_Disposed);
+            _forms.VVIForm = SetupInstrumentForm("VVI","VVI",_renderers.VVI,_vviForm_Disposed);
         }
-        private void SetupInstrumentForm
+        private InstrumentForm SetupInstrumentForm
         (
 			string instrumentName,
             string formCaption,
-            ref InstrumentForm instrumentForm,
             IInstrumentRenderer renderer,
             EventHandler disposeHandler,
             Image initialImage=null
         )
         {
 	        var currentSettings = _instrumentFormSettingsReader.Read(instrumentName);
-            if (!currentSettings.Enabled ) return;
+            if (!currentSettings.Enabled ) return null;
             Point location;
             Size size;
 			var screen = Common.Screen.Util.FindScreen(currentSettings.OutputDisplay);
-            instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false };
+            var instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false };
 			if (currentSettings.StretchToFit)
             {
                 location = new Point(0, 0);
@@ -1775,182 +1739,182 @@ namespace MFDExtractor
                     graphics.DrawImage(initialImage, instrumentForm.ClientRectangle);
                 }
             }
-
+	        return instrumentForm;
         }
 
         private void SetupRPM1Form()
         {
-            SetupInstrumentForm("RPM1","Engine 1 - RPM",ref _rpm1Form,_renderers.RPM1,_rpm1Form_Disposed);
+            _forms.RPM1Form = SetupInstrumentForm("RPM1","Engine 1 - RPM",_renderers.RPM1,_rpm1Form_Disposed);
         }
 
         private void SetupRPM2Form()
         {
-            SetupInstrumentForm("RPM2","Engine 2 - RPM",ref _rpm2Form,_renderers.RPM2,_rpm2Form_Disposed);
+            _forms.RPM2Form = SetupInstrumentForm("RPM2","Engine 2 - RPM",_renderers.RPM2,_rpm2Form_Disposed);
         }
 
         private void SetupSpeedbrakeForm()
         {
-            SetupInstrumentForm("Speedbrake","Speedbrake",ref _speedbrakeForm,_renderers.Speedbrake,_speedbrakeForm_Disposed);
+            _forms.SpeedbrakeForm = SetupInstrumentForm("Speedbrake","Speedbrake",_renderers.Speedbrake,_speedbrakeForm_Disposed);
         }
 
         private void SetupRWRForm()
         {
-            SetupInstrumentForm("RWR","RWR",ref _rwrForm,_renderers.RWR,_rwrForm_Disposed);
+            _forms.RWRForm = SetupInstrumentForm("RWR","RWR",_renderers.RWR,_rwrForm_Disposed);
         }
 
         private void SetupOIL2Form()
         {
-            SetupInstrumentForm("OIL2","Engine 2 - Oil Pressure Indicator",ref _oilGauge2Form,_renderers.OIL2,_oilGauge2Form_Disposed);
+            _forms.OILGauge2Form = SetupInstrumentForm("OIL2","Engine 2 - Oil Pressure Indicator",_renderers.OIL2,_oilGauge2Form_Disposed);
         }
 
         private void SetupOIL1Form()
         {
-            SetupInstrumentForm("OIL1","Engine 1 - Oil Pressure Indicator",ref _oilGauge1Form,_renderers.OIL1,_oilGauge1Form_Disposed);
+            _forms.OILGauge1Form = SetupInstrumentForm("OIL1","Engine 1 - Oil Pressure Indicator",_renderers.OIL1,_oilGauge1Form_Disposed);
         }
 
         private void SetupNOZ2Form()
         {
-            SetupInstrumentForm("NOZ2","Engine 2 - Nozzle Position Indicator",ref _nozPos2Form,_renderers.NOZ2,_nozPos2Form_Disposed);
+            _forms.NOZPos2Form= SetupInstrumentForm("NOZ2","Engine 2 - Nozzle Position Indicator",_renderers.NOZ2,_nozPos2Form_Disposed);
         }
 
         private void SetupNOZ1Form()
         {
-            SetupInstrumentForm("NOZ1","Engine 1 - Nozzle Position Indicator",ref _nozPos1Form,_renderers.NOZ1,_nozPos1Form_Disposed);
+            _forms.NOZPos1Form = SetupInstrumentForm("NOZ1","Engine 1 - Nozzle Position Indicator",_renderers.NOZ1,_nozPos1Form_Disposed);
         }
 
         private void SetupNWSIndexerForm()
         {
-            SetupInstrumentForm("NWSIndexer","NWS Indexer",ref _nwsIndexerForm,_renderers.NWSIndexer,_nwsIndexerForm_Disposed);
+            _forms.NWSIndexerForm = SetupInstrumentForm("NWSIndexer","NWS Indexer",_renderers.NWSIndexer,_nwsIndexerForm_Disposed);
         }
 
         private void SetupGearLightsForm()
         {
-            SetupInstrumentForm("GearLights", "Landing Gear Lights",ref _landingGearLightsForm,_renderers.LandingGearLights,_landingGearLightsForm_Disposed);
+            _forms.LandingGearLightsForm = SetupInstrumentForm("GearLights", "Landing Gear Lights",_renderers.LandingGearLights,_landingGearLightsForm_Disposed);
         }
 
         private void SetupHSIForm()
         {
-            SetupInstrumentForm("HSI", "Horizontal Situation Indicator", ref _hsiForm,_renderers.HSI,_hsiForm_Disposed);
+            _forms.HSIForm = SetupInstrumentForm("HSI", "Horizontal Situation Indicator",_renderers.HSI,_hsiForm_Disposed);
         }
 
         private void SetupEHSIForm()
         {
-            SetupInstrumentForm("EHSI","EHSI",ref _ehsiForm,_renderers.EHSI,_ehsiForm_Disposed);
+            _forms.EHSIForm = SetupInstrumentForm("EHSI","EHSI",_renderers.EHSI,_ehsiForm_Disposed);
         }
 
         private void SetupFuelQuantityForm()
         {
-            SetupInstrumentForm("FuelQuantity","Fuel Quantity",ref _fuelQuantityForm,_renderers.FuelQuantity,_fuelQuantityForm_Disposed);
+            _forms.FuelQuantityForm = SetupInstrumentForm("FuelQuantity","Fuel Quantity",_renderers.FuelQuantity,FuelQuantityForm_Disposed);
         }
 
         private void SetupFuelFlowForm()
         {
-            SetupInstrumentForm("FuelFlow","Fuel Flow Indicator",ref _fuelFlowForm,_renderers.FuelFlow,_fuelFlowForm_Disposed);
+            _forms.FuelFlowForm = SetupInstrumentForm("FuelFlow","Fuel Flow Indicator",_renderers.FuelFlow,_fuelFlowForm_Disposed);
         }
 
         private void SetupISISForm()
         {
-            SetupInstrumentForm("ISIS","ISIS",ref _isisForm,_renderers.ISIS,_isisForm_Disposed);
+            _forms.ISISForm = SetupInstrumentForm("ISIS","ISIS",_renderers.ISIS,_isisForm_Disposed);
         }
 
         private void SetupAccelerometerForm()
         {
-            SetupInstrumentForm("Accelerometer","Accelerometer",ref _accelerometerForm,_renderers.Accelerometer,_accelerometerForm_Disposed);
+            _forms.AccelerometerForm = SetupInstrumentForm("Accelerometer","Accelerometer",_renderers.Accelerometer,_accelerometerForm_Disposed);
         }
 
         private void SetupFTIT2Form()
         {
-            SetupInstrumentForm("FTIT2","FTIT 2",ref _ftit2Form,_renderers.FTIT2,_ftit2Form_Disposed);
+            _forms.FTIT2Form = SetupInstrumentForm("FTIT2","FTIT 2",_renderers.FTIT2,_ftit2Form_Disposed);
         }
 
         private void SetupFTIT1Form()
         {
-            SetupInstrumentForm("FTIT1","FTIT 1",ref _ftit1Form,_renderers.FTIT1,_ftit1Form_Disposed);
+            _forms.FTIT1Form = SetupInstrumentForm("FTIT1","FTIT 1",_renderers.FTIT1,_ftit1Form_Disposed);
         }
 
         private void SetupEPUFuelForm()
         {
-            SetupInstrumentForm("EPUFuel","EPU Fuel",ref _epuFuelForm,_renderers.EPUFuel,_epuFuelForm_Disposed);
+            _forms.EPUFuelForm = SetupInstrumentForm("EPUFuel","EPU Fuel",_renderers.EPUFuel,_epuFuelForm_Disposed);
         }
 
         private void SetupPFLForm()
         {
-            SetupInstrumentForm("PFL","PFL",ref _pflForm,_renderers.PFL,_pflForm_Disposed);
+            _forms.PFLForm = SetupInstrumentForm("PFL","PFL",_renderers.PFL,_pflForm_Disposed);
         }
 
         private void SetupDEDForm()
         {
-            SetupInstrumentForm("DED","DED",ref _dedForm,_renderers.DED,_dedForm_Disposed);
+            _forms.DEDForm = SetupInstrumentForm("DED","DED",_renderers.DED,_dedForm_Disposed);
         }
 
         private void SetupCompassForm()
         {
-            SetupInstrumentForm("Compass","Compass",ref _compassForm,_renderers.Compass,_compassForm_Disposed);
+            _forms.CompassForm = SetupInstrumentForm("Compass","Compass",_renderers.Compass,_compassForm_Disposed);
         }
 
         private void SetupCMDSPanelForm()
         {
-            SetupInstrumentForm("CMDS", "CMDS",ref _cmdsPanelForm, _renderers.CMDSPanel,_cmdsPanelForm_Disposed);
+            _forms.CMDSPanelForm = SetupInstrumentForm("CMDS", "CMDS", _renderers.CMDSPanel,_cmdsPanelForm_Disposed);
         }
 
         private void SetupCautionPanelForm()
         {
-            SetupInstrumentForm("CautionPanel", "Caution Panel",ref _cautionPanelForm,_renderers.CautionPanel,_cautionPanelForm_Disposed);
+            _forms.CautionPanelForm = SetupInstrumentForm("CautionPanel", "Caution Panel",_renderers.CautionPanel,_cautionPanelForm_Disposed);
         }
 
         private void SetupAOAIndicatorForm()
         {
-            SetupInstrumentForm("AOAIndicator","AOA Indicator",ref _aoaIndicatorForm,_renderers.AOAIndicator,_aoaIndicatorForm_Disposed);
+            _forms.AOAIndicatorForm = SetupInstrumentForm("AOAIndicator","AOA Indicator",_renderers.AOAIndicator,AOAIndicatorForm_Disposed);
         }
 
-        private void SetupAOAIndexerForm()
+		private void SetupAOAIndexerForm()
         {
-            SetupInstrumentForm("AOAIndexer","AOA Indexer",ref _aoaIndexerForm,_renderers.AOAIndexer,_aoaIndexerForm_Disposed);
+            _forms.AOAIndexerForm = SetupInstrumentForm("AOAIndexer","AOA Indexer",_renderers.AOAIndexer,AOAIndexerForm_Disposed);
         }
 
         private void SetupAltimeterForm()
         {
-            SetupInstrumentForm("Altimeter","Altimeter",ref _altimeterForm,_renderers.Altimeter,_altimeterForm_Disposed);
+            _forms.AltimeterForm = SetupInstrumentForm("Altimeter","Altimeter",_renderers.Altimeter,_altimeterForm_Disposed);
         }
 
         private void SetupCabinPressForm()
         {
-            SetupInstrumentForm("CabinPress","Cabin Pressure Indicator",ref _cabinPressForm,_renderers.CabinPress,_cabinPressForm_Disposed);
+            _forms.CabinPressForm = SetupInstrumentForm("CabinPress","Cabin Pressure Indicator",_renderers.CabinPress,_cabinPressForm_Disposed);
         }
 
         private void SetupRollTrimForm()
         {
-            SetupInstrumentForm("RollTrim","Roll Trim Indicator",ref _rollTrimForm,_renderers.RollTrim,_rollTrimForm_Disposed);
+            _forms.RollTrimForm = SetupInstrumentForm("RollTrim","Roll Trim Indicator",_renderers.RollTrim,_rollTrimForm_Disposed);
         }
 
         private void SetupPitchTrimForm()
         {
-            SetupInstrumentForm("PitchTrim","Pitch Trim Indicator",ref _pitchTrimForm,_renderers.PitchTrim,_pitchTrimForm_Disposed);
+            _forms.PitchTrimForm = SetupInstrumentForm("PitchTrim","Pitch Trim Indicator",_renderers.PitchTrim,_pitchTrimForm_Disposed);
         }
 
         private void SetupHydAForm()
         {
-            SetupInstrumentForm("HYDA","Hydraulic Pressure Indicator A",ref _hydAForm,_renderers.HYDA,_hydAForm_Disposed);
+            _forms.HydAForm = SetupInstrumentForm("HYDA","Hydraulic Pressure Indicator A",_renderers.HYDA,_hydAForm_Disposed);
         }
 
         private void SetupHydBForm()
         {
-            SetupInstrumentForm("HYDB", "Hydraulic Pressure Indicator B",ref _hydBForm,_renderers.HYDB,_hydBForm_Disposed);
+            _forms.HydBForm = SetupInstrumentForm("HYDB", "Hydraulic Pressure Indicator B",_renderers.HYDB,_hydBForm_Disposed);
         }
 
         private void SetupASIForm()
         {
-            SetupInstrumentForm("ASI", "Airspeed Indicator",ref _asiForm,_renderers.ASI,_asiForm_Disposed);
+            _forms.ASIForm = SetupInstrumentForm("ASI", "Airspeed Indicator",_renderers.ASI,_asiForm_Disposed);
         }
 
         private void SetupADIForm()
         {
-            SetupInstrumentForm("ADI","Attitude Indicator",ref _adiForm,_renderers.ADI,_adiForm_Disposed);
+            _forms.ADIForm = SetupInstrumentForm("ADI","Attitude Indicator",_renderers.ADI,_adiForm_Disposed);
         }
 
         private void SetupBackupADIForm()
         {
-            SetupInstrumentForm("BackupADI","Standby Attitude Indicator",ref _backupAdiForm,_renderers.BackupADI,_backupAdiForm_Disposed);
+            _forms.BackupAdiForm = SetupInstrumentForm("BackupADI","Standby Attitude Indicator",_renderers.BackupADI,_backupAdiForm_Disposed);
         }
 
         #endregion
@@ -1961,206 +1925,206 @@ namespace MFDExtractor
 
         private void _vviForm_Disposed(object sender, EventArgs e)
         {
-            _vviForm = null;
+            _forms.VVIForm = null;
         }
 
         private void _rpm2Form_Disposed(object sender, EventArgs e)
         {
-            _rpm2Form = null;
+            _forms.RPM2Form = null;
         }
 
         private void _rpm1Form_Disposed(object sender, EventArgs e)
         {
-            _rpm1Form = null;
+            _forms.RPM1Form = null;
         }
 
         private void _speedbrakeForm_Disposed(object sender, EventArgs e)
         {
-            _speedbrakeForm = null;
+            _forms.SpeedbrakeForm = null;
         }
 
         private void _rwrForm_Disposed(object sender, EventArgs e)
         {
-            _rwrForm = null;
+            _forms.RWRForm = null;
         }
 
         private void _landingGearLightsForm_Disposed(object sender, EventArgs e)
         {
-            _landingGearLightsForm = null;
+            _forms.LandingGearLightsForm = null;
         }
 
         private void _oilGauge1Form_Disposed(object sender, EventArgs e)
         {
-            _oilGauge1Form = null;
+            _forms.OILGauge1Form = null;
         }
 
         private void _oilGauge2Form_Disposed(object sender, EventArgs e)
         {
-            _oilGauge2Form = null;
+            _forms.OILGauge2Form = null;
         }
 
         private void _nozPos1Form_Disposed(object sender, EventArgs e)
         {
-            _nozPos1Form = null;
+            _forms.NOZPos1Form = null;
         }
 
         private void _nozPos2Form_Disposed(object sender, EventArgs e)
         {
-            _nozPos2Form = null;
+            _forms.NOZPos2Form = null;
         }
 
         private void _nwsIndexerForm_Disposed(object sender, EventArgs e)
         {
-            _nwsIndexerForm = null;
+            _forms.NWSIndexerForm = null;
         }
 
         private void _hsiForm_Disposed(object sender, EventArgs e)
         {
-            _hsiForm = null;
+            _forms.HSIForm = null;
         }
 
         private void _ehsiForm_Disposed(object sender, EventArgs e)
         {
-            _ehsiForm = null;
+            _forms.EHSIForm = null;
         }
 
-        private void _fuelQuantityForm_Disposed(object sender, EventArgs e)
+        private void FuelQuantityForm_Disposed(object sender, EventArgs e)
         {
-            _fuelQuantityForm = null;
+            _forms.FuelQuantityForm = null;
         }
 
         private void _fuelFlowForm_Disposed(object sender, EventArgs e)
         {
-            _fuelFlowForm = null;
+            _forms.FuelFlowForm = null;
         }
 
         private void _isisForm_Disposed(object sender, EventArgs e)
         {
-            _isisForm = null;
+            _forms.ISISForm = null;
         }
 
         private void _accelerometerForm_Disposed(object sender, EventArgs e)
         {
-            _accelerometerForm = null;
+            _forms.AccelerometerForm = null;
         }
         private void _ftit2Form_Disposed(object sender, EventArgs e)
         {
-            _ftit2Form = null;
+            _forms.FTIT2Form = null;
         }
 
         private void _ftit1Form_Disposed(object sender, EventArgs e)
         {
-            _ftit1Form = null;
+            _forms.FTIT1Form = null;
         }
 
         private void _epuFuelForm_Disposed(object sender, EventArgs e)
         {
-            _epuFuelForm = null;
+            _forms.EPUFuelForm = null;
         }
 
         private void _pflForm_Disposed(object sender, EventArgs e)
         {
-            _pflForm = null;
+            _forms.PFLForm = null;
         }
 
         private void _dedForm_Disposed(object sender, EventArgs e)
         {
-            _dedForm = null;
+            _forms.DEDForm = null;
         }
 
         private void _compassForm_Disposed(object sender, EventArgs e)
         {
-            _compassForm = null;
+            _forms.CompassForm = null;
         }
 
         private void _cmdsPanelForm_Disposed(object sender, EventArgs e)
         {
-            _cmdsPanelForm = null;
+            _forms.CMDSPanelForm = null;
         }
 
         private void _cautionPanelForm_Disposed(object sender, EventArgs e)
         {
-            _cautionPanelForm = null;
+            _forms.CautionPanelForm = null;
         }
 
-        private void _aoaIndicatorForm_Disposed(object sender, EventArgs e)
+        private void AOAIndicatorForm_Disposed(object sender, EventArgs e)
         {
-            _aoaIndicatorForm = null;
+            _forms.AOAIndicatorForm = null;
         }
 
-        private void _aoaIndexerForm_Disposed(object sender, EventArgs e)
+        private void AOAIndexerForm_Disposed(object sender, EventArgs e)
         {
-            _aoaIndexerForm = null;
+            _forms.AOAIndexerForm = null;
         }
 
         private void _altimeterForm_Disposed(object sender, EventArgs e)
         {
-            _altimeterForm = null;
+            _forms.AltimeterForm = null;
         }
 
         private void _asiForm_Disposed(object sender, EventArgs e)
         {
-            _asiForm = null;
+            _forms.ASIForm = null;
         }
 
         private void _adiForm_Disposed(object sender, EventArgs e)
         {
-            _adiForm = null;
+            _forms.ADIForm = null;
         }
 
         private void _backupAdiForm_Disposed(object sender, EventArgs e)
         {
-            _backupAdiForm = null;
+            _forms.BackupAdiForm = null;
         }
 
         private void _hydAForm_Disposed(object sender, EventArgs e)
         {
-            _hydAForm = null;
+            _forms.HydAForm = null;
         }
 
         private void _hydBForm_Disposed(object sender, EventArgs e)
         {
-            _hydBForm = null;
+            _forms.HydBForm = null;
         }
 
         private void _cabinPressForm_Disposed(object sender, EventArgs e)
         {
-            _cabinPressForm = null;
+            _forms.CabinPressForm = null;
         }
 
         private void _rollTrimForm_Disposed(object sender, EventArgs e)
         {
-            _rollTrimForm = null;
+            _forms.RollTrimForm = null;
         }
 
         private void _pitchTrimForm_Disposed(object sender, EventArgs e)
         {
-            _pitchTrimForm = null;
+            _forms.PitchTrimForm = null;
         }
 
         private void _mfd4Form_Disposed(object sender, EventArgs e)
         {
-            _mfd4Form = null;
+            _forms.MFD4Form = null;
         }
 
         private void _mfd3Form_Disposed(object sender, EventArgs e)
         {
-            _mfd3Form = null;
+            _forms.MFD3Form = null;
         }
 
         private void _leftMfdForm_Disposed(object sender, EventArgs e)
         {
-            _leftMfdForm = null;
+            _forms.LeftMFDForm = null;
         }
 
         private void _rightMfdForm_Disposed(object sender, EventArgs e)
         {
-            _rightMfdForm = null;
+            _forms.RightMfdForm = null;
         }
 
         private void _hudForm_Disposed(object sender, EventArgs e)
         {
-            _hudForm = null;
+            _forms.HUDForm = null;
         }
 
         #endregion
@@ -2179,207 +2143,207 @@ namespace MFDExtractor
 
         public void RecoverADIWindow(Screen screen)
         {
-            RecoverInstrumentForm(_adiForm, screen);
+            RecoverInstrumentForm(_forms.ADIForm, screen);
         }
 
         public void RecoverBackupADIWindow(Screen screen)
         {
-            RecoverInstrumentForm(_backupAdiForm, screen);
+            RecoverInstrumentForm(_forms.BackupAdiForm, screen);
         }
 
         public void RecoverASIWindow(Screen screen)
         {
-            RecoverInstrumentForm(_asiForm, screen);
+            RecoverInstrumentForm(_forms.ASIForm, screen);
         }
 
         public void RecoverCabinPressWindow(Screen screen)
         {
-            RecoverInstrumentForm(_cabinPressForm, screen);
+            RecoverInstrumentForm(_forms.CabinPressForm, screen);
         }
 
         public void RecoverRollTrimWindow(Screen screen)
         {
-            RecoverInstrumentForm(_rollTrimForm, screen);
+            RecoverInstrumentForm(_forms.RollTrimForm, screen);
         }
 
         public void RecoverPitchTrimWindow(Screen screen)
         {
-            RecoverInstrumentForm(_pitchTrimForm, screen);
+            RecoverInstrumentForm(_forms.PitchTrimForm, screen);
         }
 
         public void RecoverAltimeterWindow(Screen screen)
         {
-            RecoverInstrumentForm(_altimeterForm, screen);
+            RecoverInstrumentForm(_forms.AltimeterForm, screen);
         }
 
         public void RecoverAOAIndexerWindow(Screen screen)
         {
-            RecoverInstrumentForm(_aoaIndexerForm, screen);
+            RecoverInstrumentForm(_forms.AOAIndexerForm, screen);
         }
 
         public void RecoverAOAIndicatorWindow(Screen screen)
         {
-            RecoverInstrumentForm(_aoaIndicatorForm, screen);
+            RecoverInstrumentForm(_forms.AOAIndicatorForm, screen);
         }
 
         public void RecoverCautionPanelWindow(Screen screen)
         {
-            RecoverInstrumentForm(_cautionPanelForm, screen);
+            RecoverInstrumentForm(_forms.CautionPanelForm, screen);
         }
 
         public void RecoverCMDSPanelWindow(Screen screen)
         {
-            RecoverInstrumentForm(_cmdsPanelForm, screen);
+            RecoverInstrumentForm(_forms.CMDSPanelForm, screen);
         }
 
         public void RecoverCompassWindow(Screen screen)
         {
-            RecoverInstrumentForm(_compassForm, screen);
+            RecoverInstrumentForm(_forms.CompassForm, screen);
         }
 
         public void RecoverDEDWindow(Screen screen)
         {
-            RecoverInstrumentForm(_dedForm, screen);
+            RecoverInstrumentForm(_forms.DEDForm, screen);
         }
 
         public void RecoverPFLWindow(Screen screen)
         {
-            RecoverInstrumentForm(_pflForm, screen);
+            RecoverInstrumentForm(_forms.PFLForm, screen);
         }
 
         public void RecoverEPUFuelWindow(Screen screen)
         {
-            RecoverInstrumentForm(_epuFuelForm, screen);
+            RecoverInstrumentForm(_forms.EPUFuelForm, screen);
         }
 
         public void RecoverFTIT1Window(Screen screen)
         {
-            RecoverInstrumentForm(_ftit1Form, screen);
+            RecoverInstrumentForm(_forms.FTIT1Form, screen);
         }
 
         public void RecoverAccelerometerWindow(Screen screen)
         {
-            RecoverInstrumentForm(_accelerometerForm, screen);
+            RecoverInstrumentForm(_forms.AccelerometerForm, screen);
         }
 
         public void RecoverFTIT2Window(Screen screen)
         {
-            RecoverInstrumentForm(_ftit2Form, screen);
+            RecoverInstrumentForm(_forms.FTIT2Form, screen);
         }
 
         public void RecoverFuelFlowWindow(Screen screen)
         {
-            RecoverInstrumentForm(_fuelFlowForm, screen);
+            RecoverInstrumentForm(_forms.FuelFlowForm, screen);
         }
 
         public void RecoverISISWindow(Screen screen)
         {
-            RecoverInstrumentForm(_isisForm, screen);
+            RecoverInstrumentForm(_forms.ISISForm, screen);
         }
 
         public void RecoverFuelQuantityWindow(Screen screen)
         {
-            RecoverInstrumentForm(_fuelQuantityForm, screen);
+            RecoverInstrumentForm(_forms.FuelQuantityForm, screen);
         }
 
         public void RecoverHSIWindow(Screen screen)
         {
-            RecoverInstrumentForm(_hsiForm, screen);
+            RecoverInstrumentForm(_forms.HSIForm, screen);
         }
 
         public void RecoverEHSIWindow(Screen screen)
         {
-            RecoverInstrumentForm(_ehsiForm, screen);
+            RecoverInstrumentForm(_forms.EHSIForm, screen);
         }
 
         public void RecoverLandingGearLightsWindow(Screen screen)
         {
-            RecoverInstrumentForm(_landingGearLightsForm, screen);
+            RecoverInstrumentForm(_forms.LandingGearLightsForm, screen);
         }
 
         public void RecoverNWSWindow(Screen screen)
         {
-            RecoverInstrumentForm(_nwsIndexerForm, screen);
+            RecoverInstrumentForm(_forms.NWSIndexerForm, screen);
         }
 
         public void RecoverNOZ1Window(Screen screen)
         {
-            RecoverInstrumentForm(_nozPos1Form, screen);
+            RecoverInstrumentForm(_forms.NOZPos1Form, screen);
         }
 
         public void RecoverNOZ2Window(Screen screen)
         {
-            RecoverInstrumentForm(_nozPos2Form, screen);
+            RecoverInstrumentForm(_forms.NOZPos2Form, screen);
         }
 
         public void RecoverOil1Window(Screen screen)
         {
-            RecoverInstrumentForm(_oilGauge1Form, screen);
+            RecoverInstrumentForm(_forms.OILGauge1Form, screen);
         }
 
         public void RecoverOil2Window(Screen screen)
         {
-            RecoverInstrumentForm(_oilGauge2Form, screen);
+            RecoverInstrumentForm(_forms.OILGauge2Form, screen);
         }
 
         public void RecoverAzimuthIndicatorWindow(Screen screen)
         {
-            RecoverInstrumentForm(_rwrForm, screen);
+            RecoverInstrumentForm(_forms.RWRForm, screen);
         }
 
         public void RecoverSpeedbrakeWindow(Screen screen)
         {
-            RecoverInstrumentForm(_speedbrakeForm, screen);
+            RecoverInstrumentForm(_forms.SpeedbrakeForm, screen);
         }
 
         public void RecoverRPM1Window(Screen screen)
         {
-            RecoverInstrumentForm(_rpm1Form, screen);
+            RecoverInstrumentForm(_forms.RPM1Form, screen);
         }
 
         public void RecoverRPM2Window(Screen screen)
         {
-            RecoverInstrumentForm(_rpm2Form, screen);
+            RecoverInstrumentForm(_forms.RPM2Form, screen);
         }
 
         public void RecoverVVIWindow(Screen screen)
         {
-            RecoverInstrumentForm(_vviForm, screen);
+            RecoverInstrumentForm(_forms.VVIForm, screen);
         }
 
         public void RecoverMfd4Window(Screen screen)
         {
-            RecoverInstrumentForm(_mfd4Form, screen);
+            RecoverInstrumentForm(_forms.MFD4Form, screen);
         }
 
         public void RecoverMfd3Window(Screen screen)
         {
-            RecoverInstrumentForm(_mfd3Form, screen);
+            RecoverInstrumentForm(_forms.MFD3Form, screen);
         }
 
         public void RecoverLeftMfdWindow(Screen screen)
         {
-            RecoverInstrumentForm(_leftMfdForm, screen);
+            RecoverInstrumentForm(_forms.LeftMFDForm, screen);
         }
 
         public void RecoverRightMfdWindow(Screen screen)
         {
-            RecoverInstrumentForm(_rightMfdForm, screen);
+            RecoverInstrumentForm(_forms.RightMfdForm, screen);
         }
 
         public void RecoverHudWindow(Screen screen)
         {
-            RecoverInstrumentForm(_hudForm, screen);
+            RecoverInstrumentForm(_forms.HUDForm, screen);
         }
 
         public void RecoverHydAWindow(Screen screen)
         {
-            RecoverInstrumentForm(_hydAForm, screen);
+            RecoverInstrumentForm(_forms.HydAForm, screen);
         }
 
         public void RecoverHydBWindow(Screen screen)
         {
-            RecoverInstrumentForm(_hydBForm, screen);
+            RecoverInstrumentForm(_forms.HydBForm, screen);
         }
 
         #endregion
@@ -2420,49 +2384,49 @@ namespace MFDExtractor
         /// </summary>
         private void CloseOutputWindowForms()
         {
-            CloseOutputWindowForm(_adiForm);
-            CloseOutputWindowForm(_backupAdiForm);
-            CloseOutputWindowForm(_asiForm);
-            CloseOutputWindowForm(_altimeterForm);
-            CloseOutputWindowForm(_aoaIndexerForm);
-            CloseOutputWindowForm(_aoaIndicatorForm);
-            CloseOutputWindowForm(_cautionPanelForm);
-            CloseOutputWindowForm(_cmdsPanelForm);
-            CloseOutputWindowForm(_compassForm);
-            CloseOutputWindowForm(_dedForm);
-            CloseOutputWindowForm(_pflForm);
-            CloseOutputWindowForm(_epuFuelForm);
-            CloseOutputWindowForm(_accelerometerForm);
-            CloseOutputWindowForm(_ftit1Form);
-            CloseOutputWindowForm(_ftit2Form);
-            CloseOutputWindowForm(_fuelFlowForm);
-            CloseOutputWindowForm(_isisForm);
-            CloseOutputWindowForm(_fuelQuantityForm);
-            CloseOutputWindowForm(_hsiForm);
-            CloseOutputWindowForm(_ehsiForm);
-            CloseOutputWindowForm(_landingGearLightsForm);
-            CloseOutputWindowForm(_nwsIndexerForm);
-            CloseOutputWindowForm(_nozPos1Form);
-            CloseOutputWindowForm(_nozPos2Form);
-            CloseOutputWindowForm(_oilGauge1Form);
-            CloseOutputWindowForm(_oilGauge2Form);
-            CloseOutputWindowForm(_rwrForm);
-            CloseOutputWindowForm(_speedbrakeForm);
-            CloseOutputWindowForm(_rpm1Form);
-            CloseOutputWindowForm(_rpm2Form);
-            CloseOutputWindowForm(_vviForm);
-            CloseOutputWindowForm(_hydAForm);
-            CloseOutputWindowForm(_hydBForm);
-            CloseOutputWindowForm(_cabinPressForm);
-            CloseOutputWindowForm(_rollTrimForm);
-            CloseOutputWindowForm(_pitchTrimForm);
+            CloseOutputWindowForm(_forms.ADIForm);
+            CloseOutputWindowForm(_forms.BackupAdiForm);
+            CloseOutputWindowForm(_forms.ASIForm);
+            CloseOutputWindowForm(_forms.AltimeterForm);
+            CloseOutputWindowForm(_forms.AOAIndexerForm);
+            CloseOutputWindowForm(_forms.AOAIndicatorForm);
+            CloseOutputWindowForm(_forms.CautionPanelForm);
+            CloseOutputWindowForm(_forms.CMDSPanelForm);
+            CloseOutputWindowForm(_forms.CompassForm);
+            CloseOutputWindowForm(_forms.DEDForm);
+            CloseOutputWindowForm(_forms.PFLForm);
+            CloseOutputWindowForm(_forms.EPUFuelForm);
+            CloseOutputWindowForm(_forms.AccelerometerForm);
+            CloseOutputWindowForm(_forms.FTIT1Form);
+            CloseOutputWindowForm(_forms.FTIT2Form);
+            CloseOutputWindowForm(_forms.FuelFlowForm);
+            CloseOutputWindowForm(_forms.ISISForm);
+            CloseOutputWindowForm(_forms.FuelQuantityForm);
+            CloseOutputWindowForm(_forms.HSIForm);
+            CloseOutputWindowForm(_forms.EHSIForm);
+            CloseOutputWindowForm(_forms.LandingGearLightsForm);
+            CloseOutputWindowForm(_forms.NWSIndexerForm);
+            CloseOutputWindowForm(_forms.NOZPos1Form);
+            CloseOutputWindowForm(_forms.NOZPos2Form);
+            CloseOutputWindowForm(_forms.OILGauge1Form);
+            CloseOutputWindowForm(_forms.OILGauge2Form);
+            CloseOutputWindowForm(_forms.RWRForm);
+            CloseOutputWindowForm(_forms.SpeedbrakeForm);
+            CloseOutputWindowForm(_forms.RPM1Form);
+            CloseOutputWindowForm(_forms.RPM2Form);
+            CloseOutputWindowForm(_forms.VVIForm);
+            CloseOutputWindowForm(_forms.HydAForm);
+            CloseOutputWindowForm(_forms.HydBForm);
+            CloseOutputWindowForm(_forms.CabinPressForm);
+            CloseOutputWindowForm(_forms.RollTrimForm);
+            CloseOutputWindowForm(_forms.PitchTrimForm);
 
 
-            CloseOutputWindowForm(_mfd4Form);
-            CloseOutputWindowForm(_mfd3Form);
-            CloseOutputWindowForm(_leftMfdForm);
-            CloseOutputWindowForm(_rightMfdForm);
-            CloseOutputWindowForm(_hudForm);
+            CloseOutputWindowForm(_forms.MFD4Form);
+            CloseOutputWindowForm(_forms.MFD3Form);
+            CloseOutputWindowForm(_forms.LeftMFDForm);
+            CloseOutputWindowForm(_forms.RightMfdForm);
+            CloseOutputWindowForm(_forms.HUDForm);
         }
 
         #endregion
@@ -2719,14 +2683,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RWR)) ||
-                    (_rwrForm != null && _rwrForm.RenderImmediately))
+                    (_forms.RWRForm != null && _forms.RWRForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RWR_RenderEveryN == Settings.Default.RWR_RenderOnN - 1) ||
-                        (_rwrForm != null && _rwrForm.RenderImmediately))
+                        (_forms.RWRForm != null && _forms.RWRForm.RenderImmediately))
                     {
-                        if (_rwrForm != null)
+                        if (_forms.RWRForm != null)
                         {
-                            _rwrForm.RenderImmediately = false;
+                            _forms.RWRForm.RenderImmediately = false;
                         }
                         if (_rwrRenderStart != null)
                         {
@@ -2775,14 +2739,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CMDSPanel)) ||
-                    (_cmdsPanelForm != null && _cmdsPanelForm.RenderImmediately))
+                    (_forms.CMDSPanelForm != null && _forms.CMDSPanelForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.CMDS_RenderEveryN == Settings.Default.CMDS_RenderOnN - 1) ||
-                        (_cmdsPanelForm != null && _cmdsPanelForm.RenderImmediately))
+                        (_forms.CMDSPanelForm != null && _forms.CMDSPanelForm.RenderImmediately))
                     {
-                        if (_cmdsPanelForm != null)
+                        if (_forms.CMDSPanelForm != null)
                         {
-                            _cmdsPanelForm.RenderImmediately = false;
+                            _forms.CMDSPanelForm.RenderImmediately = false;
                         }
                         if (_cmdsPanelRenderStart != null)
                         {
@@ -2809,15 +2773,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CautionPanel)) ||
-                    (_cautionPanelForm != null && _cautionPanelForm.RenderImmediately))
+                    (_forms.CautionPanelForm != null && _forms.CautionPanelForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.CautionPanel_RenderEveryN ==
                          Settings.Default.CautionPanel_RenderOnN - 1) ||
-                        (_cautionPanelForm != null && _cautionPanelForm.RenderImmediately))
+                        (_forms.CautionPanelForm != null && _forms.CautionPanelForm.RenderImmediately))
                     {
-                        if (_cautionPanelForm != null)
+                        if (_forms.CautionPanelForm != null)
                         {
-                            _cautionPanelForm.RenderImmediately = false;
+                            _forms.CautionPanelForm.RenderImmediately = false;
                         }
                         if (_cautionPanelRenderStart != null)
                         {
@@ -2844,15 +2808,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.LandingGearLights)) ||
-                    (_landingGearLightsForm != null && _landingGearLightsForm.RenderImmediately))
+                    (_forms.LandingGearLightsForm != null && _forms.LandingGearLightsForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.GearLights_RenderEveryN ==
                          Settings.Default.GearLights_RenderOnN - 1) ||
-                        (_landingGearLightsForm != null && _landingGearLightsForm.RenderImmediately))
+                        (_forms.LandingGearLightsForm != null && _forms.LandingGearLightsForm.RenderImmediately))
                     {
-                        if (_landingGearLightsForm != null)
+                        if (_forms.LandingGearLightsForm != null)
                         {
-                            _landingGearLightsForm.RenderImmediately = false;
+                            _forms.LandingGearLightsForm.RenderImmediately = false;
                         }
                         if (_landingGearLightsRenderStart != null)
                         {
@@ -2870,15 +2834,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Speedbrake)) ||
-                    (_speedbrakeForm != null && _speedbrakeForm.RenderImmediately))
+                    (_forms.SpeedbrakeForm != null && _forms.SpeedbrakeForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Speedbrake_RenderEveryN ==
                          Settings.Default.Speedbrake_RenderOnN - 1) ||
-                        (_speedbrakeForm != null && _speedbrakeForm.RenderImmediately))
+                        (_forms.SpeedbrakeForm != null && _forms.SpeedbrakeForm.RenderImmediately))
                     {
-                        if (_speedbrakeForm != null)
+                        if (_forms.SpeedbrakeForm != null)
                         {
-                            _speedbrakeForm.RenderImmediately = false;
+                            _forms.SpeedbrakeForm.RenderImmediately = false;
                         }
                         if (_speedbrakeRenderStart != null)
                         {
@@ -2905,14 +2869,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.DED) ||
-                     (_dedForm != null && _dedForm.RenderImmediately)))
+                     (_forms.DEDForm != null && _forms.DEDForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.DED_RenderEveryN == Settings.Default.DED_RenderOnN - 1) ||
-                        (_dedForm != null && _dedForm.RenderImmediately))
+                        (_forms.DEDForm != null && _forms.DEDForm.RenderImmediately))
                     {
-                        if (_dedForm != null)
+                        if (_forms.DEDForm != null)
                         {
-                            _dedForm.RenderImmediately = false;
+                            _forms.DEDForm.RenderImmediately = false;
                         }
                         if (_dedRenderStart != null)
                         {
@@ -2930,14 +2894,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.PFL)) ||
-                    (_pflForm != null && _pflForm.RenderImmediately))
+                    (_forms.PFLForm != null && _forms.PFLForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.PFL_RenderEveryN == Settings.Default.PFL_RenderOnN - 1) ||
-                        (_pflForm != null && _pflForm.RenderImmediately))
+                        (_forms.PFLForm != null && _forms.PFLForm.RenderImmediately))
                     {
-                        if (_pflForm != null)
+                        if (_forms.PFLForm != null)
                         {
-                            _pflForm.RenderImmediately = false;
+                            _forms.PFLForm.RenderImmediately = false;
                         }
                         if (_pflRenderStart != null)
                         {
@@ -2964,15 +2928,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FuelFlow)) ||
-                    (_fuelFlowForm != null && _fuelFlowForm.RenderImmediately))
+                    (_forms.FuelFlowForm != null && _forms.FuelFlowForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FuelFlow_RenderEveryN ==
                          Settings.Default.FuelFlow_RenderOnN - 1) ||
-                        (_fuelFlowForm != null && _fuelFlowForm.RenderImmediately))
+                        (_forms.FuelFlowForm != null && _forms.FuelFlowForm.RenderImmediately))
                     {
-                        if (_fuelFlowForm != null)
+                        if (_forms.FuelFlowForm != null)
                         {
-                            _fuelFlowForm.RenderImmediately = false;
+                            _forms.FuelFlowForm.RenderImmediately = false;
                         }
                         if (_fuelFlowRenderStart != null)
                         {
@@ -2990,15 +2954,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FuelQuantity)) ||
-                    (_fuelQuantityForm != null && _fuelQuantityForm.RenderImmediately))
+                    (_forms.FuelQuantityForm != null && _forms.FuelQuantityForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FuelQuantity_RenderEveryN ==
                          Settings.Default.FuelQuantity_RenderOnN - 1) ||
-                        (_fuelQuantityForm != null && _fuelQuantityForm.RenderImmediately))
+                        (_forms.FuelQuantityForm != null && _forms.FuelQuantityForm.RenderImmediately))
                     {
-                        if (_fuelQuantityForm != null)
+                        if (_forms.FuelQuantityForm != null)
                         {
-                            _fuelQuantityForm.RenderImmediately = false;
+                            _forms.FuelQuantityForm.RenderImmediately = false;
                         }
                         if (_fuelQuantityRenderStart != null)
                         {
@@ -3016,14 +2980,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.EPUFuel)) ||
-                    (_epuFuelForm != null && _epuFuelForm.RenderImmediately))
+                    (_forms.EPUFuelForm != null && _forms.EPUFuelForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.EPUFuel_RenderEveryN == Settings.Default.EPUFuel_RenderOnN - 1) ||
-                        (_epuFuelForm != null && _epuFuelForm.RenderImmediately))
+                        (_forms.EPUFuelForm != null && _forms.EPUFuelForm.RenderImmediately))
                     {
-                        if (_epuFuelForm != null)
+                        if (_forms.EPUFuelForm != null)
                         {
-                            _epuFuelForm.RenderImmediately = false;
+                            _forms.EPUFuelForm.RenderImmediately = false;
                         }
                         if (_epuFuelRenderStart != null)
                         {
@@ -3050,15 +3014,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.AOAIndexer)) ||
-                    (_aoaIndexerForm != null && _aoaIndexerForm.RenderImmediately))
+                    (_forms.AOAIndexerForm != null && _forms.AOAIndexerForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.AOAIndexer_RenderEveryN ==
                          Settings.Default.AOAIndexer_RenderOnN - 1) ||
-                        (_aoaIndexerForm != null && _aoaIndexerForm.RenderImmediately))
+                        (_forms.AOAIndexerForm != null && _forms.AOAIndexerForm.RenderImmediately))
                     {
-                        if (_aoaIndexerForm != null)
+                        if (_forms.AOAIndexerForm != null)
                         {
-                            _aoaIndexerForm.RenderImmediately = false;
+                            _forms.AOAIndexerForm.RenderImmediately = false;
                         }
                         if (_aoaIndexerRenderStart != null)
                         {
@@ -3076,15 +3040,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NWSIndexer)) ||
-                    (_nwsIndexerForm != null && _nwsIndexerForm.RenderImmediately))
+                    (_forms.NWSIndexerForm != null && _forms.NWSIndexerForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.NWSIndexer_RenderEveryN ==
                          Settings.Default.NWSIndexer_RenderOnN - 1) ||
-                        (_nwsIndexerForm != null && _nwsIndexerForm.RenderImmediately))
+                        (_forms.NWSIndexerForm != null && _forms.NWSIndexerForm.RenderImmediately))
                     {
-                        if (_nwsIndexerForm != null)
+                        if (_forms.NWSIndexerForm != null)
                         {
-                            _nwsIndexerForm.RenderImmediately = false;
+                            _forms.NWSIndexerForm.RenderImmediately = false;
                         }
                         if (_nwsIndexerRenderStart != null)
                         {
@@ -3111,14 +3075,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FTIT1)) ||
-                    (_ftit1Form != null && _ftit1Form.RenderImmediately))
+                    (_forms.FTIT1Form != null && _forms.FTIT1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FTIT1_RenderEveryN == Settings.Default.FTIT1_RenderOnN - 1) ||
-                        (_ftit1Form != null && _ftit1Form.RenderImmediately))
+                        (_forms.FTIT1Form != null && _forms.FTIT1Form.RenderImmediately))
                     {
-                        if (_ftit1Form != null)
+                        if (_forms.FTIT1Form != null)
                         {
-                            _ftit1Form.RenderImmediately = false;
+                            _forms.FTIT1Form.RenderImmediately = false;
                         }
                         if (_ftit1RenderStart != null)
                         {
@@ -3136,14 +3100,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NOZ1)) ||
-                    (_nozPos1Form != null && _nozPos1Form.RenderImmediately))
+                    (_forms.NOZPos1Form != null && _forms.NOZPos1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.NOZ1_RenderEveryN == Settings.Default.NOZ1_RenderOnN - 1) ||
-                        (_nozPos1Form != null && _nozPos1Form.RenderImmediately))
+                        (_forms.NOZPos1Form != null && _forms.NOZPos1Form.RenderImmediately))
                     {
-                        if (_nozPos1Form != null)
+                        if (_forms.NOZPos1Form != null)
                         {
-                            _nozPos1Form.RenderImmediately = false;
+                            _forms.NOZPos1Form.RenderImmediately = false;
                         }
                         if (_nozPos1RenderStart != null)
                         {
@@ -3161,14 +3125,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.OIL1)) ||
-                    (_oilGauge1Form != null && _oilGauge1Form.RenderImmediately))
+                    (_forms.OILGauge1Form != null && _forms.OILGauge1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.OIL1_RenderEveryN == Settings.Default.OIL1_RenderOnN - 1) ||
-                        (_oilGauge1Form != null && _oilGauge1Form.RenderImmediately))
+                        (_forms.OILGauge1Form != null && _forms.OILGauge1Form.RenderImmediately))
                     {
-                        if (_oilGauge1Form != null)
+                        if (_forms.OILGauge1Form != null)
                         {
-                            _oilGauge1Form.RenderImmediately = false;
+                            _forms.OILGauge1Form.RenderImmediately = false;
                         }
                         if (_oilGauge1RenderStart != null)
                         {
@@ -3186,14 +3150,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RPM1)) ||
-                    (_rpm1Form != null && _rpm1Form.RenderImmediately))
+                    (_forms.RPM1Form != null && _forms.RPM1Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RPM1_RenderEveryN == Settings.Default.RPM1_RenderOnN - 1) ||
-                        (_rpm1Form != null && _rpm1Form.RenderImmediately))
+                        (_forms.RPM1Form != null && _forms.RPM1Form.RenderImmediately))
                     {
-                        if (_rpm1Form != null)
+                        if (_forms.RPM1Form != null)
                         {
-                            _rpm1Form.RenderImmediately = false;
+                            _forms.RPM1Form.RenderImmediately = false;
                         }
                         if (_rpm1RenderStart != null)
                         {
@@ -3220,14 +3184,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FTIT2)) ||
-                    (_ftit2Form != null && _ftit2Form.RenderImmediately))
+                    (_forms.FTIT2Form != null && _forms.FTIT2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.FTIT2_RenderEveryN == Settings.Default.FTIT2_RenderOnN - 1) ||
-                        (_ftit2Form != null && _ftit2Form.RenderImmediately))
+                        (_forms.FTIT2Form != null && _forms.FTIT2Form.RenderImmediately))
                     {
-                        if (_ftit2Form != null)
+                        if (_forms.FTIT2Form != null)
                         {
-                            _ftit2Form.RenderImmediately = false;
+                            _forms.FTIT2Form.RenderImmediately = false;
                         }
                         if (_ftit2RenderStart != null)
                         {
@@ -3245,14 +3209,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NOZ2)) ||
-                    (_nozPos2Form != null && _nozPos2Form.RenderImmediately))
+                    (_forms.NOZPos2Form != null && _forms.NOZPos2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.NOZ2_RenderEveryN == Settings.Default.NOZ2_RenderOnN - 1) ||
-                        (_nozPos2Form != null && _nozPos2Form.RenderImmediately))
+                        (_forms.NOZPos2Form != null && _forms.NOZPos2Form.RenderImmediately))
                     {
-                        if (_nozPos2Form != null)
+                        if (_forms.NOZPos2Form != null)
                         {
-                            _nozPos2Form.RenderImmediately = false;
+                            _forms.NOZPos2Form.RenderImmediately = false;
                         }
                         if (_nozPos2RenderStart != null)
                         {
@@ -3270,14 +3234,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.OIL2)) ||
-                    (_oilGauge2Form != null && _oilGauge2Form.RenderImmediately))
+                    (_forms.OILGauge2Form != null && _forms.OILGauge2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.OIL2_RenderEveryN == Settings.Default.OIL2_RenderOnN - 1) ||
-                        (_oilGauge2Form != null && _oilGauge2Form.RenderImmediately))
+                        (_forms.OILGauge2Form != null && _forms.OILGauge2Form.RenderImmediately))
                     {
-                        if (_oilGauge2Form != null)
+                        if (_forms.OILGauge2Form != null)
                         {
-                            _oilGauge2Form.RenderImmediately = false;
+                            _forms.OILGauge2Form.RenderImmediately = false;
                         }
                         if (_oilGauge2RenderStart != null)
                         {
@@ -3295,14 +3259,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RPM2)) ||
-                    (_rpm2Form != null && _rpm2Form.RenderImmediately))
+                    (_forms.RPM2Form != null && _forms.RPM2Form.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RPM2_RenderEveryN == Settings.Default.RPM2_RenderOnN - 1) ||
-                        (_rpm2Form != null && _rpm2Form.RenderImmediately))
+                        (_forms.RPM2Form != null && _forms.RPM2Form.RenderImmediately))
                     {
-                        if (_rpm2Form != null)
+                        if (_forms.RPM2Form != null)
                         {
-                            _rpm2Form.RenderImmediately = false;
+                            _forms.RPM2Form.RenderImmediately = false;
                         }
                         if (_rpm2RenderStart != null)
                         {
@@ -3329,14 +3293,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HYDA)) ||
-                    (_hydAForm != null && _hydAForm.RenderImmediately))
+                    (_forms.HydAForm != null && _forms.HydAForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.HYDA_RenderEveryN == Settings.Default.HYDA_RenderOnN - 1) ||
-                        (_hydAForm != null && _hydAForm.RenderImmediately))
+                        (_forms.HydAForm != null && _forms.HydAForm.RenderImmediately))
                     {
-                        if (_hydAForm != null)
+                        if (_forms.HydAForm != null)
                         {
-                            _hydAForm.RenderImmediately = false;
+                            _forms.HydAForm.RenderImmediately = false;
                         }
                         if (_hydARenderStart != null)
                         {
@@ -3354,14 +3318,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HYDB)) ||
-                    (_hydBForm != null && _hydBForm.RenderImmediately))
+                    (_forms.HydBForm != null && _forms.HydBForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.HYDB_RenderEveryN == Settings.Default.HYDB_RenderOnN - 1) ||
-                        (_hydBForm != null && _hydBForm.RenderImmediately))
+                        (_forms.HydBForm != null && _forms.HydBForm.RenderImmediately))
                     {
-                        if (_hydBForm != null)
+                        if (_forms.HydBForm != null)
                         {
-                            _hydBForm.RenderImmediately = false;
+                            _forms.HydBForm.RenderImmediately = false;
                         }
                         if (_hydBRenderStart != null)
                         {
@@ -3379,15 +3343,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CabinPress)) ||
-                    (_cabinPressForm != null && _cabinPressForm.RenderImmediately))
+                    (_forms.CabinPressForm != null && _forms.CabinPressForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.CabinPress_RenderEveryN ==
                          Settings.Default.CabinPress_RenderOnN - 1) ||
-                        (_cabinPressForm != null && _cabinPressForm.RenderImmediately))
+                        (_forms.CabinPressForm != null && _forms.CabinPressForm.RenderImmediately))
                     {
-                        if (_cabinPressForm != null)
+                        if (_forms.CabinPressForm != null)
                         {
-                            _cabinPressForm.RenderImmediately = false;
+                            _forms.CabinPressForm.RenderImmediately = false;
                         }
                         if (_cabinPressRenderStart != null)
                         {
@@ -3414,15 +3378,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RollTrim)) ||
-                    (_rollTrimForm != null && _rollTrimForm.RenderImmediately))
+                    (_forms.RollTrimForm != null && _forms.RollTrimForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.RollTrim_RenderEveryN ==
                          Settings.Default.RollTrim_RenderOnN - 1) ||
-                        (_rollTrimForm != null && _rollTrimForm.RenderImmediately))
+                        (_forms.RollTrimForm != null && _forms.RollTrimForm.RenderImmediately))
                     {
-                        if (_rollTrimForm != null)
+                        if (_forms.RollTrimForm != null)
                         {
-                            _rollTrimForm.RenderImmediately = false;
+                            _forms.RollTrimForm.RenderImmediately = false;
                         }
                         if (_rollTrimRenderStart != null)
                         {
@@ -3440,15 +3404,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.PitchTrim)) ||
-                    (_pitchTrimForm != null && _pitchTrimForm.RenderImmediately))
+                    (_forms.PitchTrimForm != null && _forms.PitchTrimForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.PitchTrim_RenderEveryN ==
                          Settings.Default.PitchTrim_RenderOnN - 1) ||
-                        (_pitchTrimForm != null && _pitchTrimForm.RenderImmediately))
+                        (_forms.PitchTrimForm != null && _forms.PitchTrimForm.RenderImmediately))
                     {
-                        if (_pitchTrimForm != null)
+                        if (_forms.PitchTrimForm != null)
                         {
-                            _pitchTrimForm.RenderImmediately = false;
+                            _forms.PitchTrimForm.RenderImmediately = false;
                         }
                         if (_pitchTrimRenderStart != null)
                         {
@@ -3476,14 +3440,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ADI) ||
-                     (_adiForm != null && _adiForm.RenderImmediately)))
+                     (_forms.ADIForm != null && _forms.ADIForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.ADI_RenderEveryN == Settings.Default.ADI_RenderOnN - 1) ||
-                        (_adiForm != null && _adiForm.RenderImmediately))
+                        (_forms.ADIForm != null && _forms.ADIForm.RenderImmediately))
                     {
-                        if (_adiForm != null)
+                        if (_forms.ADIForm != null)
                         {
-                            _adiForm.RenderImmediately = false;
+                            _forms.ADIForm.RenderImmediately = false;
                         }
                         if (_adiRenderStart != null)
                         {
@@ -3501,14 +3465,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ISIS)) ||
-                    (_isisForm != null && _isisForm.RenderImmediately))
+                    (_forms.ISISForm != null && _forms.ISISForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.ISIS_RenderEveryN == Settings.Default.ISIS_RenderOnN - 1) ||
-                        (_isisForm != null && _isisForm.RenderImmediately))
+                        (_forms.ISISForm != null && _forms.ISISForm.RenderImmediately))
                     {
-                        if (_isisForm != null)
+                        if (_forms.ISISForm != null)
                         {
-                            _isisForm.RenderImmediately = false;
+                            _forms.ISISForm.RenderImmediately = false;
                         }
                         if (_isisRenderStart != null)
                         {
@@ -3526,14 +3490,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HSI) ||
-                     (_hsiForm != null && _hsiForm.RenderImmediately)))
+                     (_forms.HSIForm != null && _forms.HSIForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.HSI_RenderEveryN == Settings.Default.HSI_RenderOnN - 1) ||
-                        (_hsiForm != null && _hsiForm.RenderImmediately))
+                        (_forms.HSIForm != null && _forms.HSIForm.RenderImmediately))
                     {
-                        if (_hsiForm != null)
+                        if (_forms.HSIForm != null)
                         {
-                            _hsiForm.RenderImmediately = false;
+                            _forms.HSIForm.RenderImmediately = false;
                         }
                         if (_hsiRenderStart != null)
                         {
@@ -3551,14 +3515,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.EHSI)) ||
-                    (_ehsiForm != null && _ehsiForm.RenderImmediately))
+                    (_forms.EHSIForm != null && _forms.EHSIForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.EHSI_RenderEveryN == Settings.Default.EHSI_RenderOnN - 1) ||
-                        (_ehsiForm != null && _ehsiForm.RenderImmediately))
+                        (_forms.EHSIForm != null && _forms.EHSIForm.RenderImmediately))
                     {
-                        if (_ehsiForm != null)
+                        if (_forms.EHSIForm != null)
                         {
-                            _ehsiForm.RenderImmediately = false;
+                            _forms.EHSIForm.RenderImmediately = false;
                         }
                         if (_ehsiRenderStart != null)
                         {
@@ -3576,15 +3540,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Altimeter)) ||
-                    (_altimeterForm != null && _altimeterForm.RenderImmediately))
+                    (_forms.AltimeterForm != null && _forms.AltimeterForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Altimeter_RenderEveryN ==
                          Settings.Default.Altimeter_RenderOnN - 1) ||
-                        (_altimeterForm != null && _altimeterForm.RenderImmediately))
+                        (_forms.AltimeterForm != null && _forms.AltimeterForm.RenderImmediately))
                     {
-                        if (_altimeterForm != null)
+                        if (_forms.AltimeterForm != null)
                         {
-                            _altimeterForm.RenderImmediately = false;
+                            _forms.AltimeterForm.RenderImmediately = false;
                         }
                         if (_altimeterRenderStart != null)
                         {
@@ -3602,14 +3566,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ASI) ||
-                     (_asiForm != null && _asiForm.RenderImmediately)))
+                     (_forms.ASIForm != null && _forms.ASIForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.ASI_RenderEveryN == Settings.Default.ASI_RenderOnN - 1) ||
-                        (_asiForm != null && _asiForm.RenderImmediately))
+                        (_forms.ASIForm != null && _forms.ASIForm.RenderImmediately))
                     {
-                        if (_asiForm != null)
+                        if (_forms.ASIForm != null)
                         {
-                            _asiForm.RenderImmediately = false;
+                            _forms.ASIForm.RenderImmediately = false;
                         }
                         if (_asiRenderStart != null)
                         {
@@ -3627,15 +3591,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.BackupADI)) ||
-                    (_backupAdiForm != null && _backupAdiForm.RenderImmediately))
+                    (_forms.BackupAdiForm != null && _forms.BackupAdiForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Backup_ADI_RenderEveryN ==
                          Settings.Default.Backup_ADI_RenderOnN - 1) ||
-                        (_backupAdiForm != null && _backupAdiForm.RenderImmediately))
+                        (_forms.BackupAdiForm != null && _forms.BackupAdiForm.RenderImmediately))
                     {
-                        if (_backupAdiForm != null)
+                        if (_forms.BackupAdiForm != null)
                         {
-                            _backupAdiForm.RenderImmediately = false;
+                            _forms.BackupAdiForm.RenderImmediately = false;
                         }
                         if (_backupAdiRenderStart != null)
                         {
@@ -3653,14 +3617,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.VVI) ||
-                     (_vviForm != null && _vviForm.RenderImmediately)))
+                     (_forms.VVIForm != null && _forms.VVIForm.RenderImmediately)))
                 {
                     if ((_renderCycleNum%Settings.Default.VVI_RenderEveryN == Settings.Default.VVI_RenderOnN - 1) ||
-                        (_vviForm != null && _vviForm.RenderImmediately))
+                        (_forms.VVIForm != null && _forms.VVIForm.RenderImmediately))
                     {
-                        if (_vviForm != null)
+                        if (_forms.VVIForm != null)
                         {
-                            _vviForm.RenderImmediately = false;
+                            _forms.VVIForm.RenderImmediately = false;
                         }
                         if (_vviRenderStart != null)
                         {
@@ -3678,15 +3642,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.AOAIndicator)) ||
-                    (_aoaIndicatorForm != null && _aoaIndicatorForm.RenderImmediately))
+                    (_forms.AOAIndicatorForm != null && _forms.AOAIndicatorForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.AOAIndicator_RenderEveryN ==
                          Settings.Default.AOAIndicator_RenderOnN - 1) ||
-                        (_aoaIndicatorForm != null && _aoaIndicatorForm.RenderImmediately))
+                        (_forms.AOAIndicatorForm != null && _forms.AOAIndicatorForm.RenderImmediately))
                     {
-                        if (_aoaIndicatorForm != null)
+                        if (_forms.AOAIndicatorForm != null)
                         {
-                            _aoaIndicatorForm.RenderImmediately = false;
+                            _forms.AOAIndicatorForm.RenderImmediately = false;
                         }
                         if (_aoaIndicatorRenderStart != null)
                         {
@@ -3704,14 +3668,14 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Compass)) ||
-                    (_compassForm != null && _compassForm.RenderImmediately))
+                    (_forms.CompassForm != null && _forms.CompassForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Compass_RenderEveryN == Settings.Default.Compass_RenderOnN - 1) ||
-                        (_compassForm != null && _compassForm.RenderImmediately))
+                        (_forms.CompassForm != null && _forms.CompassForm.RenderImmediately))
                     {
-                        if (_compassForm != null)
+                        if (_forms.CompassForm != null)
                         {
-                            _compassForm.RenderImmediately = false;
+                            _forms.CompassForm.RenderImmediately = false;
                         }
                         if (_compassRenderStart != null)
                         {
@@ -3729,15 +3693,15 @@ namespace MFDExtractor
                 if (_testMode || !renderOnlyOnStateChanges ||
                     (renderOnlyOnStateChanges &&
                      IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Accelerometer)) ||
-                    (_accelerometerForm != null && _accelerometerForm.RenderImmediately))
+                    (_forms.AccelerometerForm != null && _forms.AccelerometerForm.RenderImmediately))
                 {
                     if ((_renderCycleNum%Settings.Default.Accelerometer_RenderEveryN ==
                          Settings.Default.Accelerometer_RenderOnN - 1) ||
-                        (_accelerometerForm != null && _accelerometerForm.RenderImmediately))
+                        (_forms.AccelerometerForm != null && _forms.AccelerometerForm.RenderImmediately))
                     {
-                        if (_accelerometerForm != null)
+                        if (_forms.AccelerometerForm != null)
                         {
-                            _accelerometerForm.RenderImmediately = false;
+                            _forms.AccelerometerForm.RenderImmediately = false;
                         }
                         if (_accelerometerRenderStart != null)
                         {
@@ -4424,48 +4388,48 @@ namespace MFDExtractor
                 if (disposing)
                 {
                     Stop();
-                    Common.Util.DisposeObject(_asiForm);
-                    Common.Util.DisposeObject(_adiForm);
-                    Common.Util.DisposeObject(_backupAdiForm);
-                    Common.Util.DisposeObject(_altimeterForm);
-                    Common.Util.DisposeObject(_aoaIndexerForm);
-                    Common.Util.DisposeObject(_aoaIndicatorForm);
-                    Common.Util.DisposeObject(_cautionPanelForm);
-                    Common.Util.DisposeObject(_cmdsPanelForm);
-                    Common.Util.DisposeObject(_compassForm);
-                    Common.Util.DisposeObject(_dedForm);
-                    Common.Util.DisposeObject(_pflForm);
-                    Common.Util.DisposeObject(_epuFuelForm);
-                    Common.Util.DisposeObject(_accelerometerForm);
-                    Common.Util.DisposeObject(_ftit1Form);
-                    Common.Util.DisposeObject(_ftit2Form);
-                    Common.Util.DisposeObject(_fuelFlowForm);
-                    Common.Util.DisposeObject(_isisForm);
-                    Common.Util.DisposeObject(_fuelQuantityForm);
-                    Common.Util.DisposeObject(_hsiForm);
-                    Common.Util.DisposeObject(_ehsiForm);
-                    Common.Util.DisposeObject(_landingGearLightsForm);
-                    Common.Util.DisposeObject(_nwsIndexerForm);
-                    Common.Util.DisposeObject(_nozPos1Form);
-                    Common.Util.DisposeObject(_nozPos2Form);
-                    Common.Util.DisposeObject(_oilGauge1Form);
-                    Common.Util.DisposeObject(_oilGauge2Form);
-                    Common.Util.DisposeObject(_rwrForm);
-                    Common.Util.DisposeObject(_speedbrakeForm);
-                    Common.Util.DisposeObject(_rpm1Form);
-                    Common.Util.DisposeObject(_rpm2Form);
-                    Common.Util.DisposeObject(_vviForm);
-                    Common.Util.DisposeObject(_hydAForm);
-                    Common.Util.DisposeObject(_hydBForm);
-                    Common.Util.DisposeObject(_cabinPressForm);
-                    Common.Util.DisposeObject(_rollTrimForm);
-                    Common.Util.DisposeObject(_pitchTrimForm);
+                    Common.Util.DisposeObject(_forms.ASIForm);
+                    Common.Util.DisposeObject(_forms.ADIForm);
+                    Common.Util.DisposeObject(_forms.BackupAdiForm);
+                    Common.Util.DisposeObject(_forms.AltimeterForm);
+                    Common.Util.DisposeObject(_forms.AOAIndexerForm);
+                    Common.Util.DisposeObject(_forms.AOAIndicatorForm);
+                    Common.Util.DisposeObject(_forms.CautionPanelForm);
+                    Common.Util.DisposeObject(_forms.CMDSPanelForm);
+                    Common.Util.DisposeObject(_forms.CompassForm);
+                    Common.Util.DisposeObject(_forms.DEDForm);
+                    Common.Util.DisposeObject(_forms.PFLForm);
+                    Common.Util.DisposeObject(_forms.EPUFuelForm);
+                    Common.Util.DisposeObject(_forms.AccelerometerForm);
+                    Common.Util.DisposeObject(_forms.FTIT1Form);
+                    Common.Util.DisposeObject(_forms.FTIT2Form);
+                    Common.Util.DisposeObject(_forms.FuelFlowForm);
+                    Common.Util.DisposeObject(_forms.ISISForm);
+                    Common.Util.DisposeObject(_forms.FuelQuantityForm);
+                    Common.Util.DisposeObject(_forms.HSIForm);
+                    Common.Util.DisposeObject(_forms.EHSIForm);
+                    Common.Util.DisposeObject(_forms.LandingGearLightsForm);
+                    Common.Util.DisposeObject(_forms.NWSIndexerForm);
+                    Common.Util.DisposeObject(_forms.NOZPos1Form);
+                    Common.Util.DisposeObject(_forms.NOZPos2Form);
+                    Common.Util.DisposeObject(_forms.OILGauge1Form);
+                    Common.Util.DisposeObject(_forms.OILGauge2Form);
+                    Common.Util.DisposeObject(_forms.RWRForm);
+                    Common.Util.DisposeObject(_forms.SpeedbrakeForm);
+                    Common.Util.DisposeObject(_forms.RPM1Form);
+                    Common.Util.DisposeObject(_forms.RPM2Form);
+                    Common.Util.DisposeObject(_forms.VVIForm);
+                    Common.Util.DisposeObject(_forms.HydAForm);
+                    Common.Util.DisposeObject(_forms.HydBForm);
+                    Common.Util.DisposeObject(_forms.CabinPressForm);
+                    Common.Util.DisposeObject(_forms.RollTrimForm);
+                    Common.Util.DisposeObject(_forms.PitchTrimForm);
 
-                    Common.Util.DisposeObject(_mfd4Form);
-                    Common.Util.DisposeObject(_mfd3Form);
-                    Common.Util.DisposeObject(_leftMfdForm);
-                    Common.Util.DisposeObject(_rightMfdForm);
-                    Common.Util.DisposeObject(_hudForm);
+                    Common.Util.DisposeObject(_forms.MFD4Form);
+                    Common.Util.DisposeObject(_forms.MFD3Form);
+                    Common.Util.DisposeObject(_forms.LeftMFDForm);
+                    Common.Util.DisposeObject(_forms.RightMfdForm);
+                    Common.Util.DisposeObject(_forms.HUDForm);
                     Common.Util.DisposeObject(_texSmReader);
                     Common.Util.DisposeObject(_texSmStatusReader);
                     Common.Util.DisposeObject(_falconSmReader);
