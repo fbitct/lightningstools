@@ -3,7 +3,7 @@ using LightningGauges.Renderers;
 
 namespace MFDExtractor.EventSystem
 {
-	internal interface IEHSIStateTracker
+	public interface IEHSIStateTracker
 	{
 		DateTime? RightKnobDepressedTime { get; set; }
 		DateTime? RightKnobLastActivityTime { get; set; }
@@ -12,7 +12,7 @@ namespace MFDExtractor.EventSystem
 		void UpdateEHSIBrightnessLabelVisibility();
 	}
 
-	class EHSIStateTracker : IEHSIStateTracker
+	public class EHSIStateTracker : IEHSIStateTracker
 	{
 		public DateTime? RightKnobDepressedTime { get; set; }
 		public DateTime? RightKnobLastActivityTime { get; set; }

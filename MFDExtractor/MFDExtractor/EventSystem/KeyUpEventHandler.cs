@@ -15,17 +15,17 @@ namespace MFDExtractor.EventSystem
 		private readonly KeySettings _keySettings;
 		private readonly IKeyEventArgsAugmenter _keyEventArgsAugmenter;
 		private readonly IEHSIStateTracker _ehsiStateTracker;
-		private readonly IInputEventHandler _ehsiRightKnobReleased;
+		private readonly IInputEvents _inputEvents;
 		public KeyUpEventHandler(
 			KeySettings keySettings, 
 			IEHSIStateTracker ehsiStateTracker,
-			IInputEventHandler ehsiRightKnobReleased,
+			IInputEvents inputEvents,
 			IKeyEventArgsAugmenter keyEventArgsAugmenter = null
 			)
 		{
 			_keySettings = keySettings;
 			_ehsiStateTracker = ehsiStateTracker;
-			_ehsiRightKnobReleased = ehsiRightKnobReleased;
+			_inputEvents = inputEvents;
 			_keyEventArgsAugmenter = keyEventArgsAugmenter ?? new KeyEventArgsAugmenter();
 		}
 
@@ -61,7 +61,7 @@ namespace MFDExtractor.EventSystem
 				)
 				)
 			{
-				_ehsiRightKnobReleased.Raise();
+				_inputEvents.EHSIRightKnobReleased.Handle();
 			}
 		}
 	}

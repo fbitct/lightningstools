@@ -15,89 +15,58 @@ namespace MFDExtractor.EventSystem
 		private readonly IDIHotkeyDetection _diHotkeyDetection;
 		private readonly IEHSIStateTracker _ehsiStateTracker;
 		private readonly KeySettings _keySettings;
-		private readonly IInputEventHandler 
-			_nightVisionModeIsToggled,
-			_airspeedIndexDecreasedByOne,_airspeedIndexIncreasedByOne,
-			_ehsiLeftKnobDecreasedByOne,_ehsiLeftKnobIncreasedByOne,
-			_ehsiRightKnobDecreasedByOne,_ehsiRightKnobIncreasedByOne,
-			_ehsiRightKnobDepressed,_ehsiRightKnobReleased,
-			_ehsiMenuButtonDepressed, 
-			_isisBrightButtonDepressed, _isisStandardButtonDepressed,
-			_azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased,
-			_accelerometerIsReset;
+		private readonly IInputEvents _inputEvents;
 		
 		public MediatorStateChangeHandler(
 			KeySettings keySettings,
 			IDirectInputEventHotkeyFilter directInputEventHotkeyFilter,
 			IDIHotkeyDetection diHotkeyDetection,
 			IEHSIStateTracker ehsiStateTracker,
-			IInputEventHandler nightVisionModeIsToggled, 
-			IInputEventHandler airspeedIndexDecreasedByOne,IInputEventHandler airspeedIndexIncreasedByOne,
-			IInputEventHandler ehsiLeftKnobDecreasedByOne, IInputEventHandler ehsiLeftKnobIncreasedByOne, 
-			IInputEventHandler ehsiRightKnobDecreasedByOne, IInputEventHandler ehsiRightKnobIncreasedByOne, 
-			IInputEventHandler ehsiRightKnobDepressed, IInputEventHandler ehsiRightKnobReleased,
-			IInputEventHandler ehsiMenuButtonDepressed, 
-			IInputEventHandler isisBrightButtonDepressed, IInputEventHandler isisStandardButtonDepressed, 
-			IInputEventHandler azimuthIndicatorBrightnessIncreased, IInputEventHandler azimuthIndicatorBrightnessDecreased, 
-			IInputEventHandler accelerometerIsReset)
+			IInputEvents inputEvents)
 		{
 			_keySettings = keySettings;
 			_directInputEventHotkeyFilter = directInputEventHotkeyFilter;
 			_diHotkeyDetection = diHotkeyDetection;
-			_nightVisionModeIsToggled = nightVisionModeIsToggled;
-			_airspeedIndexIncreasedByOne = airspeedIndexIncreasedByOne;
-			_airspeedIndexDecreasedByOne = airspeedIndexDecreasedByOne;
-			_ehsiLeftKnobDecreasedByOne = ehsiLeftKnobDecreasedByOne;
-			_ehsiLeftKnobIncreasedByOne = ehsiLeftKnobIncreasedByOne;
-			_ehsiRightKnobDecreasedByOne = ehsiRightKnobDecreasedByOne;
-			_ehsiRightKnobIncreasedByOne = ehsiRightKnobIncreasedByOne;
-			_ehsiRightKnobDepressed = ehsiRightKnobDepressed;
-			_ehsiRightKnobReleased = ehsiRightKnobReleased;
 			_ehsiStateTracker = ehsiStateTracker;
-			_ehsiMenuButtonDepressed = ehsiMenuButtonDepressed;
-			_isisBrightButtonDepressed = isisBrightButtonDepressed;
-			_isisStandardButtonDepressed = isisStandardButtonDepressed;
-			_azimuthIndicatorBrightnessIncreased = azimuthIndicatorBrightnessIncreased;
-			_azimuthIndicatorBrightnessDecreased = azimuthIndicatorBrightnessDecreased;
-			_accelerometerIsReset = accelerometerIsReset;
+			_inputEvents = inputEvents;
 		}
 		public void HandleStateChange(object sender, PhysicalControlStateChangedEventArgs e)
 		{
 			if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.NVISKey))
 			{
-				_nightVisionModeIsToggled.Raise();
+				_inputEvents.NightVisionModeToggled.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.AirspeedIndexIncreaseKey))
 			{
-				_airspeedIndexIncreasedByOne.Raise();
+				_inputEvents.AirspeedIndexIncreasedByOne.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.AirspeedIndexDecreaseKey))
 			{
-				_airspeedIndexDecreasedByOne.Raise();
+				_inputEvents.AirspeedIndexDecreasedByOne.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.EHSIHeadingDecreaseKey))
 			{
-				_ehsiLeftKnobDecreasedByOne.Raise();
+				_inputEvents.EHSILeftKnobDecreasedByOne.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.EHSIHeadingIncreaseKey))
 			{
-				_ehsiLeftKnobIncreasedByOne.Raise();
+				_inputEvents.EHSILeftKnobIncreasedByOne.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.EHSICourseDecreaseKey))
 			{
-				_ehsiRightKnobDecreasedByOne.Raise();
+				_inputEvents.EHSIRightKnobDecreasedByOne.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.EHSICourseIncreaseKey))
 			{
-				_ehsiRightKnobIncreasedByOne.Raise();
+				_inputEvents.EHSIRightKnobIncreasedByOne.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.EHSICourseDepressedKey))
 			{
-				_ehsiRightKnobDepressed.Raise();
+				_inputEvents.EHSIRightKnobDepressed.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.EHSIMenuButtonDepressedKey))
 			{
-				_ehsiMenuButtonDepressed.Raise();
+				_inputEvents.EHSIMenuButtonDepressed.Handle();
 			}
 			else if (
 				!_diHotkeyDetection.DirectInputHotkeyIsTriggering(_keySettings.EHSICourseDepressedKey)
@@ -105,27 +74,27 @@ namespace MFDExtractor.EventSystem
 				_ehsiStateTracker.RightKnobIsPressed
 				)
 			{
-				_ehsiRightKnobReleased.Raise();
+				_inputEvents.EHSIRightKnobReleased.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.ISISBrightButtonKey))
 			{
-				_isisBrightButtonDepressed.Raise();
+				_inputEvents.ISISBrightButtonDepressed.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.ISISStandardButtonKey))
 			{
-				_isisStandardButtonDepressed.Raise();
+				_inputEvents.ISISStandardButtonDepressed.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.AzimuthIndicatorBrightnessIncreaseKey))
 			{
-				_azimuthIndicatorBrightnessIncreased.Raise();
+				_inputEvents.AzimuthIndicatorBrightnessIncreased.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.AzimuthIndicatorBrightnessDecreaseKey))
 			{
-				_azimuthIndicatorBrightnessDecreased.Raise();
+				_inputEvents.AzimuthIndicatorBrightnessDecreased.Handle();
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, _keySettings.AccelerometerResetKey))
 			{
-				_accelerometerIsReset.Raise();
+				_inputEvents.AccelerometerReset.Handle();
 			}
 		}
 	}

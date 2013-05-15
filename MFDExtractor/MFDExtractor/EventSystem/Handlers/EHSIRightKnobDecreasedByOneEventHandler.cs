@@ -7,15 +7,16 @@ using MFDExtractor.Properties;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	class EHSIRightKnobDecreasedByOne : IInputEventHandler
+	public interface IEHSIRightKnobDecreasedByOneEventHandler:IInputEventHandlerEventHandler{}
+	public class EHSIRightKnobDecreasedByOneEventHandler : IEHSIRightKnobDecreasedByOneEventHandler
 	{
 		private readonly IF16EHSI _ehsi;
-		public EHSIRightKnobDecreasedByOne(IF16EHSI ehsi)
+		public EHSIRightKnobDecreasedByOneEventHandler(IF16EHSI ehsi)
 		{
 			_ehsi = ehsi;
 		}
 
-		public void Raise()
+		public void Handle()
 		{
 			if (_ehsi.InstrumentState.ShowBrightnessLabel)
 			{

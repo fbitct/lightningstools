@@ -7,17 +7,18 @@ using MFDExtractor.Properties;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	class EHSIRightKnobIncreasedByOne : IInputEventHandler
+	public interface IEHSIRightKnobIncreasedByOneEventHandler:IInputEventHandlerEventHandler{}
+	public class EHSIRightKnobIncreasedByOneEventHandler : IEHSIRightKnobIncreasedByOneEventHandler
 	{
 		private readonly IEHSIStateTracker _ehsiStateTracker;
 		private readonly IF16EHSI _ehsi;
-		public EHSIRightKnobIncreasedByOne(IEHSIStateTracker ehsiStateTracker, IF16EHSI ehsi)
+		public EHSIRightKnobIncreasedByOneEventHandler(IEHSIStateTracker ehsiStateTracker, IF16EHSI ehsi)
 		{
 			_ehsiStateTracker = ehsiStateTracker;
 			_ehsi = ehsi;
 		}
 
-		public void Raise()
+		public void Handle()
 		{
 			_ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
 			if (_ehsi.InstrumentState.ShowBrightnessLabel)

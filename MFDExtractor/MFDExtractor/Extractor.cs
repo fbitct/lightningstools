@@ -403,16 +403,7 @@ namespace MFDExtractor
 	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
 	    private IEHSIStateTracker _ehsiStateTracker;
 
-		private readonly IInputEventHandler
-			_nightVisionModeIsToggled,
-			_airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne,
-			_ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne,
-			_ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne,
-			_ehsiRightKnobDepressed, _ehsiRightKnobReleased,
-			_ehsiMenuButtonDepressed,
-			_isisBrightButtonDepressed, _isisStandardButtonDepressed,
-			_azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased,
-			_accelerometerIsReset;
+		
 
 	    private readonly IKeyDownEventHandler _keyDownEventHandler;
 	    private readonly IKeyUpEventHandler _keyUpEventHandler;
@@ -420,6 +411,7 @@ namespace MFDExtractor
 	    private readonly IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
 	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
+	    private readonly IInputEvents _inputEvents;
 		#endregion
 
         #endregion
@@ -429,20 +421,12 @@ namespace MFDExtractor
 			IKeyDownEventHandler keyDownEventHandler = null, 
 			IKeyDownEventHandler keyUpEventHandler=null,
 			IKeyboardWatcher keyboardWatcher = null,
-			IInputEventHandler nightVisionModeIsToggled=null,
-			IInputEventHandler airspeedIndexDecreasedByOne = null, IInputEventHandler airspeedIndexIncreasedByOne = null,
-			IInputEventHandler ehsiLeftKnobDecreasedByOne = null, IInputEventHandler ehsiLeftKnobIncreasedByOne = null,
-			IInputEventHandler ehsiRightKnobDecreasedByOne = null, IInputEventHandler ehsiRightKnobIncreasedByOne = null,
-			IInputEventHandler ehsiRightKnobDepressed = null, IInputEventHandler ehsiRightKnobReleased = null,
-			IInputEventHandler ehsiMenuButtonDepressed = null,
-			IInputEventHandler isisBrightButtonDepressed = null, IInputEventHandler isisStandardButtonDepressed = null,
-			IInputEventHandler azimuthIndicatorBrightnessIncreased = null, IInputEventHandler azimuthIndicatorBrightnessDecreased = null,
-			IInputEventHandler accelerometerIsReset = null,
 			IDirectInputEventHotkeyFilter directInputEventHotkeyFilter= null, 
 			IEHSIStateTracker ehsiStateTracker =null, 
 			IClientSideIncomingMessageDispatcher clientSideIncomingMessageDispatcher = null,
 			IServerSideIncomingMessageDispatcher serverSideIncomingMessageDispatcher = null, 
-			IGdiPlusOptionsReader gdiPlusOptionsReader=null)
+			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
+			IInputEvents inputEvents = null)
         {
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
@@ -453,39 +437,7 @@ namespace MFDExtractor
 			State = new ExtractorState();
 
 			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
-			_nightVisionModeIsToggled = nightVisionModeIsToggled ?? new NightVisionModeIsToggled(this);
-			_airspeedIndexIncreasedByOne = airspeedIndexIncreasedByOne ?? new AirspeedIndexIncreasedByOne(_renderers.ASI);
-			_airspeedIndexDecreasedByOne = airspeedIndexDecreasedByOne ?? new AirspeedIndexDecreasedByOne(_renderers.ASI);
-			_ehsiLeftKnobDecreasedByOne = ehsiLeftKnobDecreasedByOne ?? new EHSILeftKnobDecreasedByOne();
-			_ehsiLeftKnobIncreasedByOne = ehsiLeftKnobIncreasedByOne ?? new EHSILeftKnobIncreasedByOne();
-			_ehsiRightKnobDecreasedByOne = ehsiRightKnobDecreasedByOne ?? new EHSIRightKnobDecreasedByOne(_renderers.EHSI);
-			_ehsiRightKnobIncreasedByOne = ehsiRightKnobIncreasedByOne ?? new EHSIRightKnobIncreasedByOne(_ehsiStateTracker, _renderers.EHSI);
-	        _ehsiRightKnobDepressed = ehsiRightKnobDepressed ?? new EHSIRightKnobDepressed(_ehsiStateTracker);
-			_ehsiRightKnobReleased = ehsiRightKnobReleased ?? new EHSIRightKnobReleased(_ehsiStateTracker);
-			_ehsiMenuButtonDepressed = ehsiMenuButtonDepressed ?? new EHSIMenuButtonDepressed(_renderers.EHSI);
-			_isisBrightButtonDepressed = isisBrightButtonDepressed ?? new ISISBrightButtonDepressed(_renderers.ISIS);
-			_isisStandardButtonDepressed = isisStandardButtonDepressed ?? new ISISStandardButtonDepressed(_renderers.ISIS);
-			_azimuthIndicatorBrightnessIncreased = azimuthIndicatorBrightnessIncreased ?? new AzimuthIndicatorBrightnessIncreased(_renderers.RWR);
-			_azimuthIndicatorBrightnessDecreased = azimuthIndicatorBrightnessDecreased ?? new AzimuthIndicatorBrightnessDecreased(_renderers.RWR);
-			_accelerometerIsReset = accelerometerIsReset ?? new AccelerometerIsReset(_renderers.Accelerometer);
-	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,
-		        _diHotkeyDetection, _ehsiStateTracker,
-		        _nightVisionModeIsToggled,
-		        _airspeedIndexDecreasedByOne,
-		        _airspeedIndexIncreasedByOne,
-		        _ehsiLeftKnobDecreasedByOne,
-		        _ehsiLeftKnobIncreasedByOne,
-		        _ehsiRightKnobDecreasedByOne,
-		        _ehsiRightKnobIncreasedByOne,
-		        _ehsiRightKnobDepressed,
-		        _ehsiRightKnobReleased,
-		        _ehsiMenuButtonDepressed,
-		        _isisBrightButtonDepressed,
-		        _isisStandardButtonDepressed,
-		        _azimuthIndicatorBrightnessIncreased,
-		        _azimuthIndicatorBrightnessDecreased,
-		        _accelerometerIsReset
-		        );
+	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,_diHotkeyDetection, _ehsiStateTracker,_inputEvents );
             if (!Settings.Default.DisableDirectInputMediator)
             {
                 Mediator = new Mediator(null);
@@ -493,18 +445,12 @@ namespace MFDExtractor
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
             _bmsSupport = new BMSSupport();
-	        _keyDownEventHandler = keyDownEventHandler ??
-		        new KeyDownEventHandler(_ehsiStateTracker, _nightVisionModeIsToggled, _airspeedIndexDecreasedByOne,
-			        _airspeedIndexIncreasedByOne, _ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne,
-			        _ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne, _ehsiRightKnobDepressed, _ehsiRightKnobReleased,
-			        _ehsiMenuButtonDepressed, _isisBrightButtonDepressed, _isisStandardButtonDepressed,
-			        _azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased, _accelerometerIsReset,
-			        _keySettings);
+	        _keyDownEventHandler = keyDownEventHandler ?? new KeyDownEventHandler(_ehsiStateTracker, _inputEvents, _keySettings);
 
-			_keyUpEventHandler = new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _ehsiRightKnobReleased);
+			_keyUpEventHandler = new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, _log);
-			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_nightVisionModeIsToggled, _airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne, _ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne, _ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne, _ehsiRightKnobDepressed, _ehsiRightKnobReleased, _ehsiMenuButtonDepressed, _accelerometerIsReset, _client);
-			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_nightVisionModeIsToggled, _airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne, _ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne, _ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne, _ehsiRightKnobDepressed, _ehsiRightKnobReleased, _ehsiMenuButtonDepressed, _isisBrightButtonDepressed, _isisStandardButtonDepressed, _azimuthIndicatorBrightnessIncreased, _azimuthIndicatorBrightnessDecreased, _accelerometerIsReset);
+			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
+			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
 
         }
         private void SetupRenderThreadWorkHelpers()

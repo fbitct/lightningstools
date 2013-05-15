@@ -3,16 +3,17 @@ using LightningGauges.Renderers;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	class EHSIMenuButtonDepressed : IInputEventHandler
+	public interface IEHSIMenuButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
+	public class EHSIMenuButtonDepressedEventHandler : IEHSIMenuButtonDepressedEventHandler
 	{
 		private readonly IF16EHSI _ehsi;
 
-		public EHSIMenuButtonDepressed(IF16EHSI ehsi)
+		public EHSIMenuButtonDepressedEventHandler(IF16EHSI ehsi)
 		{
 			_ehsi = ehsi;
 		}
 
-		public void Raise()
+		public void Handle()
 		{
 			var currentMode =_ehsi.InstrumentState.InstrumentMode;
 			F16EHSI.F16EHSIInstrumentState.InstrumentModes? newMode = null;

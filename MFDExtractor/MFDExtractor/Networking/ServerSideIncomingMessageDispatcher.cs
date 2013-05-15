@@ -1,5 +1,4 @@
 ﻿using System;
-using MFDExtractor.EventSystem;
 using MFDExtractor.EventSystem.Handlers;
 
 namespace MFDExtractor.Networking
@@ -11,28 +10,11 @@ namespace MFDExtractor.Networking
 
 	class ServerSideIncomingMessageDispatcher : IServerSideIncomingMessageDispatcher
 	{
-		private readonly IInputEventHandler
-			_nightVisionModeIsToggled,
-			_airspeedIndexDecreasedByOne, _airspeedIndexIncreasedByOne,
-			_ehsiLeftKnobDecreasedByOne, _ehsiLeftKnobIncreasedByOne,
-			_ehsiRightKnobDecreasedByOne, _ehsiRightKnobIncreasedByOne,
-			_ehsiRightKnobDepressed, _ehsiRightKnobReleased,
-			_ehsiMenuButtonDepressed,
-			_accelerometerIsReset;
+		private readonly IInputEvents _inputEvents;
 
-		public ServerSideIncomingMessageDispatcher(IInputEventHandler nightVisionModeIsToggled, IInputEventHandler airspeedIndexDecreasedByOne, IInputEventHandler airspeedIndexIncreasedByOne, IInputEventHandler ehsiLeftKnobDecreasedByOne, IInputEventHandler ehsiLeftKnobIncreasedByOne, IInputEventHandler ehsiRightKnobDecreasedByOne, IInputEventHandler ehsiRightKnobIncreasedByOne, IInputEventHandler ehsiRightKnobDepressed, IInputEventHandler ehsiRightKnobReleased, IInputEventHandler ehsiMenuButtonDepressed, IInputEventHandler isisBrightButtonDepressed, IInputEventHandler isisStandardButtonDepressed, IInputEventHandler azimuthIndicatorBrightnessIncreased, IInputEventHandler azimuthIndicatorBrightnessDecreased, IInputEventHandler accelerometerIsReset)
+		public ServerSideIncomingMessageDispatcher(IInputEvents inputEvents)
 		{
-			_nightVisionModeIsToggled = nightVisionModeIsToggled;
-			_airspeedIndexDecreasedByOne = airspeedIndexDecreasedByOne;
-			_airspeedIndexIncreasedByOne = airspeedIndexIncreasedByOne;
-			_ehsiLeftKnobDecreasedByOne = ehsiLeftKnobDecreasedByOne;
-			_ehsiLeftKnobIncreasedByOne = ehsiLeftKnobIncreasedByOne;
-			_ehsiRightKnobDecreasedByOne = ehsiRightKnobDecreasedByOne;
-			_ehsiRightKnobIncreasedByOne = ehsiRightKnobIncreasedByOne;
-			_ehsiRightKnobDepressed = ehsiRightKnobDepressed;
-			_ehsiRightKnobReleased = ehsiRightKnobReleased;
-			_ehsiMenuButtonDepressed = ehsiMenuButtonDepressed;
-			_accelerometerIsReset = accelerometerIsReset;
+			_inputEvents = inputEvents;
 		}
 
 		public void ProcessPendingMessages()
@@ -44,37 +26,37 @@ namespace MFDExtractor.Networking
 				switch (messageType)
 				{
 					case MessageTypes.ToggleNightMode:
-						_nightVisionModeIsToggled.Raise();
+						_inputEvents.NightVisionModeToggled.Handle();
 						break;
 					case MessageTypes.AirspeedIndexIncrease:
-						_airspeedIndexIncreasedByOne.Raise();
+						_inputEvents.AirspeedIndexIncreasedByOne.Handle();
 						break;
 					case MessageTypes.AirspeedIndexDecrease:
-						_airspeedIndexDecreasedByOne.Raise();
+						_inputEvents.AirspeedIndexDecreasedByOne.Handle();
 						break;
 					case MessageTypes.EHSILeftKnobIncrease:
-						_ehsiLeftKnobIncreasedByOne.Raise();
+						_inputEvents.EHSILeftKnobIncreasedByOne.Handle();
 						break;
 					case MessageTypes.EHSILeftKnobDecrease:
-						_ehsiLeftKnobDecreasedByOne.Raise();
+						_inputEvents.EHSILeftKnobDecreasedByOne.Handle();
 						break;
 					case MessageTypes.EHSIRightKnobIncrease:
-						_ehsiRightKnobIncreasedByOne.Raise();
+						_inputEvents.EHSIRightKnobIncreasedByOne.Handle();
 						break;
 					case MessageTypes.EHSIRightKnobDecrease:
-						_ehsiRightKnobDecreasedByOne.Raise();
+						_inputEvents.EHSIRightKnobDecreasedByOne.Handle();
 						break;
 					case MessageTypes.EHSIRightKnobDepressed:
-						_ehsiRightKnobDepressed.Raise();
+						_inputEvents.EHSIRightKnobDepressed.Handle();
 						break;
 					case MessageTypes.EHSIRightKnobReleased:
-						_ehsiRightKnobReleased.Raise();
+						_inputEvents.EHSIRightKnobReleased.Handle();
 						break;
 					case MessageTypes.EHSIMenuButtonDepressed:
-						_ehsiMenuButtonDepressed.Raise();
+						_inputEvents.EHSIMenuButtonDepressed.Handle();
 						break;
 					case MessageTypes.AccelerometerIsReset:
-						_accelerometerIsReset.Raise();
+						_inputEvents.AccelerometerReset.Handle();
 						break;
 				}
 				pendingMessage = ExtractorServer.GetNextPendingMessageToServerFromClient();

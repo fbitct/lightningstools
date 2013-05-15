@@ -4,9 +4,10 @@ using F4Utils.Process;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	class EHSILeftKnobIncreasedByOne : IInputEventHandler
+	public interface IEHSILeftKnobIncreasedByOneEventHandler:IInputEventHandlerEventHandler {}
+	public class EHSILeftKnobIncreasedByOneEventHandler : IEHSILeftKnobIncreasedByOneEventHandler
 	{
-		public void Raise()
+		public void Handle()
 		{
 			var falconDataFormat = Util.DetectFalconFormat();
 			var useIncrementByOne = false;

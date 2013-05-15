@@ -2,16 +2,17 @@
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	class EHSIRightKnobReleased : IInputEventHandler
+	public interface IEHSIRightKnobReleasedEventHandler:IInputEventHandlerEventHandler {}
+	public class EHSIRightKnobReleasedEventHandler : IEHSIRightKnobReleasedEventHandler
 	{
 		private readonly IEHSIStateTracker _ehsiStateTracker;
 
-		public EHSIRightKnobReleased(IEHSIStateTracker ehsiStateTracker)
+		public EHSIRightKnobReleasedEventHandler(IEHSIStateTracker ehsiStateTracker)
 		{
 			_ehsiStateTracker = ehsiStateTracker;
 		}
 
-		public void Raise()
+		public void Handle()
 		{
 			_ehsiStateTracker.RightKnobDepressedTime = null;
 			_ehsiStateTracker.RightKnobReleasedTime = DateTime.Now;
