@@ -2884,63 +2884,17 @@ namespace MFDExtractor
 
         private void SignalTrimIndicatorRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableRollTrimOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RollTrim)) ||
-                    (_forms.RollTrimForm != null && _forms.RollTrimForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.RollTrim_RenderEveryN ==
-                         Settings.Default.RollTrim_RenderOnN - 1) ||
-                        (_forms.RollTrimForm != null && _forms.RollTrimForm.RenderImmediately))
-                    {
-                        if (_forms.RollTrimForm != null)
-                        {
-                            _forms.RollTrimForm.RenderImmediately = false;
-                        }
-                        if (_rollTrimRenderStart != null)
-                        {
-                            _rollTrimRenderStart.Set();
-                        }
-                        if (_rollTrimRenderEnd != null)
-                        {
-                            toWait.Add(_rollTrimRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnablePitchTrimOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.PitchTrim)) ||
-                    (_forms.PitchTrimForm != null && _forms.PitchTrimForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.PitchTrim_RenderEveryN ==
-                         Settings.Default.PitchTrim_RenderOnN - 1) ||
-                        (_forms.PitchTrimForm != null && _forms.PitchTrimForm.RenderImmediately))
-                    {
-                        if (_forms.PitchTrimForm != null)
-                        {
-                            _forms.PitchTrimForm.RenderImmediately = false;
-                        }
-                        if (_pitchTrimRenderStart != null)
-                        {
-                            _pitchTrimRenderStart.Set();
-                        }
-                        if (_pitchTrimRenderEnd != null)
-                        {
-                            toWait.Add(_pitchTrimRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableRollTrimOutput, Settings.Default.RollTrim_RenderEveryN, Settings.Default.RollTrim_RenderOnN,
+                _forms.RollTrimForm, _rollTrimRenderStart, _rollTrimRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RollTrim));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnablePitchTrimOutput, Settings.Default.PitchTrim_RenderEveryN, Settings.Default.PitchTrim_RenderOnN,
+                _forms.PitchTrimForm, _pitchTrimRenderStart, _pitchTrimRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.PitchTrim));
         }
 
         private void SignalPrimaryFlightInstrumentRenderThreadsToStart(List<WaitHandle> toWait)
