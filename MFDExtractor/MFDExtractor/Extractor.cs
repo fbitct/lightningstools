@@ -2862,87 +2862,24 @@ namespace MFDExtractor
 
         private void SignalRightAuxEmulatedGaugesRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableHYDAOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HYDA)) ||
-                    (_forms.HydAForm != null && _forms.HydAForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.HYDA_RenderEveryN == Settings.Default.HYDA_RenderOnN - 1) ||
-                        (_forms.HydAForm != null && _forms.HydAForm.RenderImmediately))
-                    {
-                        if (_forms.HydAForm != null)
-                        {
-                            _forms.HydAForm.RenderImmediately = false;
-                        }
-                        if (_hydARenderStart != null)
-                        {
-                            _hydARenderStart.Set();
-                        }
-                        if (_hydARenderEnd != null)
-                        {
-                            toWait.Add(_hydARenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableHYDBOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HYDB)) ||
-                    (_forms.HydBForm != null && _forms.HydBForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.HYDB_RenderEveryN == Settings.Default.HYDB_RenderOnN - 1) ||
-                        (_forms.HydBForm != null && _forms.HydBForm.RenderImmediately))
-                    {
-                        if (_forms.HydBForm != null)
-                        {
-                            _forms.HydBForm.RenderImmediately = false;
-                        }
-                        if (_hydBRenderStart != null)
-                        {
-                            _hydBRenderStart.Set();
-                        }
-                        if (_hydBRenderEnd != null)
-                        {
-                            toWait.Add(_hydBRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableCabinPressOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CabinPress)) ||
-                    (_forms.CabinPressForm != null && _forms.CabinPressForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.CabinPress_RenderEveryN ==
-                         Settings.Default.CabinPress_RenderOnN - 1) ||
-                        (_forms.CabinPressForm != null && _forms.CabinPressForm.RenderImmediately))
-                    {
-                        if (_forms.CabinPressForm != null)
-                        {
-                            _forms.CabinPressForm.RenderImmediately = false;
-                        }
-                        if (_cabinPressRenderStart != null)
-                        {
-                            _cabinPressRenderStart.Set();
-                        }
-                        if (_cabinPressRenderEnd != null)
-                        {
-                            toWait.Add(_cabinPressRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableHYDAOutput, Settings.Default.HYDA_RenderEveryN, Settings.Default.HYDA_RenderOnN,
+                _forms.HydAForm, _hydARenderStart, _hydARenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HYDA));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableHYDBOutput, Settings.Default.HYDB_RenderEveryN, Settings.Default.HYDB_RenderOnN,
+                _forms.HydBForm, _hydBRenderStart, _hydBRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HYDB));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableCabinPressOutput, Settings.Default.CabinPress_RenderEveryN, Settings.Default.CabinPress_RenderOnN,
+                _forms.CabinPressForm, _cabinPressRenderStart, _cabinPressRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CabinPress));
+
         }
 
         private void SignalTrimIndicatorRenderThreadsToStart(List<WaitHandle> toWait)
