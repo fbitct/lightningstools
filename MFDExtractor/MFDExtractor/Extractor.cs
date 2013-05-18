@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
 using Common.InputSupport.UI;
+using Common.MacroProgramming;
 using Common.SimSupport;
 using Common.UI;
 using F4SharedMem;
@@ -2724,98 +2725,29 @@ namespace MFDExtractor
 
         private void SignalCautionPanelRenderThreadToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableCautionPanelOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CautionPanel)) ||
-                    (_forms.CautionPanelForm != null && _forms.CautionPanelForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.CautionPanel_RenderEveryN ==
-                         Settings.Default.CautionPanel_RenderOnN - 1) ||
-                        (_forms.CautionPanelForm != null && _forms.CautionPanelForm.RenderImmediately))
-                    {
-                        if (_forms.CautionPanelForm != null)
-                        {
-                            _forms.CautionPanelForm.RenderImmediately = false;
-                        }
-                        if (_cautionPanelRenderStart != null)
-                        {
-                            _cautionPanelRenderStart.Set();
-                        }
-                        if (_cautionPanelRenderEnd != null)
-                        {
-                            toWait.Add(_cautionPanelRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableCautionPanelOutput, Settings.Default.CautionPanel_RenderEveryN, Settings.Default.CautionPanel_RenderOnN,
+                _forms.CautionPanelForm, _cautionPanelRenderStart, _cautionPanelRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CautionPanel));
         }
 
         private void SignalGearPanelAccessoryRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableGearLightsOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.LandingGearLights)) ||
-                    (_forms.LandingGearLightsForm != null && _forms.LandingGearLightsForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.GearLights_RenderEveryN ==
-                         Settings.Default.GearLights_RenderOnN - 1) ||
-                        (_forms.LandingGearLightsForm != null && _forms.LandingGearLightsForm.RenderImmediately))
-                    {
-                        if (_forms.LandingGearLightsForm != null)
-                        {
-                            _forms.LandingGearLightsForm.RenderImmediately = false;
-                        }
-                        if (_landingGearLightsRenderStart != null)
-                        {
-                            _landingGearLightsRenderStart.Set();
-                        }
-                        if (_landingGearLightsRenderEnd != null)
-                        {
-                            toWait.Add(_landingGearLightsRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableSpeedbrakeOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Speedbrake)) ||
-                    (_forms.SpeedbrakeForm != null && _forms.SpeedbrakeForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.Speedbrake_RenderEveryN ==
-                         Settings.Default.Speedbrake_RenderOnN - 1) ||
-                        (_forms.SpeedbrakeForm != null && _forms.SpeedbrakeForm.RenderImmediately))
-                    {
-                        if (_forms.SpeedbrakeForm != null)
-                        {
-                            _forms.SpeedbrakeForm.RenderImmediately = false;
-                        }
-                        if (_speedbrakeRenderStart != null)
-                        {
-                            _speedbrakeRenderStart.Set();
-                        }
-                        if (_speedbrakeRenderEnd != null)
-                        {
-                            toWait.Add(_speedbrakeRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableGearLightsOutput, Settings.Default.GearLights_RenderEveryN, Settings.Default.GearLights_RenderOnN,
+                _forms.LandingGearLightsForm, _landingGearLightsRenderStart, _landingGearLightsRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.LandingGearLights));
+
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableSpeedbrakeOutput, Settings.Default.Speedbrake_RenderEveryN, Settings.Default.Speedbrake_RenderOnN,
+                _forms.SpeedbrakeForm, _speedbrakeRenderStart, _speedbrakeRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Speedbrake));
+
+
         }
 
         private void SignalDEDPFLRenderThreadsToStart(List<WaitHandle> toWait)
