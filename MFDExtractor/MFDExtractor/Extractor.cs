@@ -2752,61 +2752,18 @@ namespace MFDExtractor
 
         private void SignalDEDPFLRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableDEDOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.DED) ||
-                     (_forms.DEDForm != null && _forms.DEDForm.RenderImmediately)))
-                {
-                    if ((_renderCycleNum%Settings.Default.DED_RenderEveryN == Settings.Default.DED_RenderOnN - 1) ||
-                        (_forms.DEDForm != null && _forms.DEDForm.RenderImmediately))
-                    {
-                        if (_forms.DEDForm != null)
-                        {
-                            _forms.DEDForm.RenderImmediately = false;
-                        }
-                        if (_dedRenderStart != null)
-                        {
-                            _dedRenderStart.Set();
-                        }
-                        if (_dedRenderEnd != null)
-                        {
-                            toWait.Add(_dedRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnablePFLOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.PFL)) ||
-                    (_forms.PFLForm != null && _forms.PFLForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.PFL_RenderEveryN == Settings.Default.PFL_RenderOnN - 1) ||
-                        (_forms.PFLForm != null && _forms.PFLForm.RenderImmediately))
-                    {
-                        if (_forms.PFLForm != null)
-                        {
-                            _forms.PFLForm.RenderImmediately = false;
-                        }
-                        if (_pflRenderStart != null)
-                        {
-                            _pflRenderStart.Set();
-                        }
-                        if (_pflRenderEnd != null)
-                        {
-                            toWait.Add(_pflRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableDEDOutput, Settings.Default.DED_RenderEveryN, Settings.Default.DED_RenderOnN,
+                _forms.DEDForm, _dedRenderStart, _dedRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.DED));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnablePFLOutput, Settings.Default.PFL_RenderEveryN, Settings.Default.PFL_RenderOnN,
+                _forms.PFLForm, _pflRenderStart, _pflRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.PFL));
+            
         }
 
         private void SignalFuelInstrumentsRenderThreadsToStart(List<WaitHandle> toWait)
