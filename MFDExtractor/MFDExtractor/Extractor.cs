@@ -626,7 +626,6 @@ namespace MFDExtractor
                                                 settings.HUD_OutLRY);
 
 
-            _testMode = settings.TestMode;
             _threadPriority = settings.ThreadPriority;
             _compressionType = settings.CompressionType;
             _imageFormat = settings.NetworkImageFormat;
@@ -718,34 +717,23 @@ namespace MFDExtractor
                 {
                     if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                     {
-                        FalconDataFormats? format = F4Utils.Process.Util.DetectFalconFormat();
+                        var falconDataFormat = F4Utils.Process.Util.DetectFalconFormat();
 
                         //set automatic 3D mode for BMS
-                        if (format.HasValue && format.Value == FalconDataFormats.BMS4) _threeDeeMode = true;
+                        if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4) _threeDeeMode = true;
 
                         bool doMore = true;
-                        bool newReader = false;
                         if (_falconSmReader == null)
                         {
-                            if (format.HasValue)
-                            {
-                                _falconSmReader = new Reader(format.Value);
-                                newReader = true;
-                            }
-                            else
-                            {
-                                _falconSmReader = new Reader();
-                                newReader = true;
-                            }
+                            _falconSmReader = falconDataFormat.HasValue ? new Reader(falconDataFormat.Value) : new Reader();
                         }
                         else
                         {
-                            if (format.HasValue)
+                            if (falconDataFormat.HasValue)
                             {
-                                if (format.Value != _falconSmReader.DataFormat)
+                                if (falconDataFormat.Value != _falconSmReader.DataFormat)
                                 {
-                                    _falconSmReader = new Reader(format.Value);
-                                    newReader = true;
+                                    _falconSmReader = new Reader(falconDataFormat.Value);
                                 }
                             }
                             else
@@ -754,7 +742,6 @@ namespace MFDExtractor
                                 Common.Util.DisposeObject(_falconSmReader);
                                 _falconSmReader = null;
                                 _useBMSAdvancedSharedmemValues = false;
-                                newReader = false;
                             }
                         }
                         
@@ -762,46 +749,10 @@ namespace MFDExtractor
                         {
                             toReturn = _falconSmReader.GetCurrentData();
 
-                            bool computeRalt = false;
-                            if (Settings.Default.EnableISISOutput || NetworkMode == NetworkMode.Server)
-                            {
-                                computeRalt = true;
-                            }
+                            bool computeRalt = Settings.Default.EnableISISOutput || NetworkMode == NetworkMode.Server;
                             if (computeRalt)
                             {
-                                if (_terrainBrowser == null)
-                                {
-                                    _terrainBrowser = new TerrainBrowser(false);
-                                    _terrainBrowser.LoadCurrentTheaterTerrainDatabase();
-                                }
-                                if (_terrainBrowser != null && toReturn != null)
-                                {
-                                    var extensionData = new FlightDataExtension();
-                                    float terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
-                                    float ralt = -toReturn.z - terrainHeight;
-
-                                    //reset AGL altitude to zero if we're on the ground
-                                    if (
-                                        ((toReturn.lightBits & (int) LightBits.WOW) == (int) LightBits.WOW)
-                                        ||
-                                        (
-                                            ((toReturn.lightBits3 & (int) Bms4LightBits3.OnGround) ==
-                                             (int) Bms4LightBits3.OnGround)
-                                            &&
-                                            toReturn.DataFormat == FalconDataFormats.BMS4
-                                        )
-                                        )
-                                    {
-                                        ralt = 0;
-                                    }
-
-                                    if (ralt < 0)
-                                    {
-                                        ralt = 0;
-                                    }
-                                    extensionData.RadarAltitudeFeetAGL = ralt;
-                                    toReturn.ExtensionData = extensionData;
-                                }
+                                ComputeRadarAltitude(toReturn);
                             }
                         }
                     }
@@ -811,17 +762,45 @@ namespace MFDExtractor
                     }
                 }
             }
-            if (toReturn == null)
-            {
-                toReturn = new FlightData();
-                toReturn.hsiBits = Int32.MaxValue;
-            }
+            if (toReturn != null) return toReturn;
+            toReturn = new FlightData {hsiBits = Int32.MaxValue};
             return toReturn;
         }
 
- 
+	    private void ComputeRadarAltitude(FlightData toReturn)
+	    {
+	        if (_terrainBrowser != null && toReturn != null)
+	        {
+	            var extensionData = new FlightDataExtension();
+	            float terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
+	            float ralt = -toReturn.z - terrainHeight;
 
-        private Image GetMfd4Bitmap()
+	            //reset AGL altitude to zero if we're on the ground
+	            if (
+	                ((toReturn.lightBits & (int) LightBits.WOW) == (int) LightBits.WOW)
+	                    ||
+	                (
+	                    ((toReturn.lightBits3 & (int) Bms4LightBits3.OnGround) ==
+	                        (int) Bms4LightBits3.OnGround)
+	                        &&
+	                    toReturn.DataFormat == FalconDataFormats.BMS4
+	                    )
+	                )
+	            {
+	                ralt = 0;
+	            }
+
+	            if (ralt < 0)
+	            {
+	                ralt = 0;
+	            }
+	            extensionData.RadarAltitudeFeetAGL = ralt;
+	            toReturn.ExtensionData = extensionData;
+	        }
+	    }
+
+
+	    private Image GetMfd4Bitmap()
         {
             Image toReturn = null;
             if (_testMode)
