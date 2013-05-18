@@ -183,6 +183,7 @@
     <Compile Include="InstrumentFormSettings.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="Configuration\InputControlSelectionSettingReader.cs" />
+    <Compile Include="InstrumentRenderHelper.cs" />
     <Compile Include="InstrumentStateSnapshotCache.cs" />
     <Compile Include="Networking\ClientSideIncomingMessageDispatcher.cs" />
     <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />

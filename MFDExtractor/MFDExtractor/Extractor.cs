@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
 using Common.InputSupport.UI;
 using Common.SimSupport;
 using Common.UI;
-using Common.Win32;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using F4Utils.Process;
@@ -376,7 +375,8 @@ namespace MFDExtractor
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
 	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
 	    private readonly IInputEvents _inputEvents;
-		#endregion
+	    private readonly InstrumentRenderHelper _instrumentRenderHelper;
+        #endregion
 
         #endregion
 
@@ -390,7 +390,8 @@ namespace MFDExtractor
 			IClientSideIncomingMessageDispatcher clientSideIncomingMessageDispatcher = null,
 			IServerSideIncomingMessageDispatcher serverSideIncomingMessageDispatcher = null, 
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
-			IInputEvents inputEvents = null)
+			IInputEvents inputEvents = null,
+            IInstrumentRenderHelper instrumentRenderHelper = null)
         {
 			_forms = new InstrumentForms();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
@@ -399,6 +400,7 @@ namespace MFDExtractor
 			_rendererSetInitializer.Initialize(_gdiPlusOptions);
 			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_renderers.EHSI);
 			_directInputEventHotkeyFilter = directInputEventHotkeyFilter ?? new DirectInputEventHotkeyFilter();
+            _instrumentRenderHelper = new InstrumentRenderHelper();
 			State = new ExtractorState();
 
 			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
@@ -2623,7 +2625,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!_simRunning && !(_networkMode == NetworkMode.Client)) && !_testMode)
+                    if ((!_simRunning && _networkMode != NetworkMode.Client) && !_testMode)
                     {
                         Application.DoEvents();
                         Thread.Sleep(5);
@@ -4074,14 +4076,14 @@ namespace MFDExtractor
 
         private float GetIndicatedAltitude(float trueAltitude, float baroPressure, bool pressureInInchesOfMercury)
         {
-            float baroPressureInchesOfMercury = baroPressure;
+            var baroPressureInchesOfMercury = baroPressure;
             if (!pressureInInchesOfMercury)
             {
                 baroPressureInchesOfMercury = baroPressure/Constants.INCHES_MERCURY_TO_HECTOPASCALS;
             }
-            float baroDifference = baroPressureInchesOfMercury - 29.92f;
-            float baroChangePerThousandFeet = 1.08f;
-            float altitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
+            var baroDifference = baroPressureInchesOfMercury - 29.92f;
+            var baroChangePerThousandFeet = 1.08f;
+            var altitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
             return altitudeCorrection + trueAltitude;
         }
 
@@ -4104,157 +4106,44 @@ namespace MFDExtractor
             {
                 return;
             }
-            Bitmap image = null;
-            try
-            {
-                if (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270"))
-                {
-                    image = new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width,
-                                       PixelFormat.Format32bppPArgb);
-                }
-                else
-                {
-                    image = new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height,
-                                       PixelFormat.Format32bppPArgb);
-                }
-                using (Graphics g = Graphics.FromImage(image))
-                {
-                    try
-                    {
-                        renderer.Render(g, new Rectangle(0, 0, image.Width, image.Height));
-                        targetForm.LastRenderedOn = DateTime.Now;
-                        if (HighlightingBorderShouldBeDisplayedOnTargetForm(targetForm))
-                        {
-                            Color scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
-                            var scopeGreenPen = new Pen(scopeGreenColor);
-                            scopeGreenPen.Width = 5;
-                            g.DrawRectangle(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
-                            targetForm.RenderImmediately = true;
-                        }
-                    }
-                    catch (ThreadAbortException)
-                    {
-                    }
-                    catch (ThreadInterruptedException)
-                    {
-                    }
-                    catch (Exception e)
-                    {
-                        try
-                        {
-                            _log.Error("An error occurred while rendering " + renderer.GetType(), e);
-                        }
-                        catch (NullReferenceException ex)
-                        {
-                        }
-                    }
-                }
-                if (rotation != RotateFlipType.RotateNoneFlipNone)
-                {
-                    image.RotateFlip(rotation);
-                }
-                using (var graphics = targetForm.CreateGraphics())
-                {
-					if (State.NightMode)
-                    {
-                        var nvisImageAttribs = new ImageAttributes();
-                        var nvisColorMatrix = Util.GetNVISColorMatrix(255, 255);
-                        nvisImageAttribs.SetColorMatrix(nvisColorMatrix, ColorMatrixFlag.Default);
-                        graphics.DrawImage(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height,
-                                           GraphicsUnit.Pixel, nvisImageAttribs);
-                    }
-                    else if (monochrome)
-                    {
-                        var monochromeImageAttribs = new ImageAttributes();
-						var greyscaleColorMatrix = Util.GreyscaleColorMatrix;
-                        monochromeImageAttribs.SetColorMatrix(greyscaleColorMatrix, ColorMatrixFlag.Default);
-                        graphics.DrawImage(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height,
-                                           GraphicsUnit.Pixel, monochromeImageAttribs);
-                    }
-                    else
-                    {
-                        graphics.DrawImageUnscaled(image, 0, 0, image.Width, image.Height);
-                    }
-                }
-            }
-            catch (ExternalException)
-            {
-                //GDI+ error message we don't care about
-            }
-            catch (ObjectDisposedException)
-            {
-                //GDI+ error message thrown on operations on disposed images -- can happen when one thread disposes while shutting-down thread tries to render
-            }
-            catch (ArgumentException)
-            {
-                //GDI+ error message we don't care about
-            }
-            catch (OutOfMemoryException)
-            {
-                //bullshit OOM messages from GDI+
-            }
-            catch (InvalidOperationException)
-            {
-                //GDI+ error message we don't care about
-            }
-            finally
-            {
-                Common.Util.DisposeObject(image);
-            }
+            _instrumentRenderHelper.Render(renderer, targetForm, rotation, monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(targetForm), _nightMode);
             var endTime = DateTime.Now;
             var elapsed = endTime.Subtract(startTime);
-            if (elapsed.TotalMilliseconds < MIN_RENDERER_PASS_TIME_MILLSECONDS)
+            if (!(elapsed.TotalMilliseconds < MIN_RENDERER_PASS_TIME_MILLSECONDS)) return;
+            var toWait = new TimeSpan(0, 0, 0, 0,
+                (int) (MIN_RENDERER_PASS_TIME_MILLSECONDS - elapsed.TotalMilliseconds));
+            if (toWait.TotalMilliseconds < MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER)
             {
-                var toWait = new TimeSpan(0, 0, 0, 0,
-                                          (int) (MIN_RENDERER_PASS_TIME_MILLSECONDS - elapsed.TotalMilliseconds));
-                if (toWait.TotalMilliseconds < MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER)
-                {
-                    toWait = new TimeSpan(0, 0, 0, 0, MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER);
-                }
-                Thread.Sleep(toWait);
+                toWait = new TimeSpan(0, 0, 0, 0, MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER);
             }
+            Thread.Sleep(toWait);
         }
 
-        private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
+
+	    private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
         {
-			return targetForm.SizingOrMovingCursorsAreDisplayed  && Settings.Default.HighlightOutputWindows
-                ;
+			return targetForm.SizingOrMovingCursorsAreDisplayed  && Settings.Default.HighlightOutputWindows;
         }
 
-        private bool WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow()
+        private static bool WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow()
         {
-            var retVal = false;
-            try
-            {
-                foreach (Form form in Application.OpenForms)
-                {
-                    var iForm = form as InstrumentForm;
-                    if (iForm != null)
-                    {
-                        if (
-                            iForm.Visible && iForm.SizingOrMovingCursorsAreDisplayed
-                            &&
-                            (
-                                ((Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left)
-                                ||
-                                ((Control.MouseButtons & MouseButtons.Right) == MouseButtons.Right)
-                            )
-                            )
-                        {
-                            retVal = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            catch (InvalidOperationException e)
-                //if the OpenForms collection is modified during our loop (by the application shutting down, etc), we need to swallow this here
-            {
-            }
-            return retVal;
+            return MouseButtonDown && Application.OpenForms.OfType<InstrumentForm>().Any(x => x.Visible && x.SizingOrMovingCursorsAreDisplayed);
         }
 
-        #endregion
+	    private static bool MouseButtonDown
+	    {
+	        get 
+            { 
+                return 
+                (
+                    ((Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left) 
+                    || 
+                    ((Control.MouseButtons & MouseButtons.Right) == MouseButtons.Right)
+                ); 
+            }
+	    }
+
+	    #endregion
 
         #region MFD rendering thread-work methods
 
