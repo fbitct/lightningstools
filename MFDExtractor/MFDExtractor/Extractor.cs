@@ -364,7 +364,7 @@ namespace MFDExtractor
         private IRenderThreadWorkHelper _pitchTrimRenderThreadWorkHelper;
         private readonly DIHotkeyDetection _diHotkeyDetection;
 	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
-	    private IEHSIStateTracker _ehsiStateTracker;
+	    private readonly IEHSIStateTracker _ehsiStateTracker;
 
 		
 
@@ -375,7 +375,8 @@ namespace MFDExtractor
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
 	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
 	    private readonly IInputEvents _inputEvents;
-	    private readonly InstrumentRenderHelper _instrumentRenderHelper;
+	    private readonly IInstrumentRenderHelper _instrumentRenderHelper;
+        private readonly IRenderStartHelper _renderStartHelper;
         #endregion
 
         #endregion
@@ -391,19 +392,22 @@ namespace MFDExtractor
 			IServerSideIncomingMessageDispatcher serverSideIncomingMessageDispatcher = null, 
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null,
-            IInstrumentRenderHelper instrumentRenderHelper = null)
+            IInstrumentRenderHelper instrumentRenderHelper = null,
+            IRenderStartHelper renderStartHelper = null)
         {
 			_forms = new InstrumentForms();
+            _renderStartHelper = renderStartHelper ?? new RenderStartHelper();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
 			_rendererSetInitializer = new RendererSetInitializer(_renderers);
 			_rendererSetInitializer.Initialize(_gdiPlusOptions);
 			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_renderers.EHSI);
 			_directInputEventHotkeyFilter = directInputEventHotkeyFilter ?? new DirectInputEventHotkeyFilter();
-            _instrumentRenderHelper = new InstrumentRenderHelper();
+            _instrumentRenderHelper = instrumentRenderHelper ?? new InstrumentRenderHelper();
 			State = new ExtractorState();
 
 			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
+            _inputEvents = inputEvents ?? new InputEvents(_renderers, _ehsiStateTracker, this);
 	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,_diHotkeyDetection, _ehsiStateTracker,_inputEvents );
             if (!Settings.Default.DisableDirectInputMediator)
             {
@@ -2653,6 +2657,7 @@ namespace MFDExtractor
 
         private void SignalRwrRenderThreadToStart(List<WaitHandle> toWait)
         {
+
             if (!(_running && _keepRunning))
             {
                 return;
@@ -2710,36 +2715,11 @@ namespace MFDExtractor
 
         private void SignalCMDSRenderThreadToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableCMDSOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CMDSPanel)) ||
-                    (_forms.CMDSPanelForm != null && _forms.CMDSPanelForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.CMDS_RenderEveryN == Settings.Default.CMDS_RenderOnN - 1) ||
-                        (_forms.CMDSPanelForm != null && _forms.CMDSPanelForm.RenderImmediately))
-                    {
-                        if (_forms.CMDSPanelForm != null)
-                        {
-                            _forms.CMDSPanelForm.RenderImmediately = false;
-                        }
-                        if (_cmdsPanelRenderStart != null)
-                        {
-                            _cmdsPanelRenderStart.Set();
-                        }
-                        if (_cmdsPanelRenderEnd != null)
-                        {
-                            toWait.Add(_cmdsPanelRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning, 
+                Settings.Default.EnableCMDSOutput, Settings.Default.CMDS_RenderEveryN, Settings.Default.CMDS_RenderOnN,
+                _forms.CMDSPanelForm, _cmdsPanelRenderStart, _cmdsPanelRenderEnd, 
+                _testMode, _renderCycleNum, 
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.CMDSPanel));
         }
 
         private void SignalCautionPanelRenderThreadToStart(List<WaitHandle> toWait)
