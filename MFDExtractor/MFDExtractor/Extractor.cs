@@ -2600,7 +2600,7 @@ namespace MFDExtractor
                         SignalEngine2GaugesRenderThreadsToStart(toWait);
                         SignalRightAuxEmulatedGaugesRenderThreadsToStart(toWait);
                         SignalTrimIndicatorRenderThreadsToStart(toWait);
-                        SignalDEDPFLRenderThreadsToStart(toWait);
+                        SignalDEDAndPFLRenderThreadsToStart(toWait);
                         SignalCautionPanelRenderThreadToStart(toWait);
                         SignalCMDSRenderThreadToStart(toWait);
                         SignalGearPanelAccessoryRenderThreadsToStart(toWait);
@@ -2750,7 +2750,7 @@ namespace MFDExtractor
 
         }
 
-        private void SignalDEDPFLRenderThreadsToStart(List<WaitHandle> toWait)
+        private void SignalDEDAndPFLRenderThreadsToStart(List<WaitHandle> toWait)
         {
             _renderStartHelper.Start(toWait, _running, _keepRunning,
                 Settings.Default.EnableDEDOutput, Settings.Default.DED_RenderEveryN, Settings.Default.DED_RenderOnN,
@@ -2790,63 +2790,18 @@ namespace MFDExtractor
 
         private void SignalIndexerRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableAOAIndexerOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.AOAIndexer)) ||
-                    (_forms.AOAIndexerForm != null && _forms.AOAIndexerForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.AOAIndexer_RenderEveryN ==
-                         Settings.Default.AOAIndexer_RenderOnN - 1) ||
-                        (_forms.AOAIndexerForm != null && _forms.AOAIndexerForm.RenderImmediately))
-                    {
-                        if (_forms.AOAIndexerForm != null)
-                        {
-                            _forms.AOAIndexerForm.RenderImmediately = false;
-                        }
-                        if (_aoaIndexerRenderStart != null)
-                        {
-                            _aoaIndexerRenderStart.Set();
-                        }
-                        if (_aoaIndexerRenderEnd != null)
-                        {
-                            toWait.Add(_aoaIndexerRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableNWSIndexerOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NWSIndexer)) ||
-                    (_forms.NWSIndexerForm != null && _forms.NWSIndexerForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.NWSIndexer_RenderEveryN ==
-                         Settings.Default.NWSIndexer_RenderOnN - 1) ||
-                        (_forms.NWSIndexerForm != null && _forms.NWSIndexerForm.RenderImmediately))
-                    {
-                        if (_forms.NWSIndexerForm != null)
-                        {
-                            _forms.NWSIndexerForm.RenderImmediately = false;
-                        }
-                        if (_nwsIndexerRenderStart != null)
-                        {
-                            _nwsIndexerRenderStart.Set();
-                        }
-                        if (_nwsIndexerRenderEnd != null)
-                        {
-                            toWait.Add(_nwsIndexerRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableAOAIndexerOutput, Settings.Default.AOAIndexer_RenderEveryN, Settings.Default.AOAIndexer_RenderOnN,
+                _forms.AOAIndexerForm, _aoaIndexerRenderStart, _aoaIndexerRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.AOAIndexer));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableNWSIndexerOutput, Settings.Default.NWSIndexer_RenderEveryN, Settings.Default.NWSIndexer_RenderOnN,
+                _forms.NWSIndexerForm, _nwsIndexerRenderStart, _nwsIndexerRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NWSIndexer));
+            
         }
 
         private void SignalEngine1GaugesRenderThreadsToStart(List<WaitHandle> toWait)
