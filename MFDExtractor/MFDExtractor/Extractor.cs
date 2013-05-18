@@ -2835,111 +2835,29 @@ namespace MFDExtractor
 
         private void SignalEngine2GaugesRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableFTIT2Output)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FTIT2)) ||
-                    (_forms.FTIT2Form != null && _forms.FTIT2Form.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.FTIT2_RenderEveryN == Settings.Default.FTIT2_RenderOnN - 1) ||
-                        (_forms.FTIT2Form != null && _forms.FTIT2Form.RenderImmediately))
-                    {
-                        if (_forms.FTIT2Form != null)
-                        {
-                            _forms.FTIT2Form.RenderImmediately = false;
-                        }
-                        if (_ftit2RenderStart != null)
-                        {
-                            _ftit2RenderStart.Set();
-                        }
-                        if (_ftit2RenderEnd != null)
-                        {
-                            toWait.Add(_ftit2RenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableNOZ2Output)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NOZ2)) ||
-                    (_forms.NOZPos2Form != null && _forms.NOZPos2Form.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.NOZ2_RenderEveryN == Settings.Default.NOZ2_RenderOnN - 1) ||
-                        (_forms.NOZPos2Form != null && _forms.NOZPos2Form.RenderImmediately))
-                    {
-                        if (_forms.NOZPos2Form != null)
-                        {
-                            _forms.NOZPos2Form.RenderImmediately = false;
-                        }
-                        if (_nozPos2RenderStart != null)
-                        {
-                            _nozPos2RenderStart.Set();
-                        }
-                        if (_nozPos2RenderEnd != null)
-                        {
-                            toWait.Add(_nozPos2RenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableOIL2Output)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.OIL2)) ||
-                    (_forms.OILGauge2Form != null && _forms.OILGauge2Form.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.OIL2_RenderEveryN == Settings.Default.OIL2_RenderOnN - 1) ||
-                        (_forms.OILGauge2Form != null && _forms.OILGauge2Form.RenderImmediately))
-                    {
-                        if (_forms.OILGauge2Form != null)
-                        {
-                            _forms.OILGauge2Form.RenderImmediately = false;
-                        }
-                        if (_oilGauge2RenderStart != null)
-                        {
-                            _oilGauge2RenderStart.Set();
-                        }
-                        if (_oilGauge2RenderEnd != null)
-                        {
-                            toWait.Add(_oilGauge2RenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableRPM2Output)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RPM2)) ||
-                    (_forms.RPM2Form != null && _forms.RPM2Form.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.RPM2_RenderEveryN == Settings.Default.RPM2_RenderOnN - 1) ||
-                        (_forms.RPM2Form != null && _forms.RPM2Form.RenderImmediately))
-                    {
-                        if (_forms.RPM2Form != null)
-                        {
-                            _forms.RPM2Form.RenderImmediately = false;
-                        }
-                        if (_rpm2RenderStart != null)
-                        {
-                            _rpm2RenderStart.Set();
-                        }
-                        if (_rpm2RenderEnd != null)
-                        {
-                            toWait.Add(_rpm2RenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableFTIT2Output, Settings.Default.FTIT2_RenderEveryN, Settings.Default.FTIT2_RenderOnN,
+                _forms.FTIT2Form, _ftit2RenderStart, _ftit2RenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FTIT2));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableNOZ2Output, Settings.Default.NOZ2_RenderEveryN, Settings.Default.NOZ2_RenderOnN,
+                _forms.NOZPos2Form, _nozPos2RenderStart, _nozPos2RenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.NOZ2));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableOIL2Output, Settings.Default.OIL2_RenderEveryN, Settings.Default.OIL2_RenderOnN,
+                _forms.OILGauge2Form, _oilGauge2RenderStart, _oilGauge2RenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.OIL2));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableRPM2Output, Settings.Default.RPM2_RenderEveryN, Settings.Default.RPM2_RenderOnN,
+                _forms.RPM2Form, _rpm2RenderStart, _rpm2RenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RPM2));
         }
 
         private void SignalRightAuxEmulatedGaugesRenderThreadsToStart(List<WaitHandle> toWait)
