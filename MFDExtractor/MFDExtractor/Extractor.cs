@@ -2768,88 +2768,24 @@ namespace MFDExtractor
 
         private void SignalFuelInstrumentsRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableFuelFlowOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FuelFlow)) ||
-                    (_forms.FuelFlowForm != null && _forms.FuelFlowForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.FuelFlow_RenderEveryN ==
-                         Settings.Default.FuelFlow_RenderOnN - 1) ||
-                        (_forms.FuelFlowForm != null && _forms.FuelFlowForm.RenderImmediately))
-                    {
-                        if (_forms.FuelFlowForm != null)
-                        {
-                            _forms.FuelFlowForm.RenderImmediately = false;
-                        }
-                        if (_fuelFlowRenderStart != null)
-                        {
-                            _fuelFlowRenderStart.Set();
-                        }
-                        if (_fuelFlowRenderEnd != null)
-                        {
-                            toWait.Add(_fuelFlowRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableFuelQuantityOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FuelQuantity)) ||
-                    (_forms.FuelQuantityForm != null && _forms.FuelQuantityForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.FuelQuantity_RenderEveryN ==
-                         Settings.Default.FuelQuantity_RenderOnN - 1) ||
-                        (_forms.FuelQuantityForm != null && _forms.FuelQuantityForm.RenderImmediately))
-                    {
-                        if (_forms.FuelQuantityForm != null)
-                        {
-                            _forms.FuelQuantityForm.RenderImmediately = false;
-                        }
-                        if (_fuelQuantityRenderStart != null)
-                        {
-                            _fuelQuantityRenderStart.Set();
-                        }
-                        if (_fuelQuantityRenderEnd != null)
-                        {
-                            toWait.Add(_fuelQuantityRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableEPUFuelOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.EPUFuel)) ||
-                    (_forms.EPUFuelForm != null && _forms.EPUFuelForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.EPUFuel_RenderEveryN == Settings.Default.EPUFuel_RenderOnN - 1) ||
-                        (_forms.EPUFuelForm != null && _forms.EPUFuelForm.RenderImmediately))
-                    {
-                        if (_forms.EPUFuelForm != null)
-                        {
-                            _forms.EPUFuelForm.RenderImmediately = false;
-                        }
-                        if (_epuFuelRenderStart != null)
-                        {
-                            _epuFuelRenderStart.Set();
-                        }
-                        if (_epuFuelRenderEnd != null)
-                        {
-                            toWait.Add(_epuFuelRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableFuelFlowOutput, Settings.Default.FuelFlow_RenderEveryN, Settings.Default.FuelFlow_RenderOnN,
+                _forms.FuelFlowForm, _fuelFlowRenderStart, _fuelFlowRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FuelFlow));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableFuelQuantityOutput, Settings.Default.FuelQuantity_RenderEveryN, Settings.Default.FuelQuantity_RenderOnN,
+                _forms.FuelQuantityForm, _fuelQuantityRenderStart, _fuelQuantityRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.FuelQuantity));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableEPUFuelOutput, Settings.Default.EPUFuel_RenderEveryN, Settings.Default.EPUFuel_RenderOnN,
+                _forms.EPUFuelForm, _epuFuelRenderStart, _epuFuelRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.EPUFuel));
+
         }
 
         private void SignalIndexerRenderThreadsToStart(List<WaitHandle> toWait)
