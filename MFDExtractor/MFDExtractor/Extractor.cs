@@ -5,12 +5,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
 using Common.InputSupport.UI;
-using Common.MacroProgramming;
 using Common.SimSupport;
 using Common.UI;
 using F4SharedMem;
@@ -2659,38 +2657,11 @@ namespace MFDExtractor
 
         private void SignalRwrRenderThreadToStart(List<WaitHandle> toWait)
         {
-
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
-
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableRWROutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RWR)) ||
-                    (_forms.RWRForm != null && _forms.RWRForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.RWR_RenderEveryN == Settings.Default.RWR_RenderOnN - 1) ||
-                        (_forms.RWRForm != null && _forms.RWRForm.RenderImmediately))
-                    {
-                        if (_forms.RWRForm != null)
-                        {
-                            _forms.RWRForm.RenderImmediately = false;
-                        }
-                        if (_rwrRenderStart != null)
-                        {
-                            _rwrRenderStart.Set();
-                        }
-                        if (_rwrRenderEnd != null)
-                        {
-                            toWait.Add(_rwrRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableRWROutput, Settings.Default.RWR_RenderEveryN, Settings.Default.RWR_RenderOnN,
+                _forms.RWRForm, _rwrRenderStart, _rwrRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RWR));
         }
 
         private static void WaitAllAndClearList(List<WaitHandle> toWait, int millisecondsTimeout)
