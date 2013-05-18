@@ -2899,291 +2899,72 @@ namespace MFDExtractor
 
         private void SignalPrimaryFlightInstrumentRenderThreadsToStart(List<WaitHandle> toWait)
         {
-            if (!(_running && _keepRunning))
-            {
-                return;
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableADIOutput, Settings.Default.ADI_RenderEveryN, Settings.Default.ADI_RenderOnN,
+                _forms.ADIForm, _adiRenderStart, _adiRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ADI));
 
-            bool renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
-            if (Settings.Default.EnableADIOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ADI) ||
-                     (_forms.ADIForm != null && _forms.ADIForm.RenderImmediately)))
-                {
-                    if ((_renderCycleNum%Settings.Default.ADI_RenderEveryN == Settings.Default.ADI_RenderOnN - 1) ||
-                        (_forms.ADIForm != null && _forms.ADIForm.RenderImmediately))
-                    {
-                        if (_forms.ADIForm != null)
-                        {
-                            _forms.ADIForm.RenderImmediately = false;
-                        }
-                        if (_adiRenderStart != null)
-                        {
-                            _adiRenderStart.Set();
-                        }
-                        if (_adiRenderEnd != null)
-                        {
-                            toWait.Add(_adiRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableISISOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ISIS)) ||
-                    (_forms.ISISForm != null && _forms.ISISForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.ISIS_RenderEveryN == Settings.Default.ISIS_RenderOnN - 1) ||
-                        (_forms.ISISForm != null && _forms.ISISForm.RenderImmediately))
-                    {
-                        if (_forms.ISISForm != null)
-                        {
-                            _forms.ISISForm.RenderImmediately = false;
-                        }
-                        if (_isisRenderStart != null)
-                        {
-                            _isisRenderStart.Set();
-                        }
-                        if (_isisRenderEnd != null)
-                        {
-                            toWait.Add(_isisRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableHSIOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HSI) ||
-                     (_forms.HSIForm != null && _forms.HSIForm.RenderImmediately)))
-                {
-                    if ((_renderCycleNum%Settings.Default.HSI_RenderEveryN == Settings.Default.HSI_RenderOnN - 1) ||
-                        (_forms.HSIForm != null && _forms.HSIForm.RenderImmediately))
-                    {
-                        if (_forms.HSIForm != null)
-                        {
-                            _forms.HSIForm.RenderImmediately = false;
-                        }
-                        if (_hsiRenderStart != null)
-                        {
-                            _hsiRenderStart.Set();
-                        }
-                        if (_hsiRenderEnd != null)
-                        {
-                            toWait.Add(_hsiRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableEHSIOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.EHSI)) ||
-                    (_forms.EHSIForm != null && _forms.EHSIForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.EHSI_RenderEveryN == Settings.Default.EHSI_RenderOnN - 1) ||
-                        (_forms.EHSIForm != null && _forms.EHSIForm.RenderImmediately))
-                    {
-                        if (_forms.EHSIForm != null)
-                        {
-                            _forms.EHSIForm.RenderImmediately = false;
-                        }
-                        if (_ehsiRenderStart != null)
-                        {
-                            _ehsiRenderStart.Set();
-                        }
-                        if (_ehsiRenderEnd != null)
-                        {
-                            toWait.Add(_ehsiRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableAltimeterOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Altimeter)) ||
-                    (_forms.AltimeterForm != null && _forms.AltimeterForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.Altimeter_RenderEveryN ==
-                         Settings.Default.Altimeter_RenderOnN - 1) ||
-                        (_forms.AltimeterForm != null && _forms.AltimeterForm.RenderImmediately))
-                    {
-                        if (_forms.AltimeterForm != null)
-                        {
-                            _forms.AltimeterForm.RenderImmediately = false;
-                        }
-                        if (_altimeterRenderStart != null)
-                        {
-                            _altimeterRenderStart.Set();
-                        }
-                        if (_altimeterRenderEnd != null)
-                        {
-                            toWait.Add(_altimeterRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableASIOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ASI) ||
-                     (_forms.ASIForm != null && _forms.ASIForm.RenderImmediately)))
-                {
-                    if ((_renderCycleNum%Settings.Default.ASI_RenderEveryN == Settings.Default.ASI_RenderOnN - 1) ||
-                        (_forms.ASIForm != null && _forms.ASIForm.RenderImmediately))
-                    {
-                        if (_forms.ASIForm != null)
-                        {
-                            _forms.ASIForm.RenderImmediately = false;
-                        }
-                        if (_asiRenderStart != null)
-                        {
-                            _asiRenderStart.Set();
-                        }
-                        if (_asiRenderEnd != null)
-                        {
-                            toWait.Add(_asiRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableBackupADIOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.BackupADI)) ||
-                    (_forms.BackupAdiForm != null && _forms.BackupAdiForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.Backup_ADI_RenderEveryN ==
-                         Settings.Default.Backup_ADI_RenderOnN - 1) ||
-                        (_forms.BackupAdiForm != null && _forms.BackupAdiForm.RenderImmediately))
-                    {
-                        if (_forms.BackupAdiForm != null)
-                        {
-                            _forms.BackupAdiForm.RenderImmediately = false;
-                        }
-                        if (_backupAdiRenderStart != null)
-                        {
-                            _backupAdiRenderStart.Set();
-                        }
-                        if (_backupAdiRenderEnd != null)
-                        {
-                            toWait.Add(_backupAdiRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableVVIOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.VVI) ||
-                     (_forms.VVIForm != null && _forms.VVIForm.RenderImmediately)))
-                {
-                    if ((_renderCycleNum%Settings.Default.VVI_RenderEveryN == Settings.Default.VVI_RenderOnN - 1) ||
-                        (_forms.VVIForm != null && _forms.VVIForm.RenderImmediately))
-                    {
-                        if (_forms.VVIForm != null)
-                        {
-                            _forms.VVIForm.RenderImmediately = false;
-                        }
-                        if (_vviRenderStart != null)
-                        {
-                            _vviRenderStart.Set();
-                        }
-                        if (_vviRenderEnd != null)
-                        {
-                            toWait.Add(_vviRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableAOAIndicatorOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.AOAIndicator)) ||
-                    (_forms.AOAIndicatorForm != null && _forms.AOAIndicatorForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.AOAIndicator_RenderEveryN ==
-                         Settings.Default.AOAIndicator_RenderOnN - 1) ||
-                        (_forms.AOAIndicatorForm != null && _forms.AOAIndicatorForm.RenderImmediately))
-                    {
-                        if (_forms.AOAIndicatorForm != null)
-                        {
-                            _forms.AOAIndicatorForm.RenderImmediately = false;
-                        }
-                        if (_aoaIndicatorRenderStart != null)
-                        {
-                            _aoaIndicatorRenderStart.Set();
-                        }
-                        if (_aoaIndicatorRenderEnd != null)
-                        {
-                            toWait.Add(_aoaIndicatorRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableCompassOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Compass)) ||
-                    (_forms.CompassForm != null && _forms.CompassForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.Compass_RenderEveryN == Settings.Default.Compass_RenderOnN - 1) ||
-                        (_forms.CompassForm != null && _forms.CompassForm.RenderImmediately))
-                    {
-                        if (_forms.CompassForm != null)
-                        {
-                            _forms.CompassForm.RenderImmediately = false;
-                        }
-                        if (_compassRenderStart != null)
-                        {
-                            _compassRenderStart.Set();
-                        }
-                        if (_compassRenderEnd != null)
-                        {
-                            toWait.Add(_compassRenderEnd);
-                        }
-                    }
-                }
-            }
-            if (Settings.Default.EnableAccelerometerOutput)
-            {
-                if (_testMode || !renderOnlyOnStateChanges ||
-                    (renderOnlyOnStateChanges &&
-                     IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Accelerometer)) ||
-                    (_forms.AccelerometerForm != null && _forms.AccelerometerForm.RenderImmediately))
-                {
-                    if ((_renderCycleNum%Settings.Default.Accelerometer_RenderEveryN ==
-                         Settings.Default.Accelerometer_RenderOnN - 1) ||
-                        (_forms.AccelerometerForm != null && _forms.AccelerometerForm.RenderImmediately))
-                    {
-                        if (_forms.AccelerometerForm != null)
-                        {
-                            _forms.AccelerometerForm.RenderImmediately = false;
-                        }
-                        if (_accelerometerRenderStart != null)
-                        {
-                            _accelerometerRenderStart.Set();
-                        }
-                        if (_accelerometerRenderEnd != null)
-                        {
-                            toWait.Add(_accelerometerRenderEnd);
-                        }
-                    }
-                }
-            }
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableISISOutput, Settings.Default.ISIS_RenderEveryN, Settings.Default.ISIS_RenderOnN,
+                _forms.ISISForm, _isisRenderStart, _isisRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ISIS));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableHSIOutput, Settings.Default.HSI_RenderEveryN, Settings.Default.HSI_RenderOnN,
+                _forms.HSIForm, _hsiRenderStart, _hsiRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.HSI));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableEHSIOutput, Settings.Default.EHSI_RenderEveryN, Settings.Default.EHSI_RenderOnN,
+                _forms.EHSIForm, _ehsiRenderStart, _ehsiRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.EHSI));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableAltimeterOutput, Settings.Default.Altimeter_RenderEveryN, Settings.Default.Altimeter_RenderOnN,
+                _forms.AltimeterForm, _altimeterRenderStart, _altimeterRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Altimeter));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableASIOutput, Settings.Default.ASI_RenderEveryN, Settings.Default.ASI_RenderOnN,
+                _forms.ASIForm, _asiRenderStart, _asiRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.ASI));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableBackupADIOutput, Settings.Default.Backup_ADI_RenderEveryN, Settings.Default.Backup_ADI_RenderOnN,
+                _forms.BackupAdiForm, _backupAdiRenderStart, _backupAdiRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.BackupADI));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableVVIOutput, Settings.Default.VVI_RenderEveryN, Settings.Default.VVI_RenderOnN,
+                _forms.VVIForm, _vviRenderStart, _vviRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.VVI));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableAOAIndicatorOutput, Settings.Default.AOAIndicator_RenderEveryN, Settings.Default.AOAIndicator_RenderOnN,
+                _forms.AOAIndicatorForm, _aoaIndicatorRenderStart, _aoaIndicatorRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.AOAIndicator));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableCompassOutput, Settings.Default.Compass_RenderEveryN, Settings.Default.Compass_RenderOnN,
+                _forms.CompassForm, _compassRenderStart, _compassRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Compass));
+
+            _renderStartHelper.Start(toWait, _running, _keepRunning,
+                Settings.Default.EnableAccelerometerOutput, Settings.Default.Accelerometer_RenderEveryN, Settings.Default.Accelerometer_RenderOnN,
+                _forms.AccelerometerForm, _accelerometerRenderStart, _accelerometerRenderEnd,
+                _testMode, _renderCycleNum,
+                IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.Accelerometer));
+
         }
 
         private void SignalMFDAndHudThreadsToStart()
