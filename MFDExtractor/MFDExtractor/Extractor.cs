@@ -95,7 +95,6 @@ namespace MFDExtractor
         public static bool SimRunning = false;
         private readonly object _texSmReaderLock = new object();
         private Reader _falconSmReader;
-        private FlightData _flightData;
         private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
         private Rectangle _hudOutputRect = new Rectangle(0, 0, 0, 0);
         private Rectangle _leftMfdOutputRect = new Rectangle(0, 0, 0, 0);
@@ -761,8 +760,8 @@ namespace MFDExtractor
 	        if (_terrainBrowser != null && toReturn != null)
 	        {
 	            var extensionData = new FlightDataExtension();
-	            float terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
-	            float ralt = -toReturn.z - terrainHeight;
+	            var terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
+	            var ralt = -toReturn.z - terrainHeight;
 
 	            //reset AGL altitude to zero if we're on the ground
 	            if (
@@ -956,13 +955,9 @@ namespace MFDExtractor
         private void SetFlightData(FlightData flightData)
         {
             if (flightData == null) return;
-            lock (flightData)
+            if (_networkMode == NetworkMode.Server)
             {
-                _flightData = flightData;
-                if (_networkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SetFlightData(flightData);
-                }
+                ExtractorServer.SetFlightData(flightData);
             }
         }
         private void SetAndDisposeImage(Image image, Action<Image> serveImageFunc, RotateFlipType rotateFlipType, InstrumentForm instrumentForm, bool monochrome)
