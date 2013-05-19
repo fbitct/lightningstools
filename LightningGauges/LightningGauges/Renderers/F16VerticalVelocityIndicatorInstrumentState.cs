@@ -1,6 +1,10 @@
-﻿namespace LightningGauges.Renderers
+﻿using System;
+using Common.SimSupport;
+
+namespace LightningGauges.Renderers
 {
-    public class F16VerticalVelocityIndicatorInstrumentState
+    [Serializable]
+    public class F16VerticalVelocityIndicatorInstrumentState:InstrumentStateBase
     {
         private const float MAX_VELOCITY = 6000;
         private const float MIN_VELOCITY = -6000;

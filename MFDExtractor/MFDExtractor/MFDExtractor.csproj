@@ -180,6 +180,7 @@
     <Compile Include="FlightDataUpdater.cs" />
     <Compile Include="Instrument.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
+    <Compile Include="InstrumentFormFactory.cs" />
     <Compile Include="InstrumentFormSettings.cs" />
     <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="Configuration\InputControlSelectionSettingReader.cs" />

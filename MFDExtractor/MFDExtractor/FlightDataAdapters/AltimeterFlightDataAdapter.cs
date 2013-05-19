@@ -1,4 +1,5 @@
-﻿using F4SharedMem;
+﻿using Common.Math;
+using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
 

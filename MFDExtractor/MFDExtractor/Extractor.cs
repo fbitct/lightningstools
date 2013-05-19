@@ -37,7 +37,6 @@ namespace MFDExtractor
 
 	    private readonly IInputControlSelectionSettingReader _inputControlSelectionSettingReader = new InputControlSelectionSettingReader();
 		private readonly IInstrumentStateSnapshotCache _instrumentStateSnapshotCache= new InstrumentStateSnapshotCache();
-		private readonly IInstrumentFormSettingsReader _instrumentFormSettingsReader = new InstrumentFormSettingsReader();
 
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms = new Dictionary<IInstrumentRenderer, InstrumentForm>();
 	    private KeySettings _keySettings;
@@ -364,6 +363,7 @@ namespace MFDExtractor
 	    private readonly IInputEvents _inputEvents;
 	    private readonly IInstrumentRenderHelper _instrumentRenderHelper;
         private readonly IRenderStartHelper _renderStartHelper;
+	    private readonly IInstrumentFormFactory _instrumentFormFactory;
         #endregion
 
         #endregion
@@ -380,8 +380,10 @@ namespace MFDExtractor
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null,
             IInstrumentRenderHelper instrumentRenderHelper = null,
-            IRenderStartHelper renderStartHelper = null)
+            IRenderStartHelper renderStartHelper = null,
+            IInstrumentFormFactory instrumentFormFactory=null)
         {
+            _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
 			_forms = new InstrumentForms();
             _renderStartHelper = renderStartHelper ?? new RenderStartHelper();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
@@ -1200,7 +1202,7 @@ namespace MFDExtractor
             }
             DateTime endTime = DateTime.Now;
             TimeSpan elapsed = endTime.Subtract(startTime);
-            Log.DebugFormat("Finished setting up output forms on the extractor at: {0}", endTime.ToString());
+            Log.DebugFormat("Finished setting up output forms on the extractor at: {0}", endTime);
             Log.DebugFormat("Time taken to set up output forms on the extractor: {0}", elapsed.TotalMilliseconds);
         }
 
@@ -1208,27 +1210,27 @@ namespace MFDExtractor
 
         private void SetupMfd4Form()
         {
-            _forms.MFD4Form = SetupInstrumentForm("MFD4","MFD 4",null,_mfd4Form_Disposed,_mfd4BlankImage);
+            _forms.MFD4Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "MFD4","MFD 4",null,_mfd4Form_Disposed,_mfd4BlankImage);
         }
 
         private void SetupMfd3Form()
         {
-            _forms.MFD3Form = SetupInstrumentForm("MFD3","MFD 3",null,_mfd3Form_Disposed,_mfd3BlankImage);
+            _forms.MFD3Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "MFD3", "MFD 3", null, _mfd3Form_Disposed, _mfd3BlankImage);
         }
 
         private void SetupLeftMfdForm()
         {
-            _forms.LeftMFDForm = SetupInstrumentForm("LMFD","Left MFD",null,_leftMfdForm_Disposed,_leftMfdBlankImage);
+            _forms.LeftMFDForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "LMFD","Left MFD",null,_leftMfdForm_Disposed,_leftMfdBlankImage);
         }
 
         private void SetupRightMfdForm()
         {
-            _forms.RightMfdForm = SetupInstrumentForm("RMFD","Right MFD",null,_rightMfdForm_Disposed,_rightMfdBlankImage);
+            _forms.RightMfdForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "RMFD", "Right MFD", null, _rightMfdForm_Disposed, _rightMfdBlankImage);
         }
 
         private void SetupHudForm()
         {
-            _forms.HUDForm = SetupInstrumentForm("HUD","HUD",null,_hudForm_Disposed,_hudBlankImage);
+            _forms.HUDForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "HUD", "HUD", null, _hudForm_Disposed, _hudBlankImage);
         }
 
         #endregion
@@ -1237,230 +1239,182 @@ namespace MFDExtractor
 
         private void SetupVVIForm()
         {
-            _forms.VVIForm = SetupInstrumentForm("VVI","VVI",_renderers.VVI,_vviForm_Disposed);
-        }
-        private InstrumentForm SetupInstrumentForm
-        (
-			string instrumentName,
-            string formCaption,
-            IInstrumentRenderer renderer,
-            EventHandler disposeHandler,
-            Image initialImage=null
-        )
-        {
-	        var currentSettings = _instrumentFormSettingsReader.Read(instrumentName);
-            if (!currentSettings.Enabled ) return null;
-            Point location;
-            Size size;
-			var screen = Common.Screen.Util.FindScreen(currentSettings.OutputDisplay);
-            var instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false };
-			if (currentSettings.StretchToFit)
-            {
-                location = new Point(0, 0);
-                size = screen.Bounds.Size;
-                instrumentForm.StretchToFill = true;
-            }
-            else
-            {
-				location = new Point(currentSettings.ULX, currentSettings.ULY);
-				size = new Size(currentSettings.LRX - currentSettings.ULX, currentSettings.LRY - currentSettings.ULY);
-                instrumentForm.StretchToFill = false;
-            }
-			instrumentForm.AlwaysOnTop = currentSettings.AlwaysOnTop;
-			instrumentForm.Monochrome = currentSettings.Monochrome;
-			instrumentForm.Rotation = currentSettings.RotateFlipType;
-            instrumentForm.WindowState = FormWindowState.Normal;
-            Common.Screen.Util.OpenFormOnSpecificMonitor(instrumentForm, screen, location, size, true, true);
-            instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentName,instrumentForm,_extractor).HandleDataChangedEvent;
-
-            instrumentForm.Disposed += disposeHandler;
-            if (renderer != null)
-            {
-                _outputForms.Add(renderer, instrumentForm);
-            }
-            if (initialImage != null)
-            {
-                using (var graphics = instrumentForm.CreateGraphics())
-                {
-                    graphics.DrawImage(initialImage, instrumentForm.ClientRectangle);
-                }
-            }
-	        return instrumentForm;
+            _forms.VVIForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "VVI", "VVI", _renderers.VVI, _vviForm_Disposed);
         }
 
         private void SetupRPM1Form()
         {
-            _forms.RPM1Form = SetupInstrumentForm("RPM1","Engine 1 - RPM",_renderers.RPM1,_rpm1Form_Disposed);
+            _forms.RPM1Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "RPM1", "Engine 1 - RPM", _renderers.RPM1, _rpm1Form_Disposed);
         }
 
         private void SetupRPM2Form()
         {
-            _forms.RPM2Form = SetupInstrumentForm("RPM2","Engine 2 - RPM",_renderers.RPM2,_rpm2Form_Disposed);
+            _forms.RPM2Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "RPM2", "Engine 2 - RPM", _renderers.RPM2, _rpm2Form_Disposed);
         }
 
         private void SetupSpeedbrakeForm()
         {
-            _forms.SpeedbrakeForm = SetupInstrumentForm("Speedbrake","Speedbrake",_renderers.Speedbrake,_speedbrakeForm_Disposed);
+            _forms.SpeedbrakeForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "Speedbrake", "Speedbrake", _renderers.Speedbrake, _speedbrakeForm_Disposed);
         }
 
         private void SetupRWRForm()
         {
-            _forms.RWRForm = SetupInstrumentForm("RWR","RWR",_renderers.RWR,_rwrForm_Disposed);
+            _forms.RWRForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "RWR", "RWR", _renderers.RWR, _rwrForm_Disposed);
         }
 
         private void SetupOIL2Form()
         {
-            _forms.OILGauge2Form = SetupInstrumentForm("OIL2","Engine 2 - Oil Pressure Indicator",_renderers.OIL2,_oilGauge2Form_Disposed);
+            _forms.OILGauge2Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "OIL2", "Engine 2 - Oil Pressure Indicator", _renderers.OIL2, _oilGauge2Form_Disposed);
         }
 
         private void SetupOIL1Form()
         {
-            _forms.OILGauge1Form = SetupInstrumentForm("OIL1","Engine 1 - Oil Pressure Indicator",_renderers.OIL1,_oilGauge1Form_Disposed);
+            _forms.OILGauge1Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "OIL1", "Engine 1 - Oil Pressure Indicator", _renderers.OIL1, _oilGauge1Form_Disposed);
         }
 
         private void SetupNOZ2Form()
         {
-            _forms.NOZPos2Form= SetupInstrumentForm("NOZ2","Engine 2 - Nozzle Position Indicator",_renderers.NOZ2,_nozPos2Form_Disposed);
+            _forms.NOZPos2Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "NOZ2", "Engine 2 - Nozzle Position Indicator", _renderers.NOZ2, _nozPos2Form_Disposed);
         }
 
         private void SetupNOZ1Form()
         {
-            _forms.NOZPos1Form = SetupInstrumentForm("NOZ1","Engine 1 - Nozzle Position Indicator",_renderers.NOZ1,_nozPos1Form_Disposed);
+            _forms.NOZPos1Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "NOZ1", "Engine 1 - Nozzle Position Indicator", _renderers.NOZ1, _nozPos1Form_Disposed);
         }
 
         private void SetupNWSIndexerForm()
         {
-            _forms.NWSIndexerForm = SetupInstrumentForm("NWSIndexer","NWS Indexer",_renderers.NWSIndexer,_nwsIndexerForm_Disposed);
+            _forms.NWSIndexerForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "NWSIndexer", "NWS Indexer", _renderers.NWSIndexer, _nwsIndexerForm_Disposed);
         }
 
         private void SetupGearLightsForm()
         {
-            _forms.LandingGearLightsForm = SetupInstrumentForm("GearLights", "Landing Gear Lights",_renderers.LandingGearLights,_landingGearLightsForm_Disposed);
+            _forms.LandingGearLightsForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "GearLights", "Landing Gear Lights", _renderers.LandingGearLights, _landingGearLightsForm_Disposed);
         }
 
         private void SetupHSIForm()
         {
-            _forms.HSIForm = SetupInstrumentForm("HSI", "Horizontal Situation Indicator",_renderers.HSI,_hsiForm_Disposed);
+            _forms.HSIForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "HSI", "Horizontal Situation Indicator", _renderers.HSI, _hsiForm_Disposed);
         }
 
         private void SetupEHSIForm()
         {
-            _forms.EHSIForm = SetupInstrumentForm("EHSI","EHSI",_renderers.EHSI,_ehsiForm_Disposed);
+            _forms.EHSIForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "EHSI", "EHSI", _renderers.EHSI, _ehsiForm_Disposed);
         }
 
         private void SetupFuelQuantityForm()
         {
-            _forms.FuelQuantityForm = SetupInstrumentForm("FuelQuantity","Fuel Quantity",_renderers.FuelQuantity,FuelQuantityForm_Disposed);
+            _forms.FuelQuantityForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "FuelQuantity", "Fuel Quantity", _renderers.FuelQuantity, FuelQuantityForm_Disposed);
         }
 
         private void SetupFuelFlowForm()
         {
-            _forms.FuelFlowForm = SetupInstrumentForm("FuelFlow","Fuel Flow Indicator",_renderers.FuelFlow,_fuelFlowForm_Disposed);
+            _forms.FuelFlowForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "FuelFlow", "Fuel Flow Indicator", _renderers.FuelFlow, _fuelFlowForm_Disposed);
         }
 
         private void SetupISISForm()
         {
-            _forms.ISISForm = SetupInstrumentForm("ISIS","ISIS",_renderers.ISIS,_isisForm_Disposed);
+            _forms.ISISForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "ISIS", "ISIS", _renderers.ISIS, _isisForm_Disposed);
         }
 
         private void SetupAccelerometerForm()
         {
-            _forms.AccelerometerForm = SetupInstrumentForm("Accelerometer","Accelerometer",_renderers.Accelerometer,_accelerometerForm_Disposed);
+            _forms.AccelerometerForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "Accelerometer", "Accelerometer", _renderers.Accelerometer, _accelerometerForm_Disposed);
         }
 
         private void SetupFTIT2Form()
         {
-            _forms.FTIT2Form = SetupInstrumentForm("FTIT2","FTIT 2",_renderers.FTIT2,_ftit2Form_Disposed);
+            _forms.FTIT2Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "FTIT2", "FTIT 2", _renderers.FTIT2, _ftit2Form_Disposed);
         }
 
         private void SetupFTIT1Form()
         {
-            _forms.FTIT1Form = SetupInstrumentForm("FTIT1","FTIT 1",_renderers.FTIT1,_ftit1Form_Disposed);
+            _forms.FTIT1Form = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "FTIT1", "FTIT 1", _renderers.FTIT1, _ftit1Form_Disposed);
         }
 
         private void SetupEPUFuelForm()
         {
-            _forms.EPUFuelForm = SetupInstrumentForm("EPUFuel","EPU Fuel",_renderers.EPUFuel,_epuFuelForm_Disposed);
+            _forms.EPUFuelForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "EPUFuel", "EPU Fuel", _renderers.EPUFuel, _epuFuelForm_Disposed);
         }
 
         private void SetupPFLForm()
         {
-            _forms.PFLForm = SetupInstrumentForm("PFL","PFL",_renderers.PFL,_pflForm_Disposed);
+            _forms.PFLForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "PFL", "PFL", _renderers.PFL, _pflForm_Disposed);
         }
 
         private void SetupDEDForm()
         {
-            _forms.DEDForm = SetupInstrumentForm("DED","DED",_renderers.DED,_dedForm_Disposed);
+            _forms.DEDForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "DED", "DED", _renderers.DED, _dedForm_Disposed);
         }
 
         private void SetupCompassForm()
         {
-            _forms.CompassForm = SetupInstrumentForm("Compass","Compass",_renderers.Compass,_compassForm_Disposed);
+            _forms.CompassForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "Compass", "Compass", _renderers.Compass, _compassForm_Disposed);
         }
 
         private void SetupCMDSPanelForm()
         {
-            _forms.CMDSPanelForm = SetupInstrumentForm("CMDS", "CMDS", _renderers.CMDSPanel,_cmdsPanelForm_Disposed);
+            _forms.CMDSPanelForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "CMDS", "CMDS", _renderers.CMDSPanel, _cmdsPanelForm_Disposed);
         }
 
         private void SetupCautionPanelForm()
         {
-            _forms.CautionPanelForm = SetupInstrumentForm("CautionPanel", "Caution Panel",_renderers.CautionPanel,_cautionPanelForm_Disposed);
+            _forms.CautionPanelForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "CautionPanel", "Caution Panel", _renderers.CautionPanel, _cautionPanelForm_Disposed);
         }
 
         private void SetupAOAIndicatorForm()
         {
-            _forms.AOAIndicatorForm = SetupInstrumentForm("AOAIndicator","AOA Indicator",_renderers.AOAIndicator,AOAIndicatorForm_Disposed);
+            _forms.AOAIndicatorForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "AOAIndicator", "AOA Indicator", _renderers.AOAIndicator, AOAIndicatorForm_Disposed);
         }
 
 		private void SetupAOAIndexerForm()
         {
-            _forms.AOAIndexerForm = SetupInstrumentForm("AOAIndexer","AOA Indexer",_renderers.AOAIndexer,AOAIndexerForm_Disposed);
+            _forms.AOAIndexerForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "AOAIndexer", "AOA Indexer", _renderers.AOAIndexer, AOAIndexerForm_Disposed);
         }
 
         private void SetupAltimeterForm()
         {
-            _forms.AltimeterForm = SetupInstrumentForm("Altimeter","Altimeter",_renderers.Altimeter,_altimeterForm_Disposed);
+            _forms.AltimeterForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "Altimeter", "Altimeter", _renderers.Altimeter, _altimeterForm_Disposed);
         }
 
         private void SetupCabinPressForm()
         {
-            _forms.CabinPressForm = SetupInstrumentForm("CabinPress","Cabin Pressure Indicator",_renderers.CabinPress,_cabinPressForm_Disposed);
+            _forms.CabinPressForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "CabinPress", "Cabin Pressure Indicator", _renderers.CabinPress, _cabinPressForm_Disposed);
         }
 
         private void SetupRollTrimForm()
         {
-            _forms.RollTrimForm = SetupInstrumentForm("RollTrim","Roll Trim Indicator",_renderers.RollTrim,_rollTrimForm_Disposed);
+            _forms.RollTrimForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "RollTrim", "Roll Trim Indicator", _renderers.RollTrim, _rollTrimForm_Disposed);
         }
 
         private void SetupPitchTrimForm()
         {
-            _forms.PitchTrimForm = SetupInstrumentForm("PitchTrim","Pitch Trim Indicator",_renderers.PitchTrim,_pitchTrimForm_Disposed);
+            _forms.PitchTrimForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "PitchTrim", "Pitch Trim Indicator", _renderers.PitchTrim, _pitchTrimForm_Disposed);
         }
 
         private void SetupHydAForm()
         {
-            _forms.HydAForm = SetupInstrumentForm("HYDA","Hydraulic Pressure Indicator A",_renderers.HYDA,_hydAForm_Disposed);
+            _forms.HydAForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "HYDA", "Hydraulic Pressure Indicator A", _renderers.HYDA, _hydAForm_Disposed);
         }
 
         private void SetupHydBForm()
         {
-            _forms.HydBForm = SetupInstrumentForm("HYDB", "Hydraulic Pressure Indicator B",_renderers.HYDB,_hydBForm_Disposed);
+            _forms.HydBForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "HYDB", "Hydraulic Pressure Indicator B", _renderers.HYDB, _hydBForm_Disposed);
         }
 
         private void SetupASIForm()
         {
-            _forms.ASIForm = SetupInstrumentForm("ASI", "Airspeed Indicator",_renderers.ASI,_asiForm_Disposed);
+            _forms.ASIForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "ASI", "Airspeed Indicator", _renderers.ASI, _asiForm_Disposed);
         }
 
         private void SetupADIForm()
         {
-            _forms.ADIForm = SetupInstrumentForm("ADI","Attitude Indicator",_renderers.ADI,_adiForm_Disposed);
+            _forms.ADIForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "ADI", "Attitude Indicator", _renderers.ADI, _adiForm_Disposed);
         }
 
         private void SetupBackupADIForm()
         {
-            _forms.BackupAdiForm = SetupInstrumentForm("BackupADI","Standby Attitude Indicator",_renderers.BackupADI,_backupAdiForm_Disposed);
+            _forms.BackupAdiForm = _instrumentFormFactory.SetupInstrumentForm(_extractor, _outputForms, "BackupADI", "Standby Attitude Indicator", _renderers.BackupADI, _backupAdiForm_Disposed);
         }
 
         #endregion

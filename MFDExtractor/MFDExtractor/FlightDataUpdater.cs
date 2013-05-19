@@ -16,7 +16,7 @@ namespace MFDExtractor
             FlightData flightData,
             bool simRunning,
             bool useBMSAdvancedSharedmemValues,
-            Action UpdateEHSIBrightnessLabelVisibility,
+            Action updateEHSIBrightnessLabelVisibility,
             NetworkMode networkMode);
     }
 
@@ -32,7 +32,7 @@ namespace MFDExtractor
             FlightData flightData,
             bool simRunning,
             bool useBMSAdvancedSharedmemValues,
-            Action UpdateEHSIBrightnessLabelVisibility,
+            Action updateEHSIBrightnessLabelVisibility,
             NetworkMode networkMode)
         {
             if (flightData == null || (networkMode != NetworkMode.Client && !simRunning))
@@ -135,7 +135,7 @@ namespace MFDExtractor
                 }
 
                 UpdateHSIAndEHSICourseDeviationAndToFromFlags(renderers);
-                UpdateEHSI(UpdateEHSIBrightnessLabelVisibility);
+                UpdateEHSI(updateEHSIBrightnessLabelVisibility);
                 _flightDataAdapterSet.HYDA.Adapt(renderers.HYDA, flightData);
                 _flightDataAdapterSet.HYDB.Adapt(renderers.HYDB, flightData);
                 _flightDataAdapterSet.CabinPress.Adapt(renderers.CabinPress, flightData);
@@ -180,7 +180,7 @@ namespace MFDExtractor
                 renderers.RWR.InstrumentState.RWRPowerOn = false;
                 renderers.ISIS.InstrumentState.RadarAltitudeAGL = 0;
                 renderers.ISIS.InstrumentState.OffFlag = true;
-                UpdateEHSIBrightnessLabelVisibility();
+                updateEHSIBrightnessLabelVisibility();
             }
         }
 
