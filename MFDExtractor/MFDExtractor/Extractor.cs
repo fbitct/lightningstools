@@ -57,7 +57,7 @@ namespace MFDExtractor
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
 
 
-		private InstrumentForms _forms;
+		private readonly InstrumentForms _forms;
         private volatile bool _keepRunning;
         private volatile bool _nightMode;
         private volatile bool _running;
@@ -101,7 +101,7 @@ namespace MFDExtractor
 
         #region Output Window Coordinates
 
-        public static bool _simRunning = false;
+        public static bool SimRunning = false;
         private readonly object _texSmReaderLock = new object();
         private Reader _falconSmReader;
         private FlightData _flightData;
@@ -571,14 +571,15 @@ namespace MFDExtractor
 	        _keySettings = _keySettingsReader.Read();
             _gdiPlusOptions= _gdiPlusOptionsReader.Read();
             _networkMode = (NetworkMode) settings.NetworkingMode;
-            if (_networkMode == NetworkMode.Server)
+            switch (_networkMode)
             {
-                _serverEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
-            }
-            else if (_networkMode == NetworkMode.Client)
-            {
-                _serverEndpoint = new IPEndPoint(IPAddress.Parse(settings.ClientUseServerIpAddress),
-                                                 settings.ClientUseServerPortNum);
+                case NetworkMode.Server:
+                    _serverEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
+                    break;
+                case NetworkMode.Client:
+                    _serverEndpoint = new IPEndPoint(IPAddress.Parse(settings.ClientUseServerIpAddress),
+                        settings.ClientUseServerPortNum);
+                    break;
             }
             if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
             {
@@ -679,10 +680,7 @@ namespace MFDExtractor
             {
                 _client = new ExtractorClient(_serverEndpoint, _serviceName);
             }
-            catch (Exception)
-            {
-                //Debug.WriteLine(e);
-            }
+            catch {}
         }
 
         private void SetupNetworkingServer()
@@ -717,7 +715,7 @@ namespace MFDExtractor
             FlightData toReturn = null;
             if (!_testMode)
             {
-                if (_simRunning || _networkMode == NetworkMode.Client)
+                if (SimRunning || _networkMode == NetworkMode.Client)
                 {
                     if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                     {
@@ -816,7 +814,7 @@ namespace MFDExtractor
             }
             else
             {
-                if (_simRunning || _networkMode == NetworkMode.Client)
+                if (SimRunning || _networkMode == NetworkMode.Client)
                 {
                     if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
                     {
@@ -826,14 +824,9 @@ namespace MFDExtractor
                     {
                         if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                         {
-                            if (_twoDeePrimaryView)
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(twoDeePrimaryCaptureRectangle);
-                            }
-                            else
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(twoDeeSecondaryCaptureRectangle);
-                            }
+                            toReturn = Common.Screen.Util.CaptureScreenRectangle(_twoDeePrimaryView
+                                ? twoDeePrimaryCaptureRectangle 
+                                : twoDeeSecondaryCaptureRectangle);
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
@@ -873,7 +866,7 @@ namespace MFDExtractor
         private Image Get3DHud()
         {
             Image toReturn = null;
-            if (_keepRunning && (_simRunning && _sim3DDataAvailable) && _hud3DInputRect != Rectangle.Empty)
+            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _hud3DInputRect != Rectangle.Empty)
             {
                 try
                 {
@@ -896,7 +889,7 @@ namespace MFDExtractor
         private Image Get3DMFD4()
         {
             Image toReturn = null;
-            if (_keepRunning && (_simRunning && _sim3DDataAvailable) && _mfd4_3DInputRect != Rectangle.Empty)
+            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _mfd4_3DInputRect != Rectangle.Empty)
             {
                 try
                 {
@@ -919,7 +912,7 @@ namespace MFDExtractor
         private Image Get3DMFD3()
         {
             Image toReturn = null;
-            if (_keepRunning && (_simRunning && _sim3DDataAvailable) && _mfd3_3DInputRect != Rectangle.Empty)
+            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _mfd3_3DInputRect != Rectangle.Empty)
             {
                 try
                 {
@@ -942,7 +935,7 @@ namespace MFDExtractor
         private Image Get3DLeftMFD()
         {
             Image toReturn = null;
-            if (_keepRunning && (_simRunning && _sim3DDataAvailable) && _leftMfd3DInputRect != Rectangle.Empty)
+            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _leftMfd3DInputRect != Rectangle.Empty)
             {
                 try
                 {
@@ -965,7 +958,7 @@ namespace MFDExtractor
         private Image Get3DRightMFD()
         {
             Image toReturn = null;
-            if (_keepRunning && (_simRunning && _sim3DDataAvailable) && _rightMfd3DInputRect != Rectangle.Empty)
+            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _rightMfd3DInputRect != Rectangle.Empty)
             {
                 try
                 {
@@ -2199,11 +2192,11 @@ namespace MFDExtractor
                     }
 
 
-                    if (_simRunning || _testMode || NetworkMode == NetworkMode.Client)
+                    if (SimRunning || _testMode || NetworkMode == NetworkMode.Client)
                     {
                         var currentFlightData = GetFlightData();
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _simRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         try
                         {
                         }
@@ -2223,7 +2216,7 @@ namespace MFDExtractor
                         var flightDataToSet = new FlightData();
                         flightDataToSet.hsiBits = Int32.MaxValue;
                         SetFlightData(flightDataToSet);
-						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _simRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
+						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
                         SetMfd3Image(Util.CloneBitmap(_mfd3BlankImage));
                         SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));
@@ -2274,7 +2267,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!_simRunning && _networkMode != NetworkMode.Client) && !_testMode)
+                    if ((!SimRunning && _networkMode != NetworkMode.Client) && !_testMode)
                     {
                         Application.DoEvents();
                         Thread.Sleep(5);
@@ -2618,7 +2611,7 @@ namespace MFDExtractor
                     count++;
                     if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                     {
-                        bool simWasRunning = _simRunning;
+                        bool simWasRunning = SimRunning;
 
                         //TODO:make this check optional via the user-config file
                         if (count%1 == 0)
@@ -2629,14 +2622,14 @@ namespace MFDExtractor
 
                             try
                             {
-                                _simRunning = NetworkMode == NetworkMode.Client ||
+                                SimRunning = NetworkMode == NetworkMode.Client ||
                                               F4Utils.Process.Util.IsFalconRunning();
                             }
                             catch (Exception ex)
                             {
                                 _log.Error(ex.Message, ex);
                             }
-                            _sim3DDataAvailable = _simRunning &&
+                            _sim3DDataAvailable = SimRunning &&
                                                   (NetworkMode == NetworkMode.Client ||
                                                    _texSmStatusReader.IsDataAvailable);
 
@@ -2684,7 +2677,7 @@ namespace MFDExtractor
                                 _rightMfd3DInputRect = Rectangle.Empty;
                                 _hud3DInputRect = Rectangle.Empty;
                             }
-                            if (simWasRunning && !_simRunning)
+                            if (simWasRunning && !SimRunning)
                             {
                                 CloseAndDisposeSharedmemReaders();
 
@@ -2693,7 +2686,7 @@ namespace MFDExtractor
                                     TearDownImageServer();
                                 }
                             }
-                            if (_networkMode == NetworkMode.Server && (!simWasRunning && _simRunning))
+                            if (_networkMode == NetworkMode.Server && (!simWasRunning && SimRunning))
                             {
                                 SetupNetworkingServer();
                             }
