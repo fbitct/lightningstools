@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
@@ -20,7 +19,6 @@ using MFDExtractor.Networking;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
 using log4net;
-using Constants = Common.Math.Constants;
 using Util = Common.Imaging.Util;
 using Common.Networking;
 using MFDExtractor.Configuration;
@@ -28,17 +26,11 @@ using MFDExtractor.EventSystem.Handlers;
 
 namespace MFDExtractor
 {
-	public class AllForms
-	{
-		
-	}
-	public sealed class Extractor : AllForms, IDisposable
+	public sealed class Extractor : IDisposable
     {
         #region Instance Variables
 
-        private const int MIN_RENDERER_PASS_TIME_MILLSECONDS = 0;
-        private const int MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER = 0;
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Extractor));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Extractor));
         private static Extractor _extractor;
         private bool _disposed;
         private long _renderCycleNum;
@@ -58,12 +50,12 @@ namespace MFDExtractor
 
 
 		private readonly InstrumentForms _forms;
-        private volatile bool _keepRunning;
-        private volatile bool _nightMode;
-        private volatile bool _running;
-        private volatile bool _testMode;
-        private volatile bool _threeDeeMode;
-        private volatile bool _twoDeePrimaryView = true;
+        private bool _keepRunning;
+        private bool _nightMode =false;
+        private bool _running;
+        private bool _testMode=false;
+        private bool _threeDeeMode;
+        private bool _twoDeePrimaryView = true;
 
         #region Capture Coordinates
 
@@ -105,7 +97,7 @@ namespace MFDExtractor
         private readonly object _texSmReaderLock = new object();
         private Reader _falconSmReader;
         private FlightData _flightData;
-        private IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
+        private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
         private Rectangle _hudOutputRect = new Rectangle(0, 0, 0, 0);
         private Rectangle _leftMfdOutputRect = new Rectangle(0, 0, 0, 0);
         private Rectangle _mfd3_OutputRect = new Rectangle(0, 0, 0, 0);
@@ -145,7 +137,7 @@ namespace MFDExtractor
 
         #region Network Configuration
 
-        private const string _serviceName = "MFDExtractorService";
+        private const string ServiceName = "MFDExtractorService";
         private ExtractorClient _client;
         private string _compressionType = "None";
         private string _imageFormat = "PNG";
@@ -257,33 +249,35 @@ namespace MFDExtractor
         #region Threads
 
         private readonly IMediatorStateChangeHandler _mediatorEventHandler;
-        private Thread _accelerometerRenderThread;
         private InputControlSelection _accelerometerResetKey;
-
-        private Thread _adiRenderThread;
         private InputControlSelection _airspeedIndexDecreaseKey;
         private InputControlSelection _airspeedIndexIncreaseKey;
-        private Thread _altimeterRenderThread;
-        private Thread _aoaIndexerRenderThread;
-        private Thread _aoaIndicatorRenderThread;
-        private Thread _asiRenderThread;
         private InputControlSelection _azimuthIndicatorBrightnessDecreaseKey;
         private InputControlSelection _azimuthIndicatorBrightnessIncreaseKey;
-        private Thread _backupAdiRenderThread;
-        private Thread _cabinPressRenderThread;
-
-        private Thread _captureOrchestrationThread;
-
-        private Thread _cautionPanelRenderThread;
-        private Thread _cmdsPanelRenderThread;
-        private Thread _compassRenderThread;
-        private Thread _dedRenderThread;
         private InputControlSelection _ehsiCourseDecreaseKey;
         private InputControlSelection _ehsiCourseDepressedKey;
         private InputControlSelection _ehsiCourseIncreaseKey;
         private InputControlSelection _ehsiHeadingDecreaseKey;
         private InputControlSelection _ehsiHeadingIncreaseKey;
         private InputControlSelection _ehsiMenuButtonDepressedKey;
+        private InputControlSelection _isisBrightButtonKey;
+        private InputControlSelection _isisStandardButtonKey;
+        private InputControlSelection _nvisKey;
+
+        private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
+        private Thread _accelerometerRenderThread;
+        private Thread _adiRenderThread;
+        private Thread _altimeterRenderThread;
+        private Thread _aoaIndexerRenderThread;
+        private Thread _aoaIndicatorRenderThread;
+        private Thread _asiRenderThread;
+        private Thread _backupAdiRenderThread;
+        private Thread _cabinPressRenderThread;
+        private Thread _captureOrchestrationThread;
+        private Thread _cautionPanelRenderThread;
+        private Thread _cmdsPanelRenderThread;
+        private Thread _compassRenderThread;
+        private Thread _dedRenderThread;
         private Thread _ehsiRenderThread;
         private Thread _epuFuelRenderThread;
         private Thread _ftit1RenderThread;
@@ -294,9 +288,7 @@ namespace MFDExtractor
         private Thread _hudCaptureThread;
         private Thread _hydARenderThread;
         private Thread _hydBRenderThread;
-        private InputControlSelection _isisBrightButtonKey;
         private Thread _isisRenderThread;
-        private InputControlSelection _isisStandardButtonKey;
         private Thread _keyboardWatcherThread;
         private Thread _landingGearLightsRenderThread;
         private Thread _leftMfdCaptureThread;
@@ -304,7 +296,6 @@ namespace MFDExtractor
         private Thread _mfd4CaptureThread;
         private Thread _nozPos1RenderThread;
         private Thread _nozPos2RenderThread;
-        private InputControlSelection _nvisKey;
         private Thread _nwsIndexerRenderThread;
         private Thread _oilGauge1RenderThread;
         private Thread _oilGauge2RenderThread;
@@ -315,15 +306,13 @@ namespace MFDExtractor
         private Thread _rpm1RenderThread;
         private Thread _rpm2RenderThread;
         private Thread _rwrRenderThread;
-
         private Thread _simStatusMonitorThread;
         private Thread _speedbrakeRenderThread;
-        private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
-
         private Thread _vviRenderThread;
+
         private readonly RenderThreadSetupHelper _renderThreadSetupHelper;
         private readonly ThreadAbortion _threadAbortion;
-        private readonly BMSSupport _bmsSupport;
+
         private IRenderThreadWorkHelper _adiRenderThreadWorkHelper;
         private IRenderThreadWorkHelper _backupAdiRenderThreadWorkHelper;
         private IRenderThreadWorkHelper _asiRenderThreadWorkHelper;
@@ -413,11 +402,10 @@ namespace MFDExtractor
             }
             _renderThreadSetupHelper = new RenderThreadSetupHelper();
             _threadAbortion = new ThreadAbortion();
-            _bmsSupport = new BMSSupport();
 	        _keyDownEventHandler = keyDownEventHandler ?? new KeyDownEventHandler(_ehsiStateTracker, _inputEvents, _keySettings);
 
 			_keyUpEventHandler = new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
-			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, _log);
+			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
 			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
 
@@ -559,13 +547,10 @@ namespace MFDExtractor
         }
         public static Extractor GetInstance()
         {
-            if (_extractor == null)
-            {
-                _extractor = new Extractor();
-            }
-            return _extractor;
+            return _extractor ?? (_extractor = new Extractor());
         }
-        public void LoadSettings()
+
+	    public void LoadSettings()
         {
             var settings = Settings.Default;
 	        _keySettings = _keySettingsReader.Read();
@@ -678,14 +663,14 @@ namespace MFDExtractor
         {
             try
             {
-                _client = new ExtractorClient(_serverEndpoint, _serviceName);
+                _client = new ExtractorClient(_serverEndpoint, ServiceName);
             }
             catch {}
         }
 
         private void SetupNetworkingServer()
         {
-            ExtractorServer.CreateService(_serviceName, _serverEndpoint.Port, _compressionType, _imageFormat);
+            ExtractorServer.CreateService(ServiceName, _serverEndpoint.Port, _compressionType, _imageFormat);
         }
 
         private void TearDownImageServer()
@@ -822,15 +807,17 @@ namespace MFDExtractor
                     }
                     else
                     {
-                        if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
+                        switch (_networkMode)
                         {
-                            toReturn = Common.Screen.Util.CaptureScreenRectangle(_twoDeePrimaryView
-                                ? twoDeePrimaryCaptureRectangle 
-                                : twoDeeSecondaryCaptureRectangle);
-                        }
-                        else if (_networkMode == NetworkMode.Client)
-                        {
-                            toReturn = remoteImageRequestFunc();
+                            case NetworkMode.Standalone: //fallthrough
+                            case NetworkMode.Server:
+                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_twoDeePrimaryView
+                                    ? twoDeePrimaryCaptureRectangle 
+                                    : twoDeeSecondaryCaptureRectangle);
+                                break;
+                            case NetworkMode.Client:
+                                toReturn = remoteImageRequestFunc();
+                                break;
                         }
                     }
                 }
@@ -840,27 +827,27 @@ namespace MFDExtractor
         }
 	    private Image GetMfd4Bitmap()
 	    {
-	        return GetImage(_mfd4TestAlignmentImage, Get3DMFD4,_client.GetMfd4Bitmap,_primaryMfd4_2DInputRect, _secondaryMfd4_2DInputRect);
+            return GetImage(_mfd4TestAlignmentImage, Get3DMFD4, () => _client != null ? _client.GetMfd4Bitmap() : null, _primaryMfd4_2DInputRect, _secondaryMfd4_2DInputRect);
         }
 
         private Image GetMfd3Bitmap()
         {
-            return GetImage(_mfd3TestAlignmentImage, Get3DMFD3, _client.GetMfd3Bitmap, _primaryMfd3_2DInputRect, _secondaryMfd3_2DInputRect);
+            return GetImage(_mfd3TestAlignmentImage, Get3DMFD3, () => _client != null ? _client.GetMfd3Bitmap():null, _primaryMfd3_2DInputRect, _secondaryMfd3_2DInputRect);
         }
 
         private Image GetLeftMfdBitmap()
         {
-            return GetImage(_leftMfdTestAlignmentImage, Get3DLeftMFD, _client.GetLeftMfdBitmap, _primaryLeftMfd2DInputRect, _secondaryLeftMfd2DInputRect);
+            return GetImage(_leftMfdTestAlignmentImage, Get3DLeftMFD, () => _client != null ? _client.GetLeftMfdBitmap():null, _primaryLeftMfd2DInputRect, _secondaryLeftMfd2DInputRect);
         }
 
 	    private Image GetRightMfdBitmap()
 	    {
-            return GetImage(_rightMfdTestAlignmentImage, Get3DRightMFD, _client.GetRightMfdBitmap, _primaryRightMfd2DInputRect, _secondaryRightMfd2DInputRect);
+            return GetImage(_rightMfdTestAlignmentImage, Get3DRightMFD, () => _client != null ? _client.GetRightMfdBitmap():null, _primaryRightMfd2DInputRect, _secondaryRightMfd2DInputRect);
 	    }
 
 	    private Image GetHudBitmap()
         {
-            return GetImage(_hudTestAlignmentImage, Get3DHud, _client.GetHudBitmap, _primaryHud2DInputRect, _secondaryHud2DInputRect);
+            return GetImage(_hudTestAlignmentImage, Get3DHud, () => _client != null ? _client.GetHudBitmap():null, _primaryHud2DInputRect, _secondaryHud2DInputRect);
         }
 
         private Image Get3D(Rectangle rttInputRectangle)
@@ -882,7 +869,7 @@ namespace MFDExtractor
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
             return null;
         }
@@ -927,7 +914,7 @@ namespace MFDExtractor
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
             finally
             {
@@ -1044,7 +1031,7 @@ namespace MFDExtractor
         private void SetupOutputForms()
         {
             DateTime startTime = DateTime.Now;
-            _log.DebugFormat("Started setting up output forms on the extractor at: {0}", startTime.ToString());
+            Log.DebugFormat("Started setting up output forms on the extractor at: {0}", startTime);
             if (Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server)
             {
                 SetupMfd4Form();
@@ -1213,8 +1200,8 @@ namespace MFDExtractor
             }
             DateTime endTime = DateTime.Now;
             TimeSpan elapsed = endTime.Subtract(startTime);
-            _log.DebugFormat("Finished setting up output forms on the extractor at: {0}", endTime.ToString());
-            _log.DebugFormat("Time taken to set up output forms on the extractor: {0}", elapsed.TotalMilliseconds);
+            Log.DebugFormat("Finished setting up output forms on the extractor at: {0}", endTime.ToString());
+            Log.DebugFormat("Time taken to set up output forms on the extractor: {0}", elapsed.TotalMilliseconds);
         }
 
         #region MFD Forms Setup
@@ -1933,7 +1920,7 @@ namespace MFDExtractor
                 }
                 catch (InvalidOperationException e)
                 {
-                    _log.Error(e.Message, e);
+                    Log.Error(e.Message, e);
                 }
             }
         }
@@ -1999,35 +1986,23 @@ namespace MFDExtractor
         /// </summary>
         private void RunThreads()
         {
-            if (!_running)
-            {
-                _running = true;
-                SetupNetworking();
-                _keepRunning = true;
-                _rendererSetInitializer.Initialize(_gdiPlusOptions);
-                SetupOutputForms();
-                SetupThreads();
-                StartThreads();
+            if (_running) return;
+            _running = true;
+            SetupNetworking();
+            _keepRunning = true;
+            _rendererSetInitializer.Initialize(_gdiPlusOptions);
+            SetupOutputForms();
+            SetupThreads();
+            StartThreads();
 
-                DateTime startingEventStartTime = DateTime.Now;
-                _log.DebugFormat("About to invoke the Starting event at {0}", startingEventStartTime.ToString());
-                if (Started != null)
-                {
-                    Started.Invoke(this, new EventArgs());
-                }
-                DateTime startingEventFinishTime = DateTime.Now;
-                _log.DebugFormat("Finished invoking the Starting event at {0}", startingEventFinishTime.ToString());
-                TimeSpan startingEventTimeTaken = startingEventFinishTime.Subtract(startingEventStartTime);
-                _log.DebugFormat("Time taken to invoke the Starting event: {0}",
-                                 startingEventTimeTaken.TotalMilliseconds);
+            if (Started != null)
+            {
+                Started.Invoke(this, new EventArgs());
             }
         }
 
         private void StartThreads()
         {
-            DateTime startTime = DateTime.Now;
-            _log.DebugFormat("Starting threads on the extractor at: {0}", startTime.ToString());
-
             StartThread(_mfd4CaptureThread);
             StartThread(_mfd3CaptureThread);
             StartThread(_leftMfdCaptureThread);
@@ -2073,32 +2048,18 @@ namespace MFDExtractor
             StartThread(_simStatusMonitorThread);
             StartThread(_captureOrchestrationThread);
             StartThread(_keyboardWatcherThread);
-
-            DateTime finishedTime = DateTime.Now;
-            TimeSpan elapsed = finishedTime.Subtract(startTime);
-
-            _log.DebugFormat("Took {0} milliseconds for all threads to start.", elapsed.TotalMilliseconds);
-            _log.DebugFormat("Finished starting threads on the extractor at: {0}", finishedTime.ToString());
         }
 
-        private void StartThread(Thread t)
+        private static void StartThread(Thread t)
         {
             if (t == null) return;
-            try
-            {
-                t.Start();
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            t.Start();
         }
 
        
 
         private void CaptureOrchestrationThreadWork()
         {
-            var toWait = new List<WaitHandle>();
             try
             {
                 while (_keepRunning)
@@ -2113,15 +2074,15 @@ namespace MFDExtractor
                         _renderCycleNum = 0;
                     }
                     var thisLoopStartTime = DateTime.Now;
-                    var setNullImages = true;
 
-                    if (NetworkMode == NetworkMode.Client)
+                    switch (NetworkMode)
                     {
-						_clientSideIncomingMessageDispatcher.ProcessPendingMessages();
-                    }
-                    else if (NetworkMode == NetworkMode.Server)
-                    {
-                        _serverSideIncomingMessageDispatcher.ProcessPendingMessages();
+                        case NetworkMode.Client:
+                            _clientSideIncomingMessageDispatcher.ProcessPendingMessages();
+                            break;
+                        case NetworkMode.Server:
+                            _serverSideIncomingMessageDispatcher.ProcessPendingMessages();
+                            break;
                     }
 
 
@@ -2141,13 +2102,12 @@ namespace MFDExtractor
                         }
                         catch (Exception e)
                         {
-                            _log.Error(e.Message, e);
+                            Log.Error(e.Message, e);
                         }
                     }
                     else
                     {
-                        var flightDataToSet = new FlightData();
-                        flightDataToSet.hsiBits = Int32.MaxValue;
+                        var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
 						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
@@ -2155,12 +2115,11 @@ namespace MFDExtractor
                         SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));
                         SetRightMfdImage(Util.CloneBitmap(_rightMfdBlankImage));
                         SetHudImage(Util.CloneBitmap(_hudBlankImage));
-                        setNullImages = false;
                     }
 
                     try
                     {
-                        toWait = new List<WaitHandle>();
+                        var toWait = new List<WaitHandle>();
                         SignalMFDAndHudThreadsToStart();
                         SignalRwrRenderThreadToStart(toWait);
                         SignalPrimaryFlightInstrumentRenderThreadsToStart(toWait);
@@ -2184,18 +2143,18 @@ namespace MFDExtractor
                     }
                     catch (Exception e)
                     {
-                        _log.Error(e.Message, e);
+                        Log.Error(e.Message, e);
                     }
 
-                    DateTime thisLoopFinishTime = DateTime.Now;
-                    TimeSpan timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
-                    int millisToSleep = Settings.Default.PollingDelay - ((int) timeElapsed.TotalMilliseconds);
+                    var thisLoopFinishTime = DateTime.Now;
+                    var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
+                    var millisToSleep = Settings.Default.PollingDelay - ((int) timeElapsed.TotalMilliseconds);
                     if (_testMode) millisToSleep = 500;
-                    DateTime sleepUntil = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, millisToSleep));
+                    var sleepUntil = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, millisToSleep));
                     while (DateTime.Now < sleepUntil)
                     {
                         var millisRemaining = (int) Math.Floor(DateTime.Now.Subtract(sleepUntil).TotalMilliseconds);
-                        int millisWaited = millisRemaining >= 5 ? 5 : 1;
+                        var millisWaited = millisRemaining >= 5 ? 5 : 1;
                         Thread.Sleep(millisWaited);
                         Application.DoEvents();
                     }
@@ -2231,26 +2190,20 @@ namespace MFDExtractor
                 IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(_renderers.RWR));
         }
 
-        private static void WaitAllAndClearList(List<WaitHandle> toWait, int millisecondsTimeout)
+        private static void WaitAllAndClearList(List<WaitHandle> waitHandles, int millisecondsTimeout)
         {
-            if (toWait != null && toWait.Count > 0)
+            if (waitHandles == null || waitHandles.Count <= 0) return;
+            try
             {
-                try
-                {
-                    WaitHandle[] handles = toWait.ToArray();
-                    if (handles != null && handles.Length > 0)
-                    {
-                        WaitHandle.WaitAll(handles, millisecondsTimeout);
-                    }
-                }
-                catch (TimeoutException)
-                {
-                }
-                catch (DuplicateWaitObjectException) //this can happen somehow if our list is not cleared 
-                {
-                }
+                WaitHandle.WaitAll(waitHandles.ToArray(), millisecondsTimeout);
             }
-            toWait.Clear();
+            catch (TimeoutException)
+            {
+            }
+            catch (DuplicateWaitObjectException) //this can happen somehow if our list is not cleared 
+            {
+            }
+            waitHandles.Clear();
         }
 
         private void SignalCMDSRenderThreadToStart(List<WaitHandle> toWait)
@@ -2544,7 +2497,7 @@ namespace MFDExtractor
                     count++;
                     if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                     {
-                        bool simWasRunning = SimRunning;
+                        var simWasRunning = SimRunning;
 
                         //TODO:make this check optional via the user-config file
                         if (count%1 == 0)
@@ -2560,7 +2513,7 @@ namespace MFDExtractor
                             }
                             catch (Exception ex)
                             {
-                                _log.Error(ex.Message, ex);
+                                Log.Error(ex.Message, ex);
                             }
                             _sim3DDataAvailable = SimRunning &&
                                                   (NetworkMode == NetworkMode.Client ||
@@ -2626,7 +2579,6 @@ namespace MFDExtractor
                         }
                     }
                     Thread.Sleep(500);
-                    //System.GC.Collect();
                 }
                 Debug.WriteLine("SimStatusMonitorThreadWork has exited.");
             }
@@ -2658,77 +2610,55 @@ namespace MFDExtractor
         private void WaitForThreadEndThenAbort(ref Thread[] threads, TimeSpan timeout)
         {
             if (threads == null) return;
-            DateTime startTime = DateTime.Now;
+            var startTime = DateTime.Now;
 
-            for (int i = 0; i < threads.Length; i++)
+            for (var i = 0; i < threads.Length; i++)
             {
-                Thread t = threads[i];
+                var t = threads[i];
 
                 if (t == null)
                 {
                     continue;
                 }
-
-                string threadName = t.Name ?? "unknown";
-
-                //interrupt the threads
-                try
-                {
-                    t.Interrupt();
-                }
-                catch (Exception)
-                {
-                }
+                try { t.Interrupt(); } catch {}
             }
 
-            for (int i = 0; i < threads.Length; i++)
+            for (var i = 0; i < threads.Length; i++)
             {
-                Thread t = threads[i];
+                var thread = threads[i];
 
-                if (t == null)
+                if (thread == null)
                 {
                     continue;
                 }
 
-                string threadName = t.Name ?? "unknown";
-
-                DateTime now = DateTime.Now;
-                TimeSpan elapsed = now.Subtract(startTime);
-                TimeSpan timeRemaining = elapsed.Subtract(timeout);
+                var now = DateTime.Now;
+                var elapsed = now.Subtract(startTime);
+                var timeRemaining = elapsed.Subtract(timeout);
                 if (timeRemaining.TotalMilliseconds <= 0) timeRemaining = new TimeSpan(0, 0, 0, 0, 1);
 
                 try
                 {
-                    t.Join(timeRemaining);
-                    t = null;
+                    thread.Join(timeRemaining);
                     threads[i] = null;
                 }
-                catch (Exception e)
-                {
-                }
+                catch{}
             }
 
-            for (int i = 0; i < threads.Length; i++)
+            for (var i = 0; i < threads.Length; i++)
             {
-                Thread t = threads[i];
+                var thread = threads[i];
 
-                if (t == null)
+                if (thread == null)
                 {
                     continue;
                 }
 
-                string threadName = t.Name ?? "unknown";
-
-                if (t != null)
+                try
                 {
-                    try
-                    {
-                        _threadAbortion.AbortThread(ref t);
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    _threadAbortion.AbortThread(ref thread);
                 }
+                catch {}
             }
         }
 
@@ -2801,10 +2731,12 @@ namespace MFDExtractor
         private void SetupCaptureOrchestrationThread()
         {
             _threadAbortion.AbortThread(ref _captureOrchestrationThread);
-            _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork);
-            _captureOrchestrationThread.Priority = _threadPriority;
-            _captureOrchestrationThread.IsBackground = true;
-            _captureOrchestrationThread.Name = "CaptureOrchestrationThread";
+            _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork)
+            {
+                Priority = _threadPriority,
+                IsBackground = true,
+                Name = "CaptureOrchestrationThread"
+            };
         }
 
 
@@ -2813,10 +2745,12 @@ namespace MFDExtractor
             _threadAbortion.AbortThread(ref _hudCaptureThread);
             if (Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server)
             {
-                _hudCaptureThread = new Thread(HudCaptureThreadWork);
-                _hudCaptureThread.Priority = _threadPriority;
-                _hudCaptureThread.IsBackground = true;
-                _hudCaptureThread.Name = "HudCaptureThread";
+                _hudCaptureThread = new Thread(HudCaptureThreadWork)
+                {
+                    Priority = _threadPriority,
+                    IsBackground = true,
+                    Name = "HudCaptureThread"
+                };
             }
         }
 
@@ -2825,10 +2759,12 @@ namespace MFDExtractor
             _threadAbortion.AbortThread(ref _rightMfdCaptureThread);
             if (Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server)
             {
-                _rightMfdCaptureThread = new Thread(RightMfdCaptureThreadWork);
-                _rightMfdCaptureThread.Priority = _threadPriority;
-                _rightMfdCaptureThread.IsBackground = true;
-                _rightMfdCaptureThread.Name = "RightMfdCaptureThread";
+                _rightMfdCaptureThread = new Thread(RightMfdCaptureThreadWork)
+                {
+                    Priority = _threadPriority,
+                    IsBackground = true,
+                    Name = "RightMfdCaptureThread"
+                };
             }
         }
 
@@ -2837,10 +2773,12 @@ namespace MFDExtractor
             _threadAbortion.AbortThread(ref _leftMfdCaptureThread);
             if (Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server)
             {
-                _leftMfdCaptureThread = new Thread(LeftMfdCaptureThreadWork);
-                _leftMfdCaptureThread.Priority = _threadPriority;
-                _leftMfdCaptureThread.IsBackground = true;
-                _leftMfdCaptureThread.Name = "LeftMfdCaptureThread";
+                _leftMfdCaptureThread = new Thread(LeftMfdCaptureThreadWork)
+                {
+                    Priority = _threadPriority,
+                    IsBackground = true,
+                    Name = "LeftMfdCaptureThread"
+                };
             }
         }
 
@@ -2849,10 +2787,12 @@ namespace MFDExtractor
             _threadAbortion.AbortThread(ref _mfd3CaptureThread);
             if (Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server)
             {
-                _mfd3CaptureThread = new Thread(Mfd3CaptureThreadWork);
-                _mfd3CaptureThread.Priority = _threadPriority;
-                _mfd3CaptureThread.IsBackground = true;
-                _mfd3CaptureThread.Name = "Mfd3CaptureThread";
+                _mfd3CaptureThread = new Thread(Mfd3CaptureThreadWork)
+                {
+                    Priority = _threadPriority,
+                    IsBackground = true,
+                    Name = "Mfd3CaptureThread"
+                };
             }
         }
 
@@ -2861,41 +2801,29 @@ namespace MFDExtractor
             _threadAbortion.AbortThread(ref _mfd4CaptureThread);
             if (Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server)
             {
-                _mfd4CaptureThread = new Thread(Mfd4CaptureThreadWork);
-                _mfd4CaptureThread.Priority = _threadPriority;
-                _mfd4CaptureThread.IsBackground = true;
-                _mfd4CaptureThread.Name = "Mfd4CaptureThread";
+                _mfd4CaptureThread = new Thread(Mfd4CaptureThreadWork)
+                {
+                    Priority = _threadPriority,
+                    IsBackground = true,
+                    Name = "Mfd4CaptureThread"
+                };
             }
         }
 
         private void SetupSimStatusMonitorThread()
         {
             _threadAbortion.AbortThread(ref _simStatusMonitorThread);
-            _simStatusMonitorThread = new Thread(SimStatusMonitorThreadWork);
-            _simStatusMonitorThread.Priority = ThreadPriority.BelowNormal;
-            _simStatusMonitorThread.IsBackground = true;
-            _simStatusMonitorThread.Name = "SimStatusMonitorThread";
+            _simStatusMonitorThread = new Thread(SimStatusMonitorThreadWork)
+            {
+                Priority = ThreadPriority.BelowNormal,
+                IsBackground = true,
+                Name = "SimStatusMonitorThread"
+            };
         }
 
         #endregion
 
         #region Gauges rendering thread-work methods
-
-
-        private float GetIndicatedAltitude(float trueAltitude, float baroPressure, bool pressureInInchesOfMercury)
-        {
-            var baroPressureInchesOfMercury = baroPressure;
-            if (!pressureInInchesOfMercury)
-            {
-                baroPressureInchesOfMercury = baroPressure/Constants.INCHES_MERCURY_TO_HECTOPASCALS;
-            }
-            var baroDifference = baroPressureInchesOfMercury - 29.92f;
-            var baroChangePerThousandFeet = 1.08f;
-            var altitudeCorrection = (baroDifference/baroChangePerThousandFeet)*1000.0f;
-            return altitudeCorrection + trueAltitude;
-        }
-
-       
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted(IInstrumentRenderer renderer)
         {
@@ -2917,12 +2845,12 @@ namespace MFDExtractor
             _instrumentRenderHelper.Render(renderer, targetForm, rotation, monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(targetForm), _nightMode);
             var endTime = DateTime.Now;
             var elapsed = endTime.Subtract(startTime);
-            if (!(elapsed.TotalMilliseconds < MIN_RENDERER_PASS_TIME_MILLSECONDS)) return;
+            if (!(elapsed.TotalMilliseconds < 0)) return;
             var toWait = new TimeSpan(0, 0, 0, 0,
-                (int) (MIN_RENDERER_PASS_TIME_MILLSECONDS - elapsed.TotalMilliseconds));
-            if (toWait.TotalMilliseconds < MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER)
+                (int) (0 - elapsed.TotalMilliseconds));
+            if (toWait.TotalMilliseconds < 0)
             {
-                toWait = new TimeSpan(0, 0, 0, 0, MIN_DELAY_AT_END_OF_INSTRUMENT_RENDER);
+                toWait = new TimeSpan(0, 0, 0, 0, 0);
             }
             Thread.Sleep(toWait);
         }
@@ -2930,26 +2858,8 @@ namespace MFDExtractor
 
 	    private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
         {
-			return targetForm.SizingOrMovingCursorsAreDisplayed  && Settings.Default.HighlightOutputWindows;
+            return targetForm !=null && targetForm.SizingOrMovingCursorsAreDisplayed && Settings.Default.HighlightOutputWindows;
         }
-
-        private static bool WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow()
-        {
-            return MouseButtonDown && Application.OpenForms.OfType<InstrumentForm>().Any(x => x.Visible && x.SizingOrMovingCursorsAreDisplayed);
-        }
-
-	    private static bool MouseButtonDown
-	    {
-	        get 
-            { 
-                return 
-                (
-                    ((Control.MouseButtons & MouseButtons.Left) == MouseButtons.Left) 
-                    || 
-                    ((Control.MouseButtons & MouseButtons.Right) == MouseButtons.Right)
-                ); 
-            }
-	    }
 
 	    #endregion
 
