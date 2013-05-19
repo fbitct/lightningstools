@@ -863,119 +863,51 @@ namespace MFDExtractor
             return GetImage(_hudTestAlignmentImage, Get3DHud, _client.GetHudBitmap, _primaryHud2DInputRect, _secondaryHud2DInputRect);
         }
 
-        private Image Get3DHud()
+        private Image Get3D(Rectangle rttInputRectangle)
         {
-            Image toReturn = null;
-            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _hud3DInputRect != Rectangle.Empty)
+            if (!_keepRunning || (!SimRunning || !_sim3DDataAvailable) || rttInputRectangle == Rectangle.Empty)
             {
-                try
+                return null;
+            }
+
+            try
+            {
+                lock (_texSmReaderLock)
                 {
-                    lock (_texSmReaderLock)
+                    if (_texSmReader != null)
                     {
-                        if (_texSmReader != null)
-                        {
-                            toReturn = Util.CloneBitmap(_texSmReader.GetImage(_hud3DInputRect));
-                        }
+                        return Util.CloneBitmap(_texSmReader.GetImage(rttInputRectangle));
                     }
                 }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
             }
-            return toReturn;
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
+        }
+        private Image Get3DHud()
+        {
+            return Get3D(_hud3DInputRect);
         }
 
         private Image Get3DMFD4()
         {
-            Image toReturn = null;
-            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _mfd4_3DInputRect != Rectangle.Empty)
-            {
-                try
-                {
-                    lock (_texSmReaderLock)
-                    {
-                        if (_texSmReader != null)
-                        {
-                            toReturn = Util.CloneBitmap(_texSmReader.GetImage(_mfd4_3DInputRect));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-            }
-            return toReturn;
+            return Get3D(_mfd4_3DInputRect);
         }
 
         private Image Get3DMFD3()
         {
-            Image toReturn = null;
-            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _mfd3_3DInputRect != Rectangle.Empty)
-            {
-                try
-                {
-                    lock (_texSmReaderLock)
-                    {
-                        if (_texSmReader != null)
-                        {
-                            toReturn = Util.CloneBitmap(_texSmReader.GetImage(_mfd3_3DInputRect));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-            }
-            return toReturn;
+            return Get3D(_mfd3_3DInputRect);
         }
 
         private Image Get3DLeftMFD()
         {
-            Image toReturn = null;
-            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _leftMfd3DInputRect != Rectangle.Empty)
-            {
-                try
-                {
-                    lock (_texSmReaderLock)
-                    {
-                        if (_texSmReader != null)
-                        {
-                            toReturn = Util.CloneBitmap(_texSmReader.GetImage(_leftMfd3DInputRect));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-            }
-            return toReturn;
+            return Get3D(_leftMfd3DInputRect);
         }
 
         private Image Get3DRightMFD()
         {
-            Image toReturn = null;
-            if (_keepRunning && (SimRunning && _sim3DDataAvailable) && _rightMfd3DInputRect != Rectangle.Empty)
-            {
-                try
-                {
-                    lock (_texSmReaderLock)
-                    {
-                        if (_texSmReader != null)
-                        {
-                            toReturn = Util.CloneBitmap(_texSmReader.GetImage(_rightMfd3DInputRect));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-            }
-            return toReturn;
+            return Get3D(_rightMfd3DInputRect);
         }
 
         #endregion
