@@ -3,16 +3,16 @@
 	public interface INightVisionModeToggledEventHandler:IInputEventHandlerEventHandler {}
 	public class NightVisionModeToggledEventHandler : INightVisionModeToggledEventHandler
 	{
-		private readonly Extractor _extractor;
+		private readonly ExtractorState _extractorState;
 
-		public NightVisionModeToggledEventHandler(Extractor extractor)
+		public NightVisionModeToggledEventHandler(ExtractorState extractorState)
 		{
-			_extractor = extractor;
+			_extractorState = extractorState;
 		}
 
 		public void Handle()
 		{
-			_extractor.State.NightMode = !_extractor.State.NightMode;
+			_extractorState.NightMode = !_extractorState.NightMode;
 		}
 	}
 }

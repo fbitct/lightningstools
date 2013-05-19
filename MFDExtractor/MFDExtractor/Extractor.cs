@@ -209,7 +209,7 @@ namespace MFDExtractor
 			State = new ExtractorState();
 
 			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
-            _inputEvents = inputEvents ?? new InputEvents(_renderers, _ehsiStateTracker, this);
+            _inputEvents = inputEvents ?? new InputEvents(_renderers, _ehsiStateTracker, State);
 	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,_diHotkeyDetection, _ehsiStateTracker,_inputEvents );
             if (!Settings.Default.DisableDirectInputMediator)
             {

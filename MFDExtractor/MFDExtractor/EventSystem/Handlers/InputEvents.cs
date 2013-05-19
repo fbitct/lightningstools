@@ -39,9 +39,9 @@ namespace MFDExtractor.EventSystem.Handlers
 			public IAzimuthIndicatorBrightnessDecreasedEventHandler AzimuthIndicatorBrightnessDecreased { get; private set; }
 			public IAccelerometerResetEventHandler AccelerometerReset { get; private set; }
 
-		public InputEvents(IInstrumentRendererSet renderers, IEHSIStateTracker ehsiStateTracker, Extractor extractor)
+		public InputEvents(IInstrumentRendererSet renderers, IEHSIStateTracker ehsiStateTracker, ExtractorState extractorState)
 		{
-			NightVisionModeToggled =  new NightVisionModeToggledEventHandler(extractor);
+			NightVisionModeToggled =  new NightVisionModeToggledEventHandler(extractorState);
 			AirspeedIndexIncreasedByOne = new AirspeedIndexIncreasedByOneEventHandler(renderers.ASI);
 			AirspeedIndexDecreasedByOne = new AirspeedIndexDecreasedByOneEventHandler(renderers.ASI);
 			EHSILeftKnobDecreasedByOne = new EHSILeftKnobDecreasedByOneEventHandler();

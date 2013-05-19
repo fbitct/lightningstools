@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using Common.Networking;
 
 namespace MFDExtractor
 {
@@ -12,5 +13,7 @@ namespace MFDExtractor
 		public bool TwoDeePrimaryView { get; set; }
 		public bool ThreeDeeMode { get; set; }
         public long RenderCycleNum { get; set; }
+        public NetworkMode NetworkMode { get; set; }
+        public bool SimRunning { get; set; }
 	}
 }
