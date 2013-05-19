@@ -49,7 +49,7 @@ namespace MFDExtractor
 
         private readonly Dictionary<IInstrumentRenderer, InstrumentForm> _outputForms = new Dictionary<IInstrumentRenderer, InstrumentForm>();
 	    private KeySettings _keySettings;
-	    private IKeySettingsReader _keySettingsReader = new KeySettingsReader();
+	    private readonly IKeySettingsReader _keySettingsReader = new KeySettingsReader();
 
 		private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
         private readonly IRendererSetInitializer _rendererSetInitializer;
@@ -57,7 +57,6 @@ namespace MFDExtractor
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
 
 
-        private Form _applicationForm;
 		private InstrumentForms _forms;
         private volatile bool _keepRunning;
         private volatile bool _nightMode;
@@ -1358,7 +1357,7 @@ namespace MFDExtractor
 			instrumentForm.Monochrome = currentSettings.Monochrome;
 			instrumentForm.Rotation = currentSettings.RotateFlipType;
             instrumentForm.WindowState = FormWindowState.Normal;
-            Common.Screen.Util.OpenFormOnSpecificMonitor(instrumentForm, _applicationForm, screen, location, size, true, true);
+            Common.Screen.Util.OpenFormOnSpecificMonitor(instrumentForm, screen, location, size, true, true);
             instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentName,instrumentForm,_extractor).HandleDataChangedEvent;
 
             instrumentForm.Disposed += disposeHandler;

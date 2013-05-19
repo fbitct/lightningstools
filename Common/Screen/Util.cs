@@ -57,20 +57,18 @@ namespace Common.Screen
             return System.Windows.Forms.Screen.PrimaryScreen;
         }
 
-        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm,
-                                                     System.Windows.Forms.Screen screen, Point point, Size size,
+        public static void OpenFormOnSpecificMonitor(Form formToOpen, System.Windows.Forms.Screen screen, Point point, Size size,
                                                      bool hideFromTaskBar, bool hideFromAltTab)
         {
-            OpenFormOnSpecificMonitor(formToOpen, parentForm, screen, point, size, hideFromTaskBar, hideFromAltTab,
-                                      false);
+            OpenFormOnSpecificMonitor(formToOpen, screen, point, size, hideFromTaskBar, hideFromAltTab,false);
         }
 
-        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm,
+        public static void OpenFormOnSpecificMonitor(Form formToOpen, 
                                                      System.Windows.Forms.Screen screen, Point point, Size size,
                                                      bool hideFromTaskBar, bool hideFromAltTab,
                                                      bool makeCurrentThreadIntoUIThread)
         {
-            OpenFormOnSpecificMonitor(formToOpen, parentForm, screen, point, size);
+            OpenFormOnSpecificMonitor(formToOpen, screen, point, size);
             if (hideFromTaskBar)
             {
                 formToOpen.ShowInTaskbar = false;
@@ -89,8 +87,7 @@ namespace Common.Screen
             }
         }
 
-        public static void OpenFormOnSpecificMonitor(Form formToOpen, Form parentForm,
-                                                     System.Windows.Forms.Screen screen, Point point, Size size)
+        public static void OpenFormOnSpecificMonitor(Form formToOpen, System.Windows.Forms.Screen screen, Point point, Size size)
         {
             OpenFormOnSpecificMonitor(formToOpen, screen, ref point, ref size, false);
         }
