@@ -65,7 +65,6 @@ namespace MFDExtractor
         private volatile bool _testMode;
         private volatile bool _threeDeeMode;
         private volatile bool _twoDeePrimaryView = true;
-        private volatile bool _windowSizingOrMoving;
 
         #region Capture Coordinates
 
@@ -2179,7 +2178,6 @@ namespace MFDExtractor
             {
                 while (_keepRunning)
                 {
-                    _windowSizingOrMoving = WindowSizingOrMovingBeingAttemptedOnAnyOutputWindow();
                     Application.DoEvents();
                     if (_renderCycleNum < long.MaxValue)
                     {
@@ -2239,10 +2237,8 @@ namespace MFDExtractor
                     {
                         toWait = new List<WaitHandle>();
                         SignalMFDAndHudThreadsToStart();
-                        //performance group 0
                         SignalRwrRenderThreadToStart(toWait);
                         SignalPrimaryFlightInstrumentRenderThreadsToStart(toWait);
-                        //                            WaitAllAndClearList(toWait, 1000);
                         SignalFuelInstrumentsRenderThreadsToStart(toWait);
                         SignalIndexerRenderThreadsToStart(toWait);
                         SignalEngine1GaugesRenderThreadsToStart(toWait);
@@ -2298,10 +2294,6 @@ namespace MFDExtractor
             }
             catch (ThreadInterruptedException)
             {
-            }
-            finally
-            {
-                _windowSizingOrMoving = false;
             }
         }
 
