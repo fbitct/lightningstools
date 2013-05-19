@@ -991,129 +991,49 @@ namespace MFDExtractor
 
         #region MFD Capturing implementation methods
 
-        private void CaptureMfd4()
+        private void CaptureAndUpdateOutput(bool instrumentEnabled, Func<Image> getterFunc, Action<Image> setterFunc, Image blankVersion )
         {
-            if (Settings.Default.EnableMfd4Output || _networkMode == NetworkMode.Server)
+            if (!instrumentEnabled && _networkMode != NetworkMode.Server) return;
+
+            Image image = null;
+            try
             {
-                Image mfd4Image = null;
-                try
-                {
-                    mfd4Image = GetMfd4Bitmap();
-                    if (mfd4Image == null)
-                    {
-                        mfd4Image = Util.CloneBitmap(_mfd4BlankImage);
-                    }
-                    SetMfd4Image(mfd4Image);
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-                finally
-                {
-                    Common.Util.DisposeObject(mfd4Image);
-                }
+                image = getterFunc() ?? Util.CloneBitmap(blankVersion);
+                setterFunc(image);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
+            finally
+            {
+                Common.Util.DisposeObject(image);
             }
         }
 
+	    private void CaptureMfd4()
+	    {
+	        CaptureAndUpdateOutput(Settings.Default.EnableMfd4Output, GetMfd4Bitmap, SetMfd4Image, _mfd4BlankImage);
+	    }
+
         private void CaptureMfd3()
         {
-            if (Settings.Default.EnableMfd3Output || _networkMode == NetworkMode.Server)
-            {
-                Image mfd3Image = null;
-                try
-                {
-                    mfd3Image = GetMfd3Bitmap();
-                    if (mfd3Image == null)
-                    {
-                        mfd3Image = Util.CloneBitmap(_mfd3BlankImage);
-                    }
-                    SetMfd3Image(mfd3Image);
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-                finally
-                {
-                    Common.Util.DisposeObject(mfd3Image);
-                }
-            }
+            CaptureAndUpdateOutput(Settings.Default.EnableMfd3Output, GetMfd3Bitmap, SetMfd3Image, _mfd3BlankImage);
         }
 
         private void CaptureLeftMfd()
         {
-            if (Settings.Default.EnableLeftMFDOutput || _networkMode == NetworkMode.Server)
-            {
-                Image leftMfdImage = null;
-                try
-                {
-                    leftMfdImage = GetLeftMfdBitmap();
-                    if (leftMfdImage == null)
-                    {
-                        leftMfdImage = Util.CloneBitmap(_leftMfdBlankImage);
-                    }
-                    SetLeftMfdImage(leftMfdImage);
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-                finally
-                {
-                    Common.Util.DisposeObject(leftMfdImage);
-                }
-            }
+            CaptureAndUpdateOutput(Settings.Default.EnableLeftMFDOutput, GetLeftMfdBitmap, SetLeftMfdImage, _leftMfdBlankImage);
         }
 
         private void CaptureRightMfd()
         {
-            if (Settings.Default.EnableRightMFDOutput || _networkMode == NetworkMode.Server)
-            {
-                Image rightMfdImage = null;
-                try
-                {
-                    rightMfdImage = GetRightMfdBitmap();
-                    if (rightMfdImage == null)
-                    {
-                        rightMfdImage = Util.CloneBitmap(_rightMfdBlankImage);
-                    }
-                    SetRightMfdImage(rightMfdImage);
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-                finally
-                {
-                    Common.Util.DisposeObject(rightMfdImage);
-                }
-            }
+            CaptureAndUpdateOutput(Settings.Default.EnableRightMFDOutput, GetRightMfdBitmap, SetRightMfdImage, _rightMfdBlankImage);
         }
 
         private void CaptureHud()
         {
-            if (Settings.Default.EnableHudOutput || _networkMode == NetworkMode.Server)
-            {
-                Image hudImage = null;
-                try
-                {
-                    hudImage = GetHudBitmap();
-                    if (hudImage == null)
-                    {
-                        hudImage = Util.CloneBitmap(_hudBlankImage);
-                    }
-                    SetHudImage(hudImage);
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
-                finally
-                {
-                    Common.Util.DisposeObject(hudImage);
-                }
-            }
+            CaptureAndUpdateOutput(Settings.Default.EnableHudOutput, GetHudBitmap, SetHudImage, _hudBlankImage);
         }
 
         #endregion
