@@ -3,9 +3,25 @@ using System.Drawing;
 
 namespace MFDExtractor
 {
-	[Serializable]
-	class InstrumentFormSettings
-	{
+    public interface IInstrumentFormSettings
+    {
+        bool Enabled { get; set; }
+        string OutputDisplay { get; set; }
+        bool StretchToFit { get; set; }
+        int ULX { get; set; }
+        int ULY { get; set; }
+        int LRX { get; set; }
+        int LRY { get; set; }
+        bool AlwaysOnTop { get; set; }
+        bool Monochrome { get; set; }
+        RotateFlipType RotateFlipType { get; set; }
+        int RenderEveryN { get; set; }
+        int RenderOnN { get; set; }
+    }
+
+    [Serializable]
+	class InstrumentFormSettings : IInstrumentFormSettings
+    {
 		public bool Enabled { get; set; }
 		public string OutputDisplay { get; set; }
 		public bool StretchToFit { get; set; }
@@ -16,5 +32,7 @@ namespace MFDExtractor
 		public bool AlwaysOnTop { get; set; }
 		public bool Monochrome { get; set; }
 		public RotateFlipType RotateFlipType { get; set; }
+        public int RenderEveryN { get; set; }
+        public int RenderOnN { get; set; }
 	}
 }

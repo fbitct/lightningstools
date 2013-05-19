@@ -10,11 +10,11 @@ namespace MFDExtractor
     {
         private static ILog _log = LogManager.GetLogger(typeof(BMSSupport));
 
-        public static void Read3DCoordinatesFromCurrentBmsDatFile(ref Rectangle mfd4_3DImageSourceRectangle,
-                                                                   ref Rectangle mfd3_3DImageSourceRectangle,
-                                                                   ref Rectangle leftMfd3DImageSourceRectangle,
-                                                                   ref Rectangle rightMfd3DImageSourceRectangle,
-                                                                   ref Rectangle hud3DImageSourceRectangle)
+        public static void Read3DCoordinatesFromCurrentBmsDatFile(CaptureCoordinates mfd4CaptureCoordinates,
+                                                                   CaptureCoordinates mfd3CaptureCoordinates,
+                                                                   CaptureCoordinates leftMfdCaptureCoordinates,
+                                                                   CaptureCoordinates rightMfdCaptureCoordinates,
+                                                                   CaptureCoordinates hudCaptureCoordinates)
         {
             FileInfo file = FindBms3DCockpitFile();
             if (file == null)
@@ -22,11 +22,11 @@ namespace MFDExtractor
                 return;
             }
             bool isDoubleResolution = IsDoubleResolutionRtt();
-            mfd4_3DImageSourceRectangle = new Rectangle();
-            mfd3_3DImageSourceRectangle = new Rectangle();
-            leftMfd3DImageSourceRectangle = new Rectangle();
-            rightMfd3DImageSourceRectangle = new Rectangle();
-            hud3DImageSourceRectangle = new Rectangle();
+            var mfd4_3DImageSourceRectangle = new Rectangle();
+            var mfd3_3DImageSourceRectangle = new Rectangle();
+            var leftMfd3DImageSourceRectangle = new Rectangle();
+            var rightMfd3DImageSourceRectangle = new Rectangle();
+            var hud3DImageSourceRectangle = new Rectangle();
 
             using (FileStream stream = file.OpenRead())
             using (var reader = new StreamReader(stream))
@@ -145,6 +145,11 @@ namespace MFDExtractor
                 mfd4_3DImageSourceRectangle = MultiplyRectangle(mfd4_3DImageSourceRectangle, 2);
                 hud3DImageSourceRectangle = MultiplyRectangle(hud3DImageSourceRectangle, 2);
             }
+            leftMfdCaptureCoordinates.ThreeDee = leftMfd3DImageSourceRectangle;
+            rightMfdCaptureCoordinates.ThreeDee = rightMfd3DImageSourceRectangle;
+            mfd3CaptureCoordinates.ThreeDee = mfd3_3DImageSourceRectangle;
+            mfd4CaptureCoordinates.ThreeDee = mfd4_3DImageSourceRectangle;
+            hudCaptureCoordinates.ThreeDee = hud3DImageSourceRectangle;
         }
 
         private static Rectangle MultiplyRectangle(Rectangle rect, int factor)

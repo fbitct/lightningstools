@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using Common.SimSupport;
 using MFDExtractor.Configuration;
@@ -10,14 +8,11 @@ namespace MFDExtractor
 {
     internal interface IInstrumentFormFactory
     {
-        InstrumentForm SetupInstrumentForm
+        InstrumentForm Create
             (
-            Extractor extractor,
-            Dictionary<IInstrumentRenderer, InstrumentForm> outputForms,
             string instrumentName,
             string formCaption,
             IInstrumentRenderer renderer,
-            EventHandler disposeHandler,
             Image initialImage = null
             );
     }
@@ -30,14 +25,11 @@ namespace MFDExtractor
         {
             _instrumentFormSettingsReader = instrumentFormSettingsReader ?? new InstrumentFormSettingsReader();
         }
-        public InstrumentForm SetupInstrumentForm
+        public InstrumentForm Create
         (
-            Extractor extractor,
-            Dictionary<IInstrumentRenderer, InstrumentForm> outputForms,
             string instrumentName,
             string formCaption,
             IInstrumentRenderer renderer,
-            EventHandler disposeHandler,
             Image initialImage = null
         )
         {
@@ -46,7 +38,7 @@ namespace MFDExtractor
             Point location;
             Size size;
             var screen = Common.Screen.Util.FindScreen(currentSettings.OutputDisplay);
-            var instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false };
+            var instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false, Settings = currentSettings};
             if (currentSettings.StretchToFit)
             {
                 location = new Point(0, 0);
@@ -64,13 +56,8 @@ namespace MFDExtractor
             instrumentForm.Rotation = currentSettings.RotateFlipType;
             instrumentForm.WindowState = FormWindowState.Normal;
             Common.Screen.Util.OpenFormOnSpecificMonitor(instrumentForm, screen, location, size, true, true);
-            instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentName, instrumentForm, extractor).HandleDataChangedEvent;
+            instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentName, instrumentForm).HandleDataChangedEvent;
 
-            instrumentForm.Disposed += disposeHandler;
-            if (renderer != null)
-            {
-                outputForms.Add(renderer, instrumentForm);
-            }
             if (initialImage == null) return instrumentForm;
             using (var graphics = instrumentForm.CreateGraphics())
             {

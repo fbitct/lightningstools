@@ -4,7 +4,7 @@ namespace MFDExtractor.Configuration
 {
 	internal interface IInstrumentFormSettingsWriter
 	{
-		void Write(string instrumentName, InstrumentFormSettings instrumentFormSettings);
+		void Write(string instrumentName, IInstrumentFormSettings instrumentFormSettings);
 	}
 
 	internal class InstrumentFormSettingsWriter : IInstrumentFormSettingsWriter
@@ -16,7 +16,7 @@ namespace MFDExtractor.Configuration
 			_settingWriter = settingWriter ?? new SettingWriter();
 		}
 
-		public void Write(string instrumentName, InstrumentFormSettings instrumentFormSettings)
+		public void Write(string instrumentName, IInstrumentFormSettings instrumentFormSettings)
 		{
 			_settingWriter.WriteSetting(value:instrumentFormSettings.Enabled, settingName: String.Format("Enable{0}Output", instrumentName));
 			_settingWriter.WriteSetting(value:instrumentFormSettings.OutputDisplay, settingName: String.Format("{0}_OutputDisplay", instrumentName));

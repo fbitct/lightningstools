@@ -1,4 +1,5 @@
-﻿using LightningGauges.Renderers;
+﻿using Common.SimSupport;
+using LightningGauges.Renderers;
 
 namespace MFDExtractor
 {
@@ -40,7 +41,7 @@ namespace MFDExtractor
          IF16AzimuthIndicator RWR{ get; set; }
          IF16SpeedbrakeIndicator Speedbrake{ get; set; }
          IF16VerticalVelocityIndicator VVI{ get; set; }
-
+         IInstrumentRenderer this [InstrumentType instrumentType] { get; }
     }
 
     public class InstrumentRendererSet : IInstrumentRendererSet
@@ -81,5 +82,17 @@ namespace MFDExtractor
         public IF16AzimuthIndicator RWR { get; set; }
         public IF16SpeedbrakeIndicator Speedbrake { get; set; }
         public IF16VerticalVelocityIndicator VVI { get; set; }
+
+        public IInstrumentRenderer this[InstrumentType instrumentType]
+        {
+            get
+            {
+                var propertyInfo= GetType().GetProperty(instrumentType.ToString());
+                if (propertyInfo ==null) return null;
+                var getterMethod= propertyInfo.GetGetMethod();
+                if (getterMethod ==null) return null;
+                return getterMethod.Invoke(this, null) as IInstrumentRenderer;
+            }
+        }
     }
 }

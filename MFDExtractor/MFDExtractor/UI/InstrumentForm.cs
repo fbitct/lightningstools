@@ -9,15 +9,11 @@ namespace MFDExtractor.UI
         private const int MIN_WINDOW_WIDTH = 50;
         private const int MIN_WINDOW_HEIGHT = 50;
         private bool _adjustLocation;
-        private bool _alwaysOnTop;
+        private bool _stretchChanging;
         private Rectangle _boundsOnResizeBegin = Rectangle.Empty;
         private Cursor _cursorOnResizeBegin;
         private Rectangle _lastBounds = Rectangle.Empty;
-        private bool _monochrome;
         private ResizeHelper _resizeHelper;
-        private RotateFlipType _rotation;
-        private bool _stretchChanging;
-        private bool _stretchToFill;
 
         public InstrumentForm()
         {
@@ -29,7 +25,7 @@ namespace MFDExtractor.UI
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.UserPaint, true);
 
-            if (!base.DesignMode)
+            if (!DesignMode)
             {
                 _resizeHelper = new ResizeHelper(this);
             }
@@ -38,15 +34,22 @@ namespace MFDExtractor.UI
         public bool RenderImmediately { get; set; }
         public DateTime LastRenderedOn { get; set; }
 
+        private IInstrumentFormSettings _settings;
+        public IInstrumentFormSettings Settings
+        {
+            get { return _settings ?? (_settings = new InstrumentFormSettings()); }
+            set { _settings = value; }
+        }
+
         public bool StretchToFill
         {
-            get { return _stretchToFill; }
+            get { return Settings.StretchToFit; }
             set
             {
                 _stretchChanging = true;
-                _stretchToFill = value;
-                ctxStretchToFill.Checked = _stretchToFill;
-                if (_stretchToFill)
+                Settings.StretchToFit = value;
+                ctxStretchToFill.Checked = Settings.StretchToFit;
+                if (Settings.StretchToFit)
                 {
                     SetFullScreen();
                 }
@@ -62,33 +65,33 @@ namespace MFDExtractor.UI
 
         public bool Monochrome
         {
-            get { return _monochrome; }
+            get { return Settings.Monochrome; }
             set
             {
-                _monochrome = value;
-                ctxMonochrome.Checked = _monochrome;
+                Settings.Monochrome = value;
+                ctxMonochrome.Checked = Settings.Monochrome;
                 OnDataChanged(new EventArgs());
             }
         }
 
         public bool AlwaysOnTop
         {
-            get { return _alwaysOnTop; }
+            get { return Settings.AlwaysOnTop; }
             set
             {
-                _alwaysOnTop = value;
-                TopMost = _alwaysOnTop;
-                ctxAlwaysOnTop.Checked = _alwaysOnTop;
+                Settings.AlwaysOnTop = value;
+                TopMost = Settings.AlwaysOnTop;
+                ctxAlwaysOnTop.Checked = Settings.AlwaysOnTop;
                 OnDataChanged(new EventArgs());
             }
         }
 
         public RotateFlipType Rotation
         {
-            get { return _rotation; }
+            get { return Settings.RotateFlipType; }
             set
             {
-                _rotation = value;
+                Settings.RotateFlipType = value;
                 ApplyRotationCheck();
                 OnDataChanged(new EventArgs());
             }
@@ -119,7 +122,7 @@ namespace MFDExtractor.UI
         protected void ApplyRotationCheck()
         {
             ClearRotationChecks();
-            switch (_rotation)
+            switch (Rotation)
             {
                 case RotateFlipType.RotateNoneFlipNone:
                     ctxRotationNoRotationNoFlip.Checked = true;
@@ -144,8 +147,6 @@ namespace MFDExtractor.UI
                     break;
                 case RotateFlipType.Rotate90FlipY:
                     ctxRotatePlus90DegreesFlipVertically.Checked = true;
-                    break;
-                default:
                     break;
             }
         }
@@ -186,7 +187,7 @@ namespace MFDExtractor.UI
 
         protected override void OnSizeChanged(EventArgs e)
         {
-            if (_stretchToFill)
+            if (StretchToFill)
             {
                 return;
             }
@@ -207,7 +208,7 @@ namespace MFDExtractor.UI
                 float ratio = (_boundsOnResizeBegin.Width/(float) _boundsOnResizeBegin.Height);
                 Width = (int) (ratio*Height);
             }
-            if (!_stretchToFill && !_stretchChanging)
+            if (!StretchToFill && !_stretchChanging)
             {
                 _lastBounds = Bounds;
             }
@@ -219,10 +220,10 @@ namespace MFDExtractor.UI
             if (DesktopBounds.Size != thisScreen.Bounds.Size &&
                 DesktopBounds.Location != thisScreen.Bounds.Location)
             {
-                _stretchToFill = false;
+                StretchToFill = false;
                 if (ctxStretchToFill != null)
                 {
-                    ctxStretchToFill.Checked = _stretchToFill;
+                    ctxStretchToFill.Checked = StretchToFill;
                 }
             }
             base.OnSizeChanged(e);
@@ -231,7 +232,7 @@ namespace MFDExtractor.UI
 
         protected override void OnLocationChanged(EventArgs e)
         {
-            if (_stretchToFill)
+            if (StretchToFill)
             {
                 _adjustLocation = true;
             }

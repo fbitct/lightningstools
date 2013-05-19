@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BMSSupport.cs" />
+    <Compile Include="CaptureCoordinates.cs" />
     <Compile Include="Configuration\GdiPlusOptionsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsWriter.cs" />
@@ -179,21 +180,22 @@
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataUpdater.cs" />
     <Compile Include="Instrument.cs" />
+    <Compile Include="InstrumentFactory.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
     <Compile Include="InstrumentFormFactory.cs" />
     <Compile Include="InstrumentFormSettings.cs" />
-    <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="Configuration\InputControlSelectionSettingReader.cs" />
+    <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="InstrumentRenderHelper.cs" />
     <Compile Include="InstrumentStateSnapshotCache.cs" />
     <Compile Include="Networking\ClientSideIncomingMessageDispatcher.cs" />
     <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />
     <Compile Include="Properties\Settings.cs" />
+    <Compile Include="InstrumentType.cs" />
     <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="RendererSetInitializer.cs" />
-    <Compile Include="RenderStartHelper.cs" />
-    <Compile Include="RenderThreadSetupHelper.cs" />
-    <Compile Include="RenderThreadWorkHelper.cs" />
+    <Compile Include="RenderThreadSignaller.cs" />
+    <Compile Include="RenderThreadFactory.cs" />
     <Compile Include="SettingReader.cs" />
     <Compile Include="SettingsWriter.cs" />
     <Compile Include="ThreadAbortion.cs" />

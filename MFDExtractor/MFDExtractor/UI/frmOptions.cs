@@ -395,43 +395,6 @@ namespace MFDExtractor.UI
             chkRollTrim.Checked = settings.EnableRollTrimOutput;
             chkPitchTrim.Checked = settings.EnablePitchTrimOutput;
 
-            //pbRecoverAzimuthIndicator.Enabled = chkAzimuthIndicator.Checked;
-            //pbRecoverADI.Enabled = chkADI.Checked;
-            //pbRecoverStandbyADI.Enabled = chkStandbyADI.Checked;
-            //pbRecoverASI.Enabled = chkAirspeedIndicator.Checked;
-            //pbRecoverAltimeter.Enabled = chkAltimeter.Checked;
-            //pbRecoverAOAIndexer.Enabled = chkAOAIndexer.Checked;
-            //pbRecoverAOAIndicator.Enabled = chkAOAIndicator.Checked;
-            //pbRecoverCautionPanel.Enabled = chkCautionPanel.Checked;
-            //pbRecoverCMDSPanel.Enabled = chkCMDSPanel.Checked;
-            //pbRecoverCompass.Enabled = chkCompass.Checked;
-            //pbRecoverDED.Enabled = chkDED.Checked;
-            //pbRecoverPFL.Enabled = chkPFL.Checked;
-            //pbRecoverEPU.Enabled = chkEPU.Checked;
-            //pbRecoverAccelerometer.Enabled = chkAccelerometer.Checked;
-            //pbRecoverFTIT1.Enabled = chkFTIT1.Checked;
-            //pbRecoverFTIT2.Enabled = chkFTIT2.Checked;
-            //pbRecoverFuelFlow.Enabled = chkFuelFlow.Checked;
-            //pbRecoverISIS.Enabled = chkISIS.Checked;
-            //pbRecoverFuelQuantity.Enabled = chkFuelQty.Checked;
-            //pbRecoverHSI.Enabled = chkHSI.Checked;
-            //pbRecoverEHSI.Enabled = chkEHSI.Checked;
-            //pbRecoverGearLights.Enabled = chkGearLights.Checked;
-            //pbRecoverNWS.Enabled = chkNWSIndexer.Checked;
-            //pbRecoverNozPos1.Enabled = chkNOZ1.Checked;
-            //pbRecoverNozPos2.Enabled = chkNOZ2.Checked;
-            //pbRecoverOil1.Enabled = chkOIL1.Checked;
-            //pbRecoverOil2.Enabled = chkOIL2.Checked;
-            //pbRecoverSpeedbrake.Enabled = chkSpeedbrake.Checked;
-            //pbRecoverRPM1.Enabled = chkRPM1.Checked;
-            //pbRecoverRPM2.Enabled = chkRPM2.Checked;
-            //pbRecoverVVI.Enabled = chkVVI.Checked;
-            //pbRecoverHydA.Enabled = chkHydA.Checked;
-            //pbRecoverHydB.Enabled = chkHydB.Checked;
-            //pbRecoverCabinPress.Enabled = chkCabinPress.Checked;
-            //pbRecoverRollTrim.Enabled = chkRollTrim.Checked;
-            //pbRecoverPitchTrim.Enabled = chkPitchTrim.Checked;
-
 
             string azimuthIndicatorType = settings.AzimuthIndicatorType;
             var azimuthIndicatorStyle =
@@ -1880,31 +1843,6 @@ namespace MFDExtractor.UI
             }
         }
 
-        private void cmdRecoverMfd4_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverMfd4Window(Screen.FromPoint(Location));
-        }
-
-        private void cmdRecoverMfd3_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverMfd3Window(Screen.FromPoint(Location));
-        }
-
-        private void cmdRecoverLeftMfd_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverLeftMfdWindow(Screen.FromPoint(Location));
-        }
-
-        private void cmdRecoverRightMfd_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverRightMfdWindow(Screen.FromPoint(Location));
-        }
-
-        private void cmdRecoverHud_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverHudWindow(Screen.FromPoint(Location));
-        }
-
         private void cmdImportCoordinates_Click(object sender, EventArgs e)
         {
             var file = new OpenFileDialog();
@@ -2782,175 +2720,6 @@ namespace MFDExtractor.UI
             BringToFront();
         }
 
-        private void pbRecoverADI_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverADIWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverAltimeter_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverAltimeterWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverAOAIndexer_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverAOAIndexerWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverAOAIndicator_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverAOAIndicatorWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverCautionPanel_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverCautionPanelWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverCMDSPanel_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverCMDSPanelWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverCompass_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverCompassWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverDED_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverDEDWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverFTIT1_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverFTIT1Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverAccelerometer_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverAccelerometerWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverNozPos1_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverNOZ1Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverOil1_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverOil1Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverRPM1_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverRPM1Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverFTIT2_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverFTIT2Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverNozPos2_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverNOZ2Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverOil2_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverOil2Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverRPM2_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverRPM2Window(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverEPU_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverEPUFuelWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverFuelFlow_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverFuelFlowWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverISIS_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverISISWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverNWS_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverNWSWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverPFL_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverPFLWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverSpeedbrake_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverSpeedbrakeWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverVVI_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverVVIWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverHSI_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverHSIWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverEHSI_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverEHSIWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverGearLights_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverLandingGearLightsWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverFuelQuantity_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverFuelQuantityWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverStandbyADI_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverBackupADIWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverHydA_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverHydAWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverHydB_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverHydBWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverCabinPress_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverCabinPressWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverRollTrim_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverRollTrimWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverPitchTrim_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverPitchTrimWindow(Screen.FromPoint(Location));
-        }
 
         private void cmdNV_Click(object sender, EventArgs e)
         {
@@ -3053,16 +2822,6 @@ namespace MFDExtractor.UI
                     F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
                 //StopAndRestartExtractor();
             }
-        }
-
-        private void pbRecoverASI_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverASIWindow(Screen.FromPoint(Location));
-        }
-
-        private void pbRecoverAzimuthIndicator_Click(object sender, EventArgs e)
-        {
-            _extractor.RecoverAzimuthIndicatorWindow(Screen.FromPoint(Location));
         }
 
 

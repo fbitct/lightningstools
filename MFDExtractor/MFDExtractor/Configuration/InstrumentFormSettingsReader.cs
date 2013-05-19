@@ -19,20 +19,21 @@ namespace MFDExtractor.Configuration
 
 		public InstrumentFormSettings Read(string instrumentName)
 		{
-			var toReturn = new InstrumentFormSettings
-			{
-				Enabled = (bool) _settingReader.ReadSetting(defaultValue: false, settingName: String.Format("Enable{0}Output", instrumentName)),
-				OutputDisplay = (string)_settingReader.ReadSetting(defaultValue: string.Empty, settingName: String.Format("{0}_OutputDisplay", instrumentName)),
-				StretchToFit = (bool) _settingReader.ReadSetting(defaultValue: false, settingName: String.Format("{0}_StretchToFit", instrumentName)),
-				ULX = (int)_settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutULX", instrumentName)),
-                ULY = (int)_settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutULY", instrumentName)),
-                LRX = (int)_settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutLRX", instrumentName)),
-                LRY = (int)_settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutLRY", instrumentName)),
-				AlwaysOnTop = (bool)_settingReader.ReadSetting(defaultValue: false, settingName: String.Format("{0}_AlwaysOnTop", instrumentName)),
-				Monochrome = (bool)_settingReader.ReadSetting(defaultValue: false, settingName: String.Format("{0}_Monochrome", instrumentName)),
-				RotateFlipType = (RotateFlipType) _settingReader.ReadSetting(defaultValue: RotateFlipType.RotateNoneFlipNone, settingName: String.Format("{0}_RotateFlipType", instrumentName)),
-			};
-			return toReturn;
+
+		    var toReturn = new InstrumentFormSettings();
+		    toReturn.Enabled =(bool)_settingReader.ReadSetting(defaultValue: false,settingName: String.Format("Enable{0}Output", instrumentName));
+		    toReturn.OutputDisplay =(string)_settingReader.ReadSetting(defaultValue: string.Empty,settingName: String.Format("{0}_OutputDisplay", instrumentName));
+		    toReturn.StretchToFit =(bool)_settingReader.ReadSetting(defaultValue: false,settingName: String.Format("{0}_StretchToFit", instrumentName));
+		    toReturn.ULX =(int) _settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutULX", instrumentName));
+		    toReturn.ULY =(int) _settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutULY", instrumentName));
+		    toReturn.LRX =(int) _settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutLRX", instrumentName));
+		    toReturn.LRY = (int) _settingReader.ReadSetting(defaultValue: 0, settingName: String.Format("{0}_OutLRY", instrumentName));
+		    toReturn.AlwaysOnTop = (bool) _settingReader.ReadSetting(defaultValue: false,settingName: String.Format("{0}_AlwaysOnTop", instrumentName));
+		    toReturn.Monochrome = (bool) _settingReader.ReadSetting(defaultValue: false,settingName: String.Format("{0}_Monochrome", instrumentName));
+		    toReturn.RotateFlipType =(RotateFlipType)_settingReader.ReadSetting(defaultValue: RotateFlipType.RotateNoneFlipNone,settingName: String.Format("{0}_RotateFlipType", instrumentName));
+		    toReturn.RenderEveryN =(int)_settingReader.ReadSetting(defaultValue: 1, settingName: String.Format("{0}_RenderEveryN", instrumentName));
+		    toReturn.RenderOnN =(int)_settingReader.ReadSetting(defaultValue: 1, settingName: String.Format("{0}_RenderOnN", instrumentName));
+		    return toReturn;
 		}
 	}
 }

@@ -801,7 +801,6 @@ namespace MFDExtractor.UI
             this.cmdRecoverLeftMfd.TabIndex = 9;
             this.cmdRecoverLeftMfd.Text = "&Recover";
             this.cmdRecoverLeftMfd.UseVisualStyleBackColor = true;
-            this.cmdRecoverLeftMfd.Click += new System.EventHandler(this.cmdRecoverLeftMfd_Click);
             // 
             // tabRMFD
             // 
@@ -998,7 +997,6 @@ namespace MFDExtractor.UI
             this.cmdRecoverRightMfd.TabIndex = 158;
             this.cmdRecoverRightMfd.Text = "&Recover";
             this.cmdRecoverRightMfd.UseVisualStyleBackColor = true;
-            this.cmdRecoverRightMfd.Click += new System.EventHandler(this.cmdRecoverRightMfd_Click);
             // 
             // tabMFD3
             // 
@@ -1195,7 +1193,6 @@ namespace MFDExtractor.UI
             this.cmdRecoverMfd3.TabIndex = 162;
             this.cmdRecoverMfd3.Text = "&Recover";
             this.cmdRecoverMfd3.UseVisualStyleBackColor = true;
-            this.cmdRecoverMfd3.Click += new System.EventHandler(this.cmdRecoverMfd3_Click);
             // 
             // tabMFD4
             // 
@@ -1391,7 +1388,6 @@ namespace MFDExtractor.UI
             this.cmdRecoverMfd4.TabIndex = 166;
             this.cmdRecoverMfd4.Text = "&Recover";
             this.cmdRecoverMfd4.UseVisualStyleBackColor = true;
-            this.cmdRecoverMfd4.Click += new System.EventHandler(this.cmdRecoverMfd4_Click);
             // 
             // tabHUD
             // 
@@ -1425,7 +1421,6 @@ namespace MFDExtractor.UI
             this.cmdRecoverHud.TabIndex = 170;
             this.cmdRecoverHud.Text = "&Recover";
             this.cmdRecoverHud.UseVisualStyleBackColor = true;
-            this.cmdRecoverHud.Click += new System.EventHandler(this.cmdRecoverHud_Click);
             // 
             // grpPrimaryViewHudImageSourceCoordinates
             // 
@@ -1665,7 +1660,6 @@ namespace MFDExtractor.UI
             this.pbRecoverDED.TabIndex = 73;
             this.pbRecoverDED.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverDED, "Recover");
-            this.pbRecoverDED.Click += new System.EventHandler(this.pbRecoverDED_Click);
             // 
             // chkEHSI
             // 
@@ -1704,7 +1698,6 @@ namespace MFDExtractor.UI
             this.pbRecoverEHSI.TabIndex = 86;
             this.pbRecoverEHSI.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverEHSI, "Recover");
-            this.pbRecoverEHSI.Click += new System.EventHandler(this.pbRecoverEHSI_Click);
             // 
             // pbRecoverASI
             // 
@@ -1721,7 +1714,6 @@ namespace MFDExtractor.UI
             this.pbRecoverASI.TabIndex = 67;
             this.pbRecoverASI.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverASI, "Recover");
-            this.pbRecoverASI.Click += new System.EventHandler(this.pbRecoverASI_Click);
             // 
             // grpVVIOptions
             // 
@@ -1795,7 +1787,6 @@ namespace MFDExtractor.UI
             this.pbRecoverCompass.TabIndex = 90;
             this.pbRecoverCompass.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverCompass, "Recover");
-            this.pbRecoverCompass.Click += new System.EventHandler(this.pbRecoverCompass_Click);
             // 
             // pbRecoverStandbyADI
             // 
@@ -1812,7 +1803,6 @@ namespace MFDExtractor.UI
             this.pbRecoverStandbyADI.TabIndex = 92;
             this.pbRecoverStandbyADI.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverStandbyADI, "Recover");
-            this.pbRecoverStandbyADI.Click += new System.EventHandler(this.pbRecoverStandbyADI_Click);
             // 
             // pbRecoverHSI
             // 
@@ -1829,7 +1819,6 @@ namespace MFDExtractor.UI
             this.pbRecoverHSI.TabIndex = 51;
             this.pbRecoverHSI.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverHSI, "Recover");
-            this.pbRecoverHSI.Click += new System.EventHandler(this.pbRecoverHSI_Click);
             // 
             // pbRecoverVVI
             // 
@@ -1846,7 +1835,6 @@ namespace MFDExtractor.UI
             this.pbRecoverVVI.TabIndex = 50;
             this.pbRecoverVVI.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverVVI, "Recover");
-            this.pbRecoverVVI.Click += new System.EventHandler(this.pbRecoverVVI_Click);
             // 
             // chkCabinPress
             // 
@@ -1874,7 +1862,6 @@ namespace MFDExtractor.UI
             this.pbRecoverCabinPress.TabIndex = 63;
             this.pbRecoverCabinPress.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverCabinPress, "Recover");
-            this.pbRecoverCabinPress.Click += new System.EventHandler(this.pbRecoverCabinPress_Click);
             // 
             // chkAirspeedIndicator
             // 
@@ -1902,7 +1889,6 @@ namespace MFDExtractor.UI
             this.pbRecoverAccelerometer.TabIndex = 88;
             this.pbRecoverAccelerometer.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverAccelerometer, "Recover");
-            this.pbRecoverAccelerometer.Click += new System.EventHandler(this.pbRecoverAccelerometer_Click);
             // 
             // chkVVI
             // 
@@ -1963,7 +1949,6 @@ namespace MFDExtractor.UI
             this.pbRecoverISIS.TabIndex = 84;
             this.pbRecoverISIS.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverISIS, "Recover");
-            this.pbRecoverISIS.Click += new System.EventHandler(this.pbRecoverISIS_Click);
             // 
             // chkADI
             // 
@@ -1991,7 +1976,6 @@ namespace MFDExtractor.UI
             this.pbRecoverADI.TabIndex = 28;
             this.pbRecoverADI.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverADI, "Recover");
-            this.pbRecoverADI.Click += new System.EventHandler(this.pbRecoverADI_Click);
             // 
             // chkAOAIndicator
             // 
@@ -2019,7 +2003,6 @@ namespace MFDExtractor.UI
             this.pbRecoverAOAIndicator.TabIndex = 32;
             this.pbRecoverAOAIndicator.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverAOAIndicator, "Recover");
-            this.pbRecoverAOAIndicator.Click += new System.EventHandler(this.pbRecoverAOAIndicator_Click);
             // 
             // pbRecoverAltimeter
             // 
@@ -2036,7 +2019,6 @@ namespace MFDExtractor.UI
             this.pbRecoverAltimeter.TabIndex = 30;
             this.pbRecoverAltimeter.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverAltimeter, "Recover");
-            this.pbRecoverAltimeter.Click += new System.EventHandler(this.pbRecoverAltimeter_Click);
             // 
             // grpAltimeterStyle
             // 
@@ -2151,7 +2133,6 @@ namespace MFDExtractor.UI
             this.pbRecoverAzimuthIndicator.TabIndex = 78;
             this.pbRecoverAzimuthIndicator.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverAzimuthIndicator, "Recover");
-            this.pbRecoverAzimuthIndicator.Click += new System.EventHandler(this.pbRecoverAzimuthIndicator_Click);
             // 
             // chkCMDSPanel
             // 
@@ -2179,7 +2160,6 @@ namespace MFDExtractor.UI
             this.pbRecoverCMDSPanel.TabIndex = 80;
             this.pbRecoverCMDSPanel.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverCMDSPanel, "Recover");
-            this.pbRecoverCMDSPanel.Click += new System.EventHandler(this.pbRecoverCMDSPanel_Click);
             // 
             // grpAzimuthIndicatorStyle
             // 
@@ -2344,7 +2324,6 @@ namespace MFDExtractor.UI
             this.pbRecoverFuelFlow.TabIndex = 46;
             this.pbRecoverFuelFlow.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverFuelFlow, "Recover");
-            this.pbRecoverFuelFlow.Click += new System.EventHandler(this.pbRecoverFuelFlow_Click);
             // 
             // gbEngine1Instros
             // 
@@ -2389,7 +2368,6 @@ namespace MFDExtractor.UI
             this.pbRecoverRPM1.TabIndex = 40;
             this.pbRecoverRPM1.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverRPM1, "Recover");
-            this.pbRecoverRPM1.Click += new System.EventHandler(this.pbRecoverRPM1_Click);
             // 
             // pbRecoverOil1
             // 
@@ -2406,7 +2384,6 @@ namespace MFDExtractor.UI
             this.pbRecoverOil1.TabIndex = 39;
             this.pbRecoverOil1.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverOil1, "Recover");
-            this.pbRecoverOil1.Click += new System.EventHandler(this.pbRecoverOil1_Click);
             // 
             // pbRecoverNozPos1
             // 
@@ -2423,7 +2400,6 @@ namespace MFDExtractor.UI
             this.pbRecoverNozPos1.TabIndex = 38;
             this.pbRecoverNozPos1.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverNozPos1, "Recover");
-            this.pbRecoverNozPos1.Click += new System.EventHandler(this.pbRecoverNozPos1_Click);
             // 
             // pbRecoverFTIT1
             // 
@@ -2440,7 +2416,6 @@ namespace MFDExtractor.UI
             this.pbRecoverFTIT1.TabIndex = 37;
             this.pbRecoverFTIT1.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverFTIT1, "Recover");
-            this.pbRecoverFTIT1.Click += new System.EventHandler(this.pbRecoverFTIT1_Click);
             // 
             // chkRPM1
             // 
@@ -2529,7 +2504,6 @@ namespace MFDExtractor.UI
             this.pbRecoverRPM2.TabIndex = 44;
             this.pbRecoverRPM2.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverRPM2, "Recover");
-            this.pbRecoverRPM2.Click += new System.EventHandler(this.pbRecoverRPM2_Click);
             // 
             // pbRecoverOil2
             // 
@@ -2546,7 +2520,6 @@ namespace MFDExtractor.UI
             this.pbRecoverOil2.TabIndex = 43;
             this.pbRecoverOil2.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverOil2, "Recover");
-            this.pbRecoverOil2.Click += new System.EventHandler(this.pbRecoverOil2_Click);
             // 
             // chkOIL2
             // 
@@ -2574,7 +2547,6 @@ namespace MFDExtractor.UI
             this.pbRecoverNozPos2.TabIndex = 42;
             this.pbRecoverNozPos2.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverNozPos2, "Recover");
-            this.pbRecoverNozPos2.Click += new System.EventHandler(this.pbRecoverNozPos2_Click);
             // 
             // pbRecoverFTIT2
             // 
@@ -2591,7 +2563,6 @@ namespace MFDExtractor.UI
             this.pbRecoverFTIT2.TabIndex = 41;
             this.pbRecoverFTIT2.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverFTIT2, "Recover");
-            this.pbRecoverFTIT2.Click += new System.EventHandler(this.pbRecoverFTIT2_Click);
             // 
             // chkRPM2
             // 
@@ -2706,7 +2677,6 @@ namespace MFDExtractor.UI
             this.pbRecoverHydA.TabIndex = 71;
             this.pbRecoverHydA.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverHydA, "Recover");
-            this.pbRecoverHydA.Click += new System.EventHandler(this.pbRecoverHydA_Click);
             // 
             // pbRecoverHydB
             // 
@@ -2723,7 +2693,6 @@ namespace MFDExtractor.UI
             this.pbRecoverHydB.TabIndex = 72;
             this.pbRecoverHydB.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverHydB, "Recover");
-            this.pbRecoverHydB.Click += new System.EventHandler(this.pbRecoverHydB_Click);
             // 
             // chkHydB
             // 
@@ -2787,7 +2756,6 @@ namespace MFDExtractor.UI
             this.pbRecoverCautionPanel.TabIndex = 71;
             this.pbRecoverCautionPanel.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverCautionPanel, "Recover");
-            this.pbRecoverCautionPanel.Click += new System.EventHandler(this.pbRecoverCautionPanel_Click);
             // 
             // pbRecoverPFL
             // 
@@ -2804,7 +2772,6 @@ namespace MFDExtractor.UI
             this.pbRecoverPFL.TabIndex = 75;
             this.pbRecoverPFL.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverPFL, "Recover");
-            this.pbRecoverPFL.Click += new System.EventHandler(this.pbRecoverPFL_Click);
             // 
             // tabIndexers
             // 
@@ -2846,7 +2813,6 @@ namespace MFDExtractor.UI
             this.pbRecoverNWS.TabIndex = 96;
             this.pbRecoverNWS.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverNWS, "Recover");
-            this.pbRecoverNWS.Click += new System.EventHandler(this.pbRecoverNWS_Click);
             // 
             // chkAOAIndexer
             // 
@@ -2874,7 +2840,6 @@ namespace MFDExtractor.UI
             this.pbRecoverAOAIndexer.TabIndex = 94;
             this.pbRecoverAOAIndexer.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverAOAIndexer, "Recover");
-            this.pbRecoverAOAIndexer.Click += new System.EventHandler(this.pbRecoverAOAIndexer_Click);
             // 
             // tabTrim
             // 
@@ -2916,7 +2881,6 @@ namespace MFDExtractor.UI
             this.pbRecoverPitchTrim.TabIndex = 65;
             this.pbRecoverPitchTrim.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverPitchTrim, "Recover");
-            this.pbRecoverPitchTrim.Click += new System.EventHandler(this.pbRecoverPitchTrim_Click);
             // 
             // pbRecoverRollTrim
             // 
@@ -2933,7 +2897,6 @@ namespace MFDExtractor.UI
             this.pbRecoverRollTrim.TabIndex = 63;
             this.pbRecoverRollTrim.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverRollTrim, "Recover");
-            this.pbRecoverRollTrim.Click += new System.EventHandler(this.pbRecoverRollTrim_Click);
             // 
             // chkRollTrim
             // 
@@ -2984,7 +2947,6 @@ namespace MFDExtractor.UI
             this.pbRecoverEPU.TabIndex = 65;
             this.pbRecoverEPU.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverEPU, "Recover");
-            this.pbRecoverEPU.Click += new System.EventHandler(this.pbRecoverEPU_Click);
             // 
             // tabGearAndBrakes
             // 
@@ -3026,7 +2988,6 @@ namespace MFDExtractor.UI
             this.pbRecoverSpeedbrake.TabIndex = 68;
             this.pbRecoverSpeedbrake.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverSpeedbrake, "Recover");
-            this.pbRecoverSpeedbrake.Click += new System.EventHandler(this.pbRecoverSpeedbrake_Click);
             // 
             // chkGearLights
             // 
@@ -3054,7 +3015,6 @@ namespace MFDExtractor.UI
             this.pbRecoverGearLights.TabIndex = 69;
             this.pbRecoverGearLights.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverGearLights, "Recover");
-            this.pbRecoverGearLights.Click += new System.EventHandler(this.pbRecoverGearLights_Click);
             // 
             // tabHotkeys
             // 
