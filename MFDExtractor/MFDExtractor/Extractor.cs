@@ -884,6 +884,7 @@ namespace MFDExtractor
             {
                 _log.Error(e.Message, e);
             }
+            return null;
         }
         private Image Get3DHud()
         {
