@@ -1132,207 +1132,61 @@ namespace MFDExtractor
                 }
             }
         }
-
+        private void SetAndDisposeImage(Image image, Action<Image> serveImageFunc, RotateFlipType rotateFlipType, InstrumentForm instrumentForm, bool monochrome)
+        {
+            if (image == null) return;
+            if (_networkMode == NetworkMode.Server)
+            {
+                serveImageFunc(image);
+            }
+            if (instrumentForm != null)
+            {
+                if (rotateFlipType != RotateFlipType.RotateNoneFlipNone)
+                {
+                    image.RotateFlip(rotateFlipType);
+                }
+                using (var graphics = instrumentForm.CreateGraphics())
+                {
+                    if (monochrome)
+                    {
+                        var ia = new ImageAttributes();
+                        ia.SetColorMatrix(Util.GreyscaleColorMatrix);
+                        using (var compatible = Util.CopyBitmap(image))
+                        {
+                            graphics.DrawImage(compatible, instrumentForm.ClientRectangle, 0, 0, image.Width,
+                                                image.Height, GraphicsUnit.Pixel, ia);
+                        }
+                    }
+                    else
+                    {
+                        graphics.DrawImage(image, instrumentForm.ClientRectangle);
+                    }
+                }
+            }
+            Common.Util.DisposeObject(image);
+        }
         private void SetHudImage(Image hudImage)
         {
-            if (hudImage == null) return;
-            lock (hudImage)
-            {
-                if (_networkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SetHudBitmap(hudImage);
-                }
-                if (_forms.HUDForm != null)
-                {
-                    if (Settings.Default.HUD_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        hudImage.RotateFlip(Settings.Default.HUD_RotateFlipType);
-                    }
-                    using (var graphics = _forms.HUDForm.CreateGraphics())
-                    {
-                        if (Settings.Default.HUD_Monochrome)
-                        {
-                            var ia = new ImageAttributes();
-							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                            using (var compatible = Util.CopyBitmap(hudImage))
-                            {
-                                graphics.DrawImage(compatible, _forms.HUDForm.ClientRectangle, 0, 0, hudImage.Width,
-                                                   hudImage.Height, GraphicsUnit.Pixel, ia);
-                            }
-                        }
-                        else
-                        {
-                            graphics.DrawImage(hudImage, _forms.HUDForm.ClientRectangle);
-                        }
-                    }
-                }
-                Common.Util.DisposeObject(hudImage);
-            }
+            SetAndDisposeImage(hudImage, ExtractorServer.SetHudBitmap, Settings.Default.HUD_RotateFlipType, _forms.HUDForm, Settings.Default.HUD_Monochrome);
         }
-
-        
-        /// <summary>
-        ///     Stores the current MFD #4 image and makes it available over the network to remote clients
-        /// </summary>
-        /// <param name="mfd4Image">the current MFD #4 image to store/send</param>
         private void SetMfd4Image(Image mfd4Image)
         {
-            if (mfd4Image == null) return;
-            lock (mfd4Image)
-            {
-                if (_networkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SetMfd4Bitmap(mfd4Image);
-                }
-                if (_forms.MFD4Form != null)
-                {
-                    if (Settings.Default.MFD4_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        mfd4Image.RotateFlip(Settings.Default.MFD4_RotateFlipType);
-                    }
-                    using (Graphics graphics = _forms.MFD4Form.CreateGraphics())
-                    {
-                        if (Settings.Default.MFD4_Monochrome)
-                        {
-                            var ia = new ImageAttributes();
-							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                            using (Image compatible = Util.CopyBitmap(mfd4Image))
-                            {
-                                graphics.DrawImage(compatible, _forms.MFD4Form.ClientRectangle, 0, 0, mfd4Image.Width,
-                                                   mfd4Image.Height, GraphicsUnit.Pixel, ia);
-                            }
-                        }
-                        else
-                        {
-                            graphics.DrawImage(mfd4Image, _forms.MFD4Form.ClientRectangle);
-                        }
-                    }
-                }
-                Common.Util.DisposeObject(mfd4Image);
-            }
+            SetAndDisposeImage(mfd4Image, ExtractorServer.SetMfd4Bitmap, Settings.Default.MFD4_RotateFlipType, _forms.MFD4Form, Settings.Default.MFD4_Monochrome);
         }
 
-        /// <summary>
-        ///     Stores the current MFD #3 image and makes it available over the network to remote clients
-        /// </summary>
-        /// <param name="mfd3Image">the current MFD #3 image to store/send</param>
         private void SetMfd3Image(Image mfd3Image)
         {
-            if (mfd3Image == null) return;
-            lock (mfd3Image)
-            {
-                if (_networkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SetMfd3Bitmap(mfd3Image);
-                }
-                if (_forms.MFD3Form != null)
-                {
-                    if (Settings.Default.MFD3_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        mfd3Image.RotateFlip(Settings.Default.MFD3_RotateFlipType);
-                    }
-                    using (Graphics graphics = _forms.MFD3Form.CreateGraphics())
-                    {
-                        if (Settings.Default.MFD3_Monochrome)
-                        {
-                            var ia = new ImageAttributes();
-							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                            using (Image compatible = Util.CopyBitmap(mfd3Image))
-                            {
-                                graphics.DrawImage(compatible, _forms.MFD3Form.ClientRectangle, 0, 0, mfd3Image.Width,
-                                                   mfd3Image.Height, GraphicsUnit.Pixel, ia);
-                            }
-                        }
-                        else
-                        {
-                            graphics.DrawImage(mfd3Image, _forms.MFD3Form.ClientRectangle);
-                        }
-                    }
-                }
-                Common.Util.DisposeObject(mfd3Image);
-            }
+            SetAndDisposeImage(mfd3Image, ExtractorServer.SetMfd3Bitmap, Settings.Default.MFD3_RotateFlipType, _forms.MFD3Form, Settings.Default.MFD3_Monochrome);
         }
 
-        /// <summary>
-        ///     Stores the current Left MFD image and makes it available over the network to remote clients
-        /// </summary>
-        /// <param name="leftMfdImage">the current Left MFD image to store/send</param>
         private void SetLeftMfdImage(Image leftMfdImage)
         {
-            if (leftMfdImage == null) return;
-            lock (leftMfdImage)
-            {
-                if (_networkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SetLeftMfdBitmap(leftMfdImage);
-                }
-                if (_forms.LeftMFDForm != null)
-                {
-                    if (Settings.Default.LMFD_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        leftMfdImage.RotateFlip(Settings.Default.LMFD_RotateFlipType);
-                    }
-                    using (Graphics graphics = _forms.LeftMFDForm.CreateGraphics())
-                    {
-                        if (Settings.Default.LMFD_Monochrome)
-                        {
-                            var ia = new ImageAttributes();
-							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                            using (Image compatible = Util.CopyBitmap(leftMfdImage))
-                            {
-                                graphics.DrawImage(compatible, _forms.LeftMFDForm.ClientRectangle, 0, 0, leftMfdImage.Width,
-                                                   leftMfdImage.Height, GraphicsUnit.Pixel, ia);
-                            }
-                        }
-                        else
-                        {
-                            graphics.DrawImage(leftMfdImage, _forms.LeftMFDForm.ClientRectangle);
-                        }
-                    }
-                }
-                Common.Util.DisposeObject(leftMfdImage);
-            }
+            SetAndDisposeImage(leftMfdImage, ExtractorServer.SetLeftMfdBitmap, Settings.Default.LMFD_RotateFlipType, _forms.LeftMFDForm, Settings.Default.LMFD_Monochrome);
         }
 
-        /// <summary>
-        ///     Stores the current Right MFD image and makes it available over the network to remote clients
-        /// </summary>
-        /// <param name="rightMfdImage">the current Right MFD image to store/send</param>
         private void SetRightMfdImage(Image rightMfdImage)
         {
-            if (rightMfdImage == null) return;
-            lock (rightMfdImage)
-            {
-                if (_networkMode == NetworkMode.Server)
-                {
-                    ExtractorServer.SetRightMfdBitmap(rightMfdImage);
-                }
-                if (_forms.RightMfdForm != null)
-                {
-                    if (Settings.Default.RMFD_RotateFlipType != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        rightMfdImage.RotateFlip(Settings.Default.RMFD_RotateFlipType);
-                    }
-                    using (Graphics graphics = _forms.RightMfdForm.CreateGraphics())
-                    {
-                        if (Settings.Default.RMFD_Monochrome)
-                        {
-                            var ia = new ImageAttributes();
-							ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                            using (Image compatible = Util.CopyBitmap(rightMfdImage))
-                            {
-                                graphics.DrawImage(compatible, _forms.RightMfdForm.ClientRectangle, 0, 0, rightMfdImage.Width,
-                                                   rightMfdImage.Height, GraphicsUnit.Pixel, ia);
-                            }
-                        }
-                        else
-                        {
-                            graphics.DrawImage(rightMfdImage, _forms.RightMfdForm.ClientRectangle);
-                        }
-                    }
-                }
-                Common.Util.DisposeObject(rightMfdImage);
-            }
+            SetAndDisposeImage(rightMfdImage, ExtractorServer.SetRightMfdBitmap, Settings.Default.RMFD_RotateFlipType, _forms.RightMfdForm, Settings.Default.RMFD_Monochrome);
         }
 
         #endregion
