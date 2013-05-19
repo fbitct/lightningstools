@@ -1840,22 +1840,20 @@ namespace MFDExtractor
 
         #region Form Teardown
 
-        private void CloseOutputWindowForm(Form form)
+        private static void CloseOutputWindowForm(Form form)
         {
-            if (form != null)
+            if (form == null) return;
+            try
             {
-                try
-                {
-                    form.Close();
-                }
-                catch (InvalidOperationException e)
-                {
-                    Log.Error(e.Message, e);
-                }
+                form.Close();
+            }
+            catch (InvalidOperationException e)
+            {
+                Log.Error(e.Message, e);
             }
         }
 
-        /// <summary>
+	    /// <summary>
         ///     Close all the output window forms
         /// </summary>
         private void CloseOutputWindowForms()
@@ -2668,76 +2666,43 @@ namespace MFDExtractor
                 Name = "CaptureOrchestrationThread"
             };
         }
-
-
-        private void SetupHUDCaptureThread()
+        private void SetupCaptureThread(ref Thread thread, Func<bool> predicate, ThreadStart threadStart, string threadName)
         {
-            _threadAbortion.AbortThread(ref _hudCaptureThread);
-            if (Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server)
+            _threadAbortion.AbortThread(ref thread);
+            if (predicate())
             {
-                _hudCaptureThread = new Thread(HudCaptureThreadWork)
+                thread = new Thread(threadStart)
                 {
                     Priority = _threadPriority,
                     IsBackground = true,
-                    Name = "HudCaptureThread"
+                    Name = threadName
                 };
             }
+        }
+
+        private void SetupHUDCaptureThread()
+        {
+            SetupCaptureThread(ref _hudCaptureThread,() => Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server, HudCaptureThreadWork, "HudCaptureThread");
         }
 
         private void SetupRightMFDCaptureThread()
         {
-            _threadAbortion.AbortThread(ref _rightMfdCaptureThread);
-            if (Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server)
-            {
-                _rightMfdCaptureThread = new Thread(RightMfdCaptureThreadWork)
-                {
-                    Priority = _threadPriority,
-                    IsBackground = true,
-                    Name = "RightMfdCaptureThread"
-                };
-            }
+            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server, RightMfdCaptureThreadWork, "RightMfdCaptureThread");
         }
 
         private void SetupLeftMFDCaptureThread()
         {
-            _threadAbortion.AbortThread(ref _leftMfdCaptureThread);
-            if (Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server)
-            {
-                _leftMfdCaptureThread = new Thread(LeftMfdCaptureThreadWork)
-                {
-                    Priority = _threadPriority,
-                    IsBackground = true,
-                    Name = "LeftMfdCaptureThread"
-                };
-            }
+            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server, LeftMfdCaptureThreadWork, "LeftMfdCaptureThread");
         }
 
         private void SetupMFD3CaptureThread()
         {
-            _threadAbortion.AbortThread(ref _mfd3CaptureThread);
-            if (Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server)
-            {
-                _mfd3CaptureThread = new Thread(Mfd3CaptureThreadWork)
-                {
-                    Priority = _threadPriority,
-                    IsBackground = true,
-                    Name = "Mfd3CaptureThread"
-                };
-            }
+            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server, Mfd3CaptureThreadWork, "Mfd3CaptureThread");
         }
 
         private void SetupMFD4CaptureThread()
         {
-            _threadAbortion.AbortThread(ref _mfd4CaptureThread);
-            if (Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server)
-            {
-                _mfd4CaptureThread = new Thread(Mfd4CaptureThreadWork)
-                {
-                    Priority = _threadPriority,
-                    IsBackground = true,
-                    Name = "Mfd4CaptureThread"
-                };
-            }
+            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server, Mfd4CaptureThreadWork, "Mfd4CaptureThread");
         }
 
         private void SetupSimStatusMonitorThread()
