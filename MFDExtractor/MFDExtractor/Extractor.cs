@@ -805,13 +805,16 @@ namespace MFDExtractor
 	        }
 	    }
 
-
-	    private Image GetMfd4Bitmap()
+        private Image GetImage(Image testAlignmentImage,
+            Func<Image> threeDeeModeLocalCaptureFunc,
+            Func<Image> remoteImageRequestFunc,
+            Rectangle twoDeePrimaryCaptureRectangle,
+            Rectangle twoDeeSecondaryCaptureRectangle)
         {
             Image toReturn = null;
             if (_testMode)
             {
-                toReturn = Util.CloneBitmap(_mfd4TestAlignmentImage);
+                toReturn = Util.CloneBitmap(testAlignmentImage);
             }
             else
             {
@@ -819,7 +822,7 @@ namespace MFDExtractor
                 {
                     if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
                     {
-                        toReturn = Get3DMFD4();
+                        toReturn = threeDeeModeLocalCaptureFunc();
                     }
                     else
                     {
@@ -827,173 +830,46 @@ namespace MFDExtractor
                         {
                             if (_twoDeePrimaryView)
                             {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_primaryMfd4_2DInputRect);
+                                toReturn = Common.Screen.Util.CaptureScreenRectangle(twoDeePrimaryCaptureRectangle);
                             }
                             else
                             {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_secondaryMfd4_2DInputRect);
+                                toReturn = Common.Screen.Util.CaptureScreenRectangle(twoDeeSecondaryCaptureRectangle);
                             }
                         }
                         else if (_networkMode == NetworkMode.Client)
                         {
-	                        toReturn = _client.GetMfd4Bitmap();
+                            toReturn = remoteImageRequestFunc();
                         }
                     }
                 }
             }
             return toReturn;
+
+        }
+	    private Image GetMfd4Bitmap()
+	    {
+	        return GetImage(_mfd4TestAlignmentImage, Get3DMFD4,_client.GetMfd4Bitmap,_primaryMfd4_2DInputRect, _secondaryMfd4_2DInputRect);
         }
 
         private Image GetMfd3Bitmap()
         {
-            Image toReturn = null;
-            if (_testMode)
-            {
-                toReturn = Util.CloneBitmap(_mfd3TestAlignmentImage);
-            }
-            else
-            {
-                if (_simRunning || _networkMode == NetworkMode.Client)
-                {
-                    if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
-                    {
-                        toReturn = Get3DMFD3();
-                    }
-                    else
-                    {
-                        if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
-                        {
-                            if (_twoDeePrimaryView)
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_primaryMfd3_2DInputRect);
-                            }
-                            else
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_secondaryMfd3_2DInputRect);
-                            }
-                        }
-                        else if (_networkMode == NetworkMode.Client)
-                        {
-	                        toReturn = _client.GetMfd3Bitmap();
-                        }
-                    }
-                }
-            }
-            return toReturn;
+            return GetImage(_mfd3TestAlignmentImage, Get3DMFD3, _client.GetMfd3Bitmap, _primaryMfd3_2DInputRect, _secondaryMfd3_2DInputRect);
         }
 
         private Image GetLeftMfdBitmap()
         {
-            Image toReturn = null;
-            if (_testMode)
-            {
-                toReturn = Util.CloneBitmap(_leftMfdTestAlignmentImage);
-            }
-            else
-            {
-                if (_simRunning || _networkMode == NetworkMode.Client)
-                {
-                    if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
-                    {
-                        toReturn = Get3DLeftMFD();
-                    }
-                    else
-                    {
-                        if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
-                        {
-                            if (_twoDeePrimaryView)
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_primaryLeftMfd2DInputRect);
-                            }
-                            else
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_secondaryLeftMfd2DInputRect);
-                            }
-                        }
-                        else if (_networkMode == NetworkMode.Client)
-                        {
-	                        toReturn = _client.GetLeftMfdBitmap();
-                        }
-                    }
-                }
-            }
-            return toReturn;
+            return GetImage(_leftMfdTestAlignmentImage, Get3DLeftMFD, _client.GetLeftMfdBitmap, _primaryLeftMfd2DInputRect, _secondaryLeftMfd2DInputRect);
         }
 
-        private Image GetRightMfdBitmap()
-        {
-            Image toReturn = null;
-            if (_testMode)
-            {
-                toReturn = Util.CloneBitmap(_rightMfdTestAlignmentImage);
-            }
-            else
-            {
-                if (_simRunning || _networkMode == NetworkMode.Client)
-                {
-                    if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
-                    {
-                        toReturn = Get3DRightMFD();
-                    }
-                    else
-                    {
-                        if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
-                        {
-                            if (_twoDeePrimaryView)
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_primaryRightMfd2DInputRect);
-                            }
-                            else
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_secondaryRightMfd2DInputRect);
-                            }
-                        }
-                        else if (_networkMode == NetworkMode.Client)
-                        {
-	                        toReturn = _client.GetRightMfdBitmap();
-                        }
-                    }
-                }
-            }
-            return toReturn;
-        }
+	    private Image GetRightMfdBitmap()
+	    {
+            return GetImage(_rightMfdTestAlignmentImage, Get3DRightMFD, _client.GetRightMfdBitmap, _primaryRightMfd2DInputRect, _secondaryRightMfd2DInputRect);
+	    }
 
-        private Image GetHudBitmap()
+	    private Image GetHudBitmap()
         {
-            Image toReturn = null;
-            if (_testMode)
-            {
-                toReturn = Util.CloneBitmap(_hudTestAlignmentImage);
-            }
-            else
-            {
-                if (_simRunning || _networkMode == NetworkMode.Client)
-                {
-                    if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
-                    {
-                        toReturn = Get3DHud();
-                    }
-                    else
-                    {
-                        if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
-                        {
-                            if (_twoDeePrimaryView)
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_primaryHud2DInputRect);
-                            }
-                            else
-                            {
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_secondaryHud2DInputRect);
-                            }
-                        }
-                        else if (_networkMode == NetworkMode.Client)
-                        {
-	                        toReturn = _client.GetHudBitmap();
-                        }
-                    }
-                }
-            }
-            return toReturn;
+            return GetImage(_hudTestAlignmentImage, Get3DHud, _client.GetHudBitmap, _primaryHud2DInputRect, _secondaryHud2DInputRect);
         }
 
         private Image Get3DHud()
