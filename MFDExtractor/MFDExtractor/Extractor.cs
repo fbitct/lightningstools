@@ -717,58 +717,66 @@ namespace MFDExtractor
         private FlightData GetFlightData()
         {
             FlightData toReturn = null;
-            if (!_testMode)
+            if (_testMode)
+            {
+            }
+            else
             {
                 if (SimRunning || _networkMode == NetworkMode.Client)
                 {
-                    if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
+                    switch (_networkMode)
                     {
-                        var falconDataFormat = F4Utils.Process.Util.DetectFalconFormat();
-
-                        //set automatic 3D mode for BMS
-                        if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4) _threeDeeMode = true;
-
-                        bool doMore = true;
-                        if (_falconSmReader == null)
+                        case NetworkMode.Standalone:
+                        case NetworkMode.Server:
                         {
-                            _falconSmReader = falconDataFormat.HasValue ? new Reader(falconDataFormat.Value) : new Reader();
-                        }
-                        else
-                        {
-                            if (falconDataFormat.HasValue)
+                            var falconDataFormat = F4Utils.Process.Util.DetectFalconFormat();
+
+                            //set automatic 3D mode for BMS
+                            if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4)
+                                _threeDeeMode = true;
+
+                            bool doMore = true;
+                            if (_falconSmReader == null)
                             {
-                                if (falconDataFormat.Value != _falconSmReader.DataFormat)
-                                {
-                                    _falconSmReader = new Reader(falconDataFormat.Value);
-                                }
+                                _falconSmReader = falconDataFormat.HasValue
+                                    ? new Reader(falconDataFormat.Value)
+                                    : new Reader();
                             }
                             else
                             {
-                                doMore = false;
-                                Common.Util.DisposeObject(_falconSmReader);
-                                _falconSmReader = null;
-                                _useBMSAdvancedSharedmemValues = false;
+                                if (falconDataFormat.HasValue)
+                                {
+                                    if (falconDataFormat.Value != _falconSmReader.DataFormat)
+                                    {
+                                        _falconSmReader = new Reader(falconDataFormat.Value);
+                                    }
+                                }
+                                else
+                                {
+                                    doMore = false;
+                                    Common.Util.DisposeObject(_falconSmReader);
+                                    _falconSmReader = null;
+                                    _useBMSAdvancedSharedmemValues = false;
+                                }
                             }
-                        }
-                        
-                        if (doMore)
-                        {
-                            toReturn = _falconSmReader.GetCurrentData();
-                            if (NetworkMode == NetworkMode.Server)
+
+                            if (doMore)
                             {
-                                _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
+                                toReturn = _falconSmReader.GetCurrentData();
+                                if (NetworkMode == NetworkMode.Server)
+                                {
+                                    _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
+                                }
                             }
                         }
-                    }
-                    else if (_networkMode == NetworkMode.Client)
-                    {
-	                    toReturn = _client.GetFlightData();
+                            break;
+                        case NetworkMode.Client:
+                            toReturn = _client.GetFlightData();
+                            break;
                     }
                 }
             }
-            if (toReturn != null) return toReturn;
-            toReturn = new FlightData {hsiBits = Int32.MaxValue};
-            return toReturn;
+            return toReturn ?? new FlightData {hsiBits = Int32.MaxValue};
         }
 
         private Image GetImage(Image testAlignmentImage,
@@ -2682,27 +2690,27 @@ namespace MFDExtractor
 
         private void SetupHUDCaptureThread()
         {
-            SetupCaptureThread(ref _hudCaptureThread,() => Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server, HudCaptureThreadWork, "HudCaptureThread");
+            SetupCaptureThread(ref _hudCaptureThread, () => Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_hudCaptureStart, CaptureHud), "HudCaptureThread");
         }
 
         private void SetupRightMFDCaptureThread()
         {
-            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server, RightMfdCaptureThreadWork, "RightMfdCaptureThread");
+            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server, ()=>CaptureThreadWork(_rightMfdCaptureStart, CaptureRightMfd), "RightMfdCaptureThread");
         }
 
         private void SetupLeftMFDCaptureThread()
         {
-            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server, LeftMfdCaptureThreadWork, "LeftMfdCaptureThread");
+            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server, ()=>CaptureThreadWork(_leftMfdCaptureStart,CaptureLeftMfd), "LeftMfdCaptureThread");
         }
 
         private void SetupMFD3CaptureThread()
         {
-            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server, Mfd3CaptureThreadWork, "Mfd3CaptureThread");
+            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd3CaptureStart, CaptureMfd3), "Mfd3CaptureThread");
         }
 
         private void SetupMFD4CaptureThread()
         {
-            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server, Mfd4CaptureThreadWork, "Mfd4CaptureThread");
+            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd4CaptureStart, CaptureMfd4), "Mfd4CaptureThread");
         }
 
         private void SetupSimStatusMonitorThread()
@@ -2758,16 +2766,14 @@ namespace MFDExtractor
 
 	    #endregion
 
-        #region MFD rendering thread-work methods
-
-        private void LeftMfdCaptureThreadWork()
+        private void CaptureThreadWork(WaitHandle waitHandle, Action capture)
         {
             try
             {
                 while (_keepRunning)
                 {
-                    _leftMfdCaptureStart.WaitOne();
-                    CaptureLeftMfd();
+                    waitHandle.WaitOne();
+                    capture();
                 }
             }
             catch (ThreadAbortException)
@@ -2777,80 +2783,6 @@ namespace MFDExtractor
             {
             }
         }
-
-        private void RightMfdCaptureThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _rightMfdCaptureStart.WaitOne();
-                    CaptureRightMfd();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void HudCaptureThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _hudCaptureStart.WaitOne();
-                    CaptureHud();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void Mfd3CaptureThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _mfd3CaptureStart.WaitOne();
-                    CaptureMfd3();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        private void Mfd4CaptureThreadWork()
-        {
-            try
-            {
-                while (_keepRunning)
-                {
-                    _mfd4CaptureStart.WaitOne();
-                    CaptureMfd4();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
-
-        #endregion
 
         #endregion
 
@@ -2931,11 +2863,9 @@ namespace MFDExtractor
 
         internal static void DisposeInstance()
         {
-            if (_extractor != null)
-            {
-                Common.Util.DisposeObject(_extractor);
-                _extractor = null;
-            }
+            if (_extractor == null) return;
+            Common.Util.DisposeObject(_extractor);
+            _extractor = null;
         }
 
         #endregion
