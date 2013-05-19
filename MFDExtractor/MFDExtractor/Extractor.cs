@@ -11,7 +11,6 @@ using Common.InputSupport.UI;
 using Common.SimSupport;
 using Common.UI;
 using F4SharedMem;
-using F4SharedMem.Headers;
 using F4Utils.Process;
 using F4Utils.Terrain;
 using MFDExtractor.EventSystem;
@@ -363,6 +362,7 @@ namespace MFDExtractor
 	    private readonly IInstrumentRenderHelper _instrumentRenderHelper;
         private readonly IRenderStartHelper _renderStartHelper;
 	    private readonly IInstrumentFormFactory _instrumentFormFactory;
+	    private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
         #endregion
 
         #endregion
@@ -380,7 +380,8 @@ namespace MFDExtractor
 			IInputEvents inputEvents = null,
             IInstrumentRenderHelper instrumentRenderHelper = null,
             IRenderStartHelper renderStartHelper = null,
-            IInstrumentFormFactory instrumentFormFactory=null)
+            IInstrumentFormFactory instrumentFormFactory=null,
+            IRadarAltitudeCalculator radarAltitudeCalculator=null)
         {
             _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
 			_forms = new InstrumentForms();
@@ -409,7 +410,7 @@ namespace MFDExtractor
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
 			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
-
+            _radarAltitudeCalculator = new RadarAltitudeCalculator(_terrainBrowser);
         }
         private void SetupRenderThreadWorkHelpers()
         {
@@ -460,10 +461,7 @@ namespace MFDExtractor
                 return;
             }
             KeyFileUtils.ResetCurrentKeyFile();
-            if (Starting != null)
-            {
-                Starting.Invoke(this, new EventArgs());
-            }
+            OnStarting();
 	        _keySettings = _keySettingsReader.Read();
             if (Mediator != null)
             {
@@ -472,12 +470,18 @@ namespace MFDExtractor
             
             RunThreads();
         }
-        public void Stop()
+
+	    private void OnStarting()
+	    {
+	        if (Starting != null)
+	        {
+	            Starting.Invoke(this, new EventArgs());
+	        }
+	    }
+
+	    public void Stop()
         {
-            if (Stopping != null)
-            {
-                Stopping.Invoke(this, new EventArgs());
-            }
+            OnStopping();
             _keepRunning = false;
             if (Mediator != null)
             {
@@ -541,12 +545,26 @@ namespace MFDExtractor
             }
             CloseAndDisposeSharedmemReaders();
             _running = false;
-            if (Stopped != null)
-            {
-                Stopped.Invoke(this, new EventArgs());
-            }
+            OnStopped();
         }
-        public static Extractor GetInstance()
+
+	    private void OnStopped()
+	    {
+	        if (Stopped != null)
+	        {
+	            Stopped.Invoke(this, new EventArgs());
+	        }
+	    }
+
+	    private void OnStopping()
+	    {
+	        if (Stopping != null)
+	        {
+	            Stopping.Invoke(this, new EventArgs());
+	        }
+	    }
+
+	    public static Extractor GetInstance()
         {
             return _extractor ?? (_extractor = new Extractor());
         }
@@ -736,11 +754,9 @@ namespace MFDExtractor
                         if (doMore)
                         {
                             toReturn = _falconSmReader.GetCurrentData();
-
-                            bool computeRalt = Settings.Default.EnableISISOutput || NetworkMode == NetworkMode.Server;
-                            if (computeRalt)
+                            if (NetworkMode == NetworkMode.Server)
                             {
-                                ComputeRadarAltitude(toReturn);
+                                _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
                             }
                         }
                     }
@@ -755,38 +771,6 @@ namespace MFDExtractor
             return toReturn;
         }
 
-	    private void ComputeRadarAltitude(FlightData toReturn)
-	    {
-	        if (_terrainBrowser != null && toReturn != null)
-	        {
-	            var extensionData = new FlightDataExtension();
-	            var terrainHeight = _terrainBrowser.GetTerrainHeight(toReturn.x, toReturn.y);
-	            var ralt = -toReturn.z - terrainHeight;
-
-	            //reset AGL altitude to zero if we're on the ground
-	            if (
-	                ((toReturn.lightBits & (int) LightBits.WOW) == (int) LightBits.WOW)
-	                    ||
-	                (
-	                    ((toReturn.lightBits3 & (int) Bms4LightBits3.OnGround) ==
-	                        (int) Bms4LightBits3.OnGround)
-	                        &&
-	                    toReturn.DataFormat == FalconDataFormats.BMS4
-	                    )
-	                )
-	            {
-	                ralt = 0;
-	            }
-
-	            if (ralt < 0)
-	            {
-	                ralt = 0;
-	            }
-	            extensionData.RadarAltitudeFeetAGL = ralt;
-	            toReturn.ExtensionData = extensionData;
-	        }
-	    }
-
         private Image GetImage(Image testAlignmentImage,
             Func<Image> threeDeeModeLocalCaptureFunc,
             Func<Image> remoteImageRequestFunc,
@@ -800,26 +784,24 @@ namespace MFDExtractor
             }
             else
             {
-                if (SimRunning || _networkMode == NetworkMode.Client)
+                if (!SimRunning && _networkMode != NetworkMode.Client) return null;
+                if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
                 {
-                    if (_threeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
+                    toReturn = threeDeeModeLocalCaptureFunc();
+                }
+                else
+                {
+                    switch (_networkMode)
                     {
-                        toReturn = threeDeeModeLocalCaptureFunc();
-                    }
-                    else
-                    {
-                        switch (_networkMode)
-                        {
-                            case NetworkMode.Standalone: //fallthrough
-                            case NetworkMode.Server:
-                                toReturn = Common.Screen.Util.CaptureScreenRectangle(_twoDeePrimaryView
-                                    ? twoDeePrimaryCaptureRectangle 
-                                    : twoDeeSecondaryCaptureRectangle);
-                                break;
-                            case NetworkMode.Client:
-                                toReturn = remoteImageRequestFunc();
-                                break;
-                        }
+                        case NetworkMode.Standalone: //fallthrough
+                        case NetworkMode.Server:
+                            toReturn = Common.Screen.Util.CaptureScreenRectangle(_twoDeePrimaryView
+                                ? twoDeePrimaryCaptureRectangle 
+                                : twoDeeSecondaryCaptureRectangle);
+                            break;
+                        case NetworkMode.Client:
+                            toReturn = remoteImageRequestFunc();
+                            break;
                     }
                 }
             }
@@ -977,13 +959,7 @@ namespace MFDExtractor
                 {
                     if (monochrome)
                     {
-                        var ia = new ImageAttributes();
-                        ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-                        using (var compatible = Util.CopyBitmap(image))
-                        {
-                            graphics.DrawImage(compatible, instrumentForm.ClientRectangle, 0, 0, image.Width,
-                                                image.Height, GraphicsUnit.Pixel, ia);
-                        }
+                        DrawImageToControlMonochrome(image, instrumentForm, graphics);
                     }
                     else
                     {
@@ -993,7 +969,18 @@ namespace MFDExtractor
             }
             Common.Util.DisposeObject(image);
         }
-        private void SetHudImage(Image hudImage)
+
+	    private static void DrawImageToControlMonochrome(Image image, Control instrumentForm, Graphics graphics)
+	    {
+	        var ia = new ImageAttributes();
+	        ia.SetColorMatrix(Util.GreyscaleColorMatrix);
+	        using (var compatible = Util.CopyBitmap(image))
+	        {
+	            graphics.DrawImage(compatible, instrumentForm.ClientRectangle, 0, 0, image.Width,image.Height, GraphicsUnit.Pixel, ia);
+	        }
+	    }
+
+	    private void SetHudImage(Image hudImage)
         {
             SetAndDisposeImage(hudImage, ExtractorServer.SetHudBitmap, Settings.Default.HUD_RotateFlipType, _forms.HUDForm, Settings.Default.HUD_Monochrome);
         }
@@ -1027,8 +1014,6 @@ namespace MFDExtractor
 
         private void SetupOutputForms()
         {
-            DateTime startTime = DateTime.Now;
-            Log.DebugFormat("Started setting up output forms on the extractor at: {0}", startTime);
             if (Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server)
             {
                 SetupMfd4Form();
@@ -1195,10 +1180,6 @@ namespace MFDExtractor
             {
                 SetupPitchTrimForm();
             }
-            DateTime endTime = DateTime.Now;
-            TimeSpan elapsed = endTime.Subtract(startTime);
-            Log.DebugFormat("Finished setting up output forms on the extractor at: {0}", endTime);
-            Log.DebugFormat("Time taken to set up output forms on the extractor: {0}", elapsed.TotalMilliseconds);
         }
 
         #region MFD Forms Setup
