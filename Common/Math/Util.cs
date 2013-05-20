@@ -37,5 +37,10 @@ namespace Common.Math
             }
             return fDif;
         }
-    }
+		public static Rectangle MultiplyRectangle(Rectangle rect, int factor)
+		{
+			return new Rectangle(rect.X * factor, rect.Y * factor, rect.Width * factor,
+								 rect.Height * factor);
+		}
+	}
 }

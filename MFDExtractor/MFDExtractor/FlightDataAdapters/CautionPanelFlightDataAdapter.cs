@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using F4SharedMem;
+﻿using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
 

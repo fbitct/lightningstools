@@ -106,7 +106,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BMSSupport.cs" />
+    <Compile Include="BMSSupport\BMSConfigFileReader.cs" />
+    <Compile Include="BMSSupport\BMSRunningExecutableLocator.cs" />
+    <Compile Include="BMSSupport\ThreeDeeCockpitFileFinder.cs" />
+    <Compile Include="BMSSupport\DoubleResolutionRTTChecker.cs" />
+    <Compile Include="BMSSupport\ThreeDeeCaptureCoordinateReader.cs" />
     <Compile Include="CaptureCoordinates.cs" />
     <Compile Include="Configuration\GdiPlusOptionsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsReader.cs" />
@@ -138,7 +142,6 @@
     <Compile Include="Configuration\KeySettings.cs" />
     <Compile Include="EventSystem\KeyUpEventHandler.cs" />
     <Compile Include="EventSystem\MediatorStateChangeHandler.cs" />
-    <Compile Include="EventSystem\MessagePublisher.cs" />
     <Compile Include="Extractor.cs">
       <SubType>Code</SubType>
     </Compile>

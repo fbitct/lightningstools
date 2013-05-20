@@ -14,6 +14,7 @@ using Common.UI;
 using F4SharedMem;
 using F4Utils.Process;
 using F4Utils.Terrain;
+using MFDExtractor.BMSSupport;
 using MFDExtractor.EventSystem;
 using MFDExtractor.Networking;
 using MFDExtractor.Properties;
@@ -161,9 +162,7 @@ namespace MFDExtractor
 	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
 	    private readonly IEHSIStateTracker _ehsiStateTracker;
 
-		
-
-	    private readonly IKeyDownEventHandler _keyDownEventHandler;
+		private readonly IKeyDownEventHandler _keyDownEventHandler;
 	    private readonly IKeyUpEventHandler _keyUpEventHandler;
 	    private readonly IKeyboardWatcher _keyboardWatcher;
 	    private readonly IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
@@ -180,6 +179,7 @@ namespace MFDExtractor
         private InstrumentForm _mfd3Form;
         private InstrumentForm _mfd4Form;
 	    private readonly IInstrumentFormFactory _instrumentFormFactory;
+		private readonly IThreeDeeCaptureCoordinateReader _threeDeeCaptureCoordinateReader;
         #endregion
 
         #endregion
@@ -196,7 +196,8 @@ namespace MFDExtractor
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null,
             IInstrumentFactory instrumentFactory = null,
-            IInstrumentFormFactory instrumentFormFactory = null)
+            IInstrumentFormFactory instrumentFormFactory = null,
+			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null)
         {
             _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
@@ -224,6 +225,7 @@ namespace MFDExtractor
 			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _radarAltitudeCalculator = new RadarAltitudeCalculator(_terrainBrowser);
+			_threeDeeCaptureCoordinateReader = new ThreeDeeCaptureCoordinateReader();
         }
         private void SetupInstruments()
         {
@@ -1174,7 +1176,7 @@ namespace MFDExtractor
                                                 (_mfd3CaptureCoordinates.ThreeDee == Rectangle.Empty) ||
                                                 (_mfd4CaptureCoordinates.ThreeDee == Rectangle.Empty))
                                             {
-                                                BMSSupport.Read3DCoordinatesFromCurrentBmsDatFile(
+												_threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile(
                                                                                         _mfd4CaptureCoordinates,
                                                                                        _mfd3CaptureCoordinates,
                                                                                        _leftMfdCaptureCoordinates,

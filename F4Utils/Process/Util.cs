@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading;
 using Common.Win32;
 using F4SharedMem;
 using log4net;
-using System.ComponentModel;
 
 namespace F4Utils.Process
 {
@@ -68,28 +68,26 @@ namespace F4Utils.Process
         public static string GetFalconExePath()
         {
             var windowHandle = GetFalconWindowHandle();
-            string toReturn = null;
             if (windowHandle != IntPtr.Zero)
             {
-                int procId;
-                NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
-                var process = System.Diagnostics.Process.GetProcessById(procId);
-                try
-                {
-                    toReturn = (from ProcessModule module in process.Modules
-                                where
-                                    module.ModuleName.Contains(MODULENAME_F4) ||
-                                    module.ModuleName.ToUpper().Contains(MODULENAME_FALCON)
-                                select module.FileName).FirstOrDefault();
-                }
-                catch (Win32Exception)
-                {
-                    
-                }
+                int processId;
+                NativeMethods.GetWindowThreadProcessId(windowHandle, out processId);
+                var process = System.Diagnostics.Process.GetProcessById(processId);
+				return GetMainModuleFilepath(processId);
             }
-            return toReturn;
+            return null;
         }
-
+		private static string GetMainModuleFilepath(int processId)
+		{
+			var wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + processId;
+			using (var searcher = new ManagementObjectSearcher(wmiQueryString))
+			using (var results = searcher.Get())
+			{
+				return results.Cast<ManagementObject>()
+					.Select(x=>x["ExecutablePath"])
+					.Cast<string>().FirstOrDefault(x => x.StartsWith(MODULENAME_F4) || x.StartsWith(MODULENAME_FALCON));
+			}
+		}
         public static IntPtr GetFalconWindowHandle()
         {
             var hWnd = NativeMethods.FindWindow(WINDOW_CLASS_FALCONDISPLAY, null);
