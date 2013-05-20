@@ -1,8 +1,6 @@
-﻿using System;
-using Common.UI;
+﻿using Common.UI;
 using LightningGauges.Renderers;
-using MFDExtractor.Properties;
-using MFDExtractor.UI;
+using MFDExtractor.RendererFactories;
 
 namespace MFDExtractor
 {
@@ -14,11 +12,28 @@ namespace MFDExtractor
     class RendererSetInitializer : IRendererSetInitializer
     {
         private readonly IInstrumentRendererSet _renderers;
-        public RendererSetInitializer(IInstrumentRendererSet renderers)
+	    private readonly IAzimuthIndicatorFactory _azimuthIndicatorFactory;
+	    private readonly IAltimeterRendererFactory _altimeterRendererFactory;
+	    private readonly IFuelQualityIndicatorRendererFactory _fuelQualityIndicatorRendererFactory;
+	    private readonly IISISRendererFactory _isisRendererFactory;
+	    private readonly IVVIRendererFactory _vviRendererFactory;
+        public RendererSetInitializer(
+			IInstrumentRendererSet renderers = null, 
+			IAzimuthIndicatorFactory azimuthIndicatorFactory = null, 
+			IFuelQualityIndicatorRendererFactory fuelQualityIndicatorRendererFactory=null, 
+			IAltimeterRendererFactory altimeterRendererFactory=null, 
+			IISISRendererFactory isisRendererFactory=null, 
+			IVVIRendererFactory vviRendererFactory=null)
         {
-            _renderers = renderers ?? new InstrumentRendererSet();
-        }
-        public void Initialize(GdiPlusOptions gdiPlusOptions)
+	        _renderers = renderers ?? new InstrumentRendererSet();
+			_azimuthIndicatorFactory = azimuthIndicatorFactory ?? new AzimuthIndicatorFactory();
+			_altimeterRendererFactory = altimeterRendererFactory ?? new AltimeterRendererFactory();
+			_fuelQualityIndicatorRendererFactory = fuelQualityIndicatorRendererFactory ?? new FuelQualityIndicatorRendererFactory();
+	        _isisRendererFactory = isisRendererFactory ?? new ISISRendererFactory();
+			_vviRendererFactory = vviRendererFactory ?? new VVIRendererFactory();
+		}
+
+	    public void Initialize(GdiPlusOptions gdiPlusOptions)
         {
             SetupADIRenderer();
             SetupBackupADIRenderer();
@@ -60,17 +75,7 @@ namespace MFDExtractor
 
         private void SetupVVIRenderer()
         {
-            var vviStyleString = Settings.Default.VVI_Style;
-            var vviStyle = (VVIStyles) Enum.Parse(typeof (VVIStyles), vviStyleString);
-            switch (vviStyle)
-            {
-                case VVIStyles.Tape:
-                    _renderers.VVI = new F16VerticalVelocityIndicatorUSA();
-                    break;
-                case VVIStyles.Needle:
-                    _renderers.VVI = new F16VerticalVelocityIndicatorEU();
-                    break;
-            }
+	        _renderers.VVI = _vviRendererFactory.Create();
         }
 
         private void SetupRPM2Renderer()
@@ -92,13 +97,7 @@ namespace MFDExtractor
 
         private void SetupRWRRenderer(GdiPlusOptions gdiPlusOptions)
         {
-            _renderers.RWR = new F16AzimuthIndicator();
-            var styleString = Settings.Default.AzimuthIndicatorType;
-            var style = (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle) 
-                Enum.Parse(typeof (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), styleString);
-            ((F16AzimuthIndicator)_renderers.RWR).Options.Style = style;
-            ((F16AzimuthIndicator)_renderers.RWR).Options.HideBezel = !Settings.Default.AzimuthIndicator_ShowBezel;
-            ((F16AzimuthIndicator)_renderers.RWR).Options.GDIPlusOptions = gdiPlusOptions;
+	        _renderers.RWR = _azimuthIndicatorFactory.Create(gdiPlusOptions);
         }
 
         private void SetupOil2Renderer()
@@ -148,17 +147,7 @@ namespace MFDExtractor
 
         private void SetupFuelQuantityRenderer()
         {
-            _renderers.FuelQuantity = new F16FuelQuantityIndicator();
-            if (Settings.Default.FuelQuantityIndicator_NeedleCModel)
-            {
-                ((F16FuelQuantityIndicator)_renderers.FuelQuantity).Options.NeedleType =
-                    F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel;
-            }
-            else
-            {
-                ((F16FuelQuantityIndicator)_renderers.FuelQuantity).Options.NeedleType =
-                    F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel;
-            }
+	        _renderers.FuelQuantity = _fuelQualityIndicatorRendererFactory.Create();
         }
 
         private void SetupFuelFlowRenderer()
@@ -168,23 +157,7 @@ namespace MFDExtractor
 
         private void SetupISISRenderer(GdiPlusOptions gdiPlusOptions)
         {
-            _renderers.ISIS = new F16ISIS();
-            var pressureUnitsString = Settings.Default.ISIS_PressureUnits;
-            if (!string.IsNullOrEmpty(pressureUnitsString))
-            {
-                try
-                {
-                    ((F16ISIS)_renderers.ISIS).Options.PressureAltitudeUnits =
-                        (F16ISIS.F16ISISOptions.PressureUnits)
-                        Enum.Parse(typeof (F16ISIS.F16ISISOptions.PressureUnits), pressureUnitsString);
-                }
-                catch (Exception )
-                {
-                    ((F16ISIS)_renderers.ISIS).Options.PressureAltitudeUnits =
-                        F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
-                }
-            }
-            ((F16ISIS)_renderers.ISIS).Options.GDIPlusOptions = gdiPlusOptions;
+	        _renderers.ISIS = _isisRendererFactory.Create(gdiPlusOptions);
         }
 
         private void SetupAccelerometerRenderer()
@@ -246,16 +219,7 @@ namespace MFDExtractor
 
         private void SetupAltimeterRenderer()
         {
-            _renderers.Altimeter = new F16Altimeter();
-
-            var altimeterSyleString = Settings.Default.Altimeter_Style;
-            var altimeterStyle = (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle) 
-                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterSyleString);
-            ((F16Altimeter)_renderers.Altimeter).Options.Style = altimeterStyle;
-
-            var pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
-            var pressureUnits = (F16Altimeter.F16AltimeterOptions.PressureUnits) Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
-            ((F16Altimeter)_renderers.Altimeter).Options.PressureAltitudeUnits = pressureUnits;
+	        _renderers.Altimeter = _altimeterRendererFactory.Create();
         }
 
         private void SetupASIRenderer()

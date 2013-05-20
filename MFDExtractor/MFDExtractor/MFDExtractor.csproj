@@ -196,6 +196,11 @@
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="InstrumentType.cs" />
     <Compile Include="RadarAltitudeCalculator.cs" />
+    <Compile Include="RendererFactories\AltimeterRendererFactory.cs" />
+    <Compile Include="RendererFactories\FuelQualityIndicatorRendererFactory.cs" />
+    <Compile Include="RendererFactories\ISISRendererFactory.cs" />
+    <Compile Include="RendererFactories\RwrRendererFactory.cs" />
+    <Compile Include="RendererFactories\VVIRendererFactory.cs" />
     <Compile Include="RendererSetInitializer.cs" />
     <Compile Include="RenderThreadSignaller.cs" />
     <Compile Include="RenderThreadFactory.cs" />
