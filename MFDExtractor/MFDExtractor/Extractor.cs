@@ -13,7 +13,6 @@ using Common.InputSupport.UI;
 using Common.UI;
 using F4SharedMem;
 using F4Utils.Process;
-using F4Utils.Terrain;
 using MFDExtractor.BMSSupport;
 using MFDExtractor.EventSystem;
 using MFDExtractor.Networking;
@@ -34,15 +33,10 @@ namespace MFDExtractor
         private static readonly ILog Log = LogManager.GetLogger(typeof (Extractor));
         private static Extractor _extractor;
         private bool _disposed;
-
-	    private readonly IInputControlSelectionSettingReader _inputControlSelectionSettingReader = new InputControlSelectionSettingReader();
-
 	    private KeySettings _keySettings;
 	    private readonly IKeySettingsReader _keySettingsReader = new KeySettingsReader();
-
 		private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
         private readonly IRendererSetInitializer _rendererSetInitializer;
-
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
 
 	    private CaptureCoordinates _hudCaptureCoordinates;
@@ -53,16 +47,13 @@ namespace MFDExtractor
 
         #region Output Window Coordinates
 
-        public static bool SimRunning = false;
         private readonly object _texSmReaderLock = new object();
-        private Reader _falconSmReader;
         private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
         private bool _sim3DDataAvailable;
 
         #endregion
 
         #region Falcon 4 Sharedmem Readers & status flags
-        private TerrainBrowser _terrainBrowser = new TerrainBrowser(false);
 
         private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
         private F4TexSharedMem.Reader _texSmStatusReader = new F4TexSharedMem.Reader();
@@ -155,14 +146,13 @@ namespace MFDExtractor
         private Thread _rightMfdCaptureThread;
         private Thread _simStatusMonitorThread;
 
-        private readonly RenderThreadFactory _renderThreadFactory;
         private readonly ThreadAbortion _threadAbortion;
 
         private readonly DIHotkeyDetection _diHotkeyDetection;
 	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
 	    private readonly IEHSIStateTracker _ehsiStateTracker;
 
-		private readonly IKeyDownEventHandler _keyDownEventHandler;
+	    private readonly IKeyDownEventHandler _keyDownEventHandler;
 	    private readonly IKeyUpEventHandler _keyUpEventHandler;
 	    private readonly IKeyboardWatcher _keyboardWatcher;
 	    private readonly IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
@@ -180,14 +170,15 @@ namespace MFDExtractor
         private InstrumentForm _mfd4Form;
 	    private readonly IInstrumentFormFactory _instrumentFormFactory;
 		private readonly IThreeDeeCaptureCoordinateReader _threeDeeCaptureCoordinateReader;
+	    private readonly IFlightDataRetriever _flightDataRetriever;
         #endregion
 
         #endregion
 
 
         private Extractor(
-			IKeyDownEventHandler keyDownEventHandler = null, 
-			IKeyDownEventHandler keyUpEventHandler=null,
+            IKeyDownEventHandler keyDownEventHandler = null, 
+			IKeyUpEventHandler keyUpEventHandler=null,
 			IKeyboardWatcher keyboardWatcher = null,
 			IDirectInputEventHotkeyFilter directInputEventHotkeyFilter= null, 
 			IEHSIStateTracker ehsiStateTracker =null, 
@@ -197,8 +188,10 @@ namespace MFDExtractor
 			IInputEvents inputEvents = null,
             IInstrumentFactory instrumentFactory = null,
             IInstrumentFormFactory instrumentFormFactory = null,
-			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null)
+			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null,
+            IFlightDataRetriever flightDataRetriever= null)
         {
+            State = new ExtractorState();
             _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
@@ -207,8 +200,6 @@ namespace MFDExtractor
             _instrumentFactory = instrumentFactory ?? new InstrumentFactory(_renderers);
 			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_renderers.EHSI);
 			_directInputEventHotkeyFilter = directInputEventHotkeyFilter ?? new DirectInputEventHotkeyFilter();
-			State = new ExtractorState();
-
 			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
             _inputEvents = inputEvents ?? new InputEvents(_renderers, _ehsiStateTracker, State);
 	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,_diHotkeyDetection, _ehsiStateTracker,_inputEvents );
@@ -216,16 +207,14 @@ namespace MFDExtractor
             {
                 Mediator = new Mediator(null);
             }
-            _renderThreadFactory = new RenderThreadFactory();
             _threadAbortion = new ThreadAbortion();
 	        _keyDownEventHandler = keyDownEventHandler ?? new KeyDownEventHandler(_ehsiStateTracker, _inputEvents, _keySettings);
-
-			_keyUpEventHandler = new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
+			_keyUpEventHandler = keyUpEventHandler ??  new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
 			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
-            _radarAltitudeCalculator = new RadarAltitudeCalculator(_terrainBrowser);
-			_threeDeeCaptureCoordinateReader = new ThreeDeeCaptureCoordinateReader();
+            _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
+			_threeDeeCaptureCoordinateReader = threeDeeCaptureCoordinateReader ?? new ThreeDeeCaptureCoordinateReader();
         }
         private void SetupInstruments()
         {
@@ -445,7 +434,7 @@ namespace MFDExtractor
             get { return _networkMode; }
             set { _networkMode = value; }
         }
-		public ExtractorState State { get; set; }
+		public static ExtractorState State { get; set; }
         public Mediator Mediator { get; set; }
 
         #endregion
@@ -502,70 +491,6 @@ namespace MFDExtractor
 
         #region Capture Strategy Orchestration Methods
 
-        private FlightData GetFlightData()
-        {
-            FlightData toReturn = null;
-            if (State.TestMode)
-            {
-            }
-            else
-            {
-                if (SimRunning || _networkMode == NetworkMode.Client)
-                {
-                    switch (_networkMode)
-                    {
-                        case NetworkMode.Standalone:
-                        case NetworkMode.Server:
-                        {
-                            var falconDataFormat = F4Utils.Process.Util.DetectFalconFormat();
-
-                            //set automatic 3D mode for BMS
-                            if (falconDataFormat.HasValue && falconDataFormat.Value == FalconDataFormats.BMS4)
-                                State.ThreeDeeMode = true;
-
-                            bool doMore = true;
-                            if (_falconSmReader == null)
-                            {
-                                _falconSmReader = falconDataFormat.HasValue
-                                    ? new Reader(falconDataFormat.Value)
-                                    : new Reader();
-                            }
-                            else
-                            {
-                                if (falconDataFormat.HasValue)
-                                {
-                                    if (falconDataFormat.Value != _falconSmReader.DataFormat)
-                                    {
-                                        _falconSmReader = new Reader(falconDataFormat.Value);
-                                    }
-                                }
-                                else
-                                {
-                                    doMore = false;
-                                    Common.Util.DisposeObject(_falconSmReader);
-                                    _falconSmReader = null;
-                                    _useBMSAdvancedSharedmemValues = false;
-                                }
-                            }
-
-                            if (doMore)
-                            {
-                                toReturn = _falconSmReader.GetCurrentData();
-                                if (NetworkMode == NetworkMode.Server)
-                                {
-                                    _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
-                                }
-                            }
-                        }
-                            break;
-                        case NetworkMode.Client:
-                            toReturn = _client.GetFlightData();
-                            break;
-                    }
-                }
-            }
-            return toReturn ?? new FlightData {hsiBits = Int32.MaxValue};
-        }
 
         private Image GetImage(Image testAlignmentImage,
             Func<Image> threeDeeModeLocalCaptureFunc,
@@ -578,7 +503,7 @@ namespace MFDExtractor
             }
             else
             {
-                if (!SimRunning && _networkMode != NetworkMode.Client) return null;
+                if (!State.SimRunning && _networkMode != NetworkMode.Client) return null;
                 if (State.ThreeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
                 {
                     toReturn = threeDeeModeLocalCaptureFunc();
@@ -629,7 +554,7 @@ namespace MFDExtractor
 
         private Image Get3D(Rectangle rttInputRectangle)
         {
-            if (!State.KeepRunning || (!SimRunning || !_sim3DDataAvailable) || rttInputRectangle == Rectangle.Empty)
+            if (!State.KeepRunning || (!State.SimRunning || !_sim3DDataAvailable) || rttInputRectangle == Rectangle.Empty)
             {
                 return null;
             }
@@ -945,11 +870,11 @@ namespace MFDExtractor
                     }
 
 
-                    if (SimRunning || State.TestMode || NetworkMode == NetworkMode.Client)
+                    if (State.SimRunning || State.TestMode || NetworkMode == NetworkMode.Client)
                     {
-                        var currentFlightData = GetFlightData();
+                        var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         try
                         {
                         }
@@ -968,7 +893,7 @@ namespace MFDExtractor
                     {
                         var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
-						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
+						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
                         SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
                         SetMfd3Image(Util.CloneBitmap(_mfd3BlankImage));
                         SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));
@@ -1050,7 +975,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!SimRunning && _networkMode != NetworkMode.Client) && !State.TestMode)
+                    if ((!State.SimRunning && _networkMode != NetworkMode.Client) && !State.TestMode)
                     {
                         Application.DoEvents();
                         Thread.Sleep(5);
@@ -1131,7 +1056,7 @@ namespace MFDExtractor
                     count++;
                     if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
                     {
-                        var simWasRunning = SimRunning;
+                        var simWasRunning = State.SimRunning;
 
                         //TODO:make this check optional via the user-config file
                         if (count%1 == 0)
@@ -1142,14 +1067,14 @@ namespace MFDExtractor
 
                             try
                             {
-                                SimRunning = NetworkMode == NetworkMode.Client ||
+                                State.SimRunning = NetworkMode == NetworkMode.Client ||
                                               F4Utils.Process.Util.IsFalconRunning();
                             }
                             catch (Exception ex)
                             {
                                 Log.Error(ex.Message, ex);
                             }
-                            _sim3DDataAvailable = SimRunning &&
+                            _sim3DDataAvailable = State.SimRunning &&
                                                   (NetworkMode == NetworkMode.Client ||
                                                    _texSmStatusReader.IsDataAvailable);
 
@@ -1198,7 +1123,7 @@ namespace MFDExtractor
                                 _rightMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
                                 _hudCaptureCoordinates.ThreeDee = Rectangle.Empty;
                             }
-                            if (simWasRunning && !SimRunning)
+                            if (simWasRunning && !State.SimRunning)
                             {
                                 CloseAndDisposeSharedmemReaders();
 
@@ -1207,7 +1132,7 @@ namespace MFDExtractor
                                     TearDownImageServer();
                                 }
                             }
-                            if (_networkMode == NetworkMode.Server && (!simWasRunning && SimRunning))
+                            if (_networkMode == NetworkMode.Server && (!simWasRunning && State.SimRunning))
                             {
                                 SetupNetworkingServer();
                             }
@@ -1227,17 +1152,12 @@ namespace MFDExtractor
 
         private void CloseAndDisposeSharedmemReaders()
         {
-            Common.Util.DisposeObject(_terrainBrowser);
-            _terrainBrowser = null;
-
             Common.Util.DisposeObject(_texSmStatusReader);
             _texSmStatusReader = null;
 
             Common.Util.DisposeObject(_texSmReader);
             _texSmReader = null;
 
-            Common.Util.DisposeObject(_falconSmReader);
-            _falconSmReader = null;
         }
 
         #region Thread Teardown
@@ -1427,7 +1347,6 @@ namespace MFDExtractor
                     Stop();
                     Common.Util.DisposeObject(_texSmReader);
                     Common.Util.DisposeObject(_texSmStatusReader);
-                    Common.Util.DisposeObject(_falconSmReader);
                     Common.Util.DisposeObject(_mfd4BlankImage);
                     Common.Util.DisposeObject(_mfd3BlankImage);
                     Common.Util.DisposeObject(_leftMfdBlankImage);

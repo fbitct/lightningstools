@@ -63,10 +63,10 @@ namespace MFDExtractor.UI
         /// <param name="e">Event arguments for the form's Load event</param>
         private void frmOptions_Load(object sender, EventArgs e)
         {
-            _extractorRunningStateOnFormOpen = _extractor.State.Running; //store current running
+            _extractorRunningStateOnFormOpen = Extractor.State.Running; //store current running
             //state of the Extractor engine
             //stop the Extractor engine
-			if (_extractor.State.Running)
+			if (Extractor.State.Running)
             {
                 _extractor.Stop();
             }
@@ -75,7 +75,7 @@ namespace MFDExtractor.UI
             _extractor.DataChanged += extractor_DataChanged;
 
             //put the Extractor into Test mode (displays the Test/Blank images)
-			_extractor.State.TestMode = true;
+			Extractor.State.TestMode = true;
             //set the titlebar for the Options form
             Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
 
@@ -1177,7 +1177,7 @@ namespace MFDExtractor.UI
                     }
                     else
                     {
-						if (_extractor.State.Running)
+						if (Extractor.State.Running)
                         {
                             _extractor.Stop(); //stop the Extractor if it's currently running
                         }
@@ -1424,9 +1424,9 @@ namespace MFDExtractor.UI
             Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
             if (persist) //persist the user settings to disk
             {
-				bool testMode = _extractor.State.TestMode; //store whether we're in test mode
+				bool testMode = Extractor.State.TestMode; //store whether we're in test mode
                 settings.TestMode = false; //clear test mode flag from the current settings cache (in-memory)
-				_extractorRunningStateOnFormOpen = _extractor.State.Running;
+				_extractorRunningStateOnFormOpen = Extractor.State.Running;
                 //store current Extractor instance's "isRunning" state
                 settings.Save(); //save our new settings to the current settings cache (on-disk)
                 settings.TestMode = testMode; //reset the test-mode flag in the current settings cache
@@ -1533,7 +1533,7 @@ namespace MFDExtractor.UI
             try
             {
                 Settings.Default.Reload(); //re-load the on-disk user settings into the in-memory user config cache
-				if (_extractor.State.Running)
+				if (Extractor.State.Running)
                 {
                     _extractor.Stop(); //stop the Extractor engine if it's running
                 }
@@ -1553,17 +1553,17 @@ namespace MFDExtractor.UI
         /// <param name="e">Event arguments for the Click event</param>
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
-			_extractor.State.TestMode = false;
+			Extractor.State.TestMode = false;
             if (_extractorRunningStateOnFormOpen)
             {
-				if (!_extractor.State.Running)
+				if (!Extractor.State.Running)
                 {
                     _extractor.Start();
                 }
             }
             else
             {
-				if (_extractor.State.Running)
+				if (Extractor.State.Running)
                 {
                     _extractor.Stop();
                 }
@@ -1700,7 +1700,7 @@ namespace MFDExtractor.UI
         private void StopAndRestartExtractor()
         {
             if (_formLoading) return;
-			if (_extractor.State.Running)
+			if (Extractor.State.Running)
             {
                 _extractor.Stop();
                 _extractor.LoadSettings();
@@ -1828,12 +1828,12 @@ namespace MFDExtractor.UI
             {
                 Settings.Default.Reset();
                 Settings.Default.UpgradeNeeded = false;
-				bool extractorRunning = _extractor.State.Running;
+				bool extractorRunning = Extractor.State.Running;
                 if (extractorRunning)
                 {
                     _extractor.Stop();
                     _extractor.LoadSettings();
-					_extractor.State.TestMode = true;
+					Extractor.State.TestMode = true;
                 }
                 if (extractorRunning)
                 {

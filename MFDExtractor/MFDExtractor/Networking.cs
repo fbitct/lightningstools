@@ -379,7 +379,7 @@ namespace MFDExtractor
         public FlightData GetFlightData()
         {
             FlightData toReturn = null;
-            if (!Extractor.SimRunning)
+            if (!Extractor.State.SimRunning)
             {
                 return null;
             }
@@ -402,7 +402,7 @@ namespace MFDExtractor
         public byte[] GetMfd4BitmapBytes()
         {
             byte[] toReturn = null;
-            if (!Extractor.SimRunning)
+            if (!Extractor.State.SimRunning)
             {
                 return null;
             }
@@ -426,7 +426,7 @@ namespace MFDExtractor
         public byte[] GetMfd3BitmapBytes()
         {
             byte[] toReturn = null;
-            if (!Extractor.SimRunning)
+            if (!Extractor.State.SimRunning)
             {
                 return null;
             }
@@ -450,7 +450,7 @@ namespace MFDExtractor
         public byte[] GetLeftMfdBitmapBytes()
         {
             byte[] toReturn = null;
-            if (!Extractor.SimRunning)
+            if (!Extractor.State.SimRunning)
             {
                 return null;
             }
@@ -475,7 +475,7 @@ namespace MFDExtractor
         {
             byte[] toReturn;
 
-            if (!Extractor.SimRunning)
+            if (!Extractor.State.SimRunning)
             {
                 return null;
             }
@@ -499,7 +499,7 @@ namespace MFDExtractor
         public byte[] GetHudBitmapBytes()
         {
             byte[] toReturn = null;
-            if (!Extractor.SimRunning)
+            if (!Extractor.State.SimRunning)
             {
                 return null;
             }

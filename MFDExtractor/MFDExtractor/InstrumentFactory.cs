@@ -26,17 +26,17 @@ namespace MFDExtractor
         {
             var instrument = new Instrument(_instrumentStateSnapshotCache)
             {
-                Type=instrumentType,
+                Type = instrumentType,
                 StartSignal = new AutoResetEvent(false),
                 EndSignal = new AutoResetEvent(false),
                 Renderer = _instrumentRendererSet[instrumentType],
-            };
-            instrument.Form = _instrumentFormFactory.Create(
+                Form = _instrumentFormFactory.Create(
 
-                instrumentType.ToString(),
-                instrumentType.ToString(),
-                _instrumentRendererSet[instrumentType]
-                );
+                    instrumentType.ToString(),
+                    instrumentType.ToString(),
+                    _instrumentRendererSet[instrumentType]
+                    ),
+            };
             return instrument;
         }
     }
