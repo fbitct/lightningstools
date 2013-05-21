@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -168,6 +167,7 @@ namespace MFDExtractor
 		private readonly IThreeDeeCaptureCoordinateReader _threeDeeCaptureCoordinateReader;
 	    private readonly IFlightDataRetriever _flightDataRetriever;
 	    private readonly IImageGetter _imageGetter;
+	    private readonly ISetAndDisposeImageHelper _setAndDisposeImageHelper;
         #endregion
 
         #endregion
@@ -187,7 +187,8 @@ namespace MFDExtractor
             IInstrumentFormFactory instrumentFormFactory = null,
 			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null,
             IFlightDataRetriever flightDataRetriever= null,
-            IImageGetter imageGetter=null)
+            IImageGetter imageGetter=null,
+            ISetAndDisposeImageHelper setAndDisposeImageHelper=null)
         {
             State = new ExtractorState();
             _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
@@ -214,6 +215,7 @@ namespace MFDExtractor
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
 			_threeDeeCaptureCoordinateReader = threeDeeCaptureCoordinateReader ?? new ThreeDeeCaptureCoordinateReader();
             _imageGetter = imageGetter ?? new ImageGetter();
+            _setAndDisposeImageHelper = setAndDisposeImageHelper ?? new SetAndDisposeImageHelper();
         }
         private void SetupInstruments()
         {
@@ -618,66 +620,29 @@ namespace MFDExtractor
                 ExtractorServer.SetFlightData(flightData);
             }
         }
-        private void SetAndDisposeImage(Image image, Action<Image> serveImageFunc, RotateFlipType rotateFlipType, InstrumentForm instrumentForm, bool monochrome)
-        {
-            if (image == null) return;
-            if (State.NetworkMode == NetworkMode.Server)
-            {
-                serveImageFunc(image);
-            }
-            if (instrumentForm != null)
-            {
-                if (rotateFlipType != RotateFlipType.RotateNoneFlipNone)
-                {
-                    image.RotateFlip(rotateFlipType);
-                }
-                using (var graphics = instrumentForm.CreateGraphics())
-                {
-                    if (monochrome)
-                    {
-                        DrawImageToControlMonochrome(image, instrumentForm, graphics);
-                    }
-                    else
-                    {
-                        graphics.DrawImage(image, instrumentForm.ClientRectangle);
-                    }
-                }
-            }
-            Common.Util.DisposeObject(image);
-        }
-
-	    private static void DrawImageToControlMonochrome(Image image, Control instrumentForm, Graphics graphics)
-	    {
-	        var ia = new ImageAttributes();
-	        ia.SetColorMatrix(Util.GreyscaleColorMatrix);
-	        using (var compatible = Util.CopyBitmap(image))
-	        {
-	            graphics.DrawImage(compatible, instrumentForm.ClientRectangle, 0, 0, image.Width,image.Height, GraphicsUnit.Pixel, ia);
-	        }
-	    }
-
+        
 	    private void SetHudImage(Image hudImage)
         {
-            SetAndDisposeImage(hudImage, ExtractorServer.SetHudBitmap, Settings.Default.HUD_RotateFlipType, _hudForm, Settings.Default.HUD_Monochrome);
+            _setAndDisposeImageHelper.SetAndDisposeImage(State,hudImage, ExtractorServer.SetHudBitmap, Settings.Default.HUD_RotateFlipType, _hudForm, Settings.Default.HUD_Monochrome);
         }
         private void SetMfd4Image(Image mfd4Image)
         {
-            SetAndDisposeImage(mfd4Image, ExtractorServer.SetMfd4Bitmap, Settings.Default.MFD4_RotateFlipType, _mfd4Form, Settings.Default.MFD4_Monochrome);
+            _setAndDisposeImageHelper.SetAndDisposeImage(State, mfd4Image, ExtractorServer.SetMfd4Bitmap, Settings.Default.MFD4_RotateFlipType, _mfd4Form, Settings.Default.MFD4_Monochrome);
         }
 
         private void SetMfd3Image(Image mfd3Image)
         {
-            SetAndDisposeImage(mfd3Image, ExtractorServer.SetMfd3Bitmap, Settings.Default.MFD3_RotateFlipType, _mfd3Form, Settings.Default.MFD3_Monochrome);
+            _setAndDisposeImageHelper.SetAndDisposeImage(State, mfd3Image, ExtractorServer.SetMfd3Bitmap, Settings.Default.MFD3_RotateFlipType, _mfd3Form, Settings.Default.MFD3_Monochrome);
         }
 
         private void SetLeftMfdImage(Image leftMfdImage)
         {
-            SetAndDisposeImage(leftMfdImage, ExtractorServer.SetLeftMfdBitmap, Settings.Default.LMFD_RotateFlipType, _leftMfdForm, Settings.Default.LMFD_Monochrome);
+            _setAndDisposeImageHelper.SetAndDisposeImage(State, leftMfdImage, ExtractorServer.SetLeftMfdBitmap, Settings.Default.LMFD_RotateFlipType, _leftMfdForm, Settings.Default.LMFD_Monochrome);
         }
 
         private void SetRightMfdImage(Image rightMfdImage)
         {
-            SetAndDisposeImage(rightMfdImage, ExtractorServer.SetRightMfdBitmap, Settings.Default.RMFD_RotateFlipType, _rightMfdForm, Settings.Default.RMFD_Monochrome);
+            _setAndDisposeImageHelper.SetAndDisposeImage(State, rightMfdImage, ExtractorServer.SetRightMfdBitmap, Settings.Default.RMFD_RotateFlipType, _rightMfdForm, Settings.Default.RMFD_Monochrome);
         }
 
         #endregion

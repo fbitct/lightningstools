@@ -206,6 +206,7 @@
     <Compile Include="RendererSetInitializer.cs" />
     <Compile Include="RenderThreadSignaller.cs" />
     <Compile Include="RenderThreadFactory.cs" />
+    <Compile Include="SetAndDisposeImageHelper.cs" />
     <Compile Include="SettingReader.cs" />
     <Compile Include="SettingsWriter.cs" />
     <Compile Include="SharedmemReaderFactory.cs" />
