@@ -86,7 +86,6 @@ namespace MFDExtractor
         private ExtractorClient _client;
         private string _compressionType = "None";
         private string _imageFormat = "PNG";
-        private NetworkMode _networkMode = NetworkMode.Standalone;
         private IPEndPoint _serverEndpoint;
 
         #endregion
@@ -159,7 +158,6 @@ namespace MFDExtractor
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
 	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
 	    private readonly IInputEvents _inputEvents;
-	    private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
 
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
 	    private readonly IInstrumentFactory _instrumentFactory;
@@ -275,7 +273,7 @@ namespace MFDExtractor
             WaitForThreadEndThenAbort(ref threadsToKill, new TimeSpan(0, 0, 1));
 
             CloseOutputWindowForms();
-            if (_networkMode == NetworkMode.Server)
+            if (State.NetworkMode == NetworkMode.Server)
             {
                 TearDownImageServer();
             }
@@ -332,8 +330,8 @@ namespace MFDExtractor
             var settings = Settings.Default;
 	        _keySettings = _keySettingsReader.Read();
             _gdiPlusOptions= _gdiPlusOptionsReader.Read();
-            _networkMode = (NetworkMode) settings.NetworkingMode;
-            switch (_networkMode)
+            State.NetworkMode = (NetworkMode) settings.NetworkingMode;
+            switch (State.NetworkMode)
             {
                 case NetworkMode.Server:
                     _serverEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
@@ -343,7 +341,7 @@ namespace MFDExtractor
                         settings.ClientUseServerPortNum);
                     break;
             }
-            if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
+            if (State.NetworkMode == NetworkMode.Server || State.NetworkMode == NetworkMode.Standalone)
             {
                 _mfd4CaptureCoordinates = new CaptureCoordinates
                 {
@@ -429,11 +427,6 @@ namespace MFDExtractor
             get { return _serverEndpoint; }
             set { _serverEndpoint = value; }
         }
-        public NetworkMode NetworkMode
-        {
-            get { return _networkMode; }
-            set { _networkMode = value; }
-        }
 		public static ExtractorState State { get; set; }
         public Mediator Mediator { get; set; }
 
@@ -445,11 +438,11 @@ namespace MFDExtractor
 
         private void SetupNetworking()
         {
-            if (_networkMode == NetworkMode.Client)
+            if (State.NetworkMode == NetworkMode.Client)
             {
                 SetupNetworkingClient();
             }
-            if (_networkMode == NetworkMode.Server)
+            if (State.NetworkMode == NetworkMode.Server)
             {
                 SetupNetworkingServer();
             }
@@ -503,14 +496,14 @@ namespace MFDExtractor
             }
             else
             {
-                if (!State.SimRunning && _networkMode != NetworkMode.Client) return null;
-                if (State.ThreeDeeMode && (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone))
+                if (!State.SimRunning && State.NetworkMode != NetworkMode.Client) return null;
+                if (State.ThreeDeeMode && (State.NetworkMode == NetworkMode.Server || State.NetworkMode == NetworkMode.Standalone))
                 {
                     toReturn = threeDeeModeLocalCaptureFunc();
                 }
                 else
                 {
-                    switch (_networkMode)
+                    switch (State.NetworkMode)
                     {
                         case NetworkMode.Standalone: //fallthrough
                         case NetworkMode.Server:
@@ -606,7 +599,7 @@ namespace MFDExtractor
 
         private void CaptureAndUpdateOutput(bool instrumentEnabled, Func<Image> getterFunc, Action<Image> setterFunc, Image blankVersion )
         {
-            if (!instrumentEnabled && _networkMode != NetworkMode.Server) return;
+            if (!instrumentEnabled && State.NetworkMode != NetworkMode.Server) return;
 
             Image image = null;
             try
@@ -656,7 +649,7 @@ namespace MFDExtractor
         private void SetFlightData(FlightData flightData)
         {
             if (flightData == null) return;
-            if (_networkMode == NetworkMode.Server)
+            if (State.NetworkMode == NetworkMode.Server)
             {
                 ExtractorServer.SetFlightData(flightData);
             }
@@ -664,7 +657,7 @@ namespace MFDExtractor
         private void SetAndDisposeImage(Image image, Action<Image> serveImageFunc, RotateFlipType rotateFlipType, InstrumentForm instrumentForm, bool monochrome)
         {
             if (image == null) return;
-            if (_networkMode == NetworkMode.Server)
+            if (State.NetworkMode == NetworkMode.Server)
             {
                 serveImageFunc(image);
             }
@@ -733,25 +726,25 @@ namespace MFDExtractor
 
         private void SetupOutputForms()
         {
-            if (Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server)
+            if (Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server)
             {
                 SetupMfd4Form();
             }
-            if (Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server)
+            if (Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server)
             {
                 SetupMfd3Form();
             }
-            if (Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server)
+            if (Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server)
             {
                 SetupLeftMfdForm();
             }
 
-            if (Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server)
+            if (Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server)
             {
                 SetupRightMfdForm();
             }
 
-            if (Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server)
+            if (Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server)
             {
                 SetupHudForm();
             }
@@ -859,7 +852,7 @@ namespace MFDExtractor
                     }
                     var thisLoopStartTime = DateTime.Now;
 
-                    switch (NetworkMode)
+                    switch (State.NetworkMode)
                     {
                         case NetworkMode.Client:
                             _clientSideIncomingMessageDispatcher.ProcessPendingMessages();
@@ -870,11 +863,11 @@ namespace MFDExtractor
                     }
 
 
-                    if (State.SimRunning || State.TestMode || NetworkMode == NetworkMode.Client)
+                    if (State.SimRunning || State.TestMode || State.NetworkMode == NetworkMode.Client)
                     {
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
                         try
                         {
                         }
@@ -893,7 +886,7 @@ namespace MFDExtractor
                     {
                         var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
-						_flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _networkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
                         SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
                         SetMfd3Image(Util.CloneBitmap(_mfd3BlankImage));
                         SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));
@@ -975,7 +968,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                    if ((!State.SimRunning && _networkMode != NetworkMode.Client) && !State.TestMode)
+                    if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.TestMode)
                     {
                         Application.DoEvents();
                         Thread.Sleep(5);
@@ -1023,23 +1016,23 @@ namespace MFDExtractor
             {
                 return;
             }
-            if (Settings.Default.EnableMfd4Output || _networkMode == NetworkMode.Server)
+            if (Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server)
             {
                 _mfd4CaptureStart.Set();
             }
-            if (Settings.Default.EnableMfd3Output || _networkMode == NetworkMode.Server)
+            if (Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server)
             {
                 _mfd3CaptureStart.Set();
             }
-            if (Settings.Default.EnableLeftMFDOutput || _networkMode == NetworkMode.Server)
+            if (Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server)
             {
                 _leftMfdCaptureStart.Set();
             }
-            if (Settings.Default.EnableRightMFDOutput || _networkMode == NetworkMode.Server)
+            if (Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server)
             {
                 _rightMfdCaptureStart.Set();
             }
-            if (Settings.Default.EnableHudOutput || _networkMode == NetworkMode.Server)
+            if (Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server)
             {
                 _hudCaptureStart.Set();
             }
@@ -1054,7 +1047,7 @@ namespace MFDExtractor
                 while (State.KeepRunning)
                 {
                     count++;
-                    if (_networkMode == NetworkMode.Server || _networkMode == NetworkMode.Standalone)
+                    if (State.NetworkMode == NetworkMode.Server || State.NetworkMode == NetworkMode.Standalone)
                     {
                         var simWasRunning = State.SimRunning;
 
@@ -1067,7 +1060,7 @@ namespace MFDExtractor
 
                             try
                             {
-                                State.SimRunning = NetworkMode == NetworkMode.Client ||
+                                State.SimRunning = State.NetworkMode == NetworkMode.Client ||
                                               F4Utils.Process.Util.IsFalconRunning();
                             }
                             catch (Exception ex)
@@ -1075,7 +1068,7 @@ namespace MFDExtractor
                                 Log.Error(ex.Message, ex);
                             }
                             _sim3DDataAvailable = State.SimRunning &&
-                                                  (NetworkMode == NetworkMode.Client ||
+                                                  (State.NetworkMode == NetworkMode.Client ||
                                                    _texSmStatusReader.IsDataAvailable);
 
                             if (_sim3DDataAvailable)
@@ -1093,7 +1086,7 @@ namespace MFDExtractor
                                              Settings.Default.EnableMfd3Output ||
                                              Settings.Default.EnableMfd4Output ||
                                              Settings.Default.EnableHudOutput ||
-                                             NetworkMode == NetworkMode.Server))
+                                             State.NetworkMode == NetworkMode.Server))
                                         {
                                             if ((_hudCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
                                                 (_leftMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
@@ -1127,12 +1120,12 @@ namespace MFDExtractor
                             {
                                 CloseAndDisposeSharedmemReaders();
 
-                                if (_networkMode == NetworkMode.Server)
+                                if (State.NetworkMode == NetworkMode.Server)
                                 {
                                     TearDownImageServer();
                                 }
                             }
-                            if (_networkMode == NetworkMode.Server && (!simWasRunning && State.SimRunning))
+                            if (State.NetworkMode == NetworkMode.Server && (!simWasRunning && State.SimRunning))
                             {
                                 SetupNetworkingServer();
                             }
@@ -1273,27 +1266,27 @@ namespace MFDExtractor
 
         private void SetupHUDCaptureThread()
         {
-            SetupCaptureThread(ref _hudCaptureThread, () => Settings.Default.EnableHudOutput || NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_hudCaptureStart, CaptureHud), "HudCaptureThread");
+            SetupCaptureThread(ref _hudCaptureThread, () => Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_hudCaptureStart, CaptureHud), "HudCaptureThread");
         }
 
         private void SetupRightMFDCaptureThread()
         {
-            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || NetworkMode == NetworkMode.Server, ()=>CaptureThreadWork(_rightMfdCaptureStart, CaptureRightMfd), "RightMfdCaptureThread");
+            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_rightMfdCaptureStart, CaptureRightMfd), "RightMfdCaptureThread");
         }
 
         private void SetupLeftMFDCaptureThread()
         {
-            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || NetworkMode == NetworkMode.Server, ()=>CaptureThreadWork(_leftMfdCaptureStart,CaptureLeftMfd), "LeftMfdCaptureThread");
+            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_leftMfdCaptureStart, CaptureLeftMfd), "LeftMfdCaptureThread");
         }
 
         private void SetupMFD3CaptureThread()
         {
-            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd3CaptureStart, CaptureMfd3), "Mfd3CaptureThread");
+            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd3CaptureStart, CaptureMfd3), "Mfd3CaptureThread");
         }
 
         private void SetupMFD4CaptureThread()
         {
-            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd4CaptureStart, CaptureMfd4), "Mfd4CaptureThread");
+            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd4CaptureStart, CaptureMfd4), "Mfd4CaptureThread");
         }
 
         private void SetupSimStatusMonitorThread()
