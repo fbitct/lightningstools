@@ -47,7 +47,6 @@ namespace MFDExtractor
 
         #region Output Window Coordinates
 
-        private readonly object _texSmReaderLock = new object();
         private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
         private bool _sim3DDataAvailable;
 
@@ -56,7 +55,6 @@ namespace MFDExtractor
         #region Falcon 4 Sharedmem Readers & status flags
 
         private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
-        private F4TexSharedMem.Reader _texSmStatusReader = new F4TexSharedMem.Reader();
         private bool _useBMSAdvancedSharedmemValues;
         #endregion
 
@@ -523,17 +521,14 @@ namespace MFDExtractor
 
             try
             {
-                lock (_texSmReaderLock)
+                if (_texSmReader != null)
                 {
-                    if (_texSmReader != null)
-                    {
-                        return Util.CloneBitmap(_texSmReader.GetImage(rttInputRectangle));
-                    }
+                    return Util.CloneBitmap(_texSmReader.GetImage(rttInputRectangle));
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Log.Error(e.Message, e);
+                Log.Error(ex.Message, ex);
             }
             return null;
         }
@@ -821,15 +816,7 @@ namespace MFDExtractor
                     }
                     var thisLoopStartTime = DateTime.Now;
 
-                    switch (State.NetworkMode)
-                    {
-                        case NetworkMode.Client:
-                            _clientSideIncomingMessageDispatcher.ProcessPendingMessages();
-                            break;
-                        case NetworkMode.Server:
-                            _serverSideIncomingMessageDispatcher.ProcessPendingMessages();
-                            break;
-                    }
+                    ProcessNetworkMessages();
 
 
                     if (State.SimRunning || State.TestMode || State.NetworkMode == NetworkMode.Client)
@@ -837,19 +824,6 @@ namespace MFDExtractor
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
                         _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
-                        try
-                        {
-                        }
-                        catch (ThreadInterruptedException)
-                        {
-                        }
-                        catch (ThreadAbortException)
-                        {
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Error(e.Message, e);
-                        }
                     }
                     else
                     {
@@ -959,8 +933,21 @@ namespace MFDExtractor
             }
         }
 
+	    private void ProcessNetworkMessages()
+	    {
+	        switch (State.NetworkMode)
+	        {
+	            case NetworkMode.Client:
+	                _clientSideIncomingMessageDispatcher.ProcessPendingMessages();
+	                break;
+	            case NetworkMode.Server:
+	                _serverSideIncomingMessageDispatcher.ProcessPendingMessages();
+	                break;
+	        }
+	    }
 
-        private static void WaitAllAndClearList(List<WaitHandle> waitHandles, int millisecondsTimeout)
+
+	    private static void WaitAllAndClearList(List<WaitHandle> waitHandles, int millisecondsTimeout)
         {
             if (waitHandles == null || waitHandles.Count <= 0) return;
             try
@@ -1019,26 +1006,11 @@ namespace MFDExtractor
                     if (State.NetworkMode == NetworkMode.Server || State.NetworkMode == NetworkMode.Standalone)
                     {
                         var simWasRunning = State.SimRunning;
-
-                        //TODO:make this check optional via the user-config file
                         if (count%1 == 0)
                         {
                             count = 0;
-                            Common.Util.DisposeObject(_texSmStatusReader);
-                            _texSmStatusReader = new F4TexSharedMem.Reader();
 
-                            try
-                            {
-                                State.SimRunning = State.NetworkMode == NetworkMode.Client ||
-                                              F4Utils.Process.Util.IsFalconRunning();
-                            }
-                            catch (Exception ex)
-                            {
-                                Log.Error(ex.Message, ex);
-                            }
-                            _sim3DDataAvailable = State.SimRunning &&
-                                                  (State.NetworkMode == NetworkMode.Client ||
-                                                   _texSmStatusReader.IsDataAvailable);
+                            _sim3DDataAvailable = State.SimRunning || State.NetworkMode == NetworkMode.Client;
 
                             if (_sim3DDataAvailable)
                             {
@@ -1046,30 +1018,10 @@ namespace MFDExtractor
                                 {
                                     if (State.ThreeDeeMode)
                                     {
-                                        lock (_texSmReaderLock)
+                                        if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
+                                        if (NeedToCaptureMFDsAndOrHud)
                                         {
-                                            if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
-                                        }
-                                        if ((Settings.Default.EnableLeftMFDOutput ||
-                                             Settings.Default.EnableRightMFDOutput ||
-                                             Settings.Default.EnableMfd3Output ||
-                                             Settings.Default.EnableMfd4Output ||
-                                             Settings.Default.EnableHudOutput ||
-                                             State.NetworkMode == NetworkMode.Server))
-                                        {
-                                            if ((_hudCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-                                                (_leftMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-                                                (_rightMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-                                                (_mfd3CaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-                                                (_mfd4CaptureCoordinates.ThreeDee == Rectangle.Empty))
-                                            {
-												_threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile(
-                                                                                        _mfd4CaptureCoordinates,
-                                                                                       _mfd3CaptureCoordinates,
-                                                                                       _leftMfdCaptureCoordinates,
-                                                                                       _rightMfdCaptureCoordinates,
-                                                                                       _hudCaptureCoordinates);
-                                            }
+                                            EnsureThreeDeeCaptureCoordinatesAreLoaded();
                                         }
                                     }
                                 }
@@ -1079,11 +1031,7 @@ namespace MFDExtractor
                             }
                             else
                             {
-                                _mfd4CaptureCoordinates.ThreeDee = Rectangle.Empty;
-                                _mfd3CaptureCoordinates.ThreeDee = Rectangle.Empty;
-                                _leftMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
-                                _rightMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
-                                _hudCaptureCoordinates.ThreeDee = Rectangle.Empty;
+                                ResetThreeDeeCaptureCoordinates();
                             }
                             if (simWasRunning && !State.SimRunning)
                             {
@@ -1102,7 +1050,6 @@ namespace MFDExtractor
                     }
                     Thread.Sleep(500);
                 }
-                Debug.WriteLine("SimStatusMonitorThreadWork has exited.");
             }
             catch (ThreadAbortException)
             {
@@ -1112,11 +1059,47 @@ namespace MFDExtractor
             }
         }
 
-        private void CloseAndDisposeSharedmemReaders()
-        {
-            Common.Util.DisposeObject(_texSmStatusReader);
-            _texSmStatusReader = null;
+	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded()
+	    {
+	        if ((_hudCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
+	            (_leftMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
+	            (_rightMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
+	            (_mfd3CaptureCoordinates.ThreeDee == Rectangle.Empty) ||
+	            (_mfd4CaptureCoordinates.ThreeDee == Rectangle.Empty))
+	        {
+	            _threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile(
+	                _mfd4CaptureCoordinates,
+	                _mfd3CaptureCoordinates,
+	                _leftMfdCaptureCoordinates,
+	                _rightMfdCaptureCoordinates,
+	                _hudCaptureCoordinates);
+	        }
+	    }
 
+	    private void ResetThreeDeeCaptureCoordinates()
+	    {
+	        _mfd4CaptureCoordinates.ThreeDee = Rectangle.Empty;
+	        _mfd3CaptureCoordinates.ThreeDee = Rectangle.Empty;
+	        _leftMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
+	        _rightMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
+	        _hudCaptureCoordinates.ThreeDee = Rectangle.Empty;
+	    }
+
+	    private static bool NeedToCaptureMFDsAndOrHud
+	    {
+	        get
+	        {
+	            return (Settings.Default.EnableLeftMFDOutput ||
+	                Settings.Default.EnableRightMFDOutput ||
+	                Settings.Default.EnableMfd3Output ||
+	                Settings.Default.EnableMfd4Output ||
+	                Settings.Default.EnableHudOutput ||
+	                State.NetworkMode == NetworkMode.Server);
+	        }
+	    }
+
+	    private void CloseAndDisposeSharedmemReaders()
+        {
             Common.Util.DisposeObject(_texSmReader);
             _texSmReader = null;
 
@@ -1308,7 +1291,6 @@ namespace MFDExtractor
                 {
                     Stop();
                     Common.Util.DisposeObject(_texSmReader);
-                    Common.Util.DisposeObject(_texSmStatusReader);
                     Common.Util.DisposeObject(_mfd4BlankImage);
                     Common.Util.DisposeObject(_mfd3BlankImage);
                     Common.Util.DisposeObject(_leftMfdBlankImage);

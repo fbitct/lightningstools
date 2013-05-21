@@ -14,6 +14,6 @@ namespace MFDExtractor
 		public bool ThreeDeeMode { get; set; }
         public long RenderCycleNum { get; set; }
         public NetworkMode NetworkMode { get; set; }
-        public bool SimRunning { get; set; }
+        public bool SimRunning { get { return NetworkMode == NetworkMode.Client || F4Utils.Process.Util.IsFalconRunning(); } }
 	}
 }
