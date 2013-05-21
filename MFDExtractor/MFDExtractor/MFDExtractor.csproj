@@ -183,6 +183,7 @@
     <Compile Include="FlightDataExtension.cs" />
     <Compile Include="FlightDataRetriever.cs" />
     <Compile Include="FlightDataUpdater.cs" />
+    <Compile Include="ImageGetter.cs" />
     <Compile Include="Instrument.cs" />
     <Compile Include="InstrumentFactory.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />

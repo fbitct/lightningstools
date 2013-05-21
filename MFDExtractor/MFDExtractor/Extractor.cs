@@ -169,6 +169,7 @@ namespace MFDExtractor
 	    private readonly IInstrumentFormFactory _instrumentFormFactory;
 		private readonly IThreeDeeCaptureCoordinateReader _threeDeeCaptureCoordinateReader;
 	    private readonly IFlightDataRetriever _flightDataRetriever;
+	    private readonly IImageGetter _imageGetter;
         #endregion
 
         #endregion
@@ -187,7 +188,8 @@ namespace MFDExtractor
             IInstrumentFactory instrumentFactory = null,
             IInstrumentFormFactory instrumentFormFactory = null,
 			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null,
-            IFlightDataRetriever flightDataRetriever= null)
+            IFlightDataRetriever flightDataRetriever= null,
+            IImageGetter imageGetter=null)
         {
             State = new ExtractorState();
             _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
@@ -213,6 +215,7 @@ namespace MFDExtractor
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
 			_threeDeeCaptureCoordinateReader = threeDeeCaptureCoordinateReader ?? new ThreeDeeCaptureCoordinateReader();
+            _imageGetter = imageGetter ?? new ImageGetter();
         }
         private void SetupInstruments()
         {
@@ -485,64 +488,30 @@ namespace MFDExtractor
         #region Capture Strategy Orchestration Methods
 
 
-        private Image GetImage(Image testAlignmentImage,
-            Func<Image> threeDeeModeLocalCaptureFunc,
-            Func<Image> remoteImageRequestFunc, CaptureCoordinates captureCoordinates)
-        {
-            Image toReturn = null;
-            if (State.TestMode)
-            {
-                toReturn = Util.CloneBitmap(testAlignmentImage);
-            }
-            else
-            {
-                if (!State.SimRunning && State.NetworkMode != NetworkMode.Client) return null;
-                if (State.ThreeDeeMode && (State.NetworkMode == NetworkMode.Server || State.NetworkMode == NetworkMode.Standalone))
-                {
-                    toReturn = threeDeeModeLocalCaptureFunc();
-                }
-                else
-                {
-                    switch (State.NetworkMode)
-                    {
-                        case NetworkMode.Standalone: //fallthrough
-                        case NetworkMode.Server:
-                            toReturn = Common.Screen.Util.CaptureScreenRectangle(State.TwoDeePrimaryView
-                                ? captureCoordinates.Primary2D 
-                                : captureCoordinates.Secondary2D);
-                            break;
-                        case NetworkMode.Client:
-                            toReturn = remoteImageRequestFunc();
-                            break;
-                    }
-                }
-            }
-            return toReturn;
-
-        }
+        
 	    private Image GetMfd4Bitmap()
 	    {
-            return GetImage(_mfd4TestAlignmentImage, Get3DMFD4, () => _client != null ? _client.GetMfd4Bitmap() : null, _mfd4CaptureCoordinates);
+            return _imageGetter.GetImage(State, _mfd4TestAlignmentImage, Get3DMFD4, () => _client != null ? _client.GetMfd4Bitmap() : null, _mfd4CaptureCoordinates);
         }
 
         private Image GetMfd3Bitmap()
         {
-            return GetImage(_mfd3TestAlignmentImage, Get3DMFD3, () => _client != null ? _client.GetMfd3Bitmap():null, _mfd3CaptureCoordinates);
+            return _imageGetter.GetImage(State, _mfd3TestAlignmentImage, Get3DMFD3, () => _client != null ? _client.GetMfd3Bitmap() : null, _mfd3CaptureCoordinates);
         }
 
         private Image GetLeftMfdBitmap()
         {
-            return GetImage(_leftMfdTestAlignmentImage, Get3DLeftMFD, () => _client != null ? _client.GetLeftMfdBitmap():null, _leftMfdCaptureCoordinates);
+            return _imageGetter.GetImage(State, _leftMfdTestAlignmentImage, Get3DLeftMFD, () => _client != null ? _client.GetLeftMfdBitmap() : null, _leftMfdCaptureCoordinates);
         }
 
 	    private Image GetRightMfdBitmap()
 	    {
-            return GetImage(_rightMfdTestAlignmentImage, Get3DRightMFD, () => _client != null ? _client.GetRightMfdBitmap():null, _rightMfdCaptureCoordinates);
+            return _imageGetter.GetImage(State, _rightMfdTestAlignmentImage, Get3DRightMFD, () => _client != null ? _client.GetRightMfdBitmap() : null, _rightMfdCaptureCoordinates);
 	    }
 
 	    private Image GetHudBitmap()
         {
-            return GetImage(_hudTestAlignmentImage, Get3DHud, () => _client != null ? _client.GetHudBitmap():null, _hudCaptureCoordinates);
+            return _imageGetter.GetImage(State,_hudTestAlignmentImage, Get3DHud, () => _client != null ? _client.GetHudBitmap() : null, _hudCaptureCoordinates);
         }
 
         private Image Get3D(Rectangle rttInputRectangle)
