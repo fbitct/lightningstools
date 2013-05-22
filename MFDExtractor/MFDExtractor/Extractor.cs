@@ -1115,27 +1115,27 @@ namespace MFDExtractor
 
         private void SetupHUDCaptureThread()
         {
-            SetupCaptureThread(ref _hudCaptureThread, () => Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_hudCaptureStart, CaptureHud), "HudCaptureThread");
+            SetupCaptureThread(ref _hudCaptureThread, () => Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_hudCaptureStart, CaptureHud, _hudCaptureEnd), "HudCaptureThread");
         }
 
         private void SetupRightMFDCaptureThread()
         {
-            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_rightMfdCaptureStart, CaptureRightMfd), "RightMfdCaptureThread");
+            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_rightMfdCaptureStart, CaptureRightMfd, _rightMfdCaptureEnd), "RightMfdCaptureThread");
         }
 
         private void SetupLeftMFDCaptureThread()
         {
-            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_leftMfdCaptureStart, CaptureLeftMfd), "LeftMfdCaptureThread");
+            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_leftMfdCaptureStart, CaptureLeftMfd, _leftMfdCaptureEnd), "LeftMfdCaptureThread");
         }
 
         private void SetupMFD3CaptureThread()
         {
-            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd3CaptureStart, CaptureMfd3), "Mfd3CaptureThread");
+            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd3CaptureStart, CaptureMfd3, _mfd3CaptureEnd), "Mfd3CaptureThread");
         }
 
         private void SetupMFD4CaptureThread()
         {
-            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd4CaptureStart, CaptureMfd4), "Mfd4CaptureThread");
+            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd4CaptureStart, CaptureMfd4, _mfd4CaptureEnd), "Mfd4CaptureThread");
         }
 
         private void SetupSimStatusMonitorThread()
@@ -1152,14 +1152,15 @@ namespace MFDExtractor
         #endregion
 
 
-        private void CaptureThreadWork(WaitHandle waitHandle, Action capture)
+        private void CaptureThreadWork(WaitHandle startSignal, Action capture, EventWaitHandle endSignal)
         {
             try
             {
                 while (State.KeepRunning)
                 {
-                    waitHandle.WaitOne();
+                    startSignal.WaitOne();
                     capture();
+	                endSignal.Set();
                 }
             }
             catch (ThreadAbortException)
