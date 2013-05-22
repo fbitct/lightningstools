@@ -28,30 +28,29 @@ namespace MFDExtractor
         public FlightData GetFlightData(ExtractorState extractorState)
         {
             FlightData toReturn = null;
-            if (!extractorState.TestMode)
-            {
-                if (extractorState.SimRunning || extractorState.NetworkMode == NetworkMode.Client)
-                {
-                    switch (extractorState.NetworkMode)
-                    {
-                        case NetworkMode.Standalone:
-                        case NetworkMode.Server:
-                        {
-                                var sharedMemReader = _sharedmemReaderFactory.Create();
-                                toReturn = sharedMemReader.GetCurrentData();
-                                if (extractorState.NetworkMode == NetworkMode.Server)
-                                {
-                                    _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
-                                }
-                            }
-                            break;
-                        case NetworkMode.Client:
-                            toReturn = _extractorClient.GetFlightData();
-                            break;
-                    }
-                }
-            }
-            return toReturn ?? new FlightData { hsiBits = Int32.MaxValue };
+	        if (extractorState.TestMode || (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client))
+	        {
+		        return EmptyFlightData;
+	        }
+	        switch (extractorState.NetworkMode)
+	        {
+		        case NetworkMode.Standalone:
+		        case NetworkMode.Server:
+		        {
+			        var sharedMemReader = _sharedmemReaderFactory.Create();
+			        toReturn = sharedMemReader.GetCurrentData();
+			        if (extractorState.NetworkMode == NetworkMode.Server)
+			        {
+				        _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
+			        }
+		        }
+			        break;
+		        case NetworkMode.Client:
+			        toReturn = _extractorClient.GetFlightData();
+			        break;
+	        }
+	        return toReturn ?? EmptyFlightData;
         }
+		private FlightData EmptyFlightData { get { return new FlightData { hsiBits = Int32.MaxValue }; } }
     }
 }
