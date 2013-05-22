@@ -3,7 +3,6 @@ using Common.Math;
 using Common.Networking;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using F4Utils.SimSupport;
 using LightningGauges.Renderers;
 using MFDExtractor.FlightDataAdapters;
 
@@ -15,7 +14,6 @@ namespace MFDExtractor
             IInstrumentRendererSet renderers,
             FlightData flightData,
             bool simRunning,
-            bool useBMSAdvancedSharedmemValues,
             Action updateEHSIBrightnessLabelVisibility,
             NetworkMode networkMode);
     }
@@ -31,7 +29,6 @@ namespace MFDExtractor
             IInstrumentRendererSet renderers,
             FlightData flightData,
             bool simRunning,
-            bool useBMSAdvancedSharedmemValues,
             Action updateEHSIBrightnessLabelVisibility,
             NetworkMode networkMode)
         {
@@ -44,9 +41,9 @@ namespace MFDExtractor
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
 
-                _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData, useBMSAdvancedSharedmemValues);
+                _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData);
                 _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
-                _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData, useBMSAdvancedSharedmemValues);
+                _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData);
                 _flightDataAdapterSet.AirspeedIndicator.Adapt(renderers.ASI, flightData);
                 _flightDataAdapterSet.Compass.Adapt(renderers.Compass, flightData);
                 _flightDataAdapterSet.AOAIndicator.Adapt(renderers.AOAIndicator, flightData);
@@ -122,7 +119,7 @@ namespace MFDExtractor
                     renderers.ISIS.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Constants.RADIANS_PER_DEGREE;
                 }
 
-                UpdateNavigationMode(renderers, flightData, useBMSAdvancedSharedmemValues);
+                UpdateNavigationMode(renderers, flightData);
                 if (((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF))
                 {
                     TurnOffHSI(renderers);
@@ -219,10 +216,9 @@ namespace MFDExtractor
             renderers.ADI.InstrumentState.ShowCommandBars = false;
         }
 
-        private static void UpdateNavigationMode(IInstrumentRendererSet renderers, FlightData flightData,
-            bool useBMSAdvancedSharedmemValues)
+        private static void UpdateNavigationMode(IInstrumentRendererSet renderers, FlightData flightData)
         {
-            if (flightData.DataFormat == FalconDataFormats.BMS4 && useBMSAdvancedSharedmemValues)
+            if (flightData.DataFormat == FalconDataFormats.BMS4)
             {
                 /*
                     This value is called navMode and is unsigned char type with 4 possible values: ILS_TACAN = 0, and TACAN = 1,

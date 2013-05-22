@@ -6,15 +6,15 @@ namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IAltimeterFlightDataAdapter
     {
-        void Adapt(IF16Altimeter altimeter, FlightData flightData, bool useBMSAdvancedSharedmemValues);
+        void Adapt(IF16Altimeter altimeter, FlightData flightData);
     }
 
     class AltimeterFlightDataAdapter : IAltimeterFlightDataAdapter
     {
-        public void Adapt(IF16Altimeter altimeter, FlightData flightData, bool useBMSAdvancedSharedmemValues)
+        public void Adapt(IF16Altimeter altimeter, FlightData flightData)
         {
             var altbits = (AltBits)flightData.altBits;
-            if (flightData.DataFormat == FalconDataFormats.BMS4 && useBMSAdvancedSharedmemValues)
+            if (flightData.DataFormat == FalconDataFormats.BMS4)
             {
                 AdaptBMS4Altimeter(altimeter, flightData, altbits);
             }

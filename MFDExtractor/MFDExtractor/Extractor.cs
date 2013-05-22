@@ -47,7 +47,6 @@ namespace MFDExtractor
         #region Falcon 4 Sharedmem Readers & status flags
 
         private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
-        private bool _useBMSAdvancedSharedmemValues;
         #endregion
 
         #region Blank Images
@@ -719,13 +718,13 @@ namespace MFDExtractor
                     {
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
                     }
                     else
                     {
                         var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, State.SimRunning, _useBMSAdvancedSharedmemValues, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, State.SimRunning, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
                         SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
                         SetMfd3Image(Util.CloneBitmap(_mfd3BlankImage));
                         SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));

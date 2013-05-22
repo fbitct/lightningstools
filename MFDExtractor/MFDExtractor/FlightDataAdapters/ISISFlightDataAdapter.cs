@@ -7,7 +7,7 @@ namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IISISFlightDataAdapter
     {
-        void Adapt(IF16ISIS isis, FlightData flightData, bool useBMSAdvancedSharedmemValues);
+        void Adapt(IF16ISIS isis, FlightData flightData);
     }
     class ISISFlightDataAdapter:IISISFlightDataAdapter
     {
@@ -16,13 +16,13 @@ namespace MFDExtractor.FlightDataAdapters
 		{
 			_radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
 		}
-        public void Adapt(IF16ISIS isis, FlightData flightData, bool useBMSAdvancedSharedmemValues)
+        public void Adapt(IF16ISIS isis, FlightData flightData)
         {
             var altbits = (AltBits) flightData.altBits;
             var hsibits = (HsiBits) flightData.hsiBits;
             isis.InstrumentState.AirspeedKnots = flightData.kias;
 
-            if (flightData.DataFormat == FalconDataFormats.BMS4 && useBMSAdvancedSharedmemValues)
+            if (flightData.DataFormat == FalconDataFormats.BMS4)
             {
                 isis.InstrumentState.IndicatedAltitudeFeetMSL = -flightData.aauz;
                 if (flightData.VersionNum >= 111)
