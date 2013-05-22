@@ -37,13 +37,6 @@ namespace MFDExtractor
 		private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
         private readonly IRendererSetInitializer _rendererSetInitializer;
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
-
-	    private CaptureCoordinates _hudCaptureCoordinates;
-        private CaptureCoordinates _leftMfdCaptureCoordinates;
-        private CaptureCoordinates _rightMfdCaptureCoordinates;
-        private CaptureCoordinates _mfd3CaptureCoordinates;
-        private CaptureCoordinates _mfd4CaptureCoordinates;
-
         #region Output Window Coordinates
 
         private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
@@ -168,7 +161,13 @@ namespace MFDExtractor
 	    private readonly IFlightDataRetriever _flightDataRetriever;
 	    private readonly IImageGetter _imageGetter;
 	    private readonly ISetAndDisposeImageHelper _setAndDisposeImageHelper;
-        #endregion
+
+		private Rectangle _hudRectangle;
+		private Rectangle _leftMfdRectangle;
+		private Rectangle _rightMfdRectangle;
+		private Rectangle _mfd3Rectangle;
+		private Rectangle _mfd4Rectangle;
+		#endregion
 
         #endregion
 
@@ -344,74 +343,6 @@ namespace MFDExtractor
                         settings.ClientUseServerPortNum);
                     break;
             }
-            if (State.NetworkMode == NetworkMode.Server || State.NetworkMode == NetworkMode.Standalone)
-            {
-                _mfd4CaptureCoordinates = new CaptureCoordinates
-                {
-                    Primary2D =
-                        Rectangle.FromLTRB(settings.Primary_MFD4_2D_ULX, settings.Primary_MFD4_2D_ULY,
-                            settings.Primary_MFD4_2D_LRX, settings.Primary_MFD4_2D_LRY),
-                    Secondary2D =
-                        Rectangle.FromLTRB(settings.Secondary_MFD4_2D_ULX, settings.Secondary_MFD4_2D_ULY,
-                            settings.Secondary_MFD4_2D_LRX, settings.Secondary_MFD4_2D_LRY),
-                    Output =
-                        Rectangle.FromLTRB(settings.MFD4_OutULX, settings.MFD4_OutULY, settings.MFD4_OutLRX,
-                            settings.MFD4_OutLRY)
-                };
-                _mfd3CaptureCoordinates = new CaptureCoordinates
-                {
-                    Primary2D = Rectangle.FromLTRB(settings.Primary_MFD3_2D_ULX, settings.Primary_MFD3_2D_ULY,
-                        settings.Primary_MFD3_2D_LRX, settings.Primary_MFD3_2D_LRY),
-                    Secondary2D = Rectangle.FromLTRB(settings.Secondary_MFD3_2D_ULX,
-                        settings.Secondary_MFD3_2D_ULY,
-                        settings.Secondary_MFD3_2D_LRX,
-                        settings.Secondary_MFD3_2D_LRY),
-                    Output =
-                        Rectangle.FromLTRB(settings.MFD3_OutULX, settings.MFD3_OutULY, settings.MFD3_OutLRX,
-                            settings.MFD3_OutLRY)
-                };
-                _leftMfdCaptureCoordinates = new CaptureCoordinates
-                {
-                    Primary2D = Rectangle.FromLTRB(settings.Primary_LMFD_2D_ULX,
-                        settings.Primary_LMFD_2D_ULY,
-                        settings.Primary_LMFD_2D_LRX,
-                        settings.Primary_LMFD_2D_LRY),
-                    Secondary2D = Rectangle.FromLTRB(settings.Secondary_LMFD_2D_ULX,
-                        settings.Secondary_LMFD_2D_ULY,
-                        settings.Secondary_LMFD_2D_LRX,
-                        settings.Secondary_LMFD_2D_LRY),
-                    Output =
-                        Rectangle.FromLTRB(settings.LMFD_OutULX, settings.LMFD_OutULY, settings.LMFD_OutLRX,
-                            settings.LMFD_OutLRY)
-                };
-                _rightMfdCaptureCoordinates = new CaptureCoordinates
-                {
-                    Primary2D = Rectangle.FromLTRB(settings.Primary_RMFD_2D_ULX,
-                        settings.Primary_RMFD_2D_ULY,
-                        settings.Primary_RMFD_2D_LRX,
-                        settings.Primary_RMFD_2D_LRY),
-                    Secondary2D = Rectangle.FromLTRB(settings.Secondary_RMFD_2D_ULX,
-                        settings.Secondary_RMFD_2D_ULY,
-                        settings.Secondary_RMFD_2D_LRX,
-                        settings.Secondary_RMFD_2D_LRY),
-                    Output =
-                        Rectangle.FromLTRB(settings.RMFD_OutULX, settings.RMFD_OutULY, settings.RMFD_OutLRX,
-                            settings.RMFD_OutLRY)
-                };
-                _hudCaptureCoordinates = new CaptureCoordinates
-                {
-                    Primary2D = Rectangle.FromLTRB(settings.Primary_HUD_2D_ULX, settings.Primary_HUD_2D_ULY,
-                        settings.Primary_HUD_2D_LRX, settings.Primary_HUD_2D_LRY),
-                    Secondary2D = Rectangle.FromLTRB(settings.Secondary_HUD_2D_ULX,
-                        settings.Secondary_HUD_2D_ULY,
-                        settings.Secondary_HUD_2D_LRX,
-                        settings.Secondary_HUD_2D_LRY),
-                    Output =
-                        Rectangle.FromLTRB(settings.HUD_OutULX, settings.HUD_OutULY, settings.HUD_OutLRX,
-                            settings.HUD_OutLRY)
-                };
-            }
-
             
             _threadPriority = settings.ThreadPriority;
             _compressionType = settings.CompressionType;
@@ -491,27 +422,27 @@ namespace MFDExtractor
         
 	    private Image GetMfd4Bitmap()
 	    {
-            return _imageGetter.GetImage(State, _mfd4TestAlignmentImage, Get3DMFD4, () => _client != null ? _client.GetMfd4Bitmap() : null, _mfd4CaptureCoordinates);
+            return _imageGetter.GetImage(State, _mfd4TestAlignmentImage, Get3DMFD4, () => _client != null ? _client.GetMfd4Bitmap() : null);
         }
 
         private Image GetMfd3Bitmap()
         {
-            return _imageGetter.GetImage(State, _mfd3TestAlignmentImage, Get3DMFD3, () => _client != null ? _client.GetMfd3Bitmap() : null, _mfd3CaptureCoordinates);
+            return _imageGetter.GetImage(State, _mfd3TestAlignmentImage, Get3DMFD3, () => _client != null ? _client.GetMfd3Bitmap() : null);
         }
 
         private Image GetLeftMfdBitmap()
         {
-            return _imageGetter.GetImage(State, _leftMfdTestAlignmentImage, Get3DLeftMFD, () => _client != null ? _client.GetLeftMfdBitmap() : null, _leftMfdCaptureCoordinates);
+            return _imageGetter.GetImage(State, _leftMfdTestAlignmentImage, Get3DLeftMFD, () => _client != null ? _client.GetLeftMfdBitmap() : null);
         }
 
 	    private Image GetRightMfdBitmap()
 	    {
-            return _imageGetter.GetImage(State, _rightMfdTestAlignmentImage, Get3DRightMFD, () => _client != null ? _client.GetRightMfdBitmap() : null, _rightMfdCaptureCoordinates);
+            return _imageGetter.GetImage(State, _rightMfdTestAlignmentImage, Get3DRightMFD, () => _client != null ? _client.GetRightMfdBitmap() : null);
 	    }
 
 	    private Image GetHudBitmap()
         {
-            return _imageGetter.GetImage(State,_hudTestAlignmentImage, Get3DHud, () => _client != null ? _client.GetHudBitmap() : null, _hudCaptureCoordinates);
+            return _imageGetter.GetImage(State,_hudTestAlignmentImage, Get3DHud, () => _client != null ? _client.GetHudBitmap() : null);
         }
 
         private Image Get3D(Rectangle rttInputRectangle)
@@ -536,27 +467,27 @@ namespace MFDExtractor
         }
         private Image Get3DHud()
         {
-            return Get3D(_hudCaptureCoordinates.ThreeDee);
+            return Get3D(_hudRectangle);
         }
 
         private Image Get3DMFD4()
         {
-            return Get3D(_mfd4CaptureCoordinates.ThreeDee);
+            return Get3D(_mfd4Rectangle);
         }
 
         private Image Get3DMFD3()
         {
-            return Get3D(_mfd3CaptureCoordinates.ThreeDee);
+            return Get3D(_mfd3Rectangle);
         }
 
         private Image Get3DLeftMFD()
         {
-            return Get3D(_leftMfdCaptureCoordinates.ThreeDee);
+            return Get3D(_leftMfdRectangle);
         }
 
         private Image Get3DRightMFD()
         {
-            return Get3D(_rightMfdCaptureCoordinates.ThreeDee);
+            return Get3D(_rightMfdRectangle);
         }
 
         #endregion
@@ -1031,28 +962,28 @@ namespace MFDExtractor
 
 	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded()
 	    {
-	        if ((_hudCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-	            (_leftMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-	            (_rightMfdCaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-	            (_mfd3CaptureCoordinates.ThreeDee == Rectangle.Empty) ||
-	            (_mfd4CaptureCoordinates.ThreeDee == Rectangle.Empty))
+	        if ((_hudRectangle == Rectangle.Empty) ||
+				(_leftMfdRectangle == Rectangle.Empty) ||
+				(_rightMfdRectangle == Rectangle.Empty) ||
+				(_mfd3Rectangle == Rectangle.Empty) ||
+				(_mfd4Rectangle == Rectangle.Empty))
 	        {
 	            _threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile(
-	                _mfd4CaptureCoordinates,
-	                _mfd3CaptureCoordinates,
-	                _leftMfdCaptureCoordinates,
-	                _rightMfdCaptureCoordinates,
-	                _hudCaptureCoordinates);
+					out _mfd4Rectangle,
+					out _mfd3Rectangle,
+					out _leftMfdRectangle,
+					out _rightMfdRectangle,
+					out _hudRectangle);
 	        }
 	    }
 
 	    private void ResetThreeDeeCaptureCoordinates()
 	    {
-	        _mfd4CaptureCoordinates.ThreeDee = Rectangle.Empty;
-	        _mfd3CaptureCoordinates.ThreeDee = Rectangle.Empty;
-	        _leftMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
-	        _rightMfdCaptureCoordinates.ThreeDee = Rectangle.Empty;
-	        _hudCaptureCoordinates.ThreeDee = Rectangle.Empty;
+	        _mfd4Rectangle = Rectangle.Empty;
+			_mfd3Rectangle = Rectangle.Empty;
+			_leftMfdRectangle = Rectangle.Empty;
+			_rightMfdRectangle = Rectangle.Empty;
+			_hudRectangle = Rectangle.Empty;
 	    }
 
 	    private static bool NeedToCaptureMFDsAndOrHud

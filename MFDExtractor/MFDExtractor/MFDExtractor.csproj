@@ -111,7 +111,6 @@
     <Compile Include="BMSSupport\ThreeDeeCockpitFileFinder.cs" />
     <Compile Include="BMSSupport\DoubleResolutionRTTChecker.cs" />
     <Compile Include="BMSSupport\ThreeDeeCaptureCoordinateReader.cs" />
-    <Compile Include="CaptureCoordinates.cs" />
     <Compile Include="Configuration\GdiPlusOptionsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsWriter.cs" />

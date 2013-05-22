@@ -11,8 +11,7 @@ namespace MFDExtractor
             ExtractorState extractorState,
             Image testAlignmentImage,
             Func<Image> threeDeeModeLocalExtractFunc,
-            Func<Image> remoteImageRetrievalFunc,
-            CaptureCoordinates captureCoordinates);
+            Func<Image> remoteImageRetrievalFunc);
     }
 
     class ImageGetter : IImageGetter
@@ -21,39 +20,21 @@ namespace MFDExtractor
             ExtractorState extractorState,
             Image testAlignmentImage,
             Func<Image> threeDeeModeLocalExtractFunc,
-            Func<Image> remoteImageRetrievalFunc,
-            CaptureCoordinates captureCoordinates)
+            Func<Image> remoteImageRetrievalFunc)
         {
-            Image toReturn = null;
+            Image toReturn;
             if (extractorState.TestMode)
             {
                 toReturn = Util.CloneBitmap(testAlignmentImage);
             }
             else
             {
-                if (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client) return null;
-                if (extractorState.ThreeDeeMode && (extractorState.NetworkMode == NetworkMode.Server || extractorState.NetworkMode == NetworkMode.Standalone))
-                {
-                    toReturn = threeDeeModeLocalExtractFunc();
-                }
-                else
-                {
-                    switch (extractorState.NetworkMode)
-                    {
-                        case NetworkMode.Server://falls through to the standalone case 
-                        case NetworkMode.Standalone: 
-                            toReturn = Common.Screen.Util.CaptureScreenRectangle(
-                                extractorState.TwoDeePrimaryView
-                                    ? captureCoordinates.Primary2D
-                                    : captureCoordinates.Secondary2D);
-                            break;
-                        case NetworkMode.Client:
-                            toReturn = remoteImageRetrievalFunc();
-                            break;
-                    }
-                }
+	            if (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client) return null;
+	            toReturn = extractorState.ThreeDeeMode && (extractorState.NetworkMode == NetworkMode.Server || extractorState.NetworkMode == NetworkMode.Standalone)
+		            ? threeDeeModeLocalExtractFunc()
+		            : remoteImageRetrievalFunc();
             }
-            return toReturn;
+	        return toReturn;
 
         }
     }
