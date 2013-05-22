@@ -802,66 +802,7 @@ namespace MFDExtractor
                         SetHudImage(Util.CloneBitmap(_hudBlankImage));
                     }
 
-                    try
-                    {
-                        var toWait = new List<WaitHandle>();
-                        SignalMFDAndHudThreadsToStart();
-                        _instruments[InstrumentType.RWR].Signal(toWait, State);
-                        _instruments[InstrumentType.ADI].Signal(toWait, State);
-                        _instruments[InstrumentType.ISIS].Signal(toWait, State);
-                        _instruments[InstrumentType.HSI].Signal(toWait, State);
-                        _instruments[InstrumentType.EHSI].Signal(toWait, State);
-                        _instruments[InstrumentType.Altimeter].Signal(toWait, State);
-                        _instruments[InstrumentType.ASI].Signal(toWait, State);
-                        _instruments[InstrumentType.BackupADI].Signal(toWait, State);
-                        _instruments[InstrumentType.VVI].Signal(toWait, State);
-                        _instruments[InstrumentType.AOAIndicator].Signal(toWait, State);
-                        _instruments[InstrumentType.Compass].Signal(toWait, State);
-                        _instruments[InstrumentType.Accelerometer].Signal(toWait, State);
-
-                        _instruments[InstrumentType.FuelFlow].Signal(toWait, State);
-                        _instruments[InstrumentType.FuelQuantity].Signal(toWait, State);
-                        _instruments[InstrumentType.EPUFuel].Signal(toWait, State);
-                        _instruments[InstrumentType.AOAIndexer].Signal(toWait, State);
-                        _instruments[InstrumentType.NWSIndexer].Signal(toWait, State);
-
-                        _instruments[InstrumentType.FTIT1].Signal(toWait, State);
-                        _instruments[InstrumentType.NOZ1].Signal(toWait, State);
-                        _instruments[InstrumentType.OIL1].Signal(toWait, State);
-                        _instruments[InstrumentType.RPM1].Signal(toWait, State);
-
-                        _instruments[InstrumentType.FTIT2].Signal(toWait, State);
-                        _instruments[InstrumentType.NOZ2].Signal(toWait, State);
-                        _instruments[InstrumentType.OIL2].Signal(toWait, State);
-                        _instruments[InstrumentType.RPM2].Signal(toWait, State);
-
-                        _instruments[InstrumentType.HYDA].Signal(toWait, State);
-                        _instruments[InstrumentType.HYDB].Signal(toWait, State);
-                        _instruments[InstrumentType.CabinPress].Signal(toWait, State);
-                        _instruments[InstrumentType.RollTrim].Signal(toWait, State);
-                        _instruments[InstrumentType.PitchTrim].Signal(toWait, State);
-
-                        _instruments[InstrumentType.DED].Signal(toWait, State);
-                        _instruments[InstrumentType.PFL].Signal(toWait, State);
-
-                        _instruments[InstrumentType.CautionPanel].Signal(toWait, State);
-                        _instruments[InstrumentType.CMDSPanel].Signal(toWait, State);
-
-                        _instruments[InstrumentType.LandingGearLights].Signal(toWait, State);
-                        _instruments[InstrumentType.Speedbrake].Signal(toWait, State);
-
-                        WaitAllAndClearList(toWait, 1000);
-                    }
-                    catch (ThreadInterruptedException)
-                    {
-                    }
-                    catch (ThreadAbortException)
-                    {
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error(e.Message, e);
-                    }
+                    SignalInstrumentRenderThreadsToStart();
 
                     var thisLoopFinishTime = DateTime.Now;
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
@@ -898,7 +839,71 @@ namespace MFDExtractor
             }
         }
 
-	    private void ProcessNetworkMessages()
+		private void SignalInstrumentRenderThreadsToStart()
+		{
+			try
+			{
+				var toWait = new List<WaitHandle>();
+				SignalMFDAndHudThreadsToStart();
+				_instruments[InstrumentType.RWR].Signal(toWait, State);
+				_instruments[InstrumentType.ADI].Signal(toWait, State);
+				_instruments[InstrumentType.ISIS].Signal(toWait, State);
+				_instruments[InstrumentType.HSI].Signal(toWait, State);
+				_instruments[InstrumentType.EHSI].Signal(toWait, State);
+				_instruments[InstrumentType.Altimeter].Signal(toWait, State);
+				_instruments[InstrumentType.ASI].Signal(toWait, State);
+				_instruments[InstrumentType.BackupADI].Signal(toWait, State);
+				_instruments[InstrumentType.VVI].Signal(toWait, State);
+				_instruments[InstrumentType.AOAIndicator].Signal(toWait, State);
+				_instruments[InstrumentType.Compass].Signal(toWait, State);
+				_instruments[InstrumentType.Accelerometer].Signal(toWait, State);
+
+				_instruments[InstrumentType.FuelFlow].Signal(toWait, State);
+				_instruments[InstrumentType.FuelQuantity].Signal(toWait, State);
+				_instruments[InstrumentType.EPUFuel].Signal(toWait, State);
+				_instruments[InstrumentType.AOAIndexer].Signal(toWait, State);
+				_instruments[InstrumentType.NWSIndexer].Signal(toWait, State);
+
+				_instruments[InstrumentType.FTIT1].Signal(toWait, State);
+				_instruments[InstrumentType.NOZ1].Signal(toWait, State);
+				_instruments[InstrumentType.OIL1].Signal(toWait, State);
+				_instruments[InstrumentType.RPM1].Signal(toWait, State);
+
+				_instruments[InstrumentType.FTIT2].Signal(toWait, State);
+				_instruments[InstrumentType.NOZ2].Signal(toWait, State);
+				_instruments[InstrumentType.OIL2].Signal(toWait, State);
+				_instruments[InstrumentType.RPM2].Signal(toWait, State);
+
+				_instruments[InstrumentType.HYDA].Signal(toWait, State);
+				_instruments[InstrumentType.HYDB].Signal(toWait, State);
+				_instruments[InstrumentType.CabinPress].Signal(toWait, State);
+				_instruments[InstrumentType.RollTrim].Signal(toWait, State);
+				_instruments[InstrumentType.PitchTrim].Signal(toWait, State);
+
+				_instruments[InstrumentType.DED].Signal(toWait, State);
+				_instruments[InstrumentType.PFL].Signal(toWait, State);
+
+				_instruments[InstrumentType.CautionPanel].Signal(toWait, State);
+				_instruments[InstrumentType.CMDSPanel].Signal(toWait, State);
+
+				_instruments[InstrumentType.LandingGearLights].Signal(toWait, State);
+				_instruments[InstrumentType.Speedbrake].Signal(toWait, State);
+
+				WaitAllAndClearList(toWait, 1000);
+			}
+			catch (ThreadInterruptedException)
+			{
+			}
+			catch (ThreadAbortException)
+			{
+			}
+			catch (Exception e)
+			{
+				Log.Error(e.Message, e);
+			}
+		}
+
+		private void ProcessNetworkMessages()
 	    {
 	        switch (State.NetworkMode)
 	        {
