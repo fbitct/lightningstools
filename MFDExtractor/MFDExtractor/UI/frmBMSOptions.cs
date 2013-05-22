@@ -37,9 +37,7 @@ namespace MFDExtractor.UI
                     var proposed = new DirectoryInfo(value);
                     if (proposed.Exists)
                     {
-                        //FileInfo bmsExeFile = new FileInfo(Path.Combine(proposed.FullName, "F4-BMS.exe"));
                         var bmsExeFile = new FileInfo(Path.Combine(proposed.FullName, "Launcher.exe"));
-                        //Falcas 04/09/2012
                         if (bmsExeFile.Exists)
                         {
                             var artFolder = new DirectoryInfo(Path.Combine(proposed.FullName, @"data\art\ckptart"));
@@ -266,12 +264,12 @@ namespace MFDExtractor.UI
                     reader.Close();
                 }
 
-                bool rttFound = false;
-                bool batchSizeFound = false;
+                var rttFound = false;
+                var batchSizeFound = false;
                 for (int i = 0; i < allLines.Count; i++)
                 {
-                    string currentLine = allLines[i];
-                    List<String> tokens = Common.Strings.Util.Tokenize(currentLine);
+                    var currentLine = allLines[i];
+                    var tokens = Common.Strings.Util.Tokenize(currentLine);
                     if (tokens.Count > 2)
                     {
                         if (tokens[0].ToLowerInvariant() == "set")
@@ -301,7 +299,7 @@ namespace MFDExtractor.UI
                 }
                 if (!rttFound)
                 {
-                    string newLine = "set g_bExportRTTTextures ";
+                    var newLine = "set g_bExportRTTTextures ";
                     if (chkEnable3DModeExtraction.Checked)
                     {
                         newLine += "1";
@@ -338,38 +336,25 @@ namespace MFDExtractor.UI
         private bool ValidateUserInput()
         {
             _errProvider.Clear();
-            if (_bmsPath == null || txtBmsInstallationPath.Text == null)
-            {
-                //_errProvider.SetError(lblBmsInstallationPath, "Please select your OpenFalcon installation path.");
-                _errProvider.SetError(lblBmsInstallationPath, "Please select your BMS4.32 installation path.");
-                //Falcas 04/09/2012
-                return false;
-            }
-            return true;
+	        if (_bmsPath != null && txtBmsInstallationPath.Text != null) return true;
+	        _errProvider.SetError(lblBmsInstallationPath, "Please select your BMS installation path.");
+	        return false;
         }
 
         private void cmdBrowse_Click(object sender, EventArgs e)
         {
-            string oldBmsPath = _bmsPath;
+            var oldBmsPath = _bmsPath;
             dlgBrowse.ShowDialog(this);
-            if (dlgBrowse.SelectedPath != null && dlgBrowse.SelectedPath != string.Empty)
-            {
-                var proposedPath = new DirectoryInfo(dlgBrowse.SelectedPath);
-                if (proposedPath.Exists)
-                {
-                    BmsPath = proposedPath.FullName;
-                    if (BmsPath == null)
-                    {
-                        BmsPath = oldBmsPath;
-                        //MessageBox.Show(this, "Could not find a valid OpenFalcon installation in " + proposedPath.FullName + ".", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-                        MessageBox.Show(this,
-                                        "Could not find a valid BMS4.32 installation in " + proposedPath.FullName + ".",
-                                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                                        MessageBoxDefaultButton.Button1);
-                        //Falcas 04/09/2012
-                    }
-                }
-            }
+	        if (string.IsNullOrEmpty(dlgBrowse.SelectedPath)) return;
+	        var proposedPath = new DirectoryInfo(dlgBrowse.SelectedPath);
+	        if (!proposedPath.Exists) return;
+	        BmsPath = proposedPath.FullName;
+	        if (BmsPath != null) return;
+	        BmsPath = oldBmsPath;
+	        MessageBox.Show(this,
+		        "Could not find a valid BMS installation in " + proposedPath.FullName + ".",
+		        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error,
+		        MessageBoxDefaultButton.Button1);
         }
 
         private void cmdCancel_Click(object sender, EventArgs e)

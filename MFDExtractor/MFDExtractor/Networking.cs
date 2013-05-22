@@ -513,7 +513,7 @@ namespace MFDExtractor
             }
             lock (_hudBitmapLock)
             {
-                //TODO: check image format when OpenFalcon is set to 16-bit color, see if it's 565 or 555
+                //TODO: check image format when BMS is set to 16-bit color, see if it's 565 or 555
                 Util.ConvertPixelFormat(ref _hudBitmap, PixelFormat.Format16bppRgb565);
                 toReturn = Util.BytesFromBitmap(_hudBitmap, _compressionType, _imageFormat);
                 Interlocked.Exchange(ref _lastRetrievedHudImageBytes, toReturn);

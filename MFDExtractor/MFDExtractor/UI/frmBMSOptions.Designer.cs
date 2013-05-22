@@ -313,7 +313,7 @@
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "OpenFalcon Advanced Options";
+            this.Text = "BMS Advanced Options";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.frmBMSOptions_Load);
             ((System.ComponentModel.ISupportInitialize)(this._errProvider)).EndInit();
