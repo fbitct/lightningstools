@@ -917,13 +917,10 @@ namespace MFDExtractor
                             {
                                 try
                                 {
-                                    if (State.ThreeDeeMode)
+                                    if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
+                                    if (NeedToCaptureMFDsAndOrHud)
                                     {
-                                        if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
-                                        if (NeedToCaptureMFDsAndOrHud)
-                                        {
-                                            EnsureThreeDeeCaptureCoordinatesAreLoaded();
-                                        }
+                                        EnsureThreeDeeCaptureCoordinatesAreLoaded();
                                     }
                                 }
                                 catch (InvalidOperationException)

@@ -10,7 +10,7 @@ namespace MFDExtractor
         Image GetImage(
             ExtractorState extractorState,
             Image testAlignmentImage,
-            Func<Image> threeDeeModeLocalExtractFunc,
+            Func<Image> localExtractFunc,
             Func<Image> remoteImageRetrievalFunc);
     }
 
@@ -19,7 +19,7 @@ namespace MFDExtractor
         public Image GetImage(
             ExtractorState extractorState,
             Image testAlignmentImage,
-            Func<Image> threeDeeModeLocalExtractFunc,
+            Func<Image> localExtractFunc,
             Func<Image> remoteImageRetrievalFunc)
         {
             Image toReturn;
@@ -30,8 +30,8 @@ namespace MFDExtractor
             else
             {
 	            if (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client) return null;
-	            toReturn = extractorState.ThreeDeeMode && (extractorState.NetworkMode == NetworkMode.Server || extractorState.NetworkMode == NetworkMode.Standalone)
-		            ? threeDeeModeLocalExtractFunc()
+	            toReturn = (extractorState.NetworkMode == NetworkMode.Server || extractorState.NetworkMode == NetworkMode.Standalone)
+		            ? localExtractFunc()
 		            : remoteImageRetrievalFunc();
             }
 	        return toReturn;

@@ -13,7 +13,7 @@ namespace MFDExtractor.UI
     /// </summary>
     public partial class frmMain : Form
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (frmMain));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (frmMain));
 
         /// <summary>
         ///     Event that gets fired from DirectInput when there are keyboard inputs waiting to be processed
@@ -44,36 +44,6 @@ namespace MFDExtractor.UI
         private frmOptions _optionsForm;
 
         /// <summary>
-        ///     DirectInput Key code representing hotkey which switches the MFD Extractor to 3D mode
-        /// </summary>
-        private Key _threeDKeyCode;
-
-        /// <summary>
-        ///     Windows Forms Key code representing hotkey which switches the MFD Extractor to 3D mode
-        /// </summary>
-        private Keys _threeDkeys;
-
-        /// <summary>
-        ///     Windows Forms Key code representing hotkey which switches the MFD Extractor to 2D primary view mode
-        /// </summary>
-        private Keys _twoDPrimaryKeys;
-
-        /// <summary>
-        ///     DirectInput Key code representing hotkey which switches the MFD Extractor to 2D primary view mode
-        /// </summary>
-        private Key _twoDPrimaryViewKeyCode;
-
-        /// <summary>
-        ///     Windows Forms Key code representing hotkey which switches the MFD Extractor to 2D primary view mode
-        /// </summary>
-        private Keys _twoDSecondaryKeys;
-
-        /// <summary>
-        ///     DirectInput Key code representing hotkey which switches the MFD Extractor to 2D secondary view mode
-        /// </summary>
-        private Key _twoDSecondaryViewKeyCode;
-
-        /// <summary>
         ///     Default constructor for the form
         /// </summary>
         public frmMain()
@@ -95,7 +65,7 @@ namespace MFDExtractor.UI
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
         }
 
@@ -104,155 +74,13 @@ namespace MFDExtractor.UI
         /// </summary>
         private void ReadKeyboard()
         {
-            KeyboardState keystate;
-
-            try
+	        try
             {
-                //Get the current keyboard state
-                keystate = _keyb.GetCurrentKeyboardState();
-
-                if (keystate[_twoDPrimaryViewKeyCode]) //if the 2D mode (primary view) hotkey is pressed
-                {
-                    if (
-                        (
-                            //check if Control key is down [if control key is part of the required 2D-mode (primary view) hotkey]
-                            (
-                                (((_twoDPrimaryKeys & Keys.Modifiers) & Keys.Control) != 0) //control key required
-                                && (keystate[Key.LeftControl] || keystate[Key.RightControl]) //control key pressed
-                            )
-                            || //OR
-                            (
-                                ((_twoDPrimaryKeys & Keys.Modifiers) & Keys.Control) == 0 //control key not required
-                            )
-                        ) // end of CTRL check 
-                        && //AND
-                        (
-                            //check if Shift key is down [if Shift key is part of the required 2D-mode (primary view) hotkey]
-                            (
-                                ((_twoDPrimaryKeys & Keys.Modifiers) & Keys.Shift) != 0 //shift key required
-                                && (keystate[Key.LeftShift] || keystate[Key.RightShift]) //shift key pressed
-                            )
-                            || //OR 
-                            (
-                                ((_twoDPrimaryKeys & Keys.Modifiers) & Keys.Shift) == 0 //shift key not required
-                            )
-                        ) //end of SHIFT check
-                        && //AND
-                        (
-                            //check if Alt key is down [if Alt key is part of the required 2D-mode (primary view) hotkey]
-                            (
-                                (((_twoDPrimaryKeys & Keys.Modifiers) & Keys.Alt)) != 0 //ALT key required
-                                && (keystate[Key.LeftAlt] || keystate[Key.RightAlt]) //ALT key pressed
-                            )
-                            || //OR 
-                            (
-                                ((_twoDPrimaryKeys & Keys.Modifiers) & Keys.Alt) == 0 //ALT key not required
-                            )
-                        ) //end of ALT check
-                        )
-                    {
-                        //if 2D primary view mode hotkey is pressed, then set the global 3D-mode flag to FALSE (i.e., switch to 2D primary view mode)
-                        Extractor.State.ThreeDeeMode = false;
-                        //tell the Extractor to use the primary-view coordiantes
-						Extractor.State.TwoDeePrimaryView = true;
-                    }
-                }
-                else if (keystate[_twoDSecondaryViewKeyCode]) //if the 2D mode (secondary view) hotkey is pressed
-                {
-                    if (
-                        (
-                            //check if Control key is down [if control key is part of the required 2D-mode (secondary view) hotkey]
-                            (
-                                (((_twoDSecondaryKeys & Keys.Modifiers) & Keys.Control) != 0) //control key required
-                                && (keystate[Key.LeftControl] || keystate[Key.RightControl]) //control key pressed
-                            )
-                            || //OR
-                            (
-                                ((_twoDSecondaryKeys & Keys.Modifiers) & Keys.Control) == 0 //control key not required
-                            )
-                        ) // end of CTRL check 
-                        && //AND
-                        (
-                            //check if Shift key is down [if Shift key is part of the required 2D-mode (secondary view) hotkey]
-                            (
-                                ((_twoDSecondaryKeys & Keys.Modifiers) & Keys.Shift) != 0 //shift key required
-                                && (keystate[Key.LeftShift] || keystate[Key.RightShift]) //shift key pressed
-                            )
-                            || //OR 
-                            (
-                                ((_twoDSecondaryKeys & Keys.Modifiers) & Keys.Shift) == 0 //shift key not required
-                            )
-                        ) //end of SHIFT check
-                        && //AND
-                        (
-                            //check if Alt key is down [if Alt key is part of the required 2D-mode (secondary view) hotkey]
-                            (
-                                (((_twoDSecondaryKeys & Keys.Modifiers) & Keys.Alt)) != 0 //ALT key required
-                                && (keystate[Key.LeftAlt] || keystate[Key.RightAlt]) //ALT key pressed
-                            )
-                            || //OR 
-                            (
-                                ((_twoDSecondaryKeys & Keys.Modifiers) & Keys.Alt) == 0 //ALT key not required
-                            )
-                        ) //end of ALT check
-                        )
-                    {
-                        //if 2D secondary view mode hotkey is pressed, then set the global 3D-mode flag to FALSE (i.e., switch to 2D secondary view mode)
-						Extractor.State.ThreeDeeMode = false;
-                        //tell the Extractor to use the secondary-view coordiantes
-						Extractor.State.TwoDeePrimaryView = false;
-                    }
-                }
-                else if (keystate[_threeDKeyCode]) //if the 3D hotkey is pressed
-                {
-                    if (
-                        (
-                            //check if Control key is down [if Control key is part of the required 3D-mode hotkey]
-                            (
-                                ((_threeDkeys & Keys.Modifiers) & Keys.Control) != 0 //control key required
-                                && (keystate[Key.LeftControl] || keystate[Key.RightControl]) //control key pressed
-                            )
-                            || //OR
-                            (
-                                (((_threeDkeys & Keys.Modifiers) & Keys.Control)) == 0 //control key not required
-                            )
-                        ) // end of CTRL check 
-                        && //AND
-                        (
-                            //check if Shift key is down [if Shift key is part of the required 3D-mode hotkey]
-                            (
-                                ((_threeDkeys & Keys.Modifiers) & Keys.Shift) != 0 //shift key required
-                                && (keystate[Key.LeftShift] || keystate[Key.RightShift]) //shift key pressed
-                            )
-                            || //OR 
-                            (
-                                ((_threeDkeys & Keys.Modifiers) & Keys.Shift) == 0 //shift key not required
-                            )
-                        ) //end of SHIFT check
-                        && //AND
-                        (
-                            //check if Alt key is down [if Alt key is part of the required 3D-mode hotkey]
-                            (
-                                ((_threeDkeys & Keys.Modifiers) & Keys.Alt) != 0 //ALT key required
-                                && (keystate[Key.LeftAlt] || keystate[Key.RightAlt]) //ALT key pressed
-                            )
-                            || //OR 
-                            (
-                                ((_threeDkeys & Keys.Modifiers) & Keys.Alt) == 0 //ALT key not required
-                            )
-                        ) //end of ALT check
-                        )
-                    {
-                        //switch the MFD Extractor to 3D mode
-						Extractor.State.ThreeDeeMode = true;
-                    }
-                }
+                _keyb.GetCurrentKeyboardState();
             }
-            catch (Exception)
+            catch
             {
-                //if any problems are detected while attempting to read the current keyboard state, then 
-                //re-attempt to acquire the DirectInput keyboard device; ignore other problems
-                InitializeKeyboard();
+	            InitializeKeyboard();
             }
         }
 
@@ -269,9 +97,9 @@ namespace MFDExtractor.UI
                     ReadKeyboard();
                     //read the current keyboard state and check if any mode-switching hotkeys have been pressed
                 }
-                catch (Exception)
+                catch
                 {
-                    //prevent this thread from aborting on an unhandled exception
+	                //prevent this thread from aborting on an unhandled exception
                 }
             }
         }
@@ -288,7 +116,7 @@ namespace MFDExtractor.UI
             Height = 0;
 
             //set the form's titlebar equal to the app's name as defined in the app properties file
-            Text = Application.ProductName + " v" + Application.ProductVersion;
+            Text = Application.ProductName + @" v" + Application.ProductVersion;
             nfyTrayIcon.Text = Text;
             //disable checks for illegal cross-thread calls, as there are some code chunks that do
             //directly update the UI thread 
@@ -319,7 +147,6 @@ namespace MFDExtractor.UI
             if ((NetworkMode) settings.NetworkingMode != NetworkMode.Client)
             {
                 InitializeKeyboard();
-                SetupHotkeys();
                 _keyboardWatcherThread = new Thread(KeyboardWatcherThreadWork);
                 _keyboardWatcherThread.SetApartmentState(ApartmentState.STA);
                 _keyboardWatcherThread.Priority = ThreadPriority.BelowNormal;
@@ -335,19 +162,6 @@ namespace MFDExtractor.UI
             }
         }
 
-        /// <summary>
-        ///     Read the user-defined mode-switching hotkeys from the user settings file
-        /// </summary>
-        internal void SetupHotkeys()
-        {
-            Settings settings = Settings.Default;
-            _twoDPrimaryViewKeyCode = KeyConverter.ConvertFrom((Settings.Default.TwoDPrimaryHotkey) & Keys.KeyCode);
-            _twoDSecondaryViewKeyCode = KeyConverter.ConvertFrom((Settings.Default.TwoDSecondaryHotkey) & Keys.KeyCode);
-            _threeDKeyCode = KeyConverter.ConvertFrom((Settings.Default.ThreeDHotkey) & Keys.KeyCode);
-            _twoDPrimaryKeys = Settings.Default.TwoDPrimaryHotkey;
-            _twoDSecondaryKeys = Settings.Default.TwoDSecondaryHotkey;
-            _threeDkeys = Settings.Default.ThreeDHotkey;
-        }
 
         /// <summary>
         ///     Event handler for the Extractor engine's Stopping event
@@ -466,7 +280,6 @@ namespace MFDExtractor.UI
                 _optionsForm = new frmOptions();
                 _optionsForm.ShowDialog(this);
 
-                SetupHotkeys(); //reconfigure any global mode-switching hotkeys per any new user settings
                 extractor.LoadSettings();
                 //ask the Extractor engine to refresh its settings from the application's user-config file
 
