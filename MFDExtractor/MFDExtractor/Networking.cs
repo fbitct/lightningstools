@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -138,70 +139,55 @@ namespace MFDExtractor
 
         public Image GetMfd4Bitmap()
         {
-            if (_server != null)
+	        if (_server != null)
             {
                 var raw = _server.GetMfd4BitmapBytes();
                 return Util.BitmapFromBytes(raw);
             }
-            else
-            {
-                return null;
-            }
+	        return null;
         }
 
-        public Image GetMfd3Bitmap()
-        {
-            if (_server != null)
+	    public Image GetMfd3Bitmap()
+	    {
+		    if (_server != null)
             {
                 var raw = _server.GetMfd3BitmapBytes();
                 return Util.BitmapFromBytes(raw);
             }
-            else
-            {
-                return null;
-            }
-        }
+		    return null;
+	    }
 
-        public Image GetLeftMfdBitmap()
-        {
-            if (_server != null)
+	    public Image GetLeftMfdBitmap()
+	    {
+		    if (_server != null)
             {
                 var raw = _server.GetLeftMfdBitmapBytes();
                 return Util.BitmapFromBytes(raw);
             }
-            else
-            {
-                return null;
-            }
-        }
+		    return null;
+	    }
 
-        public Image GetRightMfdBitmap()
-        {
-            if (_server != null)
+	    public Image GetRightMfdBitmap()
+	    {
+		    if (_server != null)
             {
                 var raw = _server.GetRightMfdBitmapBytes();
                 return Util.BitmapFromBytes(raw);
             }
-            else
-            {
-                return null;
-            }
-        }
+		    return null;
+	    }
 
-        public Image GetHudBitmap()
-        {
-            if (_server != null)
+	    public Image GetHudBitmap()
+	    {
+		    if (_server != null)
             {
                 var raw = _server.GetHudBitmapBytes();
                 return Util.BitmapFromBytes(raw);
             }
-            else
-            {
-                return null;
-            }
-        }
+		    return null;
+	    }
 
-        public FlightData GetFlightData()
+	    public FlightData GetFlightData()
         {
             return _server != null ? _server.GetFlightData() : null;
         }
@@ -227,19 +213,17 @@ namespace MFDExtractor
         public void ClearPendingMessagesToClientFromServer()
         {
             EnsureConnected();
-            if (IsConnected)
-            {
-                try
-                {
-                    if (_server != null)
-                    {
-                        _server.ClearPendingMessagesToClientFromServer();
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
+	        if (!IsConnected) return;
+	        try
+	        {
+		        if (_server != null)
+		        {
+			        _server.ClearPendingMessagesToClientFromServer();
+		        }
+	        }
+	        catch
+	        {
+	        }
         }
 
         public Message GetNextMessageToClientFromServer()
@@ -255,7 +239,7 @@ namespace MFDExtractor
                         toReturn = _server.GetNextPendingMessageToClientFromServer();
                     }
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }
@@ -280,7 +264,7 @@ namespace MFDExtractor
                 {
                     chan = new TcpClientChannel();
                 }
-                catch (Exception)
+                catch
                 {
                 }
                 try
@@ -297,7 +281,7 @@ namespace MFDExtractor
                 {
                     RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
                 }
-                catch (Exception)
+                catch
                 {
                 }
                 try
@@ -312,7 +296,7 @@ namespace MFDExtractor
                         + "/"
                         + _serviceName);
                 }
-                catch (Exception)
+                catch
                 {
                 }
             }
@@ -327,7 +311,7 @@ namespace MFDExtractor
                 {
                     _wasConnected = _server.TestConnection();
                 }
-                catch (Exception ex)
+                catch
                 {
                 }
             }
@@ -401,7 +385,7 @@ namespace MFDExtractor
 
         public byte[] GetMfd4BitmapBytes()
         {
-            byte[] toReturn = null;
+            byte[] toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
@@ -425,7 +409,7 @@ namespace MFDExtractor
 
         public byte[] GetMfd3BitmapBytes()
         {
-            byte[] toReturn = null;
+            byte[] toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
@@ -449,7 +433,7 @@ namespace MFDExtractor
 
         public byte[] GetLeftMfdBitmapBytes()
         {
-            byte[] toReturn = null;
+            byte[] toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
@@ -748,15 +732,8 @@ namespace MFDExtractor
 
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)
         {
-            var messagesToRemove = new List<Message>();
-            foreach (var message in _messagesToServerFromClient)
-            {
-                if (message.MessageType == messageType)
-                {
-                    messagesToRemove.Add(message);
-                }
-            }
-            foreach (var message in messagesToRemove)
+            var messagesToRemove = _messagesToServerFromClient.Where(message => message.MessageType == messageType).ToList();
+	        foreach (var message in messagesToRemove)
             {
                 _messagesToServerFromClient.Remove(message);
             }

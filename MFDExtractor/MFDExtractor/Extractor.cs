@@ -96,11 +96,11 @@ namespace MFDExtractor
         private readonly AutoResetEvent _mfd3CaptureStart = new AutoResetEvent(false);
         private readonly AutoResetEvent _mfd4CaptureStart = new AutoResetEvent(false);
         private readonly AutoResetEvent _rightMfdCaptureStart = new AutoResetEvent(false);
-        private AutoResetEvent _hudCaptureEnd = new AutoResetEvent(false);
-        private AutoResetEvent _leftMfdCaptureEnd = new AutoResetEvent(false);
-        private AutoResetEvent _mfd3CaptureEnd = new AutoResetEvent(false);
-        private AutoResetEvent _mfd4CaptureEnd = new AutoResetEvent(false);
-        private AutoResetEvent _rightMfdCaptureEnd = new AutoResetEvent(false);
+        private readonly AutoResetEvent _hudCaptureEnd = new AutoResetEvent(false);
+		private readonly AutoResetEvent _leftMfdCaptureEnd = new AutoResetEvent(false);
+		private readonly AutoResetEvent _mfd3CaptureEnd = new AutoResetEvent(false);
+		private readonly AutoResetEvent _mfd4CaptureEnd = new AutoResetEvent(false);
+		private readonly AutoResetEvent _rightMfdCaptureEnd = new AutoResetEvent(false);
 
        
 
@@ -493,7 +493,7 @@ namespace MFDExtractor
 
         #region MFD Capturing implementation methods
 
-        private void CaptureAndUpdateOutput(bool instrumentEnabled, Func<Image> getterFunc, Action<Image> setterFunc, Image blankVersion )
+        private static void CaptureAndUpdateOutput(bool instrumentEnabled, Func<Image> getterFunc, Action<Image> setterFunc, Image blankVersion )
         {
             if (!instrumentEnabled && State.NetworkMode != NetworkMode.Server) return;
 
@@ -542,7 +542,7 @@ namespace MFDExtractor
 
         #region MFD & HUD Image Swapping
 
-        private void SetFlightData(FlightData flightData)
+        private static void SetFlightData(FlightData flightData)
         {
             if (flightData == null) return;
             if (State.NetworkMode == NetworkMode.Server)
