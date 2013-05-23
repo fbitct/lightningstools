@@ -255,7 +255,65 @@ namespace F4SharedMem.Headers
         CalType = 0x01,	// true if calibration in inches of Mercury (Hg), false if in hectoPascal (hPa)
         PneuFlag = 0x02,	// true if PNEU flag is visible
     };
+    [ComVisible(true)]
+    [Flags]
+    [Serializable]
+    public enum PowerBits : int
+    {
+        BusPowerBattery = 0x01,	// true if at least the battery bus is powered
+        BusPowerEmergency = 0x02,	// true if at least the emergency bus is powered
+        BusPowerEssential = 0x04,	// true if at least the essential bus is powered
+        BusPowerNonEssential = 0x08,	// true if at least the non-essential bus is powered
+        MainGenerator = 0x10,	// true if the main generator is online
+        StandbyGenerator = 0x20,	// true if the standby generator is online
+        JetFuelStarter = 0x40,	// true if JFS is running, can be used for magswitch
+    };
+    [ComVisible(true)]
+    [Flags]
+    [Serializable]
+    public enum BlinkBits : int
+    {
+        // currently working
+        OuterMarker = 0x01,	// defined in HsiBits    - slow flashing for outer marker
+        MiddleMarker = 0x02,	// defined in HsiBits    - fast flashing for middle marker
+        PROBEHEAT = 0x04,	// defined in LightBits2 - probeheat system is tested
+        AuxSrch = 0x08,	// defined in LightBits2 - search function in NOT activated and a search radar is painting ownship
+        Launch = 0x10,	// defined in LightBits2 - missile is fired at ownship
+        PriMode = 0x20,	// defined in LightBits2 - priority mode is enabled but more than 5 threat emitters are detected
+        Unk = 0x40,	// defined in LightBits2 - unknown is not active but EWS detects unknown radar
 
+        // not working yet, defined for future use
+        Elec_Fault = 0x80,	// defined in LightBits3 - non-resetting fault
+        OXY_BROW = 0x100,	// defined in LightBits  - monitor fault during Obogs
+        EPUOn = 0x200,	// defined in LightBits3 - abnormal EPU operation
+        JFSOn_Slow = 0x400,	// defined in LightBits3 - slow blinking: non-critical failure
+        JFSOn_Fast = 0x800,	// defined in LightBits3 - fast blinking: critical failure
+    };
+
+    [ComVisible(true)]
+    [Flags]
+    [Serializable]
+    public enum CmdsModes : int
+    {
+        CmdsOFF = 0,
+        CmdsSTBY = 1,
+        CmdsMAN = 2,
+        CmdsSEMI = 3,
+        CmdsAUTO = 4,
+        CmdsBYP = 5,
+    };
+
+    [ComVisible(true)]
+    [Flags]
+    [Serializable]
+    public enum NavModes : int
+    {
+        ILS_TACAN = 0,
+        TACAN = 1,
+        NAV = 2,
+        ILS_NAV = 3,
+    };
+    
     [ComVisible(false)]
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack=1)]
@@ -413,7 +471,7 @@ namespace F4SharedMem.Headers
 
     }
 
-    // BMS4 Flight Data Model
+    // BMS4.33 Flight Data Model
     [ComVisible(false)]
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -544,9 +602,10 @@ namespace F4SharedMem.Headers
         public float headY;        // Head Y offset from design eye (feet)
         public float headZ;        // Head Z offset from design eye (feet)
         public int MainPower;
-        
+
 
     }
+    
     [ComVisible(false)]
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -590,10 +649,11 @@ namespace F4SharedMem.Headers
 
         short vehicleACD;	// Ownship ACD index number, i.e. which aircraft type are we flying.
 
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
         byte[] tacanInfo; //TACAN info (new in BMS4)
     }
 
-        [ComVisible(true)]
+    [ComVisible(true)]
     [Serializable]
     public enum TacanSources : int
     {
@@ -616,16 +676,21 @@ namespace F4SharedMem.Headers
     [StructLayout(LayoutKind.Sequential)]
     public struct BMS4FlightData2
     {
+        int versionNum;
         float nozzlePos2;   // Ownship engine nozzle2 percent open (0-100)
         float rpm2;         // Ownship engine rpm2 (Percent 0-103)
         float ftit2;        // Ownship Forward Turbine Inlet Temp2 (Degrees C)
         float oilPressure2; // Ownship Oil Pressure2 (Percent 0-100)
+        float hydPressureA; // Ownship Hydraulic Pressure A
+        float hydPressureB;// Ownship Hydraulic Pressure B
+ 
         byte navMode;  // current mode selected for HSI/eHSI (added in BMS4)
-        float aauz; // Ownship barometric altitude given by AAU (depends on calibration)
+        float AAUZ; // Ownship barometric altitude given by AAU (depends on calibration)
         int AltCalReading;	// barometric altitude calibration (depends on CalType)
         int altBits;		// various altimeter bits, see AltBits enum for details
+        float cabinAlt;// Ownship cabin altitude
         int BupUhfPreset;	// BUP UHF channel preset
-
+        int bupUhfFreq; // BUP UHF channel frequency
         int powerBits;		// Ownship power bus / generator states, see PowerBits enum for details
         int blinkBits;		// Cockpit indicator lights blink status, see BlinkBits enum for details
         // NOTE: these bits indicate only *if* a lamp is blinking, in addition to the
@@ -633,13 +698,12 @@ namespace F4SharedMem.Headers
         // *actual* blinking.
         int cmdsMode;		// Ownship CMDS mode state, see CmdsModes enum for details
         int currentTime;	// Current time in seconds (max 60 * 60 * 24)
-        char[] vehicleType;	// Ownship vehicle type name: vehicleType[VEHICLE_TYPE_STRING_LENGTH] (VEHICLE_TYPE_STRING_LENGTH = 15)
+        short vehicleACD;	// Ownship ACD index number, i.e. which aircraft type are we flying.
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = (int)TacanSources.NUMBER_OF_SOURCES)]
         byte[] tacanInfo;      // Tacan band/mode settings for UFC and AUX COMM
 
     }
-
 
     [ComVisible(false)]
     [Serializable]

@@ -49,7 +49,7 @@ namespace F4SharedMem
         {
             Type thisType = this.GetType();
             Type dataType = data.GetType();
-            FieldInfo[] fields = dataType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo[] fields = dataType.GetFields(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             for (int i = 0; i < fields.Length; i++)
             {
                 FieldInfo currentField = fields[i];
@@ -269,6 +269,7 @@ namespace F4SharedMem
         public float headY;        // Head Y offset from design eye (feet)
         public float headZ;        // Head Z offset from design eye (feet)
         public int MainPower;
+
         public byte navMode; //HSI nav mode (new in BMS4)
         public float aauz; //AAU altimeter indicated altitude (new in BMS4)
         public int AltCalReading;	// barometric altitude calibration (depends on CalType)
