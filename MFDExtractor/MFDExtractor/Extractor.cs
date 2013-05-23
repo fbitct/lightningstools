@@ -16,9 +16,7 @@ using MFDExtractor.BMSSupport;
 using MFDExtractor.EventSystem;
 using MFDExtractor.Networking;
 using MFDExtractor.Properties;
-using MFDExtractor.UI;
 using log4net;
-using Util = Common.Imaging.Util;
 using Common.Networking;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
@@ -39,34 +37,16 @@ namespace MFDExtractor
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
         #region Output Window Coordinates
 
-        private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
+        private readonly IFlightDataUpdater _flightDataUpdater;
 
         #endregion
 
         #region Falcon 4 Sharedmem Readers & status flags
 
-        private F4TexSharedMem.Reader _texSmReader = new F4TexSharedMem.Reader();
+        private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
         #endregion
 
-        #region Blank Images
-
-        private readonly Image _hudBlankImage = Util.CloneBitmap(Resources.hudBlankImage);
-        private readonly Image _leftMfdBlankImage = Util.CloneBitmap(Resources.leftMFDBlankImage);
-        private readonly Image _mfd3BlankImage = Util.CloneBitmap(Resources.leftMFDBlankImage); //TODO: change to MFD3
-        private readonly Image _mfd4BlankImage = Util.CloneBitmap(Resources.rightMFDBlankImage); //TODO: change to MFD4
-        private readonly Image _rightMfdBlankImage = Util.CloneBitmap(Resources.rightMFDBlankImage);
-
-        #endregion
-
-        #region Test/Alignment Images
-
-        private readonly Image _hudTestAlignmentImage = Util.CloneBitmap(Resources.hudTestAlignmentImage);
-        private readonly Image _leftMfdTestAlignmentImage = Util.CloneBitmap(Resources.leftMFDTestAlignmentImage);
-        private readonly Image _mfd3TestAlignmentImage = Util.CloneBitmap(Resources.leftMFDTestAlignmentImage);
-        private readonly Image _mfd4TestAlignmentImage = Util.CloneBitmap(Resources.leftMFDTestAlignmentImage);
-        private readonly Image _rightMfdTestAlignmentImage = Util.CloneBitmap(Resources.rightMFDTestAlignmentImage);
-
-        #endregion
+       
 
         #region Network Configuration
 
@@ -88,22 +68,6 @@ namespace MFDExtractor
 
         #endregion
 
-        #region Thread Synchronization Signals
-
-        private readonly AutoResetEvent _hudCaptureStart = new AutoResetEvent(false);
-        private readonly AutoResetEvent _leftMfdCaptureStart = new AutoResetEvent(false);
-        private readonly AutoResetEvent _mfd3CaptureStart = new AutoResetEvent(false);
-        private readonly AutoResetEvent _mfd4CaptureStart = new AutoResetEvent(false);
-        private readonly AutoResetEvent _rightMfdCaptureStart = new AutoResetEvent(false);
-        private readonly AutoResetEvent _hudCaptureEnd = new AutoResetEvent(false);
-		private readonly AutoResetEvent _leftMfdCaptureEnd = new AutoResetEvent(false);
-		private readonly AutoResetEvent _mfd3CaptureEnd = new AutoResetEvent(false);
-		private readonly AutoResetEvent _mfd4CaptureEnd = new AutoResetEvent(false);
-		private readonly AutoResetEvent _rightMfdCaptureEnd = new AutoResetEvent(false);
-
-       
-
-        #endregion
 
         #region Threads
 
@@ -125,12 +89,7 @@ namespace MFDExtractor
 
         private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
        private Thread _captureOrchestrationThread;
-        private Thread _hudCaptureThread;
         private Thread _keyboardWatcherThread;
-        private Thread _leftMfdCaptureThread;
-        private Thread _mfd3CaptureThread;
-        private Thread _mfd4CaptureThread;
-        private Thread _rightMfdCaptureThread;
         private Thread _simStatusMonitorThread;
 
         private readonly ThreadAbortion _threadAbortion;
@@ -149,22 +108,9 @@ namespace MFDExtractor
 
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
 	    private readonly IInstrumentFactory _instrumentFactory;
-	    private InstrumentForm _hudForm;
-        private InstrumentForm _leftMfdForm;
-        private InstrumentForm _rightMfdForm;
-        private InstrumentForm _mfd3Form;
-        private InstrumentForm _mfd4Form;
-	    private readonly IInstrumentFormFactory _instrumentFormFactory;
 		private readonly IThreeDeeCaptureCoordinateReader _threeDeeCaptureCoordinateReader;
 	    private readonly IFlightDataRetriever _flightDataRetriever;
-	    private readonly IImageGetter _imageGetter;
-	    private readonly ISetAndDisposeImageHelper _setAndDisposeImageHelper;
-
-		private Rectangle _hudRectangle;
-		private Rectangle _leftMfdRectangle;
-		private Rectangle _rightMfdRectangle;
-		private Rectangle _mfd3Rectangle;
-		private Rectangle _mfd4Rectangle;
+		private SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
 		#endregion
 
         #endregion
@@ -181,14 +127,11 @@ namespace MFDExtractor
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null,
             IInstrumentFactory instrumentFactory = null,
-            IInstrumentFormFactory instrumentFormFactory = null,
 			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null,
             IFlightDataRetriever flightDataRetriever= null,
-            IImageGetter imageGetter=null,
-            ISetAndDisposeImageHelper setAndDisposeImageHelper=null)
+			IFlightDataUpdater flightDataUpdater =null)
         {
             State = new ExtractorState();
-            _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
 	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
 			_rendererSetInitializer = new RendererSetInitializer(_renderers);
@@ -211,8 +154,7 @@ namespace MFDExtractor
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
 			_threeDeeCaptureCoordinateReader = threeDeeCaptureCoordinateReader ?? new ThreeDeeCaptureCoordinateReader();
-            _imageGetter = imageGetter ?? new ImageGetter();
-            _setAndDisposeImageHelper = setAndDisposeImageHelper ?? new SetAndDisposeImageHelper();
+	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater(_texSmReader, _sharedMemorySpriteCoordinates, State);
         }
         private void SetupInstruments()
         {
@@ -263,12 +205,7 @@ namespace MFDExtractor
                 {
                     _captureOrchestrationThread,
                     _simStatusMonitorThread,
-                    _keyboardWatcherThread,
-                    _mfd4CaptureThread,
-                    _mfd3CaptureThread,
-                    _leftMfdCaptureThread,
-                    _rightMfdCaptureThread,
-                    _hudCaptureThread
+                    _keyboardWatcherThread
                 };
             WaitForThreadEndThenAbort(ref threadsToKill, new TimeSpan(0, 0, 1));
 
@@ -283,11 +220,6 @@ namespace MFDExtractor
         }
         private void CloseOutputWindowForms()
         {       
-            CloseAndDisposeForm(_hudForm);
-            CloseAndDisposeForm(_leftMfdForm);
-            CloseAndDisposeForm(_rightMfdForm);
-            CloseAndDisposeForm(_mfd3Form);
-            CloseAndDisposeForm(_mfd4Form);
             foreach (var instrument in _instruments)
             {
                 CloseAndDisposeForm(instrument.Value.Form);
@@ -401,144 +333,11 @@ namespace MFDExtractor
 
         #endregion
 
-        
 
         #endregion
-
-       
-
-        #region Instrument Renderer Setup
-
-
-        #endregion
-
-        #region MFD Capture Code
-
-        #region Capture Strategy Orchestration Methods
 
 
         
-	    private Image GetMfd4Bitmap()
-	    {
-            return _imageGetter.GetImage(State, _mfd4TestAlignmentImage, Get3DMFD4, () => _client != null ? _client.GetMfd4Bitmap() : null);
-        }
-
-        private Image GetMfd3Bitmap()
-        {
-            return _imageGetter.GetImage(State, _mfd3TestAlignmentImage, Get3DMFD3, () => _client != null ? _client.GetMfd3Bitmap() : null);
-        }
-
-        private Image GetLeftMfdBitmap()
-        {
-            return _imageGetter.GetImage(State, _leftMfdTestAlignmentImage, Get3DLeftMFD, () => _client != null ? _client.GetLeftMfdBitmap() : null);
-        }
-
-	    private Image GetRightMfdBitmap()
-	    {
-            return _imageGetter.GetImage(State, _rightMfdTestAlignmentImage, Get3DRightMFD, () => _client != null ? _client.GetRightMfdBitmap() : null);
-	    }
-
-	    private Image GetHudBitmap()
-        {
-            return _imageGetter.GetImage(State,_hudTestAlignmentImage, Get3DHud, () => _client != null ? _client.GetHudBitmap() : null);
-        }
-
-        private Image Get3D(Rectangle rttInputRectangle)
-        {
-            if (!State.KeepRunning || (!State.SimRunning) || rttInputRectangle == Rectangle.Empty)
-            {
-                return null;
-            }
-
-            try
-            {
-                if (_texSmReader != null)
-                {
-                    return Util.CloneBitmap(_texSmReader.GetImage(rttInputRectangle));
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex.Message, ex);
-            }
-            return null;
-        }
-        private Image Get3DHud()
-        {
-            return Get3D(_hudRectangle);
-        }
-
-        private Image Get3DMFD4()
-        {
-            return Get3D(_mfd4Rectangle);
-        }
-
-        private Image Get3DMFD3()
-        {
-            return Get3D(_mfd3Rectangle);
-        }
-
-        private Image Get3DLeftMFD()
-        {
-            return Get3D(_leftMfdRectangle);
-        }
-
-        private Image Get3DRightMFD()
-        {
-            return Get3D(_rightMfdRectangle);
-        }
-
-        #endregion
-
-        #region MFD Capturing implementation methods
-
-        private static void CaptureAndUpdateOutput(bool instrumentEnabled, Func<Image> getterFunc, Action<Image> setterFunc, Image blankVersion )
-        {
-            if (!instrumentEnabled && State.NetworkMode != NetworkMode.Server) return;
-
-            Image image = null;
-            try
-            {
-                image = getterFunc() ?? Util.CloneBitmap(blankVersion);
-                setterFunc(image);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.Message, e);
-            }
-            finally
-            {
-                Common.Util.DisposeObject(image);
-            }
-        }
-
-	    private void CaptureMfd4()
-	    {
-	        CaptureAndUpdateOutput(Settings.Default.EnableMfd4Output, GetMfd4Bitmap, SetMfd4Image, _mfd4BlankImage);
-	    }
-
-        private void CaptureMfd3()
-        {
-            CaptureAndUpdateOutput(Settings.Default.EnableMfd3Output, GetMfd3Bitmap, SetMfd3Image, _mfd3BlankImage);
-        }
-
-        private void CaptureLeftMfd()
-        {
-            CaptureAndUpdateOutput(Settings.Default.EnableLeftMFDOutput, GetLeftMfdBitmap, SetLeftMfdImage, _leftMfdBlankImage);
-        }
-
-        private void CaptureRightMfd()
-        {
-            CaptureAndUpdateOutput(Settings.Default.EnableRightMFDOutput, GetRightMfdBitmap, SetRightMfdImage, _rightMfdBlankImage);
-        }
-
-        private void CaptureHud()
-        {
-            CaptureAndUpdateOutput(Settings.Default.EnableHudOutput, GetHudBitmap, SetHudImage, _hudBlankImage);
-        }
-
-        #endregion
-
         #region MFD & HUD Image Swapping
 
         private static void SetFlightData(FlightData flightData)
@@ -550,98 +349,10 @@ namespace MFDExtractor
             }
         }
         
-	    private void SetHudImage(Image hudImage)
-        {
-            _setAndDisposeImageHelper.SetAndDisposeImage(State,hudImage, ExtractorServer.SetHudBitmap, Settings.Default.HUD_RotateFlipType, _hudForm, Settings.Default.HUD_Monochrome);
-        }
-        private void SetMfd4Image(Image mfd4Image)
-        {
-            _setAndDisposeImageHelper.SetAndDisposeImage(State, mfd4Image, ExtractorServer.SetMfd4Bitmap, Settings.Default.MFD4_RotateFlipType, _mfd4Form, Settings.Default.MFD4_Monochrome);
-        }
-
-        private void SetMfd3Image(Image mfd3Image)
-        {
-            _setAndDisposeImageHelper.SetAndDisposeImage(State, mfd3Image, ExtractorServer.SetMfd3Bitmap, Settings.Default.MFD3_RotateFlipType, _mfd3Form, Settings.Default.MFD3_Monochrome);
-        }
-
-        private void SetLeftMfdImage(Image leftMfdImage)
-        {
-            _setAndDisposeImageHelper.SetAndDisposeImage(State, leftMfdImage, ExtractorServer.SetLeftMfdBitmap, Settings.Default.LMFD_RotateFlipType, _leftMfdForm, Settings.Default.LMFD_Monochrome);
-        }
-
-        private void SetRightMfdImage(Image rightMfdImage)
-        {
-            _setAndDisposeImageHelper.SetAndDisposeImage(State, rightMfdImage, ExtractorServer.SetRightMfdBitmap, Settings.Default.RMFD_RotateFlipType, _rightMfdForm, Settings.Default.RMFD_Monochrome);
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Forms Management
-
-        #region Forms Setup
-
-        private void SetupOutputForms()
-        {
-            if (Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server)
-            {
-                SetupMfd4Form();
-            }
-            if (Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server)
-            {
-                SetupMfd3Form();
-            }
-            if (Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server)
-            {
-                SetupLeftMfdForm();
-            }
-
-            if (Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server)
-            {
-                SetupRightMfdForm();
-            }
-
-            if (Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server)
-            {
-                SetupHudForm();
-            }
-        }
-
-        #region MFD Forms Setup
-
-        private void SetupMfd4Form()
-        {
-            _mfd4Form = _instrumentFormFactory.Create("MFD4","MFD 4",null,_mfd4BlankImage);
-        }
-
-        private void SetupMfd3Form()
-        {
-            _mfd3Form = _instrumentFormFactory.Create("MFD3", "MFD 3", null, _mfd3BlankImage);
-        }
-
-        private void SetupLeftMfdForm()
-        {
-            _leftMfdForm = _instrumentFormFactory.Create("LMFD", "Left MFD", null,_leftMfdBlankImage);
-        }
-
-        private void SetupRightMfdForm()
-        {
-            _rightMfdForm = _instrumentFormFactory.Create("RMFD", "Right MFD", null, _rightMfdBlankImage);
-        }
-
-        private void SetupHudForm()
-        {
-            _hudForm = _instrumentFormFactory.Create("HUD", "HUD", null,_hudBlankImage);
-        }
 
         #endregion
 
 
-        #endregion
-
-
-        #endregion
 
         #region Thread Management
 
@@ -655,7 +366,6 @@ namespace MFDExtractor
             SetupNetworking();
             State.KeepRunning = true;
             _rendererSetInitializer.Initialize(_gdiPlusOptions);
-            SetupOutputForms();
             SetupThreads();
             StartThreads();
 
@@ -667,14 +377,7 @@ namespace MFDExtractor
 
         private void StartThreads()
         {
-            StartThread(_mfd4CaptureThread);
-            StartThread(_mfd3CaptureThread);
-            StartThread(_leftMfdCaptureThread);
-            StartThread(_rightMfdCaptureThread);
-            StartThread(_hudCaptureThread);
-
             StartAllInstruments();
-
             StartThread(_simStatusMonitorThread);
             StartThread(_captureOrchestrationThread);
             StartThread(_keyboardWatcherThread);
@@ -717,18 +420,13 @@ namespace MFDExtractor
                     {
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, State.SimRunning, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility);
                     }
                     else
                     {
                         var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, State.SimRunning, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, State.NetworkMode);
-                        SetMfd4Image(Util.CloneBitmap(_mfd4BlankImage));
-                        SetMfd3Image(Util.CloneBitmap(_mfd3BlankImage));
-                        SetLeftMfdImage(Util.CloneBitmap(_leftMfdBlankImage));
-                        SetRightMfdImage(Util.CloneBitmap(_rightMfdBlankImage));
-                        SetHudImage(Util.CloneBitmap(_hudBlankImage));
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility);
                     }
 
                     SignalInstrumentRenderThreadsToStart();
@@ -773,7 +471,6 @@ namespace MFDExtractor
 			try
 			{
 				var toWait = new List<WaitHandle>();
-				SignalMFDAndHudThreadsToStart();
 				_instruments[InstrumentType.RWR].Signal(toWait, State);
 				_instruments[InstrumentType.ADI].Signal(toWait, State);
 				_instruments[InstrumentType.ISIS].Signal(toWait, State);
@@ -862,37 +559,6 @@ namespace MFDExtractor
             waitHandles.Clear();
         }
 
-
-
-
-        private void SignalMFDAndHudThreadsToStart()
-        {
-            if (!(State.Running && State.KeepRunning))
-            {
-                return;
-            }
-            if (Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server)
-            {
-                _mfd4CaptureStart.Set();
-            }
-            if (Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server)
-            {
-                _mfd3CaptureStart.Set();
-            }
-            if (Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server)
-            {
-                _leftMfdCaptureStart.Set();
-            }
-            if (Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server)
-            {
-                _rightMfdCaptureStart.Set();
-            }
-            if (Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server)
-            {
-                _hudCaptureStart.Set();
-            }
-        }
-
         private void SimStatusMonitorThreadWork()
         {
             try
@@ -954,36 +620,27 @@ namespace MFDExtractor
 
 	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded()
 	    {
-	        if ((_hudRectangle == Rectangle.Empty) ||
-				(_leftMfdRectangle == Rectangle.Empty) ||
-				(_rightMfdRectangle == Rectangle.Empty) ||
-				(_mfd3Rectangle == Rectangle.Empty) ||
-				(_mfd4Rectangle == Rectangle.Empty))
+			if ((_sharedMemorySpriteCoordinates.HUD == Rectangle.Empty) ||
+				(_sharedMemorySpriteCoordinates.LMFD == Rectangle.Empty) ||
+				(_sharedMemorySpriteCoordinates.RMFD == Rectangle.Empty) ||
+				(_sharedMemorySpriteCoordinates.MFD3 == Rectangle.Empty) ||
+				(_sharedMemorySpriteCoordinates.MFD4 == Rectangle.Empty))
 	        {
-	            _threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile(
-					out _mfd4Rectangle,
-					out _mfd3Rectangle,
-					out _leftMfdRectangle,
-					out _rightMfdRectangle,
-					out _hudRectangle);
+	            _sharedMemorySpriteCoordinates = _threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile();
 	        }
 	    }
 
 	    private void ResetThreeDeeCaptureCoordinates()
 	    {
-	        _mfd4Rectangle = Rectangle.Empty;
-			_mfd3Rectangle = Rectangle.Empty;
-			_leftMfdRectangle = Rectangle.Empty;
-			_rightMfdRectangle = Rectangle.Empty;
-			_hudRectangle = Rectangle.Empty;
+	        _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
 	    }
 
 	    private static bool NeedToCaptureMFDsAndOrHud
 	    {
 	        get
 	        {
-	            return (Settings.Default.EnableLeftMFDOutput ||
-	                Settings.Default.EnableRightMFDOutput ||
+	            return (Settings.Default.EnableLMFDOutput ||
+	                Settings.Default.EnableRMFDOutput ||
 	                Settings.Default.EnableMfd3Output ||
 	                Settings.Default.EnableMfd4Output ||
 	                Settings.Default.EnableHudOutput ||
@@ -1065,12 +722,6 @@ namespace MFDExtractor
             SetupCaptureOrchestrationThread();
             SetupKeyboardWatcherThread();
 
-            SetupMFD4CaptureThread();
-            SetupMFD3CaptureThread();
-            SetupLeftMFDCaptureThread();
-            SetupRightMFDCaptureThread();
-            SetupHUDCaptureThread();
-
             SetupInstruments();
 
         }
@@ -1095,45 +746,9 @@ namespace MFDExtractor
                 Name = "CaptureOrchestrationThread"
             };
         }
-        private void SetupCaptureThread(ref Thread thread, Func<bool> predicate, ThreadStart threadStart, string threadName)
-        {
-            _threadAbortion.AbortThread(ref thread);
-            if (predicate())
-            {
-                thread = new Thread(threadStart)
-                {
-                    Priority = _threadPriority,
-                    IsBackground = true,
-                    Name = threadName
-                };
-            }
-        }
+       
 
-        private void SetupHUDCaptureThread()
-        {
-            SetupCaptureThread(ref _hudCaptureThread, () => Settings.Default.EnableHudOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_hudCaptureStart, CaptureHud, _hudCaptureEnd), "HudCaptureThread");
-        }
-
-        private void SetupRightMFDCaptureThread()
-        {
-            SetupCaptureThread(ref _rightMfdCaptureThread, () => Settings.Default.EnableRightMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_rightMfdCaptureStart, CaptureRightMfd, _rightMfdCaptureEnd), "RightMfdCaptureThread");
-        }
-
-        private void SetupLeftMFDCaptureThread()
-        {
-            SetupCaptureThread(ref _leftMfdCaptureThread, () => Settings.Default.EnableLeftMFDOutput || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_leftMfdCaptureStart, CaptureLeftMfd, _leftMfdCaptureEnd), "LeftMfdCaptureThread");
-        }
-
-        private void SetupMFD3CaptureThread()
-        {
-            SetupCaptureThread(ref _mfd3CaptureThread, () => Settings.Default.EnableMfd3Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd3CaptureStart, CaptureMfd3, _mfd3CaptureEnd), "Mfd3CaptureThread");
-        }
-
-        private void SetupMFD4CaptureThread()
-        {
-            SetupCaptureThread(ref _mfd4CaptureThread, () => Settings.Default.EnableMfd4Output || State.NetworkMode == NetworkMode.Server, () => CaptureThreadWork(_mfd4CaptureStart, CaptureMfd4, _mfd4CaptureEnd), "Mfd4CaptureThread");
-        }
-
+       
         private void SetupSimStatusMonitorThread()
         {
             _threadAbortion.AbortThread(ref _simStatusMonitorThread);
@@ -1147,25 +762,6 @@ namespace MFDExtractor
 
         #endregion
 
-
-        private void CaptureThreadWork(WaitHandle startSignal, Action capture, EventWaitHandle endSignal)
-        {
-            try
-            {
-                while (State.KeepRunning)
-                {
-                    startSignal.WaitOne();
-                    capture();
-	                endSignal.Set();
-                }
-            }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
-        }
 
         #endregion
 
@@ -1185,16 +781,6 @@ namespace MFDExtractor
                 {
                     Stop();
                     Common.Util.DisposeObject(_texSmReader);
-                    Common.Util.DisposeObject(_mfd4BlankImage);
-                    Common.Util.DisposeObject(_mfd3BlankImage);
-                    Common.Util.DisposeObject(_leftMfdBlankImage);
-                    Common.Util.DisposeObject(_rightMfdBlankImage);
-                    Common.Util.DisposeObject(_hudBlankImage);
-                    Common.Util.DisposeObject(_mfd4TestAlignmentImage);
-                    Common.Util.DisposeObject(_mfd3TestAlignmentImage);
-                    Common.Util.DisposeObject(_leftMfdTestAlignmentImage);
-                    Common.Util.DisposeObject(_rightMfdTestAlignmentImage);
-                    Common.Util.DisposeObject(_hudTestAlignmentImage);
                 }
             }
             _disposed = true;

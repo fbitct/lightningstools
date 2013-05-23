@@ -13,31 +13,33 @@ namespace MFDExtractor
         void UpdateRendererStatesFromFlightData(
             IInstrumentRendererSet renderers,
             FlightData flightData,
-            bool simRunning,
-            Action updateEHSIBrightnessLabelVisibility,
-            NetworkMode networkMode);
+            Action updateEHSIBrightnessLabelVisibility);
     }
 
     internal class FlightDataUpdater : IFlightDataUpdater
     {
+	    private readonly F4TexSharedMem.IReader _texSharedmemReader;
+		private readonly ExtractorState _extractorState;
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
-        public FlightDataUpdater(IFlightDataAdapterSet flightDataAdapterSet = null)
+	    private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates;
+        public FlightDataUpdater(F4TexSharedMem.IReader texSharedmemReader, SharedMemorySpriteCoordinates sharedMemorySpriteCoordinates, ExtractorState extractorState, IFlightDataAdapterSet flightDataAdapterSet = null)
         {
+	        _texSharedmemReader = texSharedmemReader;
+	        _sharedMemorySpriteCoordinates = sharedMemorySpriteCoordinates;
+	        _extractorState = extractorState;
             _flightDataAdapterSet = flightDataAdapterSet ?? new FlightDataAdapterSet();
         }
         public void UpdateRendererStatesFromFlightData(
             IInstrumentRendererSet renderers,
             FlightData flightData,
-            bool simRunning,
-            Action updateEHSIBrightnessLabelVisibility,
-            NetworkMode networkMode)
+            Action updateEHSIBrightnessLabelVisibility)
         {
-            if (flightData == null || (networkMode != NetworkMode.Client && !simRunning))
+			if (flightData == null || (_extractorState.NetworkMode != NetworkMode.Client && !_extractorState.SimRunning))
             {
                 flightData = new FlightData {hsiBits = Int32.MaxValue};
             }
 
-            if (simRunning || networkMode == NetworkMode.Client)
+			if (_extractorState.SimRunning || _extractorState.NetworkMode == NetworkMode.Client)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
 
@@ -158,7 +160,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.OIL1.Adapt(renderers.OIL1, flightData);
                 _flightDataAdapterSet.OIL2.Adapt(renderers.OIL2, flightData);
                 _flightDataAdapterSet.Accelerometer.Adapt(renderers.Accelerometer, flightData);
-            }
+			}
             else //Falcon's not running
             {
                 if (renderers.VVI is F16VerticalVelocityIndicatorEU)
@@ -179,7 +181,12 @@ namespace MFDExtractor
                 renderers.ISIS.InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-        }
+			_flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.LMFD);
+			_flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.RMFD);
+			_flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.MFD3);
+			_flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.MFD4);
+			_flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.HUD);
+		}
 
         private static void SetISISPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)
         {

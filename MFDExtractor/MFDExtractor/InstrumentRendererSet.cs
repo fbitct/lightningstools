@@ -1,5 +1,6 @@
 ﻿using Common.SimSupport;
 using LightningGauges.Renderers;
+using MFDExtractor.Renderer;
 
 namespace MFDExtractor
 {
@@ -41,6 +42,12 @@ namespace MFDExtractor
          IF16AzimuthIndicator RWR{ get; set; }
          IF16SpeedbrakeIndicator Speedbrake{ get; set; }
          IF16VerticalVelocityIndicator VVI{ get; set; }
+         IMfdRenderer LMFD { get; set; }
+         IMfdRenderer RMFD { get; set; }
+		 IMfdRenderer MFD3 { get; set; }
+		 IMfdRenderer MFD4 { get; set; }
+		 IMfdRenderer HUD { get; set; }
+
          IInstrumentRenderer this [InstrumentType instrumentType] { get; }
     }
 
@@ -82,6 +89,11 @@ namespace MFDExtractor
         public IF16AzimuthIndicator RWR { get; set; }
         public IF16SpeedbrakeIndicator Speedbrake { get; set; }
         public IF16VerticalVelocityIndicator VVI { get; set; }
+		public IMfdRenderer LMFD { get; set; }
+		public IMfdRenderer RMFD { get; set; }
+		public IMfdRenderer MFD3 { get; set; }
+		public IMfdRenderer MFD4 { get; set; }
+		public IMfdRenderer HUD { get; set; }
 
         public IInstrumentRenderer this[InstrumentType instrumentType]
         {

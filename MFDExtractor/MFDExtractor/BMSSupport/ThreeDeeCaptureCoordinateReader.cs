@@ -7,12 +7,7 @@ namespace MFDExtractor.BMSSupport
 {
 	internal interface IThreeDeeCaptureCoordinateReader
 	{
-		void Read3DCoordinatesFromCurrentBmsDatFile(
-			out Rectangle mfd4CaptureCoordinates,
-			out Rectangle mfd3CaptureCoordinates,
-			out Rectangle leftMfdCaptureCoordinates,
-			out Rectangle rightMfdCaptureCoordinates,
-			out Rectangle hudCaptureCoordinates);
+		SharedMemorySpriteCoordinates Read3DCoordinatesFromCurrentBmsDatFile();
 	}
 
 	class ThreeDeeCaptureCoordinateReader : IThreeDeeCaptureCoordinateReader
@@ -31,23 +26,14 @@ namespace MFDExtractor.BMSSupport
 
 			_log = log ?? LogManager.GetLogger(GetType());
 		}
-		public void Read3DCoordinatesFromCurrentBmsDatFile(out Rectangle mfd4CaptureCoordinates,
-																   out Rectangle mfd3CaptureCoordinates,
-																   out Rectangle leftMfdCaptureCoordinates,
-																   out Rectangle rightMfdCaptureCoordinates,
-																   out Rectangle hudCaptureCoordinates)
+		public SharedMemorySpriteCoordinates Read3DCoordinatesFromCurrentBmsDatFile()
 		{
-
-			mfd4CaptureCoordinates = Rectangle.Empty;
-			mfd3CaptureCoordinates = Rectangle.Empty;
-			leftMfdCaptureCoordinates = Rectangle.Empty;
-			rightMfdCaptureCoordinates = Rectangle.Empty;
-			hudCaptureCoordinates = Rectangle.Empty;
+			var coordinates = new SharedMemorySpriteCoordinates();
 
 			var threeDeeCockpitFile = _threeDeeCockpitFileFinder.FindThreeDeeCockpitFile();
 			if (threeDeeCockpitFile == null)
 			{
-				return;
+				return coordinates;
 			}
 			var isDoubleResolution = _doubleResolutionRTTChecker.IsDoubleResolutionRtt;
 
@@ -59,34 +45,35 @@ namespace MFDExtractor.BMSSupport
 					var currentLine = reader.ReadLine() ?? string.Empty;
 					if (currentLine.ToLowerInvariant().StartsWith("hud"))
 					{
-						hudCaptureCoordinates = ReadCaptureCoordinates(currentLine);
+						coordinates.HUD = ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfd4"))
 					{
-						mfd4CaptureCoordinates = ReadCaptureCoordinates(currentLine);
+						coordinates.MFD4 = ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfd3"))
 					{
-						mfd3CaptureCoordinates= ReadCaptureCoordinates(currentLine);
+						coordinates.MFD3= ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfdleft"))
 					{
-						rightMfdCaptureCoordinates= ReadCaptureCoordinates(currentLine);
+						coordinates.RMFD= ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfdright"))
 					{
-						hudCaptureCoordinates= ReadCaptureCoordinates(currentLine);
+						coordinates.LMFD= ReadCaptureCoordinates(currentLine);
 					}
 				}
 			}
 			if (isDoubleResolution)
 			{
-				leftMfdCaptureCoordinates = Common.Math.Util.MultiplyRectangle(leftMfdCaptureCoordinates, 2);
-				rightMfdCaptureCoordinates = Common.Math.Util.MultiplyRectangle(rightMfdCaptureCoordinates, 2);
-				mfd3CaptureCoordinates = Common.Math.Util.MultiplyRectangle(mfd3CaptureCoordinates, 2);
-				mfd4CaptureCoordinates = Common.Math.Util.MultiplyRectangle(mfd4CaptureCoordinates, 2);
-				hudCaptureCoordinates = Common.Math.Util.MultiplyRectangle(hudCaptureCoordinates, 2);
+				coordinates.LMFD = Common.Math.Util.MultiplyRectangle(coordinates.LMFD, 2);
+				coordinates.RMFD = Common.Math.Util.MultiplyRectangle(coordinates.RMFD, 2);
+				coordinates.MFD3 = Common.Math.Util.MultiplyRectangle(coordinates.MFD3, 2);
+				coordinates.MFD4 = Common.Math.Util.MultiplyRectangle(coordinates.MFD4, 2);
+				coordinates.HUD = Common.Math.Util.MultiplyRectangle(coordinates.HUD, 2);
 			}
+			return coordinates;
 		}
 
 		private Rectangle ReadCaptureCoordinates(string configLine)

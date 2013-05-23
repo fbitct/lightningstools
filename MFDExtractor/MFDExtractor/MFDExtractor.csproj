@@ -157,6 +157,7 @@
     <Compile Include="FlightDataAdapters\FTIT1FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FTIT2FlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\FuelQTYFlightDataAdapter.cs" />
+    <Compile Include="FlightDataAdapters\MFDFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\HYDAFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\HYDBFlightDataAdapter.cs" />
     <Compile Include="FlightDataAdapters\NOZ1FlightDataAdapter.cs" />
@@ -181,7 +182,6 @@
     <Compile Include="FlightDataAdapters\VVIFlightDataAdapter.cs" />
     <Compile Include="FlightDataRetriever.cs" />
     <Compile Include="FlightDataUpdater.cs" />
-    <Compile Include="ImageGetter.cs" />
     <Compile Include="Instrument.cs" />
     <Compile Include="InstrumentFactory.cs" />
     <Compile Include="InstrumentFormDataChangedHandler.cs" />
@@ -202,11 +202,12 @@
     <Compile Include="RendererFactories\RwrRendererFactory.cs" />
     <Compile Include="RendererFactories\VVIRendererFactory.cs" />
     <Compile Include="RendererSetInitializer.cs" />
+    <Compile Include="Renderer\MfdRenderer.cs" />
     <Compile Include="RenderThreadSignaller.cs" />
     <Compile Include="RenderThreadFactory.cs" />
-    <Compile Include="SetAndDisposeImageHelper.cs" />
     <Compile Include="SettingReader.cs" />
     <Compile Include="SettingsWriter.cs" />
+    <Compile Include="SharedMemorySpriteCoordinates.cs" />
     <Compile Include="SharedmemReaderFactory.cs" />
     <Compile Include="ThreadAbortion.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
@@ -276,6 +277,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

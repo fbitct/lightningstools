@@ -6,10 +6,20 @@ using F4TexSharedMem.Win32;
 
 namespace F4TexSharedMem
 {
-    [ComVisible(true)]
+	[ComVisible(false)]
+	public interface IReader
+	{
+		bool IsDataAvailable { get; }
+		Bitmap FullImage { get; }
+		void Dispose();
+		IntPtr GetImagePointer(ref Rectangle rect);
+		Bitmap GetImage(Rectangle rect);
+	}
+
+	[ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
-    public sealed class Reader : IDisposable
-    {
+    public sealed class Reader : IDisposable, IReader
+	{
         private const string SharedMemoryFileName = "FalconTexturesSharedMemoryArea";
         private bool _dataAvailable;
         private bool _disposed;

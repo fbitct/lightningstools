@@ -1,4 +1,6 @@
-﻿namespace MFDExtractor.FlightDataAdapters
+﻿using MFDExtractor.FlightDataAdapters.MFDExtractor.FlightDataAdapters;
+
+namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IFlightDataAdapterSet
     {
@@ -35,7 +37,12 @@
         IFTIT2FlightDataAdapter FTIT2 { get; }
         IFuelQuantityFlightDataAdapter FuelQuantity { get; }
         IStandbyADIFlightDataAdapter StandbyADI { get; }
-    }
+		IMFDFlightDataAdapter LMFD { get;}
+		IMFDFlightDataAdapter RMFD { get;}
+		IMFDFlightDataAdapter MFD3 { get;}
+		IMFDFlightDataAdapter MFD4 { get;}
+		IMFDFlightDataAdapter HUD { get;}
+	}
 
     class FlightDataAdapterSet : IFlightDataAdapterSet
     {
@@ -74,7 +81,12 @@
             FTIT2 = new FTIT2FlightDataAdapter();
             FuelQuantity = new FuelQuantityFlightDataAdapter();
             StandbyADI = new StandbyADIFlightDataAdapter();
-        }
+			LMFD = new MFDFlightDataAdapter();
+			RMFD = new MFDFlightDataAdapter();
+			MFD3 = new MFDFlightDataAdapter();
+			MFD4 = new MFDFlightDataAdapter();
+			HUD = new MFDFlightDataAdapter();
+		}
 
         public ICMDSFlightDataAdapter CMDS { get; private set; }
         public INWSFlightDataAdapter NWS { get; private set; }
@@ -109,5 +121,10 @@
         public IFTIT2FlightDataAdapter FTIT2 { get; private set; }
         public IFuelQuantityFlightDataAdapter FuelQuantity { get; private set; }
         public IStandbyADIFlightDataAdapter StandbyADI { get; private set; }
+		public IMFDFlightDataAdapter LMFD { get; private set; }
+		public IMFDFlightDataAdapter RMFD { get; private set; }
+		public IMFDFlightDataAdapter MFD3 { get; private set; }
+		public IMFDFlightDataAdapter MFD4 { get; private set; }
+		public IMFDFlightDataAdapter HUD { get; private set; }
     }
 }

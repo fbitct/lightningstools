@@ -1,5 +1,7 @@
 ﻿using Common.UI;
 using LightningGauges.Renderers;
+using MFDExtractor.Properties;
+using MFDExtractor.Renderer;
 using MFDExtractor.RendererFactories;
 
 namespace MFDExtractor
@@ -71,8 +73,72 @@ namespace MFDExtractor
             SetupCabinPressRenderer();
             SetupRollTrimRenderer();
             SetupPitchTrimRenderer();
-        }
-
+		    SetupLMFDRenderer();
+			SetupRMFDRenderer();
+			SetupMFD3Renderer();
+			SetupMFD4Renderer();
+			SetupHUDRenderer();
+		}
+		private void SetupLMFDRenderer()
+		{
+			_renderers.LMFD = new MfdRenderer
+			{
+				Options =
+					new MfdRenderer.MfdRendererOptions
+					{
+						BlankImage = Resources.leftMFDBlankImage,
+						TestAlignmentImage = Resources.leftMFDTestAlignmentImage
+					}
+			};
+		}
+		private void SetupRMFDRenderer()
+		{
+			_renderers.RMFD = new MfdRenderer
+			{
+				Options =
+					new MfdRenderer.MfdRendererOptions
+					{
+						BlankImage = Resources.rightMFDBlankImage,
+						TestAlignmentImage = Resources.rightMFDTestAlignmentImage
+					}
+			};
+		}
+		private void SetupMFD3Renderer()
+		{
+			_renderers.MFD3 = new MfdRenderer
+			{
+				Options =
+					new MfdRenderer.MfdRendererOptions
+					{
+						BlankImage = Resources.leftMFDBlankImage,
+						TestAlignmentImage = Resources.mfd3TestAlignmentImage
+					}
+			};
+		}
+		private void SetupMFD4Renderer()
+		{
+			_renderers.MFD4 = new MfdRenderer
+			{
+				Options =
+					new MfdRenderer.MfdRendererOptions
+					{
+						BlankImage = Resources.rightMFDBlankImage,
+						TestAlignmentImage = Resources.mfd4TestAlignmentImage
+					}
+			};
+		}
+		private void SetupHUDRenderer()
+		{
+			_renderers.HUD = new MfdRenderer
+			{
+				Options =
+					new MfdRenderer.MfdRendererOptions
+					{
+						BlankImage = Resources.hudBlankImage,
+						TestAlignmentImage = Resources.hudTestAlignmentImage
+					}
+			};
+		}
         private void SetupVVIRenderer()
         {
 	        _renderers.VVI = _vviRendererFactory.Create();

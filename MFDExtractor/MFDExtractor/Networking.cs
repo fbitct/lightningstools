@@ -60,11 +60,7 @@ namespace MFDExtractor
     public interface IExtractorClient
     {
         bool IsConnected { get; }
-        Image GetMfd4Bitmap();
-        Image GetMfd3Bitmap();
-        Image GetLeftMfdBitmap();
-        Image GetRightMfdBitmap();
-        Image GetHudBitmap();
+        Image GetInstrumentImagesSprite();
         FlightData GetFlightData();
         void SendMessageToServer(Message message);
         void ClearPendingMessagesToClientFromServer();
@@ -73,11 +69,7 @@ namespace MFDExtractor
 
     public interface IExtractorServer
     {
-        byte[] GetMfd4BitmapBytes();
-        byte[] GetMfd3BitmapBytes();
-        byte[] GetLeftMfdBitmapBytes();
-        byte[] GetRightMfdBitmapBytes();
-        byte[] GetHudBitmapBytes();
+        byte[] GetInstrumentImagesSpriteBytes();
         FlightData GetFlightData();
         void SubmitMessageToServerFromClient(Message message);
         void ClearPendingMessagesToClientFromServer();
@@ -137,51 +129,11 @@ namespace MFDExtractor
             }
         }
 
-        public Image GetMfd4Bitmap()
-        {
-	        if (_server != null)
-            {
-                var raw = _server.GetMfd4BitmapBytes();
-                return Util.BitmapFromBytes(raw);
-            }
-	        return null;
-        }
-
-	    public Image GetMfd3Bitmap()
+	    public Image GetInstrumentImagesSprite()
 	    {
 		    if (_server != null)
             {
-                var raw = _server.GetMfd3BitmapBytes();
-                return Util.BitmapFromBytes(raw);
-            }
-		    return null;
-	    }
-
-	    public Image GetLeftMfdBitmap()
-	    {
-		    if (_server != null)
-            {
-                var raw = _server.GetLeftMfdBitmapBytes();
-                return Util.BitmapFromBytes(raw);
-            }
-		    return null;
-	    }
-
-	    public Image GetRightMfdBitmap()
-	    {
-		    if (_server != null)
-            {
-                var raw = _server.GetRightMfdBitmapBytes();
-                return Util.BitmapFromBytes(raw);
-            }
-		    return null;
-	    }
-
-	    public Image GetHudBitmap()
-	    {
-		    if (_server != null)
-            {
-                var raw = _server.GetHudBitmapBytes();
+                var raw = _server.GetInstrumentImagesSpriteBytes();
                 return Util.BitmapFromBytes(raw);
             }
 		    return null;
@@ -320,35 +272,15 @@ namespace MFDExtractor
 
     public class ExtractorServer : MarshalByRefObject, IExtractorServer
     {
-        private static readonly object _mfd4BitmapLock = new object();
-        private static readonly object _mfd3BitmapLock = new object();
-        private static readonly object _leftMfdBitmapLock = new object();
-        private static readonly object _rightMfdBitmapLock = new object();
-        private static readonly object _hudBitmapLock = new object();
+        private static readonly object _instrumentImagesSpriteLock = new object();
         private static readonly object _flightDataLock = new object();
         private static FlightData _flightData;
-        private static Image _mfd4Bitmap;
-        private static Image _mfd3Bitmap;
-        private static Image _leftMfdBitmap;
-        private static Image _rightMfdBitmap;
-        private static Image _hudBitmap;
-        private static long _mfd4ImageSequenceNum;
-        private static long _mfd3ImageSequenceNum;
-        private static long _leftMfdImageSequenceNum;
-        private static long _rightMfdImageSequenceNum;
-        private static long _hudImageSequenceNum;
+        private static Image _instrumentImagesSprite;
+        private static long _instrumentImagesSpriteSequenceNum;
         private static long _flightDataSequenceNum;
-        private static long _lastRetrievedMfd4ImageSequenceNum = 0;
-        private static long _lastRetrievedMfd3ImageSequenceNum = 0;
-        private static long _lastRetrievedLeftMfdImageSequenceNum = 0;
-        private static long _lastRetrievedRightMfdImageSequenceNum = 0;
-        private static long _lastRetrievedHudImageSequenceNum = 0;
+        private static long _lastRetrievedInstrumentImagesSpriteSequenceNum = 0;
         private static long _lastRetrievedFlightDataSequenceNum = 0;
-        private static byte[] _lastRetrievedMfd4ImageBytes;
-        private static byte[] _lastRetrievedMfd3ImageBytes;
-        private static byte[] _lastRetrievedLeftMfdImageBytes;
-        private static byte[] _lastRetrievedRightMfdImageBytes;
-        private static byte[] _lastRetrievedHudImageBytes;
+        private static byte[] _lastRetrievedInstrumentImagesSpriteBytes;
         private static FlightData _lastRetrievedFlightData;
         private static string _compressionType = "LZW";
         private static string _imageFormat = "TIFF";
@@ -383,124 +315,29 @@ namespace MFDExtractor
             return toReturn;
         }
 
-        public byte[] GetMfd4BitmapBytes()
+
+
+        public byte[] GetInstrumentImagesSpriteBytes()
         {
             byte[] toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
             }
-            if (_lastRetrievedMfd4ImageSequenceNum == _mfd4ImageSequenceNum)
+            if (_lastRetrievedInstrumentImagesSpriteSequenceNum == _instrumentImagesSpriteSequenceNum)
             {
-                return _lastRetrievedMfd4ImageBytes;
+                return _lastRetrievedInstrumentImagesSpriteBytes;
             }
-            if (_mfd4Bitmap == null)
-            {
-                return null;
-            }
-            lock (_mfd4BitmapLock)
-            {
-                Util.ConvertPixelFormat(ref _mfd4Bitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Util.BytesFromBitmap(_mfd4Bitmap, _compressionType, _imageFormat);
-                Interlocked.Exchange(ref _lastRetrievedMfd4ImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-
-        public byte[] GetMfd3BitmapBytes()
-        {
-            byte[] toReturn;
-            if (!Extractor.State.SimRunning)
+            if (_instrumentImagesSprite == null)
             {
                 return null;
             }
-            if (_lastRetrievedMfd3ImageSequenceNum == _mfd3ImageSequenceNum)
-            {
-                return _lastRetrievedMfd3ImageBytes;
-            }
-            if (_mfd3Bitmap == null)
-            {
-                return null;
-            }
-            lock (_mfd3BitmapLock)
-            {
-                Util.ConvertPixelFormat(ref _mfd3Bitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Util.BytesFromBitmap(_mfd3Bitmap, _compressionType, _imageFormat);
-                Interlocked.Exchange(ref _lastRetrievedMfd3ImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-
-        public byte[] GetLeftMfdBitmapBytes()
-        {
-            byte[] toReturn;
-            if (!Extractor.State.SimRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedLeftMfdImageSequenceNum == _leftMfdImageSequenceNum)
-            {
-                return _lastRetrievedLeftMfdImageBytes;
-            }
-            if (_leftMfdBitmap == null)
-            {
-                return null;
-            }
-            lock (_leftMfdBitmapLock)
-            {
-                Util.ConvertPixelFormat(ref _leftMfdBitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Util.BytesFromBitmap(_leftMfdBitmap, _compressionType, _imageFormat);
-                Interlocked.Exchange(ref _lastRetrievedLeftMfdImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-
-        public byte[] GetRightMfdBitmapBytes()
-        {
-            byte[] toReturn;
-
-            if (!Extractor.State.SimRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedRightMfdImageSequenceNum == _rightMfdImageSequenceNum)
-            {
-                return _lastRetrievedRightMfdImageBytes;
-            }
-            if (_rightMfdBitmap == null)
-            {
-                return null;
-            }
-            lock (_rightMfdBitmapLock)
-            {
-                Util.ConvertPixelFormat(ref _rightMfdBitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Util.BytesFromBitmap(_rightMfdBitmap, _compressionType, _imageFormat);
-                Interlocked.Exchange(ref _lastRetrievedRightMfdImageBytes, toReturn);
-            }
-            return toReturn;
-        }
-
-        public byte[] GetHudBitmapBytes()
-        {
-            byte[] toReturn = null;
-            if (!Extractor.State.SimRunning)
-            {
-                return null;
-            }
-            if (_lastRetrievedHudImageSequenceNum == _hudImageSequenceNum)
-            {
-                return _lastRetrievedHudImageBytes;
-            }
-            if (_hudBitmap == null)
-            {
-                return null;
-            }
-            lock (_hudBitmapLock)
+            lock (_instrumentImagesSpriteLock)
             {
                 //TODO: check image format when BMS is set to 16-bit color, see if it's 565 or 555
-                Util.ConvertPixelFormat(ref _hudBitmap, PixelFormat.Format16bppRgb565);
-                toReturn = Util.BytesFromBitmap(_hudBitmap, _compressionType, _imageFormat);
-                Interlocked.Exchange(ref _lastRetrievedHudImageBytes, toReturn);
+                Util.ConvertPixelFormat(ref _instrumentImagesSprite, PixelFormat.Format16bppRgb565);
+                toReturn = Util.BytesFromBitmap(_instrumentImagesSprite, _compressionType, _imageFormat);
+                Interlocked.Exchange(ref _lastRetrievedInstrumentImagesSpriteBytes, toReturn);
             }
             return toReturn;
         }
@@ -635,99 +472,25 @@ namespace MFDExtractor
             Interlocked.Increment(ref _flightDataSequenceNum);
         }
 
-        internal static void SetMfd4Bitmap(Image bitmap)
-        {
-            var cloned = Util.CloneBitmap(bitmap);
-            lock (_mfd4BitmapLock)
-            {
-                if (_mfd4Bitmap != null)
-                {
-                    var oldRef = _mfd4Bitmap;
-                    Interlocked.Exchange(ref _mfd4Bitmap, cloned);
-                    Common.Util.DisposeObject(oldRef);
-                }
-                else
-                {
-                    Interlocked.Exchange(ref _mfd4Bitmap, cloned);
-                }
-            }
-            Interlocked.Increment(ref _mfd4ImageSequenceNum);
-        }
+        
 
-        internal static void SetMfd3Bitmap(Image bitmap)
+        internal static void SetInstrumentImagesSprite(Image bitmap)
         {
             var cloned = Util.CloneBitmap(bitmap);
-            lock (_mfd3BitmapLock)
+            lock (_instrumentImagesSpriteLock)
             {
-                if (_mfd3Bitmap != null)
+                if (_instrumentImagesSprite != null)
                 {
-                    var oldRef = _mfd3Bitmap;
-                    Interlocked.Exchange(ref _mfd3Bitmap, cloned);
+                    var oldRef = _instrumentImagesSprite;
+                    Interlocked.Exchange(ref _instrumentImagesSprite, cloned);
                     Common.Util.DisposeObject(oldRef);
                 }
                 else
                 {
-                    Interlocked.Exchange(ref _mfd3Bitmap, cloned);
+                    Interlocked.Exchange(ref _instrumentImagesSprite, cloned);
                 }
             }
-            Interlocked.Increment(ref _mfd3ImageSequenceNum);
-        }
-
-        internal static void SetLeftMfdBitmap(Image bitmap)
-        {
-            var cloned = Util.CloneBitmap(bitmap);
-            lock (_leftMfdBitmapLock)
-            {
-                if (_leftMfdBitmap != null)
-                {
-                    var oldRef = _leftMfdBitmap;
-                    Interlocked.Exchange(ref _leftMfdBitmap, cloned);
-                    Common.Util.DisposeObject(oldRef);
-                }
-                else
-                {
-                    Interlocked.Exchange(ref _leftMfdBitmap, cloned);
-                }
-            }
-            Interlocked.Increment(ref _leftMfdImageSequenceNum);
-        }
-
-        internal static void SetRightMfdBitmap(Image bitmap)
-        {
-            var cloned = Util.CloneBitmap(bitmap);
-            lock (_rightMfdBitmapLock)
-            {
-                if (_rightMfdBitmap != null)
-                {
-                    var oldRef = _rightMfdBitmap;
-                    Interlocked.Exchange(ref _rightMfdBitmap, cloned);
-                    Common.Util.DisposeObject(oldRef);
-                }
-                else
-                {
-                    Interlocked.Exchange(ref _rightMfdBitmap, cloned);
-                }
-            }
-            Interlocked.Increment(ref _rightMfdImageSequenceNum);
-        }
-
-        internal static void SetHudBitmap(Image bitmap)
-        {
-            var cloned = Util.CloneBitmap(bitmap);
-            lock (_hudBitmapLock)
-            {
-                if (_hudBitmap != null)
-                {
-                    var oldRef = _hudBitmap;
-                    Interlocked.Exchange(ref _hudBitmap, cloned);
-                    Common.Util.DisposeObject(oldRef);
-                }
-                else
-                {
-                    Interlocked.Exchange(ref _hudBitmap, cloned);
-                }
-            }
-            Interlocked.Increment(ref _hudImageSequenceNum);
+            Interlocked.Increment(ref _instrumentImagesSpriteSequenceNum);
         }
 
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)

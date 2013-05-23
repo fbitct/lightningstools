@@ -282,8 +282,8 @@ namespace MFDExtractor.UI
 
             chkEnableMFD4.Checked = settings.EnableMfd4Output;
             chkEnableMFD3.Checked = settings.EnableMfd3Output;
-            chkEnableLeftMFD.Checked = settings.EnableLeftMFDOutput;
-            chkEnableRightMFD.Checked = settings.EnableRightMFDOutput;
+            chkEnableLeftMFD.Checked = settings.EnableLMFDOutput;
+            chkEnableRightMFD.Checked = settings.EnableRMFDOutput;
             chkEnableHud.Checked = settings.EnableHudOutput;
 
             cmdRecoverHud.Enabled = chkEnableHud.Checked;
@@ -665,8 +665,8 @@ namespace MFDExtractor.UI
             settings.CompressionType = cboCompressionType.SelectedItem.ToString();
             settings.EnableMfd4Output = chkEnableMFD4.Checked;
             settings.EnableMfd3Output = chkEnableMFD3.Checked;
-            settings.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
-            settings.EnableRightMFDOutput = chkEnableRightMFD.Checked;
+            settings.EnableLMFDOutput = chkEnableLeftMFD.Checked;
+            settings.EnableRMFDOutput = chkEnableRightMFD.Checked;
             settings.EnableHudOutput = chkEnableHud.Checked;
 
             settings.EnableRWROutput = chkAzimuthIndicator.Checked;
@@ -1052,7 +1052,7 @@ namespace MFDExtractor.UI
 
         private void chkEnableLeftMFD_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.Default.EnableLeftMFDOutput = chkEnableLeftMFD.Checked;
+            Settings.Default.EnableLMFDOutput = chkEnableLeftMFD.Checked;
             cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
             //StopAndRestartExtractor();
             BringToFront();
@@ -1060,7 +1060,7 @@ namespace MFDExtractor.UI
 
         private void chkEnableRightMFD_CheckedChanged(object sender, EventArgs e)
         {
-            Settings.Default.EnableRightMFDOutput = chkEnableRightMFD.Checked;
+            Settings.Default.EnableRMFDOutput = chkEnableRightMFD.Checked;
             cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
             //StopAndRestartExtractor();
             BringToFront();
