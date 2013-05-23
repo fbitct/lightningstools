@@ -10,7 +10,7 @@ namespace F4TexSharedMem
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class Reader : IDisposable
     {
-        private const string SHARED_MEMORY_FILE_NAME = "FalconTexturesSharedMemoryArea";
+        private const string SharedMemoryFileName = "FalconTexturesSharedMemoryArea";
         private bool _dataAvailable;
         private bool _disposed;
         private PixelFormat _format = PixelFormat.Undefined;
@@ -42,18 +42,13 @@ namespace F4TexSharedMem
                     {
                         checkFor = Marshal.ReadInt32(_lpStartAddress);
                     }
-                    catch (Exception)
+                    catch
                     {
                     }
                     _dataAvailable = checkFor != 0;
                 }
                 return _dataAvailable;
             }
-        }
-
-        private NativeMethods.DDSURFACEDESC2 SurfaceDesc
-        {
-            get { return _surfaceDesc; }
         }
 
         public Bitmap FullImage
@@ -74,10 +69,6 @@ namespace F4TexSharedMem
         private void DetectImageFormat()
         {
             _formatDetected = false;
-            if (!_dataAvailable)
-            {
-                var dataAvailable = IsDataAvailable;
-            }
             if (!_dataAvailable)
             {
                 throw new InvalidOperationException("Image data not available.");
@@ -179,31 +170,27 @@ namespace F4TexSharedMem
         {
             CloseSM();
             _hFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
-                                                                SHARED_MEMORY_FILE_NAME);
+                                                                SharedMemoryFileName);
             _lpStartAddress = NativeMethods.MapViewOfFile(_hFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0,
                                                           IntPtr.Zero);
         }
 
         private void CloseSM()
         {
-            if (!_hFileMappingObject.Equals(IntPtr.Zero))
-            {
-                NativeMethods.UnmapViewOfFile(_lpStartAddress);
-                NativeMethods.CloseHandle(_hFileMappingObject);
-            }
+	        if (_hFileMappingObject.Equals(IntPtr.Zero)) return;
+	        NativeMethods.UnmapViewOfFile(_lpStartAddress);
+	        NativeMethods.CloseHandle(_hFileMappingObject);
         }
 
         internal void Dispose(bool disposing)
         {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    CloseSM();
-                }
+	        if (_disposed) return;
+	        if (disposing)
+	        {
+		        CloseSM();
+	        }
 
-                _disposed = true;
-            }
+	        _disposed = true;
         }
     }
 }
