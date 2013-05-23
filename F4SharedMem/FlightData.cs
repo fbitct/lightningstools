@@ -53,7 +53,7 @@ namespace F4SharedMem
             for (int i = 0; i < fields.Length; i++)
             {
                 FieldInfo currentField = fields[i];
-                FieldInfo thisField = thisType.GetField(currentField.Name);
+                FieldInfo thisField = thisType.GetField(currentField.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if (thisField == null) continue;
                 Type currentFieldType = currentField.FieldType;
                 if (currentFieldType.IsArray)

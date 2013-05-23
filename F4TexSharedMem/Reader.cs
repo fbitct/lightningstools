@@ -81,7 +81,7 @@ namespace F4TexSharedMem
             _formatDetected = false;
             if (!_dataAvailable)
             {
-                throw new InvalidOperationException("Image data not available.");
+                return;
             }
             _surfaceDesc =
                 (NativeMethods.DDSURFACEDESC2)
@@ -98,11 +98,11 @@ namespace F4TexSharedMem
                     _format = PixelFormat.Format32bppRgb;
                     break;
             }
-            if (_format == PixelFormat.Undefined)
+            if (_format != PixelFormat.Undefined)
             {
-                throw new InvalidOperationException("Image data format could not be detected.");
+                _formatDetected = true; 
             }
-            _formatDetected = true;
+            
         }
 
         public IntPtr GetImagePointer(ref Rectangle rect)

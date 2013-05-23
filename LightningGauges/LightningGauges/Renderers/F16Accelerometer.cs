@@ -99,6 +99,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var acceleration = value;
+                    if (Double.IsNaN(acceleration)) acceleration = 1;
                     if (acceleration < MIN_INDICATABLE_GS) acceleration = MIN_INDICATABLE_GS;
                     if (acceleration > MAX_INDICATABLE_GS) acceleration = MAX_INDICATABLE_GS;
                     if (acceleration > _maxGs) _maxGs = acceleration;

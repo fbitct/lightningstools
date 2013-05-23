@@ -45,23 +45,23 @@ namespace MFDExtractor.BMSSupport
 				while (!reader.EndOfStream)
 				{
 					var currentLine = reader.ReadLine() ?? string.Empty;
-					if (currentLine.ToLowerInvariant().StartsWith("hud"))
+					if (currentLine.ToLowerInvariant().StartsWith("hud\t"))
 					{
 						_coordinates.HUD = ReadCaptureCoordinates(currentLine);
 					}
-					else if (currentLine.ToLowerInvariant().StartsWith("mfd4"))
+                    else if (currentLine.ToLowerInvariant().StartsWith("mfd4\t"))
 					{
 						_coordinates.MFD4 = ReadCaptureCoordinates(currentLine);
 					}
-					else if (currentLine.ToLowerInvariant().StartsWith("mfd3"))
+                    else if (currentLine.ToLowerInvariant().StartsWith("mfd3\t"))
 					{
 						_coordinates.MFD3= ReadCaptureCoordinates(currentLine);
 					}
-					else if (currentLine.ToLowerInvariant().StartsWith("mfdleft"))
+                    else if (currentLine.ToLowerInvariant().StartsWith("mfdleft\t"))
 					{
 						_coordinates.RMFD= ReadCaptureCoordinates(currentLine);
 					}
-					else if (currentLine.ToLowerInvariant().StartsWith("mfdright"))
+                    else if (currentLine.ToLowerInvariant().StartsWith("mfdright\t"))
 					{
 						_coordinates.LMFD= ReadCaptureCoordinates(currentLine);
 					}

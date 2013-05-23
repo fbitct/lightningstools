@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Common.SimSupport;
 using System.Drawing;
 
@@ -37,12 +38,24 @@ namespace MFDExtractor.Renderer
 			{
 				if (Options.SourceImage != null)
 				{
-					graphics.DrawImage(Options.SourceImage, bounds, Options.SourceRectangle, GraphicsUnit.Pixel);
+				    RenderFromSharedmemSurface(graphics, bounds);
 				}
 			}
 		}
+	    private void RenderFromSharedmemSurface(Graphics graphics, Rectangle bounds)
+	    {
+            lock (Options.SourceImage)
+	        {
+	            try
+	            {
+	                graphics.DrawImage(Options.SourceImage, bounds, Options.SourceRectangle, GraphicsUnit.Pixel);
+	            }
+	            catch (AccessViolationException){}
+	            catch (InvalidOperationException){}
+	        }
+	    }
 
-		public MfdRendererInstrumentState InstrumentState { get; set; }
+	    public MfdRendererInstrumentState InstrumentState { get; set; }
 		public MfdRendererOptions Options { get; set; }
 		public override void Dispose() {}
 		~MfdRenderer()
