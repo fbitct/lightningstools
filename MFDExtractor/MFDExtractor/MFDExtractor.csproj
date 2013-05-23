@@ -215,12 +215,6 @@
     <Compile Include="UI\frmBMSOptions.Designer.cs">
       <DependentUpon>frmBMSOptions.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\frmSelectImportExportCoordinates.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\frmSelectImportExportCoordinates.Designer.cs">
-      <DependentUpon>frmSelectImportExportCoordinates.cs</DependentUpon>
-    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Networking.cs" />
     <Compile Include="UI\DraggableForm.cs">
@@ -263,10 +257,6 @@
     <EmbeddedResource Include="UI\frmOptions.resx">
       <SubType>Designer</SubType>
       <DependentUpon>frmOptions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\frmSelectImportExportCoordinates.resx">
-      <DependentUpon>frmSelectImportExportCoordinates.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\InstrumentForm.resx">
       <SubType>Designer</SubType>
