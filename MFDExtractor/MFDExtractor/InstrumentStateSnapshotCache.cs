@@ -16,6 +16,7 @@ namespace MFDExtractor
 
 		public bool CaptureInstrumentStateSnapshotAndCheckIfStale(IInstrumentRenderer renderer, InstrumentForm instrumentForm)
 		{
+		    if (renderer == null) return false;
 			const int staleDataTimeout = 500;
 			var oldStateSnapshot = _instrumentStates.ContainsKey(renderer) ? _instrumentStates[renderer] : InstrumentStateSnapshot.Default;
 			var newStateSnapshot = CaptureStateSnapshot(renderer);

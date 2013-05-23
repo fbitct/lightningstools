@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MFDExtractor.BMSSupport
 {
@@ -19,13 +20,13 @@ namespace MFDExtractor.BMSSupport
 		public FileInfo FindThreeDeeCockpitFile()
 		{
 			var basePath = _bmsRunningExecutableLocator.BMSExePath;
-			return basePath == null ? null : Paths(basePath).FirstOrDefault();
+			return basePath == null ? null : Paths(basePath).FirstOrDefault(x=>x!=null);
         }
 		private static IEnumerable<FileInfo> Paths(string basePath)
 		{
-			yield return SearchIn(Path.Combine(basePath, @"\art\ckptartn"), "3dckpit.dat");
-			yield return SearchIn(Path.Combine(basePath, @"\art\ckptart"), "3dckpit.dat");
-		}
+            yield return SearchIn(Path.Combine(basePath, @"..\..\Data\art\ckptartn"), "3dckpit.dat");
+            yield return SearchIn(Path.Combine(basePath, @"..\..\Data\art\ckptart"), "3dckpit.dat");
+        }
 		private static FileInfo SearchIn(string searchPath, string fileName)
 		{
 			var dir = new DirectoryInfo(searchPath);

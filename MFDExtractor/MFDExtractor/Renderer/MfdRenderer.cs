@@ -23,21 +23,21 @@ namespace MFDExtractor.Renderer
 			{
 				if (Options.BlankImage != null)
 				{
-					graphics.DrawImage(Options.BlankImage, 0, 0, new Rectangle(new Point(0, 0), Options.BlankImage.Size),GraphicsUnit.Pixel);
+					graphics.DrawImage(Options.BlankImage, bounds, new Rectangle(new Point(0, 0), Options.BlankImage.Size),GraphicsUnit.Pixel);
 				}
 			}
 			else if (InstrumentState.TestMode)
 			{
 				if (Options.TestAlignmentImage != null)
 				{
-					graphics.DrawImage(Options.TestAlignmentImage, 0, 0, new Rectangle(new Point(0, 0), Options.TestAlignmentImage.Size), GraphicsUnit.Pixel);
+					graphics.DrawImage(Options.TestAlignmentImage, bounds, new Rectangle(new Point(0, 0), Options.TestAlignmentImage.Size), GraphicsUnit.Pixel);
 				}
 			}
 			else
 			{
 				if (Options.SourceImage != null)
 				{
-					graphics.DrawImage(Options.SourceImage, 0, 0, Options.SourceRectangle, GraphicsUnit.Pixel);
+					graphics.DrawImage(Options.SourceImage, bounds, Options.SourceRectangle, GraphicsUnit.Pixel);
 				}
 			}
 		}

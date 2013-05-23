@@ -12,7 +12,7 @@ namespace MFDExtractor.BMSSupport
 
 		public DoubleResolutionRTTChecker(IBMSConfigFileReader bmsConfigFileReader=null)
 		{
-			_bmsConfigFileReader = bmsConfigFileReader;
+			_bmsConfigFileReader = bmsConfigFileReader ?? new BMSConfigFileReader();
 		}
 		public bool IsDoubleResolutionRtt
 		{

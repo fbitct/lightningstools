@@ -274,7 +274,7 @@
             this.lblBmsInstallationPath.Name = "lblBmsInstallationPath";
             this.lblBmsInstallationPath.Size = new System.Drawing.Size(139, 13);
             this.lblBmsInstallationPath.TabIndex = 3;
-            this.lblBmsInstallationPath.Text = "BMS4.32 Installation Folder:";
+            this.lblBmsInstallationPath.Text = "BMS Installation Folder:";
             // 
             // txtBmsInstallationPath
             // 

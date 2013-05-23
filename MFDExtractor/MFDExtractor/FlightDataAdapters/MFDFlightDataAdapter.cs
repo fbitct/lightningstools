@@ -17,7 +17,7 @@ namespace MFDExtractor.FlightDataAdapters
 				mfd.Options.SourceImage = instrumentImagesSprite;
 				mfd.Options.SourceRectangle = imageSourceRectangle;
 				mfd.InstrumentState.TestMode = extractorState.TestMode;
-				mfd.InstrumentState.Blank = extractorState.SimRunning;
+				mfd.InstrumentState.Blank = !extractorState.SimRunning;
 			}
 		}
 	}

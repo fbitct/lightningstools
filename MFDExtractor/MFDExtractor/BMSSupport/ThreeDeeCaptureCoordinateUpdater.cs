@@ -5,35 +5,37 @@ using log4net;
 
 namespace MFDExtractor.BMSSupport
 {
-	internal interface IThreeDeeCaptureCoordinateReader
+	internal interface IThreeDeeCaptureCoordinateUpdater
 	{
-		SharedMemorySpriteCoordinates Read3DCoordinatesFromCurrentBmsDatFile();
+		void Update3DCoordinatesFromCurrentBmsDatFile();
 	}
 
-	class ThreeDeeCaptureCoordinateReader : IThreeDeeCaptureCoordinateReader
+	class ThreeDeeCaptureCoordinateUpdater : IThreeDeeCaptureCoordinateUpdater
 	{
 		private readonly ILog _log;
+	    private readonly SharedMemorySpriteCoordinates _coordinates;
 		private readonly IThreeDeeCockpitFileFinder _threeDeeCockpitFileFinder;
 		private readonly IDoubleResolutionRTTChecker _doubleResolutionRTTChecker;
 
-		public ThreeDeeCaptureCoordinateReader(
-			IThreeDeeCockpitFileFinder threeDeeCockpitFileFinder=null,
+		public ThreeDeeCaptureCoordinateUpdater(
+            SharedMemorySpriteCoordinates coordinates,
+            IThreeDeeCockpitFileFinder threeDeeCockpitFileFinder=null,
 			IDoubleResolutionRTTChecker doubleResolutionRTTChecker = null,
 			ILog log=null)
 		{
+		    _coordinates = coordinates;
 			_threeDeeCockpitFileFinder = threeDeeCockpitFileFinder ?? new ThreeDeeCockpitFileFinder();
 			_doubleResolutionRTTChecker = doubleResolutionRTTChecker ?? new DoubleResolutionRTTChecker();
 
 			_log = log ?? LogManager.GetLogger(GetType());
 		}
-		public SharedMemorySpriteCoordinates Read3DCoordinatesFromCurrentBmsDatFile()
+        public void Update3DCoordinatesFromCurrentBmsDatFile()
 		{
-			var coordinates = new SharedMemorySpriteCoordinates();
 
 			var threeDeeCockpitFile = _threeDeeCockpitFileFinder.FindThreeDeeCockpitFile();
 			if (threeDeeCockpitFile == null)
 			{
-				return coordinates;
+				return;
 			}
 			var isDoubleResolution = _doubleResolutionRTTChecker.IsDoubleResolutionRtt;
 
@@ -45,35 +47,34 @@ namespace MFDExtractor.BMSSupport
 					var currentLine = reader.ReadLine() ?? string.Empty;
 					if (currentLine.ToLowerInvariant().StartsWith("hud"))
 					{
-						coordinates.HUD = ReadCaptureCoordinates(currentLine);
+						_coordinates.HUD = ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfd4"))
 					{
-						coordinates.MFD4 = ReadCaptureCoordinates(currentLine);
+						_coordinates.MFD4 = ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfd3"))
 					{
-						coordinates.MFD3= ReadCaptureCoordinates(currentLine);
+						_coordinates.MFD3= ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfdleft"))
 					{
-						coordinates.RMFD= ReadCaptureCoordinates(currentLine);
+						_coordinates.RMFD= ReadCaptureCoordinates(currentLine);
 					}
 					else if (currentLine.ToLowerInvariant().StartsWith("mfdright"))
 					{
-						coordinates.LMFD= ReadCaptureCoordinates(currentLine);
+						_coordinates.LMFD= ReadCaptureCoordinates(currentLine);
 					}
 				}
 			}
 			if (isDoubleResolution)
 			{
-				coordinates.LMFD = Common.Math.Util.MultiplyRectangle(coordinates.LMFD, 2);
-				coordinates.RMFD = Common.Math.Util.MultiplyRectangle(coordinates.RMFD, 2);
-				coordinates.MFD3 = Common.Math.Util.MultiplyRectangle(coordinates.MFD3, 2);
-				coordinates.MFD4 = Common.Math.Util.MultiplyRectangle(coordinates.MFD4, 2);
-				coordinates.HUD = Common.Math.Util.MultiplyRectangle(coordinates.HUD, 2);
+                _coordinates.LMFD = Common.Math.Util.MultiplyRectangle(_coordinates.LMFD, 2);
+                _coordinates.RMFD = Common.Math.Util.MultiplyRectangle(_coordinates.RMFD, 2);
+                _coordinates.MFD3 = Common.Math.Util.MultiplyRectangle(_coordinates.MFD3, 2);
+                _coordinates.MFD4 = Common.Math.Util.MultiplyRectangle(_coordinates.MFD4, 2);
+                _coordinates.HUD = Common.Math.Util.MultiplyRectangle(_coordinates.HUD, 2);
 			}
-			return coordinates;
 		}
 
 		private Rectangle ReadCaptureCoordinates(string configLine)
@@ -85,6 +86,7 @@ namespace MFDExtractor.BMSSupport
 				var rectangle = new Rectangle {X = Convert.ToInt32(tokens[10]), Y = Convert.ToInt32(tokens[11])};
 				rectangle.Width = Math.Abs(Convert.ToInt32(tokens[12]) - rectangle.X);
 				rectangle.Height = Math.Abs(Convert.ToInt32(tokens[13]) - rectangle.Y);
+			    return rectangle;
 			}
 			catch (Exception e)
 			{

@@ -108,9 +108,9 @@ namespace MFDExtractor
 
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
 	    private readonly IInstrumentFactory _instrumentFactory;
-		private readonly IThreeDeeCaptureCoordinateReader _threeDeeCaptureCoordinateReader;
+		private readonly IThreeDeeCaptureCoordinateUpdater _threeDeeCaptureCoordinateUpdater;
 	    private readonly IFlightDataRetriever _flightDataRetriever;
-		private SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
+		private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
 		#endregion
 
         #endregion
@@ -127,7 +127,7 @@ namespace MFDExtractor
 			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null,
             IInstrumentFactory instrumentFactory = null,
-			IThreeDeeCaptureCoordinateReader threeDeeCaptureCoordinateReader=null,
+			IThreeDeeCaptureCoordinateUpdater threeDeeCaptureCoordinateUpdater=null,
             IFlightDataRetriever flightDataRetriever= null,
 			IFlightDataUpdater flightDataUpdater =null)
         {
@@ -153,7 +153,7 @@ namespace MFDExtractor
 			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
-			_threeDeeCaptureCoordinateReader = threeDeeCaptureCoordinateReader ?? new ThreeDeeCaptureCoordinateReader();
+			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
 	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater(_texSmReader, _sharedMemorySpriteCoordinates, State);
         }
         private void SetupInstruments()
@@ -471,6 +471,14 @@ namespace MFDExtractor
 			try
 			{
 				var toWait = new List<WaitHandle>();
+                _instruments[InstrumentType.HUD].Signal(toWait, State);
+                _instruments[InstrumentType.LMFD].Signal(toWait, State);
+                _instruments[InstrumentType.RMFD].Signal(toWait, State);
+                _instruments[InstrumentType.MFD3].Signal(toWait, State);
+                _instruments[InstrumentType.MFD4].Signal(toWait, State);
+
+
+
 				_instruments[InstrumentType.RWR].Signal(toWait, State);
 				_instruments[InstrumentType.ADI].Signal(toWait, State);
 				_instruments[InstrumentType.ISIS].Signal(toWait, State);
@@ -478,7 +486,7 @@ namespace MFDExtractor
 				_instruments[InstrumentType.EHSI].Signal(toWait, State);
 				_instruments[InstrumentType.Altimeter].Signal(toWait, State);
 				_instruments[InstrumentType.ASI].Signal(toWait, State);
-				_instruments[InstrumentType.BackupADI].Signal(toWait, State);
+				_instruments[InstrumentType.Backup_ADI].Signal(toWait, State);
 				_instruments[InstrumentType.VVI].Signal(toWait, State);
 				_instruments[InstrumentType.AOAIndicator].Signal(toWait, State);
 				_instruments[InstrumentType.Compass].Signal(toWait, State);
@@ -510,9 +518,9 @@ namespace MFDExtractor
 				_instruments[InstrumentType.PFL].Signal(toWait, State);
 
 				_instruments[InstrumentType.CautionPanel].Signal(toWait, State);
-				_instruments[InstrumentType.CMDSPanel].Signal(toWait, State);
+				_instruments[InstrumentType.CMDS].Signal(toWait, State);
 
-				_instruments[InstrumentType.LandingGearLights].Signal(toWait, State);
+				_instruments[InstrumentType.GearLights].Signal(toWait, State);
 				_instruments[InstrumentType.Speedbrake].Signal(toWait, State);
 
 				WaitAllAndClearList(toWait, 1000);
@@ -626,14 +634,18 @@ namespace MFDExtractor
 				(_sharedMemorySpriteCoordinates.MFD3 == Rectangle.Empty) ||
 				(_sharedMemorySpriteCoordinates.MFD4 == Rectangle.Empty))
 	        {
-	            _sharedMemorySpriteCoordinates = _threeDeeCaptureCoordinateReader.Read3DCoordinatesFromCurrentBmsDatFile();
+	            _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile();
 	        }
 	    }
 
 	    private void ResetThreeDeeCaptureCoordinates()
 	    {
-	        _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
-	    }
+	        _sharedMemorySpriteCoordinates.HUD = Rectangle.Empty;
+            _sharedMemorySpriteCoordinates.LMFD = Rectangle.Empty;
+            _sharedMemorySpriteCoordinates.RMFD = Rectangle.Empty;
+            _sharedMemorySpriteCoordinates.MFD3 = Rectangle.Empty;
+            _sharedMemorySpriteCoordinates.MFD4 = Rectangle.Empty;
+        }
 
 	    private static bool NeedToCaptureMFDsAndOrHud
 	    {
