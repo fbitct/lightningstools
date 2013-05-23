@@ -73,21 +73,11 @@ namespace F4Utils.Process
                 int processId;
                 NativeMethods.GetWindowThreadProcessId(windowHandle, out processId);
                 var process = System.Diagnostics.Process.GetProcessById(processId);
-				return GetMainModuleFilepath(processId);
+                return process.MainModule.FileName;
             }
             return null;
         }
-		private static string GetMainModuleFilepath(int processId)
-		{
-			var wmiQueryString = "SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE ProcessId = " + processId;
-			using (var searcher = new ManagementObjectSearcher(wmiQueryString))
-			using (var results = searcher.Get())
-			{
-				return results.Cast<ManagementObject>()
-					.Select(x=>x["ExecutablePath"])
-					.Cast<string>().FirstOrDefault(x => x.StartsWith(MODULENAME_F4) || x.StartsWith(MODULENAME_FALCON));
-			}
-		}
+		
         public static IntPtr GetFalconWindowHandle()
         {
             var hWnd = NativeMethods.FindWindow(WINDOW_CLASS_FALCONDISPLAY, null);
