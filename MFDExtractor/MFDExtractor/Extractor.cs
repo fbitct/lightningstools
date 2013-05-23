@@ -40,7 +40,6 @@ namespace MFDExtractor
         #region Output Window Coordinates
 
         private readonly IFlightDataUpdater _flightDataUpdater = new FlightDataUpdater();
-        private bool _sim3DDataAvailable;
 
         #endregion
 
@@ -446,7 +445,7 @@ namespace MFDExtractor
 
         private Image Get3D(Rectangle rttInputRectangle)
         {
-            if (!State.KeepRunning || (!State.SimRunning || !_sim3DDataAvailable) || rttInputRectangle == Rectangle.Empty)
+            if (!State.KeepRunning || (!State.SimRunning) || rttInputRectangle == Rectangle.Empty)
             {
                 return null;
             }
@@ -909,10 +908,7 @@ namespace MFDExtractor
                         if (count%1 == 0)
                         {
                             count = 0;
-
-                            _sim3DDataAvailable = State.SimRunning || State.NetworkMode == NetworkMode.Client;
-
-                            if (_sim3DDataAvailable)
+							if (State.SimRunning || State.NetworkMode == NetworkMode.Client)
                             {
                                 try
                                 {
