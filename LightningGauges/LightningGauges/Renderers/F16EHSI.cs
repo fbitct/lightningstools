@@ -123,8 +123,10 @@ namespace LightningGauges.Renderers
                 FromFlag = false;
                 ShowToFromFlag = true;
                 NoDataFlag = false;
+                NoPowerFlag = false; //Added by Falcas 28-10-2012
             }
 
+            public bool NoPowerFlag { get; set; }
             public bool NoDataFlag { get; set; }
             public bool ShowToFromFlag { get; set; }
             public bool ToFlag { get; set; }
@@ -338,7 +340,11 @@ namespace LightningGauges.Renderers
 
                 var outerRect = new RectangleF(0, 0, width, height);
 
-                if (InstrumentState.NoDataFlag)
+                if (InstrumentState.NoPowerFlag)
+                {
+
+                }
+                else if (InstrumentState.NoDataFlag)
                 {
                     DrawNoDataFlag(gfx, outerRect);
                 }

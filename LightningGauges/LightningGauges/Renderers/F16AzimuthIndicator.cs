@@ -22,7 +22,7 @@ namespace LightningGauges.Renderers
     {
         #region EWMSMode enum
 
-        public enum EWMSMode
+        public enum EWMSMode :int
         {
             Off,
             Standby,
@@ -77,6 +77,9 @@ namespace LightningGauges.Renderers
 
         private static readonly Font _symbolTextFontLarge = new Font("Lucida Console", 15, FontStyle.Bold,
                                                                      GraphicsUnit.Point);
+
+        private static readonly Font _TestTextFontLarge = new Font("Lucida Console", 20, FontStyle.Bold,
+                                                                    GraphicsUnit.Point); //Added Falcas 07-11-2012, For RWR test.
 
         private static readonly Color _scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
         private static readonly Pen _scopeGreenPen = new Pen(_scopeGreenColor);
@@ -381,466 +384,469 @@ namespace LightningGauges.Renderers
                                   new Rectangle(0, 0, backgroundWidth, backgroundHeight), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
-                if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
+                if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay && InstrumentState.RWRPowerOn)
                 {
-                    //DRAW OSB LEGENDS
-                    var verticalOsbLegendLHSFormat = new StringFormat();
-                    verticalOsbLegendLHSFormat.Alignment = StringAlignment.Far;
-                    verticalOsbLegendLHSFormat.LineAlignment = StringAlignment.Center;
+                     //Added Falcas 28-10-2012, If there is no power keep blank
+                     //DRAW OSB LEGENDS
+                        var verticalOsbLegendLHSFormat = new StringFormat();
+                        verticalOsbLegendLHSFormat.Alignment = StringAlignment.Far;
+                        verticalOsbLegendLHSFormat.LineAlignment = StringAlignment.Center;
 
-                    var verticalOsbLegendRHSFormat = new StringFormat();
-                    verticalOsbLegendRHSFormat.Alignment = StringAlignment.Near;
-                    verticalOsbLegendRHSFormat.LineAlignment = StringAlignment.Center;
+                        var verticalOsbLegendRHSFormat = new StringFormat();
+                        verticalOsbLegendRHSFormat.Alignment = StringAlignment.Near;
+                        verticalOsbLegendRHSFormat.LineAlignment = StringAlignment.Center;
 
-                    var verticalOsbLegendWidth = 15;
-                    var verticalOsbLegendHeight = 50;
+                        var verticalOsbLegendWidth = 15;
+                        var verticalOsbLegendHeight = 50;
 
-                    var leftLegend1Rectangle = new Rectangle(0, 7, verticalOsbLegendWidth, verticalOsbLegendHeight);
-                    var leftLegend2Rectangle = new Rectangle(0, 68, verticalOsbLegendWidth, verticalOsbLegendHeight + 10);
-                    var leftLegend3Rectangle = new Rectangle(0, 135, verticalOsbLegendWidth, verticalOsbLegendHeight);
-                    var leftLegend4Rectangle = new Rectangle(0, 200, verticalOsbLegendWidth, verticalOsbLegendHeight);
-                    var rightLegend1Rectangle = new Rectangle(width - verticalOsbLegendWidth, leftLegend1Rectangle.Top,
-                                                              leftLegend1Rectangle.Width, verticalOsbLegendHeight);
-                    var rightLegend2Rectangle = new Rectangle(rightLegend1Rectangle.Left, leftLegend2Rectangle.Top,
-                                                              leftLegend2Rectangle.Width, verticalOsbLegendHeight + 10);
-                    var rightLegend3Rectangle = new Rectangle(rightLegend2Rectangle.Left, leftLegend3Rectangle.Top,
-                                                              rightLegend2Rectangle.Width, verticalOsbLegendHeight);
-                    var rightLegend4Rectangle = new Rectangle(rightLegend3Rectangle.Left, leftLegend4Rectangle.Top,
-                                                              rightLegend3Rectangle.Width, verticalOsbLegendHeight);
+                        var leftLegend1Rectangle = new Rectangle(0, 7, verticalOsbLegendWidth, verticalOsbLegendHeight);
+                        var leftLegend2Rectangle = new Rectangle(0, 68, verticalOsbLegendWidth, verticalOsbLegendHeight + 10);
+                        var leftLegend3Rectangle = new Rectangle(0, 135, verticalOsbLegendWidth, verticalOsbLegendHeight);
+                        var leftLegend4Rectangle = new Rectangle(0, 200, verticalOsbLegendWidth, verticalOsbLegendHeight);
+                        var rightLegend1Rectangle = new Rectangle(width - verticalOsbLegendWidth, leftLegend1Rectangle.Top,
+                                                                  leftLegend1Rectangle.Width, verticalOsbLegendHeight);
+                        var rightLegend2Rectangle = new Rectangle(rightLegend1Rectangle.Left, leftLegend2Rectangle.Top,
+                                                                  leftLegend2Rectangle.Width, verticalOsbLegendHeight + 10);
+                        var rightLegend3Rectangle = new Rectangle(rightLegend2Rectangle.Left, leftLegend3Rectangle.Top,
+                                                                  rightLegend2Rectangle.Width, verticalOsbLegendHeight);
+                        var rightLegend4Rectangle = new Rectangle(rightLegend3Rectangle.Left, leftLegend4Rectangle.Top,
+                                                                  rightLegend3Rectangle.Width, verticalOsbLegendHeight);
 
-                    //draw TTD-specific extra items
-                    if (
-                        InstrumentState.RWRPowerOn &&
-                        (
-                            InstrumentState.UnknownThreatScanMode
-                            ||
+                        //draw TTD-specific extra items
+                        if (
+                            InstrumentState.RWRPowerOn &&
                             (
-                                AreNonVisibleUnknownThreatsDetected()
-                                && DateTime.Now.Millisecond%500 < 250
+                                InstrumentState.UnknownThreatScanMode
+                                ||
+                                (
+                                    AreNonVisibleUnknownThreatsDetected()
+                                    && DateTime.Now.Millisecond % 500 < 250
+                                )
                             )
-                        )
-                        ) //draw highlighted UNK legend 
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, leftLegend1Rectangle);
-                        DrawString(gfx, "UNK", _osbLegendFont, Brushes.Black, leftLegend1Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-                    else //draw non-highlighted UNK legend
-                    {
-                        DrawString(gfx, "UNK", _osbLegendFont, _osbLegendBrush, leftLegend1Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-                    if (InstrumentState.RWRPowerOn && InstrumentState.Handoff) //draw highlighted HOFF legend 
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, leftLegend2Rectangle);
-                        DrawString(gfx, "HOFF", _osbLegendFont, Brushes.Black, leftLegend2Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-                    else //draw non-highlighted UNK legend
-                    {
-                        DrawString(gfx, "HOFF", _osbLegendFont, _osbLegendBrush, leftLegend2Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-
-                    if (InstrumentState.RWRPowerOn && InstrumentState.SeparateMode) //draw highlighted SEP legend 
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, leftLegend3Rectangle);
-                        DrawString(gfx, "SEP", _osbLegendFont, Brushes.Black, leftLegend3Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-                    else //draw non-highlighted SEP legend
-                    {
-                        DrawString(gfx, "SEP", _osbLegendFont, _osbLegendBrush, leftLegend3Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-
-                    if (InstrumentState.RWRPowerOn &&
-                        ((InstrumentState.PriorityMode && !AreNonVisiblePriorityThreatsDetected()) ||
-                         (InstrumentState.PriorityMode && AreNonVisiblePriorityThreatsDetected() &&
-                          DateTime.Now.Millisecond%500 < 250)))
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, leftLegend4Rectangle);
-                        DrawString(gfx, "PRI", _osbLegendFont, Brushes.Black, leftLegend4Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-                    else //draw non-highlighted PRI legend
-                    {
-                        DrawString(gfx, "PRI", _osbLegendFont, _osbLegendBrush, leftLegend4Rectangle,
-                                   verticalOsbLegendLHSFormat);
-                    }
-
-
-                    if (InstrumentState.RWRPowerOn &&
-                        (InstrumentState.NavalMode ||
-                         (AreNonVisibleNavalThreatsDetected() && DateTime.Now.Millisecond%500 < 250)))
-                        //draw highlighted NVL legend 
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, rightLegend1Rectangle);
-                        DrawString(gfx, "NVL", _osbLegendFont, Brushes.Black, rightLegend1Rectangle,
-                                   verticalOsbLegendRHSFormat);
-                    }
-                    else //draw non-highlighted NVL legend
-                    {
-                        DrawString(gfx, "NVL", _osbLegendFont, _osbLegendBrush, rightLegend1Rectangle,
-                                   verticalOsbLegendRHSFormat);
-                    }
-
-
-                    if (InstrumentState.RWRPowerOn &&
-                        (InstrumentState.SearchMode ||
-                         (AreNonVisibleSearchThreatsDetected() && DateTime.Now.Millisecond%500 < 250)))
-                        //draw highlighted SRCH legend 
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, rightLegend2Rectangle);
-                        DrawString(gfx, "SRCH", _osbLegendFont, Brushes.Black, rightLegend2Rectangle,
-                                   verticalOsbLegendRHSFormat);
-                    }
-                    else //draw non-highlighted SRCH legend
-                    {
-                        DrawString(gfx, "SRCH", _osbLegendFont, _osbLegendBrush, rightLegend2Rectangle,
-                                   verticalOsbLegendRHSFormat);
-                    }
-
-                    if (InstrumentState.RWRPowerOn
-                        && (
-                               InstrumentState.LowAltitudeMode
-                           //|| (AreNonVisibleGroundThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)
-                           )) //draw highlighted ALT legend 
-                    {
-                        gfx.FillRectangle(_osbLegendBrush, rightLegend3Rectangle);
-                        DrawString(gfx, "ALT", _osbLegendFont, Brushes.Black, rightLegend3Rectangle,
-                                   verticalOsbLegendRHSFormat);
-                    }
-                    else //draw non-highlighted ALT legend
-                    {
-                        DrawString(gfx, "ALT", _osbLegendFont, _osbLegendBrush, rightLegend3Rectangle,
-                                   verticalOsbLegendRHSFormat);
-                    }
-
-                    //draw chaff count
-
-
-                    Color chaffCountColor;
-                    if (InstrumentState.ChaffCount == 0)
-                    {
-                        chaffCountColor = severeColor;
-                    }
-                    else if (InstrumentState.ChaffLow)
-                    {
-                        chaffCountColor = warnColor;
-                    }
-                    else
-                    {
-                        chaffCountColor = okColor;
-                    }
-                    Brush chaffCountBrush = new SolidBrush(chaffCountColor);
-                    DrawString(gfx, "CHAF", _chaffFlareCountLegendFont, chaffCountBrush, chaffCountRectangle,
-                               chaffFlareCountStringFormat);
-                    chaffCountRectangle.Offset(0, 12);
-                    DrawString(gfx, string.Format("{0:00}", InstrumentState.ChaffCount), _chaffFlareCountLegendFont,
-                               chaffCountBrush, chaffCountRectangle, chaffFlareCountStringFormat);
-
-                    Color flareCountColor;
-                    if (InstrumentState.FlareCount == 0)
-                    {
-                        flareCountColor = severeColor;
-                    }
-                    else if (InstrumentState.FlareLow)
-                    {
-                        flareCountColor = warnColor;
-                    }
-                    else
-                    {
-                        flareCountColor = okColor;
-                    }
-                    Brush flareCountBrush = new SolidBrush(flareCountColor);
-                    DrawString(gfx, "FLAR", _chaffFlareCountLegendFont, flareCountBrush, flareCountRectangle,
-                               chaffFlareCountStringFormat);
-                    flareCountRectangle.Offset(0, 12);
-                    DrawString(gfx, string.Format("{0:00}", InstrumentState.FlareCount), _chaffFlareCountLegendFont,
-                               flareCountBrush, flareCountRectangle, chaffFlareCountStringFormat);
-
-
-                    Color other1CountColor;
-                    if (InstrumentState.Other1Count == 0)
-                    {
-                        other1CountColor = severeColor;
-                    }
-                    else if (InstrumentState.Other1Low)
-                    {
-                        other1CountColor = warnColor;
-                    }
-                    else
-                    {
-                        other1CountColor = okColor;
-                    }
-                    Brush other1CountBrush = new SolidBrush(other1CountColor);
-                    DrawString(gfx, "OTR1", _chaffFlareCountLegendFont, other1CountBrush, other1CountRectangle,
-                               chaffFlareCountStringFormat);
-                    other1CountRectangle.Offset(0, 12);
-                    DrawString(gfx, string.Format("{0:00}", InstrumentState.Other1Count), _chaffFlareCountLegendFont,
-                               other1CountBrush, other1CountRectangle, chaffFlareCountStringFormat);
-
-
-                    Color other2CountColor;
-                    if (InstrumentState.Other2Count == 0)
-                    {
-                        other2CountColor = severeColor;
-                    }
-                    else if (InstrumentState.Other2Low)
-                    {
-                        other2CountColor = warnColor;
-                    }
-                    else
-                    {
-                        other2CountColor = okColor;
-                    }
-                    Brush other2CountBrush = new SolidBrush(other2CountColor);
-                    DrawString(gfx, "OTR2", _chaffFlareCountLegendFont, other2CountBrush, other2CountRectangle,
-                               chaffFlareCountStringFormat);
-                    other2CountRectangle.Offset(0, 12);
-                    DrawString(gfx, String.Format("{0:00}", InstrumentState.Other2Count), _chaffFlareCountLegendFont,
-                               other2CountBrush, other2CountRectangle, chaffFlareCountStringFormat);
-
-                    if (InstrumentState.EWSGo)
-                    {
-                        var legendColor = _scopeGreenColor;
-                        Brush legendBrush = new SolidBrush(legendColor);
-                        DrawString(gfx, "GO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
-                    }
-                    else if (InstrumentState.EWSNoGo)
-                    {
-                        var legendColor = warnColor;
-                        Brush legendBrush = new SolidBrush(legendColor);
-                        DrawString(gfx, "NOGO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
-                    }
-                    else if (InstrumentState.EWSDispenseReady)
-                    {
-                        var legendColor = _scopeGreenColor;
-                        Brush legendBrush = new SolidBrush(legendColor);
-                        DrawString(gfx, "DISP", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
-                    }
-
-
-                    if (InstrumentState.EWSDispenseReady)
-                    {
-                        var legendColor = okColor;
-                        Brush legendBrush = new SolidBrush(legendColor);
-                        DrawString(gfx, "RDY", _otherLegendFont, legendBrush, rdyRectangle, miscTextStringFormat);
-                    }
-
-                    if (InstrumentState.EWSDegraded) //draw PFL legend 
-                    {
-                        var legendColor = warnColor;
-                        Brush legendBrush = new SolidBrush(legendColor);
-                        DrawString(gfx, "PFL", _otherLegendFont, legendBrush, pflRectangle, miscTextStringFormat);
-                    }
-
-                    switch (InstrumentState.EWMSMode)
-                    {
-                        case EWMSMode.Off:
-                            {
-                                var legendColor = severeColor;
-                                Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "OFF", _otherLegendFont, legendBrush, ewmsModeRectangle,
-                                           miscTextStringFormat);
-                            }
-                            break;
-                        case EWMSMode.Standby:
-                            {
-                                var legendColor = warnColor;
-                                Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "SBY", _otherLegendFont, legendBrush, ewmsModeRectangle,
-                                           miscTextStringFormat);
-                            }
-                            break;
-                        case EWMSMode.Manual:
-                            {
-                                var legendColor = okColor;
-                                Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "MAN", _otherLegendFont, legendBrush, ewmsModeRectangle,
-                                           miscTextStringFormat);
-                            }
-                            break;
-                        case EWMSMode.Semiautomatic:
-                            {
-                                var legendColor = okColor;
-                                Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "SEM", _otherLegendFont, legendBrush, ewmsModeRectangle,
-                                           miscTextStringFormat);
-                            }
-                            break;
-                        case EWMSMode.Automatic:
-                            {
-                                var legendColor = okColor;
-                                Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "AUT", _otherLegendFont, legendBrush, ewmsModeRectangle,
-                                           miscTextStringFormat);
-                            }
-                            break;
-                        case EWMSMode.Bypass:
-                            {
-                                var legendColor = severeColor;
-                                Brush legendBrush = new SolidBrush(legendColor);
-                                DrawString(gfx, "BYP", _otherLegendFont, legendBrush, ewmsModeRectangle,
-                                           miscTextStringFormat);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-
-                    //Draw the page legends
-                    var pageLegendStringFormat = new StringFormat();
-                    pageLegendStringFormat.Alignment = StringAlignment.Center;
-                    pageLegendStringFormat.LineAlignment = StringAlignment.Near;
-                    pageLegendStringFormat.Trimming = StringTrimming.None;
-                    pageLegendStringFormat.FormatFlags = StringFormatFlags.NoWrap;
-
-                    var pageLegendHeight = 15;
-                    var pageLegendWidth = 35;
-                    var pageLegendSeparation = 15;
-                    var tacLegendRectangle = new Rectangle(57, backgroundHeight - pageLegendHeight - 5, pageLegendWidth,
-                                                           pageLegendHeight);
-                    var sysLegendRectangle = new Rectangle(tacLegendRectangle.Right + pageLegendSeparation,
-                                                           tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
-                    var tstLegendRectangle = new Rectangle(sysLegendRectangle.Right + pageLegendSeparation,
-                                                           tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
-
-                    if (true)
-                    {
-                        //draw highlighted TAC legend
-                        gfx.FillRectangle(Brushes.White, tacLegendRectangle);
-                        DrawString(gfx, "TAC", _pageLegendFont, Brushes.Black, tacLegendRectangle,
-                                   pageLegendStringFormat);
-                    }
-                    else
-                    {
-                        //draw non-highlighted TAC legend
-                        DrawString(gfx, "TAC", _pageLegendFont, Brushes.White, tacLegendRectangle,
-                                   pageLegendStringFormat);
-                    }
-
-                    if (false)
-                    {
-                        //draw highlighted SYS legend
-                        gfx.FillRectangle(Brushes.White, sysLegendRectangle);
-                        DrawString(gfx, "SYS", _pageLegendFont, Brushes.Black, sysLegendRectangle,
-                                   pageLegendStringFormat);
-                    }
-                    else
-                    {
-                        //draw non-highlighted SYS legend
-                        DrawString(gfx, "SYS", _pageLegendFont, Brushes.White, sysLegendRectangle,
-                                   pageLegendStringFormat);
-                    }
-
-                    if (false)
-                    {
-                        //draw highlighted TST legend
-                        gfx.FillRectangle(Brushes.White, tstLegendRectangle);
-                        DrawString(gfx, "TST", _pageLegendFont, Brushes.Black, tstLegendRectangle,
-                                   pageLegendStringFormat);
-                    }
-                    else
-                    {
-                        //draw non-highlighted TST legend
-                        DrawString(gfx, "TST", _pageLegendFont, Brushes.White, tstLegendRectangle,
-                                   pageLegendStringFormat);
-                    }
-
-                    gfx.Transform = initialTransform;
-                    gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
-                    gfx.ScaleTransform(atdRingScale, atdRingScale);
-                    var grayPen = Pens.Gray;
-                    var lineLength = 10;
-                    //draw the outer lethality ring
-                    {
-                        var toRestore = gfx.Transform;
-                        gfx.TranslateTransform(outerRingLeft, outerRingTop);
-                        gfx.DrawEllipse(grayPen, 0, 0, atdOuterRingDiameter, atdOuterRingDiameter);
-
-                        for (var i = 0; i <= 180; i += 30)
+                            ) //draw highlighted UNK legend 
                         {
-                            var previousTransform = gfx.Transform;
-                            gfx.TranslateTransform(atdOuterRingDiameter/2.0f, atdOuterRingDiameter/2.0f);
-                            gfx.RotateTransform(i);
-                            gfx.TranslateTransform(-atdOuterRingDiameter/2.0f, -atdOuterRingDiameter/2.0f);
-                            if (i%90 == 0)
-                            {
-                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
-                                             lineLength*2);
-                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
-                                             atdOuterRingDiameter/2.0f, atdOuterRingDiameter - (lineLength*2));
-                            }
-                            else
-                            {
-                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
-                                             lineLength);
-                                gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
-                                             atdOuterRingDiameter/2.0f, atdOuterRingDiameter - lineLength);
-                            }
-                            gfx.Transform = previousTransform;
+                            gfx.FillRectangle(_osbLegendBrush, leftLegend1Rectangle);
+                            DrawString(gfx, "UNK", _osbLegendFont, Brushes.Black, leftLegend1Rectangle,
+                                       verticalOsbLegendLHSFormat);
                         }
-                        gfx.Transform = toRestore;
-                    }
+                        else //draw non-highlighted UNK legend
+                        {
+                            DrawString(gfx, "UNK", _osbLegendFont, _osbLegendBrush, leftLegend1Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
+                        if (InstrumentState.RWRPowerOn && InstrumentState.Handoff) //draw highlighted HOFF legend 
+                        {
+                            gfx.FillRectangle(_osbLegendBrush, leftLegend2Rectangle);
+                            DrawString(gfx, "HOFF", _osbLegendFont, Brushes.Black, leftLegend2Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
+                        else //draw non-highlighted UNK legend
+                        {
+                            DrawString(gfx, "HOFF", _osbLegendFont, _osbLegendBrush, leftLegend2Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
 
-                    //draw the middle lethality ring 
-                    {
-                        var toRestore = gfx.Transform;
-                        gfx.TranslateTransform(middleRingLeft, middleRingTop);
-                        gfx.DrawEllipse(grayPen, 0, 0, atdMiddleRingDiameter, atdMiddleRingDiameter);
+                        if (InstrumentState.RWRPowerOn && InstrumentState.SeparateMode) //draw highlighted SEP legend 
+                        {
+                            gfx.FillRectangle(_osbLegendBrush, leftLegend3Rectangle);
+                            DrawString(gfx, "SEP", _osbLegendFont, Brushes.Black, leftLegend3Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
+                        else //draw non-highlighted SEP legend
+                        {
+                            DrawString(gfx, "SEP", _osbLegendFont, _osbLegendBrush, leftLegend3Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
 
-                        var previousTransform = gfx.Transform;
-                        gfx.TranslateTransform(atdMiddleRingDiameter/2.0f, atdMiddleRingDiameter/2.0f);
-                        gfx.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                        gfx.TranslateTransform(-atdMiddleRingDiameter/2.0f, -atdMiddleRingDiameter/2.0f);
+                        if (InstrumentState.RWRPowerOn &&
+                            ((InstrumentState.PriorityMode && !AreNonVisiblePriorityThreatsDetected()) ||
+                             (InstrumentState.PriorityMode && AreNonVisiblePriorityThreatsDetected() &&
+                              DateTime.Now.Millisecond % 500 < 250)))
+                        {
+                            gfx.FillRectangle(_osbLegendBrush, leftLegend4Rectangle);
+                            DrawString(gfx, "PRI", _osbLegendFont, Brushes.Black, leftLegend4Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
+                        else //draw non-highlighted PRI legend
+                        {
+                            DrawString(gfx, "PRI", _osbLegendFont, _osbLegendBrush, leftLegend4Rectangle,
+                                       verticalOsbLegendLHSFormat);
+                        }
 
-                        //draw north line
-                        gfx.DrawLine(grayPen, atdMiddleRingDiameter/2.0f, -(lineLength*2), atdMiddleRingDiameter/2.0f, 0);
 
-                        //draw west line
-                        gfx.DrawLine(grayPen, 0, (atdMiddleRingDiameter/2.0f), lineLength, (atdMiddleRingDiameter/2.0f));
+                        if (InstrumentState.RWRPowerOn &&
+                            (InstrumentState.NavalMode ||
+                             (AreNonVisibleNavalThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)))
+                        //draw highlighted NVL legend 
+                        {
+                            gfx.FillRectangle(_osbLegendBrush, rightLegend1Rectangle);
+                            DrawString(gfx, "NVL", _osbLegendFont, Brushes.Black, rightLegend1Rectangle,
+                                       verticalOsbLegendRHSFormat);
+                        }
+                        else //draw non-highlighted NVL legend
+                        {
+                            DrawString(gfx, "NVL", _osbLegendFont, _osbLegendBrush, rightLegend1Rectangle,
+                                       verticalOsbLegendRHSFormat);
+                        }
 
-                        //draw east line
-                        gfx.DrawLine(grayPen, atdMiddleRingDiameter, (atdMiddleRingDiameter/2.0f),
-                                     atdMiddleRingDiameter - lineLength, (atdMiddleRingDiameter/2.0f));
 
-                        //draw south line
-                        gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter - lineLength,
-                                     (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter + lineLength);
+                        if (InstrumentState.RWRPowerOn &&
+                            (InstrumentState.SearchMode ||
+                             (AreNonVisibleSearchThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)))
+                        //draw highlighted SRCH legend 
+                        {
+                            gfx.FillRectangle(_osbLegendBrush, rightLegend2Rectangle);
+                            DrawString(gfx, "SRCH", _osbLegendFont, Brushes.Black, rightLegend2Rectangle,
+                                       verticalOsbLegendRHSFormat);
+                        }
+                        else //draw non-highlighted SRCH legend
+                        {
+                            DrawString(gfx, "SRCH", _osbLegendFont, _osbLegendBrush, rightLegend2Rectangle,
+                                       verticalOsbLegendRHSFormat);
+                        }
 
-                        //draw north flag
-                        gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*2),
-                                     (atdMiddleRingDiameter/2.0f) + 7, -(lineLength*0.75f));
-                        gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*0.75f),
-                                     (atdMiddleRingDiameter/2.0f) + 7, -(lineLength*0.75f));
+                        if (InstrumentState.RWRPowerOn
+                            && (
+                                   InstrumentState.LowAltitudeMode
+                            //|| (AreNonVisibleGroundThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)
+                               )) //draw highlighted ALT legend 
+                        {
+                            gfx.FillRectangle(_osbLegendBrush, rightLegend3Rectangle);
+                            DrawString(gfx, "ALT", _osbLegendFont, Brushes.Black, rightLegend3Rectangle,
+                                       verticalOsbLegendRHSFormat);
+                        }
+                        else //draw non-highlighted ALT legend
+                        {
+                            DrawString(gfx, "ALT", _osbLegendFont, _osbLegendBrush, rightLegend3Rectangle,
+                                       verticalOsbLegendRHSFormat);
+                        }
 
-                        //g.Transform = previousTransform;
-                        gfx.Transform = toRestore;
-                    }
+                        //draw chaff count
 
-                    // draw the inner lethality ring
-                    gfx.DrawEllipse(grayPen, innerRingLeft, innerRingTop, atdInnerRingDiameter, atdInnerRingDiameter);
 
-                    if (!InstrumentState.RWRPowerOn) //draw RWR POWER OFF flag
-                    {
-                        var rwrOffTextHeight = atdInnerRingDiameter;
-                        var rwrOffTextWidth = atdInnerRingDiameter;
-                        var rwrRectangle = new RectangleF((backgroundWidth/2.0f) - (rwrOffTextWidth/2.0f),
-                                                          ((backgroundHeight/2.0f) - (rwrOffTextHeight/2.0f)),
-                                                          rwrOffTextWidth, rwrOffTextHeight);
-                        rwrRectangle.Inflate(-5, -5);
-                        var legendColor = severeColor;
-                        var legendPen = new Pen(legendColor);
-                        Brush legendBrush = new SolidBrush(legendColor);
-                        //g.FillEllipse(legendBrush, rwrRectangle);
-                        //DrawString(g, "RWR", _otherLegendFont, Brushes.Black, rwrRectangle, rwrOffTextStringFormat);
-                        gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top),
-                                     new PointF(rwrRectangle.Right, rwrRectangle.Bottom));
-                        gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom),
-                                     new PointF(rwrRectangle.Right, rwrRectangle.Top));
-                    }
+                        Color chaffCountColor;
+                        if (InstrumentState.ChaffCount == 0)
+                        {
+                            chaffCountColor = severeColor;
+                        }
+                        else if (InstrumentState.ChaffLow)
+                        {
+                            chaffCountColor = warnColor;
+                        }
+                        else
+                        {
+                            chaffCountColor = okColor;
+                        }
+                        Brush chaffCountBrush = new SolidBrush(chaffCountColor);
+                        DrawString(gfx, "CHAF", _chaffFlareCountLegendFont, chaffCountBrush, chaffCountRectangle,
+                                   chaffFlareCountStringFormat);
+                        chaffCountRectangle.Offset(0, 12);
+                        DrawString(gfx, string.Format("{0:00}", InstrumentState.ChaffCount), _chaffFlareCountLegendFont,
+                                   chaffCountBrush, chaffCountRectangle, chaffFlareCountStringFormat);
+
+                        Color flareCountColor;
+                        if (InstrumentState.FlareCount == 0)
+                        {
+                            flareCountColor = severeColor;
+                        }
+                        else if (InstrumentState.FlareLow)
+                        {
+                            flareCountColor = warnColor;
+                        }
+                        else
+                        {
+                            flareCountColor = okColor;
+                        }
+                        Brush flareCountBrush = new SolidBrush(flareCountColor);
+                        DrawString(gfx, "FLAR", _chaffFlareCountLegendFont, flareCountBrush, flareCountRectangle,
+                                   chaffFlareCountStringFormat);
+                        flareCountRectangle.Offset(0, 12);
+                        DrawString(gfx, string.Format("{0:00}", InstrumentState.FlareCount), _chaffFlareCountLegendFont,
+                                   flareCountBrush, flareCountRectangle, chaffFlareCountStringFormat);
+
+
+                        Color other1CountColor;
+                        if (InstrumentState.Other1Count == 0)
+                        {
+                            other1CountColor = severeColor;
+                        }
+                        else if (InstrumentState.Other1Low)
+                        {
+                            other1CountColor = warnColor;
+                        }
+                        else
+                        {
+                            other1CountColor = okColor;
+                        }
+                        Brush other1CountBrush = new SolidBrush(other1CountColor);
+                        DrawString(gfx, "OTR1", _chaffFlareCountLegendFont, other1CountBrush, other1CountRectangle,
+                                   chaffFlareCountStringFormat);
+                        other1CountRectangle.Offset(0, 12);
+                        DrawString(gfx, string.Format("{0:00}", InstrumentState.Other1Count), _chaffFlareCountLegendFont,
+                                   other1CountBrush, other1CountRectangle, chaffFlareCountStringFormat);
+
+
+                        Color other2CountColor;
+                        if (InstrumentState.Other2Count == 0)
+                        {
+                            other2CountColor = severeColor;
+                        }
+                        else if (InstrumentState.Other2Low)
+                        {
+                            other2CountColor = warnColor;
+                        }
+                        else
+                        {
+                            other2CountColor = okColor;
+                        }
+                        Brush other2CountBrush = new SolidBrush(other2CountColor);
+                        DrawString(gfx, "OTR2", _chaffFlareCountLegendFont, other2CountBrush, other2CountRectangle,
+                                   chaffFlareCountStringFormat);
+                        other2CountRectangle.Offset(0, 12);
+                        DrawString(gfx, String.Format("{0:00}", InstrumentState.Other2Count), _chaffFlareCountLegendFont,
+                                   other2CountBrush, other2CountRectangle, chaffFlareCountStringFormat);
+
+                        if (InstrumentState.EWSGo)
+                        {
+                            var legendColor = _scopeGreenColor;
+                            Brush legendBrush = new SolidBrush(legendColor);
+                            DrawString(gfx, "GO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
+                        }
+                        else if (InstrumentState.EWSNoGo)
+                        {
+                            var legendColor = warnColor;
+                            Brush legendBrush = new SolidBrush(legendColor);
+                            DrawString(gfx, "NOGO", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
+                        }
+                        else if (InstrumentState.EWSDispenseReady)
+                        {
+                            var legendColor = _scopeGreenColor;
+                            Brush legendBrush = new SolidBrush(legendColor);
+                            DrawString(gfx, "DISP", _otherLegendFont, legendBrush, goNogoRect, miscTextStringFormat);
+                        }
+
+
+                        if (InstrumentState.EWSDispenseReady)
+                        {
+                            var legendColor = okColor;
+                            Brush legendBrush = new SolidBrush(legendColor);
+                            DrawString(gfx, "RDY", _otherLegendFont, legendBrush, rdyRectangle, miscTextStringFormat);
+                        }
+
+                        if (InstrumentState.EWSDegraded) //draw PFL legend 
+                        {
+                            var legendColor = warnColor;
+                            Brush legendBrush = new SolidBrush(legendColor);
+                            DrawString(gfx, "PFL", _otherLegendFont, legendBrush, pflRectangle, miscTextStringFormat);
+                        }
+
+                        //Added Falcas 10-11-2012.
+                        InstrumentState.EWMSMode = GetEWMSMode(InstrumentState.cmdsMode);
+                        switch (InstrumentState.EWMSMode)
+                        {
+                            case EWMSMode.Off:
+                                {
+                                    var legendColor = severeColor;
+                                    Brush legendBrush = new SolidBrush(legendColor);
+                                    DrawString(gfx, "OFF", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                               miscTextStringFormat);
+                                }
+                                break;
+                            case EWMSMode.Standby:
+                                {
+                                    var legendColor = warnColor;
+                                    Brush legendBrush = new SolidBrush(legendColor);
+                                    DrawString(gfx, "SBY", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                               miscTextStringFormat);
+                                }
+                                break;
+                            case EWMSMode.Manual:
+                                {
+                                    var legendColor = okColor;
+                                    Brush legendBrush = new SolidBrush(legendColor);
+                                    DrawString(gfx, "MAN", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                               miscTextStringFormat);
+                                }
+                                break;
+                            case EWMSMode.Semiautomatic:
+                                {
+                                    var legendColor = okColor;
+                                    Brush legendBrush = new SolidBrush(legendColor);
+                                    DrawString(gfx, "SEM", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                               miscTextStringFormat);
+                                }
+                                break;
+                            case EWMSMode.Automatic:
+                                {
+                                    var legendColor = okColor;
+                                    Brush legendBrush = new SolidBrush(legendColor);
+                                    DrawString(gfx, "AUT", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                               miscTextStringFormat);
+                                }
+                                break;
+                            case EWMSMode.Bypass:
+                                {
+                                    var legendColor = severeColor;
+                                    Brush legendBrush = new SolidBrush(legendColor);
+                                    DrawString(gfx, "BYP", _otherLegendFont, legendBrush, ewmsModeRectangle,
+                                               miscTextStringFormat);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+
+                        //Draw the page legends
+                        var pageLegendStringFormat = new StringFormat();
+                        pageLegendStringFormat.Alignment = StringAlignment.Center;
+                        pageLegendStringFormat.LineAlignment = StringAlignment.Near;
+                        pageLegendStringFormat.Trimming = StringTrimming.None;
+                        pageLegendStringFormat.FormatFlags = StringFormatFlags.NoWrap;
+
+                        var pageLegendHeight = 15;
+                        var pageLegendWidth = 35;
+                        var pageLegendSeparation = 15;
+                        var tacLegendRectangle = new Rectangle(57, backgroundHeight - pageLegendHeight - 5, pageLegendWidth,
+                                                               pageLegendHeight);
+                        var sysLegendRectangle = new Rectangle(tacLegendRectangle.Right + pageLegendSeparation,
+                                                               tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
+                        var tstLegendRectangle = new Rectangle(sysLegendRectangle.Right + pageLegendSeparation,
+                                                               tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
+
+                        if (true)
+                        {
+                            //draw highlighted TAC legend
+                            gfx.FillRectangle(Brushes.White, tacLegendRectangle);
+                            DrawString(gfx, "TAC", _pageLegendFont, Brushes.Black, tacLegendRectangle,
+                                       pageLegendStringFormat);
+                        }
+                        else
+                        {
+                            //draw non-highlighted TAC legend
+                            DrawString(gfx, "TAC", _pageLegendFont, Brushes.White, tacLegendRectangle,
+                                       pageLegendStringFormat);
+                        }
+
+                        if (false)
+                        {
+                            //draw highlighted SYS legend
+                            gfx.FillRectangle(Brushes.White, sysLegendRectangle);
+                            DrawString(gfx, "SYS", _pageLegendFont, Brushes.Black, sysLegendRectangle,
+                                       pageLegendStringFormat);
+                        }
+                        else
+                        {
+                            //draw non-highlighted SYS legend
+                            DrawString(gfx, "SYS", _pageLegendFont, Brushes.White, sysLegendRectangle,
+                                       pageLegendStringFormat);
+                        }
+
+                        if (InstrumentState.RWRTest1 || InstrumentState.RWRTest2) //Added Falcas 10-11-2012
+                        {
+                            //draw highlighted TST legend
+                            gfx.FillRectangle(Brushes.White, tstLegendRectangle);
+                            DrawString(gfx, "TST", _pageLegendFont, Brushes.Black, tstLegendRectangle,
+                                       pageLegendStringFormat);
+                        }
+                        else
+                        {
+                            //draw non-highlighted TST legend
+                            DrawString(gfx, "TST", _pageLegendFont, Brushes.White, tstLegendRectangle,
+                                       pageLegendStringFormat);
+                        }
+
+                        gfx.Transform = initialTransform;
+                        gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
+                        gfx.ScaleTransform(atdRingScale, atdRingScale);
+                        var grayPen = Pens.Gray;
+                        var lineLength = 10;
+                        //draw the outer lethality ring
+                        {
+                            var toRestore = gfx.Transform;
+                            gfx.TranslateTransform(outerRingLeft, outerRingTop);
+                            gfx.DrawEllipse(grayPen, 0, 0, atdOuterRingDiameter, atdOuterRingDiameter);
+
+                            for (var i = 0; i <= 180; i += 30)
+                            {
+                                var previousTransform = gfx.Transform;
+                                gfx.TranslateTransform(atdOuterRingDiameter / 2.0f, atdOuterRingDiameter / 2.0f);
+                                gfx.RotateTransform(i);
+                                gfx.TranslateTransform(-atdOuterRingDiameter / 2.0f, -atdOuterRingDiameter / 2.0f);
+                                if (i % 90 == 0)
+                                {
+                                    gfx.DrawLine(grayPen, atdOuterRingDiameter / 2.0f, 0, atdOuterRingDiameter / 2.0f,
+                                                 lineLength * 2);
+                                    gfx.DrawLine(grayPen, atdOuterRingDiameter / 2.0f, atdOuterRingDiameter,
+                                                 atdOuterRingDiameter / 2.0f, atdOuterRingDiameter - (lineLength * 2));
+                                }
+                                else
+                                {
+                                    gfx.DrawLine(grayPen, atdOuterRingDiameter / 2.0f, 0, atdOuterRingDiameter / 2.0f,
+                                                 lineLength);
+                                    gfx.DrawLine(grayPen, atdOuterRingDiameter / 2.0f, atdOuterRingDiameter,
+                                                 atdOuterRingDiameter / 2.0f, atdOuterRingDiameter - lineLength);
+                                }
+                                gfx.Transform = previousTransform;
+                            }
+                            gfx.Transform = toRestore;
+                        }
+
+                        //draw the middle lethality ring 
+                        {
+                            var toRestore = gfx.Transform;
+                            gfx.TranslateTransform(middleRingLeft, middleRingTop);
+                            gfx.DrawEllipse(grayPen, 0, 0, atdMiddleRingDiameter, atdMiddleRingDiameter);
+
+                            var previousTransform = gfx.Transform;
+                            gfx.TranslateTransform(atdMiddleRingDiameter / 2.0f, atdMiddleRingDiameter / 2.0f);
+                            gfx.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                            gfx.TranslateTransform(-atdMiddleRingDiameter / 2.0f, -atdMiddleRingDiameter / 2.0f);
+
+                            //draw north line
+                            gfx.DrawLine(grayPen, atdMiddleRingDiameter / 2.0f, -(lineLength * 2), atdMiddleRingDiameter / 2.0f, 0);
+
+                            //draw west line
+                            gfx.DrawLine(grayPen, 0, (atdMiddleRingDiameter / 2.0f), lineLength, (atdMiddleRingDiameter / 2.0f));
+
+                            //draw east line
+                            gfx.DrawLine(grayPen, atdMiddleRingDiameter, (atdMiddleRingDiameter / 2.0f),
+                                         atdMiddleRingDiameter - lineLength, (atdMiddleRingDiameter / 2.0f));
+
+                            //draw south line
+                            gfx.DrawLine(grayPen, (atdMiddleRingDiameter / 2.0f), atdMiddleRingDiameter - lineLength,
+                                         (atdMiddleRingDiameter / 2.0f), atdMiddleRingDiameter + lineLength);
+
+                            //draw north flag
+                            gfx.DrawLine(grayPen, (atdMiddleRingDiameter / 2.0f), -(lineLength * 2),
+                                         (atdMiddleRingDiameter / 2.0f) + 7, -(lineLength * 0.75f));
+                            gfx.DrawLine(grayPen, (atdMiddleRingDiameter / 2.0f), -(lineLength * 0.75f),
+                                         (atdMiddleRingDiameter / 2.0f) + 7, -(lineLength * 0.75f));
+
+                            //g.Transform = previousTransform;
+                            gfx.Transform = toRestore;
+                        }
+
+                        // draw the inner lethality ring
+                        gfx.DrawEllipse(grayPen, innerRingLeft, innerRingTop, atdInnerRingDiameter, atdInnerRingDiameter);
+
+                        if (!InstrumentState.RWRPowerOn) //draw RWR POWER OFF flag
+                        {
+                            var rwrOffTextHeight = atdInnerRingDiameter;
+                            var rwrOffTextWidth = atdInnerRingDiameter;
+                            var rwrRectangle = new RectangleF((backgroundWidth / 2.0f) - (rwrOffTextWidth / 2.0f),
+                                                              ((backgroundHeight / 2.0f) - (rwrOffTextHeight / 2.0f)),
+                                                              rwrOffTextWidth, rwrOffTextHeight);
+                            rwrRectangle.Inflate(-5, -5);
+                            var legendColor = severeColor;
+                            var legendPen = new Pen(legendColor);
+                            Brush legendBrush = new SolidBrush(legendColor);
+                            //g.FillEllipse(legendBrush, rwrRectangle);
+                            //DrawString(g, "RWR", _otherLegendFont, Brushes.Black, rwrRectangle, rwrOffTextStringFormat);
+                            gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top),
+                                         new PointF(rwrRectangle.Right, rwrRectangle.Bottom));
+                            gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom),
+                                         new PointF(rwrRectangle.Right, rwrRectangle.Top));
+                        }
                 }
 
                 if (
@@ -850,8 +856,8 @@ namespace LightningGauges.Renderers
                         Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR
                     )
                     &&
-                    InstrumentState.RWRPowerOn
-                    )
+                    InstrumentState.RWRPowerOn && !InstrumentState.RWRTest1 && !InstrumentState.RWRTest2
+                    ) //Added Falcas 07-11-2012, Do not draw when in RWR test.
                 {
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                     if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
@@ -860,6 +866,7 @@ namespace LightningGauges.Renderers
                         gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
                         gfx.ScaleTransform(atdRingScale, atdRingScale);
                     }
+
                     //draw heartbeat cross
                     gfx.DrawLine(
                         _scopeGreenPen,
@@ -881,12 +888,68 @@ namespace LightningGauges.Renderers
                         new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 20),
                         new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 10)
                         );
-
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
+
+                    //Added Falcas 07-11-2012, Center of RWR indication "S"
+                    if (InstrumentState.SearchMode)
+                    {
+                        var pageLegendStringFormat = new StringFormat();
+                        pageLegendStringFormat.Alignment = StringAlignment.Center;
+                        pageLegendStringFormat.LineAlignment = StringAlignment.Near;
+                        pageLegendStringFormat.Trimming = StringTrimming.None;
+                        pageLegendStringFormat.FormatFlags = StringFormatFlags.NoWrap;
+
+                        var RwrLegendRectangle = new Rectangle(113, 119, 30, 30);
+                        DrawString(gfx, "S", _TestTextFontLarge, Brushes.Lime, RwrLegendRectangle,
+                                           pageLegendStringFormat);
+                    }
                 }
 
+                
                 if (InstrumentState.RWRPowerOn)
                 {
+                    //Added Falcas 07-11-2012
+                    //RWR test
+                    if (InstrumentState.RWRTest1)
+                    {
+                        var pageLegendStringFormat = new StringFormat();
+                        pageLegendStringFormat.Alignment = StringAlignment.Center;
+                        pageLegendStringFormat.LineAlignment = StringAlignment.Near;
+                        pageLegendStringFormat.Trimming = StringTrimming.None;
+                        pageLegendStringFormat.FormatFlags = StringFormatFlags.NoWrap;
+
+                        var RwrLegendRectangle = new Rectangle(114, 98, 30, 30);
+                        DrawString(gfx, "RWR", _TestTextFontLarge, Brushes.Lime, RwrLegendRectangle,
+                                           pageLegendStringFormat);
+                        var Rwr2LegendRectangle = new Rectangle(114, 118, 30, 30);
+                        DrawString(gfx, "SYSTEM GO", _TestTextFontLarge, Brushes.Lime, Rwr2LegendRectangle,
+                                           pageLegendStringFormat);
+                    }
+                    if (InstrumentState.RWRTest2)
+                    {
+                        var pageLegendStringFormat = new StringFormat();
+                        pageLegendStringFormat.Alignment = StringAlignment.Center;
+                        pageLegendStringFormat.LineAlignment = StringAlignment.Near;
+                        pageLegendStringFormat.Trimming = StringTrimming.None;
+                        pageLegendStringFormat.FormatFlags = StringFormatFlags.NoWrap;
+
+                        var RwrLegendRectangle = new Rectangle(86, 80, 30, 30);
+                        DrawString(gfx, "F16C", _TestTextFontLarge, Brushes.Lime, RwrLegendRectangle,
+                                           pageLegendStringFormat);
+                        var Rwr1LegendRectangle = new Rectangle(105, 100, 30, 30);
+                        DrawString(gfx, "1*OFP  0020", _TestTextFontLarge, Brushes.Lime, Rwr1LegendRectangle,
+                                           pageLegendStringFormat);
+                        var Rwr2LegendRectangle = new Rectangle(105, 120, 30, 30);
+                        DrawString(gfx, "2*WO   0040", _TestTextFontLarge, Brushes.Lime, Rwr2LegendRectangle,
+                                           pageLegendStringFormat);
+                        var Rwr3LegendRectangle = new Rectangle(119, 140, 30, 30);
+                        DrawString(gfx, "PA   0050", _TestTextFontLarge, Brushes.Lime, Rwr3LegendRectangle,
+                                           pageLegendStringFormat);
+                        var Rwr4LegendRectangle = new Rectangle(119, 160, 30, 30);
+                        DrawString(gfx, "US   0060", _TestTextFontLarge, Brushes.Lime, Rwr4LegendRectangle,
+                                           pageLegendStringFormat);
+                    }
+
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                     if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
                     {
@@ -894,26 +957,30 @@ namespace LightningGauges.Renderers
                         gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
                         gfx.ScaleTransform(atdRingScale, atdRingScale);
                     }
-                    if (DateTime.Now.Millisecond < 500)
+                    if (!InstrumentState.RWRTest1 && !InstrumentState.RWRTest2) //Added Falcas 07-11-2012, Do not draw when in Test.
                     {
-                        gfx.DrawLine(
-                            _scopeGreenPen,
-                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
-                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) + 5)
-                            );
-                    }
-                    else
-                    {
-                        gfx.DrawLine(
-                            _scopeGreenPen,
-                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
-                            new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) - 5)
-                            );
+                        if (DateTime.Now.Millisecond < 500)
+                        {
+                            gfx.DrawLine(
+                                _scopeGreenPen,
+                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f)),
+                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f) + 5)
+                                );
+                        }
+                        else
+                        {
+                            gfx.DrawLine(
+                                _scopeGreenPen,
+                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f)),
+                                new PointF((backgroundWidth / 2.0f) + 10, (backgroundHeight / 2.0f) - 5)
+                                );
+                        }
                     }
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
 
-                if (InstrumentState.Blips != null && InstrumentState.RWRPowerOn)
+                //Added Falcas 07-11-2012, Do not draw the blips if in test mode.
+                if (InstrumentState.Blips != null && InstrumentState.RWRPowerOn && !InstrumentState.RWRTest1 && !InstrumentState.RWRTest2)
                 {
                     foreach (var blip in InstrumentState.Blips)
                     {
@@ -933,12 +1000,12 @@ namespace LightningGauges.Renderers
                         var translateY = 0.0f;
                         if (lethality > 1)
                         {
-                            translateY = -((2.0f - lethality)*100.0f)*0.95f;
+                            translateY = -((2.0f - lethality) * 100.0f) * 0.95f;
                             ;
                         }
                         else
                         {
-                            translateY = -((1.0f - lethality)*100.0f)*0.95f;
+                            translateY = -((1.0f - lethality) * 100.0f) * 0.95f;
                             ;
                         }
                         if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay)
@@ -1824,6 +1891,36 @@ namespace LightningGauges.Renderers
             return category;
         }
 
+        //Added Falcas 10-11-2012
+        private EWMSMode GetEWMSMode(int cmdsMode)
+        {
+            var mode = EWMSMode.Off;
+            switch (cmdsMode)
+            {
+                case (int)EWMSMode.Off:
+                    mode = EWMSMode.Off;
+                    break;
+                case (int)EWMSMode.Standby:
+                    mode = EWMSMode.Standby;
+                    break;
+                case (int)EWMSMode.Manual:
+                    mode = EWMSMode.Manual;
+                    break;
+                case (int)EWMSMode.Semiautomatic:
+                    mode = EWMSMode.Semiautomatic;
+                    break;
+                case (int)EWMSMode.Automatic:
+                    mode = EWMSMode.Automatic;
+                    break;
+                case (int)EWMSMode.Bypass:
+                    mode = EWMSMode.Bypass;
+                    break;
+                default:
+                    mode = EWMSMode.Off;
+                    break;
+            }
+            return mode;
+        }
 
         #region Instrument State
 
@@ -1920,6 +2017,7 @@ namespace LightningGauges.Renderers
             }
 
             public EWMSMode EWMSMode { get; set; }
+            public int cmdsMode { get; set; } //Added Falcas 10-11-2012
             public bool EWSGo { get; set; }
             public bool EWSNoGo { get; set; }
             public bool EWSDegraded { get; set; }
@@ -1988,6 +2086,8 @@ namespace LightningGauges.Renderers
             public Blip[] Blips { get; set; }
             public bool SeparateMode { get; set; }
             public bool RWRPowerOn { get; set; }
+            public bool RWRTest1 { get; set; } //Added Falcas 07-11-2012
+            public bool RWRTest2 { get; set; } //Added Falcas 07-11-2012
 
             public float MagneticHeadingDegrees
             {

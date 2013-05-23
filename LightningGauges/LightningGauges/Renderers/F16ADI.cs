@@ -389,7 +389,8 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the localizer flag
-                if (InstrumentState.LocalizerFlag || InstrumentState.OffFlag)
+                //if (InstrumentState.LocalizerFlag || InstrumentState.OffFlag)
+                if (InstrumentState.LocalizerFlag ) //Falcas 28-10-2012 LOC flag is not linked to the OffFlag
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(25);
@@ -399,7 +400,8 @@ namespace LightningGauges.Renderers
                 }
 
                 //draw the glideslope flag
-                if (InstrumentState.GlideslopeFlag || InstrumentState.OffFlag)
+                //if (InstrumentState.GlideslopeFlag || InstrumentState.OffFlag)
+                if (InstrumentState.GlideslopeFlag)//Falcas 28-10-2012 GS flag is not linked to the OffFlag
                 {
                     GraphicsUtil.RestoreGraphicsState(g, ref basicState);
                     g.RotateTransform(-25);
@@ -439,5 +441,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-    }
+        }
 }

@@ -167,6 +167,7 @@ namespace LightningGauges.Renderers
                     {
                         var thisByte = line[i];
                         if (thisByte == 0x04) thisByte = 0x02;
+                        if (thisByte == 0x5E) thisByte = 0x0A; //18-08-12 Added by Falcas, sets the correct deg symbol
                         var thisByteInvert = invertLine.Length > i ? invertLine[i] : (byte) 0;
                         var inverted = false;
                         if (thisByteInvert > 0 && thisByteInvert != 32)
@@ -184,5 +185,5 @@ namespace LightningGauges.Renderers
             }
         }
 
-    }
+        }
 }
