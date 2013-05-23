@@ -9,7 +9,6 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.UI;
-using Common.Strings;
 using LightningGauges.Renderers;
 using MFDExtractor.Properties;
 using Microsoft.VisualBasic.Devices;
@@ -79,12 +78,6 @@ namespace MFDExtractor.UI
             //set the titlebar for the Options form
             Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
 
-            //inform the shortcut-input controls that allow the user to input a hotkey for 2D mode 
-            //and 3D mode, that there are "modifier" keys required (i.e. you're allowed to use "A" as
-            //a hotkey without requiring something like "CTRL-A" or "ALT-A" or "SHIFT-A"
-            sciPrimary2DModeHotkey.MinModifiers = 0;
-            sciSecondary2DModeHotkey.MinModifiers = 0;
-            sci3DModeHotkey.MinModifiers = 0;
 
             //add list of possible thread priority values to the thread priority drop-down list
             string[] names = Enum.GetNames(typeof (ThreadPriority));
@@ -299,14 +292,6 @@ namespace MFDExtractor.UI
             cmdRecoverLeftMfd.Enabled = chkEnableLeftMFD.Checked;
             cmdRecoverRightMfd.Enabled = chkEnableRightMFD.Checked;
 
-            sciPrimary2DModeHotkey.Keys = settings.TwoDPrimaryHotkey;
-            sciPrimary2DModeHotkey.Refresh();
-
-            sciSecondary2DModeHotkey.Keys = settings.TwoDSecondaryHotkey;
-            sciSecondary2DModeHotkey.Refresh();
-
-            sci3DModeHotkey.Keys = settings.ThreeDHotkey;
-            sci3DModeHotkey.Refresh();
             chkStartOnLaunch.Checked = settings.StartOnLaunch;
             chkStartWithWindows.Checked = settings.LaunchWithWindows;
 
@@ -414,8 +399,6 @@ namespace MFDExtractor.UI
                     rdoAltimeterStyleElectromechanical.Checked = false;
                     rdoAltimeterStyleDigital.Checked = true;
                     break;
-                default:
-                    break;
             }
 
             string pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
@@ -432,8 +415,6 @@ namespace MFDExtractor.UI
                     rdoInchesOfMercury.Checked = false;
                     rdoMillibars.Checked = true;
                     break;
-                default:
-                    break;
             }
 
             string vviStyleString = Settings.Default.VVI_Style;
@@ -447,8 +428,6 @@ namespace MFDExtractor.UI
                 case VVIStyles.Needle:
                     rdoVVIStyleNeedle.Checked = true;
                     rdoVVIStyleTape.Checked = false;
-                    break;
-                default:
                     break;
             }
             grpVVIOptions.Enabled = chkVVI.Checked;
@@ -509,44 +488,6 @@ namespace MFDExtractor.UI
 
             errControlErrorProvider.Clear();
             //clear any errors from in the Form's ErrorProvider (leftovers from previous validation attempts)
-
-            if (!sciPrimary2DModeHotkey.IsValid)
-            {
-                SetError(sciPrimary2DModeHotkey, "Please select a valid hotkey for 2D Mode (primary view).");
-                isValid = false;
-            }
-            else if (!sciSecondary2DModeHotkey.IsValid)
-            {
-                SetError(sciSecondary2DModeHotkey, "Please select a valid hotkey for 2D Mode (seoncdary view).");
-                isValid = false;
-            }
-            else if (!sci3DModeHotkey.IsValid)
-            {
-                SetError(sci3DModeHotkey, "Please select a valid hotkey for 3D Mode.");
-                isValid = false;
-            }
-            else if (sciPrimary2DModeHotkey.Keys == sci3DModeHotkey.Keys)
-            {
-                SetError(sciPrimary2DModeHotkey,
-                         "Please select a different hotkey for 2D Mode (primary view) and 3D Mode.");
-                SetError(sci3DModeHotkey, "Please select a different hotkey for 2D Mode (primary view) and 3D Mode.");
-                isValid = false;
-            }
-            else if (sciSecondary2DModeHotkey.Keys == sci3DModeHotkey.Keys)
-            {
-                SetError(sciSecondary2DModeHotkey,
-                         "Please select a different hotkey for 2D Mode (secondary view) and 3D Mode.");
-                SetError(sci3DModeHotkey, "Please select a different hotkey for 2D Mode (secondary view) and 3D Mode.");
-                isValid = false;
-            }
-            else if (sciPrimary2DModeHotkey.Keys == sciSecondary2DModeHotkey.Keys)
-            {
-                SetError(sciPrimary2DModeHotkey,
-                         "Please select a different hotkey for 2D Mode (primary view) and 2D Mode (secondary view).");
-                SetError(sciSecondary2DModeHotkey,
-                         "Please select a different hotkey for 2D Mode (primary view) and 2D Mode (secondary view).");
-                isValid = false;
-            }
 
             if (isValid && rdoServer.Checked)
             {
@@ -832,12 +773,6 @@ namespace MFDExtractor.UI
             }
 
             settings.StartOnLaunch = chkStartOnLaunch.Checked;
-            if (rdoStandalone.Checked || rdoServer.Checked)
-            {
-                settings.TwoDPrimaryHotkey = sciPrimary2DModeHotkey.Keys;
-                settings.TwoDSecondaryHotkey = sciSecondary2DModeHotkey.Keys;
-                settings.ThreeDHotkey = sci3DModeHotkey.Keys;
-            }
             settings.ThreadPriority =
                 (ThreadPriority) Enum.Parse(typeof (ThreadPriority), cboThreadPriority.SelectedItem.ToString());
             settings.PollingDelay = Convert.ToInt32(txtPollDelay.Text, CultureInfo.InvariantCulture);
@@ -938,30 +873,6 @@ namespace MFDExtractor.UI
             if (Int32.TryParse(coordinateString, out coordinateValue))
             {
                 return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        ///     Tests a string to see if it contains (only) a valid *positive* integer
-        /// </summary>
-        /// <param name="coordinateString">
-        ///     <see cref="String" /> to test
-        /// </param>
-        /// <returns>
-        ///     <see langword="true" /> if the supplied string contains
-        ///     a valid positive integer, or <see langword="false" /> if the supplied string does
-        ///     not contain a valid positive integer.
-        /// </returns>
-        private static bool PositiveXyCoordinateIsValid(string coordinateString)
-        {
-            int coordinateValue = -1;
-            if (Int32.TryParse(coordinateString, out coordinateValue))
-            {
-                if (coordinateValue >= 0)
-                {
-                    return true;
-                }
             }
             return false;
         }
@@ -2084,9 +1995,5 @@ namespace MFDExtractor.UI
             Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
         }
 
-		private void tabMfdsHud_Click(object sender, EventArgs e)
-		{
-
-		}
     }
 }

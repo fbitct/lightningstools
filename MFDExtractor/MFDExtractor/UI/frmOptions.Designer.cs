@@ -158,13 +158,6 @@ namespace MFDExtractor.UI
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.tabHotkeysInner = new System.Windows.Forms.TabControl();
 			this.tabGeneralKeys = new System.Windows.Forms.TabPage();
-			this.groupBox6 = new System.Windows.Forms.GroupBox();
-			this.label22 = new System.Windows.Forms.Label();
-			this.sciSecondary2DModeHotkey = new Common.UI.UserControls.ShortcutInput();
-			this.sciPrimary2DModeHotkey = new Common.UI.UserControls.ShortcutInput();
-			this.label24 = new System.Windows.Forms.Label();
-			this.lbl3DModeHotkey = new System.Windows.Forms.Label();
-			this.sci3DModeHotkey = new Common.UI.UserControls.ShortcutInput();
 			this.lblNVIS = new System.Windows.Forms.Label();
 			this.cmdNV = new System.Windows.Forms.Button();
 			this.tabAccelerometerKeys = new System.Windows.Forms.TabPage();
@@ -341,7 +334,6 @@ namespace MFDExtractor.UI
 			this.panel2.SuspendLayout();
 			this.tabHotkeysInner.SuspendLayout();
 			this.tabGeneralKeys.SuspendLayout();
-			this.groupBox6.SuspendLayout();
 			this.tabAccelerometerKeys.SuspendLayout();
 			this.gbAccelerometer.SuspendLayout();
 			this.groupBox5.SuspendLayout();
@@ -474,7 +466,6 @@ namespace MFDExtractor.UI
 			this.tabMfdsHud.TabIndex = 17;
 			this.tabMfdsHud.Text = "MFDs & HUD";
 			this.tabMfdsHud.UseVisualStyleBackColor = true;
-			this.tabMfdsHud.Click += new System.EventHandler(this.tabMfdsHud_Click);
 			// 
 			// chkEnableMFD4
 			// 
@@ -2034,7 +2025,6 @@ namespace MFDExtractor.UI
 			// 
 			// tabGeneralKeys
 			// 
-			this.tabGeneralKeys.Controls.Add(this.groupBox6);
 			this.tabGeneralKeys.Controls.Add(this.lblNVIS);
 			this.tabGeneralKeys.Controls.Add(this.cmdNV);
 			this.tabGeneralKeys.Location = new System.Drawing.Point(4, 22);
@@ -2045,91 +2035,10 @@ namespace MFDExtractor.UI
 			this.tabGeneralKeys.Text = "General";
 			this.tabGeneralKeys.UseVisualStyleBackColor = true;
 			// 
-			// groupBox6
-			// 
-			this.groupBox6.Controls.Add(this.label22);
-			this.groupBox6.Controls.Add(this.sciSecondary2DModeHotkey);
-			this.groupBox6.Controls.Add(this.sciPrimary2DModeHotkey);
-			this.groupBox6.Controls.Add(this.label24);
-			this.groupBox6.Controls.Add(this.lbl3DModeHotkey);
-			this.groupBox6.Controls.Add(this.sci3DModeHotkey);
-			this.groupBox6.Location = new System.Drawing.Point(6, 6);
-			this.groupBox6.Name = "groupBox6";
-			this.groupBox6.Size = new System.Drawing.Size(476, 119);
-			this.groupBox6.TabIndex = 16;
-			this.groupBox6.TabStop = false;
-			this.groupBox6.Text = "Capture Mode Hotkeys";
-			// 
-			// label22
-			// 
-			this.label22.AutoSize = true;
-			this.label22.Location = new System.Drawing.Point(21, 18);
-			this.label22.Name = "label22";
-			this.label22.Size = new System.Drawing.Size(128, 13);
-			this.label22.TabIndex = 1;
-			this.label22.Text = "Primary 2D Mode Hotkey:";
-			this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// sciSecondary2DModeHotkey
-			// 
-			this.sciSecondary2DModeHotkey.Alt = false;
-			this.sciSecondary2DModeHotkey.CharCode = ((byte)(65));
-			this.sciSecondary2DModeHotkey.Control = false;
-			this.sciSecondary2DModeHotkey.Keys = System.Windows.Forms.Keys.A;
-			this.sciSecondary2DModeHotkey.Location = new System.Drawing.Point(146, 45);
-			this.sciSecondary2DModeHotkey.Name = "sciSecondary2DModeHotkey";
-			this.sciSecondary2DModeHotkey.Shift = false;
-			this.sciSecondary2DModeHotkey.Size = new System.Drawing.Size(314, 30);
-			this.sciSecondary2DModeHotkey.TabIndex = 4;
-			// 
-			// sciPrimary2DModeHotkey
-			// 
-			this.sciPrimary2DModeHotkey.Alt = false;
-			this.sciPrimary2DModeHotkey.CharCode = ((byte)(65));
-			this.sciPrimary2DModeHotkey.Control = false;
-			this.sciPrimary2DModeHotkey.Keys = System.Windows.Forms.Keys.A;
-			this.sciPrimary2DModeHotkey.Location = new System.Drawing.Point(146, 9);
-			this.sciPrimary2DModeHotkey.Name = "sciPrimary2DModeHotkey";
-			this.sciPrimary2DModeHotkey.Shift = false;
-			this.sciPrimary2DModeHotkey.Size = new System.Drawing.Size(314, 30);
-			this.sciPrimary2DModeHotkey.TabIndex = 2;
-			// 
-			// label24
-			// 
-			this.label24.AutoSize = true;
-			this.label24.Location = new System.Drawing.Point(4, 52);
-			this.label24.Name = "label24";
-			this.label24.Size = new System.Drawing.Size(145, 13);
-			this.label24.TabIndex = 3;
-			this.label24.Text = "Secondary 2D Mode Hotkey:";
-			this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// lbl3DModeHotkey
-			// 
-			this.lbl3DModeHotkey.AutoSize = true;
-			this.lbl3DModeHotkey.Location = new System.Drawing.Point(58, 87);
-			this.lbl3DModeHotkey.Name = "lbl3DModeHotkey";
-			this.lbl3DModeHotkey.Size = new System.Drawing.Size(91, 13);
-			this.lbl3DModeHotkey.TabIndex = 5;
-			this.lbl3DModeHotkey.Text = "3D Mode Hotkey:";
-			this.lbl3DModeHotkey.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// sci3DModeHotkey
-			// 
-			this.sci3DModeHotkey.Alt = false;
-			this.sci3DModeHotkey.CharCode = ((byte)(65));
-			this.sci3DModeHotkey.Control = false;
-			this.sci3DModeHotkey.Keys = System.Windows.Forms.Keys.A;
-			this.sci3DModeHotkey.Location = new System.Drawing.Point(145, 81);
-			this.sci3DModeHotkey.Name = "sci3DModeHotkey";
-			this.sci3DModeHotkey.Shift = false;
-			this.sci3DModeHotkey.Size = new System.Drawing.Size(316, 30);
-			this.sci3DModeHotkey.TabIndex = 6;
-			// 
 			// lblNVIS
 			// 
 			this.lblNVIS.AutoSize = true;
-			this.lblNVIS.Location = new System.Drawing.Point(10, 137);
+			this.lblNVIS.Location = new System.Drawing.Point(10, 10);
 			this.lblNVIS.Name = "lblNVIS";
 			this.lblNVIS.Size = new System.Drawing.Size(101, 13);
 			this.lblNVIS.TabIndex = 7;
@@ -2137,7 +2046,7 @@ namespace MFDExtractor.UI
 			// 
 			// cmdNV
 			// 
-			this.cmdNV.Location = new System.Drawing.Point(117, 132);
+			this.cmdNV.Location = new System.Drawing.Point(117, 5);
 			this.cmdNV.Name = "cmdNV";
 			this.cmdNV.Size = new System.Drawing.Size(75, 23);
 			this.cmdNV.TabIndex = 8;
@@ -3342,8 +3251,6 @@ namespace MFDExtractor.UI
 			this.tabHotkeysInner.ResumeLayout(false);
 			this.tabGeneralKeys.ResumeLayout(false);
 			this.tabGeneralKeys.PerformLayout();
-			this.groupBox6.ResumeLayout(false);
-			this.groupBox6.PerformLayout();
 			this.tabAccelerometerKeys.ResumeLayout(false);
 			this.gbAccelerometer.ResumeLayout(false);
 			this.groupBox5.ResumeLayout(false);
@@ -3399,13 +3306,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.Button cmdResetToDefaults;
 		private System.Windows.Forms.TabControl tabAllTabs;
 		private System.Windows.Forms.CheckBox chkEnableLeftMFD;
-        private System.Windows.Forms.TabPage tabHotkeys;
-        private System.Windows.Forms.Label label24;
-        private ShortcutInput sciSecondary2DModeHotkey;
-        private System.Windows.Forms.Label lbl3DModeHotkey;
-        private System.Windows.Forms.Label label22;
-        private ShortcutInput sciPrimary2DModeHotkey;
-        private ShortcutInput sci3DModeHotkey;
+		private System.Windows.Forms.TabPage tabHotkeys;
         private System.Windows.Forms.Button cmdRecoverLeftMfd;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -3619,8 +3520,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.TabPage tabPerformance;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.GroupBox groupBox6;
+		private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TabControl tabOtherInstros;
         private System.Windows.Forms.TabPage tabTrim;
         private System.Windows.Forms.TabPage tabFaults;
