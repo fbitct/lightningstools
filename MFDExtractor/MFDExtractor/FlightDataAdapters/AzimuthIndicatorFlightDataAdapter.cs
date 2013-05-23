@@ -1,4 +1,5 @@
-﻿using Common.Math;
+﻿using System;
+using Common.Math;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
@@ -33,7 +34,7 @@ namespace MFDExtractor.FlightDataAdapters
                         }
                         if (flightData.lethality != null)
                         {
-                            thisBlip.Lethality = flightData.lethality[i];
+                            thisBlip.Lethality = thisBlip.Lethality = 1.0f - flightData.lethality[i];
                         }
                         if (flightData.missileActivity != null)
                         {
@@ -90,7 +91,41 @@ namespace MFDExtractor.FlightDataAdapters
             azimuthIndicator.InstrumentState.Other1Low = true;
             azimuthIndicator.InstrumentState.Other2Count = 0;
             azimuthIndicator.InstrumentState.Other2Low = true;
-            azimuthIndicator.InstrumentState.RWRPowerOn = ((flightData.lightBits2 & (int)LightBits2.AuxPwr) == (int)LightBits2.AuxPwr);
+            azimuthIndicator.InstrumentState.cmdsMode = flightData.cmdsMode;
+            if (((flightData.powerBits & (int)PowerBits.BusPowerNonEssential) == (int)PowerBits.BusPowerNonEssential))
+            {
+                azimuthIndicator.InstrumentState.RWRPowerOn = ((flightData.lightBits2 & (int)LightBits2.AuxPwr) == (int)LightBits2.AuxPwr);
+                azimuthIndicator.InstrumentState.RWRTest1 = ((flightData.lightBits3 & (int)Bms4LightBits3.SysTest) == (int)Bms4LightBits3.SysTest);
+                if ((flightData.lightBits3 & (int)Bms4LightBits3.SysTest) == (int)Bms4LightBits3.SysTest) //Added Falcas 07-11-2012
+                {
+                    //Set test start time
+                    if (azimuthIndicator.InstrumentState.TestStartTime == DateTime.MinValue)
+                    {
+                        azimuthIndicator.InstrumentState.TestStartTime = DateTime.Now;
+                    }
+
+                    DateTime thisTestTime = DateTime.Now;
+                    TimeSpan TimeDiff = thisTestTime.Subtract(azimuthIndicator.InstrumentState.TestStartTime);
+                    if (TimeDiff >= TimeSpan.FromSeconds(5))
+                    {
+                        azimuthIndicator.InstrumentState.RWRTest1 = false;
+                        azimuthIndicator.InstrumentState.RWRTest2 = true;
+                    }
+                }
+                else
+                {
+                    //Reset test time.
+                    azimuthIndicator.InstrumentState.TestStartTime = DateTime.MinValue;
+                    azimuthIndicator.InstrumentState.RWRTest1 = false;
+                    azimuthIndicator.InstrumentState.RWRTest2 = false;
+                }
+            }
+            else
+            {
+                azimuthIndicator.InstrumentState.RWRPowerOn = false;
+                azimuthIndicator.InstrumentState.RWRTest1 = false;
+                azimuthIndicator.InstrumentState.RWRTest2 = false;
+            }
             azimuthIndicator.InstrumentState.PriorityMode = ((flightData.lightBits2 & (int)LightBits2.PriMode) == (int)LightBits2.PriMode);
             azimuthIndicator.InstrumentState.SearchMode = ((flightData.lightBits2 & (int)LightBits2.AuxSrch) == (int)LightBits2.AuxSrch);
             azimuthIndicator.InstrumentState.SeparateMode = ((flightData.lightBits2 & (int)LightBits2.TgtSep) == (int)LightBits2.TgtSep);

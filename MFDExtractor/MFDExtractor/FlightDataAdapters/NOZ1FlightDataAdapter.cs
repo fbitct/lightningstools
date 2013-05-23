@@ -13,18 +13,7 @@ namespace MFDExtractor.FlightDataAdapters
     {
         public void Adapt(IF16NozzlePositionIndicator nozzlePositionIndicator, FlightData flightData)
         {
-            switch (flightData.DataFormat)
-            {
-                case FalconDataFormats.OpenFalcon:
-                    nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = NonImplementedGaugeCalculations.NOZ(flightData.rpm, flightData.z, flightData.fuelFlow);
-                    break;
-                case FalconDataFormats.BMS4:
-                    nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = flightData.nozzlePos * 100.0f;
-                    break;
-                default:
-                    nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = flightData.nozzlePos;
-                    break;
-            }
+            nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = flightData.nozzlePos * 100.0f;
         }
     }
 }

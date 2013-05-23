@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Text;
 using System.Threading;
 using Common.Win32;
 using F4SharedMem;
 using log4net;
+using System.ComponentModel;
 
 namespace F4Utils.Process
 {
@@ -68,16 +68,28 @@ namespace F4Utils.Process
         public static string GetFalconExePath()
         {
             var windowHandle = GetFalconWindowHandle();
+            string toReturn = null;
             if (windowHandle != IntPtr.Zero)
             {
-                int processId;
-                NativeMethods.GetWindowThreadProcessId(windowHandle, out processId);
-                var process = System.Diagnostics.Process.GetProcessById(processId);
-                return process.MainModule.FileName;
+                int procId;
+                NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
+                var process = System.Diagnostics.Process.GetProcessById(procId);
+                try
+                {
+                    toReturn = (from ProcessModule module in process.Modules
+                                where
+                                    module.ModuleName.Contains(MODULENAME_F4) ||
+                                    module.ModuleName.ToUpper().Contains(MODULENAME_FALCON)
+                                select module.FileName).FirstOrDefault();
+                }
+                catch (Win32Exception)
+                {
+                    
+                }
             }
-            return null;
+            return toReturn;
         }
-		
+
         public static IntPtr GetFalconWindowHandle()
         {
             var hWnd = NativeMethods.FindWindow(WINDOW_CLASS_FALCONDISPLAY, null);
@@ -105,6 +117,9 @@ namespace F4Utils.Process
                 else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS3_EARLY_BMS4.ToLowerInvariant()))
                 {
                     toReturn = FalconDataFormats.BMS3;
+                }
+                else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS4.ToLowerInvariant()))
+                {
                     try
                     {
                         var verInfo = FileVersionInfo.GetVersionInfo(exePath);
@@ -116,14 +131,27 @@ namespace F4Utils.Process
                     }
                     catch (Exception e)
                     {
-                        Log.Error(e.Message, e);
+
                     }
                 }
-                else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS4.ToLowerInvariant()))
+                else if (exePath.ToLowerInvariant().Contains("falcon bms test.exe")) //Added by Falcas to make it possible to run with test exe files
                 {
-                    toReturn = FalconDataFormats.BMS4;
+                    try
+                    {
+                        var verInfo = FileVersionInfo.GetVersionInfo(exePath);
+
+                        if (verInfo.ProductMajorPart >= 4)
+                        {
+                            toReturn = FalconDataFormats.BMS4;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                 }
             }
+
             return toReturn;
         }
     }

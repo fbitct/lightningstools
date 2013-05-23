@@ -364,6 +364,7 @@ namespace MFDExtractor
             renderers.HSI.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF);
             renderers.HSI.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
             renderers.EHSI.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
+            renderers.EHSI.InstrumentState.NoPowerFlag = (fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery;
             renderers.EHSI.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
         }
 

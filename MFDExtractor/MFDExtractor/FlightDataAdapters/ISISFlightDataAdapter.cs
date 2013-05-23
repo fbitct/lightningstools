@@ -21,30 +21,12 @@ namespace MFDExtractor.FlightDataAdapters
             var altbits = (AltBits) flightData.altBits;
             var hsibits = (HsiBits) flightData.hsiBits;
             isis.InstrumentState.AirspeedKnots = flightData.kias;
+            isis.InstrumentState.IndicatedAltitudeFeetMSL = -flightData.aauz;
+	        isis.Options.PressureAltitudeUnits = ((altbits & AltBits.CalType) == AltBits.CalType) 
+				? F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury 
+				: F16ISIS.F16ISISOptions.PressureUnits.Millibars;
 
-            if (flightData.DataFormat == FalconDataFormats.BMS4)
-            {
-                isis.InstrumentState.IndicatedAltitudeFeetMSL = -flightData.aauz;
-                if (flightData.VersionNum >= 111)
-                {
-	                isis.Options.PressureAltitudeUnits = ((altbits & AltBits.CalType) == AltBits.CalType) 
-						? F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury 
-						: F16ISIS.F16ISISOptions.PressureUnits.Millibars;
-
-	                isis.InstrumentState.BarometricPressure = flightData.AltCalReading;
-                }
-                else
-                {
-                    isis.InstrumentState.BarometricPressure = 2992f;
-                    isis.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury; 
-                }
-            }
-            else
-            {
-                isis.InstrumentState.IndicatedAltitudeFeetMSL = -flightData.z;
-                isis.InstrumentState.BarometricPressure = 2992f;
-                isis.Options.PressureAltitudeUnits =F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury;
-            }
+	        isis.InstrumentState.BarometricPressure = flightData.AltCalReading;
 			isis.InstrumentState.RadarAltitudeAGL = _radarAltitudeCalculator.ComputeRadarAltitude(flightData);
 			isis.InstrumentState.MachNumber = flightData.mach;
             isis.InstrumentState.MagneticHeadingDegrees = (360 +(flightData.yaw/Constants.RADIANS_PER_DEGREE))%360;

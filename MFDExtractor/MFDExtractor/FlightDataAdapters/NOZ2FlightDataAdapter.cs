@@ -1,5 +1,4 @@
 ﻿using F4SharedMem;
-using F4Utils.SimSupport;
 using LightningGauges.Renderers;
 
 namespace MFDExtractor.FlightDataAdapters
@@ -13,18 +12,7 @@ namespace MFDExtractor.FlightDataAdapters
     {
         public void Adapt(IF16NozzlePositionIndicator nozzlePositionIndicator, FlightData flightData)
         {
-            switch (flightData.DataFormat)
-            {
-                case FalconDataFormats.OpenFalcon:
-                    nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = NonImplementedGaugeCalculations.NOZ(flightData.rpm2, flightData.z, flightData.fuelFlow);
-                    break;
-                case FalconDataFormats.BMS4:
-                    nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = flightData.nozzlePos2 * 100.0f;
-                    break;
-                default:
-                    nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = flightData.nozzlePos2;
-                    break;
-            }
+            nozzlePositionIndicator.InstrumentState.NozzlePositionPercent = flightData.nozzlePos2 * 100.0f;
         }
     }
 }

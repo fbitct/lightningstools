@@ -13,14 +13,7 @@ namespace MFDExtractor.FlightDataAdapters
     {
         public void Adapt(IF16FanTurbineInletTemperature ftit1, FlightData flightData)
         {
-            if (flightData.DataFormat == FalconDataFormats.BMS4)
-            {
-                ftit1.InstrumentState.InletTemperatureDegreesCelcius = flightData.ftit * 100.0f;
-            }
-            else
-            {
-                ftit1.InstrumentState.InletTemperatureDegreesCelcius = NonImplementedGaugeCalculations.Ftit(ftit1.InstrumentState.InletTemperatureDegreesCelcius, flightData.rpm);
-            }
+            ftit1.InstrumentState.InletTemperatureDegreesCelcius = flightData.ftit * 100.0f;
         }
     }
 }

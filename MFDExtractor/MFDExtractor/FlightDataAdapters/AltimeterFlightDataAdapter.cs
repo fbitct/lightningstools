@@ -14,42 +14,20 @@ namespace MFDExtractor.FlightDataAdapters
         public void Adapt(IF16Altimeter altimeter, FlightData flightData)
         {
             var altbits = (AltBits)flightData.altBits;
-            if (flightData.DataFormat == FalconDataFormats.BMS4)
-            {
-                AdaptBMS4Altimeter(altimeter, flightData, altbits);
-            }
-            else
-            {
-                AdaptLegacyAltimeter(altimeter, flightData);
-            }
+            AdaptAltimeter(altimeter, flightData, altbits);
         }
 
-        private static void AdaptLegacyAltimeter(IF16Altimeter altimeter, FlightData fromFalcon)
-        {
-            altimeter.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.z;
-            altimeter.InstrumentState.BarometricPressure = 2992f;
-            altimeter.InstrumentState.PneumaticModeFlag = false;
-            altimeter.Options.PressureAltitudeUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury;
-        }
-
-        private static void AdaptBMS4Altimeter(IF16Altimeter altimeter, FlightData fromFalcon, AltBits altbits)
+       
+        private static void AdaptAltimeter(IF16Altimeter altimeter, FlightData fromFalcon, AltBits altbits)
         {
             altimeter.Options.PressureAltitudeUnits = ((altbits & AltBits.CalType) == AltBits.CalType)
                 ? F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury
                 : F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars;
 
             altimeter.InstrumentState.IndicatedAltitudeFeetMSL = -fromFalcon.aauz;
-            if (fromFalcon.VersionNum >= 111)
-            {
-                altimeter.InstrumentState.BarometricPressure = fromFalcon.AltCalReading;
-                altimeter.InstrumentState.PneumaticModeFlag = ((altbits & AltBits.PneuFlag) == AltBits.PneuFlag);
-            }
-            else
-            {
-                altimeter.InstrumentState.BarometricPressure = 2992f;
-                altimeter.InstrumentState.PneumaticModeFlag = false;
-                altimeter.Options.PressureAltitudeUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury;
-            }
+            altimeter.InstrumentState.BarometricPressure = fromFalcon.AltCalReading;
+            altimeter.InstrumentState.PneumaticModeFlag = ((altbits & AltBits.PneuFlag) == AltBits.PneuFlag);
+            altimeter.InstrumentState.StandbyModeFlag = ((altbits & AltBits.PneuFlag) == AltBits.PneuFlag);
         }
     }
 }

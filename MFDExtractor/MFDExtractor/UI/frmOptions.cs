@@ -1077,7 +1077,7 @@ namespace MFDExtractor.UI
         private void cmdBMSOptions_Click(object sender, EventArgs e)
         {
             var options = new frmBMSOptions();
-            options.BmsPath = GetBmsPath();
+            options.BmsPath = Settings.Default.BmsPath;
             options.ShowDialog(this);
             if (!options.Cancelled)
             {
@@ -1087,56 +1087,6 @@ namespace MFDExtractor.UI
                     Settings.Default.BmsPath = options.BmsPath;
                 }
             }
-        }
-
-        private string GetBmsPath()
-        {
-            string bmsPath = Settings.Default.BmsPath;
-            if (bmsPath != null) bmsPath = bmsPath.Trim();
-            bool exists = false;
-            if (!String.IsNullOrEmpty(bmsPath))
-            {
-                var bmsDirInfo = new DirectoryInfo(bmsPath);
-                if (bmsDirInfo.Exists &&
-                    ((bmsDirInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory))
-                {
-                    exists = true;
-                }
-            }
-            if (!exists)
-            {
-                RegistryKey mainKey = null;
-                try
-                {
-                    mainKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\MicroProse\Falcon\4.0\", false);
-                }
-                catch (Exception)
-                {
-                }
-                if (mainKey != null)
-                {
-                    string baseDir = null;
-                    try
-                    {
-                        baseDir = (string) mainKey.GetValue("baseDir");
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    if (!String.IsNullOrEmpty(baseDir))
-                    {
-                        var dirInfo = new DirectoryInfo(baseDir);
-                        if (dirInfo.Exists)
-                        {
-                            if ((dirInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
-                            {
-                                bmsPath = dirInfo.FullName;
-                            }
-                        }
-                    }
-                }
-            }
-            return bmsPath;
         }
 
         private void cboImageFormat_SelectedIndexChanged(object sender, EventArgs e)

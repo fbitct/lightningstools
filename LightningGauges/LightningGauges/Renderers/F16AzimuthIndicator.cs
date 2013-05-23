@@ -2088,7 +2088,7 @@ namespace LightningGauges.Renderers
             public bool RWRPowerOn { get; set; }
             public bool RWRTest1 { get; set; } //Added Falcas 07-11-2012
             public bool RWRTest2 { get; set; } //Added Falcas 07-11-2012
-
+            public DateTime TestStartTime { get; set; }
             public float MagneticHeadingDegrees
             {
                 get { return _magneticHeadingDegrees; }

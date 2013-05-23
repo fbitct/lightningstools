@@ -91,8 +91,7 @@ namespace F4Utils.Process
 
                 if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.BMS4)
                 {
-                    configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar + ".." +
-                                   Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar +
+                    configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar +
                                    USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
                 }
                 else
