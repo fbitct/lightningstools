@@ -16,7 +16,6 @@ using F4Utils.Terrain.Structs;
 using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using Microsoft.Win32;
-using Terrain;
 
 namespace F4Utils.Terrain
 {
