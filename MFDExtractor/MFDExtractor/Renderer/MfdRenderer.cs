@@ -44,15 +44,16 @@ namespace MFDExtractor.Renderer
 		}
 	    private void RenderFromSharedmemSurface(Graphics graphics, Rectangle bounds)
 	    {
-            lock (Options.SourceImage)
+            var image = Options.SourceImage;
+	        try
 	        {
-	            try
-	            {
-	                graphics.DrawImage(Options.SourceImage, bounds, Options.SourceRectangle, GraphicsUnit.Pixel);
-	            }
-	            catch (AccessViolationException){}
-	            catch (InvalidOperationException){}
+                if (image.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
+                {
+                    graphics.DrawImage(image, bounds, Options.SourceRectangle, GraphicsUnit.Pixel);
+                }
 	        }
+	        catch (AccessViolationException){}
+	        catch (InvalidOperationException){}
 	    }
 
 	    public MfdRendererInstrumentState InstrumentState { get; set; }

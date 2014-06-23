@@ -16,6 +16,7 @@ using F4Utils.Terrain.Structs;
 using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using Microsoft.Win32;
+using Terrain;
 
 namespace F4Utils.Terrain
 {
@@ -27,6 +28,8 @@ namespace F4Utils.Terrain
 	public class TerrainBrowser : IDisposable, ITerrainHeightProvider
 	{
         private static readonly ILog Log = LogManager.GetLogger(typeof (TerrainBrowser));
+        private ICurrentTheaterNameDetector _currentTheaterNameDetector = new CurrentTheaterNameDetector();
+        private ITheaterDotTdfFileReader _theaterDotTdfFileReader = new TheaterDotTdfFileReader();
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -48,7 +51,7 @@ namespace F4Utils.Terrain
         private TheaterDotLxFileInfo[] _theaterDotLxFiles;
         private TheaterDotMapFileInfo _theaterDotMapFileInfo;
         private Bitmap[] _theaterMaps;
-
+        private IFarTileTextureRetriever _farTileTextureRetriever = new FarTileTextureRetriever();
         #endregion
 
         public TerrainBrowser(bool loadAllLods)
@@ -203,94 +206,7 @@ namespace F4Utils.Terrain
 
         public Bitmap GetFarTileTexture(uint textureId)
         {
-            if (_farTileTextures != null && _farTileTextures.ContainsKey(textureId))
-            {
-                return _farTileTextures[textureId];
-            }
-            if (String.IsNullOrEmpty(_farTilesDotDdsFilePath) && (String.IsNullOrEmpty(_farTilesDotRawFilePath)))
-                return null;
-
-            if (_farTilesDotDdsFilePath != null)
-            {
-                var fileInfo = new FileInfo(_farTilesDotDdsFilePath);
-                var useDDS = true;
-                if (!fileInfo.Exists) 
-                {
-                    useDDS = false;
-                    fileInfo = new FileInfo(_farTilesDotRawFilePath);
-                    if (!fileInfo.Exists) return null;
-                }
-
-
-                Bitmap bitmap;
-                if (useDDS)
-                {
-                    using (var stream = File.OpenRead(_farTilesDotDdsFilePath))
-                    {
-                        var headerSize = Marshal.SizeOf(typeof (NativeMethods.DDSURFACEDESC2));
-                        var header = new byte[headerSize];
-                        stream.Seek(0, SeekOrigin.Begin);
-                        stream.Read(header, 0, headerSize);
-
-                        var pinnedHeader = GCHandle.Alloc(header, GCHandleType.Pinned);
-                        var surfaceDesc =
-                            (NativeMethods.DDSURFACEDESC2)
-                            Marshal.PtrToStructure(pinnedHeader.AddrOfPinnedObject(),
-                                                   typeof (NativeMethods.DDSURFACEDESC2));
-                        pinnedHeader.Free();
-
-                        var imageSize = ((surfaceDesc.dwFlags & NativeMethods.DDSD_PITCH) == NativeMethods.DDSD_PITCH)
-                                            ? surfaceDesc.dwHeight*surfaceDesc.lPitch
-                                            : surfaceDesc.dwLinearSize;
-                        var ddsBytes = new byte[headerSize + 4 + imageSize];
-                        ddsBytes[0] = 0x44;
-                        ddsBytes[1] = 0x44;
-                        ddsBytes[2] = 0x53;
-                        ddsBytes[3] = 0x20;
-                        Array.Copy(header, 0, ddsBytes, 4, header.Length);
-                        stream.Seek((imageSize*textureId), SeekOrigin.Current);
-                        stream.Read(ddsBytes, headerSize + 4, imageSize);
-                        bitmap = DDS.GetBitmapFromDDSFileBytes(ddsBytes);
-
-                        if (_farTileTextures != null && !_farTileTextures.ContainsKey(textureId))
-                        {
-                            _farTileTextures.Add(textureId, bitmap);
-                        }
-                        stream.Close();
-                    }
-                }
-                else
-                {
-                    bitmap = new Bitmap(32, 32, PixelFormat.Format8bppIndexed);
-                    var pal = bitmap.Palette;
-                    for (var i = 0; i < 256; i++)
-                    {
-                        pal.Entries[i] = _farTilesDotPalFileInfo.pallete[i];
-                    }
-                    bitmap.Palette = pal;
-                    using (var stream = File.OpenRead(_farTilesDotRawFilePath))
-                    {
-                        const int imageSizeBytes = 32*32;
-                        stream.Seek(imageSizeBytes*textureId, SeekOrigin.Begin);
-                        var bytesRead = new byte[imageSizeBytes];
-                        stream.Read(bytesRead, 0, imageSizeBytes);
-                        var lockData = bitmap.LockBits(new Rectangle(0, 0, 32, 32), ImageLockMode.WriteOnly,
-                                                       bitmap.PixelFormat);
-                        var scan0 = lockData.Scan0;
-                        var height = lockData.Height;
-                        var width = lockData.Width;
-                        Marshal.Copy(bytesRead, 0, scan0, width*height);
-                        bitmap.UnlockBits(lockData);
-                        if (_farTileTextures != null && !_farTileTextures.ContainsKey(textureId))
-                        {
-                            _farTileTextures.Add(textureId, bitmap);
-                        }
-                        stream.Close();
-                    }
-                }
-                return bitmap;
-            }
-            return null;
+            return _farTileTextureRetriever.GetFarTileTexture(textureId, _farTileTextures, _farTilesDotDdsFilePath, _farTilesDotRawFilePath, _farTilesDotPalFileInfo);
         }
 
         public Bitmap LoadNearTileTexture(string textureBaseFolderPath, string tileName)
@@ -508,109 +424,14 @@ namespace F4Utils.Terrain
             _theaterMaps[lod] = bmp;
             return bmp;
         }
-
-        public string DetectCurrentTheaterName()
-        {
-            string theaterName = null;
-            var currentDataFormat = Process.Util.DetectFalconFormat();
-            FileVersionInfo verInfo = null;
-            var exePath = Process.Util.GetFalconExePath();
-            if (exePath != null) verInfo = FileVersionInfo.GetVersionInfo(exePath);
-
-            if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                try
-                {
-                    if (exePath != null)
-                    {
-                        exePath = Path.GetDirectoryName(exePath);
-                        var configFolder = exePath + Path.DirectorySeparatorChar + "config";
-                        using (
-                            var reader =
-                                File.OpenText(configFolder + Path.DirectorySeparatorChar + "options.cfg"))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                var line = reader.ReadLine();
-                                if (line == null) continue;
-                                line = line.Trim();
-                                if (line.StartsWith("gs_curTheater"))
-                                {
-                                    var equalsLoc = line.IndexOf('=');
-                                    if (equalsLoc >= 13)
-                                    {
-                                        theaterName = line.Substring(equalsLoc + 1, line.Length - equalsLoc - 1);
-                                        theaterName = theaterName.Trim();
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.Message, ex);
-                    theaterName = null;
-                }
-            }
-            else if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.BMS4 && verInfo != null &&
-                     ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) ||
-                      (verInfo.ProductMajorPart > 4)))
-            {
-                try
-                {
-                    var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Benchmark Sims");
-                    if (key != null)
-                    {
-                        var subkeys = key.GetSubKeyNames();
-                        if (subkeys != null && subkeys.Length > 0)
-                        {
-                            foreach (var subkey in subkeys)
-                            {
-                                var toRead = key.OpenSubKey(subkey, false);
-                                if (toRead != null)
-                                {
-                                    var baseDir = (string) toRead.GetValue("baseDir", null);
-                                    var exePathFI = new FileInfo(exePath);
-                                    if (baseDir != null && exePathFI.Directory.Parent.Parent.FullName.Equals(baseDir))
-                                    {
-                                        theaterName= (string) toRead.GetValue("curTheater", null);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if (!string.IsNullOrEmpty(theaterName)) theaterName = theaterName.Trim();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.Message, ex);
-                    theaterName = null;
-                }
-            }
-            else
-            {
-                try
-                {
-                    var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\MicroProse\Falcon\4.0");
-                    if (key != null) theaterName = (string) key.GetValue("curTheater");
-                    if (!string.IsNullOrEmpty(theaterName)) theaterName = theaterName.Trim();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex.Message, ex);
-                    theaterName = null;
-                }
-            }
-            return theaterName;
+        public string DetectCurrentTheaterName() {
+            return _currentTheaterNameDetector.DetectCurrentTheaterName();
         }
 
         private TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath, FalconDataFormats version)
         {
             if (exePath == null) return null;
-            var currentTheaterName = DetectCurrentTheaterName();
+            var currentTheaterName = _currentTheaterNameDetector.DetectCurrentTheaterName();
             if (currentTheaterName == null) return null;
             var f4BaseDir = new FileInfo(exePath).DirectoryName;
             FileInfo theaterDotLstFI;
@@ -638,11 +459,11 @@ namespace F4Utils.Terrain
                     {
                         var thisLine = sw.ReadLine();
                         var tdfDetailsThisLine =
-                            ReadTheaterDotTdf(f4BaseDir + Path.DirectorySeparatorChar + thisLine);
+                            _theaterDotTdfFileReader.ReadTheaterDotTdfFile(f4BaseDir + Path.DirectorySeparatorChar + thisLine);
 
                         if (tdfDetailsThisLine == null)
                         {
-                            tdfDetailsThisLine = ReadTheaterDotTdf(f4BaseDir + Path.DirectorySeparatorChar + "..\\..\\data" + Path.DirectorySeparatorChar + thisLine);
+                            tdfDetailsThisLine = _theaterDotTdfFileReader.ReadTheaterDotTdfFile(f4BaseDir + Path.DirectorySeparatorChar + "..\\..\\data" + Path.DirectorySeparatorChar + thisLine);
                         }
                         if (tdfDetailsThisLine != null)
                         {
@@ -659,107 +480,9 @@ namespace F4Utils.Terrain
             return null;
         }
 
-        private static TheaterDotTdfFileInfo ReadTheaterDotTdf(string path)
-        {
-            if (String.IsNullOrEmpty(path)) return null;
+        
 
-            var basePathFI = new FileInfo(path);
-            if (!basePathFI.Exists) return null;
-
-            var toReturn = new TheaterDotTdfFileInfo();
-            using (var fs = new FileStream(path, FileMode.Open))
-            using (var sw = new StreamReader(fs))
-            {
-                while (!sw.EndOfStream)
-                {
-                    var thisLine = sw.ReadLine();
-                    var thisLineTokens = Common.Strings.Util.Tokenize(thisLine);
-                    if (thisLineTokens.Count > 0)
-                    {
-                        if (thisLineTokens[0].ToLower() == "name")
-                        {
-                            toReturn.theaterName = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "desc")
-                        {
-                            toReturn.theaterDesc = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "bitmap")
-                        {
-                            toReturn.bitmap = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "campaigndir")
-                        {
-                            toReturn.campaignDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "terraindir")
-                        {
-                            toReturn.terrainDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "artdir")
-                        {
-                            toReturn.artDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "moviedir")
-                        {
-                            toReturn.movieDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "uisounddir")
-                        {
-                            toReturn.uiSoundDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "objectdir")
-                        {
-                            toReturn.objectDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "misctexdir")
-                        {
-                            toReturn.miscTextDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "3ddatadir")
-                        {
-                            toReturn.ThreeDeeDataDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "mintacan")
-                        {
-                            toReturn.minTacan = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "sounddir")
-                        {
-                            toReturn.soundDir = JoinTokens(thisLineTokens, true);
-                        }
-                        else if (thisLineTokens[0].ToLower() == "acmidir")
-                        {
-                            toReturn.acmiDir = JoinTokens(thisLineTokens, true);
-                        }
-                    }
-                }
-            }
-            return toReturn;
-        }
-
-        private static string JoinTokens(List<string> tokens, bool omitFirstToken)
-        {
-            string toReturn = null;
-            if (tokens != null && tokens.Count > 0)
-            {
-                var sb = new StringBuilder();
-                var first = true;
-                foreach (var st in tokens)
-                {
-                    if (omitFirstToken && first)
-                    {
-                        first = false;
-                        continue;
-                    }
-                    sb.Append(st);
-                    sb.Append(" ");
-                    first = false;
-                }
-                toReturn = sb.ToString().Trim();
-            }
-            return toReturn;
-        }
+        
 
         public float GetTerrainHeight(float feetNorth, float feetEast)
         {

@@ -628,10 +628,10 @@ namespace MFDExtractor
 
 	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded()
 	    {
-			if ((_sharedMemorySpriteCoordinates.HUD == Rectangle.Empty) ||
-				(_sharedMemorySpriteCoordinates.LMFD == Rectangle.Empty) ||
-				(_sharedMemorySpriteCoordinates.RMFD == Rectangle.Empty) ||
-				(_sharedMemorySpriteCoordinates.MFD3 == Rectangle.Empty) ||
+			if ((_sharedMemorySpriteCoordinates.HUD == Rectangle.Empty) &&
+				(_sharedMemorySpriteCoordinates.LMFD == Rectangle.Empty) &&
+				(_sharedMemorySpriteCoordinates.RMFD == Rectangle.Empty) &&
+				(_sharedMemorySpriteCoordinates.MFD3 == Rectangle.Empty) &&
 				(_sharedMemorySpriteCoordinates.MFD4 == Rectangle.Empty))
 	        {
 	            _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile();

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
@@ -13,6 +13,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -25,10 +26,13 @@
     <ErrorReport>prompt</ErrorReport>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <ProjectGuid>{BA414112-2EAB-496B-83DC-2005018A827C}</ProjectGuid>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -82,6 +86,7 @@
     <Compile Include="Campaign\Unit.cs" />
     <Compile Include="Campaign\Waypoint.cs" />
     <Compile Include="Campaign\WthFile.cs" />
+    <Compile Include="Terrain\CurrentTheaterNameDetector.cs" />
     <Compile Include="PlayerOp\AutoPilotModeType.cs" />
     <Compile Include="PlayerOp\AvionicsType.cs" />
     <Compile Include="PlayerOp\FlightModelType.cs" />
@@ -107,6 +112,7 @@
     <Compile Include="SimSupport\NonImplementedGaugeCalculations.cs" />
     <Compile Include="PlayerOp\SoundGroup.cs" />
     <Compile Include="Terrain\Constants.cs" />
+    <Compile Include="Terrain\FarTileTextureRetriever.cs" />
     <Compile Include="Terrain\Structs\FarTilesDotPalFileInfo.cs" />
     <Compile Include="Terrain\Structs\TextureBinAreaRecord.cs" />
     <Compile Include="Terrain\Structs\TextureBinPathRecord.cs" />
@@ -119,7 +125,9 @@
     <Compile Include="Terrain\Structs\TheaterDotOxFlieRecord.cs" />
     <Compile Include="Terrain\Structs\TheaterDotTdfFileInfo.cs" />
     <Compile Include="Terrain\TerrainBrowser.cs" />
+    <Compile Include="Terrain\TheaterDotTdfFileReader.cs" />
     <Compile Include="Terrain\Util.cs" />
+    <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -134,7 +142,7 @@
       <Name>F4KeyFile</Name>
     </ProjectReference>
     <ProjectReference Include="..\F4SharedMem\F4SharedMem.csproj">
-      <Project>{517D1B4D-E8C7-4331-BBE7-300FD6B78441}</Project>
+      <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
       <Name>F4SharedMem</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lzss\LzssManaged\LzssManaged.csproj">
