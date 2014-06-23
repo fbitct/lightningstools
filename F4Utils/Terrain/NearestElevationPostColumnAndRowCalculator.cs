@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terrain
+namespace F4Utils.Terrain
 {
     internal interface INearestElevationPostColumnAndRowCalculator
     {

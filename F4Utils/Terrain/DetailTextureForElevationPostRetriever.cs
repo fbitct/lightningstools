@@ -1,4 +1,5 @@
-﻿using F4Utils.Terrain.Structs;
+﻿using F4Utils.Terrain;
+using F4Utils.Terrain.Structs;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
