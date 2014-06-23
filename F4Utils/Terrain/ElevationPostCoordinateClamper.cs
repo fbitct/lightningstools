@@ -8,16 +8,22 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    internal interface IElevationPostCoordinateClamper
+    public interface IElevationPostCoordinateClamper
     {
-        void ClampElevationPostCoordinates(TheaterDotMapFileInfo theaterDotMapFileInfo, TheaterDotLxFileInfo[] theaterDotLxFiles, ref int postColumn, ref int postRow, uint lod);
+        void ClampElevationPostCoordinates(ref int postColumn, ref int postRow, uint lod, TerrainDB terrainDB);
     }
-    class ElevationPostCoordinateClamper:IElevationPostCoordinateClamper
+    public class ElevationPostCoordinateClamper:IElevationPostCoordinateClamper
     {
-        public void ClampElevationPostCoordinates(TheaterDotMapFileInfo theaterDotMapFileInfo, TheaterDotLxFileInfo[] theaterDotLxFiles, ref int postColumn, ref int postRow, uint lod)
+        public void ClampElevationPostCoordinates(ref int postColumn, ref int postRow, uint lod, TerrainDB terrainDB)
         {
-            var mapInfo = theaterDotMapFileInfo;
-            var lodInfo = theaterDotLxFiles[lod];
+            if (terrainDB == null ||  terrainDB.TheaterDotLxFiles == null)
+            {
+                postColumn = 0;
+                postRow = 0;
+                return;
+            }
+            var mapInfo = terrainDB.TheaterDotMap;
+            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
 
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             if (postColumn < 0) postColumn = 0;

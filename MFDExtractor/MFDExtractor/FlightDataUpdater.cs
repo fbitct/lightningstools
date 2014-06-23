@@ -5,6 +5,7 @@ using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
 using MFDExtractor.FlightDataAdapters;
+using F4Utils.Terrain;
 
 namespace MFDExtractor
 {
@@ -13,6 +14,7 @@ namespace MFDExtractor
         void UpdateRendererStatesFromFlightData(
             IInstrumentRendererSet renderers,
             FlightData flightData,
+            TerrainDB terrainDB,
             Action updateEHSIBrightnessLabelVisibility);
     }
 
@@ -22,7 +24,11 @@ namespace MFDExtractor
 		private readonly ExtractorState _extractorState;
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates;
-        public FlightDataUpdater(F4TexSharedMem.IReader texSharedmemReader, SharedMemorySpriteCoordinates sharedMemorySpriteCoordinates, ExtractorState extractorState, IFlightDataAdapterSet flightDataAdapterSet = null)
+        private readonly ITerrainDBFactory _terrainDBFactory;
+        public FlightDataUpdater(F4TexSharedMem.IReader texSharedmemReader, 
+            SharedMemorySpriteCoordinates sharedMemorySpriteCoordinates, 
+            ExtractorState extractorState, 
+            IFlightDataAdapterSet flightDataAdapterSet = null)
         {
 	        _texSharedmemReader = texSharedmemReader;
 	        _sharedMemorySpriteCoordinates = sharedMemorySpriteCoordinates;
@@ -32,6 +38,7 @@ namespace MFDExtractor
         public void UpdateRendererStatesFromFlightData(
             IInstrumentRendererSet renderers,
             FlightData flightData,
+            TerrainDB terrainDB,
             Action updateEHSIBrightnessLabelVisibility)
         {
 			if (flightData == null || (_extractorState.NetworkMode != NetworkMode.Client && !_extractorState.SimRunning))
@@ -43,7 +50,7 @@ namespace MFDExtractor
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
 
-                _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData);
+                _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData, terrainDB);
                 _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
                 _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData);
                 _flightDataAdapterSet.AirspeedIndicator.Adapt(renderers.ASI, flightData);
@@ -70,9 +77,9 @@ namespace MFDExtractor
                     //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
                     //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
                     var commandBarsOn = ((float) (Math.Abs(Math.Round(flightData.AdiIlsHorPos, 4))) != 0.1745f);
-                    if ((Math.Abs((flightData.AdiIlsVerPos/Constants.RADIANS_PER_DEGREE)) > 1.0f)
+                    if ((Math.Abs((flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE)) > 1.0f)
                         ||
-                        (Math.Abs((flightData.AdiIlsHorPos/Constants.RADIANS_PER_DEGREE)) > 5.0f))
+                        (Math.Abs((flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE)) > 5.0f))
                     {
                         commandBarsOn = false;
                     }
@@ -113,12 +120,12 @@ namespace MFDExtractor
                     }
 
                     renderers.ADI.InstrumentState.ShowCommandBars = commandBarsOn;
-                    renderers.ADI.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Constants.RADIANS_PER_DEGREE;
-                    renderers.ADI.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Constants.RADIANS_PER_DEGREE;
+                    renderers.ADI.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE;
+                    renderers.ADI.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE;
 
                     renderers.ISIS.InstrumentState.ShowCommandBars = commandBarsOn;
-                    renderers.ISIS.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Constants.RADIANS_PER_DEGREE;
-                    renderers.ISIS.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Constants.RADIANS_PER_DEGREE;
+                    renderers.ISIS.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE;
+                    renderers.ISIS.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE;
                 }
 
                 UpdateNavigationMode(renderers, flightData);
@@ -181,23 +188,23 @@ namespace MFDExtractor
                 renderers.ISIS.InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-			_flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.LMFD);
-			_flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.RMFD);
-			_flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.MFD3);
-			_flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.MFD4);
-			_flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, _texSharedmemReader.FullImage, _sharedMemorySpriteCoordinates.HUD);
+            _flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.LMFD));
+            _flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.RMFD));
+            _flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.MFD3));
+            _flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.MFD4));
+            _flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.HUD));
 		}
 
         private static void SetISISPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)
         {
-            renderers.ISIS.InstrumentState.PitchDegrees = ((flightData.pitch/Constants.RADIANS_PER_DEGREE));
-            renderers.ISIS.InstrumentState.RollDegrees = ((flightData.roll/Constants.RADIANS_PER_DEGREE));
+            renderers.ISIS.InstrumentState.PitchDegrees = ((flightData.pitch/Common.Math.Constants.RADIANS_PER_DEGREE));
+            renderers.ISIS.InstrumentState.RollDegrees = ((flightData.roll /Common.Math.Constants.RADIANS_PER_DEGREE));
         }
 
         private static void SetADIPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)
         {
-            renderers.ADI.InstrumentState.PitchDegrees = ((flightData.pitch/Constants.RADIANS_PER_DEGREE));
-            renderers.ADI.InstrumentState.RollDegrees = ((flightData.roll/Constants.RADIANS_PER_DEGREE));
+            renderers.ADI.InstrumentState.PitchDegrees = ((flightData.pitch / Common.Math.Constants.RADIANS_PER_DEGREE));
+            renderers.ADI.InstrumentState.RollDegrees = ((flightData.roll / Common.Math.Constants.RADIANS_PER_DEGREE));
         }
 
         private static bool ADIIsTurnedOff(HsiBits hsibits)
@@ -362,10 +369,10 @@ namespace MFDExtractor
         private static void UpdateHSI(IInstrumentRendererSet renderers, HsiBits hsibits, FlightData fromFalcon)
         {
             renderers.HSI.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF);
-            renderers.HSI.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
+            renderers.HSI.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
             renderers.EHSI.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
             renderers.EHSI.InstrumentState.NoPowerFlag = (fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery;
-            renderers.EHSI.InstrumentState.MagneticHeadingDegrees = (360 +(fromFalcon.yaw/Constants.RADIANS_PER_DEGREE))%360;
+            renderers.EHSI.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
         }
 
         private static void UpdateADI(IInstrumentRendererSet renderers, HsiBits hsibits)

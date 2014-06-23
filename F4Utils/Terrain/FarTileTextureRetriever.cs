@@ -13,29 +13,29 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    interface IFarTileTextureRetriever
+    public interface IFarTileTextureRetriever
     {
-        Bitmap GetFarTileTexture(uint textureId, Dictionary<uint, Bitmap> farTileTextures, string farTilesDotDdsFilePath, string farTilesDotRawFilePath, FarTilesDotPalFileInfo farTilesDotPalFileInfo);
+        Bitmap GetFarTileTexture(uint textureId, TerrainDB terrainDB);
     }
-    internal class FarTileTextureRetriever:IFarTileTextureRetriever
+    public class FarTileTextureRetriever:IFarTileTextureRetriever
     {
-        public Bitmap GetFarTileTexture(uint textureId, Dictionary<uint, Bitmap> farTileTextures, string farTilesDotDdsFilePath, string farTilesDotRawFilePath, FarTilesDotPalFileInfo farTilesDotPalFileInfo)
+        public Bitmap GetFarTileTexture(uint textureId, TerrainDB terrainDB)
         {
-            if (farTileTextures != null && farTileTextures.ContainsKey(textureId))
+            if (terrainDB.FarTileTextures != null && terrainDB.FarTileTextures.ContainsKey(textureId))
             {
-                return farTileTextures[textureId];
+                return terrainDB.FarTileTextures[textureId];
             }
-            if (String.IsNullOrEmpty(farTilesDotDdsFilePath) && (String.IsNullOrEmpty(farTilesDotRawFilePath)))
+            if (String.IsNullOrEmpty(terrainDB.FarTilesDotDdsFilePath) && (String.IsNullOrEmpty(terrainDB.FarTilesDotRawFilePath)))
                 return null;
 
-            if (farTilesDotDdsFilePath != null)
+            if (terrainDB.FarTilesDotDdsFilePath != null)
             {
-                var fileInfo = new FileInfo(farTilesDotDdsFilePath);
+                var fileInfo = new FileInfo(terrainDB.FarTilesDotDdsFilePath);
                 var useDDS = true;
                 if (!fileInfo.Exists)
                 {
                     useDDS = false;
-                    fileInfo = new FileInfo(farTilesDotRawFilePath);
+                    fileInfo = new FileInfo(terrainDB.FarTilesDotRawFilePath);
                     if (!fileInfo.Exists) return null;
                 }
 
@@ -43,7 +43,7 @@ namespace F4Utils.Terrain
                 Bitmap bitmap;
                 if (useDDS)
                 {
-                    using (var stream = File.OpenRead(farTilesDotDdsFilePath))
+                    using (var stream = File.OpenRead(terrainDB.FarTilesDotDdsFilePath))
                     {
                         var headerSize = Marshal.SizeOf(typeof(NativeMethods.DDSURFACEDESC2));
                         var header = new byte[headerSize];
@@ -70,9 +70,9 @@ namespace F4Utils.Terrain
                         stream.Read(ddsBytes, headerSize + 4, imageSize);
                         bitmap = DDS.GetBitmapFromDDSFileBytes(ddsBytes);
 
-                        if (farTileTextures != null && !farTileTextures.ContainsKey(textureId))
+                        if (terrainDB.FarTileTextures != null && !terrainDB.FarTileTextures.ContainsKey(textureId))
                         {
-                            farTileTextures.Add(textureId, bitmap);
+                            terrainDB.FarTileTextures.Add(textureId, bitmap);
                         }
                         stream.Close();
                     }
@@ -83,10 +83,10 @@ namespace F4Utils.Terrain
                     var pal = bitmap.Palette;
                     for (var i = 0; i < 256; i++)
                     {
-                        pal.Entries[i] = farTilesDotPalFileInfo.pallete[i];
+                        pal.Entries[i] = terrainDB.FarTilesDotPal.pallete[i];
                     }
                     bitmap.Palette = pal;
-                    using (var stream = File.OpenRead(farTilesDotRawFilePath))
+                    using (var stream = File.OpenRead(terrainDB.FarTilesDotRawFilePath))
                     {
                         const int imageSizeBytes = 32 * 32;
                         stream.Seek(imageSizeBytes * textureId, SeekOrigin.Begin);
@@ -99,9 +99,9 @@ namespace F4Utils.Terrain
                         var width = lockData.Width;
                         Marshal.Copy(bytesRead, 0, scan0, width * height);
                         bitmap.UnlockBits(lockData);
-                        if (farTileTextures != null && !farTileTextures.ContainsKey(textureId))
+                        if (terrainDB.FarTileTextures != null && !terrainDB.FarTileTextures.ContainsKey(textureId))
                         {
-                            farTileTextures.Add(textureId, bitmap);
+                            terrainDB.FarTileTextures.Add(textureId, bitmap);
                         }
                         stream.Close();
                     }

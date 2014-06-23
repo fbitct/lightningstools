@@ -20,6 +20,7 @@ using log4net;
 using Common.Networking;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
+using F4Utils.Terrain;
 
 namespace MFDExtractor
 {
@@ -44,6 +45,8 @@ namespace MFDExtractor
         #region Falcon 4 Sharedmem Readers & status flags
 
         private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
+        private ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
+        private TerrainDB _terrainDB;
         #endregion
 
        
@@ -414,19 +417,22 @@ namespace MFDExtractor
                     var thisLoopStartTime = DateTime.Now;
 
                     ProcessNetworkMessages();
-
+                    if (_terrainDB == null)
+                    {
+                        _terrainDB = _terrainDBFactory.Create(false);
+                    }
 
                     if (State.SimRunning || State.TestMode || State.NetworkMode == NetworkMode.Client)
                     {
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility);
                     }
                     else
                     {
                         var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility);
                     }
 
                     SignalInstrumentRenderThreadsToStart();

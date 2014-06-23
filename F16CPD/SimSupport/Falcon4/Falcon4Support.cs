@@ -66,9 +66,14 @@ namespace F16CPD.SimSupport.Falcon4
         private Queue<bool> _pendingMorseCodeUnits = new Queue<bool>();
         private Reader _sharedMemReader;
         private TacanChannelSource _tacanChannelSource = TacanChannelSource.Ufc;
-        private TerrainBrowser _terrainBrowser;
+        private TerrainDB _terrainDB;
         private Bitmap _theaterMapImage;
-
+        private ITerrainHeightCalculator _terrainHeightCalulator = new TerrainHeightCalculator();
+        private ILatLongCalculator _latLongCalculator = new LatLongCalculator();
+        private ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
+        private IElevationPostCoordinateClamper _elevationPostCoordinateClamper = new ElevationPostCoordinateClamper();
+        private IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever = new DetailTextureForElevationPostRetriever();
+        private ITheaterMapBuilder _theaterMapBuilder = new TheaterMapBuilder();
         #endregion
 
         public Falcon4Support(F16CpdMfdManager manager, Mediator mediator)
@@ -93,7 +98,7 @@ namespace F16CPD.SimSupport.Falcon4
             if (!Settings.Default.RunAsClient)
             {
                 LoadCurrentKeyFile();
-                EnsureTerrainBrowserLoaded();
+                EnsureTerrainIsLoaded();
             }
         }
 
@@ -259,7 +264,7 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     LoadCurrentKeyFile();
                 }
-                EnsureTerrainBrowserLoaded();
+                EnsureTerrainIsLoaded();
             }
 
             if (exePath != null && ((_sharedMemReader != null && _sharedMemReader.IsFalconRunning)))
@@ -300,7 +305,7 @@ namespace F16CPD.SimSupport.Falcon4
                 }
                 try
                 {
-                    var terrainHeight = _terrainBrowser.GetTerrainHeight(fromFalcon.x, fromFalcon.y);
+                    var terrainHeight = _terrainHeightCalulator.CalculateTerrainHeight (fromFalcon.x, fromFalcon.y, _terrainDB );
                     var agl = -fromFalcon.z - terrainHeight;
 
                     //reset AGL altitude to zero if we're on the ground
@@ -552,7 +557,7 @@ namespace F16CPD.SimSupport.Falcon4
                 float latMinutes;
                 int longWholeDegrees;
                 float longMinutes;
-                _terrainBrowser.CalculateLatLong(fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes,
+                _latLongCalculator.CalculateLatLong(_terrainDB, fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes,
                                                  out longWholeDegrees, out longMinutes);
                 flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes/60.0f);
                 flightData.LongitudeInDecimalDegrees = longWholeDegrees + (longMinutes/60.0f);
@@ -586,9 +591,9 @@ namespace F16CPD.SimSupport.Falcon4
                 }
 
                 Common.Util.DisposeObject(_keyFile);
-                Common.Util.DisposeObject(_terrainBrowser);
+                Common.Util.DisposeObject(_terrainDB);
                 _keyFile = null;
-                _terrainBrowser = null;
+                _terrainDB = null;
             }
 
             //if running in server mode, send updated flight data to client 
@@ -613,13 +618,11 @@ namespace F16CPD.SimSupport.Falcon4
             flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
         }
 
-        private void EnsureTerrainBrowserLoaded()
+        private void EnsureTerrainIsLoaded()
         {
-            if (_terrainBrowser == null)
+            if (_terrainDB == null)
             {
-                _terrainBrowser = new TerrainBrowser(true);
-                _terrainBrowser.LoadCurrentTheaterTerrainDatabase();
-                _terrainBrowser.LoadFarTilesAsync();
+                _terrainDB = _terrainDBFactory.Create(true);
             }
         }
 
@@ -1669,7 +1672,7 @@ namespace F16CPD.SimSupport.Falcon4
         public bool RenderMapAsync(Graphics g, Rectangle renderRectangle, float mapScale,
                                    int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode, DoWorkEventArgs e)
         {
-            if (_terrainBrowser == null || _terrainBrowser.DetectCurrentTheaterName() == null) return false;
+            if (_terrainDB == null || _terrainDB.TerrainBasePath == null) return false;
             _mapRenderingBackgroundWorker.ReportProgress(0);
             //define original screen size in pixels and inches
             var originalRenderSizeInPixels = new Size(Constants.I_NATIVE_RES_WIDTH, Constants.I_NATIVE_RES_HEIGHT);
@@ -1695,7 +1698,7 @@ namespace F16CPD.SimSupport.Falcon4
 
 
             //calculate number of elevation posts involved in rendering that amount of terrain distance
-            var feetBetweenL0ElevationPosts = _terrainBrowser.CurrentTheaterDotMapFileInfo.FeetBetweenL0Posts;
+            var feetBetweenL0ElevationPosts = _terrainDB.TheaterDotMap.FeetBetweenL0Posts;
             var numL0ElevationPostsToRender =
                 (int) (Math.Ceiling(terrainWidthToRenderInFeet/feetBetweenL0ElevationPosts));
             if (numL0ElevationPostsToRender < 1) return false;
@@ -1714,20 +1717,20 @@ namespace F16CPD.SimSupport.Falcon4
             while ((numThisLodElevationPostsToRender*thisLodDetailTextureWidthPixels) > originalRenderDiameterPixels)
                 //choose LoD that requires fewest unnecessary pixels to be rendered
             {
-                if (lod + 1 > _terrainBrowser.CurrentTheaterDotMapFileInfo.LastFarTiledLOD)
+                if (lod + 1 > _terrainDB.TheaterDotMap.LastFarTiledLOD)
                 {
                     break;
                 }
                 lod++;
                 feetBetweenElevationPosts *= 2.0f;
                 numThisLodElevationPostsToRender /= 2.0f;
-                if (lod > _terrainBrowser.CurrentTheaterDotMapFileInfo.LastNearTiledLOD)
+                if (lod > _terrainDB.TheaterDotMap.LastNearTiledLOD)
                 {
                     thisLodDetailTextureWidthPixels = 32;
                 }
                 else
                 {
-                    var sample = _terrainBrowser.GetDetailTextureForElevationPost(0, 0, lod);
+                    var sample = _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost(0, 0, lod, _terrainDB);
                     thisLodDetailTextureWidthPixels = sample != null ? sample.Width : 1;
                 }
             }
@@ -1772,8 +1775,8 @@ namespace F16CPD.SimSupport.Falcon4
             var clampRightXPost = rightXPost;
             var clampTopYPost = topYPost;
             var clampBottomYPost = bottomYPost;
-            _terrainBrowser.ClampElevationPostCoordinates(ref clampLeftXPost, ref clampTopYPost, lod);
-            _terrainBrowser.ClampElevationPostCoordinates(ref clampRightXPost, ref clampBottomYPost, lod);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref clampLeftXPost, ref clampTopYPost, lod, _terrainDB);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref clampRightXPost, ref clampBottomYPost, lod,_terrainDB);
 
             //now store those boundaries in a Size object for convenience
             var elevationPostsToRenderBoundsSize = new Size((Math.Abs(rightXPost - leftXPost)),
@@ -1815,7 +1818,7 @@ namespace F16CPD.SimSupport.Falcon4
                         h.TranslateTransform(-xOffset, -yOffset);
 
                         var crapMap =
-                            _terrainBrowser.GetTheaterMap(_terrainBrowser.CurrentTheaterDotMapFileInfo.NumLODs - 1);
+                            _theaterMapBuilder.GetTheaterMap(_terrainDB.TheaterDotMap.NumLODs - 1, _terrainDB);
                         if (crapMap != null)
                         {
                             h.Clear(crapMap.GetPixel(crapMap.Width - 1, crapMap.Height - 1));
@@ -1838,8 +1841,8 @@ namespace F16CPD.SimSupport.Falcon4
                                     return false;
                                 }
                                 var thisElevationPostDetailTexture =
-                                    _terrainBrowser.GetDetailTextureForElevationPost(thisElevationPostX,
-                                                                                     thisElevationPostY, lod);
+                                    _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost
+                                    (thisElevationPostX, thisElevationPostY, lod, _terrainDB);
                                 if (thisElevationPostDetailTexture == null) continue;
                                 //now draw the detail texture onto the render target
                                 var sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
@@ -2039,8 +2042,8 @@ namespace F16CPD.SimSupport.Falcon4
                     _sharedMemReader = null;
                     Common.Util.DisposeObject(_pendingComboKeys);
                     _pendingComboKeys = null;
-                    Common.Util.DisposeObject(_terrainBrowser);
-                    _terrainBrowser = null;
+                    Common.Util.DisposeObject(_terrainDB);
+                    _terrainDB = null;
                     Common.Util.DisposeObject(_mapRenderingBackgroundWorkerDoWorkDelegate);
                     _mapRenderingBackgroundWorkerDoWorkDelegate = null;
                     Common.Util.DisposeObject(_mapRenderingBackgroundWorker);

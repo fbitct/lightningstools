@@ -10,15 +10,11 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    internal interface ITerrainTextureByTextureIdRetriever
+    public interface ITerrainTextureByTextureIdRetriever
     {
-        Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod,
-            TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo, TextureDotBinFileInfo textureDotBinFileInfo,
-            Dictionary<uint, Bitmap> nearTileTextures, ref ZipFile textureZipFile, ref Dictionary<string, ZipEntry> textureDotZipFileEntries,
-            Dictionary<uint, Bitmap> farTileTextures, string farTilesDotDdsFilePath, string farTilesDotRawFilePath, FarTilesDotPalFileInfo farTilesDotPalFileInfo,
-            string currentTheaterTextureBaseFolderPath);
+        Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod, TerrainDB terrainDB);
     }
-    class TerrainTextureByTextureIdRetriever:ITerrainTextureByTextureIdRetriever
+    public class TerrainTextureByTextureIdRetriever:ITerrainTextureByTextureIdRetriever
     {
         private INearTileTextureLoader _nearTileTextureLoader;
         private IFarTileTextureRetriever _farTileTextureRetriever;
@@ -27,35 +23,31 @@ namespace F4Utils.Terrain
             _nearTileTextureLoader = nearTileTextureLoader ?? new NearTileTextureLoader();
             _farTileTextureRetriever = farTileTextureRetriever ?? new FarTileTextureRetriever();
         }
-        public Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod, 
-            TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo, TextureDotBinFileInfo textureDotBinFileInfo,
-            Dictionary<uint, Bitmap> nearTileTextures, ref ZipFile textureZipFile, ref Dictionary<string, ZipEntry> textureDotZipFileEntries,
-            Dictionary<uint, Bitmap> farTileTextures, string farTilesDotDdsFilePath, string farTilesDotRawFilePath, FarTilesDotPalFileInfo farTilesDotPalFileInfo,
-            string currentTheaterTextureBaseFolderPath)
+        public Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod, TerrainDB terrainDB)
         {
-            var lodInfo = theaterDotLxFiles[lod];
+            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
             Bitmap toReturn = null;
 
-            if (lod <= theaterDotMapFileInfo.LastNearTiledLOD)
+            if (lod <= terrainDB.TheaterDotMap.LastNearTiledLOD)
             {
-                var textureBinInfo = textureDotBinFileInfo;
-                var textureBaseFolderPath = currentTheaterTextureBaseFolderPath;
+                var textureBinInfo = terrainDB.TextureDotBin;
+                var textureBaseFolderPath = terrainDB.CurrentTheaterTextureBaseFolderPath;
                 textureId -= lodInfo.minTexOffset;
-                if (nearTileTextures.ContainsKey(textureId)) return nearTileTextures[textureId];
+                if (terrainDB.NearTileTextures.ContainsKey(textureId)) return terrainDB.NearTileTextures[textureId];
 
                 var setNum = textureId / Constants.NUM_TEXTURES_PER_SET;
                 var tileNum = textureId % Constants.NUM_TEXTURES_PER_SET;
                 var thisSet = textureBinInfo.setRecords[setNum];
                 var tileName = thisSet.tileRecords[tileNum].tileName;
-                toReturn = _nearTileTextureLoader.LoadNearTileTexture(textureBaseFolderPath, tileName, ref textureZipFile, ref textureDotZipFileEntries);
+                toReturn = _nearTileTextureLoader.LoadNearTileTexture(tileName, terrainDB);
                 if (toReturn != null)
                 {
-                    nearTileTextures.Add(textureId, toReturn);
+                    terrainDB.NearTileTextures.Add(textureId, toReturn);
                 }
             }
-            else if (lod <= theaterDotMapFileInfo.LastFarTiledLOD)
+            else if (lod <= terrainDB.TheaterDotMap.LastFarTiledLOD)
             {
-                toReturn = _farTileTextureRetriever.GetFarTileTexture(textureId, farTileTextures, farTilesDotDdsFilePath, farTilesDotRawFilePath, farTilesDotPalFileInfo);
+                toReturn = _farTileTextureRetriever.GetFarTileTexture(textureId, terrainDB);
             }
             return toReturn;
         }

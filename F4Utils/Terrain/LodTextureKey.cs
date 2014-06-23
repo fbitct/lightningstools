@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace F4Utils.Terrain
 {
     [Serializable]
-    internal class LodTextureKey
+    public class LodTextureKey
     {
         public uint Lod;
         public uint chunkXIndex;

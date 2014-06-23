@@ -1,6 +1,7 @@
 ﻿using System;
 using Common.Networking;
 using F4SharedMem;
+using F4Utils.Terrain;
 
 namespace MFDExtractor
 {
@@ -12,17 +13,15 @@ namespace MFDExtractor
     class FlightDataRetriever : IFlightDataRetriever
     {
         private readonly ISharedmemReaderFactory _sharedmemReaderFactory;
-        private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
         private readonly IExtractorClient _extractorClient;
         public FlightDataRetriever(
             IExtractorClient extractorClient,
-            ISharedmemReaderFactory sharedmemReaderFactory= null, 
-            IRadarAltitudeCalculator radarAltitudeCalculator = null
+            ISharedmemReaderFactory sharedmemReaderFactory= null
             )
         {
             _extractorClient = extractorClient;
+           
             _sharedmemReaderFactory = sharedmemReaderFactory ?? new SharedmemReaderFactory();
-            _radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
         }
 
         public FlightData GetFlightData(ExtractorState extractorState)
@@ -39,10 +38,6 @@ namespace MFDExtractor
 		        {
 			        var sharedMemReader = _sharedmemReaderFactory.Create();
 			        toReturn = sharedMemReader.GetCurrentData();
-			        if (extractorState.NetworkMode == NetworkMode.Server)
-			        {
-				        _radarAltitudeCalculator.ComputeRadarAltitude(toReturn);
-			        }
 		        }
 			        break;
 		        case NetworkMode.Client:

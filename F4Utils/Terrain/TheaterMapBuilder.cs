@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    internal interface ITheaterMapBuilder
+    public interface ITheaterMapBuilder
     {
-        Bitmap GetTheaterMap(uint lod, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo);
+        Bitmap GetTheaterMap(uint lod, TerrainDB terrainDB);
     }
-    class TheaterMapBuilder:ITheaterMapBuilder
+    public class TheaterMapBuilder:ITheaterMapBuilder
     {
-        public unsafe Bitmap GetTheaterMap(uint lod, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo)
+        public unsafe Bitmap GetTheaterMap(uint lod, TerrainDB terrainDB)
         {
-            var lodInfo = theaterDotLxFiles[lod];
-            var mapInfo = theaterDotMapFileInfo;
+            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
+            var mapInfo = terrainDB.TheaterDotMap;
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             var bmp = new Bitmap((int)mapInfo.LODMapWidths[lodInfo.LoDLevel] * postsAcross,
                                  (int)mapInfo.LODMapHeights[lodInfo.LoDLevel] * postsAcross,

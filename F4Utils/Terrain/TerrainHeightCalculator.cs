@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    internal interface ITerrainHeightCalculator
+    public interface ITerrainHeightCalculator
     {
-        float CalculateTerrainHeight(float feetNorth, float feetEast, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo);
+        float CalculateTerrainHeight(float feetNorth, float feetEast, TerrainDB terrainDB);
     }
-    class TerrainHeightCalculator:ITerrainHeightCalculator
+    public class TerrainHeightCalculator:ITerrainHeightCalculator
     {
         private IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever;
         private IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
         private INearestElevationPostColumnAndRowCalculator _nearestElevationPostColumnAndRowCalculator;
-        public TerrainHeightCalculator(
+        internal TerrainHeightCalculator(
             IColumnAndRowElevationPostRecordRetriever columnAndRowElevationPostRecordRetriever = null,
             IDistanceBetweenElevationPostsCalculator distanceBetweenElevationPostsCalculator = null,
             INearestElevationPostColumnAndRowCalculator nearestElevationPostColumnAndRowCalculator=null)
@@ -25,23 +25,31 @@ namespace F4Utils.Terrain
             _distanceBetweenElevationPostsCalculator = distanceBetweenElevationPostsCalculator ?? new DistanceBetweenElevationPostsCalculator();
             _nearestElevationPostColumnAndRowCalculator = nearestElevationPostColumnAndRowCalculator ?? new NearestElevationPostColumnAndRowCalculator();
         }
-        public float CalculateTerrainHeight(float feetNorth, float feetEast, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo )
+        public TerrainHeightCalculator()
+            : this(null, null, null)
         {
-            
+
+        }
+        public float CalculateTerrainHeight(float feetNorth, float feetEast, TerrainDB terrainDB)
+        {
             int col;
             int row;
 
-            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(0, theaterDotLxFiles, theaterDotMapFileInfo);
+            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(0, terrainDB);
 
             //determine the column and row in the DTED matrix where the nearest elevation post can be found
-            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row, theaterDotLxFiles, theaterDotMapFileInfo);
+            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row, terrainDB);
 
             //retrieve the 4 elevation posts which form a box around our current position (origin point x=0,y=0 is in lower left)
-            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, 0, theaterDotLxFiles, theaterDotMapFileInfo);
-            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, 0, theaterDotLxFiles, theaterDotMapFileInfo);
-            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, 0,theaterDotLxFiles, theaterDotMapFileInfo);
-            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, 0, theaterDotLxFiles, theaterDotMapFileInfo);
+            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, 0, terrainDB);
+            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, 0, terrainDB);
+            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, 0,terrainDB);
+            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, 0, terrainDB);
 
+            if (Q11 == null || Q21 == null || Q22 == null || Q12 == null)
+            {
+                return 0;
+            }
             //determine the North/East coordinates of these 4 posts, respectively
             var Q11North = row * feetAcross;
             var Q11East = col * feetAcross;

@@ -7,15 +7,15 @@ namespace MFDExtractor.FlightDataAdapters
 	{
 		internal interface IMFDFlightDataAdapter
 		{
-			void Adapt(IMfdRenderer mfd, ExtractorState extractorState, Image instrumentImagesSprite, Rectangle imageSourceRectangle);
+			void Adapt(IMfdRenderer mfd, ExtractorState extractorState, Image image);
 		}
 
 		class MFDFlightDataAdapter : IMFDFlightDataAdapter
 		{
-			public void Adapt(IMfdRenderer mfd, ExtractorState extractorState, Image instrumentImagesSprite, Rectangle imageSourceRectangle)
+			public void Adapt(IMfdRenderer mfd, ExtractorState extractorState, Image image)
 			{
-				mfd.Options.SourceImage = instrumentImagesSprite;
-				mfd.Options.SourceRectangle = imageSourceRectangle;
+				mfd.Options.SourceImage = image;
+                mfd.Options.SourceRectangle = image != null ? new Rectangle(0, 0, image.Width, image.Height) : Rectangle.Empty;
 				mfd.InstrumentState.TestMode = extractorState.TestMode;
 				mfd.InstrumentState.Blank = !extractorState.SimRunning;
 			}

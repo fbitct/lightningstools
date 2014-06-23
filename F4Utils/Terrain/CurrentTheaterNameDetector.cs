@@ -64,7 +64,7 @@ namespace F4Utils.Terrain
                 }
             }
             else if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.BMS4 && verInfo != null &&
-                     ((verInfo.ProductMajorPart == 4 && verInfo.ProductMinorPart >= 6826) ||
+                     ((verInfo.ProductMajorPart == 4 && verInfo.FileMinorPart >= 6826) ||
                       (verInfo.ProductMajorPart > 4)))
             {
                 try

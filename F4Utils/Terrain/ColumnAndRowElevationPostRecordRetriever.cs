@@ -8,24 +8,27 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    internal interface IColumnAndRowElevationPostRecordRetriever
+    public interface IColumnAndRowElevationPostRecordRetriever
     {
-        TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo);
+        TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod, TerrainDB terrainDB);
     }
-    internal class ColumnAndRowElevationPostRecordRetriever:IColumnAndRowElevationPostRecordRetriever
+    public class ColumnAndRowElevationPostRecordRetriever:IColumnAndRowElevationPostRecordRetriever
     {
         private IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         public ColumnAndRowElevationPostRecordRetriever(IElevationPostCoordinateClamper elevationPostCoordinateClamper = null)
         {
             _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
         }
-        public TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod, TheaterDotLxFileInfo[] theaterDotLxFiles,TheaterDotMapFileInfo theaterDotMapFileInfo)
+        public TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod, TerrainDB terrainDB)
         {
-            
-            var lodInfo = theaterDotLxFiles[lod];
-            var mapInfo = theaterDotMapFileInfo;
+            if (terrainDB == null || terrainDB.TheaterDotLxFiles == null)
+            {
+                return null;
+            }
+            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
+            var mapInfo = terrainDB.TheaterDotMap;
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(theaterDotMapFileInfo, theaterDotLxFiles, ref postColumn, ref postRow, lodInfo.LoDLevel);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref postColumn, ref postRow, lodInfo.LoDLevel, terrainDB);
             var blockRow = (int)Math.Floor((postRow / (float)postsAcross));
             var blockCol = (int)Math.Floor((postColumn / (float)postsAcross));
             var oIndex = (int)(blockRow * mapInfo.LODMapHeights[lodInfo.LoDLevel]) + blockCol;

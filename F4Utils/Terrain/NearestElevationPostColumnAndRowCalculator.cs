@@ -9,7 +9,7 @@ namespace F4Utils.Terrain
 {
     internal interface INearestElevationPostColumnAndRowCalculator
     {
-        void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo);
+        void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row, TerrainDB terrainDB);
     }
     class NearestElevationPostColumnAndRowCalculator:INearestElevationPostColumnAndRowCalculator
     {
@@ -22,13 +22,13 @@ namespace F4Utils.Terrain
             _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
         }
         public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast,
-                                                                               out int col, out int row, TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo)
+                                                                               out int col, out int row, TerrainDB terrainDB)
         {
             const int lod = 0;
-            var feetBetweenElevationPosts = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod, theaterDotLxFiles, theaterDotMapFileInfo);
+            var feetBetweenElevationPosts = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod, terrainDB);
             col = (int)Math.Floor(feetEast / feetBetweenElevationPosts);
             row = (int)Math.Floor(feetNorth / feetBetweenElevationPosts);
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(theaterDotMapFileInfo, theaterDotLxFiles,ref row, ref col, lod);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref row, ref col, lod, terrainDB);
         }
     }
 }

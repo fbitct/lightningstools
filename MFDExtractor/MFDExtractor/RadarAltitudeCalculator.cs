@@ -4,21 +4,22 @@ using F4Utils.Terrain;
 
 namespace MFDExtractor
 {
-	internal interface IRadarAltitudeCalculator
+	public interface IRadarAltitudeCalculator
 	{
-		float ComputeRadarAltitude(FlightData flightData);
+		float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB);
 	}
 
-	class RadarAltitudeCalculator : IRadarAltitudeCalculator
+	public class RadarAltitudeCalculator : IRadarAltitudeCalculator
 	{
-		private readonly ITerrainHeightProvider _terrainHeightProvider;
-		public RadarAltitudeCalculator(ITerrainHeightProvider terrainHeightProvider = null)
+		private readonly ITerrainHeightCalculator _terrainHeightCalculator;
+		public RadarAltitudeCalculator(ITerrainHeightCalculator terrainHeightCalculator=null)
 		{
-			_terrainHeightProvider = terrainHeightProvider ?? new TerrainBrowser(false);
+			_terrainHeightCalculator = terrainHeightCalculator ?? new TerrainHeightCalculator();
+            
 		}
-		public float ComputeRadarAltitude(FlightData flightData)
+		public float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB)
 		{
-			var terrainHeight = _terrainHeightProvider.GetTerrainHeight(flightData.x, flightData.y);
+            var terrainHeight = _terrainHeightCalculator.CalculateTerrainHeight(flightData.x, flightData.y, terrainDB);
 			var ralt = -flightData.z - terrainHeight;
 
 			//reset AGL altitude to zero if we're on the ground

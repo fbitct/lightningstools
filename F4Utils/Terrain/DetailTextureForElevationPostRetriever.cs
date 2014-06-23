@@ -10,17 +10,11 @@ using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
-    internal interface IDetailTextureForElevationPostRetriever
+    public interface IDetailTextureForElevationPostRetriever
     {
-        Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod,
-            TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo,
-            TextureDotBinFileInfo textureDotBinFileInfo,
-            Dictionary<uint, Bitmap> nearTileTextures, ref ZipFile textureZipFile, ref Dictionary<string, ZipEntry> textureDotZipFileEntries,
-            Dictionary<uint, Bitmap> farTileTextures, string farTilesDotDdsFilePath, string farTilesDotRawFilePath, FarTilesDotPalFileInfo farTilesDotPalFileInfo,
-            Dictionary<LodTextureKey, Bitmap> elevationPostTextures,
-            string currentTheaterTextureBaseFolderPath);
+        Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod, TerrainDB terrainDB);
     }
-    class DetailTextureForElevationPostRetriever:IDetailTextureForElevationPostRetriever
+    public class DetailTextureForElevationPostRetriever:IDetailTextureForElevationPostRetriever
     {
         private IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         private ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever;
@@ -35,19 +29,13 @@ namespace F4Utils.Terrain
             _terrainTextureByTextureIdRetriever = terrainTextureByTextureIdRetriever ?? new TerrainTextureByTextureIdRetriever();
             _columnAndRowElevationPostRetriever = columnAndRowElevationPostRetriever ?? new ColumnAndRowElevationPostRecordRetriever();
         }
-        public Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod, 
-            TheaterDotLxFileInfo[] theaterDotLxFiles, TheaterDotMapFileInfo theaterDotMapFileInfo,
-            TextureDotBinFileInfo textureDotBinFileInfo,
-            Dictionary<uint, Bitmap> nearTileTextures, ref ZipFile textureZipFile, ref Dictionary<string, ZipEntry> textureDotZipFileEntries,
-            Dictionary<uint, Bitmap> farTileTextures, string farTilesDotDdsFilePath, string farTilesDotRawFilePath, FarTilesDotPalFileInfo farTilesDotPalFileInfo,
-            Dictionary<LodTextureKey, Bitmap> elevationPostTextures,
-            string currentTheaterTextureBaseFolderPath)
+        public Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod, TerrainDB terrainDB)
         {
            
             var col = postCol;
             var row = postRow;
 
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(theaterDotMapFileInfo, theaterDotLxFiles, ref col, ref row, lod);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref col, ref row, lod, terrainDB);
             if (postCol != col || postRow != row)
             {
                 col = 0;
@@ -55,19 +43,13 @@ namespace F4Utils.Terrain
             }
 
 
-            var lRecord = _columnAndRowElevationPostRetriever.GetElevationPostRecordByColumnAndRow(col, row, lod, theaterDotLxFiles, theaterDotMapFileInfo);
+            var lRecord = _columnAndRowElevationPostRetriever.GetElevationPostRecordByColumnAndRow(col, row, lod, terrainDB);
 
             var textureId = lRecord.TextureId;
-            var bigTexture = _terrainTextureByTextureIdRetriever.GetTerrainTextureByTextureId(
-                textureId, lod,
-                theaterDotLxFiles, theaterDotMapFileInfo, 
-                textureDotBinFileInfo, nearTileTextures, 
-                ref textureZipFile, ref textureDotZipFileEntries, 
-                farTileTextures, farTilesDotDdsFilePath, farTilesDotRawFilePath, farTilesDotPalFileInfo, 
-                currentTheaterTextureBaseFolderPath);
+            var bigTexture = _terrainTextureByTextureIdRetriever.GetTerrainTextureByTextureId(textureId, lod, terrainDB);
 
             Bitmap toReturn;
-            if (lod <= theaterDotMapFileInfo.LastNearTiledLOD)
+            if (lod <= terrainDB.TheaterDotMap.LastNearTiledLOD)
             {
                 var chunksWide = 4 >> (int)lod;
                 var thisChunkXIndex = (uint)(col % chunksWide);
@@ -80,9 +62,9 @@ namespace F4Utils.Terrain
                     chunkXIndex = thisChunkXIndex,
                     chunkYIndex = thisChunkYIndex
                 };
-                if (elevationPostTextures.ContainsKey(key))
+                if (terrainDB.ElevationPostTextures.ContainsKey(key))
                 {
-                    toReturn = elevationPostTextures[key];
+                    toReturn = terrainDB.ElevationPostTextures[key];
                 }
                 else
                 {
@@ -94,7 +76,7 @@ namespace F4Utils.Terrain
                     var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
 
                     toReturn = (Bitmap)Common.Imaging.Util.CropBitmap(bigTexture, sourceRect);
-                    elevationPostTextures.Add(key, toReturn);
+                    terrainDB.ElevationPostTextures.Add(key, toReturn);
                 }
             }
             else
