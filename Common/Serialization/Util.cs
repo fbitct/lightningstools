@@ -212,7 +212,7 @@ namespace Common.Serialization
         {
             if (string.IsNullOrWhiteSpace(xml)) return null;
             object toReturn;
-            var serializer = new XmlSerializer(type);
+            var serializer = XmlSerializer.FromTypes(new[] { type })[0];
             using (var ms = new MemoryStream())
             using (var sw = new StreamWriter(ms))
             {

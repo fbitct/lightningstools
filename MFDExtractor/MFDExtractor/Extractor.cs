@@ -95,8 +95,6 @@ namespace MFDExtractor
         private Thread _keyboardWatcherThread;
         private Thread _simStatusMonitorThread;
 
-        private readonly ThreadAbortion _threadAbortion;
-
         private readonly DIHotkeyDetection _diHotkeyDetection;
 	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
 	    private readonly IEHSIStateTracker _ehsiStateTracker;
@@ -149,7 +147,6 @@ namespace MFDExtractor
             {
                 Mediator = new Mediator(null);
             }
-            _threadAbortion = new ThreadAbortion();
 	        _keyDownEventHandler = keyDownEventHandler ?? new KeyDownEventHandler(_ehsiStateTracker, _inputEvents, _keySettings);
 			_keyUpEventHandler = keyUpEventHandler ??  new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
@@ -724,7 +721,7 @@ namespace MFDExtractor
 
                 try
                 {
-                    _threadAbortion.AbortThread(ref thread);
+                    Common.Threading.Util.AbortThread(ref thread);
                 }
                 catch {}
             }
@@ -746,7 +743,7 @@ namespace MFDExtractor
 
         private void SetupKeyboardWatcherThread()
         {
-            _threadAbortion.AbortThread(ref _keyboardWatcherThread);
+            Common.Threading.Util.AbortThread(ref _keyboardWatcherThread);
 			_keyboardWatcherThread = new Thread(_keyboardWatcher.Start);
             _keyboardWatcherThread.SetApartmentState(ApartmentState.STA);
             _keyboardWatcherThread.Priority = ThreadPriority.Highest;
@@ -756,7 +753,7 @@ namespace MFDExtractor
 
         private void SetupCaptureOrchestrationThread()
         {
-            _threadAbortion.AbortThread(ref _captureOrchestrationThread);
+            Common.Threading.Util.AbortThread(ref _captureOrchestrationThread);
             _captureOrchestrationThread = new Thread(CaptureOrchestrationThreadWork)
             {
                 Priority = _threadPriority,
@@ -769,7 +766,7 @@ namespace MFDExtractor
        
         private void SetupSimStatusMonitorThread()
         {
-            _threadAbortion.AbortThread(ref _simStatusMonitorThread);
+            Common.Threading.Util.AbortThread(ref _simStatusMonitorThread);
             _simStatusMonitorThread = new Thread(SimStatusMonitorThreadWork)
             {
                 Priority = ThreadPriority.BelowNormal,

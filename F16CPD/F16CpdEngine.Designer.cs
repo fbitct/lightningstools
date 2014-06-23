@@ -31,9 +31,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "F-16 Center Pedestal Display Output Window";
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.F16CpdEngine_MouseUp);
             this.SizeChanged += new System.EventHandler(this.F16CpdEngine_SizeChanged);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.F16CpdEngine_MouseDown);
             this.LocationChanged += new System.EventHandler(this.F16CpdEngine_LocationChanged);
             this.ResumeLayout(false);
 

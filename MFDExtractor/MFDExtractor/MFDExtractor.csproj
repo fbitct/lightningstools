@@ -213,7 +213,6 @@
     <Compile Include="SettingsWriter.cs" />
     <Compile Include="SharedMemorySpriteCoordinates.cs" />
     <Compile Include="SharedmemReaderFactory.cs" />
-    <Compile Include="ThreadAbortion.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>
     </Compile>
