@@ -87,6 +87,7 @@
     <Compile Include="Campaign\Waypoint.cs" />
     <Compile Include="Campaign\WthFile.cs" />
     <Compile Include="Terrain\ColumnAndRowElevationPostRecordRetriever.cs" />
+    <Compile Include="Terrain\CurrentTheaterDotTdfLoader.cs" />
     <Compile Include="Terrain\CurrentTheaterNameDetector.cs" />
     <Compile Include="PlayerOp\AutoPilotModeType.cs" />
     <Compile Include="PlayerOp\AvionicsType.cs" />

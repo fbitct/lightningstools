@@ -40,6 +40,7 @@ namespace F4Utils.Terrain
         private ITheaterMapBuilder _theaterMapBuilder = new TheaterMapBuilder();
         private ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever = new TerrainTextureByTextureIdRetriever();
         private IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever = new DetailTextureForElevationPostRetriever();
+        private ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader = new CurrentTheaterDotTdfLoader();
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -86,7 +87,7 @@ namespace F4Utils.Terrain
                 if (exePath == null) return;
                 var f4BasePathFI = new FileInfo(exePath);
                 exePath = f4BasePathFI.DirectoryName + Path.DirectorySeparatorChar;
-                var currentTheaterTdf = GetCurrentTheaterDotTdf(exePath, falconFormat.Value);
+                var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(exePath, falconFormat.Value);
                 if (currentTheaterTdf == null) return;
                 //string theaterName = currentTheaterTdf.theaterName//DetectCurrentTheaterName();
                 //if (theaterName == null) return;
@@ -275,62 +276,6 @@ namespace F4Utils.Terrain
         public string DetectCurrentTheaterName() {
             return _currentTheaterNameDetector.DetectCurrentTheaterName();
         }
-
-        private TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath, FalconDataFormats version)
-        {
-            if (exePath == null) return null;
-            var currentTheaterName = _currentTheaterNameDetector.DetectCurrentTheaterName();
-            if (currentTheaterName == null) return null;
-            var f4BaseDir = new FileInfo(exePath).DirectoryName;
-            FileInfo theaterDotLstFI;
-            
-            theaterDotLstFI = new FileInfo(f4BaseDir + Path.DirectorySeparatorChar + "theater.lst");
-            if (!theaterDotLstFI.Exists)
-            {
-                theaterDotLstFI =
-                    new FileInfo(f4BaseDir + Path.DirectorySeparatorChar +
-                                    "terrdata\\theaterdefinition\\theater.lst");
-            }
-            if (!theaterDotLstFI.Exists)
-            {
-                theaterDotLstFI =
-                    new FileInfo(new DirectoryInfo(f4BaseDir).Parent.Parent.FullName + Path.DirectorySeparatorChar +
-                                    "data\\terrdata\\theaterdefinition\\theater.lst");
-            }
-
-            if (theaterDotLstFI.Exists)
-            {
-                using (var fs = new FileStream(theaterDotLstFI.FullName, FileMode.Open))
-                using (var sw = new StreamReader(fs))
-                {
-                    while (!sw.EndOfStream)
-                    {
-                        var thisLine = sw.ReadLine();
-                        var tdfDetailsThisLine =
-                            _theaterDotTdfFileReader.ReadTheaterDotTdfFile(f4BaseDir + Path.DirectorySeparatorChar + thisLine);
-
-                        if (tdfDetailsThisLine == null)
-                        {
-                            tdfDetailsThisLine = _theaterDotTdfFileReader.ReadTheaterDotTdfFile(f4BaseDir + Path.DirectorySeparatorChar + "..\\..\\data" + Path.DirectorySeparatorChar + thisLine);
-                        }
-                        if (tdfDetailsThisLine != null)
-                        {
-                            if (tdfDetailsThisLine.theaterName != null &&
-                                tdfDetailsThisLine.theaterName.ToLower().Trim() ==
-                                currentTheaterName.ToLower().Trim())
-                            {
-                                return tdfDetailsThisLine;
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-        
-
-        
 
         public float GetTerrainHeight(float feetNorth, float feetEast)
         {
