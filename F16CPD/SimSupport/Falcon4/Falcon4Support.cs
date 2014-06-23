@@ -19,20 +19,6 @@ using Message = F16CPD.Networking.Message;
 
 namespace F16CPD.SimSupport.Falcon4
 {
-    [Serializable]
-    public enum TacanChannelSource
-    {
-        Ufc,
-        Backup
-    }
-
-    [Serializable]
-    public enum TacanBand
-    {
-        X,
-        Y
-    }
-
     //TODO: PRIO create configurable reset key
     //TODO: PRIO blank RALTs in certain attitudes
     //TODO: PRIO is there a way to read initial switch state in falcon and synchronize to that?
@@ -50,8 +36,6 @@ namespace F16CPD.SimSupport.Falcon4
         private bool _isSendingInput;
         private bool _isSimRunning;
         private KeyFile _keyFile;
-        private TimestampedFloatValue _lastHeadingSample;
-        private List<TimestampedFloatValue> _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
         private Mediator _mediator;
         private bool _morseCodeSignalLineValue;
         private KeyWithModifiers _pendingComboKeys;
@@ -65,6 +49,8 @@ namespace F16CPD.SimSupport.Falcon4
         private ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private IElevationPostCoordinateClamper _elevationPostCoordinateClamper = new ElevationPostCoordinateClamper();
         private IMovingMap _movingMap;
+        private IDEDAlowReader _dedAlowReader;
+        private IIndicatedRateOfTurnCalculator _indicatedRateOfTurnCalculator = new IndicatedRateOfTurnCalculator();
         #endregion
 
         public Falcon4Support(F16CpdMfdManager manager, Mediator mediator)
@@ -81,6 +67,7 @@ namespace F16CPD.SimSupport.Falcon4
              */
             _morseCodeGenerator = new MorseCode {CharactersPerMinute = 53};
             _morseCodeGenerator.UnitTimeTick += MorseCodeUnitTimeTick;
+            _dedAlowReader = new DEDAlowReader();
         }
 
         #region ISimSupportModule Members
@@ -161,7 +148,7 @@ namespace F16CPD.SimSupport.Falcon4
             flightData.AdiEnableCommandBars = false;
             flightData.TacanChannel = "106X";
             _morseCodeSignalLineValue = false;
-            _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
+            _indicatedRateOfTurnCalculator.Reset();
             _isSimRunning = false;
         }
 
@@ -269,12 +256,10 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.AoaOffFlag = ((hsibits & HsiBits.AOA) == HsiBits.AOA);
                 flightData.HsiOffFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
                 flightData.AdiOffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
-                //flightData.PfdOffFlag = (flightData.VviOffFlag && flightData.AoaOffFlag && flightData.HsiOffFlag && flightData.AdiOffFlag);
                 flightData.PfdOffFlag = false;
 
                 if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
                 {
-                    //&& ((fromFalcon.hsiBits & (int)F4SharedMem.Headers.HsiBits.Flying) == (int)F4SharedMem.Headers.HsiBits.Flying) 
                     flightData.CpdPowerOnFlag = _cpdPowerOn &&
                                                 ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) !=
                                                  (int) Bms4LightBits3.Power_Off);
@@ -334,7 +319,7 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias*Constants.FPS_PER_KNOT;
                 }
                 var newAlow = flightData.AutomaticLowAltitudeWarningInFeet;
-                var foundNewAlow = CheckDED_ALOW(fromFalcon, out newAlow);
+                var foundNewAlow = _dedAlowReader.CheckDED_ALOW(fromFalcon, out newAlow);
                 if (foundNewAlow)
                 {
                     flightData.AutomaticLowAltitudeWarningInFeet = newAlow;
@@ -529,7 +514,7 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.HsiDistanceToBeaconInNauticalMiles = fromFalcon.distanceToBeacon;
                 }
 
-                DetermineIndicatedRateOfTurn(flightData);
+                _indicatedRateOfTurnCalculator.DetermineIndicatedRateOfTurn(flightData);
 
                 if (flightData.VerticalVelocityInDecimalFeetPerSecond > 0 &&
                     flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet > flightData.TransitionAltitudeInFeet)
@@ -618,161 +603,12 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private static bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow)
-        {
-            var alowString = fromFalcon.DEDLines[1];
-            var alowInverseString = fromFalcon.Invert[1];
-            var anyCharsHighlighted = false;
-            if (alowString.Contains("CARA ALOW"))
-            {
-                var newAlowString = "";
-                for (var i = 0; i < alowString.Length; i++)
-                {
-                    var someChar = alowString[i];
-                    var inverseChar = alowInverseString[i];
-                    int tryParse;
-                    if (Int32.TryParse(new String(someChar, 1), out tryParse))
-                    {
-                        if (inverseChar != ' ')
-                        {
-                            anyCharsHighlighted = true;
-                            break;
-                        }
-                        newAlowString += someChar;
-                    }
-                }
-                if (anyCharsHighlighted)
-                {
-                    newAlow = -1;
-                    return false;
-                }
-                var success = Int32.TryParse(newAlowString, out newAlow);
-                if (!success)
-                {
-                    newAlow = -1;
-                }
-                return success;
-            }
-            newAlow = -1;
-            return false;
-        }
 
-        /// <summary>
-        ///   Determines the indicated rate of turn
-        /// </summary>
-        /// <param name = "flightData"></param>
-        private void DetermineIndicatedRateOfTurn(FlightData flightData)
-        {
-            //capture the current time
-            var curTime = DateTime.Now;
 
-            //determine how many seconds it's been since our last "current heading" datum snapshot?
-            var dT = (float) ((curTime.Subtract(_lastHeadingSample.Timestamp)).TotalMilliseconds);
 
-            //determine the change in heading since our last snapshot
-            var currentHeading = flightData.MagneticHeadingInDecimalDegrees;
-            var headingDelta = Common.Math.Util.AngleDelta(_lastHeadingSample.Value, currentHeading);
-
-            //now calculate the instantaneous rate of turn
-            var currentInstantaneousRateOfTurn = (headingDelta/dT)*1000;
-            if (Math.Abs(currentInstantaneousRateOfTurn) > 30 || float.IsInfinity(currentInstantaneousRateOfTurn) ||
-                float.IsNaN(currentInstantaneousRateOfTurn)) currentInstantaneousRateOfTurn = 0; //noise
-            if (Math.Abs(currentInstantaneousRateOfTurn) >
-                (Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f))
-            {
-                currentInstantaneousRateOfTurn = (Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f)*
-                                                 Math.Sign(currentInstantaneousRateOfTurn);
-            }
-
-            var sample = new TimestampedFloatValue {Timestamp = curTime, Value = currentInstantaneousRateOfTurn};
-
-            //cull historic rate-of-turn samples older than n seconds
-            var replacementList = new List<TimestampedFloatValue>();
-            for (var i = 0; i < _lastInstantaneousRatesOfTurn.Count; i++)
-            {
-                if (!(Math.Abs(curTime.Subtract(_lastInstantaneousRatesOfTurn[i].Timestamp).TotalMilliseconds) > 1000))
-                {
-                    replacementList.Add(_lastInstantaneousRatesOfTurn[i]);
-                }
-            }
-            _lastInstantaneousRatesOfTurn = replacementList;
-
-            _lastInstantaneousRatesOfTurn.Add(sample);
-
-            var medianRateOfTurn = (float) Math.Round(MedianSampleValue(_lastInstantaneousRatesOfTurn), 1);
-            const float minIncrement = 0.1f;
-            while (medianRateOfTurn < flightData.RateOfTurnInDecimalDegreesPerSecond - minIncrement)
-            {
-                flightData.RateOfTurnInDecimalDegreesPerSecond -= minIncrement;
-            }
-            while (medianRateOfTurn > flightData.RateOfTurnInDecimalDegreesPerSecond + minIncrement)
-            {
-                flightData.RateOfTurnInDecimalDegreesPerSecond += minIncrement;
-            }
-
-            if (Math.Round(medianRateOfTurn, 1) == 0)
-            {
-                flightData.RateOfTurnInDecimalDegreesPerSecond = 0;
-            }
-            else if (medianRateOfTurn == flightData.RateOfTurnInDecimalDegreesPerSecond - minIncrement)
-            {
-                flightData.RateOfTurnInDecimalDegreesPerSecond = medianRateOfTurn;
-            }
-            else if (medianRateOfTurn == flightData.RateOfTurnInDecimalDegreesPerSecond + minIncrement)
-            {
-                flightData.RateOfTurnInDecimalDegreesPerSecond = medianRateOfTurn;
-            }
-
-            _lastHeadingSample = new TimestampedFloatValue
-                                     {
-                                         Timestamp = curTime,
-                                         Value = flightData.MagneticHeadingInDecimalDegrees
-                                     };
-        }
 
         #endregion
 
-        #region Math utility functions
-
-        private float AverageSampleValue(List<TimestampedFloatValue> values)
-        {
-            float sum = 0;
-            for (var i = 0; i < values.Count; i++)
-            {
-                sum += values[i].Value;
-            }
-
-            var avg = values.Count > 0 ? sum/values.Count : 0;
-            return avg;
-        }
-
-        private static float MedianSampleValue(List<TimestampedFloatValue> values)
-        {
-            if (values.Count == 0)
-            {
-                return 0;
-            }
-
-            var justTheValues = new float[values.Count];
-            for (var i = 0; i < values.Count; i++)
-            {
-                justTheValues[i] = values[i].Value;
-            }
-
-            Array.Sort(justTheValues);
-
-            var itemIndex = justTheValues.Length/2;
-
-            if (justTheValues.Length%2 == 0)
-            {
-                // Even number of items.
-                return (justTheValues[itemIndex] + justTheValues[itemIndex - 1])/2;
-            }
-            // Odd number of items.
-            return justTheValues[itemIndex];
-        }
-
-        #endregion
 
         #region Network messaging event handlers
 
@@ -1589,15 +1425,6 @@ namespace F16CPD.SimSupport.Falcon4
 
         #endregion
 
-        #region Nested type: TimestampedFloatValue
 
-        [Serializable]
-        public struct TimestampedFloatValue
-        {
-            public DateTime Timestamp;
-            public float Value;
-        }
-
-        #endregion
     }
 }

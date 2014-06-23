@@ -143,7 +143,14 @@
     <Compile Include="Networking\IF16CPDServer.cs" />
     <Compile Include="Networking\Message.cs" />
     <Compile Include="PdfRenderEngine.cs" />
+    <Compile Include="SimSupport\Falcon4\AverageOfSamplesCalculator.cs" />
+    <Compile Include="SimSupport\Falcon4\DEDAlowReader.cs" />
+    <Compile Include="SimSupport\Falcon4\IndicatedRateOfTurnCalculator.cs" />
+    <Compile Include="SimSupport\Falcon4\MedianOfSamplesCalculator.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap.cs" />
+    <Compile Include="SimSupport\Falcon4\TacanBand.cs" />
+    <Compile Include="SimSupport\Falcon4\TacanChannelSource.cs" />
+    <Compile Include="SimSupport\Falcon4\TimestampedFloatValue.cs" />
     <Compile Include="UI\Util\DisplaySettingsManager.cs" />
     <Compile Include="UI\Forms\DraggableForm.cs">
       <SubType>Form</SubType>
