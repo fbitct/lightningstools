@@ -40,6 +40,7 @@ namespace F4Utils.Terrain
         private ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever = new TerrainTextureByTextureIdRetriever();
         private IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever = new DetailTextureForElevationPostRetriever();
         private ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader = new CurrentTheaterDotTdfLoader();
+        private ITheaterDotMapFileReader _theaterDotMapFileReader = new TheaterDotMapFileReader();
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -108,7 +109,7 @@ namespace F4Utils.Terrain
                 var farTilesDotPalFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
                                              "FARTILES.PAL";
 
-                _theaterDotMapFileInfo = Util.ReadTheaterDotMapFile(theaterDotMapFilePath);
+                _theaterDotMapFileInfo = _theaterDotMapFileReader.ReadTheaterDotMapFile(theaterDotMapFilePath);
                 if (_elevationPostTextures != null)
                 {
                     DisposeElevationPostTextures();

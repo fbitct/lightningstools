@@ -37,6 +37,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>F4Utils</RootNamespace>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\Common\ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -136,6 +139,7 @@
     <Compile Include="Terrain\TerrainBrowser.cs" />
     <Compile Include="Terrain\TerrainHeightCalculator.cs" />
     <Compile Include="Terrain\TerrainTextureByTextureIdRetriever.cs" />
+    <Compile Include="Terrain\TheaterDotMapFileReader.cs" />
     <Compile Include="Terrain\TheaterDotTdfFileReader.cs" />
     <Compile Include="Terrain\TheaterMapBuilder.cs" />
     <Compile Include="Terrain\Util.cs" />
