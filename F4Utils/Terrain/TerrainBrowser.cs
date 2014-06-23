@@ -30,6 +30,8 @@ namespace F4Utils.Terrain
         private static readonly ILog Log = LogManager.GetLogger(typeof (TerrainBrowser));
         private ICurrentTheaterNameDetector _currentTheaterNameDetector = new CurrentTheaterNameDetector();
         private ITheaterDotTdfFileReader _theaterDotTdfFileReader = new TheaterDotTdfFileReader();
+        private INearTileTextureLoader _nearTileTextureLoader = new NearTileTextureLoader();
+        private ILatLongCalculator _latLongCalculator = new LatLongCalculator();
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -66,67 +68,70 @@ namespace F4Utils.Terrain
 
         public void LoadCurrentTheaterTerrainDatabase()
         {
-            if (_terrainLoaded || _disposing || _isDisposed) return;
-            var falconFormat = Process.Util.DetectFalconFormat();
-            if (!falconFormat.HasValue) return;
-            //TODO: check these against other theaters, for correct way to read theater installation locations
-            var exePath = Process.Util.GetFalconExePath();
-            if (exePath == null) return;
-            var f4BasePathFI = new FileInfo(exePath);
-            exePath = f4BasePathFI.DirectoryName + Path.DirectorySeparatorChar;
-            var currentTheaterTdf = GetCurrentTheaterDotTdf(exePath, falconFormat.Value);
-            if (currentTheaterTdf == null) return;
-            //string theaterName = currentTheaterTdf.theaterName//DetectCurrentTheaterName();
-            //if (theaterName == null) return;
-            var dataPath = exePath;
-            if (falconFormat.Value == FalconDataFormats.BMS4)
+            lock (this)
             {
-                dataPath = exePath + "..\\..\\data";
-            }
-            var terrainBasePath = dataPath + Path.DirectorySeparatorChar + currentTheaterTdf.terrainDir;
-            _currentTheaterTextureBaseFolderPath = terrainBasePath + Path.DirectorySeparatorChar + "texture";
-            var theaterDotMapFilePath = terrainBasePath + Path.DirectorySeparatorChar + "terrain" +
-                                        Path.DirectorySeparatorChar + "THEATER.MAP";
-            var textureDotBinFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
-                                        "TEXTURE.BIN";
-            _farTilesDotRawFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
-                                      "FARTILES.RAW";
-            _farTilesDotDdsFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
-                                      "FARTILES.DDS";
-            var farTilesDotPalFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
-                                         "FARTILES.PAL";
-
-            _theaterDotMapFileInfo = Util.ReadTheaterDotMapFile(theaterDotMapFilePath);
-            if (_elevationPostTextures != null)
-            {
-                DisposeElevationPostTextures();
-                _elevationPostTextures = new Dictionary<LodTextureKey, Bitmap>();
-            }
-            if (_farTileTextures != null)
-            {
-                DisposeFarTilesTextures();
-                _farTileTextures = new Dictionary<uint, Bitmap>();
-            }
-            if (_nearTileTextures != null)
-            {
-                DisposeNearTileTextures();
-                _nearTileTextures = new Dictionary<uint, Bitmap>();
-            }
-            _theaterDotLxFiles = new TheaterDotLxFileInfo[_theaterDotMapFileInfo.NumLODs];
-            if (_loadAllLods)
-            {
-                for (uint i = 0; i < _theaterDotMapFileInfo.NumLODs; i++)
+                if (_terrainLoaded || _disposing || _isDisposed) return;
+                var falconFormat = Process.Util.DetectFalconFormat();
+                if (!falconFormat.HasValue) return;
+                //TODO: check these against other theaters, for correct way to read theater installation locations
+                var exePath = Process.Util.GetFalconExePath();
+                if (exePath == null) return;
+                var f4BasePathFI = new FileInfo(exePath);
+                exePath = f4BasePathFI.DirectoryName + Path.DirectorySeparatorChar;
+                var currentTheaterTdf = GetCurrentTheaterDotTdf(exePath, falconFormat.Value);
+                if (currentTheaterTdf == null) return;
+                //string theaterName = currentTheaterTdf.theaterName//DetectCurrentTheaterName();
+                //if (theaterName == null) return;
+                var dataPath = exePath;
+                if (falconFormat.Value == FalconDataFormats.BMS4)
                 {
-                    _theaterDotLxFiles[i] = Util.LoadTheaterDotLxFile(i, theaterDotMapFilePath);
+                    dataPath = exePath + "..\\..\\data";
                 }
+                var terrainBasePath = dataPath + Path.DirectorySeparatorChar + currentTheaterTdf.terrainDir;
+                _currentTheaterTextureBaseFolderPath = terrainBasePath + Path.DirectorySeparatorChar + "texture";
+                var theaterDotMapFilePath = terrainBasePath + Path.DirectorySeparatorChar + "terrain" +
+                                            Path.DirectorySeparatorChar + "THEATER.MAP";
+                var textureDotBinFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
+                                            "TEXTURE.BIN";
+                _farTilesDotRawFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
+                                          "FARTILES.RAW";
+                _farTilesDotDdsFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
+                                          "FARTILES.DDS";
+                var farTilesDotPalFilePath = _currentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar +
+                                             "FARTILES.PAL";
+
+                _theaterDotMapFileInfo = Util.ReadTheaterDotMapFile(theaterDotMapFilePath);
+                if (_elevationPostTextures != null)
+                {
+                    DisposeElevationPostTextures();
+                    _elevationPostTextures = new Dictionary<LodTextureKey, Bitmap>();
+                }
+                if (_farTileTextures != null)
+                {
+                    DisposeFarTilesTextures();
+                    _farTileTextures = new Dictionary<uint, Bitmap>();
+                }
+                if (_nearTileTextures != null)
+                {
+                    DisposeNearTileTextures();
+                    _nearTileTextures = new Dictionary<uint, Bitmap>();
+                }
+                _theaterDotLxFiles = new TheaterDotLxFileInfo[_theaterDotMapFileInfo.NumLODs];
+                if (_loadAllLods)
+                {
+                    for (uint i = 0; i < _theaterDotMapFileInfo.NumLODs; i++)
+                    {
+                        _theaterDotLxFiles[i] = Util.LoadTheaterDotLxFile(i, theaterDotMapFilePath);
+                    }
+                }
+                else
+                {
+                    _theaterDotLxFiles[0] = Util.LoadTheaterDotLxFile(0, theaterDotMapFilePath);
+                }
+                _textureDotBinFileInfo = Util.ReadTextureDotBinFile(textureDotBinFilePath);
+                _farTilesDotPalFileInfo = Util.ReadFarTilesDotPalFile(farTilesDotPalFilePath);
+                _terrainLoaded = true;
             }
-            else
-            {
-                _theaterDotLxFiles[0] = Util.LoadTheaterDotLxFile(0, theaterDotMapFilePath);
-            }
-            _textureDotBinFileInfo = Util.ReadTextureDotBinFile(textureDotBinFilePath);
-            _farTilesDotPalFileInfo = Util.ReadFarTilesDotPalFile(farTilesDotPalFilePath);
-            _terrainLoaded = true;
         }
 
         public void LoadFarTilesAsync()
@@ -209,51 +214,7 @@ namespace F4Utils.Terrain
             return _farTileTextureRetriever.GetFarTileTexture(textureId, _farTileTextures, _farTilesDotDdsFilePath, _farTilesDotRawFilePath, _farTilesDotPalFileInfo);
         }
 
-        public Bitmap LoadNearTileTexture(string textureBaseFolderPath, string tileName)
-        {
-            Bitmap toReturn;
-            var tileFullPath = Path.Combine(textureBaseFolderPath, tileName);
-
-            var tileInfo = new FileInfo(tileFullPath);
-            if (string.Equals(tileInfo.Extension, ".PCX", StringComparison.InvariantCultureIgnoreCase))
-            {
-                tileFullPath = Path.Combine(Path.Combine(textureBaseFolderPath, "texture"),
-                                            Path.GetFileNameWithoutExtension(tileInfo.Name) + ".DDS");
-                tileInfo = new FileInfo(tileFullPath);
-            }
-            if (tileInfo.Exists)
-            {
-                try
-                {
-                    toReturn = DDS.Load(tileFullPath);
-                    return toReturn;
-                }
-                catch (Exception e)
-                {
-                    Log.Debug(e.Message, e);
-                }
-            }
-
-
-            if (_textureZipFile == null)
-            {
-                _textureZipFile = new ZipFile(textureBaseFolderPath + Path.DirectorySeparatorChar + "texture.zip");
-            }
-            if (_textureDotZipFileEntries == null || _textureDotZipFileEntries.Count == 0)
-            {
-                _textureDotZipFileEntries = Common.Compression.Zip.Util.GetZipFileEntries(_textureZipFile);
-            }
-            if (!_textureDotZipFileEntries.ContainsKey(tileName.ToLowerInvariant())) return null;
-            var thisEntry = _textureDotZipFileEntries[tileName.ToLowerInvariant()];
-            using (var zipStream = _textureZipFile.GetInputStream(thisEntry))
-            {
-                var rawBytes = new byte[zipStream.Length];
-                zipStream.Read(rawBytes, 0, rawBytes.Length);
-                toReturn = PCX.LoadFromBytes(rawBytes);
-            }
-            return toReturn;
-        }
-
+ 
         public Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod)
         {
             if (!_terrainLoaded)
@@ -346,7 +307,7 @@ namespace F4Utils.Terrain
                 var tileNum = textureId%Constants.NUM_TEXTURES_PER_SET;
                 var thisSet = textureBinInfo.setRecords[setNum];
                 var tileName = thisSet.tileRecords[tileNum].tileName;
-                toReturn = LoadNearTileTexture(textureBaseFolderPath, tileName);
+                toReturn = _nearTileTextureLoader.LoadNearTileTexture(textureBaseFolderPath, tileName, ref _textureZipFile, ref _textureDotZipFileEntries);
                 if (toReturn != null)
                 {
                     _nearTileTextures.Add(textureId, toReturn);
@@ -588,29 +549,7 @@ namespace F4Utils.Terrain
                 longitudeFactionalMinutes = 0;
                 return;
             }
-            var theatreOriginLatitudeInDegrees = _theaterDotMapFileInfo.baseLat;
-            var theatreOriginLongitudeInDegrees = _theaterDotMapFileInfo.baseLong;
-            const float earthEquatorialRadiusInFeet = 2.09257E7F;
-            const float feetPerMinuteOfLatLongAtEquator = 6087.03141F;
-            const float feetPerDegreeOfLatLongAtEquator = feetPerMinuteOfLatLongAtEquator*60.0F;
-            const float radiansPerDegree = 0.01745329f;
-            const float degreesPerRadian = 57.295780f;
-            const float degreesPerMinute = 60.00f;
-
-            var latitudeInRadians = (theatreOriginLatitudeInDegrees*feetPerDegreeOfLatLongAtEquator + feetNorth)/
-                                    earthEquatorialRadiusInFeet;
-            var cosineOfLatitude = (float) Math.Cos(latitudeInRadians);
-            var longitudeInRadians = ((theatreOriginLongitudeInDegrees*radiansPerDegree*earthEquatorialRadiusInFeet*
-                                       cosineOfLatitude) + feetEast)/(earthEquatorialRadiusInFeet*cosineOfLatitude);
-
-            var latitudeInDegrees = latitudeInRadians*degreesPerRadian;
-            var longitudeInDegrees = longitudeInRadians*degreesPerRadian;
-
-            longitudeWholeDegrees = (int) Math.Floor(longitudeInDegrees);
-            longitudeFactionalMinutes = Math.Abs(longitudeInDegrees - longitudeWholeDegrees)*degreesPerMinute;
-
-            latitudeWholeDegrees = (int) Math.Floor(latitudeInDegrees);
-            latitudeFractionalMinutes = Math.Abs(latitudeInDegrees - latitudeWholeDegrees)*degreesPerMinute;
+            _latLongCalculator.CalculateLatLong(_theaterDotMapFileInfo, feetNorth, feetEast, out latitudeWholeDegrees, out latitudeFractionalMinutes, out longitudeWholeDegrees, out longitudeFactionalMinutes);
         }
 
         public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast,
@@ -837,68 +776,5 @@ namespace F4Utils.Terrain
 
         #endregion
 
-        #region Nested type: LodTextureKey
-
-        [Serializable]
-        private class LodTextureKey
-        {
-            public uint Lod;
-            public uint chunkXIndex;
-            public uint chunkYIndex;
-            public uint textureId;
-
-            #region Object Overrides (ToString, GetHashCode, Equals)
-
-            /// <summary>
-            ///   Gets a textual representation of this object.
-            /// </summary>
-            /// <returns>a String containing a textual representation of this object.</returns>
-            public override string ToString()
-            {
-                return (Common.Serialization.Util.ToRawBytes(this));
-            }
-
-            /// <summary>
-            ///   Gets an integer (hash) representation of this object, 
-            ///   for use in hashtables.  If two objects are equal, 
-            ///   then their hashcodes should be equal as well.
-            /// </summary>
-            /// <returns>an integer containing a hashed representation of this object</returns>
-            public override int GetHashCode()
-            {
-                return ToString().GetHashCode();
-            }
-
-            /// <summary>
-            ///   Compares two objects to determine if they are equal to each other.
-            /// </summary>
-            /// <param name = "obj">An object to compare this instance to</param>
-            /// <returns>a boolean, set to true if the specified object is 
-            ///   equal to this instance, or false if the specified object
-            ///   is not equal.</returns>
-            public override bool Equals(object obj)
-            {
-                if (obj == null) return false;
-                if (GetType() != obj.GetType()) return false;
-                if (ToString() != obj.ToString()) return false;
-                return true;
-            }
-
-            #endregion
-
-            public LodTextureKey()
-            {
-            }
-
-            public LodTextureKey(uint lod, uint textureId, uint chunkXIndex, uint chunkYIndex) : this()
-            {
-                Lod = lod;
-                this.textureId = textureId;
-                this.chunkXIndex = chunkXIndex;
-                this.chunkYIndex = chunkYIndex;
-            }
-        }
-
-        #endregion
     }
 }

@@ -113,6 +113,9 @@
     <Compile Include="PlayerOp\SoundGroup.cs" />
     <Compile Include="Terrain\Constants.cs" />
     <Compile Include="Terrain\FarTileTextureRetriever.cs" />
+    <Compile Include="Terrain\LatLongCalculator.cs" />
+    <Compile Include="Terrain\LodTextureKey.cs" />
+    <Compile Include="Terrain\NearTileTextureLoader.cs" />
     <Compile Include="Terrain\Structs\FarTilesDotPalFileInfo.cs" />
     <Compile Include="Terrain\Structs\TextureBinAreaRecord.cs" />
     <Compile Include="Terrain\Structs\TextureBinPathRecord.cs" />
