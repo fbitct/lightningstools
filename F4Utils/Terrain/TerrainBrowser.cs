@@ -32,6 +32,14 @@ namespace F4Utils.Terrain
         private ITheaterDotTdfFileReader _theaterDotTdfFileReader = new TheaterDotTdfFileReader();
         private INearTileTextureLoader _nearTileTextureLoader = new NearTileTextureLoader();
         private ILatLongCalculator _latLongCalculator = new LatLongCalculator();
+        private ITerrainHeightCalculator _terrainHeightCalculator = new TerrainHeightCalculator();
+        private IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever = new ColumnAndRowElevationPostRecordRetriever();
+        private IElevationPostCoordinateClamper _elevationPostCoordinateClamper = new ElevationPostCoordinateClamper();
+        private IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator = new DistanceBetweenElevationPostsCalculator();
+        private INearestElevationPostColumnAndRowCalculator _nearestElevationPostColumnAndRowCalculator = new NearestElevationPostColumnAndRowCalculator();
+        private ITheaterMapBuilder _theaterMapBuilder = new TheaterMapBuilder();
+        private ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever = new TerrainTextureByTextureIdRetriever();
+        private IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever = new DetailTextureForElevationPostRetriever();
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -197,16 +205,7 @@ namespace F4Utils.Terrain
                 return;
             }
 
-            var mapInfo = _theaterDotMapFileInfo;
-            var lodInfo = _theaterDotLxFiles[lod];
-
-            const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
-            if (postColumn < 0) postColumn = 0;
-            if (postRow < 0) postRow = 0;
-            if (postColumn > (mapInfo.LODMapWidths[lodInfo.LoDLevel]*postsAcross) - 1)
-                postColumn = (int) (mapInfo.LODMapWidths[lodInfo.LoDLevel]*postsAcross) - 1;
-            if (postRow > (mapInfo.LODMapHeights[lodInfo.LoDLevel]*postsAcross) - 1)
-                postRow = (int) (mapInfo.LODMapHeights[lodInfo.LoDLevel]*postsAcross) - 1;
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(_theaterDotMapFileInfo, _theaterDotLxFiles, ref postColumn, ref postRow, lod);
         }
 
         public Bitmap GetFarTileTexture(uint textureId)
@@ -228,57 +227,11 @@ namespace F4Utils.Terrain
             }
 
             if (_theaterDotLxFiles == null) return null;
-            var col = postCol;
-            var row = postRow;
-
-            ClampElevationPostCoordinates(ref col, ref row, lod);
-            if (postCol != col || postRow != row)
-            {
-                col = 0;
-                row = 0;
-            }
-
-
-            var lRecord = GetElevationPostRecordByColumnAndRow(col, row, lod);
-
-            var textureId = lRecord.TextureId;
-            var bigTexture = GetTerrainTextureByTextureId(textureId, lod);
-            Bitmap toReturn;
-            if (lod <= _theaterDotMapFileInfo.LastNearTiledLOD)
-            {
-                var chunksWide = 4 >> (int) lod;
-                var thisChunkXIndex = (uint) (col%chunksWide);
-                var thisChunkYIndex = (uint) (row%chunksWide);
-
-                var key = new LodTextureKey
-                              {
-                                  Lod = lod,
-                                  textureId = textureId,
-                                  chunkXIndex = thisChunkXIndex,
-                                  chunkYIndex = thisChunkYIndex
-                              };
-                if (_elevationPostTextures.ContainsKey(key))
-                {
-                    toReturn = _elevationPostTextures[key];
-                }
-                else
-                {
-                    var leftX = (int) (thisChunkXIndex*(bigTexture.Width/chunksWide));
-                    var rightX = (int) ((thisChunkXIndex + 1)*(bigTexture.Width/chunksWide)) - 1;
-                    var topY = (int) (bigTexture.Height - (thisChunkYIndex + 1)*(bigTexture.Height/chunksWide));
-                    var bottomY = (int) (bigTexture.Height - thisChunkYIndex*(bigTexture.Height/chunksWide)) - 1;
-
-                    var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
-
-                    toReturn = (Bitmap) Common.Imaging.Util.CropBitmap(bigTexture, sourceRect);
-                    _elevationPostTextures.Add(key, toReturn);
-                }
-            }
-            else
-            {
-                toReturn = bigTexture;
-            }
-            return toReturn;
+            return _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost(postCol, postRow, lod,
+                _theaterDotLxFiles, _theaterDotMapFileInfo, _textureDotBinFileInfo, _nearTileTextures,
+                ref _textureZipFile, ref _textureDotZipFileEntries,
+                _farTileTextures,_farTilesDotDdsFilePath, _farTilesDotRawFilePath, _farTilesDotPalFileInfo, _elevationPostTextures,
+                _currentTheaterTextureBaseFolderPath);
         }
 
         public Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod)
@@ -293,31 +246,8 @@ namespace F4Utils.Terrain
                 return null;
             }
 
-            var lodInfo = _theaterDotLxFiles[lod];
-            Bitmap toReturn = null;
-
-            if (lod <= _theaterDotMapFileInfo.LastNearTiledLOD)
-            {
-                var textureBinInfo = _textureDotBinFileInfo;
-                var textureBaseFolderPath = _currentTheaterTextureBaseFolderPath;
-                textureId -= lodInfo.minTexOffset;
-                if (_nearTileTextures.ContainsKey(textureId)) return _nearTileTextures[textureId];
-
-                var setNum = textureId/Constants.NUM_TEXTURES_PER_SET;
-                var tileNum = textureId%Constants.NUM_TEXTURES_PER_SET;
-                var thisSet = textureBinInfo.setRecords[setNum];
-                var tileName = thisSet.tileRecords[tileNum].tileName;
-                toReturn = _nearTileTextureLoader.LoadNearTileTexture(textureBaseFolderPath, tileName, ref _textureZipFile, ref _textureDotZipFileEntries);
-                if (toReturn != null)
-                {
-                    _nearTileTextures.Add(textureId, toReturn);
-                }
-            }
-            else if (lod <= _theaterDotMapFileInfo.LastFarTiledLOD)
-            {
-                toReturn = GetFarTileTexture(textureId);
-            }
-            return toReturn;
+            return _terrainTextureByTextureIdRetriever.GetTerrainTextureByTextureId(textureId, lod, _theaterDotLxFiles, _theaterDotMapFileInfo, _textureDotBinFileInfo, _nearTileTextures, 
+                ref _textureZipFile, ref _textureDotZipFileEntries, _farTileTextures, _farTilesDotDdsFilePath, _farTilesDotRawFilePath, _farTilesDotPalFileInfo, _currentTheaterTextureBaseFolderPath);
         }
 
         public unsafe Bitmap GetTheaterMap(uint lod)
@@ -338,52 +268,9 @@ namespace F4Utils.Terrain
             }
             if (_theaterMaps[lod] != null) return _theaterMaps[lod];
 
-            var lodInfo = _theaterDotLxFiles[lod];
-            var mapInfo = _theaterDotMapFileInfo;
-            const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
-            var bmp = new Bitmap((int) mapInfo.LODMapWidths[lodInfo.LoDLevel]*postsAcross,
-                                 (int) mapInfo.LODMapHeights[lodInfo.LoDLevel]*postsAcross,
-                                 PixelFormat.Format8bppIndexed);
-            TheaterDotOxFileRecord block;
-            TheaterDotLxFileRecord lRecord;
-            var palette = bmp.Palette;
-            for (var i = 0; i < 256; i++)
-            {
-                palette.Entries[i] = mapInfo.Pallete[i];
-            }
-            bmp.Palette = palette;
-
-            var bmpLock = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly,
-                                       bmp.PixelFormat);
-            var scan0 = bmpLock.Scan0;
-            var startPtr = scan0.ToPointer();
-            var height = bmp.Height;
-            var width = bmp.Width;
-            for (var blockRow = 0; blockRow < ((int) mapInfo.LODMapHeights[lodInfo.LoDLevel]); blockRow++)
-            {
-                for (var blockCol = 0; blockCol < (mapInfo.LODMapWidths[lodInfo.LoDLevel]); blockCol++)
-                {
-                    var oIndex = (int) (blockRow*mapInfo.LODMapHeights[lodInfo.LoDLevel]) + blockCol;
-                    block = lodInfo.O[oIndex];
-                    for (var postRow = 0; postRow < postsAcross; postRow++)
-                    {
-                        for (var postCol = 0; postCol < postsAcross; postCol++)
-                        {
-                            var lIndex =
-                                (int)
-                                (((block.LRecordStartingOffset/(lodInfo.LRecordSizeBytes*postsAcross*postsAcross))*
-                                  postsAcross*postsAcross) + ((postRow*postsAcross) + postCol));
-                            lRecord = lodInfo.L[lIndex];
-                            var xCoord = (blockCol*postsAcross) + postCol;
-                            var yCoord = height - 1 - (blockRow*postsAcross) - postRow;
-                            *((byte*) startPtr + (yCoord*width) + xCoord) = lRecord.Pallete;
-                        }
-                    }
-                }
-            }
-            bmp.UnlockBits(bmpLock);
-            _theaterMaps[lod] = bmp;
-            return bmp;
+            var map = _theaterMapBuilder.GetTheaterMap(lod, _theaterDotLxFiles, _theaterDotMapFileInfo);
+            _theaterMaps[lod] = map;
+            return map;
         }
         public string DetectCurrentTheaterName() {
             return _currentTheaterNameDetector.DetectCurrentTheaterName();
@@ -458,80 +345,10 @@ namespace F4Utils.Terrain
             }
 
             if (_theaterDotLxFiles == null) return 0;
-            int col;
-            int row;
-
-            var feetAcross = GetNumFeetBetweenElevationPosts(0);
-
-            //determine the column and row in the DTED matrix where the nearest elevation post can be found
-            GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row);
-
-            //retrieve the 4 elevation posts which form a box around our current position (origin point x=0,y=0 is in lower left)
-            var Q11 = GetElevationPostRecordByColumnAndRow(col, row, 0);
-            var Q21 = GetElevationPostRecordByColumnAndRow(col + 1, row, 0);
-            var Q22 = GetElevationPostRecordByColumnAndRow(col + 1, row + 1, 0);
-            var Q12 = GetElevationPostRecordByColumnAndRow(col, row + 1, 0);
-
-            //determine the North/East coordinates of these 4 posts, respectively
-            var Q11North = row*feetAcross;
-            var Q11East = col*feetAcross;
-            float FQ11 = Q11.Elevation;
-
-            var Q21East = (col + 1)*feetAcross;
-            float FQ21 = Q21.Elevation;
-
-            float FQ22 = Q22.Elevation;
-
-            var Q12North = (row + 1)*feetAcross;
-            float FQ12 = Q12.Elevation;
-
-            //perform bilinear interpolation on the 4 outer elevation posts relative to our actual center post
-            //see: http://en.wikipedia.org/wiki/Bilinear_interpolation
-
-            var x = feetEast;
-            var y = feetNorth;
-
-            var x1 = Q11East;
-            var x2 = Q21East;
-            var y1 = Q11North;
-            var y2 = Q12North;
-
-            var result =
-                (
-                    ((FQ11/((x2 - x1)*(y2 - y1)))*(x2 - x)*(y2 - y))
-                    +
-                    ((FQ21/((x2 - x1)*(y2 - y1)))*(x - x1)*(y2 - y))
-                    +
-                    ((FQ12/((x2 - x1)*(y2 - y1)))*(x2 - x)*(y - y1))
-                    +
-                    ((FQ22/((x2 - x1)*(y2 - y1)))*(x - x1)*(y - y1))
-                );
-
-            return result;
+            return _terrainHeightCalculator.CalculateTerrainHeight(feetNorth, feetEast, _theaterDotLxFiles, _theaterDotMapFileInfo);
         }
 
-        public float GetNumFeetBetweenElevationPosts(int lod)
-        {
-            if (!_terrainLoaded)
-            {
-                LoadCurrentTheaterTerrainDatabase();
-            }
-
-            if (!_terrainLoaded || _disposing || _isDisposed)
-            {
-                return 0;
-            }
-            if (_theaterDotLxFiles == null) return 0;
-            var lodInfo = _theaterDotLxFiles[0];
-            var mapInfo = _theaterDotMapFileInfo;
-            var feetBetweenPosts = mapInfo.FeetBetweenL0Posts;
-            for (var i = 1; i <= lodInfo.LoDLevel; i++)
-            {
-                feetBetweenPosts *= 2;
-            }
-            return feetBetweenPosts;
-        }
-
+        
         public void CalculateLatLong(float feetNorth, float feetEast, out int latitudeWholeDegrees,
                                      out float latitudeFractionalMinutes, out int longitudeWholeDegrees,
                                      out float longitudeFactionalMinutes)
@@ -551,22 +368,26 @@ namespace F4Utils.Terrain
             }
             _latLongCalculator.CalculateLatLong(_theaterDotMapFileInfo, feetNorth, feetEast, out latitudeWholeDegrees, out latitudeFractionalMinutes, out longitudeWholeDegrees, out longitudeFactionalMinutes);
         }
-
-        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast,
-                                                                               out int col, out int row)
+        public float GetNumFeetBetweenElevationPosts(int lod)
         {
-            const int lod = 0;
-            var feetBetweenElevationPosts = GetNumFeetBetweenElevationPosts(lod);
-            col = (int) Math.Floor(feetEast/feetBetweenElevationPosts);
-            row = (int) Math.Floor(feetNorth/feetBetweenElevationPosts);
-            ClampElevationPostCoordinates(ref row, ref col, lod);
+            if (!_terrainLoaded)
+            {
+                LoadCurrentTheaterTerrainDatabase();
+            }
+
+            if (!_terrainLoaded || _disposing || _isDisposed)
+            {
+                return 0;
+            }
+            return _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod, _theaterDotLxFiles, _theaterDotMapFileInfo);
         }
+        
 
         public TheaterDotLxFileRecord GetElevationPostRecordByNorthEastCoordinate(float feetNorth, float feetEast)
         {
             int col;
             int row;
-            GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row);
+            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row, _theaterDotLxFiles, _theaterDotMapFileInfo);
             return GetElevationPostRecordByColumnAndRow(col, row, 0);
         }
 
@@ -581,22 +402,7 @@ namespace F4Utils.Terrain
             {
                 return null;
             }
-            var lodInfo = _theaterDotLxFiles[lod];
-            var mapInfo = _theaterDotMapFileInfo;
-            const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
-            ClampElevationPostCoordinates(ref postColumn, ref postRow, lodInfo.LoDLevel);
-            var blockRow = (int) Math.Floor((postRow/(float) postsAcross));
-            var blockCol = (int) Math.Floor((postColumn/(float) postsAcross));
-            var oIndex = (int) (blockRow*mapInfo.LODMapHeights[lodInfo.LoDLevel]) + blockCol;
-            var block = lodInfo.O[oIndex];
-            var col = (postColumn%postsAcross);
-            var row = (postRow%postsAcross);
-            var lIndex =
-                (int)
-                (((block.LRecordStartingOffset/(lodInfo.LRecordSizeBytes*postsAcross*postsAcross))*postsAcross*
-                  postsAcross) + ((row*postsAcross) + col));
-            var lRecord = lodInfo.L[lIndex];
-            return lRecord;
+            return _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(postColumn, postRow, lod, _theaterDotLxFiles, _theaterDotMapFileInfo);
         }
 
         #region Destructors

@@ -86,6 +86,7 @@
     <Compile Include="Campaign\Unit.cs" />
     <Compile Include="Campaign\Waypoint.cs" />
     <Compile Include="Campaign\WthFile.cs" />
+    <Compile Include="Terrain\ColumnAndRowElevationPostRecordRetriever.cs" />
     <Compile Include="Terrain\CurrentTheaterNameDetector.cs" />
     <Compile Include="PlayerOp\AutoPilotModeType.cs" />
     <Compile Include="PlayerOp\AvionicsType.cs" />
@@ -112,9 +113,13 @@
     <Compile Include="SimSupport\NonImplementedGaugeCalculations.cs" />
     <Compile Include="PlayerOp\SoundGroup.cs" />
     <Compile Include="Terrain\Constants.cs" />
+    <Compile Include="Terrain\DetailTextureForElevationPostRetriever.cs" />
+    <Compile Include="Terrain\DistanceBetweenElevationPostsCalculator.cs" />
+    <Compile Include="Terrain\ElevationPostCoordinateClamper.cs" />
     <Compile Include="Terrain\FarTileTextureRetriever.cs" />
     <Compile Include="Terrain\LatLongCalculator.cs" />
     <Compile Include="Terrain\LodTextureKey.cs" />
+    <Compile Include="Terrain\NearestElevationPostColumnAndRowCalculator.cs" />
     <Compile Include="Terrain\NearTileTextureLoader.cs" />
     <Compile Include="Terrain\Structs\FarTilesDotPalFileInfo.cs" />
     <Compile Include="Terrain\Structs\TextureBinAreaRecord.cs" />
@@ -128,7 +133,10 @@
     <Compile Include="Terrain\Structs\TheaterDotOxFlieRecord.cs" />
     <Compile Include="Terrain\Structs\TheaterDotTdfFileInfo.cs" />
     <Compile Include="Terrain\TerrainBrowser.cs" />
+    <Compile Include="Terrain\TerrainHeightCalculator.cs" />
+    <Compile Include="Terrain\TerrainTextureByTextureIdRetriever.cs" />
     <Compile Include="Terrain\TheaterDotTdfFileReader.cs" />
+    <Compile Include="Terrain\TheaterMapBuilder.cs" />
     <Compile Include="Terrain\Util.cs" />
     <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
