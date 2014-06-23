@@ -41,6 +41,9 @@ namespace F4Utils.Terrain
         private IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever = new DetailTextureForElevationPostRetriever();
         private ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader = new CurrentTheaterDotTdfLoader();
         private ITheaterDotMapFileReader _theaterDotMapFileReader = new TheaterDotMapFileReader();
+        private ITextureDotBinFileReader _textureDotBinFileReader = new TextureDotBinFileReader();
+        private IFarTilesDotPalFileReader _farTilesDotPalFileReader = new FarTilesDotPalFileReader();
+        private ITheaterDotLxFileReader _theaterDotLxFileReader = new TheaterDotLxFileReader();
         private readonly bool _loadAllLods;
 
         #region Instance Variables
@@ -130,15 +133,15 @@ namespace F4Utils.Terrain
                 {
                     for (uint i = 0; i < _theaterDotMapFileInfo.NumLODs; i++)
                     {
-                        _theaterDotLxFiles[i] = Util.LoadTheaterDotLxFile(i, theaterDotMapFilePath);
+                        _theaterDotLxFiles[i] = _theaterDotLxFileReader.LoadTheaterDotLxFile(i, theaterDotMapFilePath);
                     }
                 }
                 else
                 {
-                    _theaterDotLxFiles[0] = Util.LoadTheaterDotLxFile(0, theaterDotMapFilePath);
+                    _theaterDotLxFiles[0] = _theaterDotLxFileReader.LoadTheaterDotLxFile(0, theaterDotMapFilePath);
                 }
-                _textureDotBinFileInfo = Util.ReadTextureDotBinFile(textureDotBinFilePath);
-                _farTilesDotPalFileInfo = Util.ReadFarTilesDotPalFile(farTilesDotPalFilePath);
+                _textureDotBinFileInfo = _textureDotBinFileReader.ReadTextureDotBinFile(textureDotBinFilePath);
+                _farTilesDotPalFileInfo = _farTilesDotPalFileReader.ReadFarTilesDotPalFile(farTilesDotPalFilePath);
                 _terrainLoaded = true;
             }
         }

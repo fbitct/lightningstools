@@ -120,6 +120,7 @@
     <Compile Include="Terrain\DetailTextureForElevationPostRetriever.cs" />
     <Compile Include="Terrain\DistanceBetweenElevationPostsCalculator.cs" />
     <Compile Include="Terrain\ElevationPostCoordinateClamper.cs" />
+    <Compile Include="Terrain\FarTilesDotPalFileReader.cs" />
     <Compile Include="Terrain\FarTileTextureRetriever.cs" />
     <Compile Include="Terrain\LatLongCalculator.cs" />
     <Compile Include="Terrain\LodTextureKey.cs" />
@@ -139,10 +140,11 @@
     <Compile Include="Terrain\TerrainBrowser.cs" />
     <Compile Include="Terrain\TerrainHeightCalculator.cs" />
     <Compile Include="Terrain\TerrainTextureByTextureIdRetriever.cs" />
+    <Compile Include="Terrain\TextureDotBinFileReader.cs" />
+    <Compile Include="Terrain\TheaterDotLxFileReader.cs" />
     <Compile Include="Terrain\TheaterDotMapFileReader.cs" />
     <Compile Include="Terrain\TheaterDotTdfFileReader.cs" />
     <Compile Include="Terrain\TheaterMapBuilder.cs" />
-    <Compile Include="Terrain\Util.cs" />
     <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>
