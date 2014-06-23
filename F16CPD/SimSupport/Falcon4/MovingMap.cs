@@ -161,6 +161,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (_terrainDB == null || _terrainDB.TerrainBasePath == null) return false;
             _mapRenderingBackgroundWorker.ReportProgress(0);
+
             //define original screen size in pixels and inches
             var originalRenderSizeInPixels = new Size(Constants.I_NATIVE_RES_WIDTH, Constants.I_NATIVE_RES_HEIGHT);
             var originalRenderSizeInScreenInches = new SizeF(6.24f, 8.32f);
@@ -290,15 +291,10 @@ namespace F16CPD.SimSupport.Falcon4
                     using (var h = Graphics.FromImage(renderTarget))
                     {
                         var origHTransform = h.Transform;
-                        //h.CompositingQuality = CompositingQuality.HighQuality;
-                        //h.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        //h.SmoothingMode = SmoothingMode.HighQuality;
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
                         {
-                            h.TranslateTransform(cropWidth / 2.0f, cropWidth / 2.0f);
-                            h.RotateTransform(-(_mfdManager.FlightData.MagneticHeadingInDecimalDegrees));
-                            h.TranslateTransform(-cropWidth / 2.0f, -cropWidth / 2.0f);
+                            RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(cropWidth, h);
                         }
 
                         h.ScaleTransform(toScale, toScale);
@@ -319,7 +315,6 @@ namespace F16CPD.SimSupport.Falcon4
                                  thisElevationPostX <= clampRightXPost;
                                  thisElevationPostX++)
                             {
-                                //retrieve the detail texture corresponding to the current elevation post offset 
 
                                 if (_mapRenderingBackgroundWorker.CancellationPending)
                                 {
@@ -327,33 +322,11 @@ namespace F16CPD.SimSupport.Falcon4
                                     e.Cancel = true;
                                     return false;
                                 }
-                                var thisElevationPostDetailTexture =
-                                    _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost
-                                    (thisElevationPostX, thisElevationPostY, lod, _terrainDB);
-                                if (thisElevationPostDetailTexture == null) continue;
-                                //now draw the detail texture onto the render target
-                                var sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
-                                                               thisElevationPostDetailTexture.Height);
-                                //determine the upper-left pixel at which to place this detail texture on the render target
-                                var destPoint = new Point(
-                                    (thisElevationPostX - leftXPost) * thisLodDetailTextureWidthPixels,
-                                    (topYPost - thisElevationPostY - 1) * thisLodDetailTextureWidthPixels
-                                    );
-                                //calculate the destination rectangle (in pixels) on the render target, that we'll be placing the detail texture inside of
-                                var destRect = new Rectangle(destPoint,
-                                                             new Size(thisLodDetailTextureWidthPixels + 2,
-                                                                      thisLodDetailTextureWidthPixels + 2));
-                                if (_mapRenderingBackgroundWorker.CancellationPending)
-                                {
-                                    _mapRenderProgress = 0;
-                                    e.Cancel = true;
-                                    return false;
-                                }
 
-                                h.DrawImage(thisElevationPostDetailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
-                                //h.DrawImageUnscaled(thisElevationPostDetailTexture, destRect);
+                                RenderMapTextureForCurrentElevationPost(lod, thisLodDetailTextureWidthPixels, leftXPost, topYPost, h, thisElevationPostY, thisElevationPostX);
                                 numPostsRendered++;
                             }
+
                             _mapRenderingBackgroundWorker.ReportProgress(
                                 (int)Math.Floor((
                                                      numPostsRendered /
@@ -378,107 +351,12 @@ namespace F16CPD.SimSupport.Falcon4
                         clipRectangle,
                         GraphicsUnit.Pixel
                         );
-                    if (_mapAirplaneBitmap == null)
-                    {
-                        _mapAirplaneBitmap = (Bitmap)Resources.F16Symbol.Clone();
-                        _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255, 0, 255));
-                        _mapAirplaneBitmap =
-                            (Bitmap)
-                            Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap,
-                                                             new Size(
-                                                                 (int)Math.Floor(((float)_mapAirplaneBitmap.Width)),
-                                                                 (int)Math.Floor(((float)_mapAirplaneBitmap.Height))));
-                    }
-                    g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width) / 2)),
-                                (((renderRectangle.Height - _mapAirplaneBitmap.Height) / 2)));
+                    DrawAirplaneInCenter(g, renderRectangle);
 
-                    var renderRectangleScaleFactor =
-                        (float)
-                        Math.Sqrt((renderRectangle.Width * renderRectangle.Width) +
+                    var renderRectangleScaleFactor = (float) Math.Sqrt((renderRectangle.Width * renderRectangle.Width) +
                                   (renderRectangle.Height * renderRectangle.Height)) / originalRenderDiameterPixels;
 
-
-                    var mapRingPen = new Pen(Color.Magenta);
-                    Brush mapRingBrush = new SolidBrush(Color.Magenta);
-                    mapRingPen.Width = 1;
-                    const int mapRingLineWidths = 25;
-
-                    var originalGTransform = g.Transform;
-
-                    g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
-                    g.RotateTransform(-_mfdManager.FlightData.MagneticHeadingInDecimalDegrees);
-                    g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
-
-                    //rotate 45 degrees before drawing outer map range circle
-                    var preRotate = g.Transform;
-                    //capture current rotation so we can set it back before drawing inner map range circle
-                    g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
-                    g.RotateTransform(-45);
-                    g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
-
-                    //now draw outer map range circle
-                    var outerMapRingDiameterPixelsScaled =
-                        (int)Math.Floor(outerMapRingDiameterPixelsUnscaled * renderRectangleScaleFactor);
-                    var outerMapRingBoundingRect =
-                        new Rectangle(((renderRectangle.Width - outerMapRingDiameterPixelsScaled) / 2),
-                                      ((renderRectangle.Height - outerMapRingDiameterPixelsScaled) / 2),
-                                      outerMapRingDiameterPixelsScaled, outerMapRingDiameterPixelsScaled);
-                    g.DrawEllipse(mapRingPen, outerMapRingBoundingRect);
-                    var outerMapRingBoundingRectMiddleX = outerMapRingBoundingRect.X +
-                                                          (int)(Math.Floor(outerMapRingBoundingRect.Width / (float)2));
-                    var outerMapRingBoundingRectMiddleY = outerMapRingBoundingRect.Y +
-                                                          (int)(Math.Floor(outerMapRingBoundingRect.Height / (float)2));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top),
-                               new Point(outerMapRingBoundingRectMiddleX,
-                                         outerMapRingBoundingRect.Top + mapRingLineWidths));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY),
-                               new Point(outerMapRingBoundingRect.X + mapRingLineWidths, outerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen,
-                               new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width,
-                                         outerMapRingBoundingRectMiddleY),
-                               new Point(
-                                   outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineWidths,
-                                   outerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom),
-                               new Point(outerMapRingBoundingRectMiddleX,
-                                         outerMapRingBoundingRect.Bottom - mapRingLineWidths));
-
-                    //set rotation back before drawing inner map range circle
-                    g.Transform = preRotate;
-
-                    //draw inner map range circle
-                    var innerMapRingDiameterPixelsScaled = (int)(Math.Floor(outerMapRingDiameterPixelsScaled / 2.0f));
-                    var innerMapRingBoundingRect =
-                        new Rectangle(((renderRectangle.Width - innerMapRingDiameterPixelsScaled) / 2),
-                                      ((renderRectangle.Height - innerMapRingDiameterPixelsScaled) / 2),
-                                      innerMapRingDiameterPixelsScaled, innerMapRingDiameterPixelsScaled);
-                    g.DrawEllipse(mapRingPen, innerMapRingBoundingRect);
-                    var innerMapRingBoundingRectMiddleX = innerMapRingBoundingRect.X +
-                                                          (int)(Math.Floor(innerMapRingBoundingRect.Width / (float)2));
-                    var innerMapRingBoundingRectMiddleY = innerMapRingBoundingRect.Y +
-                                                          (int)(Math.Floor(innerMapRingBoundingRect.Height / (float)2));
-                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRect.X, innerMapRingBoundingRectMiddleY),
-                               new Point(innerMapRingBoundingRect.X + mapRingLineWidths, innerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen,
-                               new Point(innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width,
-                                         innerMapRingBoundingRectMiddleY),
-                               new Point(
-                                   innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width - mapRingLineWidths,
-                                   innerMapRingBoundingRectMiddleY));
-                    g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom),
-                               new Point(innerMapRingBoundingRectMiddleX,
-                                         innerMapRingBoundingRect.Bottom - mapRingLineWidths));
-
-                    //draw north marker on inner map range circle
-                    var northMarkerPoints = new Point[3];
-                    northMarkerPoints[0] = new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Top - 15);
-                    northMarkerPoints[1] = new Point(innerMapRingBoundingRectMiddleX - 12,
-                                                     innerMapRingBoundingRect.Top + 1);
-                    northMarkerPoints[2] = new Point(innerMapRingBoundingRectMiddleX + 12,
-                                                     innerMapRingBoundingRect.Top + 1);
-                    g.FillPolygon(mapRingBrush, northMarkerPoints);
-
-                    g.Transform = originalGTransform;
+                    DrawMapRing(g, renderRectangle, outerMapRingDiameterPixelsUnscaled, renderRectangleScaleFactor);
                 }
             }
             catch (Exception ex)
@@ -487,6 +365,154 @@ namespace F16CPD.SimSupport.Falcon4
                 return false;
             }
             return true;
+        }
+
+        private void RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(int cropWidth, Graphics h)
+        {
+            h.TranslateTransform(cropWidth / 2.0f, cropWidth / 2.0f);
+            h.RotateTransform(-(_mfdManager.FlightData.MagneticHeadingInDecimalDegrees));
+            h.TranslateTransform(-cropWidth / 2.0f, -cropWidth / 2.0f);
+        }
+
+        private void RenderMapTextureForCurrentElevationPost(uint lod, int thisLodDetailTextureWidthPixels, int leftXPost, int topYPost, Graphics h, int thisElevationPostY, int thisElevationPostX)
+        {
+            //retrieve the detail texture corresponding to the current elevation post offset 
+            var thisElevationPostDetailTexture =
+                _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost
+                (thisElevationPostX, thisElevationPostY, lod, _terrainDB);
+            if (thisElevationPostDetailTexture == null) return;
+            //now draw the detail texture onto the render target
+            var sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
+                                           thisElevationPostDetailTexture.Height);
+            //determine the upper-left pixel at which to place this detail texture on the render target
+            var destPoint = new Point(
+                (thisElevationPostX - leftXPost) * thisLodDetailTextureWidthPixels,
+                (topYPost - thisElevationPostY - 1) * thisLodDetailTextureWidthPixels
+                );
+            //calculate the destination rectangle (in pixels) on the render target, that we'll be placing the detail texture inside of
+            var destRect = new Rectangle(destPoint,
+                                         new Size(thisLodDetailTextureWidthPixels + 2,
+                                                  thisLodDetailTextureWidthPixels + 2));
+            h.DrawImage(thisElevationPostDetailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
+        }
+
+        private void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingDiameterPixelsUnscaled, float renderRectangleScaleFactor)
+        {
+            var mapRingPen = new Pen(Color.Magenta);
+            Brush mapRingBrush = new SolidBrush(Color.Magenta);
+            mapRingPen.Width = 1;
+            const int mapRingLineWidths = 25;
+
+            var originalGTransform = g.Transform;
+
+            g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
+            g.RotateTransform(-_mfdManager.FlightData.MagneticHeadingInDecimalDegrees);
+            g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
+
+            int outerMapRingDiameterPixelsScaled;
+            DrawOuterMapRangeCircle(g, renderRectangle, outerMapRingDiameterPixelsUnscaled, out outerMapRingDiameterPixelsScaled, renderRectangleScaleFactor, mapRingPen, mapRingLineWidths);
+
+            Rectangle innerMapRingBoundingRect;
+            int innerMapRingBoundingRectMiddleX;
+            renderRectangle = DrawInnerMapRangeCircle(g, renderRectangle, mapRingPen, mapRingLineWidths, outerMapRingDiameterPixelsScaled, out innerMapRingBoundingRect, out innerMapRingBoundingRectMiddleX);
+            DrawNorthMarkerOnInnerMapRangeCircle(g, mapRingBrush, innerMapRingBoundingRect, innerMapRingBoundingRectMiddleX);
+            g.Transform = originalGTransform;
+        }
+
+        private static void DrawNorthMarkerOnInnerMapRangeCircle(Graphics g, Brush mapRingBrush, Rectangle innerMapRingBoundingRect, int innerMapRingBoundingRectMiddleX)
+        {
+            //draw north marker on inner map range circle
+            var northMarkerPoints = new Point[3];
+            northMarkerPoints[0] = new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Top - 15);
+            northMarkerPoints[1] = new Point(innerMapRingBoundingRectMiddleX - 12,
+                                             innerMapRingBoundingRect.Top + 1);
+            northMarkerPoints[2] = new Point(innerMapRingBoundingRectMiddleX + 12,
+                                             innerMapRingBoundingRect.Top + 1);
+            g.FillPolygon(mapRingBrush, northMarkerPoints);
+        }
+
+        private static Rectangle DrawInnerMapRangeCircle(Graphics g, Rectangle renderRectangle, Pen mapRingPen, int mapRingLineWidths, int outerMapRingDiameterPixelsScaled, out Rectangle innerMapRingBoundingRect, out int innerMapRingBoundingRectMiddleX)
+        {
+            //draw inner map range circle
+            var innerMapRingDiameterPixelsScaled = (int)(Math.Floor(outerMapRingDiameterPixelsScaled / 2.0f));
+            innerMapRingBoundingRect =
+                new Rectangle(((renderRectangle.Width - innerMapRingDiameterPixelsScaled) / 2),
+                              ((renderRectangle.Height - innerMapRingDiameterPixelsScaled) / 2),
+                              innerMapRingDiameterPixelsScaled, innerMapRingDiameterPixelsScaled);
+            g.DrawEllipse(mapRingPen, innerMapRingBoundingRect);
+            innerMapRingBoundingRectMiddleX = innerMapRingBoundingRect.X +
+                          (int)(Math.Floor(innerMapRingBoundingRect.Width / (float)2));
+            var innerMapRingBoundingRectMiddleY = innerMapRingBoundingRect.Y +
+                                                  (int)(Math.Floor(innerMapRingBoundingRect.Height / (float)2));
+            g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRect.X, innerMapRingBoundingRectMiddleY),
+                       new Point(innerMapRingBoundingRect.X + mapRingLineWidths, innerMapRingBoundingRectMiddleY));
+            g.DrawLine(mapRingPen,
+                       new Point(innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width,
+                                 innerMapRingBoundingRectMiddleY),
+                       new Point(
+                           innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width - mapRingLineWidths,
+                           innerMapRingBoundingRectMiddleY));
+            g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom),
+                       new Point(innerMapRingBoundingRectMiddleX,
+                                 innerMapRingBoundingRect.Bottom - mapRingLineWidths));
+            return renderRectangle;
+        }
+
+        private static void DrawOuterMapRangeCircle(Graphics g, Rectangle renderRectangle, float outerMapRingDiameterPixelsUnscaled, out int outerMapRingDiameterPixelsScaled, float renderRectangleScaleFactor, Pen mapRingPen, int mapRingLineWidths)
+        {
+            //rotate 45 degrees before drawing outer map range circle
+            var preRotate = g.Transform;
+            //capture current rotation so we can set it back before drawing inner map range circle
+            g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
+            g.RotateTransform(-45);
+            g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
+
+            //now draw outer map range circle
+            outerMapRingDiameterPixelsScaled =
+                (int)Math.Floor(outerMapRingDiameterPixelsUnscaled * renderRectangleScaleFactor);
+            var outerMapRingBoundingRect =
+                new Rectangle(((renderRectangle.Width - outerMapRingDiameterPixelsScaled) / 2),
+                              ((renderRectangle.Height - outerMapRingDiameterPixelsScaled) / 2),
+                              outerMapRingDiameterPixelsScaled, outerMapRingDiameterPixelsScaled);
+            g.DrawEllipse(mapRingPen, outerMapRingBoundingRect);
+            var outerMapRingBoundingRectMiddleX = outerMapRingBoundingRect.X +
+                                                  (int)(Math.Floor(outerMapRingBoundingRect.Width / (float)2));
+            var outerMapRingBoundingRectMiddleY = outerMapRingBoundingRect.Y +
+                                                  (int)(Math.Floor(outerMapRingBoundingRect.Height / (float)2));
+            g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top),
+                       new Point(outerMapRingBoundingRectMiddleX,
+                                 outerMapRingBoundingRect.Top + mapRingLineWidths));
+            g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY),
+                       new Point(outerMapRingBoundingRect.X + mapRingLineWidths, outerMapRingBoundingRectMiddleY));
+            g.DrawLine(mapRingPen,
+                       new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width,
+                                 outerMapRingBoundingRectMiddleY),
+                       new Point(
+                           outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineWidths,
+                           outerMapRingBoundingRectMiddleY));
+            g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom),
+                       new Point(outerMapRingBoundingRectMiddleX,
+                                 outerMapRingBoundingRect.Bottom - mapRingLineWidths));
+
+            //set rotation back before drawing inner map range circle
+            g.Transform = preRotate;
+        }
+
+        private void DrawAirplaneInCenter(Graphics g, Rectangle renderRectangle)
+        {
+            if (_mapAirplaneBitmap == null)
+            {
+                _mapAirplaneBitmap = (Bitmap)Resources.F16Symbol.Clone();
+                _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255, 0, 255));
+                _mapAirplaneBitmap =
+                    (Bitmap)
+                    Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap,
+                                                     new Size(
+                                                         (int)Math.Floor(((float)_mapAirplaneBitmap.Width)),
+                                                         (int)Math.Floor(((float)_mapAirplaneBitmap.Height))));
+            }
+            g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width) / 2)),
+                        (((renderRectangle.Height - _mapAirplaneBitmap.Height) / 2)));
         }
          #region Destructors
 
