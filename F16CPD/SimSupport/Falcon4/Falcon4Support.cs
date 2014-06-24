@@ -16,6 +16,8 @@ using F4SharedMem.Headers;
 using F4Utils.Terrain;
 using log4net;
 using Message = F16CPD.Networking.Message;
+using F16CPD.SimSupport.Falcon4.Networking;
+using F16CPD.SimSupport.Falcon4.EventHandlers;
 
 namespace F16CPD.SimSupport.Falcon4
 {
@@ -51,6 +53,11 @@ namespace F16CPD.SimSupport.Falcon4
         private IMovingMap _movingMap;
         private IDEDAlowReader _dedAlowReader;
         private IIndicatedRateOfTurnCalculator _indicatedRateOfTurnCalculator = new IndicatedRateOfTurnCalculator();
+        private IFalconCallbackSender _falconCallbackSender;
+        private IFalconDataFormatDetector _falconDataFormatDetector;
+        private IClientSideInboundMessageProcessor _clientSideInboundMessageProcessor;
+        private IServerSideInboundMessageProcessor _serverSideInboundMessageProcessor;
+        private IInputControlEventHandler _inputControlEventHandler;
         #endregion
 
         public Falcon4Support(F16CpdMfdManager manager, Mediator mediator)
@@ -68,6 +75,13 @@ namespace F16CPD.SimSupport.Falcon4
             _morseCodeGenerator = new MorseCode {CharactersPerMinute = 53};
             _morseCodeGenerator.UnitTimeTick += MorseCodeUnitTimeTick;
             _dedAlowReader = new DEDAlowReader();
+            _inputControlEventHandler = new InputControlEventHandler(Manager);
+            _falconDataFormatDetector = new FalconDataFormatDetector(Manager);
+            _falconCallbackSender = new FalconCallbackSender(Manager);
+
+            _clientSideInboundMessageProcessor = new ClientSideInboundMessageProcessor();
+            _serverSideInboundMessageProcessor = new ServerSideInboundMessageProcessor(Manager);
+            
         }
 
         #region ISimSupportModule Members
@@ -232,7 +246,7 @@ namespace F16CPD.SimSupport.Falcon4
 
             var flightData = Manager.FlightData;
 
-            _curFalconDataFormat = DetectFalconFormat();
+            _curFalconDataFormat = _falconDataFormatDetector.DetectFalconDataFormat();
             var exePath = F4Utils.Process.Util.GetFalconExePath();
             CreateSharedMemReaderIfNotExists();
             var fromFalcon = ReadF4SharedMem();
@@ -385,15 +399,7 @@ namespace F16CPD.SimSupport.Falcon4
 
                 if (((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF))
                 {
-                    //if the ADI is off
-                    flightData.PitchAngleInDecimalDegrees = 0;
-                    flightData.RollAngleInDecimalDegrees = 0;
-                    flightData.BetaAngleInDecimalDegrees = 0;
-                    flightData.GammaAngleInDecimalDegrees = 0;
-                    flightData.AdiIlsGlideslopeDeviationInDecimalDegrees = 0;
-                    flightData.AdiIlsLocalizerDeviationInDecimalDegrees = 0;
-                    flightData.AdiEnableCommandBars = false;
-                    flightData.WindOffsetToFlightPathMarkerInDecimalDegrees = 0;
+                    TurnOffADI(flightData);
                 }
                 else
                 {
@@ -493,13 +499,7 @@ namespace F16CPD.SimSupport.Falcon4
 
                 if (((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF))
                 {
-                    flightData.HsiDistanceInvalidFlag = true;
-                    flightData.HsiDeviationInvalidFlag = false;
-                    flightData.HsiCourseDeviationLimitInDecimalDegrees = 0;
-                    flightData.HsiCourseDeviationInDecimalDegrees = 0;
-                    flightData.HsiLocalizerDeviationInDecimalDegrees = 0;
-                    flightData.HsiBearingToBeaconInDecimalDegrees = 0;
-                    flightData.HsiDistanceToBeaconInNauticalMiles = 0;
+                    TurnOffHSI(flightData);
                 }
                 else
                 {
@@ -530,29 +530,14 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     flightData.TacanChannel = fromFalcon.UFCTChan.ToString();
                 }
-                int latWholeDegrees;
-                float latMinutes;
-                int longWholeDegrees;
-                float longMinutes;
-                _latLongCalculator.CalculateLatLong(_terrainDB, fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes,
-                                                 out longWholeDegrees, out longMinutes);
-                flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes/60.0f);
-                flightData.LongitudeInDecimalDegrees = longWholeDegrees + (longMinutes/60.0f);
-                flightData.MapCoordinateFeetEast = fromFalcon.y;
-                flightData.MapCoordinateFeetNorth = fromFalcon.x;
+                UpdateMapPosition(flightData, fromFalcon);
             }
             else //Falcon's not running
             {
                 _isSimRunning = false;
                 if (Settings.Default.ShutoffIfFalconNotRunning)
                 {
-                    flightData.VviOffFlag = true;
-                    flightData.AoaOffFlag = true;
-                    flightData.HsiOffFlag = true;
-                    flightData.AdiOffFlag = true;
-                    flightData.CpdPowerOnFlag = false;
-                    flightData.RadarAltimeterOffFlag = true;
-                    flightData.PfdOffFlag = true;
+                    TurnOffAllInstruments(flightData);
                 }
                 if (Settings.Default.RunAsServer)
                 {
@@ -580,6 +565,55 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
+        private static void TurnOffAllInstruments(FlightData flightData)
+        {
+            flightData.VviOffFlag = true;
+            flightData.AoaOffFlag = true;
+            flightData.HsiOffFlag = true;
+            flightData.AdiOffFlag = true;
+            flightData.CpdPowerOnFlag = false;
+            flightData.RadarAltimeterOffFlag = true;
+            flightData.PfdOffFlag = true;
+        }
+
+        private void UpdateMapPosition(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            int latWholeDegrees;
+            float latMinutes;
+            int longWholeDegrees;
+            float longMinutes;
+            _latLongCalculator.CalculateLatLong(_terrainDB, fromFalcon.x, fromFalcon.y, out latWholeDegrees, out latMinutes,
+                                             out longWholeDegrees, out longMinutes);
+            flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes / 60.0f);
+            flightData.LongitudeInDecimalDegrees = longWholeDegrees + (longMinutes / 60.0f);
+            flightData.MapCoordinateFeetEast = fromFalcon.y;
+            flightData.MapCoordinateFeetNorth = fromFalcon.x;
+        }
+
+        private static void TurnOffHSI(FlightData flightData)
+        {
+            flightData.HsiDistanceInvalidFlag = true;
+            flightData.HsiDeviationInvalidFlag = false;
+            flightData.HsiCourseDeviationLimitInDecimalDegrees = 0;
+            flightData.HsiCourseDeviationInDecimalDegrees = 0;
+            flightData.HsiLocalizerDeviationInDecimalDegrees = 0;
+            flightData.HsiBearingToBeaconInDecimalDegrees = 0;
+            flightData.HsiDistanceToBeaconInNauticalMiles = 0;
+        }
+
+        private static void TurnOffADI(FlightData flightData)
+        {
+            //if the ADI is off
+            flightData.PitchAngleInDecimalDegrees = 0;
+            flightData.RollAngleInDecimalDegrees = 0;
+            flightData.BetaAngleInDecimalDegrees = 0;
+            flightData.GammaAngleInDecimalDegrees = 0;
+            flightData.AdiIlsGlideslopeDeviationInDecimalDegrees = 0;
+            flightData.AdiIlsLocalizerDeviationInDecimalDegrees = 0;
+            flightData.AdiEnableCommandBars = false;
+            flightData.WindOffsetToFlightPathMarkerInDecimalDegrees = 0;
+        }
+
         private void UpdateNewServerFlightDataWithCertainExistingClientFlightData(FlightData newServerFlightData)
         {
             //TODO: move all these variables to private state inside the manager
@@ -604,673 +638,13 @@ namespace F16CPD.SimSupport.Falcon4
         }
 
 
-
+      
 
 
         #endregion
 
 
-        #region Network messaging event handlers
-
-        public bool ProcessPendingMessageToServerFromClient(Message pendingMessage)
-        {
-            if (!Settings.Default.RunAsServer) return false;
-            var toReturn = false;
-            if (pendingMessage != null)
-            {
-                var messageType = pendingMessage.MessageType;
-                if (messageType != null)
-                {
-                    switch (messageType)
-                    {
-                        case "Falcon4SendCallbackMessage":
-                            var callback = (string) pendingMessage.Payload;
-                            SendCallbackToFalcon(callback);
-                            toReturn = true;
-                            break;
-                        case "Falcon4IncreaseALOW":
-                            {
-                                IncreaseAlow();
-                                toReturn = true;
-                            }
-                            break;
-
-                        case "Falcon4DecreaseALOW":
-                            {
-                                DecreaseAlow();
-                                toReturn = true;
-                            }
-                            break;
-                        case "Falcon4IncreaseBaro":
-                            {
-                                IncreaseBaro();
-                                toReturn = true;
-                            }
-                            break;
-
-                        case "Falcon4DecreaseBaro":
-                            {
-                                DecreaseBaro();
-                                toReturn = true;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            return toReturn;
-        }
-
-        public bool ProcessPendingMessageToClientFromServer(Message pendingMessage)
-        {
-            if (!Settings.Default.RunAsClient) return false;
-            var toReturn = false;
-            if (pendingMessage != null)
-            {
-                var messageType = pendingMessage.MessageType;
-                if (messageType != null)
-                {
-                    switch (messageType)
-                    {
-                        case "Falcon4CallbackOccurredMessage":
-                            var callback = (string) pendingMessage.Payload;
-                            ProcessDetectedCallback(callback);
-                            toReturn = true;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            return toReturn;
-        }
-
-        private static void ProcessDetectedCallback(string callback)
-        {
-            if (String.IsNullOrEmpty(callback) || String.IsNullOrEmpty(callback.Trim())) return;
-            /*
-            if (callback.ToLowerInvariant().Trim() == "SimHSIModeInc".ToLowerInvariant() )
-            {
-                switch (_currentNavMode)
-                {
-                    case NavModes.Tcn:
-                        _currentNavMode = NavModes.Nav;
-                        break;
-                    case NavModes.PlsTcn:
-                        _currentNavMode = NavModes.Tcn;
-                        break;
-                    case NavModes.Nav:
-                        _currentNavMode = NavModes.PlsNav;
-                        break;
-                    case NavModes.PlsNav:
-                        _currentNavMode = NavModes.PlsNav;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimStepHSIMode".ToLowerInvariant())
-            {
-                switch (_currentNavMode)
-                {
-                    case NavModes.Tcn:
-                        _currentNavMode = NavModes.Nav;
-                        break;
-                    case NavModes.PlsTcn:
-                        _currentNavMode = NavModes.Tcn;
-                        break;
-                    case NavModes.Nav:
-                        _currentNavMode = NavModes.PlsNav;
-                        break;
-                    case NavModes.PlsNav:
-                        _currentNavMode = NavModes.PlsTcn;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimHSIModeDec".ToLowerInvariant())
-            {
-                switch (_currentNavMode)
-                {
-                    case NavModes.Tcn:
-                        _currentNavMode = NavModes.PlsTcn;
-                        break;
-                    case NavModes.PlsTcn:
-                        _currentNavMode = NavModes.PlsTcn;
-                        break;
-                    case NavModes.Nav:
-                        _currentNavMode = NavModes.Tcn;
-                        break;
-                    case NavModes.PlsNav:
-                        _currentNavMode = NavModes.Nav;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimHSIIlsNav".ToLowerInvariant())
-            {
-                _currentNavMode = NavModes.PlsNav;
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimHSIIlsTcn".ToLowerInvariant())
-            {
-                _currentNavMode = NavModes.PlsTcn;
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimHSITcn".ToLowerInvariant())
-            {
-                _currentNavMode = NavModes.Tcn;
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimHSINav".ToLowerInvariant())
-            {
-                _currentNavMode = NavModes.Nav;
-            }
-            */
-            /*
-            if (callback.ToLowerInvariant().Trim() == "SimAuxComBackup".ToLowerInvariant())
-            {
-                _tacanChannelSource = TacanChannelSource.Backup;
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimAuxComUFC".ToLowerInvariant())
-            {
-                _tacanChannelSource = TacanChannelSource.Ufc;
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimToggleAuxComMaster".ToLowerInvariant())
-            {
-                if (_tacanChannelSource == TacanChannelSource.Backup)
-                {
-                    _tacanChannelSource = TacanChannelSource.Ufc;
-                }
-                else
-                {
-                    _tacanChannelSource = TacanChannelSource.Backup;
-                }
-            }
-            else if (callback.ToLowerInvariant().Trim() == "SimCycleBandAuxComDigit".ToLowerInvariant())
-            {
-                if (_backupTacanBand == TacanBand.X)
-                {
-                    _backupTacanBand = TacanBand.Y;
-                }
-                else
-                {
-                    _backupTacanBand = TacanBand.X;
-                }
-            }
-            */
-            if (Settings.Default.RunAsServer)
-            {
-                var message = new Message("Falcon4CallbackOccurredMessage", callback.Trim());
-                F16CPDServer.SubmitMessageToClient(message);
-            }
-        }
-
-        #endregion
-
-        #region CPD Physical Input Control handlesr
-
-        #region CPD Input Control Event Handler Dispatch Routines
-
-        public void HandleInputControlEvent(CpdInputControls eventSource, MfdInputControl control)
-        {
-            OptionSelectButton button;
-            switch (eventSource)
-            {
-                case CpdInputControls.OsbButton1:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton2:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton3:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton4:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton5:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton6:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton7:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton8:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton9:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton10:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton11:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton12:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton13:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton14:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton15:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton16:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton17:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton18:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton19:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton20:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton21:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton22:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton23:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton24:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton25:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.OsbButton26:
-                    button = control as OptionSelectButton;
-                    HandleOptionSelectButtonPress(button);
-                    break;
-                case CpdInputControls.HsiModeTcn:
-                    SetHsiModeTcn();
-                    break;
-                case CpdInputControls.HsiModeIlsTcn:
-                    SetHsiModePlsTcn();
-                    break;
-                case CpdInputControls.HsiModeNav:
-                    SetHsiModeNav();
-                    break;
-                case CpdInputControls.HsiModeIlsNav:
-                    SetHsiModePlsNav();
-                    break;
-                case CpdInputControls.ParameterAdjustKnobIncrease:
-                    break;
-                case CpdInputControls.ParameterAdjustKnobDecrease:
-                    break;
-                case CpdInputControls.FuelSelectTest:
-                    SetFuelSelectTest();
-                    break;
-                case CpdInputControls.FuelSelectNorm:
-                    SetFuelSelectNorm();
-                    break;
-                case CpdInputControls.FuelSelectRsvr:
-                    SetFuelSelectRsvr();
-                    break;
-                case CpdInputControls.FuelSelectIntWing:
-                    SetFuelSelectIntWing();
-                    break;
-                case CpdInputControls.FuelSelectExtWing:
-                    SetFuelSelectExtWing();
-                    break;
-                case CpdInputControls.FuelSelectExtCtr:
-                    SetFuelSelectExtCtr();
-                    break;
-                case CpdInputControls.ExtFuelSwitchTransNorm:
-                    SetExtFuelSwitchTransNorm();
-                    break;
-                case CpdInputControls.ExtFuelSwitchTransWingFirst:
-                    SetExtFuelSwitchTransWingFirst();
-                    break;
-            }
-        }
-
-        public void HandleOptionSelectButtonPress(OptionSelectButton button)
-        {
-            var functionName = button.FunctionName;
-            if (!String.IsNullOrEmpty(functionName))
-            {
-                switch (functionName)
-                {
-                    case "CourseSelectIncrease":
-                        {
-                            var format = _curFalconDataFormat;
-                            var useIncrementByOne = false;
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-                            {
-                                KeyBinding incByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiCrsIncBy1");
-                                if (incByOneCallback != null &&
-                                    incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                                {
-                                    useIncrementByOne = true;
-                                }
-                            }
-                            SendCallbackToFalcon(useIncrementByOne ? "SimHsiCrsIncBy1" : "SimHsiCourseInc");
-                        }
-                        break;
-                    case "CourseSelectDecrease":
-                        {
-                            var format = _curFalconDataFormat;
-                            var useDecrementByOne = false;
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-                            {
-                                KeyBinding decByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
-                                if (decByOneCallback != null &&
-                                    decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                                {
-                                    useDecrementByOne = true;
-                                }
-                            }
-                            SendCallbackToFalcon(useDecrementByOne ? "SimHsiCrsDecBy1" : "SimHsiCourseDec");
-                        }
-                        break;
-                    case "HeadingSelectIncrease":
-                        {
-                            var format = _curFalconDataFormat;
-                            var useIncrementByOne = false;
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-                            {
-                                KeyBinding incByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiHdgIncBy1");
-                                if (incByOneCallback != null &&
-                                    incByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                                {
-                                    useIncrementByOne = true;
-                                }
-                            }
-                            SendCallbackToFalcon(useIncrementByOne ? "SimHsiHdgIncBy1" : "SimHsiHeadingInc");
-                        }
-
-                        break;
-                    case "HeadingSelectDecrease":
-                        {
-                            var format = _curFalconDataFormat;
-                            var useDecrementByOne = false;
-                            if (format.HasValue && format.Value == FalconDataFormats.BMS4)
-                            {
-                                var decByOneCallback = F4Utils.Process.KeyFileUtils.FindKeyBinding("SimHsiHdgDecBy1");
-                                if (decByOneCallback != null &&
-                                    decByOneCallback.Key.ScanCode != (int) ScanCodes.NotAssigned)
-                                {
-                                    useDecrementByOne = true;
-                                }
-                            }
-                            SendCallbackToFalcon(useDecrementByOne ? "SimHsiHdgDecBy1" : "SimHsiHeadingDec");
-                        }
-                        break;
-                    case "BarometricPressureSettingIncrease":
-                        IncreaseBaro();
-                        break;
-                    case "BarometricPressureSettingDecrease":
-                        DecreaseBaro();
-                        break;
-                    case "LowAltitudeWarningThresholdIncrease":
-                        IncreaseAlow();
-                        break;
-                    case "LowAltitudeWarningThresholdDecrease":
-                        DecreaseAlow();
-                        break;
-                    case "AcknowledgeMessage":
-                        //SendCallbackToFalcon("SimICPFAck");
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-
-        private void DecreaseAlow()
-        {
-            if (Settings.Default.RunAsClient)
-            {
-                var message = new Message("Falcon4DecreaseALOW", Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
-                Manager.Client.SendMessageToServer(message);
-            }
-            else
-            {
-                if (Manager.FlightData.AutomaticLowAltitudeWarningInFeet > 1000)
-                {
-                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet -= 1000;
-                }
-                else
-                {
-                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet -= 100;
-                }
-                SendCallbackToFalcon("DecreaseAlow");
-            }
-        }
-
-        private void IncreaseAlow()
-        {
-            if (Settings.Default.RunAsClient)
-            {
-                var message = new Message("Falcon4IncreaseALOW", Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
-                Manager.Client.SendMessageToServer(message);
-            }
-            else
-            {
-                if (Manager.FlightData.AutomaticLowAltitudeWarningInFeet < 1000)
-                {
-                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet += 100;
-                }
-                else
-                {
-                    Manager.FlightData.AutomaticLowAltitudeWarningInFeet += 1000;
-                }
-                SendCallbackToFalcon("IncreaseAlow");
-            }
-        }
-
-        private void IncreaseBaro()
-        {
-            if (Settings.Default.RunAsClient)
-            {
-                var message = new Message("Falcon4IncreaseBaro",
-                                          Manager.FlightData.BarometricPressureInDecimalInchesOfMercury);
-                Manager.Client.SendMessageToServer(message);
-            }
-            else
-            {
-                Manager.FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
-                SendCallbackToFalcon("SimAltPressInc");
-            }
-        }
-
-        private void DecreaseBaro()
-        {
-            if (Settings.Default.RunAsClient)
-            {
-                var message = new Message("Falcon4DecreaseBaro",
-                                          Manager.FlightData.BarometricPressureInDecimalInchesOfMercury);
-                Manager.Client.SendMessageToServer(message);
-            }
-            else
-            {
-                Manager.FlightData.BarometricPressureInDecimalInchesOfMercury -= 0.01f;
-                SendCallbackToFalcon("SimAltPressDec");
-            }
-        }
-
-        #endregion
-
-        #region CPD Input Control Event Handler Worker Routines
-
-        private void SetExtFuelSwitchTransWingFirst()
-        {
-            SendCallbackToFalcon("SimFuelTransWing");
-        }
-
-        private void SetExtFuelSwitchTransNorm()
-        {
-            SendCallbackToFalcon("SimFuelTransNorm");
-        }
-
-        private void SetFuelSelectExtCtr()
-        {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimFuelCenterExt");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimFuelSwitchCenterExt");
-            }
-        }
-
-        private void SetFuelSelectExtWing()
-        {
-            //TODO: PRIO check these and all other callback names against FreeFalcon 5
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimFuelWingExt");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimFuelSwitchWingExt");
-            }
-        }
-
-        private void SetFuelSelectIntWing()
-        {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimFuelWingInt");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimFuelSwitchWingInt");
-            }
-        }
-
-        private void SetFuelSelectRsvr()
-        {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimFuelResv");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimFuelSwitchResv");
-            }
-        }
-
-        private void SetFuelSelectNorm()
-        {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimFuelNorm");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimFuelSwitchNorm");
-            }
-        }
-
-        private void SetFuelSelectTest()
-        {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimFuelTest");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimFuelSwitchTest");
-            }
-        }
-
-        private void SetHsiModePlsNav()
-        {
-            //_currentNavMode = NavModes.PlsNav;
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimIlsNav");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimHSIIlsNav");
-            }
-        }
-
-        private void SetHsiModeNav()
-        {
-            //_currentNavMode = NavModes.Nav;
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimNav");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimHSINav");
-            }
-        }
-
-        private void SetHsiModePlsTcn()
-        {
-            //_currentNavMode = NavModes.PlsTcn;
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimIlsTcn");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimHSIIlsTcn");
-            }
-        }
-
-        private void SetHsiModeTcn()
-        {
-            //_currentNavMode = NavModes.Tcn;
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.AlliedForce)
-            {
-                SendCallbackToFalcon("SimTcn");
-            }
-            else
-            {
-                SendCallbackToFalcon("SimHSITcn");
-            }
-        }
-
-        #endregion
-
-        #endregion
+        
 
         #region Falcon Process Detection and Manipulation Functions
 
@@ -1289,33 +663,7 @@ namespace F16CPD.SimSupport.Falcon4
         }
 
 
-        private void SendCallbackToFalcon(string callback)
-        {
-            if (!Settings.Default.RunAsClient)
-            {
-                var startTime = DateTime.Now;
-                _log.Debug("Sending callback:" + callback + " to Falcon.");
-                SendCallbackToFalconLocal(callback);
-                _log.Debug("Finished sending callback:" + callback + " to Falcon.");
-                var endTime = DateTime.Now;
-                var elapsed = endTime.Subtract(startTime);
-                _log.Debug(string.Format("Time taken to send callback to Falcon: {0} milliseconds",
-                                         elapsed.TotalMilliseconds));
-            }
-            else if (Settings.Default.RunAsClient)
-            {
-                var message = new Message("Falcon4SendCallbackMessage", callback);
-                Manager.Client.SendMessageToServer(message);
-            }
-        }
-
-        private void SendCallbackToFalconLocal(string callback)
-        {
-            _isSendingInput = true;
-            F4Utils.Process.KeyFileUtils.SendCallbackToFalcon(callback);
-            _isSendingInput = false;
-        }
-
+        
         private F4SharedMem.FlightData ReadF4SharedMem()
         {
             var toReturn = new F4SharedMem.FlightData();
@@ -1332,7 +680,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (_sharedMemReader == null && !Settings.Default.RunAsClient)
             {
-                _curFalconDataFormat = DetectFalconFormat();
+                _curFalconDataFormat = _falconDataFormatDetector.DetectFalconDataFormat();
                 if (_curFalconDataFormat.HasValue)
                 {
                     _sharedMemReader = new Reader(_curFalconDataFormat.Value);
@@ -1348,36 +696,24 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private FalconDataFormats? DetectFalconFormat()
-        {
-            FalconDataFormats? toReturn = null;
-            //if we're running as the server or we're running in standalone mode
-            if (Settings.Default.RunAsServer || (!Settings.Default.RunAsServer && !Settings.Default.RunAsClient))
-            {
-                toReturn = F4Utils.Process.Util.DetectFalconFormat();
-                if (Settings.Default.RunAsServer)
-                {
-                    F16CPDServer.SetSimProperty("SimName", "Falcon4");
-                    F16CPDServer.SetSimProperty("SimVersion",
-                                                toReturn.HasValue
-                                                    ? Enum.GetName(typeof (FalconDataFormats), toReturn)
-                                                    : null);
-                }
-            }
-            else if (Settings.Default.RunAsClient)
-            {
-                var simName = (string) Manager.Client.GetSimProperty("SimName");
-                var simVersion = (string) Manager.Client.GetSimProperty("SimVersion");
-                if (simName != null && simName.ToLowerInvariant() == "falcon4")
-                {
-                    toReturn = (FalconDataFormats) Enum.Parse(typeof (FalconDataFormats), simVersion);
-                }
-            }
-
-            return toReturn;
-        }
+       
 
         #endregion
+        public void HandleInputControlEvent(CpdInputControls eventSource, MfdInputControl control)
+        {
+            _inputControlEventHandler.HandleInputControlEvent(eventSource, control);
+        }
+
+        public bool ProcessPendingMessageToClientFromServer(Message message)
+        {
+            return _clientSideInboundMessageProcessor.ProcessPendingMessage(message);
+        }
+        public bool ProcessPendingMessageToServerFromClient(Message message)
+        {
+            return _serverSideInboundMessageProcessor.ProcessPendingMessage(message);
+        }
+
+
         public void RenderMap(Graphics g, Rectangle renderRect, float mapScale, int rangeRingDiameterInNauticalMiles,
                MapRotationMode rotationMode)
         {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace F16CPD.SimSupport.Falcon4
+namespace F16CPD.SimSupport
 {
     [Serializable]
     public struct TimestampedFloatValue
