@@ -17,9 +17,6 @@ namespace F4Utils.Process
         private const string MODULENAME_FALCON = "FALCON";
         private const string WINDOW_CLASS_FALCONDISPLAY = "FalconDisplay";
         private const string EXE_NAME__F4AF = "FalconAF.exe";
-        private const string EXE_NAME__REDVIPER = "RedViper.exe";
-        private const string EXE_NAME__FREEFALCON = "FFViper.exe";
-        private const string EXENAME__BMS3_EARLY_BMS4 = "F4-BMS.exe";
         private const string EXENAME__BMS4 = "Falcon BMS.exe";
         private static readonly ILog Log = LogManager.GetLogger(typeof (Util));
 
@@ -112,18 +109,6 @@ namespace F4Utils.Process
                 if (exePath.ToLowerInvariant().Contains(EXE_NAME__F4AF.ToLowerInvariant()))
                 {
                     toReturn = FalconDataFormats.AlliedForce;
-                }
-                else if (exePath.ToLowerInvariant().Contains(EXE_NAME__REDVIPER.ToLowerInvariant()))
-                {
-                    toReturn = FalconDataFormats.BMS2;
-                }
-                else if (exePath.ToLowerInvariant().Contains(EXE_NAME__FREEFALCON.ToLowerInvariant()))
-                {
-                    toReturn = FalconDataFormats.FreeFalcon5;
-                }
-                else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS3_EARLY_BMS4.ToLowerInvariant()))
-                {
-                    toReturn = FalconDataFormats.BMS3;
                 }
                 else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS4.ToLowerInvariant()))
                 {

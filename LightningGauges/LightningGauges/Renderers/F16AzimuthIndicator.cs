@@ -1958,7 +1958,7 @@ namespace LightningGauges.Renderers
                     { 
                         if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
                         _lethality = value;
-                    }; 
+                    } 
                 }
                 public int NewDetection { get; set; }
                 public bool Visible { get; set; }

@@ -157,10 +157,6 @@ namespace F4Utils.Process
                 {
                     startLoc = 231;
                 }
-                else if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.FreeFalcon5)
-                {
-                    startLoc = 163;
-                }
                 if (optionsFileContents.Length > startLoc)
                 {
                     var nullLoc = -1;
