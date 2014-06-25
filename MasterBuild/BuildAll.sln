@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalogDevices", "..\AnalogDevices\AnalogDevices.csproj", "{E8F9E0E2-6DCA-4C39-8E0C-2818C1D87DA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIUSBWrapper", "..\BIUSBWrapper\BIUSBWrapper.csproj", "{6A686BC3-E2A2-4E46-A175-B318FF0A2646}"
@@ -58,10 +60,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeexInvoke", "..\SpeexInvoke\SpeexInvoke\SpeexInvoke.csproj", "{C19C5F53-4B71-4CAF-830E-4D9226914842}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TlkTool", "..\TlkTool\TlkTool.csproj", "{34E420DF-D312-4B00-BA4D-693C2FB51E2F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlPersist", "..\UrlPersist\UrlPersist.csproj", "{8C79806E-3A8B-4D7D-B722-CB269BF8DA00}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlToImage", "..\UrlToImage\UrlToImage.csproj", "{E314B115-AC54-4F01-AC73-E38662C9850E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,12 +178,6 @@ Global
 		{34E420DF-D312-4B00-BA4D-693C2FB51E2F}.Debug|x86.Build.0 = Debug|x86
 		{34E420DF-D312-4B00-BA4D-693C2FB51E2F}.Release|x86.ActiveCfg = Release|x86
 		{34E420DF-D312-4B00-BA4D-693C2FB51E2F}.Release|x86.Build.0 = Release|x86
-		{8C79806E-3A8B-4D7D-B722-CB269BF8DA00}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8C79806E-3A8B-4D7D-B722-CB269BF8DA00}.Debug|x86.Build.0 = Debug|Any CPU
-		{8C79806E-3A8B-4D7D-B722-CB269BF8DA00}.Release|x86.ActiveCfg = Release|Any CPU
-		{E314B115-AC54-4F01-AC73-E38662C9850E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{E314B115-AC54-4F01-AC73-E38662C9850E}.Debug|x86.Build.0 = Debug|Any CPU
-		{E314B115-AC54-4F01-AC73-E38662C9850E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
