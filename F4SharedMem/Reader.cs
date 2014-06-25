@@ -5,17 +5,6 @@ using System.Collections.Generic;
 namespace F4SharedMem
 {
     [ComVisible(true)]
-    public enum FalconDataFormats
-    {
-        OpenFalcon=0,
-        BMS3=0,
-        BMS2=1,
-        AlliedForce=2,
-        BMS4=3,
-        FreeFalcon5=4
-    }
-    
-    [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class Reader : IDisposable
     {
@@ -206,17 +195,8 @@ namespace F4SharedMem
                 case FalconDataFormats.AlliedForce:
                     dataType = typeof(Headers.AFFlightData);
                     break;
-                case FalconDataFormats.BMS2:
-                    dataType = typeof(Headers.BMS2FlightData);
-                    break;
-                case FalconDataFormats.BMS3:
-                    dataType = typeof(Headers.BMS3FlightData);
-                    break;
                 case FalconDataFormats.BMS4:
                     dataType = typeof(Headers.BMS4FlightData);
-                    break;
-                case FalconDataFormats.FreeFalcon5:
-                    dataType = typeof(Headers.FreeFalcon5FlightData);
                     break;
                 default:
                     break;
@@ -238,17 +218,8 @@ namespace F4SharedMem
                 case FalconDataFormats.AlliedForce:
                     toReturn = new FlightData((Headers.AFFlightData)data);
                     break;
-                case FalconDataFormats.BMS2:
-                    toReturn = new FlightData((Headers.BMS2FlightData)data);
-                    break;
-                case FalconDataFormats.BMS3:
-                    toReturn = new FlightData((Headers.BMS3FlightData)data);
-                    break;
                 case FalconDataFormats.BMS4:
                     toReturn = new FlightData((Headers.BMS4FlightData)data);
-                    break;
-                case FalconDataFormats.FreeFalcon5:
-                    toReturn = new FlightData((Headers.FreeFalcon5FlightData)data);
                     break;
                 default:
                     break;
@@ -283,7 +254,7 @@ namespace F4SharedMem
             Disconnect();
             _hPrimarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false, _primarySharedMemoryAreaFileName);
             _lpPrimarySharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hPrimarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
-            if (_dataFormat == FalconDataFormats.OpenFalcon || _dataFormat == FalconDataFormats.BMS4)
+            if (_dataFormat == FalconDataFormats.BMS4)
             {
                 _hSecondarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false, _secondarySharedMemoryFileName);
                 _lpSecondarySharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hSecondarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);

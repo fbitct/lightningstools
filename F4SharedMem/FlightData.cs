@@ -30,21 +30,7 @@ namespace F4SharedMem
             PopulateFromStruct(data);
             DataFormat = FalconDataFormats.BMS4;
         }
-        internal FlightData(Headers.BMS3FlightData data)
-        {
-            PopulateFromStruct(data);
-            DataFormat = FalconDataFormats.BMS3;
-        }
-        internal FlightData(Headers.BMS2FlightData data)
-        {
-            PopulateFromStruct(data);
-            DataFormat = FalconDataFormats.BMS2;
-        }
-        internal FlightData(Headers.FreeFalcon5FlightData data)
-        {
-            PopulateFromStruct(data);
-            DataFormat = FalconDataFormats.FreeFalcon5;
-        }
+
         internal void PopulateFromStruct(object data)
         {
             Type thisType = this.GetType();
