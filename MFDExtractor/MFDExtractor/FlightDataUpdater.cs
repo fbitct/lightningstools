@@ -149,7 +149,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.PitchTrim.Adapt(renderers.PitchTrim, flightData);
                 _flightDataAdapterSet.AzimuthIndicator.Adapt(renderers.RWR, flightData);
                 _flightDataAdapterSet.CautionPanel.Adapt(renderers.CautionPanel, flightData);
-                _flightDataAdapterSet.CMDS.Adapt(renderers.CMDSPanel, flightData);
+                _flightDataAdapterSet.CMDS.Adapt(renderers.CMDS, flightData);
                 _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
                 _flightDataAdapterSet.PFL.Adapt(renderers.PFL, flightData);
                 _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);

@@ -265,7 +265,7 @@ namespace MFDExtractor
 
         private void SetupCMDSPanelRenderer()
         {
-            _renderers.CMDSPanel = new F16CMDSPanel();
+            _renderers.CMDS = new F16CMDSPanel();
         }
 
         private void SetupCautionPanelRenderer()

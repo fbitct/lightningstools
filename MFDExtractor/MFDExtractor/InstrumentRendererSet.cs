@@ -15,7 +15,7 @@ namespace MFDExtractor
          IF16StandbyADI BackupADI { get; set; }
          IF16CabinPressureAltitudeIndicator CabinPress { get; set; }
          IF16CautionPanel CautionPanel { get; set; }
-         IF16CMDSPanel CMDSPanel { get; set; }
+         IF16CMDSPanel CMDS { get; set; }
          IF16Compass Compass{ get; set; }
          IF16DataEntryDisplayPilotFaultList DED{ get; set; }
          IF16EHSI EHSI{ get; set; }
