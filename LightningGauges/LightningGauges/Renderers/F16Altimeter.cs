@@ -205,8 +205,28 @@ namespace LightningGauges.Renderers
                 BarometricPressure = 2992f;
             }
 
-            public float BarometricPressure { get; set; }
-            public float IndicatedAltitudeFeetMSL { get; set; }
+            private float _barometricPressure;
+            public float BarometricPressure
+            {
+                get { return _barometricPressure; }
+                set 
+                { 
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
+                    _barometricPressure = value;
+                }
+            }
+            private float _indicatedAltitudeFeetMSL;
+            public float IndicatedAltitudeFeetMSL
+            {
+                get { return _indicatedAltitudeFeetMSL; }
+                set
+                {
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
+                    if (value > MAX_ALT) value = MAX_ALT;
+                    _indicatedAltitudeFeetMSL = value;
+                }
+            }
+            private const int MAX_ALT = 1000*1000;
             public bool StandbyModeFlag { get; set; }
             public bool NormalModeFlag { get; set; }
             public bool PneumaticModeFlag { get; set; }

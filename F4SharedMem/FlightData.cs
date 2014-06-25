@@ -175,6 +175,7 @@ namespace F4SharedMem
         public float internalFuel; // Ownship internal fuel (Lbs)
         public float externalFuel; // Ownship external fuel (Lbs)
         public float fuelFlow;     // Ownship fuel flow (Lbs/Hour)
+        public float fuelFlow2;    // Ownship fuel flow2 (Lbs/Hour)
         public float rpm;          // Ownship engine rpm (Percent 0-103)
         public float rpm2;         // Ownship engine rpm2 (Percent 0-103)
         public float ftit;         // Ownship Forward Turbine Inlet Temp (Degrees C)
@@ -258,6 +259,7 @@ namespace F4SharedMem
         public int[] selected;
         public float[] lethality;
         public int[] newDetection;
+        public char[] RwrInfo;
 
         //fuel values
         public float fwd;
@@ -289,7 +291,12 @@ namespace F4SharedMem
         public short vehicleACD;	// Ownship ACD index number, i.e. which aircraft type are we flying.
         
         public byte[] tacanInfo;    //TACAN info (new in BMS4)
-        
+        float lefPos;       // Ownship LEF position
+
+        float tefPos;       // Ownship TEF position
+
+        // VERSION 6
+        float vtolPos;      // Ownship VTOL exhaust angle
 
         public OptionSelectButtonLabel[] leftMFD;
         public OptionSelectButtonLabel[] rightMFD;
