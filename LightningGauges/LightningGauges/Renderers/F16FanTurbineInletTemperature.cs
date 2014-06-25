@@ -95,6 +95,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var temp = value;
+                    if (float.IsNaN(temp) || float.IsInfinity(temp)) temp = 0;
                     if (temp < MIN_TEMP_CELCIUS) temp = MIN_TEMP_CELCIUS;
                     _inletTemperatureDegreesCelcius = temp;
                 }

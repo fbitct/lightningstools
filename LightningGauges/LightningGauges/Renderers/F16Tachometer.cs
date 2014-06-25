@@ -97,6 +97,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var pct = value;
+                    if (float.IsInfinity(pct) || float.IsNaN(pct)) pct = 0;
                     if (pct < 0) pct = 0;
                     if (pct > 110) pct = 110;
                     _rpmPercent = pct;

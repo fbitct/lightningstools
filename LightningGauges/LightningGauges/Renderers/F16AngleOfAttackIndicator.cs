@@ -108,6 +108,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var degrees = value;
+                    if (float.IsNaN(degrees) || float.IsInfinity(degrees)) degrees = 0;
                     degrees %= 360.0F;
                     if (degrees < MIN_AOA) degrees = MIN_AOA;
                     if (degrees > MAX_AOA) degrees = MAX_AOA;

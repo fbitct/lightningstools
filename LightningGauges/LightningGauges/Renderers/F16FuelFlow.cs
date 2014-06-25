@@ -106,6 +106,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var flow = value;
+                    if (float.IsNaN(flow) || float.IsInfinity(flow)) flow = 0;
                     if (flow < 0) flow = 0;
                     if (flow > MAX_FLOW) flow = MAX_FLOW;
                     _fuelFlowPoundsPerHour = flow;

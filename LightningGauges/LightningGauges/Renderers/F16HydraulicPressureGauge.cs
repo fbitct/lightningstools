@@ -91,6 +91,8 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var psi = value;
+                    if (float.IsNaN(psi) || float.IsInfinity(psi)) psi = 0;
+
                     if (psi < 0) psi = 0;
                     if (psi > 4000) psi = 4000;
                     _HydraulicPressurePoundsPerSquareInch = psi;

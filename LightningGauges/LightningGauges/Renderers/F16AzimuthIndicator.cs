@@ -1940,6 +1940,7 @@ namespace LightningGauges.Renderers
                     get { return _bearingDegrees; }
                     set
                     {
+                        if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
                         var bearing = value;
                         bearing %= 360.0f;
                         _bearingDegrees = bearing;
@@ -1949,7 +1950,16 @@ namespace LightningGauges.Renderers
                 public int MissileActivity { get; set; }
                 public int MissileLaunch { get; set; }
                 public int Selected { get; set; }
-                public float Lethality { get; set; }
+                private float _lethality;
+                public float Lethality 
+                { 
+                    get { return _lethality; } 
+                    set 
+                    { 
+                        if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
+                        _lethality = value;
+                    }; 
+                }
                 public int NewDetection { get; set; }
                 public bool Visible { get; set; }
             }
@@ -2004,6 +2014,7 @@ namespace LightningGauges.Renderers
                 get { return _rollDegrees; }
                 set
                 {
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
                     if (Inverted)
                     {
                         if (Math.Abs(value) < 90) Inverted = false;
@@ -2095,6 +2106,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var heading = value;
+                    if (float.IsNaN(heading) || float.IsInfinity(heading)) heading = 0;
                     heading %= 360.0f;
                     _magneticHeadingDegrees = heading;
                 }
@@ -2106,6 +2118,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var brightness = value;
+                    if (float.IsNaN(brightness) || float.IsInfinity(brightness)) brightness = MAX_BRIGHTNESS;
                     if (brightness < 0) brightness = 0;
                     if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
                     _brightness = brightness;

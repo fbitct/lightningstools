@@ -91,6 +91,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var pressureAltitude = value;
+                    if (float.IsNaN(pressureAltitude) || float.IsInfinity(pressureAltitude)) pressureAltitude = 0;
                     if (pressureAltitude < 0) pressureAltitude = 0;
                     if (pressureAltitude > 50000) pressureAltitude = 50000;
                     _CabinPressureAltitudeFeet = pressureAltitude;

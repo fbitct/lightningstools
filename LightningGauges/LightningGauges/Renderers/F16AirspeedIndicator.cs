@@ -118,7 +118,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var knots = value;
-                    if (knots < 0) knots = 0;
+                    if (float.IsNaN(knots) || float.IsInfinity(knots) || knots < 0) knots = 0;
                     if (knots > MAX_AIRSPEED) knots = MAX_AIRSPEED;
                     _airspeedKnots = knots;
                 }

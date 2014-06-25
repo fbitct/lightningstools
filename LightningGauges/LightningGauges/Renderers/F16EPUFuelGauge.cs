@@ -79,6 +79,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var percent = value;
+                    if (float.IsNaN(percent) || float.IsNegativeInfinity(percent)) percent = 0;
                     if (percent < 0) percent = 0;
                     if (percent > 100) percent = 100;
                     _fuelRemainingPercent = percent;

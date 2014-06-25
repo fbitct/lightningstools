@@ -247,6 +247,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var desiredCourse = value;
+                    if (float.IsNaN(desiredCourse) || float.IsInfinity(desiredCourse)) desiredCourse = 0;
                     if (desiredCourse > 360) desiredCourse %= 360;
                     _desiredCourseDegrees = desiredCourse;
                 }
@@ -258,6 +259,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var desiredHeading = value;
+                    if (float.IsNaN(desiredHeading) || float.IsInfinity(desiredHeading)) desiredHeading = 0;
                     desiredHeading %= 360;
                     _desiredHeadingDegrees = desiredHeading;
                 }
@@ -269,6 +271,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var courseDeviation = value;
+                    if (float.IsNaN(courseDeviation) || float.IsInfinity(courseDeviation)) courseDeviation = 0;
                     courseDeviation %= 360.0f;
                     if (float.IsInfinity(courseDeviation) || float.IsNaN(courseDeviation))
                     {

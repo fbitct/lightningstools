@@ -100,6 +100,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var pct = value;
+                    if (float.IsInfinity(pct) || float.IsNaN(pct)) pct = 0;
                     if (pct < 0) pct = 0;
                     if (pct > 100) pct = 100;
                     _percentOpen = pct;

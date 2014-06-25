@@ -1427,12 +1427,12 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var pitch = value;
-                    if (pitch < MIN_PITCH) pitch = MIN_PITCH;
-                    if (pitch > MAX_PITCH) pitch = MAX_PITCH;
                     if (float.IsNaN(pitch) || float.IsInfinity(pitch))
                     {
                         pitch = 0;
                     }
+                    if (pitch < MIN_PITCH) pitch = MIN_PITCH;
+                    if (pitch > MAX_PITCH) pitch = MAX_PITCH;
                     _pitchDegrees = pitch;
                 }
             }
@@ -1443,12 +1443,12 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var roll = value;
-                    if (roll < MIN_ROLL) roll = MIN_ROLL;
-                    if (roll > MAX_ROLL) roll = MAX_ROLL;
                     if (float.IsInfinity(roll) || float.IsNaN(roll))
                     {
                         roll = 0;
                     }
+                    if (roll < MIN_ROLL) roll = MIN_ROLL;
+                    if (roll > MAX_ROLL) roll = MAX_ROLL;
                     _rollDegrees = roll;
                 }
             }
@@ -1459,7 +1459,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var brightness = value;
-                    if (float.IsNaN(brightness)) brightness = 0;
+                    if (float.IsNaN(brightness) || float.IsInfinity(brightness)) brightness = MAX_BRIGHTNESS;
                     if (brightness < 0) brightness = 0;
                     if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
                     _brightness = brightness;

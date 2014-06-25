@@ -33,5 +33,5 @@ using log4net.Config;
 //      Revision
 //
 
-[assembly: AssemblyVersion("0.5.5.0")]
-[assembly: AssemblyFileVersion("0.5.5.0")]
+[assembly: AssemblyVersion("0.5.8.0")]
+[assembly: AssemblyFileVersion("0.5.8.0")]

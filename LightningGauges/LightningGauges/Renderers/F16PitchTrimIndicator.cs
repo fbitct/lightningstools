@@ -88,7 +88,8 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var pct = value;
-                    if (Math.Abs(pct) > 100.0f) pct = Math.Sign(pct)*100.0f;
+                    if (float.IsInfinity(pct) || float.IsNaN(pct)) pct = 0;
+                    if (Math.Abs(pct) > 100.0f) pct = Math.Sign(pct) * 100.0f;
                     _pitchTrimPercent = pct;
                 }
             }

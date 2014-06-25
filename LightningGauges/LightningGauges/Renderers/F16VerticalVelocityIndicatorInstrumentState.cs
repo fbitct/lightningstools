@@ -22,6 +22,7 @@ namespace LightningGauges.Renderers
             set
             {
                 var vv = value;
+                if (float.IsInfinity(vv) || float.IsNaN(vv)) vv = 0;
                 if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
                 if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
                 _verticalVelocityFeet = vv;

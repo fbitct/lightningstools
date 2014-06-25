@@ -135,6 +135,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var qty = value;
+                    if (float.IsNaN(qty) || float.IsInfinity(qty)) qty = 0;
                     if (qty < 0) qty = 0;
                     if (qty > MAX_FUEL) qty = MAX_FUEL;
                     _foreRightFuelQuantityPounds = qty;
@@ -147,6 +148,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var qty = value;
+                    if (float.IsNaN(qty) || float.IsInfinity(qty)) qty = 0;
                     if (qty < 0) qty = 0;
                     if (qty > MAX_FUEL) qty = MAX_FUEL;
                     _aftLeftFuelQuantityPounds = qty;
@@ -159,6 +161,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var qty = value;
+                    if (float.IsNaN(qty) || float.IsInfinity(qty)) qty = 0;
                     if (qty < 0) qty = 0;
                     if (qty > MAX_FUEL) qty = MAX_FUEL;
                     _totalFuelQuantityPounds = qty;
