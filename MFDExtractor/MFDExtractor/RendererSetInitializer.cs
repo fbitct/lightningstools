@@ -197,7 +197,7 @@ namespace MFDExtractor
 
         private void SetupLandingGearLightsRenderer()
         {
-            _renderers.LandingGearLights = new F16LandingGearWheelsLights();
+            _renderers.GearLights = new F16LandingGearWheelsLights();
         }
 
         private void SetupHSIRenderer()

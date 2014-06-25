@@ -8,7 +8,7 @@
         AOAIndexer,
         AOAIndicator,
         ASI,
-        Backup_ADI,
+        BackupADI,
         CabinPress,
         CautionPanel,
         CMDS,

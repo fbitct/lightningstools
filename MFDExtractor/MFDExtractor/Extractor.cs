@@ -489,7 +489,7 @@ namespace MFDExtractor
 				_instruments[InstrumentType.EHSI].Signal(toWait, State);
 				_instruments[InstrumentType.Altimeter].Signal(toWait, State);
 				_instruments[InstrumentType.ASI].Signal(toWait, State);
-				_instruments[InstrumentType.Backup_ADI].Signal(toWait, State);
+				_instruments[InstrumentType.BackupADI].Signal(toWait, State);
 				_instruments[InstrumentType.VVI].Signal(toWait, State);
 				_instruments[InstrumentType.AOAIndicator].Signal(toWait, State);
 				_instruments[InstrumentType.Compass].Signal(toWait, State);

@@ -155,7 +155,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);
                 _flightDataAdapterSet.FuelFlow.Adapt(renderers.FuelFlow, flightData);
                 _flightDataAdapterSet.FuelQuantity.Adapt(renderers.FuelQuantity, flightData);
-                _flightDataAdapterSet.LandingGearLights.Adapt(renderers.LandingGearLights, flightData);
+                _flightDataAdapterSet.LandingGearLights.Adapt(renderers.GearLights, flightData);
                 _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
                 _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
                 _flightDataAdapterSet.RPM1.Adapt(renderers.RPM1, flightData);

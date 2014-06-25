@@ -28,7 +28,7 @@ namespace MFDExtractor
          IF16HydraulicPressureGauge HYDA{ get; set; }
          IF16HydraulicPressureGauge HYDB{ get; set; }
          IF16ISIS ISIS{ get; set; }
-         IF16LandingGearWheelsLights LandingGearLights{ get; set; }
+         IF16LandingGearWheelsLights GearLights{ get; set; }
          IF16NozzlePositionIndicator NOZ1{ get; set; }
          IF16NozzlePositionIndicator NOZ2{ get; set; }
          IF16NosewheelSteeringIndexer NWSIndexer{ get; set; }
@@ -62,7 +62,7 @@ namespace MFDExtractor
         public IF16StandbyADI BackupADI { get; set; }
         public IF16CabinPressureAltitudeIndicator CabinPress { get; set; }
         public IF16CautionPanel CautionPanel { get; set; }
-        public IF16CMDSPanel CMDSPanel { get; set; }
+        public IF16CMDSPanel CMDS { get; set; }
         public IF16Compass Compass { get; set; }
         public IF16DataEntryDisplayPilotFaultList DED { get; set; }
         public IF16EHSI EHSI { get; set; }
@@ -75,7 +75,7 @@ namespace MFDExtractor
         public IF16HydraulicPressureGauge HYDA { get; set; }
         public IF16HydraulicPressureGauge HYDB { get; set; }
         public IF16ISIS ISIS { get; set; }
-        public IF16LandingGearWheelsLights LandingGearLights { get; set; }
+        public IF16LandingGearWheelsLights GearLights { get; set; }
         public IF16NozzlePositionIndicator NOZ1 { get; set; }
         public IF16NozzlePositionIndicator NOZ2 { get; set; }
         public IF16NosewheelSteeringIndexer NWSIndexer { get; set; }
