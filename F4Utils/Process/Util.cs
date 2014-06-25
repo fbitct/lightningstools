@@ -7,6 +7,7 @@ using Common.Win32;
 using F4SharedMem;
 using log4net;
 using System.ComponentModel;
+using System.Management;
 
 namespace F4Utils.Process
 {
@@ -73,21 +74,27 @@ namespace F4Utils.Process
             {
                 int procId;
                 NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
-                var process = System.Diagnostics.Process.GetProcessById(procId);
-                try
-                {
-                    toReturn = (from ProcessModule module in process.Modules
-                                where
-                                    module.ModuleName.Contains(MODULENAME_F4) ||
-                                    module.ModuleName.ToUpper().Contains(MODULENAME_FALCON)
-                                select module.FileName).FirstOrDefault();
-                }
-                catch (Win32Exception)
-                {
-                    
-                }
+                toReturn = ExePath(procId);
             }
             return toReturn;
+        }
+        private static string ExePath(int processId)
+        {
+            var wmiQueryString = string.Format("SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process WHERE ProcessId={0}", processId);
+            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
+            using (var results = searcher.Get())
+            {
+                var item = (from p in System.Diagnostics.Process.GetProcesses()
+                            join mo in results.Cast<ManagementObject>()
+                            on p.Id equals (int)(uint)mo["ProcessId"]
+                            select new
+                            {
+                                Process = p,
+                                Path = (string)mo["ExecutablePath"],
+                                CommandLine = (string)mo["CommandLine"],
+                            }).FirstOrDefault();
+                return item != null ? item.Path : null;
+            }
         }
 
         public static IntPtr GetFalconWindowHandle()

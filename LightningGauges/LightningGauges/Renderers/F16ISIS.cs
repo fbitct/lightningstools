@@ -1298,6 +1298,8 @@ namespace LightningGauges.Renderers
             private float _pitchDegrees;
             private float _rollDegrees;
             private float _verticalVelocityFeetPerMinute;
+            private float _radarAltitudeAGL;
+            private float _indicatedAltitudeFeetMSL;
 
             public F16ISISInstrumentState()
             {
@@ -1324,11 +1326,16 @@ namespace LightningGauges.Renderers
             public bool GlideslopeFlag { get; set; }
             public bool LocalizerFlag { get; set; }
             public bool ShowCommandBars { get; set; }
-
+            
             public float BarometricPressure
             {
                 get { return _barometricPressure; }
-                set { _barometricPressure = value; }
+                set 
+                {
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
+                    _barometricPressure = value; 
+                }
+
             }
 
             public float VerticalVelocityFeetPerMinute
@@ -1337,6 +1344,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var vv = value;
+                    if (float.IsNaN(vv) || float.IsInfinity(vv)) vv = MIN_VELOCITY;
                     if (vv < MIN_VELOCITY) vv = MIN_VELOCITY;
                     if (vv > MAX_VELOCITY) vv = MAX_VELOCITY;
                     _verticalVelocityFeetPerMinute = vv;
@@ -1349,20 +1357,38 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var heading = value;
+                    if (float.IsNaN(heading) || float.IsInfinity(heading)) heading = 0;
                     heading %= 360.0f;
                     _magneticHeadingDegrees = heading;
                 }
             }
 
-            public float IndicatedAltitudeFeetMSL { get; set; }
-            public float RadarAltitudeAGL { get; set; }
+            public float IndicatedAltitudeFeetMSL
+            {
+                get { return _indicatedAltitudeFeetMSL; }
+                set
+                {
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
+                    _indicatedAltitudeFeetMSL = value;
+                }
+            }
 
+            public float RadarAltitudeAGL
+            {
+                get { return _radarAltitudeAGL; }
+                set
+                {
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
+                    _radarAltitudeAGL = value;
+                }
+            }
             public float AirspeedKnots
             {
                 get { return _airspeedKnots; }
                 set
                 {
                     var knots = value;
+                    if (float.IsNaN(knots) || float.IsInfinity(knots)) knots = 0;
                     if (knots < 0) knots = 0;
                     if (knots > MAX_AIRSPEED) knots = MAX_AIRSPEED;
                     _airspeedKnots = knots;
@@ -1375,6 +1401,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var mach = value;
+                    if (float.IsNaN(mach) || float.IsInfinity(mach)) mach = 0;
                     if (mach < 0) mach = 0;
                     if (mach > MAX_MACH) mach = MAX_MACH;
                     _machNumber = mach;
@@ -1387,6 +1414,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var vne = value;
+                    if (float.IsNaN(vne) || float.IsInfinity(vne)) vne = 0;
                     if (vne < 0) vne = 0;
                     if (vne > MAX_AIRSPEED) vne = MAX_AIRSPEED;
                     _neverExceedSpeedKnots = vne;
@@ -1431,6 +1459,7 @@ namespace LightningGauges.Renderers
                 set
                 {
                     var brightness = value;
+                    if (float.IsNaN(brightness)) brightness = 0;
                     if (brightness < 0) brightness = 0;
                     if (brightness > MAX_BRIGHTNESS) brightness = MAX_BRIGHTNESS;
                     _brightness = brightness;
