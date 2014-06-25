@@ -700,7 +700,7 @@ namespace F4SharedMem.Headers
         float hydPressureB;// Ownship Hydraulic Pressure B
         int currentTime;	// Current time in seconds (max 60 * 60 * 24)
         short vehicleACD;	// Ownship ACD index number, i.e. which aircraft type are we flying.
-        int versionNum;
+        int flightData2VersionNum;
 
         float fuelFlow2;
         // VERSION 5

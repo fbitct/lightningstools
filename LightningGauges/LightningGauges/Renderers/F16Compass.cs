@@ -88,6 +88,7 @@ namespace LightningGauges.Renderers
                 get { return _magneticHeadingDegrees; }
                 set
                 {
+                    if (float.IsNaN(value) || float.IsInfinity(value)) value = 0;
                     var heading = value;
                     heading %= 360.0f;
                     _magneticHeadingDegrees = heading;

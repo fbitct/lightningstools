@@ -289,14 +289,11 @@ namespace F4SharedMem
         public int cmdsMode;		// Ownship CMDS mode state, see CmdsModes enum for details
         public int currentTime;	    // Current time in seconds (max 60 * 60 * 24)
         public short vehicleACD;	// Ownship ACD index number, i.e. which aircraft type are we flying.
-        
         public byte[] tacanInfo;    //TACAN info (new in BMS4)
         float lefPos;       // Ownship LEF position
-
         float tefPos;       // Ownship TEF position
-
-        // VERSION 6
         float vtolPos;      // Ownship VTOL exhaust angle
+        float flightData2VersionNum;
 
         public OptionSelectButtonLabel[] leftMFD;
         public OptionSelectButtonLabel[] rightMFD;
