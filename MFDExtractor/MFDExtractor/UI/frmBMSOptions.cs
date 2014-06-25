@@ -373,7 +373,7 @@ namespace MFDExtractor.UI
             }
             if (batchSize.HasValue)
             {
-                udBatchSize.Value = batchSize.Value;
+                udBatchSize.Value = batchSize.Value >=udBatchSize.Minimum ? batchSize.Value : 2;
             }
             int? colorDepth = ReadBms3DCockpitRttColorDepth();
             if (colorDepth.HasValue)
