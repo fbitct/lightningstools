@@ -335,57 +335,6 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.WindOffsetToFlightPathMarkerInDecimalDegrees = fromFalcon.windOffset/
                                                                               Common.Math.Constants.RADIANS_PER_DEGREE;
 
-                    //The following floating data is also crossed up in the flightData.h File:
-                    //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
-                    //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
-                    var commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
-                    if (
-                        (Math.Abs((fromFalcon.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
-                         Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
-                        ||
-                        (Math.Abs((fromFalcon.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
-                         Pfd.ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES)
-                        )
-                    {
-                        commandBarsOn = false;
-                    }
-                    flightData.HsiDisplayToFromFlag = true;
-
-
-                    //if the TOTALFLAGS flag is off, then we're most likely in NAV mode
-                    if ((hsibits & HsiBits.TotalFlags) != HsiBits.TotalFlags)
-                    {
-                        flightData.HsiDisplayToFromFlag = false;
-                    }
-                        //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
-                    else if (
-                        (
-                            ((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
-                            ||
-                            ((hsibits & HsiBits.FromTrue) == HsiBits.FromTrue)
-                        )
-                        )
-                    {
-                        if (!commandBarsOn) //better make sure we're not in any ILS mode too though
-                        {
-                            flightData.HsiDisplayToFromFlag = true;
-                        }
-                    }
-
-
-                    //if the glideslope or localizer flags on the ADI are turned on, then we must be in an ILS mode and therefore we 
-                    //know we don't need to show the HSI TO/FROM flags.
-                    if (
-                        ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
-                        ||
-                        ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
-                        )
-                    {
-                        flightData.HsiDisplayToFromFlag = false;
-                    }
-                    if (commandBarsOn) flightData.HsiDisplayToFromFlag = false;
-
-                    flightData.AdiEnableCommandBars = commandBarsOn;
                     flightData.AdiIlsGlideslopeDeviationInDecimalDegrees = fromFalcon.AdiIlsVerPos/
                                                                            Common.Math.Constants.RADIANS_PER_DEGREE;
                     flightData.AdiIlsLocalizerDeviationInDecimalDegrees = fromFalcon.AdiIlsHorPos/
@@ -394,30 +343,11 @@ namespace F16CPD.SimSupport.Falcon4
 
                     if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
                     {
-                        /*
-                        This value is called navMode and is unsigned char type with 4 possible values: ILS/TCN=0, TCN=1, NAV=2, ILS/NAV=3
-                        */
-
-                        var bmsNavMode = fromFalcon.navMode;
-                        switch (bmsNavMode)
-                        {
-                            case 0: //NavModes.PlsTcn:
-                                flightData.HsiDisplayToFromFlag = false;
-                                break;
-                            case 1: //NavModes.Tcn:
-                                flightData.HsiDisplayToFromFlag = true;
-                                flightData.AdiEnableCommandBars = false;
-                                break;
-                            case 2: //NavModes.Nav:
-                                flightData.HsiDisplayToFromFlag = false;
-                                flightData.AdiEnableCommandBars = false;
-                                break;
-                            case 3: //NavModes.PlsNav:
-                                flightData.HsiDisplayToFromFlag = false;
-                                break;
-                            default:
-                                break;
-                        }
+                        UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityBasedOnBMS4NavMode(flightData, fromFalcon);
+                    }
+                    else
+                    {
+                        UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityUsingLegacyTechnique(flightData, fromFalcon, hsibits);
                     }
                 }
 
@@ -487,6 +417,89 @@ namespace F16CPD.SimSupport.Falcon4
             if (Settings.Default.RunAsServer)
             {
                 F16CPDServer.SetSimProperty("F4FlightData", Common.Serialization.Util.ToRawBytes(flightData));
+            }
+        }
+
+        private static void UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityUsingLegacyTechnique(FlightData flightData, F4SharedMem.FlightData fromFalcon, HsiBits hsibits)
+        {
+            //The following floating data is also crossed up in the flightData.h File:
+            //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
+            //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
+            var commandBarsOn = ((float)(Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
+            if (
+                (Math.Abs((fromFalcon.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) >
+                 Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
+                ||
+                (Math.Abs((fromFalcon.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) >
+                 Pfd.ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES)
+                )
+            {
+                commandBarsOn = false;
+            }
+            flightData.HsiDisplayToFromFlag = true;
+
+
+            //if the TOTALFLAGS flag is off, then we're most likely in NAV mode
+            if ((hsibits & HsiBits.TotalFlags) != HsiBits.TotalFlags)
+            {
+                flightData.HsiDisplayToFromFlag = false;
+            }
+            //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
+            else if (
+                (
+                    ((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
+                    ||
+                    ((hsibits & HsiBits.FromTrue) == HsiBits.FromTrue)
+                )
+                )
+            {
+                if (!commandBarsOn) //better make sure we're not in any ILS mode too though
+                {
+                    flightData.HsiDisplayToFromFlag = true;
+                }
+            }
+
+
+            //if the glideslope or localizer flags on the ADI are turned on, then we must be in an ILS mode and therefore we 
+            //know we don't need to show the HSI TO/FROM flags.
+            if (
+                ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
+                ||
+                ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
+                )
+            {
+                flightData.HsiDisplayToFromFlag = false;
+            }
+            if (commandBarsOn) flightData.HsiDisplayToFromFlag = false;
+
+            flightData.AdiEnableCommandBars = commandBarsOn;
+        }
+
+        private static void UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityBasedOnBMS4NavMode(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            /*
+            This value is called navMode and is unsigned char type with 4 possible values: ILS/TCN=0, TCN=1, NAV=2, ILS/NAV=3
+            */
+
+            var bmsNavMode = fromFalcon.navMode;
+            switch (bmsNavMode)
+            {
+                case 0: //NavModes.PlsTcn:
+                    flightData.HsiDisplayToFromFlag = false;
+                    break;
+                case 1: //NavModes.Tcn:
+                    flightData.HsiDisplayToFromFlag = true;
+                    flightData.AdiEnableCommandBars = false;
+                    break;
+                case 2: //NavModes.Nav:
+                    flightData.HsiDisplayToFromFlag = false;
+                    flightData.AdiEnableCommandBars = false;
+                    break;
+                case 3: //NavModes.PlsNav:
+                    flightData.HsiDisplayToFromFlag = false;
+                    break;
+                default:
+                    break;
             }
         }
 
