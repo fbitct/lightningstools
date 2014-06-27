@@ -1,15 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.UI;
 using LightningGauges.Renderers;
+using MFDExtractor.Configuration;
 using MFDExtractor.Properties;
 using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
@@ -92,11 +95,48 @@ namespace MFDExtractor.UI
 
             //force a reload of the user settings from the in-memory user-config
             LoadSettings();
-
+            EnableRecoverButtons();
             _extractor.Start();
             _formLoading = false;
         }
 
+        private void EnableRecoverButtons()
+        {
+            var recoverButtons =FindControls<PictureBox>(this)
+               .Where(x => x.Name.IndexOf("recover", StringComparison.OrdinalIgnoreCase) > 0)
+                    .ToList();
+
+            foreach (var x in recoverButtons)
+            {
+                var instrumentName = x.Name.Substring(x.Name.IndexOf("recover", StringComparison.OrdinalIgnoreCase) + 7);
+                x.Click += (s, e) => RecoverInstrument(instrumentName);
+            }
+        }
+
+        private void RecoverInstrument(string instrumentName)
+        {
+            var settingsReader = new InstrumentFormSettingsReader();
+            var instrumentSettings = settingsReader.Read(instrumentName);
+            var size = new Rectangle(instrumentSettings.ULX, instrumentSettings.ULY, instrumentSettings.LRX - instrumentSettings.ULX, instrumentSettings.LRY-instrumentSettings.ULY);
+            if (size.Width < 30) size.Width = 30;
+            if (size.Height < 30) size.Height = 30;
+            instrumentSettings.ULX = 0;
+            instrumentSettings.ULY = 0;
+            instrumentSettings.LRX = instrumentSettings.ULX + size.Width;
+            instrumentSettings.LRY = instrumentSettings.ULY + size.Height;
+            instrumentSettings.OutputDisplay = null;
+            var settingsWriter = new InstrumentFormSettingsWriter();
+            settingsWriter.Write(instrumentName, instrumentSettings);
+            StopAndRestartExtractor();
+        }
+        public IEnumerable<T> FindControls<T>(Control control) where T : Control
+        {
+            var controls = control.Controls.Cast<Control>();
+
+            return controls.SelectMany(ctrl => FindControls<T>(ctrl))
+                                      .Concat(controls)
+                                      .Where(c => c.GetType() == typeof(T)).Cast<T>();
+        }
         private void PopulateGDIPlusOptionsCombos()
         {
             cbInterpolationMode.Items.Clear();
@@ -1942,6 +1982,7 @@ namespace MFDExtractor.UI
         {
             Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
         }
+
 
     }
 }

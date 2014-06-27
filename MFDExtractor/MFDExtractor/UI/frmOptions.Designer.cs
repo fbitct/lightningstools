@@ -62,7 +62,7 @@ namespace MFDExtractor.UI
 			this.chkStandbyADI = new System.Windows.Forms.CheckBox();
 			this.chkHSI = new System.Windows.Forms.CheckBox();
 			this.pbRecoverCompass = new System.Windows.Forms.PictureBox();
-			this.pbRecoverStandbyADI = new System.Windows.Forms.PictureBox();
+			this.pbRecoverBackupADI = new System.Windows.Forms.PictureBox();
 			this.pbRecoverHSI = new System.Windows.Forms.PictureBox();
 			this.pbRecoverVVI = new System.Windows.Forms.PictureBox();
 			this.chkCabinPress = new System.Windows.Forms.CheckBox();
@@ -89,7 +89,7 @@ namespace MFDExtractor.UI
 			this.chkAzimuthIndicator = new System.Windows.Forms.CheckBox();
 			this.pbRecoverAzimuthIndicator = new System.Windows.Forms.PictureBox();
 			this.chkCMDSPanel = new System.Windows.Forms.CheckBox();
-			this.pbRecoverCMDSPanel = new System.Windows.Forms.PictureBox();
+			this.pbRecoverCMDS = new System.Windows.Forms.PictureBox();
 			this.grpAzimuthIndicatorStyle = new System.Windows.Forms.GroupBox();
 			this.rdoAzimuthIndicatorStyleScope = new System.Windows.Forms.RadioButton();
 			this.rdoAzimuthIndicatorStyleDigital = new System.Windows.Forms.RadioButton();
@@ -282,7 +282,7 @@ namespace MFDExtractor.UI
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverASI)).BeginInit();
 			this.grpVVIOptions.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCompass)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbRecoverStandbyADI)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbRecoverBackupADI)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverHSI)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverVVI)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCabinPress)).BeginInit();
@@ -295,7 +295,7 @@ namespace MFDExtractor.UI
 			this.grpPressureAltitudeSettings.SuspendLayout();
 			this.tabEW.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverAzimuthIndicator)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCMDSPanel)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCMDS)).BeginInit();
 			this.grpAzimuthIndicatorStyle.SuspendLayout();
 			this.grpAzimuthIndicatorBezelTypes.SuspendLayout();
 			this.grpAzimuthIndicatorDigitalTypes.SuspendLayout();
@@ -579,7 +579,7 @@ namespace MFDExtractor.UI
 			this.tabFlightInstruments.Controls.Add(this.chkStandbyADI);
 			this.tabFlightInstruments.Controls.Add(this.chkHSI);
 			this.tabFlightInstruments.Controls.Add(this.pbRecoverCompass);
-			this.tabFlightInstruments.Controls.Add(this.pbRecoverStandbyADI);
+			this.tabFlightInstruments.Controls.Add(this.pbRecoverBackupADI);
 			this.tabFlightInstruments.Controls.Add(this.pbRecoverHSI);
 			this.tabFlightInstruments.Controls.Add(this.pbRecoverVVI);
 			this.tabFlightInstruments.Controls.Add(this.chkCabinPress);
@@ -760,21 +760,21 @@ namespace MFDExtractor.UI
 			this.pbRecoverCompass.TabStop = false;
 			this.toolTip1.SetToolTip(this.pbRecoverCompass, "Recover");
 			// 
-			// pbRecoverStandbyADI
+			// pbRecoverBackupADI
 			// 
-			this.pbRecoverStandbyADI.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverStandbyADI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverStandbyADI.Image = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverStandbyADI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverStandbyADI.Location = new System.Drawing.Point(267, 363);
-			this.pbRecoverStandbyADI.MaximumSize = new System.Drawing.Size(16, 16);
-			this.pbRecoverStandbyADI.MinimumSize = new System.Drawing.Size(16, 16);
-			this.pbRecoverStandbyADI.Name = "pbRecoverStandbyADI";
-			this.pbRecoverStandbyADI.Size = new System.Drawing.Size(16, 16);
-			this.pbRecoverStandbyADI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.pbRecoverStandbyADI.TabIndex = 92;
-			this.pbRecoverStandbyADI.TabStop = false;
-			this.toolTip1.SetToolTip(this.pbRecoverStandbyADI, "Recover");
+			this.pbRecoverBackupADI.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverBackupADI.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverBackupADI.Image = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverBackupADI.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverBackupADI.Location = new System.Drawing.Point(267, 363);
+			this.pbRecoverBackupADI.MaximumSize = new System.Drawing.Size(16, 16);
+			this.pbRecoverBackupADI.MinimumSize = new System.Drawing.Size(16, 16);
+			this.pbRecoverBackupADI.Name = "pbRecoverBackupADI";
+			this.pbRecoverBackupADI.Size = new System.Drawing.Size(16, 16);
+			this.pbRecoverBackupADI.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pbRecoverBackupADI.TabIndex = 92;
+			this.pbRecoverBackupADI.TabStop = false;
+			this.toolTip1.SetToolTip(this.pbRecoverBackupADI, "Recover");
 			// 
 			// pbRecoverHSI
 			// 
@@ -1069,7 +1069,7 @@ namespace MFDExtractor.UI
 			this.tabEW.Controls.Add(this.chkAzimuthIndicator);
 			this.tabEW.Controls.Add(this.pbRecoverAzimuthIndicator);
 			this.tabEW.Controls.Add(this.chkCMDSPanel);
-			this.tabEW.Controls.Add(this.pbRecoverCMDSPanel);
+			this.tabEW.Controls.Add(this.pbRecoverCMDS);
 			this.tabEW.Controls.Add(this.grpAzimuthIndicatorStyle);
 			this.tabEW.Location = new System.Drawing.Point(4, 40);
 			this.tabEW.Name = "tabEW";
@@ -1117,21 +1117,21 @@ namespace MFDExtractor.UI
 			this.chkCMDSPanel.UseVisualStyleBackColor = true;
 			this.chkCMDSPanel.CheckedChanged += new System.EventHandler(this.chkCMDSPanel_CheckedChanged);
 			// 
-			// pbRecoverCMDSPanel
+			// pbRecoverCMDS
 			// 
-			this.pbRecoverCMDSPanel.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverCMDSPanel.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverCMDSPanel.Image = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverCMDSPanel.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-			this.pbRecoverCMDSPanel.Location = new System.Drawing.Point(264, 150);
-			this.pbRecoverCMDSPanel.MaximumSize = new System.Drawing.Size(16, 16);
-			this.pbRecoverCMDSPanel.MinimumSize = new System.Drawing.Size(16, 16);
-			this.pbRecoverCMDSPanel.Name = "pbRecoverCMDSPanel";
-			this.pbRecoverCMDSPanel.Size = new System.Drawing.Size(16, 16);
-			this.pbRecoverCMDSPanel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.pbRecoverCMDSPanel.TabIndex = 80;
-			this.pbRecoverCMDSPanel.TabStop = false;
-			this.toolTip1.SetToolTip(this.pbRecoverCMDSPanel, "Recover");
+			this.pbRecoverCMDS.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverCMDS.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverCMDS.Image = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverCMDS.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+			this.pbRecoverCMDS.Location = new System.Drawing.Point(264, 150);
+			this.pbRecoverCMDS.MaximumSize = new System.Drawing.Size(16, 16);
+			this.pbRecoverCMDS.MinimumSize = new System.Drawing.Size(16, 16);
+			this.pbRecoverCMDS.Name = "pbRecoverCMDS";
+			this.pbRecoverCMDS.Size = new System.Drawing.Size(16, 16);
+			this.pbRecoverCMDS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pbRecoverCMDS.TabIndex = 80;
+			this.pbRecoverCMDS.TabStop = false;
+			this.toolTip1.SetToolTip(this.pbRecoverCMDS, "Recover");
 			// 
 			// grpAzimuthIndicatorStyle
 			// 
@@ -3182,7 +3182,7 @@ namespace MFDExtractor.UI
 			this.grpVVIOptions.ResumeLayout(false);
 			this.grpVVIOptions.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCompass)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbRecoverStandbyADI)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbRecoverBackupADI)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverHSI)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverVVI)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCabinPress)).EndInit();
@@ -3198,7 +3198,7 @@ namespace MFDExtractor.UI
 			this.tabEW.ResumeLayout(false);
 			this.tabEW.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbRecoverAzimuthIndicator)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCMDSPanel)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pbRecoverCMDS)).EndInit();
 			this.grpAzimuthIndicatorStyle.ResumeLayout(false);
 			this.grpAzimuthIndicatorStyle.PerformLayout();
 			this.grpAzimuthIndicatorBezelTypes.ResumeLayout(false);
@@ -3399,7 +3399,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.CheckBox chkCompass;
         private System.Windows.Forms.PictureBox pbRecoverCompass;
         private System.Windows.Forms.CheckBox chkStandbyADI;
-        private System.Windows.Forms.PictureBox pbRecoverStandbyADI;
+        private System.Windows.Forms.PictureBox pbRecoverBackupADI;
         private System.Windows.Forms.CheckBox chkEPU;
         private System.Windows.Forms.PictureBox pbRecoverEPU;
         private System.Windows.Forms.CheckBox chkCabinPress;
@@ -3514,7 +3514,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.RadioButton rdoATDPlus;
         private System.Windows.Forms.PictureBox pbRecoverAzimuthIndicator;
         private System.Windows.Forms.CheckBox chkCMDSPanel;
-        private System.Windows.Forms.PictureBox pbRecoverCMDSPanel;
+        private System.Windows.Forms.PictureBox pbRecoverCMDS;
         private System.Windows.Forms.TabPage tabNetworking;
         private System.Windows.Forms.TabPage tabStartup;
         private System.Windows.Forms.TabPage tabPerformance;
