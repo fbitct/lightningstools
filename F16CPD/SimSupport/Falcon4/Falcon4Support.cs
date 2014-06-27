@@ -66,12 +66,6 @@ namespace F16CPD.SimSupport.Falcon4
             Manager = manager;
             
             InitializeFlightData();
-            /* REMOVED BECAUSE WE ARE NOT WATCHING FOR FALCON CALLBACKS AT THE MOMENT
-            if (!Properties.Settings.Default.RunAsClient)
-            {
-                SetupDirectInputMonitoring();
-            }
-             */
             _morseCodeGenerator = new MorseCode {CharactersPerMinute = 53};
             _morseCodeGenerator.UnitTimeTick += MorseCodeUnitTimeTick;
             _dedAlowReader = new DEDAlowReader();
