@@ -179,14 +179,11 @@ namespace F16CPD.SimSupport.Falcon4
             CreateSharedMemReaderIfNotExists();
             var fromFalcon = ReadF4SharedMem();
 
-            if (!Settings.Default.RunAsClient)
+            if (_keyFile == null)
             {
-                if (_keyFile == null)
-                {
-                    LoadCurrentKeyFile();
-                }
-                EnsureTerrainIsLoaded();
+                LoadCurrentKeyFile();
             }
+            EnsureTerrainIsLoaded();
 
             if (exePath != null && ((_sharedMemReader != null && _sharedMemReader.IsFalconRunning)))
             {
