@@ -193,12 +193,6 @@ namespace F16CPD.Mfd.Controls
                 {
                     g.DrawString(text, font, forecolorBrush, textBoundingRectangle, textFormat);
                 }
-                /*
-                Pen p = new Pen(Color.Red);
-                p.Width = 1;
-                g.DrawRectangle(p, textBoundingRectangle);
-                g.DrawRectangle(p, backgroundRectangle);
-                */
                 g.Transform = origTransform;
             }
         }
