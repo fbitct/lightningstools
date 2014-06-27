@@ -16,7 +16,7 @@ namespace F16CPD.Mfd.Controls
         private F16CpdMfdManager _mfdManager;
         public FuelSelectSwitchFactory(F16CpdMfdManager mfdManager)
         {
-            mfdManager = mfdManager;
+            _mfdManager = mfdManager;
         }
         public ToggleSwitchMfdInputControl BuildFuelSelectSwitch()
         {
