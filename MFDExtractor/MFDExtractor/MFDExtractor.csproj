@@ -195,6 +195,12 @@
     <Compile Include="InstrumentRendererSet.cs" />
     <Compile Include="InstrumentRenderHelper.cs" />
     <Compile Include="InstrumentStateSnapshotCache.cs" />
+    <Compile Include="Networking\ExtractorClient.cs" />
+    <Compile Include="Networking\ExtractorServer.cs" />
+    <Compile Include="Networking\IExtractorClient.cs" />
+    <Compile Include="Networking\IExtractorServer.cs" />
+    <Compile Include="Networking\MessageTypes.cs" />
+    <Compile Include="Networking\Message.cs" />
     <Compile Include="Networking\ClientSideIncomingMessageDispatcher.cs" />
     <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />
     <Compile Include="Properties\Settings.cs" />
@@ -220,7 +226,6 @@
       <DependentUpon>frmBMSOptions.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Networking.cs" />
     <Compile Include="UI\DraggableForm.cs">
       <SubType>Form</SubType>
     </Compile>

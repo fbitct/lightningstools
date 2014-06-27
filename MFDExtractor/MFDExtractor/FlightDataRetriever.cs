@@ -2,6 +2,7 @@
 using Common.Networking;
 using F4SharedMem;
 using F4Utils.Terrain;
+using MFDExtractor.Networking;
 
 namespace MFDExtractor
 {
