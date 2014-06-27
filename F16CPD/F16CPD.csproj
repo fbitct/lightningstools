@@ -129,7 +129,6 @@
     <Compile Include="Constants.cs" />
     <Compile Include="ControlBindingsLoader.cs" />
     <Compile Include="DirectInputEventHandler.cs" />
-    <Compile Include="IInstrumentDisplayMenuPageFactory.cs" />
     <Compile Include="KeyboardWatcher.cs" />
     <Compile Include="KeyDownEventHandler.cs" />
     <Compile Include="MapRotationMode.cs" />
