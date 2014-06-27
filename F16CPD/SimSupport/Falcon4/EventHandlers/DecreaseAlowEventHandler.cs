@@ -16,10 +16,10 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
     {
         private F16CpdMfdManager _mfdManager;
         private IFalconCallbackSender _falconCallbackSender;
-        public DecreaseAlowEventHandler(F16CpdMfdManager mfdManager, IFalconCallbackSender _falconCallbackSender = null)
+        public DecreaseAlowEventHandler(F16CpdMfdManager mfdManager, IFalconCallbackSender falconCallbackSender = null)
         {
             _mfdManager = mfdManager;
-            _falconCallbackSender = _falconCallbackSender ?? new FalconCallbackSender(_mfdManager);
+            _falconCallbackSender = falconCallbackSender ?? new FalconCallbackSender(_mfdManager);
         }
         public void DecreaseAlow()
         {
