@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F16CPD", "F16CPD.csproj", "{00B0AF4E-9949-40D9-92DB-C5C4DE871834}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4KeyFile", "..\F4KeyFile\F4KeyFile.csproj", "{EEED5595-6EB8-473D-B487-334B45D753A6}"
@@ -20,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPJoyWrapper", "..\PPJoyWrapper\PPJoyWrapper.csproj", "{78555A0E-5D2F-4328-A4F0-67B5D7E51871}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LzssManaged", "..\Lzss\LzssManaged\LzssManaged.csproj", "{04F20E15-844A-4D30-9EC4-E8FD61A043A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CCB32DF0-170E-40EE-85CA-EE4B2573B52E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

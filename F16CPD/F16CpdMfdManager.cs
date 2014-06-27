@@ -17,6 +17,7 @@ using F16CPD.Networking;
 using F16CPD.Properties;
 using F16CPD.SimSupport;
 using Message = F16CPD.Networking.Message;
+using F16CPD.Mfd.Menus.InstrumentsDisplay;
 
 namespace F16CPD
 {
@@ -66,9 +67,71 @@ namespace F16CPD
         private bool _nightMode;
         private RotaryEncoderMfdInputControl _paramAdjustKnob;
         private ISimSupportModule _simSupportModule;
+        private IPrimaryMenuPageFactory _primaryMenuPageFactory;
+        private IInstrumentsDisplayMenuPageFactory _instrumentsDisplayMenuPageFactory;
+        private ITestMenuPageFactory _testMenuPageFactory;
+        private ITargetingPodMenuPageFactory _targetingPodMenuPageFactory;
+        private IMessageMenuPageFactory _messagePageMenuFactory;
+        private ITADMenuPageFactory _tadMenuPageFactory;
+        private IChecklistMenuPageFactory _checklistMenuPageFactory;
+        private IChartsMenuPageFactory _chartsMenuPageFactory;
+        private IControlMapMenuPageFactory _controlMapMenuPageFactory;
+        private IControlOverlayMenuPageFactory _controlOverlayMenuPageFactory;
+        private IBitmapAnnotationMenuPageFactory _bitmapAnnotationMenuPageFactory;
+        private IMfdInputControlFinder _mfdInputControlFinder;
+        private IHsiModeSlectorSwitchFactory _hsiModeSelectorSwitchFactory;
+        private IFuelSelectSwitchFactory _fuelSelectSwitchFactory;
+        private IExtFuelTransSwitchFactory _extFuelTransSwitchFactory;
+        private IParamSelectKnobFactory _paramSelectKnobFactory;
+        private INightModeButtonFactory _nightModeButtonFactory;
+        private IDayModeButtonFactory _dayModeButtonFactory;
+        private IBrightnessIncreaseButtonFactory _brightnessIncreaseButtonFactory;
+        private IBrightnessDecreaseButtonFactory _brightnessDecreaseButtonFactory;
 
-        public F16CpdMfdManager(Size screenBoundsPixels) : base(screenBoundsPixels)
+        internal F16CpdMfdManager(Size screenBoundsPixels,
+            IPrimaryMenuPageFactory primaryMenuPageFactory=null,
+            IInstrumentsDisplayMenuPageFactory instrumentsDisplayMenuPageFactory=null,
+            ITestMenuPageFactory testMenuPageFactory=null,
+            ITargetingPodMenuPageFactory targetingPodMenuPageFactory=null,
+            IMessageMenuPageFactory messageMenuPageFactory=null,
+            ITADMenuPageFactory tadMenuPageFactory=null,
+            IChecklistMenuPageFactory checklistMenuPageFactory=null,
+            IChartsMenuPageFactory chartsMenuPageFactory=null,
+            IControlMapMenuPageFactory controlMapMenuPageFactory=null,
+            IControlOverlayMenuPageFactory controlOverlayMenuPageFactory=null,
+            IBitmapAnnotationMenuPageFactory bitmapAnnotationMenuPageFactory=null,
+            IMfdInputControlFinder mfdInputControlFinder=null,
+            IHsiModeSlectorSwitchFactory hsiModeSelectorSwitchFactory=null,
+            IFuelSelectSwitchFactory fuelSelectSwitchFactory=null,
+            IExtFuelTransSwitchFactory extFuelTransSwitchFactory=null,
+            IParamSelectKnobFactory paramSelectKnobFactory=null,
+            INightModeButtonFactory nightModeButtonFactory=null,
+            IDayModeButtonFactory dayModeButtonFactory=null,
+            BrightnessIncreaseButtonFactory brightnessIncreaseButtonFactory=null,
+            IBrightnessDecreaseButtonFactory brightnessDecreaseButtonFactory=null
+
+            ) : base(screenBoundsPixels)
         {
+            _primaryMenuPageFactory = primaryMenuPageFactory ?? new PrimaryMenuPageFactory(this);
+            _instrumentsDisplayMenuPageFactory = instrumentsDisplayMenuPageFactory ?? new InstrumentsDisplayMenuPageFactory(this);
+            _testMenuPageFactory = testMenuPageFactory ?? new TestMenuPageFactory(this);
+            _targetingPodMenuPageFactory = targetingPodMenuPageFactory ?? new TargetingPodMenuPageFactory(this);
+            _messagePageMenuFactory = messageMenuPageFactory ?? new MessageMenuPageFactory(this);
+            _tadMenuPageFactory = tadMenuPageFactory ?? new TADMenuPageFactory(this);
+            _checklistMenuPageFactory = checklistMenuPageFactory ?? new ChecklistMenuPageFactory(this);
+            _chartsMenuPageFactory = chartsMenuPageFactory ?? new ChartsMenuPageFactory(this);
+            _controlMapMenuPageFactory = controlMapMenuPageFactory ?? new ControlMapMenuPageFactory(this);
+            _controlOverlayMenuPageFactory = controlOverlayMenuPageFactory ?? new ControlOverlayMenuPageFactory(this);
+            _bitmapAnnotationMenuPageFactory = bitmapAnnotationMenuPageFactory ?? new BitmapAnnotationMenuPageFactory(this);
+            _mfdInputControlFinder = mfdInputControlFinder ?? new MfdInputControlFinder(this);
+            _hsiModeSelectorSwitchFactory = hsiModeSelectorSwitchFactory ?? new HsiModeSelectorSwitchFactory(this);
+            _fuelSelectSwitchFactory = fuelSelectSwitchFactory ?? new FuelSelectSwitchFactory(this);
+            _extFuelTransSwitchFactory = extFuelTransSwitchFactory ?? new ExtFuelTransSwitchFactory(this);
+            _paramSelectKnobFactory = paramSelectKnobFactory ?? new ParamSelectKnobFactory(this);
+            _nightModeButtonFactory = nightModeButtonFactory ?? new NightModeButtonFactory(this);
+            _dayModeButtonFactory = dayModeButtonFactory ?? new DayModeButtonFactory(this);
+            _brightnessDecreaseButtonFactory = brightnessDecreaseButtonFactory ?? new BrightnessDecreaseButtonFactory(this);
+            _brightnessIncreaseButtonFactory = brightnessIncreaseButtonFactory ?? new BrightnessIncreaseButtonFactory(this);
             SetupNetworking();
             BuildMfdPages();
             BuildNonOsbInputControls();
@@ -129,6 +192,28 @@ namespace F16CPD
         {
             get { return MAX_BRIGHTNESS; }
         }
+        public void DecreaseBrightness()
+        {
+            unchecked
+            {
+                const int brightnessStep = (int)(MAX_BRIGHTNESS / (float)NUM_BRIGHTNESS_STEPS);
+                _brightness -= brightnessStep;
+                if (_brightness < 0) _brightness = 0;
+                Settings.Default.Brightness = _brightness;
+                Util.SaveCurrentProperties();
+            }
+        }
+        public void IncreaseBrightness()
+        {
+            unchecked
+            {
+                const int brightnessStep = (int)(MAX_BRIGHTNESS / (float)NUM_BRIGHTNESS_STEPS);
+                _brightness += brightnessStep;
+                if (_brightness > MAX_BRIGHTNESS) _brightness = MAX_BRIGHTNESS;
+                Settings.Default.Brightness = _brightness;
+                Util.SaveCurrentProperties();
+            }
+        }
 
         public bool NightMode
         {
@@ -136,11 +221,6 @@ namespace F16CPD
             set { _nightMode = value; }
         }
 
-        private void SetNightMode(bool newValue)
-        {
-            _nightMode = newValue;
-            if (FlightData != null) NightMode = newValue;
-        }
 
         private void SetupMapFetchingBackgroundWorker()
         {
@@ -259,103 +339,12 @@ namespace F16CPD
 
         private void BuildNonOsbInputControls()
         {
-            _hsiModeSelectorSwitch = new ToggleSwitchMfdInputControl();
-            _hsiModeSelectorSwitch.PositionChanged += _hsiModeSelectorSwitch_PositionChanged;
-            _hsiModeSelectorSwitch.AddPosition(@"ILS/TCN");
-            _hsiModeSelectorSwitch.AddPosition("TCN");
-            _hsiModeSelectorSwitch.AddPosition("NAV");
-            _hsiModeSelectorSwitch.AddPosition(@"ILS/NAV");
+            _hsiModeSelectorSwitch = _hsiModeSelectorSwitchFactory.CreateHsiModeSelectorSwitch();
+            _fuelSelectControl = _fuelSelectSwitchFactory.BuildFuelSelectSwitch();
+            _extFuelTransSwitch = _extFuelTransSwitchFactory.BuildExtFuelTransSwitch();
+            _paramAdjustKnob = _paramSelectKnobFactory.BuildParamSelectKnob();
 
-            _fuelSelectControl = new ToggleSwitchMfdInputControl();
-            _fuelSelectControl.PositionChanged += _fuelSelectControl_PositionChanged;
-            _fuelSelectControl.AddPosition("TEST");
-            _fuelSelectControl.AddPosition("NORM");
-            _fuelSelectControl.AddPosition("RSVR");
-            _fuelSelectControl.AddPosition("INT WING");
-            _fuelSelectControl.AddPosition("EXT WING");
-            _fuelSelectControl.AddPosition("EXT CTR");
-
-            _extFuelTransSwitch = new ToggleSwitchMfdInputControl();
-            _extFuelTransSwitch.PositionChanged += _extFuelTransSwitch_PositionChanged;
-            _extFuelTransSwitch.AddPosition("NORM");
-            _extFuelTransSwitch.AddPosition("WING FIRST");
-
-            _paramAdjustKnob = new RotaryEncoderMfdInputControl();
         }
-
-        private void _extFuelTransSwitch_PositionChanged(object sender, ToggleSwitchPositionChangedEventArgs e)
-        {
-            if (e == null) return;
-            switch (e.NewPosition.PositionName)
-            {
-                case "NORM":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.ExtFuelSwitchTransNorm, e.NewPosition);
-                    break;
-                case "WING FIRST":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.ExtFuelSwitchTransWingFirst,
-                                                                  e.NewPosition);
-                    break;
-            }
-        }
-
-        private void _fuelSelectControl_PositionChanged(object sender, ToggleSwitchPositionChangedEventArgs e)
-        {
-            if (e == null) return;
-            switch (e.NewPosition.PositionName)
-            {
-                case "TEST":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.FuelSelectTest, e.NewPosition);
-                    break;
-                case "NORM":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.FuelSelectNorm, e.NewPosition);
-                    break;
-                case "RSVR":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.FuelSelectRsvr, e.NewPosition);
-                    break;
-                case "INT WING":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.FuelSelectIntWing, e.NewPosition);
-                    break;
-                case "EXT WING":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.FuelSelectExtWing, e.NewPosition);
-                    break;
-                case "EXT CTR":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.FuelSelectExtCtr, e.NewPosition);
-                    break;
-            }
-        }
-
-        private void _hsiModeSelectorSwitch_PositionChanged(object sender, ToggleSwitchPositionChangedEventArgs e)
-        {
-            if (e == null) return;
-            switch (e.NewPosition.PositionName)
-            {
-                case "ILS/TCN":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.HsiModeIlsTcn, e.NewPosition);
-                    break;
-                case "TCN":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.HsiModeTcn, e.NewPosition);
-                    break;
-                case "NAV":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.HsiModeNav, e.NewPosition);
-                    break;
-                case "ILS/NAV":
-                    if (_simSupportModule != null)
-                        _simSupportModule.HandleInputControlEvent(CpdInputControls.HsiModeIlsNav, e.NewPosition);
-                    break;
-            }
-        }
-
 
         private void InitializeFlightInstruments()
         {
@@ -366,17 +355,17 @@ namespace F16CPD
 
         private void BuildMfdPages()
         {
-            var primaryPage = BuildPrimaryMenuPage();
-            var instrumentsDisplayPage = BuildInstrumentsDisplayMenuPage();
-            var testPage = BuildTestPage();
-            var tgpPage = BuildTargetingPodMenuPage();
-            var messagePage = BuildMessageMenuPage();
-            var tadPage = BuildTADMenuPage();
-            var checklistsPage = BuildChecklistMenuPage();
-            var chartsPage = BuildChartsMenuPage();
-            var controlMapPage = BuildControlMapMenuPage();
-            var controlOverlayPage = BuildControlOverlayMenuPage();
-            var bitmapAnnotationPage = BuildBitmapAnnotationMenuPage();
+            var primaryPage = _primaryMenuPageFactory.CreatePrimaryMenuPage();
+            var instrumentsDisplayPage = _instrumentsDisplayMenuPageFactory.BuildInstrumentsDisplayMenuPage();
+            var testPage = _testMenuPageFactory.BuildTestPage();
+            var tgpPage =_targetingPodMenuPageFactory.BuildTargetingPodMenuPage();
+            var messagePage = _messagePageMenuFactory.BuildMessageMenuPage();
+            var tadPage = _tadMenuPageFactory.BuildTADMenuPage();
+            var checklistsPage = _checklistMenuPageFactory.BuildChecklistMenuPage();
+            var chartsPage = _chartsMenuPageFactory.BuildChartsMenuPage();
+            var controlMapPage = _controlMapMenuPageFactory.BuildControlMapMenuPage();
+            var controlOverlayPage = _controlOverlayMenuPageFactory.BuildControlOverlayMenuPage();
+            var bitmapAnnotationPage = _bitmapAnnotationMenuPageFactory.BuildBitmapAnnotationMenuPage();
             MenuPages = new[]
                             {
                                 primaryPage, instrumentsDisplayPage, testPage, tgpPage, messagePage, tadPage,
@@ -384,740 +373,30 @@ namespace F16CPD
                             };
             foreach (var thisPage in MenuPages)
             {
-                var nightModeButton = CreateOptionSelectButton(thisPage, 6, "NGT", false);
-                nightModeButton.FunctionName = "NightMode";
-                nightModeButton.Pressed += nightModeButton_Pressed;
-                nightModeButton.LabelLocation = new Point(-10000, -10000);
-                nightModeButton.LabelSize = new Size(0, 0);
-                thisPage.OptionSelectButtons.Add(nightModeButton);
-
-                var dayModeButton = CreateOptionSelectButton(thisPage, 26, "DAY", false);
-                dayModeButton.FunctionName = "DayMode";
-                dayModeButton.Pressed += dayModeButton_Pressed;
-                dayModeButton.LabelSize = new Size(0, 0);
-                dayModeButton.LabelLocation = new Point(-10000, -10000);
-                thisPage.OptionSelectButtons.Add(dayModeButton);
-
-                var brightnessIncreaseButton = CreateOptionSelectButton(thisPage, 13, "BRT", false);
-                brightnessIncreaseButton.FunctionName = "IncreaseBrightness";
-                brightnessIncreaseButton.Pressed += brightnessIncreaseButton_Pressed;
-                brightnessIncreaseButton.LabelSize = new Size(0, 0);
-                brightnessIncreaseButton.LabelLocation = new Point(-10000, -10000);
-                thisPage.OptionSelectButtons.Add(brightnessIncreaseButton);
-
-                var brightnessDecreaseButton = CreateOptionSelectButton(thisPage, 19, "DIM", false);
-                brightnessDecreaseButton.FunctionName = "DecreaseBrightness";
-                brightnessDecreaseButton.Pressed += brightnessDecreaseButton_Pressed;
-                brightnessDecreaseButton.LabelSize = new Size(0, 0);
-                brightnessDecreaseButton.LabelLocation = new Point(-10000, -10000);
-                thisPage.OptionSelectButtons.Add(brightnessDecreaseButton);
+               
+                thisPage.OptionSelectButtons.Add(_nightModeButtonFactory.CreateNightModeButton(thisPage));
+                thisPage.OptionSelectButtons.Add(_dayModeButtonFactory.BuildDayModeButton(thisPage));
+                thisPage.OptionSelectButtons.Add(_brightnessIncreaseButtonFactory.BuildBrightnessIncreaseButton(thisPage));
+                thisPage.OptionSelectButtons.Add(_brightnessDecreaseButtonFactory.BuildBrightnessDecreaseButton(thisPage));
             }
             ActiveMenuPage = instrumentsDisplayPage;
         }
 
-        private void brightnessDecreaseButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            unchecked
-            {
-                const int brightnessStep = (int) (MAX_BRIGHTNESS/(float) NUM_BRIGHTNESS_STEPS);
-                _brightness -= brightnessStep;
-                if (_brightness < 0) _brightness = 0;
-                Settings.Default.Brightness = _brightness;
-                Util.SaveCurrentProperties();
-            }
-        }
-
-        private void brightnessIncreaseButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            unchecked
-            {
-                const int brightnessStep = (int) (MAX_BRIGHTNESS/(float) NUM_BRIGHTNESS_STEPS);
-                _brightness += brightnessStep;
-                if (_brightness > MAX_BRIGHTNESS) _brightness = MAX_BRIGHTNESS;
-                Settings.Default.Brightness = _brightness;
-                Util.SaveCurrentProperties();
-            }
-        }
-
-        private void dayModeButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            SetNightMode(false);
-        }
-
-        private MfdMenuPage BuildTestPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>
-                              {
-                                  CreateOptionSelectButton(thisPage, 3, "2PRV", false),
-                                  CreateOptionSelectButton(thisPage, 4, "PRV", false)
-                              };
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", true);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 8, "CLR", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 9, "MOUSE", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 10, "OFP ID", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 11, "CAL MSS", false));
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 22, "MFCD\r\nBIT", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 24, @"\/", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 24.5f, "PAGE\r\n1", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 25, @"^", false));
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Test Page";
-            return thisPage;
-        }
-
-        private void nightModeButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            SetNightMode(true);
-        }
-
-        private MfdMenuPage BuildPrimaryMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Primary Page";
-            return thisPage;
-        }
 
 
-        private MfdMenuPage BuildInstrumentsDisplayMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-            const int triangleLegLengthPixels = 25;
-            var pneuButton = CreateOptionSelectButton(thisPage, 3, "PNEU", false);
-            pneuButton.FunctionName = "ToggleAltimeterModeElecPneu";
-            pneuButton.Pressed += pneuButton_Press;
-            var ackButton = CreateOptionSelectButton(thisPage, 4, "ACK", false);
-            ackButton.FunctionName = "AcknowledgeMessage";
-            ackButton.Pressed += ackButton_Pressed;
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.FunctionName = "TestHdd";
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            var altitudeIndexUpButton = CreateOptionSelectButton(thisPage, 7, "^", false,
-                                                                 triangleLegLengthPixels);
-            altitudeIndexUpButton.FunctionName = "AltitudeIndexIncrease";
-            altitudeIndexUpButton.Pressed += altitudeIndexUpButton_Press;
-            var altitudeIndexLabel = CreateOptionSelectButton(thisPage, 7.5f, "ALT", false);
-            var altitudeIndexDownButton = CreateOptionSelectButton(thisPage, 8, @"\/", false,
-                                                                   triangleLegLengthPixels);
-            altitudeIndexDownButton.FunctionName = "AltitudeIndexDecrease";
-            altitudeIndexDownButton.Pressed += altitudeIndexDownButton_Press;
-            var barometricPressureUpButton = CreateOptionSelectButton(thisPage, 9, "^", false,
-                                                                      triangleLegLengthPixels);
-            barometricPressureUpButton.FunctionName = "BarometricPressureSettingIncrease";
-            barometricPressureUpButton.Pressed += barometricPressureUpButton_Press;
-            var barometricPressureLabel = CreateOptionSelectButton(thisPage, 9.5f, "BARO", false);
-            var barometricPressureDownButton = CreateOptionSelectButton(thisPage, 10, @"\/", false,
-                                                                        triangleLegLengthPixels);
-            barometricPressureDownButton.FunctionName = "BarometricPressureSettingDecrease";
-            barometricPressureDownButton.Pressed += barometricPressureDownButton_Press;
-            var courseSelectUpButton = CreateOptionSelectButton(thisPage, 11, "^", false,
-                                                                triangleLegLengthPixels);
-            courseSelectUpButton.FunctionName = "CourseSelectIncrease";
-            courseSelectUpButton.Pressed += courseSelectUpButton_Press;
-            var courseSelectLabel = CreateOptionSelectButton(thisPage, 11.5f, "CRS", false);
-            var courseSelectDownButton = CreateOptionSelectButton(thisPage, 12, @"\/", false,
-                                                                  triangleLegLengthPixels);
-            courseSelectDownButton.FunctionName = "CourseSelectDecrease";
-            courseSelectDownButton.Pressed += courseSelectDownButton_Press;
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", true);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            var headingSelectDownButton = CreateOptionSelectButton(thisPage, 20, @"\/", false,
-                                                                   triangleLegLengthPixels);
-            headingSelectDownButton.FunctionName = "HeadingSelectDecrease";
-            headingSelectDownButton.Pressed += headingSelectDownButton_Press;
-            var headingSelectLabel = CreateOptionSelectButton(thisPage, 20.5f, "HDG", false);
-            var headingSelectUpButton = CreateOptionSelectButton(thisPage, 21, "^", false,
-                                                                 triangleLegLengthPixels);
-            headingSelectUpButton.FunctionName = "HeadingSelectIncrease";
-            headingSelectUpButton.Pressed += headingSelectUpButton_Press;
-            var lowAltitudeThresholdSelectDownButton = CreateOptionSelectButton(thisPage, 22, @"\/",
-                                                                                false,
-                                                                                triangleLegLengthPixels);
-            lowAltitudeThresholdSelectDownButton.FunctionName = "LowAltitudeWarningThresholdDecrease";
-            lowAltitudeThresholdSelectDownButton.Pressed += lowAltitudeThresholdSelectDownButton_Press;
-            var lowAltitudeThresholdLabel = CreateOptionSelectButton(thisPage, 22.5f, "ALOW", false);
-            var lowAltitudeThresholdSelectUpButton = CreateOptionSelectButton(thisPage, 23, "^", false,
-                                                                              triangleLegLengthPixels);
-            lowAltitudeThresholdSelectUpButton.Pressed += lowAltitudeThresholdSelectUpButton_Press;
-            lowAltitudeThresholdSelectUpButton.FunctionName = "LowAltitudeWarningThresholdIncrease";
-            var airspeedIndexSelectDownButton = CreateOptionSelectButton(thisPage, 24, @"\/", false,
-                                                                         triangleLegLengthPixels);
-            airspeedIndexSelectDownButton.FunctionName = "AirspeedIndexDecrease";
-            airspeedIndexSelectDownButton.Pressed += airspeedIndexSelectDownButton_Press;
-            var airspeedIndexLabel = CreateOptionSelectButton(thisPage, 24.5f, "ASPD", false);
-            var airspeedIndexSelectUpButton = CreateOptionSelectButton(thisPage, 25, @"^", false,
-                                                                       triangleLegLengthPixels);
-            airspeedIndexSelectUpButton.FunctionName = "AirspeedIndexIncrease";
-            airspeedIndexSelectUpButton.Pressed += airspeedIndexSelectUpButton_Press;
-
-            buttons.Add(pneuButton);
-            buttons.Add(ackButton);
-            buttons.Add(testPageSelectButton);
-            buttons.Add(altitudeIndexUpButton);
-            buttons.Add(altitudeIndexLabel);
-            buttons.Add(altitudeIndexDownButton);
-            buttons.Add(barometricPressureUpButton);
-            buttons.Add(barometricPressureLabel);
-            buttons.Add(barometricPressureDownButton);
-            buttons.Add(courseSelectUpButton);
-            buttons.Add(courseSelectLabel);
-            buttons.Add(courseSelectDownButton);
-            buttons.Add(imagingPageSelectButton);
-            buttons.Add(messagingPageSelectButton);
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-            buttons.Add(targetingPodPageSelectButton);
-            buttons.Add(headDownDisplayPageSelectButton);
-            buttons.Add(headingSelectDownButton);
-            buttons.Add(headingSelectLabel);
-            buttons.Add(headingSelectUpButton);
-            buttons.Add(lowAltitudeThresholdSelectDownButton);
-            buttons.Add(lowAltitudeThresholdLabel);
-            buttons.Add(lowAltitudeThresholdSelectUpButton);
-            buttons.Add(airspeedIndexSelectDownButton);
-            buttons.Add(airspeedIndexLabel);
-            buttons.Add(airspeedIndexSelectUpButton);
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Instruments Display Page";
-            return thisPage;
-        }
-
-        private void ackButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            if (_simSupportModule != null)
-                _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton4, (OptionSelectButton) sender);
-        }
-
-        private void testPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Test Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void airspeedIndexSelectUpButton_Press(object sender, EventArgs e)
-        {
-            AirspeedIndexInKnots += 20;
-        }
-
-        private void airspeedIndexSelectDownButton_Press(object sender, EventArgs e)
-        {
-            AirspeedIndexInKnots -= 20;
-        }
-
-        private void lowAltitudeThresholdSelectUpButton_Press(object sender, EventArgs e)
-        {
-            var button = (OptionSelectButton) sender;
-            if (_simSupportModule != null)
-                _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton23, button);
-        }
-
-        private void lowAltitudeThresholdSelectDownButton_Press(object sender, EventArgs e)
-        {
-            var button = (OptionSelectButton) sender;
-            if (_simSupportModule != null)
-                _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton22, button);
-        }
-
-        private void headingSelectUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            var whenPressed = e.WhenPressed;
-            var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            var numTimes = 1;
-            if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
-
-            for (var i = 0; i < numTimes; i++)
-            {
-                FlightData.HsiDesiredHeadingInDegrees += 1;
-                if (_simSupportModule != null)
-                    _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton21, (OptionSelectButton) sender);
-            }
-        }
-
-        private void headingSelectDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            var whenPressed = e.WhenPressed;
-            var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            var numTimes = 1;
-            if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
-
-            for (var i = 0; i < numTimes; i++)
-            {
-                FlightData.HsiDesiredHeadingInDegrees -= 1;
-                if (_simSupportModule != null)
-                    _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton20, (OptionSelectButton) sender);
-            }
-        }
-
-        private void headDownDisplayPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Instruments Display Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void targetingPodPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Targeting Pod Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void tacticalAwarenessDisplayPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("TAD Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void messagingPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Message Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void imagingPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Bitmap Annotation Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void courseSelectDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            var whenPressed = e.WhenPressed;
-            var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            var numTimes = 1;
-            if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
-
-            for (var i = 0; i < numTimes; i++)
-            {
-                FlightData.HsiDesiredCourseInDegrees -= 1;
-                if (_simSupportModule != null)
-                    _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton12, (OptionSelectButton) sender);
-            }
-        }
-
-        private void courseSelectUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            var whenPressed = e.WhenPressed;
-            var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            var numTimes = 1;
-            if (howLongPressed > 300) numTimes = Settings.Default.FastCourseAndHeadingAdjustSpeed;
-
-            for (var i = 0; i < numTimes; i++)
-            {
-                FlightData.HsiDesiredCourseInDegrees += 1;
-                if (_simSupportModule != null)
-                    _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton11, (OptionSelectButton) sender);
-            }
-        }
-
-        private void barometricPressureDownButton_Press(object sender, EventArgs e)
-        {
-            FlightData.BarometricPressureInDecimalInchesOfMercury -= 0.01f;
-            if (_simSupportModule != null)
-                _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton10, (OptionSelectButton) sender);
-        }
-
-        private void barometricPressureUpButton_Press(object sender, EventArgs e)
-        {
-            FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
-            if (_simSupportModule != null)
-                _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton9, (OptionSelectButton) sender);
-        }
-
-        private void altitudeIndexDownButton_Press(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            var whenPressed = e.WhenPressed;
-            var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            var secondsPressed = (howLongPressed/1000.0f);
-            var valueDelta = 20;
-
-            if (howLongPressed >= 200) valueDelta = 100;
-            if (secondsPressed >= 1) valueDelta = 500;
-            if (secondsPressed >= 2) valueDelta = 1000;
-
-            var diff = valueDelta - ((((AltitudeIndexInFeet/valueDelta))*valueDelta) - AltitudeIndexInFeet);
-            AltitudeIndexInFeet -= diff;
-        }
-
-        private void altitudeIndexUpButton_Press(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            var whenPressed = e.WhenPressed;
-            var howLongPressed = (int) DateTime.Now.Subtract(whenPressed).TotalMilliseconds;
-            var secondsPressed = (howLongPressed/1000.0f);
-            var valueDelta = 20;
-
-            if (howLongPressed >= 200) valueDelta = 100;
-            if (secondsPressed >= 1) valueDelta = 500;
-            if (secondsPressed >= 2) valueDelta = 1000;
-
-            var diff = valueDelta + ((((AltitudeIndexInFeet/valueDelta))*valueDelta) - AltitudeIndexInFeet);
-            AltitudeIndexInFeet += diff;
-        }
-
-        private void pneuButton_Press(object sender, EventArgs e)
-        {
-            var button = (OptionSelectButton) sender;
-            if (FlightData.AltimeterMode == AltimeterMode.Electronic)
-            {
-                FlightData.AltimeterMode = AltimeterMode.Pneumatic;
-                button.LabelText = "PNEU";
-            }
-            else
-            {
-                button.LabelText = "ELEC";
-                FlightData.AltimeterMode = AltimeterMode.Electronic;
-            }
-            if (_simSupportModule != null)
-                _simSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton3, (OptionSelectButton) sender);
-        }
-
-        private MfdMenuPage FindMenuPageByName(string name)
+        internal MfdMenuPage FindMenuPageByName(string name)
         {
             return
                 MenuPages.FirstOrDefault(page => name.ToLowerInvariant().Trim() == page.Name.ToLowerInvariant().Trim());
         }
 
-        private MfdMenuPage BuildTargetingPodMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
 
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 10, "CLR MSG", false));
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", true);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 22, "CAP", false));
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Targeting Pod Page";
-            return thisPage;
-        }
-
-        private MfdMenuPage BuildMessageMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton> {CreateOptionSelectButton(thisPage, 2, "TO USB", false)};
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 6, "SADL", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 11, "DEL", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 12, "DEL ALL", false));
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", true);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 24, @"\/", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 24.5f, "NO MSG\n\r", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 25, @"^", false));
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Message Page";
-            return thisPage;
-        }
-
-        private static string GetCADRGScaleTextForMapScale(float mapScale)
-        {
-            var toReturn = "1:";
-
-            var millions = (int) Math.Round(mapScale/(1000.0f*1000.0f), 0);
-            var thousands = (int) Math.Round(mapScale/1000.0f, 0);
-            var hundreds = (int) Math.Round(mapScale/100.0f, 0);
-            var ones = (int) Math.Round(mapScale, 0);
-            if (millions > 0)
-            {
-                toReturn += millions + " M";
-            }
-            else if (thousands > 0)
-            {
-                toReturn += thousands + " K";
-            }
-            else if (hundreds > 0)
-            {
-                toReturn += hundreds.ToString();
-            }
-            else
-            {
-                toReturn += ones.ToString();
-            }
-            return toReturn;
-        }
-
-        private MfdMenuPage BuildChecklistMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-
-            var controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 1, "CNTL", false);
-            controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
-            buttons.Add(controlMapPageSelectButton);
-
-            var chartPageSelectButton = CreateOptionSelectButton(thisPage, 2, "CHARTS", false);
-            chartPageSelectButton.Pressed += chartPageSelectButton_Pressed;
-            buttons.Add(chartPageSelectButton);
-
-            var checklistPageSelectButton = CreateOptionSelectButton(thisPage, 3, "CHKLST", true);
-            checklistPageSelectButton.Pressed += checklistPageSelectButton_Pressed;
-            buttons.Add(checklistPageSelectButton);
-
-            var mapPageSelectButton = CreateOptionSelectButton(thisPage, 4, "MAP", false);
-            mapPageSelectButton.Pressed += mapPageSelectButton_Pressed;
-            buttons.Add(mapPageSelectButton);
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            var previousChecklistFileSelectButton = CreateOptionSelectButton(thisPage, 7, "^", false);
-            previousChecklistFileSelectButton.Pressed += previousChecklistFileSelectButton_Pressed;
-            buttons.Add(previousChecklistFileSelectButton);
-
-            var currentChecklistFileLabel = CreateOptionSelectButton(thisPage, 8, "NO CHKLST\nFILES",
-                                                                     false);
-            currentChecklistFileLabel.FunctionName = "CurrentChecklistFileLabel";
-            buttons.Add(currentChecklistFileLabel);
-
-            var nextChecklistFileSelectButton = CreateOptionSelectButton(thisPage, 9, @"\/", false);
-            nextChecklistFileSelectButton.Pressed += nextChecklistFileSelectButton_Pressed;
-            buttons.Add(nextChecklistFileSelectButton);
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    true);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-
-            var nextChecklistPageSelectButton = CreateOptionSelectButton(thisPage, 23, @"\/", false);
-            nextChecklistPageSelectButton.Pressed += nextChecklistPageSelectButton_Pressed;
-            buttons.Add(nextChecklistPageSelectButton);
-
-            var currentChecklistPageNumLabel = CreateOptionSelectButton(thisPage, 24, "page", false);
-            currentChecklistPageNumLabel.FunctionName = "CurrentChecklistPageNumLabel";
-            buttons.Add(currentChecklistPageNumLabel);
-
-            var prevChecklistPageSelectButton = CreateOptionSelectButton(thisPage, 25, @"^", false);
-            prevChecklistPageSelectButton.Pressed += prevChecklistPageSelectButton_Pressed;
-            buttons.Add(prevChecklistPageSelectButton);
-
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Checklists Page";
-            return thisPage;
-        }
-
-        private MfdMenuPage BuildChartsMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-
-            var controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 1, "CNTL", false);
-            controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
-            buttons.Add(controlMapPageSelectButton);
-
-            var chartPageSelectButton = CreateOptionSelectButton(thisPage, 2, "CHARTS", true);
-            chartPageSelectButton.Pressed += chartPageSelectButton_Pressed;
-            buttons.Add(chartPageSelectButton);
-
-            var checklistPageSelectButton = CreateOptionSelectButton(thisPage, 3, "CHKLST", false);
-            checklistPageSelectButton.Pressed += checklistPageSelectButton_Pressed;
-            buttons.Add(checklistPageSelectButton);
-
-            var mapPageSelectButton = CreateOptionSelectButton(thisPage, 4, "MAP", false);
-            mapPageSelectButton.Pressed += mapPageSelectButton_Pressed;
-            buttons.Add(mapPageSelectButton);
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            var previousChartFileSelectButton = CreateOptionSelectButton(thisPage, 7, "^", false);
-            previousChartFileSelectButton.Pressed += previousChartFileSelectButton_Pressed;
-            buttons.Add(previousChartFileSelectButton);
-
-            var currentChartFileLabel = CreateOptionSelectButton(thisPage, 8, "NO CHART\nFILES", false);
-            currentChartFileLabel.FunctionName = "CurrentChartFileLabel";
-            buttons.Add(currentChartFileLabel);
-
-            var nextChartFileSelectButton = CreateOptionSelectButton(thisPage, 9, @"\/", false);
-            nextChartFileSelectButton.Pressed += nextChartFileSelectButton_Pressed;
-            buttons.Add(nextChartFileSelectButton);
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    true);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-
-            var nextChartPageSelectButton = CreateOptionSelectButton(thisPage, 23, @"\/", false);
-            nextChartPageSelectButton.Pressed += nextChartPageSelectButton_Pressed;
-            buttons.Add(nextChartPageSelectButton);
-
-            var currentChartPageNumLabel = CreateOptionSelectButton(thisPage, 24, "page", false);
-            currentChartPageNumLabel.FunctionName = "CurrentChartPageNumLabel";
-            buttons.Add(currentChartPageNumLabel);
-
-            var prevChartPageSelectButton = CreateOptionSelectButton(thisPage, 25, @"^", false);
-            prevChartPageSelectButton.Pressed += prevChartPageSelectButton_Pressed;
-            buttons.Add(prevChartPageSelectButton);
-
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Charts Page";
-            return thisPage;
-        }
-
-        private void checklistPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            SwitchToChecklistsPage();
-        }
-
-        private void chartPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            SwitchToChartsPage();
-        }
-
-        private void mapPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            SwitchToMapPage();
-        }
-
-        private void prevChartPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void PrevChartPage()
         {
             if (_currentChartPageNum > 1) _currentChartPageNum--;
         }
 
-        private void nextChartPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void NextChartPage()
         {
             if (_currentChartPageNum != _currentChartPagesTotal && _currentChartPagesTotal > 0)
             {
@@ -1125,23 +404,12 @@ namespace F16CPD
             }
         }
 
-        private void nextChartFileSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            NextChartFile();
-        }
-
-        private void previousChartFileSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
-        {
-            PrevChartFile();
-        }
-
-
-        private void prevChecklistPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void PrevChecklistPage()
         {
             if (_currentChecklistPageNum > 1) _currentChecklistPageNum--;
         }
 
-        private void nextChecklistPageSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void NextChecklistPage()
         {
             if (_currentChecklistPageNum != _currentChecklistPagesTotal && _currentChecklistPagesTotal > 0)
             {
@@ -1149,131 +417,47 @@ namespace F16CPD
             }
         }
 
-        private void nextChecklistFileSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        public void SwitchToTADPage()
         {
-            NextChecklistFile();
+            SetPage("TAD Page");
         }
-
-        private void previousChecklistFileSelectButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        public void SwitchToMessagePage()
         {
-            PrevChecklistFile();
+            SetPage("Message Page");
         }
-
-        private MfdMenuPage BuildTADMenuPage()
+        public void SwitchToChecklistsPage()
         {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>();
-
-            var controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 1, "CNTL", false);
-            controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
-            buttons.Add(controlMapPageSelectButton);
-
-            var chartPageSelectButton = CreateOptionSelectButton(thisPage, 2, "CHARTS", false);
-            chartPageSelectButton.Pressed += chartPageSelectButton_Pressed;
-            buttons.Add(chartPageSelectButton);
-
-            var checklistPageSelectButton = CreateOptionSelectButton(thisPage, 3, "CHKLST", false);
-            checklistPageSelectButton.Pressed += checklistPageSelectButton_Pressed;
-            buttons.Add(checklistPageSelectButton);
-
-            var mapOnOffButton = CreateOptionSelectButton(thisPage, 4, "MAP", true);
-            mapOnOffButton.Pressed += mapOnOffButton_Pressed;
-            buttons.Add(mapOnOffButton);
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            var scaleIncreaseButton = CreateOptionSelectButton(thisPage, 7, "^", false);
-            scaleIncreaseButton.Pressed += scaleIncreaseButton_Pressed;
-            buttons.Add(scaleIncreaseButton);
-
-            var scaleLabel = CreateOptionSelectButton(thisPage, 7.5f,
-                                                      "CADRG\r\n" +
-                                                      GetCADRGScaleTextForMapScale(_mapScale), false);
-            scaleLabel.FunctionName = "MapScaleLabel";
-            buttons.Add(scaleLabel);
-
-            var scaleDecreaseButton = CreateOptionSelectButton(thisPage, 8, @"\/", false);
-            scaleDecreaseButton.Pressed += scaleDecreaseButton_Pressed;
-            buttons.Add(scaleDecreaseButton);
-            buttons.Add(CreateOptionSelectButton(thisPage, 9, "CNTR\r\nOWN", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 10, "CLR MSG", false));
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    true);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 22, "CAP", false));
-
-            var mapRangeIncrease = CreateOptionSelectButton(thisPage, 25, @"^", false);
-            mapRangeIncrease.Pressed += mapRangeIncrease_Pressed;
-            buttons.Add(mapRangeIncrease);
-
-            var mapRangeDecrease = CreateOptionSelectButton(thisPage, 24, @"\/", false);
-            mapRangeDecrease.Pressed += mapRangeDecrease_Pressed;
-            buttons.Add(mapRangeDecrease);
-
-            var mapRangeLabel = CreateOptionSelectButton(thisPage, 24.5f,
-                                                         _mapRangeRingsDiameterInNauticalMiles.ToString(),
-                                                         false);
-            mapRangeLabel.FunctionName = "MapRangeLabel";
-            buttons.Add(mapRangeLabel);
-
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "TAD Page";
-            return thisPage;
+            SetPage("Checklists Page");
+            
         }
-
-        private void mapOnOffButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        public void SwitchToInstrumentsPage()
         {
-            SwitchToMapPage();
+            SetPage("Instruments Display Page");
         }
-
-        private void SwitchToMapPage()
+        public void SwitchToTargetingPodPage()
         {
-            var newPage = FindMenuPageByName("TAD Page");
-            if (newPage != null)
-            {
-                ActiveMenuPage = newPage;
-            }
+            SetPage("Targeting Pod Page");
         }
-
-        private void SwitchToChecklistsPage()
+        public void SwitchToChartsPage()
         {
-            var newPage = FindMenuPageByName("Checklists Page");
-            if (newPage != null)
-            {
-                ActiveMenuPage = newPage;
-            }
+            SetPage("Charts Page");
         }
-
-        private void SwitchToChartsPage()
+        public void SwitchToImagingPage()
         {
-            var newPage = FindMenuPageByName("Charts Page");
-            if (newPage != null)
-            {
-                ActiveMenuPage = newPage;
-            }
+            SetPage("Bitmap Annotation Page");
         }
-
+        public void SwitchToControlOverlayPage()
+        {
+            SetPage("Control Overlay Page");
+        }
+        public void SwitchToControlMapPage()
+        {
+            SetPage("Control Map Page");
+        }
+        public void SwitchToTestPage()
+        {
+            SetPage("Test Page");
+        }
         private void UpdateCurrentChecklistPageCount()
         {
             if (_currentChecklistFile != null)
@@ -1289,14 +473,14 @@ namespace F16CPD
             }
         }
 
-        private void NextChecklistFile()
+        internal void NextChecklistFile()
         {
             var files = GetChecklistsFiles();
             _currentChecklistFile = GetNextFile(_currentChecklistFile, files);
             UpdateCurrentChecklistPageCount();
         }
 
-        private void PrevChecklistFile()
+        internal void PrevChecklistFile()
         {
             var files = GetChecklistsFiles();
             _currentChecklistFile = GetPrevFile(_currentChecklistFile, files);
@@ -1319,14 +503,14 @@ namespace F16CPD
             }
         }
 
-        private void NextChartFile()
+        internal void NextChartFile()
         {
             var files = GetChartFiles();
             _currentChartFile = GetNextFile(_currentChartFile, files);
             UpdateCurrentChartPageCount();
         }
 
-        private void PrevChartFile()
+        internal void PrevChartFile()
         {
             var files = GetChartFiles();
             _currentChartFile = GetPrevFile(_currentChartFile, files);
@@ -1409,7 +593,7 @@ namespace F16CPD
             return files;
         }
 
-        private void mapRangeDecrease_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void DecreaseMapRange()
         {
             if (_mapRangeRingsDiameterInNauticalMiles > 25)
             {
@@ -1422,7 +606,7 @@ namespace F16CPD
             if (_mapRangeRingsDiameterInNauticalMiles < 0) _mapRangeRingsDiameterInNauticalMiles = 0;
         }
 
-        private void mapRangeIncrease_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void  IncreaseMapRange()
         {
             if (_mapRangeRingsDiameterInNauticalMiles >= 20)
             {
@@ -1434,7 +618,32 @@ namespace F16CPD
             }
             if (_mapRangeRingsDiameterInNauticalMiles > 5000) _mapRangeRingsDiameterInNauticalMiles = 5000;
         }
+        internal string GetCADRGScaleTextForMapScale(float mapScale)
+        {
+            var toReturn = "1:";
 
+            var millions = (int)Math.Round(mapScale / (1000.0f * 1000.0f), 0);
+            var thousands = (int)Math.Round(mapScale / 1000.0f, 0);
+            var hundreds = (int)Math.Round(mapScale / 100.0f, 0);
+            var ones = (int)Math.Round(mapScale, 0);
+            if (millions > 0)
+            {
+                toReturn += millions + " M";
+            }
+            else if (thousands > 0)
+            {
+                toReturn += thousands + " K";
+            }
+            else if (hundreds > 0)
+            {
+                toReturn += hundreds.ToString();
+            }
+            else
+            {
+                toReturn += ones.ToString();
+            }
+            return toReturn;
+        }
         private static float GetMapScaleForCADRGScaleText(string CADRGScaletext)
         {
             var toReturn = float.NaN;
@@ -1491,7 +700,7 @@ namespace F16CPD
             return toReturn;
         }
 
-        private static float GetNextLowerMapScale(float mapScale)
+        private float GetNextLowerMapScale(float mapScale)
         {
             var toReturn = mapScale;
             var mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
@@ -1548,7 +757,7 @@ namespace F16CPD
             return toReturn;
         }
 
-        private static float GetNextHigherMapScale(float mapScale)
+        private float GetNextHigherMapScale(float mapScale)
         {
             var toReturn = mapScale;
             var mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
@@ -1605,319 +814,26 @@ namespace F16CPD
             return toReturn;
         }
 
-        private void scaleDecreaseButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void DecreaseMapScale()
         {
             _mapScale = GetNextLowerMapScale(_mapScale);
         }
 
-        private void scaleIncreaseButton_Pressed(object sender, MomentaryButtonPressedEventArgs e)
+        internal void IncreaseMapScale()
         {
             _mapScale = GetNextHigherMapScale(_mapScale);
         }
 
-        private MfdMenuPage BuildControlMapMenuPage()
+        internal float MapScale { get { return _mapScale; } }
+        private void SetPage(string pageName)
         {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>
-                              {
-                                  CreateOptionSelectButton(thisPage, 1, "CNTL", true),
-                                  CreateOptionSelectButton(thisPage, 2, "PROF", false)
-                              };
-
-            var controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 3, "MAP", true);
-            controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
-            buttons.Add(controlMapPageSelectButton);
-
-            var controlOverlayPageSelectButton = CreateOptionSelectButton(thisPage, 4, "OVR", false);
-            controlOverlayPageSelectButton.Pressed += controlOverlayPageSelectButton_Press;
-            buttons.Add(controlOverlayPageSelectButton);
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 7, "DEL\n\rCIB", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 8, "DEL\n\rMAP", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 9, "DEL\n\rDRW", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 10, "DEL\n\rSHP", false));
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 21, "LOAD\n\rECHM", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 22, "LOAD\n\rSHP", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 23, "LOAD\n\rDRW", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 24, "LOAD\n\rMAP", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 25, "LOAD\n\rCIB", false));
-
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Control Map Page";
-            return thisPage;
+            var newPage = FindMenuPageByName(pageName);
+            if (newPage != null)
+            {
+                ActiveMenuPage = newPage;
+            }
         }
 
-        private void controlOverlayPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Control Overlay Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private void controlMapPageSelectButton_Press(object sender, EventArgs e)
-        {
-            var newPage = FindMenuPageByName("Control Map Page");
-            ActiveMenuPage = newPage;
-        }
-
-        private MfdMenuPage BuildControlOverlayMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>
-                              {
-                                  CreateOptionSelectButton(thisPage, 1, "CNTL", true),
-                                  CreateOptionSelectButton(thisPage, 2, "PROF", false)
-                              };
-
-            var controlMapPageSelectButton = CreateOptionSelectButton(thisPage, 3, "MAP", false);
-            controlMapPageSelectButton.Pressed += controlMapPageSelectButton_Press;
-            buttons.Add(controlMapPageSelectButton);
-
-            var controlOverlayPageSelectButton = CreateOptionSelectButton(thisPage, 4, "OVR", true);
-            controlOverlayPageSelectButton.Pressed += controlOverlayPageSelectButton_Press;
-            buttons.Add(controlOverlayPageSelectButton);
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 7, "^", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 8, "NO DRW FILES", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 9, @"\/", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 10, "ECHUM", false));
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 23, @"\/", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 24, "NO SHP FILES", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 25, "^", false));
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Control Overlay Page";
-            return thisPage;
-        }
-
-        private MfdMenuPage BuildBitmapAnnotationMenuPage()
-        {
-            var thisPage = new MfdMenuPage(this);
-            var buttons = new List<OptionSelectButton>
-                              {
-                                  CreateOptionSelectButton(thisPage, 2, "TO\n\rINTEL", false),
-                                  CreateOptionSelectButton(thisPage, 4, "OWN\n\rFRISCO", false)
-                              };
-
-            var testPageSelectButton = CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += testPageSelectButton_Press;
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 7, "^", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 7.5f, "16102F\n\r16UKWN0", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 8, @"\/", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 9, "SEND", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 10, "DATA\n\rMODE", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 11, "DEL", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 12, "DEL ALL", false));
-
-
-            var imagingPageSelectButton = CreateOptionSelectButton(thisPage, 14, "IMG", true);
-            imagingPageSelectButton.Pressed += imagingPageSelectButton_Press;
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += messagingPageSelectButton_Press;
-            buttons.Add(messagingPageSelectButton);
-
-            var tacticalAwarenessDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 16, "TAD",
-                                                                                    false);
-            tacticalAwarenessDisplayPageSelectButton.Pressed += tacticalAwarenessDisplayPageSelectButton_Press;
-            buttons.Add(tacticalAwarenessDisplayPageSelectButton);
-
-            var targetingPodPageSelectButton = CreateOptionSelectButton(thisPage, 17, "TGP", false);
-            targetingPodPageSelectButton.Pressed += targetingPodPageSelectButton_Press;
-            buttons.Add(targetingPodPageSelectButton);
-
-            var headDownDisplayPageSelectButton = CreateOptionSelectButton(thisPage, 18, "HDD", false);
-            headDownDisplayPageSelectButton.Pressed += headDownDisplayPageSelectButton_Press;
-            buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(CreateOptionSelectButton(thisPage, 22, "CAP", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 23, "X1", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 24, "TO USB", false));
-            buttons.Add(CreateOptionSelectButton(thisPage, 25, "TO MFCD", false));
-            thisPage.OptionSelectButtons = buttons;
-            thisPage.Name = "Bitmap Annotation Page";
-            return thisPage;
-        }
-
-        private static OptionSelectButton CreateOptionSelectButton(MfdMenuPage page, float positionNum, string labelText,
-                                                                   bool invertLabelText)
-        {
-            return CreateOptionSelectButton(page, positionNum, labelText, invertLabelText, null);
-        }
-
-        private static OptionSelectButton CreateOptionSelectButton(MfdMenuPage page, float positionNum, string labelText,
-                                                                   bool invertLabelText, int? triangleLegLengthPixels)
-        {
-            var button = new OptionSelectButton(page)
-                             {
-                                 PositionNumber = positionNum,
-                                 LabelText = labelText,
-                                 InvertLabelText = invertLabelText
-                             };
-            var boundingRectangle = CalculateOSBLabelBitmapRectangle(positionNum);
-            button.LabelLocation = boundingRectangle.Location;
-            button.LabelSize = boundingRectangle.Size;
-            if (triangleLegLengthPixels.HasValue)
-            {
-                button.TriangleLegLength = triangleLegLengthPixels.Value;
-            }
-            if (positionNum >= 1 && positionNum <= 5)
-            {
-                //TOP 
-                button.TextVAlignment = VAlignment.Top;
-                button.TextHAlignment = HAlignment.Center;
-            }
-            else if (positionNum >= 6 && positionNum <= 13)
-            {
-                //RIGHT
-                button.TextVAlignment = VAlignment.Center;
-                button.TextHAlignment = HAlignment.Right;
-            }
-            else if (positionNum >= 14 && positionNum <= 18)
-            {
-                //BOTTOM
-                button.TextVAlignment = VAlignment.Bottom;
-                button.TextHAlignment = HAlignment.Center;
-            }
-            else if (positionNum >= 19 && positionNum <= 26)
-            {
-                //LEFT
-                button.TextVAlignment = VAlignment.Center;
-                button.TextHAlignment = HAlignment.Left;
-            }
-
-            if (labelText.Trim() == "^")
-            {
-                button.TextVAlignment = VAlignment.Center;
-            }
-            else if (labelText.Trim() == @"\/")
-            {
-                button.TextVAlignment = VAlignment.Center;
-            }
-            return button;
-        }
-
-        private static Rectangle CalculateOSBLabelBitmapRectangle(float positionNum)
-        {
-            const float pixelsPerInch = Constants.F_NATIVE_RES_HEIGHT/8.32f;
-            const float bezelButtonRevealWidthInches = 0.83376676384839650145772594752187f;
-            var bezelButtonRevealWidthPixels = (int) Math.Floor((bezelButtonRevealWidthInches*pixelsPerInch));
-
-            const float bezelButtonRevealHeightInches = 0.83695842450765864332603938730853f;
-            var bezelButtonRevealHeightPixels = (int) Math.Floor((bezelButtonRevealHeightInches*pixelsPerInch));
-
-            var maxTextWidthPixels = (int) (bezelButtonRevealWidthPixels*1.5f);
-            const float bezelButtonSeparatorWidthInches = 0.14500291545189504373177842565598f;
-            var bezelButtonSeparatorWidthPixels = (int) (Math.Ceiling(bezelButtonSeparatorWidthInches*pixelsPerInch));
-            const float bezelButtonSeparatorHeightInches = bezelButtonSeparatorWidthInches;
-            //0.14555798687089715536105032822757f;
-            var bezelButtonSeparatorHeightPixels = (int) (Math.Ceiling(bezelButtonSeparatorHeightInches*pixelsPerInch));
-            var leftMarginPixels =
-                (int)
-                (((Constants.I_NATIVE_RES_WIDTH -
-                   ((5*bezelButtonRevealWidthPixels) + (4*bezelButtonSeparatorWidthPixels)))/2.0f));
-            var topMarginPixels =
-                (int)
-                (((Constants.I_NATIVE_RES_HEIGHT -
-                   ((8*bezelButtonRevealHeightPixels) + (7*bezelButtonSeparatorHeightPixels)))/2.0f));
-            var boundingRectangle = new Rectangle();
-            if (positionNum >= 1 && positionNum <= 5)
-            {
-                //TOP ROW OF BUTTONS
-                var x = (int) (((positionNum - 1)*(bezelButtonRevealWidthPixels + bezelButtonSeparatorWidthPixels))) +
-                        leftMarginPixels;
-                boundingRectangle.Location = new Point(x, 0);
-                var width = bezelButtonRevealWidthPixels;
-                var height = bezelButtonRevealHeightPixels;
-                boundingRectangle.Size = new Size(width, height);
-            }
-            else if (positionNum >= 6 && positionNum <= 13)
-            {
-                //RIGHT HAND SIDE BUTTONS
-                var y = (int) (((positionNum - 6)*(bezelButtonRevealHeightPixels + bezelButtonSeparatorHeightPixels))) +
-                        topMarginPixels;
-                var width = maxTextWidthPixels;
-                var height = bezelButtonRevealHeightPixels;
-                boundingRectangle.Size = new Size(width, height);
-                boundingRectangle.Location = new Point(Constants.I_NATIVE_RES_WIDTH - width, y);
-            }
-            else if (positionNum >= 14 && positionNum <= 18)
-            {
-                //BOTTOM ROW OF BUTTONS
-                var x = (int) (((18 - positionNum)*(bezelButtonRevealWidthPixels + bezelButtonSeparatorWidthPixels))) +
-                        leftMarginPixels;
-                var y = Constants.I_NATIVE_RES_HEIGHT - bezelButtonRevealHeightPixels;
-                boundingRectangle.Location = new Point(x, y);
-                var width = bezelButtonRevealWidthPixels;
-                var height = bezelButtonRevealHeightPixels;
-                boundingRectangle.Size = new Size(width, height);
-            }
-            else if (positionNum >= 19 && positionNum <= 26)
-            {
-                //LEFT HAND SIDE BUTTONS
-                var y =
-                    (int) (((26 - positionNum)*(bezelButtonRevealHeightPixels + bezelButtonSeparatorHeightPixels))) +
-                    topMarginPixels;
-                var width = maxTextWidthPixels;
-                var height = bezelButtonRevealHeightPixels;
-                boundingRectangle.Size = new Size(width, height);
-                boundingRectangle.Location = new Point(0, y);
-            }
-            return boundingRectangle;
-        }
 
         public void ProcessPendingMessages()
         {
@@ -1930,7 +846,10 @@ namespace F16CPD
                 ProcessPendingMessagesToClientFromServer();
             }
         }
-
+        internal ToggleSwitchMfdInputControl HsiModeSelectorSwitch { get { return _hsiModeSelectorSwitch; } }
+        internal RotaryEncoderMfdInputControl ParamAdjustKnob { get { return _paramAdjustKnob; } }
+        internal ToggleSwitchMfdInputControl FuelSelectSwitch { get { return _fuelSelectControl; } }
+        internal ToggleSwitchMfdInputControl ExtFuelTransSwitch { get { return _extFuelTransSwitch; } }
         public override void Render(Graphics g)
         {
             Brush greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
@@ -2434,7 +1353,7 @@ namespace F16CPD
             }
             else
             {
-                var inputControl = GetControl(control);
+                var inputControl = _mfdInputControlFinder.GetControl(ActiveMenuPage, control);
                 if (inputControl != null)
                 {
                     if (inputControl is MomentaryButtonMfdInputControl)
@@ -2457,228 +1376,7 @@ namespace F16CPD
             }
         }
 
-        public MfdInputControl GetControl(CpdInputControls control)
-        {
-            MfdInputControl toReturn = null;
-            switch (control)
-            {
-                case CpdInputControls.Unknown:
-                    break;
-                case CpdInputControls.OsbButton1:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(1);
-                    }
-                    break;
-                case CpdInputControls.OsbButton2:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(2);
-                    }
-                    break;
-                case CpdInputControls.OsbButton3:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(3);
-                    }
-                    break;
-                case CpdInputControls.OsbButton4:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(4);
-                    }
-                    break;
-                case CpdInputControls.OsbButton5:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(5);
-                    }
-                    break;
-                case CpdInputControls.OsbButton6:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(6);
-                    }
-                    break;
-                case CpdInputControls.OsbButton7:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(7);
-                    }
-                    break;
-                case CpdInputControls.OsbButton8:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(8);
-                    }
-                    break;
-                case CpdInputControls.OsbButton9:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(9);
-                    }
-                    break;
-                case CpdInputControls.OsbButton10:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(10);
-                    }
-                    break;
-                case CpdInputControls.OsbButton11:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(11);
-                    }
-                    break;
-                case CpdInputControls.OsbButton12:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(12);
-                    }
-                    break;
-                case CpdInputControls.OsbButton13:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(13);
-                    }
-                    break;
-                case CpdInputControls.OsbButton14:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(14);
-                    }
-                    break;
-                case CpdInputControls.OsbButton15:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(15);
-                    }
-                    break;
-                case CpdInputControls.OsbButton16:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(16);
-                    }
-                    break;
-                case CpdInputControls.OsbButton17:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(17);
-                    }
-                    break;
-                case CpdInputControls.OsbButton18:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(18);
-                    }
-                    break;
-                case CpdInputControls.OsbButton19:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(19);
-                    }
-                    break;
-                case CpdInputControls.OsbButton20:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(20);
-                    }
-                    break;
-                case CpdInputControls.OsbButton21:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(21);
-                    }
-                    break;
-                case CpdInputControls.OsbButton22:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(22);
-                    }
-                    break;
-                case CpdInputControls.OsbButton23:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(23);
-                    }
-                    break;
-                case CpdInputControls.OsbButton24:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(24);
-                    }
-                    break;
-                case CpdInputControls.OsbButton25:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(25);
-                    }
-                    break;
-                case CpdInputControls.OsbButton26:
-                    if (ActiveMenuPage != null)
-                    {
-                        toReturn = ActiveMenuPage.FindOptionSelectButtonByPositionNumber(26);
-                    }
-                    break;
-                case CpdInputControls.HsiModeControl:
-                    toReturn = _hsiModeSelectorSwitch;
-                    break;
-                case CpdInputControls.HsiModeTcn:
-                    toReturn = _hsiModeSelectorSwitch.GetPositionByName("TCN");
-                    break;
-                case CpdInputControls.HsiModeIlsTcn:
-                    toReturn = _hsiModeSelectorSwitch.GetPositionByName("ILS/TCN");
-                    break;
-                case CpdInputControls.HsiModeNav:
-                    toReturn = _hsiModeSelectorSwitch.GetPositionByName("NAV");
-                    break;
-                case CpdInputControls.HsiModeIlsNav:
-                    toReturn = _hsiModeSelectorSwitch.GetPositionByName("ILS/NAV");
-                    break;
-                case CpdInputControls.ParameterAdjustKnob:
-                    toReturn = _paramAdjustKnob;
-                    break;
-                case CpdInputControls.ParameterAdjustKnobIncrease:
-                    toReturn = _paramAdjustKnob.ClockwiseMomentaryInputControl;
-                    break;
-                case CpdInputControls.ParameterAdjustKnobDecrease:
-                    toReturn = _paramAdjustKnob.CounterclockwiseMomentaryInputControl;
-                    break;
-                case CpdInputControls.FuelSelectControl:
-                    toReturn = _fuelSelectControl;
-                    break;
-                case CpdInputControls.FuelSelectTest:
-                    toReturn = _fuelSelectControl.GetPositionByName("TEST");
-                    break;
-                case CpdInputControls.FuelSelectNorm:
-                    toReturn = _fuelSelectControl.GetPositionByName("NORM");
-                    break;
-                case CpdInputControls.FuelSelectRsvr:
-                    toReturn = _fuelSelectControl.GetPositionByName("RSVR");
-                    break;
-                case CpdInputControls.FuelSelectIntWing:
-                    toReturn = _fuelSelectControl.GetPositionByName("INT WING");
-                    break;
-                case CpdInputControls.FuelSelectExtWing:
-                    toReturn = _fuelSelectControl.GetPositionByName("EXT WING");
-                    break;
-                case CpdInputControls.FuelSelectExtCtr:
-                    toReturn = _fuelSelectControl.GetPositionByName("EXT CTR");
-                    break;
-                case CpdInputControls.ExtFuelTransSwitch:
-                    toReturn = _extFuelTransSwitch;
-                    break;
-                case CpdInputControls.ExtFuelSwitchTransNorm:
-                    toReturn = _extFuelTransSwitch.GetPositionByName("NORM");
-                    break;
-                case CpdInputControls.ExtFuelSwitchTransWingFirst:
-                    toReturn = _extFuelTransSwitch.GetPositionByName("WING FIRST");
-                    break;
-                default:
-                    break;
-            }
-            return toReturn;
-        }
+       
 
         #region Destructors
 

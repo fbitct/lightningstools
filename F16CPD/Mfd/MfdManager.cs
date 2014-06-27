@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using F16CPD.Mfd.Menus;
+using F16CPD.Mfd.Controls;
 
 namespace F16CPD.Mfd
 {
