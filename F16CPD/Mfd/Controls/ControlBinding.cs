@@ -45,24 +45,12 @@ namespace F16CPD.Mfd.Controls
             return sb.ToString();
         }
 
-        /// <summary>
-        ///   Gets an integer (hash) representation of this object, 
-        ///   for use in hashtables.  If two objects are equal, 
-        ///   then their hashcodes should be equal as well.
-        /// </summary>
-        /// <returns>an integer containing a hashed representation of this object</returns>
+
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
         }
 
-        /// <summary>
-        ///   Compares two objects to determine if they are equal to each other.
-        /// </summary>
-        /// <param name = "obj">An object to compare this instance to</param>
-        /// <returns>a boolean, set to true if the specified object is 
-        ///   equal to this instance, or false if the specified object
-        ///   is not equal.</returns>
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
