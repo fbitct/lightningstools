@@ -35,7 +35,6 @@ namespace F16CPD.SimSupport.Falcon4
         private readonly MorseCode _morseCodeGenerator;
         private FalconDataFormats? _curFalconDataFormat;
         private bool _isDisposed;
-        private bool _isSendingInput;
         private bool _isSimRunning;
         private KeyFile _keyFile;
         private Mediator _mediator;
@@ -45,7 +44,6 @@ namespace F16CPD.SimSupport.Falcon4
         private Reader _sharedMemReader;
         private TacanChannelSource _tacanChannelSource = TacanChannelSource.Ufc;
         private TerrainDB _terrainDB;
-        private Bitmap _theaterMapImage;
         private ITerrainHeightCalculator _terrainHeightCalulator = new TerrainHeightCalculator();
         private ILatLongCalculator _latLongCalculator = new LatLongCalculator();
         private ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
@@ -91,7 +89,7 @@ namespace F16CPD.SimSupport.Falcon4
 
         public bool IsSendingInput
         {
-            get { return _isSendingInput; }
+            get { return FalconCallbackSender.IsSendingInput; }
         }
 
         public F16CpdMfdManager Manager { get; set; }
