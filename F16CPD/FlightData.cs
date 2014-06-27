@@ -21,7 +21,6 @@ namespace F16CPD
         private int _hsiDesiredHeadingInDegrees;
         private float _hsiDistanceToBeaconInNauticalMiles;
         private float _hsiLocalizerCourseInDecimalDegrees;
-        private NavModes _hsiMode = NavModes.Nav;
         private float _indicatedAirspeedFeetPerSecond;
         private float _indicatedAltitudeAboveMeanSeaLevelInFeet;
         private float _magneticHeadingInDecimalDegrees;

@@ -40,9 +40,12 @@ namespace F16CPD.SimSupport.Falcon4
         {
             lock (SyncLock)
             {
+                IsSendingInput = true;
                 F4Utils.Process.KeyFileUtils.SendCallbackToFalcon(callback);
+                IsSendingInput = false;
             }
         }
+        public static bool IsSendingInput { get; private set; }
 
     }
 }

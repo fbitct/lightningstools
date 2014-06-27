@@ -17,7 +17,5 @@ namespace F16CPD.SimSupport
 
         void RenderMap(Graphics g, Rectangle renderRect, float mapScale, int rangeRingDiameterInNauticalMiles,
                        MapRotationMode rotationMode);
-
-        void InitializeTestMode();
     }
 }
