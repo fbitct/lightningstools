@@ -236,37 +236,37 @@
     <Setting Name="ADI_Monochrome" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Backup_ADI_StretchToFit" Type="System.Boolean" Scope="User">
+    <Setting Name="BackupADI_StretchToFit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Backup_ADI_OutZOrder" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_OutZOrder" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="Backup_ADI_OutULX" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_OutULX" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="Backup_ADI_OutULY" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_OutULY" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="Backup_ADI_OutLRX" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_OutLRX" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">217</Value>
     </Setting>
-    <Setting Name="Backup_ADI_OutLRY" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_OutLRY" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">217</Value>
     </Setting>
     <Setting Name="EnableBackupADIOutput" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Backup_ADI_OutputDisplay" Type="System.String" Scope="User">
+    <Setting Name="BackupADI_OutputDisplay" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Backup_ADI_RotateFlipType" Type="System.Drawing.RotateFlipType" Scope="User">
+    <Setting Name="BackupADI_RotateFlipType" Type="System.Drawing.RotateFlipType" Scope="User">
       <Value Profile="(Default)">RotateNoneFlipNone</Value>
     </Setting>
-    <Setting Name="Backup_ADI_AlwaysOnTop" Type="System.Boolean" Scope="User">
+    <Setting Name="BackupADI_AlwaysOnTop" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="Backup_ADI_Monochrome" Type="System.Boolean" Scope="User">
+    <Setting Name="BackupADI_Monochrome" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ASI_StretchToFit" Type="System.Boolean" Scope="User">
@@ -1391,7 +1391,7 @@
     <Setting Name="PitchTrim_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="Backup_ADI_RenderEveryN" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="ASI_RenderEveryN" Type="System.Int32" Scope="User">
@@ -1469,7 +1469,7 @@
     <Setting Name="ASI_RenderOnN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="Backup_ADI_RenderOnN" Type="System.Int32" Scope="User">
+    <Setting Name="BackupADI_RenderOnN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="AOAIndicator_RenderOnN" Type="System.Int32" Scope="User">

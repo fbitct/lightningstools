@@ -962,72 +962,72 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Backup_ADI_StretchToFit {
+        public bool BackupADI_StretchToFit {
             get {
-                return ((bool)(this["Backup_ADI_StretchToFit"]));
+                return ((bool)(this["BackupADI_StretchToFit"]));
             }
             set {
-                this["Backup_ADI_StretchToFit"] = value;
+                this["BackupADI_StretchToFit"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int Backup_ADI_OutZOrder {
+        public int BackupADI_OutZOrder {
             get {
-                return ((int)(this["Backup_ADI_OutZOrder"]));
+                return ((int)(this["BackupADI_OutZOrder"]));
             }
             set {
-                this["Backup_ADI_OutZOrder"] = value;
+                this["BackupADI_OutZOrder"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int Backup_ADI_OutULX {
+        public int BackupADI_OutULX {
             get {
-                return ((int)(this["Backup_ADI_OutULX"]));
+                return ((int)(this["BackupADI_OutULX"]));
             }
             set {
-                this["Backup_ADI_OutULX"] = value;
+                this["BackupADI_OutULX"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int Backup_ADI_OutULY {
+        public int BackupADI_OutULY {
             get {
-                return ((int)(this["Backup_ADI_OutULY"]));
+                return ((int)(this["BackupADI_OutULY"]));
             }
             set {
-                this["Backup_ADI_OutULY"] = value;
+                this["BackupADI_OutULY"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("217")]
-        public int Backup_ADI_OutLRX {
+        public int BackupADI_OutLRX {
             get {
-                return ((int)(this["Backup_ADI_OutLRX"]));
+                return ((int)(this["BackupADI_OutLRX"]));
             }
             set {
-                this["Backup_ADI_OutLRX"] = value;
+                this["BackupADI_OutLRX"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("217")]
-        public int Backup_ADI_OutLRY {
+        public int BackupADI_OutLRY {
             get {
-                return ((int)(this["Backup_ADI_OutLRY"]));
+                return ((int)(this["BackupADI_OutLRY"]));
             }
             set {
-                this["Backup_ADI_OutLRY"] = value;
+                this["BackupADI_OutLRY"] = value;
             }
         }
         
@@ -1046,48 +1046,48 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Backup_ADI_OutputDisplay {
+        public string BackupADI_OutputDisplay {
             get {
-                return ((string)(this["Backup_ADI_OutputDisplay"]));
+                return ((string)(this["BackupADI_OutputDisplay"]));
             }
             set {
-                this["Backup_ADI_OutputDisplay"] = value;
+                this["BackupADI_OutputDisplay"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("RotateNoneFlipNone")]
-        public global::System.Drawing.RotateFlipType Backup_ADI_RotateFlipType {
+        public global::System.Drawing.RotateFlipType BackupADI_RotateFlipType {
             get {
-                return ((global::System.Drawing.RotateFlipType)(this["Backup_ADI_RotateFlipType"]));
+                return ((global::System.Drawing.RotateFlipType)(this["BackupADI_RotateFlipType"]));
             }
             set {
-                this["Backup_ADI_RotateFlipType"] = value;
+                this["BackupADI_RotateFlipType"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Backup_ADI_AlwaysOnTop {
+        public bool BackupADI_AlwaysOnTop {
             get {
-                return ((bool)(this["Backup_ADI_AlwaysOnTop"]));
+                return ((bool)(this["BackupADI_AlwaysOnTop"]));
             }
             set {
-                this["Backup_ADI_AlwaysOnTop"] = value;
+                this["BackupADI_AlwaysOnTop"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool Backup_ADI_Monochrome {
+        public bool BackupADI_Monochrome {
             get {
-                return ((bool)(this["Backup_ADI_Monochrome"]));
+                return ((bool)(this["BackupADI_Monochrome"]));
             }
             set {
-                this["Backup_ADI_Monochrome"] = value;
+                this["BackupADI_Monochrome"] = value;
             }
         }
         
@@ -5582,12 +5582,12 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int Backup_ADI_RenderEveryN {
+        public int BackupADI_RenderEveryN {
             get {
-                return ((int)(this["Backup_ADI_RenderEveryN"]));
+                return ((int)(this["BackupADI_RenderEveryN"]));
             }
             set {
-                this["Backup_ADI_RenderEveryN"] = value;
+                this["BackupADI_RenderEveryN"] = value;
             }
         }
         
@@ -5894,12 +5894,12 @@ namespace MFDExtractor.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int Backup_ADI_RenderOnN {
+        public int BackupADI_RenderOnN {
             get {
-                return ((int)(this["Backup_ADI_RenderOnN"]));
+                return ((int)(this["BackupADI_RenderOnN"]));
             }
             set {
-                this["Backup_ADI_RenderOnN"] = value;
+                this["BackupADI_RenderOnN"] = value;
             }
         }
         
