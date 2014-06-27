@@ -160,8 +160,6 @@ namespace F16CPD.SimSupport.Falcon4
 
         public void UpdateManagerFlightData()
         {
-            bool outerMarkerFromFalcon;
-            bool middleMarkerFromFalcon;
             GetNextMorseCodeUnit();
 
             if (Settings.Default.RunAsClient)
@@ -217,50 +215,9 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.z;
                 }
-                try
-                {
-                    var terrainHeight = _terrainHeightCalulator.CalculateTerrainHeight (fromFalcon.x, fromFalcon.y, _terrainDB );
-                    var agl = -fromFalcon.z - terrainHeight;
-
-                    //reset AGL altitude to zero if we're on the ground
-                    if (
-                        ((fromFalcon.lightBits & (int) LightBits.WOW) == (int) LightBits.WOW)
-                        ||
-                        (
-                            ((fromFalcon.lightBits3 & (int) Bms4LightBits3.OnGround) == (int) Bms4LightBits3.OnGround)
-                            &&
-                            _curFalconDataFormat == FalconDataFormats.BMS4
-                        )
-                        )
-                    {
-                        agl = 0;
-                    }
-                    if (agl < 0) agl = 0;
-                    flightData.AltitudeAboveGroundLevelInDecimalFeet = agl;
-                }
-                catch (Exception e)
-                {
-                    _log.Debug(e.Message, e);
-                    flightData.AltitudeAboveGroundLevelInDecimalFeet =
-                        flightData.TrueAltitudeAboveMeanSeaLevelInDecimalFeet;
-                }
-                if (Settings.Default.UseAsiLockoutSpeed && (fromFalcon.kias < Settings.Default.AsiLockoutSpeedKnots))
-                {
-                    //lockout airspeed if under 60 knots
-                    {
-                        flightData.IndicatedAirspeedInDecimalFeetPerSecond = 0;
-                    }
-                }
-                else
-                {
-                    flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias*Constants.FPS_PER_KNOT;
-                }
-                var newAlow = flightData.AutomaticLowAltitudeWarningInFeet;
-                var foundNewAlow = _dedAlowReader.CheckDED_ALOW(fromFalcon, out newAlow);
-                if (foundNewAlow)
-                {
-                    flightData.AutomaticLowAltitudeWarningInFeet = newAlow;
-                }
+                UpdateAltitudeAGL(flightData, fromFalcon);
+                UpdateIndicatedAirspeed(flightData, fromFalcon);
+                UpdateALOW(flightData, fromFalcon);
 
                 flightData.TrueAirspeedInDecimalFeetPerSecond = fromFalcon.vt;
                 flightData.MachNumber = fromFalcon.mach;
@@ -272,14 +229,7 @@ namespace F16CPD.SimSupport.Falcon4
                                                              360;
 
 
-                if (((hsibits & HsiBits.VVI) == HsiBits.VVI))
-                {
-                    flightData.VerticalVelocityInDecimalFeetPerSecond = 0;
-                }
-                else
-                {
-                    flightData.VerticalVelocityInDecimalFeetPerSecond = -fromFalcon.zDot;
-                }
+                UpdateVerticalVelocity(flightData, fromFalcon, hsibits);
 
                 flightData.AngleOfAttackInDegrees = ((hsibits & HsiBits.AOA) == HsiBits.AOA) ? 0 : fromFalcon.alpha;
 
@@ -287,38 +237,7 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.AdiGlideslopeInvalidFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
                 flightData.AdiLocalizerInvalidFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
 
-                outerMarkerFromFalcon = ((fromFalcon.hsiBits & (int) HsiBits.OuterMarker) == (int) HsiBits.OuterMarker);
-                middleMarkerFromFalcon = ((fromFalcon.hsiBits & (int) HsiBits.MiddleMarker) ==
-                                          (int) HsiBits.MiddleMarker);
-
-                if (Settings.Default.RunAsServer)
-                {
-                    flightData.MarkerBeaconOuterMarkerFlag = outerMarkerFromFalcon;
-                    flightData.MarkerBeaconMiddleMarkerFlag = middleMarkerFromFalcon;
-                }
-                else
-                {
-                    flightData.MarkerBeaconOuterMarkerFlag = outerMarkerFromFalcon & _morseCodeSignalLineValue;
-                    flightData.MarkerBeaconMiddleMarkerFlag = middleMarkerFromFalcon & _morseCodeSignalLineValue;
-
-                    if (outerMarkerFromFalcon)
-                    {
-                        _morseCodeGenerator.PlainText = "T"; //dot
-                    }
-                    else if (middleMarkerFromFalcon)
-                    {
-                        _morseCodeGenerator.PlainText = "A"; //dot-dash
-                    }
-                    if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
-                    {
-                        _morseCodeGenerator.KeepSending = true;
-                        _morseCodeGenerator.StartSending();
-                    }
-                    else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
-                    {
-                        _morseCodeGenerator.StopSending();
-                    }
-                }
+                UpdateMarkerBeaconLight(flightData, fromFalcon);
 
                 if (((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF))
                 {
@@ -415,6 +334,110 @@ namespace F16CPD.SimSupport.Falcon4
             if (Settings.Default.RunAsServer)
             {
                 F16CPDServer.SetSimProperty("F4FlightData", Common.Serialization.Util.ToRawBytes(flightData));
+            }
+        }
+
+        private void UpdateMarkerBeaconLight(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            var outerMarkerFromFalcon = ((fromFalcon.hsiBits & (int)HsiBits.OuterMarker) == (int)HsiBits.OuterMarker);
+            var middleMarkerFromFalcon = ((fromFalcon.hsiBits & (int)HsiBits.MiddleMarker) ==
+                                      (int)HsiBits.MiddleMarker);
+
+            if (Settings.Default.RunAsServer)
+            {
+                flightData.MarkerBeaconOuterMarkerFlag = outerMarkerFromFalcon;
+                flightData.MarkerBeaconMiddleMarkerFlag = middleMarkerFromFalcon;
+            }
+            else
+            {
+                flightData.MarkerBeaconOuterMarkerFlag = outerMarkerFromFalcon & _morseCodeSignalLineValue;
+                flightData.MarkerBeaconMiddleMarkerFlag = middleMarkerFromFalcon & _morseCodeSignalLineValue;
+
+                if (outerMarkerFromFalcon)
+                {
+                    _morseCodeGenerator.PlainText = "T"; //dot
+                }
+                else if (middleMarkerFromFalcon)
+                {
+                    _morseCodeGenerator.PlainText = "A"; //dot-dash
+                }
+                if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
+                {
+                    _morseCodeGenerator.KeepSending = true;
+                    _morseCodeGenerator.StartSending();
+                }
+                else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
+                {
+                    _morseCodeGenerator.StopSending();
+                }
+            }
+        }
+
+        private static void UpdateVerticalVelocity(FlightData flightData, F4SharedMem.FlightData fromFalcon, HsiBits hsibits)
+        {
+            if (((hsibits & HsiBits.VVI) == HsiBits.VVI))
+            {
+                flightData.VerticalVelocityInDecimalFeetPerSecond = 0;
+            }
+            else
+            {
+                flightData.VerticalVelocityInDecimalFeetPerSecond = -fromFalcon.zDot;
+            }
+        }
+
+        private void UpdateALOW(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            var newAlow = flightData.AutomaticLowAltitudeWarningInFeet;
+            var foundNewAlow = _dedAlowReader.CheckDED_ALOW(fromFalcon, out newAlow);
+            if (foundNewAlow)
+            {
+                flightData.AutomaticLowAltitudeWarningInFeet = newAlow;
+            }
+        }
+
+        private static void UpdateIndicatedAirspeed(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            if (Settings.Default.UseAsiLockoutSpeed && (fromFalcon.kias < Settings.Default.AsiLockoutSpeedKnots))
+            {
+                //lockout airspeed if under 60 knots
+                {
+                    flightData.IndicatedAirspeedInDecimalFeetPerSecond = 0;
+                }
+            }
+            else
+            {
+                flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias * Constants.FPS_PER_KNOT;
+            }
+        }
+
+        private void UpdateAltitudeAGL(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            try
+            {
+                var terrainHeight = _terrainHeightCalulator.CalculateTerrainHeight(fromFalcon.x, fromFalcon.y, _terrainDB);
+                var agl = -fromFalcon.z - terrainHeight;
+
+                //reset AGL altitude to zero if we're on the ground
+                if (
+                    ((fromFalcon.lightBits & (int)LightBits.WOW) == (int)LightBits.WOW)
+                    ||
+                    (
+                        ((fromFalcon.lightBits3 & (int)Bms4LightBits3.OnGround) == (int)Bms4LightBits3.OnGround)
+                        &&
+                        _curFalconDataFormat == FalconDataFormats.BMS4
+                    )
+                    )
+                {
+                    agl = 0;
+                }
+                if (agl < 0) agl = 0;
+                flightData.AltitudeAboveGroundLevelInDecimalFeet = agl;
+            }
+            catch (Exception e)
+            {
+                _log.Debug(e.Message, e);
+                flightData.AltitudeAboveGroundLevelInDecimalFeet =
+                    flightData.TrueAltitudeAboveMeanSeaLevelInDecimalFeet;
             }
         }
 
