@@ -193,28 +193,12 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.AdiOffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
                 flightData.PfdOffFlag = false;
 
-                if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
-                {
-                    flightData.CpdPowerOnFlag = _cpdPowerOn &&
-                                                ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) !=
-                                                 (int) Bms4LightBits3.Power_Off);
-                }
-                else
-                {
-                    flightData.CpdPowerOnFlag = _cpdPowerOn;
-                }
+                UpdateCpdPowerState(flightData, fromFalcon);
 
                 flightData.RadarAltimeterOffFlag = ((fromFalcon.lightBits & (int) LightBits.RadarAlt) ==
                                                     (int) LightBits.RadarAlt);
 
-                if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
-                {
-                    flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.aauz;
-                }
-                else
-                {
-                    flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.z;
-                }
+                UpdateIndicatedAltitude(flightData, fromFalcon);
                 UpdateAltitudeAGL(flightData, fromFalcon);
                 UpdateIndicatedAirspeed(flightData, fromFalcon);
                 UpdateALOW(flightData, fromFalcon);
@@ -269,39 +253,13 @@ namespace F16CPD.SimSupport.Falcon4
                 }
 
 
-                if (((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF))
-                {
-                    TurnOffHSI(flightData);
-                }
-                else
-                {
-                    flightData.HsiDistanceInvalidFlag = ((hsibits & HsiBits.CourseWarning) == HsiBits.CourseWarning);
-                    flightData.HsiDeviationInvalidFlag = ((hsibits & HsiBits.IlsWarning) == HsiBits.IlsWarning);
-                    flightData.HsiCourseDeviationLimitInDecimalDegrees = fromFalcon.deviationLimit;
-                    flightData.HsiCourseDeviationInDecimalDegrees = fromFalcon.courseDeviation;
-                    flightData.HsiLocalizerDeviationInDecimalDegrees = fromFalcon.localizerCourse;
-                    flightData.HsiDesiredCourseInDegrees = (int) fromFalcon.desiredCourse;
-                    flightData.HsiDesiredHeadingInDegrees = (int) fromFalcon.desiredHeading;
-                    flightData.HsiBearingToBeaconInDecimalDegrees = fromFalcon.bearingToBeacon;
-                    flightData.HsiDistanceToBeaconInNauticalMiles = fromFalcon.distanceToBeacon;
-                }
+                UpdateHSIData(flightData, fromFalcon, hsibits);
 
                 _indicatedRateOfTurnCalculator.DetermineIndicatedRateOfTurn(flightData);
 
-                if (flightData.VerticalVelocityInDecimalFeetPerSecond > 0 &&
-                    flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet > flightData.TransitionAltitudeInFeet)
-                {
-                    ResetBaroPressureSettingToStandard(flightData);
-                }
+                ResetBaroPressureSettingIfAboveTransitionAltitude(flightData);
 
-                if (_tacanChannelSource == TacanChannelSource.Backup)
-                {
-                    flightData.TacanChannel = fromFalcon.AUXTChan + Enum.GetName(typeof (TacanBand), _backupTacanBand);
-                }
-                else if (_tacanChannelSource == TacanChannelSource.Ufc)
-                {
-                    flightData.TacanChannel = fromFalcon.UFCTChan.ToString();
-                }
+                UpdateTACANChannel(flightData, fromFalcon);
                 UpdateMapPosition(flightData, fromFalcon);
             }
             else //Falcon's not running
@@ -311,12 +269,7 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     TurnOffAllInstruments(flightData);
                 }
-                if (Settings.Default.RunAsServer)
-                {
-                    F16CPDServer.SetSimProperty("SimName", null);
-                    F16CPDServer.SetSimProperty("SimVersion", null);
-                    F16CPDServer.SetSimProperty("F4FlightData", null);
-                }
+                
 
                 if (_sharedMemReader != null)
                 {
@@ -334,6 +287,83 @@ namespace F16CPD.SimSupport.Falcon4
             if (Settings.Default.RunAsServer)
             {
                 F16CPDServer.SetSimProperty("F4FlightData", Common.Serialization.Util.ToRawBytes(flightData));
+            }
+        }
+
+        private static void NotifyClientThatSimIsNotRunningOnServer()
+        {
+            if (Settings.Default.RunAsServer)
+            {
+                F16CPDServer.SetSimProperty("SimName", null);
+                F16CPDServer.SetSimProperty("SimVersion", null);
+                F16CPDServer.SetSimProperty("F4FlightData", null);
+            }
+        }
+
+        private void UpdateCpdPowerState(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
+            {
+                flightData.CpdPowerOnFlag = _cpdPowerOn &&
+                                            ((fromFalcon.lightBits3 & (int)Bms4LightBits3.Power_Off) !=
+                                             (int)Bms4LightBits3.Power_Off);
+            }
+            else
+            {
+                flightData.CpdPowerOnFlag = _cpdPowerOn;
+            }
+        }
+
+        private void UpdateIndicatedAltitude(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
+            {
+                flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.aauz;
+            }
+            else
+            {
+                flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.z;
+            }
+        }
+
+        private static void UpdateHSIData(FlightData flightData, F4SharedMem.FlightData fromFalcon, HsiBits hsibits)
+        {
+            if (((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF))
+            {
+                TurnOffHSI(flightData);
+            }
+            else
+            {
+                flightData.HsiDistanceInvalidFlag = ((hsibits & HsiBits.CourseWarning) == HsiBits.CourseWarning);
+                flightData.HsiDeviationInvalidFlag = ((hsibits & HsiBits.IlsWarning) == HsiBits.IlsWarning);
+                flightData.HsiCourseDeviationLimitInDecimalDegrees = fromFalcon.deviationLimit;
+                flightData.HsiCourseDeviationInDecimalDegrees = fromFalcon.courseDeviation;
+                flightData.HsiLocalizerDeviationInDecimalDegrees = fromFalcon.localizerCourse;
+                flightData.HsiDesiredCourseInDegrees = (int)fromFalcon.desiredCourse;
+                flightData.HsiDesiredHeadingInDegrees = (int)fromFalcon.desiredHeading;
+                flightData.HsiBearingToBeaconInDecimalDegrees = fromFalcon.bearingToBeacon;
+                flightData.HsiDistanceToBeaconInNauticalMiles = fromFalcon.distanceToBeacon;
+            }
+        }
+
+        private static void ResetBaroPressureSettingIfAboveTransitionAltitude(FlightData flightData)
+        {
+            if (flightData.VerticalVelocityInDecimalFeetPerSecond > 0 &&
+                flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet > flightData.TransitionAltitudeInFeet)
+            {
+                ResetBaroPressureSettingToStandard(flightData);
+            }
+        }
+
+        private void UpdateTACANChannel(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        {
+            if (_tacanChannelSource == TacanChannelSource.Backup)
+            {
+                flightData.TacanChannel = fromFalcon.AUXTChan + Enum.GetName(typeof(TacanBand), _backupTacanBand);
+            }
+            else if (_tacanChannelSource == TacanChannelSource.Ufc)
+            {
+                flightData.TacanChannel = fromFalcon.UFCTChan.ToString();
             }
         }
 
