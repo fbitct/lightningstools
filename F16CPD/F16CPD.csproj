@@ -208,7 +208,6 @@
     <Compile Include="SimSupport\Falcon4\Falcon4Support.cs" />
     <Compile Include="FlightData.cs" />
     <Compile Include="F16CpdMfdManager.cs" />
-    <Compile Include="FlightDataValuesSimulator.cs" />
     <Compile Include="F16CpdEngine.cs">
       <SubType>Form</SubType>
     </Compile>

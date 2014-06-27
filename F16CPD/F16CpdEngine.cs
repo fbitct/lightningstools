@@ -27,7 +27,6 @@ namespace F16CPD
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof (F16CpdEngine));
         private readonly Bitmap _bezel = Resources.cpdbezel;
-        private readonly FlightDataValuesSimulator _flightDataValuesSimulator = new FlightDataValuesSimulator();
         private readonly IControlBindingsLoader _controlBindingsLoader = new ControlBindingsLoader();
         private SerializableDictionary<CpdInputControls, ControlBinding> _controlBindings =
             new SerializableDictionary<CpdInputControls, ControlBinding>();
@@ -44,7 +43,6 @@ namespace F16CPD
         private Mediator.PhysicalControlStateChangedEventHandler _mediatorHandler;
         private Bitmap _renderTarget;
         private ISimSupportModule _simSupportModule;
-        private bool _testCalledOnce;
 
         public F16CpdEngine()
         {
@@ -73,6 +71,7 @@ namespace F16CPD
             _mediator = new Mediator(this) {RaiseEvents = true};
             _controlBindingsLoader.LoadControlBindings(_mediator);
             UpdateMfdManagerSize();
+            LoadSimSupportModule();
             _mediatorHandler =
                 new Mediator.PhysicalControlStateChangedEventHandler(_directInputEventHandler.MediatorPhysicalControlStateChanged);
             _mediator.PhysicalControlStateChanged += _mediatorHandler;
@@ -81,13 +80,15 @@ namespace F16CPD
                 deviceMonitor.Poll();
             }
             _keyboardWatcher.Start(new KeyDownEventHandler(_controlBindings, _manager));
-            _mouseClickHandler.Start(_manager, this, delegate() { RenderOnce(Settings.Default.PollingFrequencyMillis); });
+            _mouseClickHandler.Start(_manager, this, delegate() { 
+                RenderOnce(Settings.Default.PollingFrequencyMillis);
+                Application.DoEvents();
+            });
 
         }
 
         public void Start()
         {
-            GC.Collect();
             InitializeInternal();
             _renderTarget = CreateRenderTarget();
             _keepRunning = true;
@@ -128,6 +129,7 @@ namespace F16CPD
                 try
                 {
                     RenderOnce(pollingFrequencyMillis);
+                    Application.DoEvents();
                 }
                 catch (Exception e)
                 {
@@ -136,21 +138,12 @@ namespace F16CPD
             }
         }
 
-        private int _cycle;
         private void RenderOnce(int pollingFrequencyMillis)
         {
             if (_isDisposed || !_keepRunning) return;
-            var loopStartTime = DateTime.Now;
             UpdateMfdManagerSize();
             Render();
-            if (_cycle %10==0) Application.DoEvents();
-            _cycle++;
             var loopEndTime = DateTime.Now;
-            var elapsed = loopEndTime.Subtract(loopStartTime);
-            var wait = (int) (pollingFrequencyMillis - elapsed.TotalMilliseconds);
-            if (wait < 1) wait = 1;
-            if (!Settings.Default.RunAsClient && !_simSupportModule.IsSimRunning) wait = 350;
-            Thread.Sleep(wait);
         }
 
         protected void UpdateMfdManagerSize()
@@ -182,7 +175,6 @@ namespace F16CPD
             {
                 UpdateMfdManagerScreenBounds(rotation);
             }
-            LoadSimSupportModule();
 
             return;
         }
@@ -226,11 +218,9 @@ namespace F16CPD
         {
             _keepRunning = false;
             Application.DoEvents();
-            Thread.Sleep(1000);
             _keyboardWatcher.Stop();
             Close();
             Dispose();
-            GC.Collect();
         }
 
         protected void Render()
@@ -239,24 +229,6 @@ namespace F16CPD
 
             try
             {
-                if (TestMode)
-                {
-                    if (!_testCalledOnce)
-                    {
-                        _simSupportModule.InitializeTestMode();
-                        _manager.FlightData = _flightDataValuesSimulator.GetInitialFlightData();
-
-                        _testCalledOnce = true;
-                    }
-                    else
-                    {
-                        _manager.FlightData = _flightDataValuesSimulator.GetNextFlightData(_manager.FlightData);
-                    }
-                }
-                else
-                {
-                    _simSupportModule.UpdateManagerFlightData();
-                }
                 _manager.ProcessPendingMessages();
                 if (Settings.Default.RunAsServer)
                 {
@@ -441,10 +413,10 @@ namespace F16CPD
 
         public struct RECT
         {
-            public int Bottom;
-            public int Left;
-            public int Right;
-            public int Top;
+            public int Bottom { get; set; }
+            public int Left { get; set; }
+            public int Right { get; set; }
+            public int Top { get; set; }
         }
 
         #endregion
