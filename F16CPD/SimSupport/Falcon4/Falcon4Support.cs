@@ -174,73 +174,7 @@ namespace F16CPD.SimSupport.Falcon4
 
             if (Settings.Default.RunAsClient)
             {
-                try
-                {
-                    var serializedFlightData = (string) Manager.Client.GetSimProperty("F4FlightData");
-                    FlightData fromServer = null;
-                    if (!String.IsNullOrEmpty(serializedFlightData))
-                    {
-                        _isSimRunning = true;
-                        fromServer = (FlightData) Common.Serialization.Util.FromRawBytes(serializedFlightData);
-                        UpdateNewServerFlightDataWithCertainExistingClientFlightData(fromServer);
-                        Manager.FlightData = fromServer;
-
-                        outerMarkerFromFalcon = Manager.FlightData.MarkerBeaconOuterMarkerFlag;
-                        middleMarkerFromFalcon = Manager.FlightData.MarkerBeaconMiddleMarkerFlag;
-
-                        Manager.FlightData.MarkerBeaconOuterMarkerFlag &= _morseCodeSignalLineValue;
-                        Manager.FlightData.MarkerBeaconMiddleMarkerFlag &= _morseCodeSignalLineValue;
-
-                        if (outerMarkerFromFalcon)
-                        {
-                            if (_morseCodeGenerator != null)
-                                if (_morseCodeGenerator.PlainText != "T")
-                                {
-                                    _morseCodeGenerator.PlainText = "T"; //dot
-                                }
-                        }
-                        else if (middleMarkerFromFalcon)
-                        {
-                            if (_morseCodeGenerator != null)
-                                if (_morseCodeGenerator.PlainText != "A")
-                                {
-                                    _morseCodeGenerator.PlainText = "A"; //dot-dash
-                                }
-                        }
-                        if (_morseCodeGenerator != null)
-                            if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
-                            {
-                                if (!_morseCodeGenerator.KeepSending)
-                                {
-                                    _morseCodeGenerator.KeepSending = true;
-                                }
-                                if (!_morseCodeGenerator.Sending)
-                                {
-                                    _pendingMorseCodeUnits.Clear();
-                                    _morseCodeGenerator.StartSending();
-                                }
-                            }
-                            else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
-                            {
-                                _morseCodeGenerator.StopSending();
-                                _pendingMorseCodeUnits.Clear();
-                            }
-                    }
-                    else
-                    {
-                        _isSimRunning = false;
-                    }
-                    if (fromServer == null)
-                    {
-                        fromServer = new FlightData();
-                        InitializeFlightData();
-                        Manager.FlightData = fromServer;
-                    }
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
-                }
+                PerformClientSideFlightDataUpdates();
                 return;
             }
 
@@ -562,6 +496,77 @@ namespace F16CPD.SimSupport.Falcon4
             if (Settings.Default.RunAsServer)
             {
                 F16CPDServer.SetSimProperty("F4FlightData", Common.Serialization.Util.ToRawBytes(flightData));
+            }
+        }
+
+        private void PerformClientSideFlightDataUpdates()
+        {
+            try
+            {
+                var serializedFlightData = (string)Manager.Client.GetSimProperty("F4FlightData");
+                FlightData fromServer = null;
+                if (!String.IsNullOrEmpty(serializedFlightData))
+                {
+                    _isSimRunning = true;
+                    fromServer = (FlightData)Common.Serialization.Util.FromRawBytes(serializedFlightData);
+                    UpdateNewServerFlightDataWithCertainExistingClientFlightData(fromServer);
+                    Manager.FlightData = fromServer;
+
+                    var outerMarkerFromFalcon = Manager.FlightData.MarkerBeaconOuterMarkerFlag;
+                    var middleMarkerFromFalcon = Manager.FlightData.MarkerBeaconMiddleMarkerFlag;
+
+                    Manager.FlightData.MarkerBeaconOuterMarkerFlag &= _morseCodeSignalLineValue;
+                    Manager.FlightData.MarkerBeaconMiddleMarkerFlag &= _morseCodeSignalLineValue;
+
+                    if (outerMarkerFromFalcon)
+                    {
+                        if (_morseCodeGenerator != null)
+                            if (_morseCodeGenerator.PlainText != "T")
+                            {
+                                _morseCodeGenerator.PlainText = "T"; //dot
+                            }
+                    }
+                    else if (middleMarkerFromFalcon)
+                    {
+                        if (_morseCodeGenerator != null)
+                            if (_morseCodeGenerator.PlainText != "A")
+                            {
+                                _morseCodeGenerator.PlainText = "A"; //dot-dash
+                            }
+                    }
+                    if (_morseCodeGenerator != null)
+                        if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
+                        {
+                            if (!_morseCodeGenerator.KeepSending)
+                            {
+                                _morseCodeGenerator.KeepSending = true;
+                            }
+                            if (!_morseCodeGenerator.Sending)
+                            {
+                                _pendingMorseCodeUnits.Clear();
+                                _morseCodeGenerator.StartSending();
+                            }
+                        }
+                        else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
+                        {
+                            _morseCodeGenerator.StopSending();
+                            _pendingMorseCodeUnits.Clear();
+                        }
+                }
+                else
+                {
+                    _isSimRunning = false;
+                }
+                if (fromServer == null)
+                {
+                    fromServer = new FlightData();
+                    InitializeFlightData();
+                    Manager.FlightData = fromServer;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
             }
         }
 
