@@ -282,15 +282,6 @@ namespace F16CPD.UI.Forms
             btnStart.Enabled = false;
             mnuNfyStart.Enabled = false;
             _cpdEngine = new F16CpdEngine();
-            if (CommandLineSwitches != null)
-            {
-                if (
-                    CommandLineSwitches.Where(thisSwitch => !String.IsNullOrEmpty(thisSwitch)).Any(
-                        thisSwitch => thisSwitch.ToLowerInvariant() == "testmode"))
-                {
-                    _cpdEngine.TestMode = true;
-                }
-            }
             lblRotation.Enabled = false;
             cbOutputRotation.Enabled = false;
             gbPerformanceOptions.Enabled = false;
@@ -566,20 +557,12 @@ namespace F16CPD.UI.Forms
 
         #region Destructors
 
-        /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
-        ///   and unmanaged resources used by this object before allowing garbage collection
-        /// </summary>
         public new void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object is not
-        ///   manually disposed.  Ordinarily called only by the garbage collector.
-        /// </summary>
         ~frmMain()
         {
             if (nfyTrayIcon != null)
@@ -589,13 +572,9 @@ namespace F16CPD.UI.Forms
             Dispose();
         }
 
-        /// <summary>
-        ///   Private implementation of Dispose()
-        /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
-        private void Dispose(bool disposing)
-            //bool myDispose is there to differentiate this method from another that it would otherwise hide
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose();
             if (!_isDisposed)
             {
                 if (disposing)
