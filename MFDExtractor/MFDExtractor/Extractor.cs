@@ -75,21 +75,7 @@ namespace MFDExtractor
         #region Threads
 
         private readonly IMediatorStateChangeHandler _mediatorEventHandler;
-        private InputControlSelection _accelerometerResetKey;
-        private InputControlSelection _airspeedIndexDecreaseKey;
-        private InputControlSelection _airspeedIndexIncreaseKey;
-        private InputControlSelection _azimuthIndicatorBrightnessDecreaseKey;
-        private InputControlSelection _azimuthIndicatorBrightnessIncreaseKey;
-        private InputControlSelection _ehsiCourseDecreaseKey;
-        private InputControlSelection _ehsiCourseDepressedKey;
-        private InputControlSelection _ehsiCourseIncreaseKey;
-        private InputControlSelection _ehsiHeadingDecreaseKey;
-        private InputControlSelection _ehsiHeadingIncreaseKey;
-        private InputControlSelection _ehsiMenuButtonDepressedKey;
-        private InputControlSelection _isisBrightButtonKey;
-        private InputControlSelection _isisStandardButtonKey;
-        private InputControlSelection _nvisKey;
-
+        
         private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
        private Thread _captureOrchestrationThread;
         private Thread _keyboardWatcherThread;

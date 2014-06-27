@@ -112,6 +112,8 @@
   <ItemGroup>
     <Compile Include="BMSSupport\BMSConfigFileReader.cs" />
     <Compile Include="BMSSupport\BMSRunningExecutableLocator.cs" />
+    <Compile Include="BMSSupport\RadarAltitudeCalculator.cs" />
+    <Compile Include="BMSSupport\SharedMemorySpriteCoordinates.cs" />
     <Compile Include="BMSSupport\ThreeDeeCockpitFileFinder.cs" />
     <Compile Include="BMSSupport\DoubleResolutionRTTChecker.cs" />
     <Compile Include="BMSSupport\ThreeDeeCaptureCoordinateUpdater.cs" />
@@ -205,7 +207,6 @@
     <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="InstrumentType.cs" />
-    <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="RendererFactories\AltimeterRendererFactory.cs" />
     <Compile Include="RendererFactories\FuelQualityIndicatorRendererFactory.cs" />
     <Compile Include="RendererFactories\ISISRendererFactory.cs" />
@@ -217,7 +218,6 @@
     <Compile Include="RenderThreadFactory.cs" />
     <Compile Include="SettingReader.cs" />
     <Compile Include="SettingsWriter.cs" />
-    <Compile Include="SharedMemorySpriteCoordinates.cs" />
     <Compile Include="SharedmemReaderFactory.cs" />
     <Compile Include="UI\frmBMSOptions.cs">
       <SubType>Form</SubType>

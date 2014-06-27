@@ -3,12 +3,11 @@ using Common.Math;
 using Common.Networking;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using LightningGauges.Renderers;
-using MFDExtractor.BMSSupport;
-using MFDExtractor.FlightDataAdapters;
 using F4Utils.Terrain;
+using LightningGauges.Renderers;
+using MFDExtractor.FlightDataAdapters;
 
-namespace MFDExtractor
+namespace MFDExtractor.BMSSupport
 {
     internal interface IFlightDataUpdater
     {
@@ -362,9 +361,9 @@ namespace MFDExtractor
             renderers.HSI.InstrumentState.DistanceToBeaconNauticalMiles = 0;
         }
 
-        private static void UpdateEHSI(Action updateEHSIBrightnessLabelVisibility)
+        private static void UpdateEHSI(Action UpdateEHSIBrightnessLabelVisibility)
         {
-            updateEHSIBrightnessLabelVisibility();
+            UpdateEHSIBrightnessLabelVisibility();
         }
 
         private static void UpdateHSI(IInstrumentRendererSet renderers, HsiBits hsibits, FlightData fromFalcon)

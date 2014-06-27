@@ -42,9 +42,7 @@ namespace MFDExtractor.UI
         ///     it was already started prior to entering the Options form)
         /// </summary>
         private bool _extractorRunningStateOnFormOpen;
-
         private bool _formLoading = true;
-        private volatile bool _restartScheduled = false;
 
         /// <summary>
         ///     Default constructor for the Options Form

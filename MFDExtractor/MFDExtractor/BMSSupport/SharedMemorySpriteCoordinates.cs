@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace MFDExtractor
+namespace MFDExtractor.BMSSupport
 {
 	class SharedMemorySpriteCoordinates
 	{

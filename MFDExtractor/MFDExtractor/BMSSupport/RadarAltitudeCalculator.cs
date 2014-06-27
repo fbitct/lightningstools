@@ -2,7 +2,7 @@
 using F4SharedMem.Headers;
 using F4Utils.Terrain;
 
-namespace MFDExtractor
+namespace MFDExtractor.BMSSupport
 {
 	public interface IRadarAltitudeCalculator
 	{
