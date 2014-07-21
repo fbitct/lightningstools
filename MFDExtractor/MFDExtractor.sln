@@ -26,6 +26,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHCC", "..\PHCC\PHCC.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPJoyWrapper", "..\PPJoyWrapper\PPJoyWrapper.csproj", "{78555A0E-5D2F-4328-A4F0-67B5D7E51871}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8D9CDBD9-77DB-4E72-B2C2-B9C2B2542475}"
+	ProjectSection(SolutionItems) = preProject
+		Performance1.psess = Performance1.psess
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -82,5 +87,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
