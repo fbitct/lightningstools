@@ -88,7 +88,7 @@ namespace MFDExtractor
 	    private readonly IKeyDownEventHandler _keyDownEventHandler;
 	    private readonly IKeyUpEventHandler _keyUpEventHandler;
 	    private readonly IKeyboardWatcher _keyboardWatcher;
-	    private readonly IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
+	    private  IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
 	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
 	    private readonly IInputEvents _inputEvents;
@@ -96,7 +96,7 @@ namespace MFDExtractor
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
 	    private readonly IInstrumentFactory _instrumentFactory;
 		private readonly IThreeDeeCaptureCoordinateUpdater _threeDeeCaptureCoordinateUpdater;
-	    private readonly IFlightDataRetriever _flightDataRetriever;
+	    private  IFlightDataRetriever _flightDataRetriever;
 		private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
 		#endregion
 
@@ -136,7 +136,6 @@ namespace MFDExtractor
 	        _keyDownEventHandler = keyDownEventHandler ?? new KeyDownEventHandler(_ehsiStateTracker, _inputEvents, _keySettings);
 			_keyUpEventHandler = keyUpEventHandler ??  new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
-			_clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
 			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
@@ -303,6 +302,8 @@ namespace MFDExtractor
             try
             {
                 _client = new ExtractorClient(_serverEndpoint, ServiceName);
+                _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
+                _flightDataRetriever = new FlightDataRetriever(_client);
             }
             catch {}
         }
