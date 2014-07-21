@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,15 +17,11 @@ namespace MFDExtractor.Networking
 {
     public class ExtractorServer : MarshalByRefObject, IExtractorServer
     {
-        private static readonly object _instrumentImagesSpriteLock = new object();
         private static readonly object _flightDataLock = new object();
         private static FlightData _flightData;
-        private static Image _instrumentImagesSprite;
-        private static long _instrumentImagesSpriteSequenceNum;
+        private static ConcurrentDictionary<InstrumentType, Image> _latestTexSharedmemImages = new ConcurrentDictionary<InstrumentType, Image>(); 
         private static long _flightDataSequenceNum;
-        private static long _lastRetrievedInstrumentImagesSpriteSequenceNum = 0;
         private static long _lastRetrievedFlightDataSequenceNum = 0;
-        private static byte[] _lastRetrievedInstrumentImagesSpriteBytes;
         private static FlightData _lastRetrievedFlightData;
         private static string _compressionType = "LZW";
         private static string _imageFormat = "TIFF";
@@ -61,28 +58,18 @@ namespace MFDExtractor.Networking
 
 
 
-        public byte[] GetInstrumentImagesSpriteBytes()
+        public byte[] GetInstrumentImageBytes(InstrumentType instrumentType)
         {
             byte[] toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
             }
-            if (_lastRetrievedInstrumentImagesSpriteSequenceNum == _instrumentImagesSpriteSequenceNum)
-            {
-                return _lastRetrievedInstrumentImagesSpriteBytes;
-            }
-            if (_instrumentImagesSprite == null)
-            {
-                return null;
-            }
-            lock (_instrumentImagesSpriteLock)
-            {
-                //TODO: check image format when BMS is set to 16-bit color, see if it's 565 or 555
-                Util.ConvertPixelFormat(ref _instrumentImagesSprite, PixelFormat.Format16bppRgb565);
-                toReturn = Util.BytesFromBitmap(_instrumentImagesSprite, _compressionType, _imageFormat);
-                Interlocked.Exchange(ref _lastRetrievedInstrumentImagesSpriteBytes, toReturn);
-            }
+            Image image = null;
+            _latestTexSharedmemImages.TryGetValue(instrumentType, out image);
+            //TODO: check image format when BMS is set to 16-bit color, see if it's 565 or 555
+            Util.ConvertPixelFormat(ref image, PixelFormat.Format16bppRgb565);
+            toReturn = Util.BytesFromBitmap(image, _compressionType, _imageFormat);
             return toReturn;
         }
 
@@ -133,7 +120,6 @@ namespace MFDExtractor.Networking
             return _serviceEstablished;
         }
 
-        [DebuggerHidden]
         internal static void CreateService(string serviceName, int port, string compressionType, string imageFormat)
         {
             _compressionType = compressionType;
@@ -218,23 +204,10 @@ namespace MFDExtractor.Networking
 
         
 
-        internal static void SetInstrumentImagesSprite(Image bitmap)
+        internal static void SetInstrumentImagesSprite(Image bitmap, InstrumentType instrumentType)
         {
             var cloned = Util.CloneBitmap(bitmap);
-            lock (_instrumentImagesSpriteLock)
-            {
-                if (_instrumentImagesSprite != null)
-                {
-                    var oldRef = _instrumentImagesSprite;
-                    Interlocked.Exchange(ref _instrumentImagesSprite, cloned);
-                    Common.Util.DisposeObject(oldRef);
-                }
-                else
-                {
-                    Interlocked.Exchange(ref _instrumentImagesSprite, cloned);
-                }
-            }
-            Interlocked.Increment(ref _instrumentImagesSpriteSequenceNum);
+            _latestTexSharedmemImages.TryAdd(instrumentType, bitmap);
         }
 
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)

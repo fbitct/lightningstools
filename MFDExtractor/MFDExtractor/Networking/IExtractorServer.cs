@@ -4,7 +4,7 @@ namespace MFDExtractor.Networking
 {
     public interface IExtractorServer
     {
-        byte[] GetInstrumentImagesSpriteBytes();
+        byte[] GetInstrumentImageBytes(InstrumentType instrumentType);
         FlightData GetFlightData();
         void SubmitMessageToServerFromClient(Message message);
         void ClearPendingMessagesToClientFromServer();

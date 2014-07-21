@@ -66,11 +66,11 @@ namespace MFDExtractor.Networking
             }
         }
 
-        public Image GetInstrumentImagesSprite()
+        public Image GetInstrumentImage(InstrumentType instrumentType)
         {
             if (_server != null)
             {
-                var raw = _server.GetInstrumentImagesSpriteBytes();
+                var raw = _server.GetInstrumentImageBytes(instrumentType);
                 return Util.BitmapFromBytes(raw);
             }
             return null;
