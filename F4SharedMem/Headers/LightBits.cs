@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4SharedMem.Headers
 {
@@ -16,18 +12,14 @@ namespace F4SharedMem.Headers
 
         // Brow Lights
         TF = 0x2,   // Left eyebrow
-        OBS = 0x4,   // Not used
-        OXY_BROW = 0x4, // repurposed for eyebrow OXY LOW (was OBS, unused)
-        ALT = 0x8,   // Caution light; not used
-        EQUIP_HOT = 0x8, // Caution light; repurposed for cooling fault (was: not used)
-        WOW = 0x10,  // True if weight is on wheels: this is not a lamp bit!
+        OXY_BROW = 0x4,   // repurposed for eyebrow OXY LOW (was OBS, unused)
+        EQUIP_HOT = 0x8,   // Caution light; repurposed for cooling fault (was: not used)
+        ONGROUND = 0x10,  // True if on ground: this is not a lamp bit!
         ENG_FIRE = 0x20,  // Right eyebrow; upper half of split face lamp
         CONFIG = 0x40,  // Stores config, caution panel
         HYD = 0x80,  // Right eyebrow; see also OIL (this lamp is not split face)
-        OIL = 0x100, // Right eyebrow; see also HYD (this lamp is not split face)
         Flcs_ABCD = 0x100, // TEST panel FLCS channel lamps; repurposed, was OIL (see HYD; that lamp is not split face)
-        DUAL = 0x200, // Right eyebrow; block 25, 30/32 and older 40/42
-        FLCS = 0x200,// Right eyebrow; was called DUAL which matches block 25, 30/32 and older 40/42
+        FLCS = 0x200, // Right eyebrow; was called DUAL which matches block 25, 30/32 and older 40/42
         CAN = 0x400, // Right eyebrow
         T_L_CFG = 0x800, // Right eyebrow
 

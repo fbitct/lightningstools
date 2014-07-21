@@ -1,12 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4SharedMem.Headers
-{    // BMS4.33 Flight Data Model
+{
+    // changelog:
+    // 110: initial BMS 4.33 version
+    // 111: added SysTest to LightBits3
+    // 112: added MCAnnounced to LightBits3
+    // 113: added AllLampBits2OnExceptCarapace to LightBits2 and AllLampBits3OnExceptCarapace to LightBits3
+    // 114: renamed WOW LightBit to ONGROUND, added "real" (AFM) WOW to LightBits3
+    // 115: renamed "real" WOW in MLGWOW, added NLGWOW
+    // 116: bitfields are now unsigned instead of signed
+    // 117: added ATF_Not_Engaged to LightBits3
+
     [ComVisible(false)]
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -31,22 +37,24 @@ namespace F4SharedMem.Headers
         public float gs;           // Ownship Normal Gs
         public float windOffset;   // Wind delta to FPM (Radians)
         public float nozzlePos;    // Ownship engine nozzle percent open (0-100)
-        //        public float nozzlePos2;   // Ownship engine nozzle2 percent open (0-100)
+        //float nozzlePos2;   // MOVED TO FlightData2! Ownship engine nozzle2 percent open (0-100) 
         public float internalFuel; // Ownship internal fuel (Lbs)
         public float externalFuel; // Ownship external fuel (Lbs)
         public float fuelFlow;     // Ownship fuel flow (Lbs/Hour)
         public float rpm;          // Ownship engine rpm (Percent 0-103)
-        //        public float rpm2;         // Ownship engine rpm2 (Percent 0-103)
+        //float rpm2;         // MOVED TO FlightData2! Ownship engine rpm2 (Percent 0-103)
         public float ftit;         // Ownship Forward Turbine Inlet Temp (Degrees C)
-        //        public float ftit2;        // Ownship Forward Turbine Inlet Temp2 (Degrees C)
+        //float ftit2;        // MOVED TO FlightData2! Ownship Forward Turbine Inlet Temp2 (Degrees C)
         public float gearPos;      // Ownship Gear position 0 = up, 1 = down;
         public float speedBrake;   // Ownship speed brake position 0 = closed, 1 = 60 Degrees open
         public float epuFuel;      // Ownship EPU fuel (Percent 0-100)
         public float oilPressure;  // Ownship Oil Pressure (Percent 0-100)
+        //float oilPressure2; // MOVED TO FlightData2! Ownship Oil Pressure2 (Percent 0-100)
         public uint lightBits;      // Cockpit Indicator Lights, one bit per bulb. See enum
 
         // These are inputs. Use them carefully
         // NB: these do not work when TrackIR device is enabled
+        // NB2: launch falcon with the '-head' command line parameter to activate !
         public float headPitch;    // Head pitch offset from design eye (radians)
         public float headRoll;     // Head roll offset from design eye (radians)
         public float headYaw;      // Head yaw offset from design eye (radians)

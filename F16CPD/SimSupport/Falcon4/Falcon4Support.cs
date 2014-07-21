@@ -449,7 +449,7 @@ namespace F16CPD.SimSupport.Falcon4
 
                 //reset AGL altitude to zero if we're on the ground
                 if (
-                    ((fromFalcon.lightBits & (int)LightBits.WOW) == (int)LightBits.WOW)
+                    ((fromFalcon.lightBits & (int)LightBits.ONGROUND) == (int)LightBits.ONGROUND)
                     ||
                     (
                         ((fromFalcon.lightBits3 & (int)Bms4LightBits3.OnGround) == (int)Bms4LightBits3.OnGround)

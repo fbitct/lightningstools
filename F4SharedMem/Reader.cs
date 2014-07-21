@@ -125,7 +125,7 @@ namespace F4SharedMem
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
                 long fileSizeBytes = GetMaxMemFileSize(_lpSecondarySharedMemoryAreaBaseAddress);
-                if (fileSizeBytes > Marshal.SizeOf(typeof(Headers.BMS4FlightData2))) fileSizeBytes = Marshal.SizeOf(typeof(Headers.BMS4FlightData2));
+                if (fileSizeBytes > Marshal.SizeOf(typeof(Headers.FlightData2))) fileSizeBytes = Marshal.SizeOf(typeof(Headers.FlightData2));
                 for (int i = 0; i < fileSizeBytes; i++)
                 {
                     try
@@ -212,7 +212,7 @@ namespace F4SharedMem
                 return null;
             }
             object data = Convert.ChangeType(Marshal.PtrToStructure(_lpPrimarySharedMemoryAreaBaseAddress, dataType), dataType);
-
+            var len = Marshal.SizeOf(dataType);
             FlightData toReturn=null;
             switch(_dataFormat) {
                 case FalconDataFormats.AlliedForce:
@@ -230,14 +230,7 @@ namespace F4SharedMem
             }
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                if (_dataFormat == FalconDataFormats.BMS4)
-                {
-                    data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof(Headers.BMS4FlightData2)));
-                }
-                else
-                {
-                    data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof(Headers.FlightData2)));
-                }
+                data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof(Headers.FlightData2)));
                 toReturn.PopulateFromStruct(data);
             }
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))

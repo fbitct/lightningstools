@@ -122,6 +122,26 @@ namespace F4SharedMem
                         }
                         thisField.SetValue(this, valuesToAssign);
                     }
+                    else if (currentFieldType == typeof(Headers.Callsign_LineOfText[]))
+                    {
+                        Headers.Callsign_LineOfText[] currentValue = (Headers.Callsign_LineOfText[])currentField.GetValue(data);
+                        string[] valuesToAssign = new string[currentValue.Length];
+                        for (int j = 0; j < currentValue.Length; j++)
+                        {
+                            Headers.Callsign_LineOfText currentItem = currentValue[j];
+                            StringBuilder sb = new StringBuilder(currentItem.chars.Length);
+                           for (int k = 0; k < currentItem.chars.Length; k++)
+                            {
+                                sbyte chr = currentItem.chars[k];
+                                if (chr != 0)
+                                {
+                                   sb.Append((char)chr);
+                                }
+                            }
+                            valuesToAssign[j] = sb.ToString();
+                        }
+                        thisField.SetValue(this, valuesToAssign);
+                    }
                     else
                     {
                         System.Array currentValue = (System.Array)currentField.GetValue(data);
@@ -161,7 +181,6 @@ namespace F4SharedMem
         public float internalFuel; // Ownship internal fuel (Lbs)
         public float externalFuel; // Ownship external fuel (Lbs)
         public float fuelFlow;     // Ownship fuel flow (Lbs/Hour)
-        public float fuelFlow2;    // Ownship fuel flow2 (Lbs/Hour)
         public float rpm;          // Ownship engine rpm (Percent 0-103)
         public float rpm2;         // Ownship engine rpm2 (Percent 0-103)
         public float ftit;         // Ownship Forward Turbine Inlet Temp (Degrees C)
@@ -245,7 +264,6 @@ namespace F4SharedMem
         public int[] selected;
         public float[] lethality;
         public int[] newDetection;
-        public char[] RwrInfo;
 
         //fuel values
         public float fwd;
@@ -253,6 +271,7 @@ namespace F4SharedMem
         public float total;
 
         public int VersionNum;    //Version of Mem area
+        public int VersionNum2;     // Version of Mem area
         public float headX;        // Head X offset from design eye (feet)
         public float headY;        // Head Y offset from design eye (feet)
         public float headZ;        // Head Z offset from design eye (feet)
@@ -276,10 +295,19 @@ namespace F4SharedMem
         public int currentTime;	    // Current time in seconds (max 60 * 60 * 24)
         public short vehicleACD;	// Ownship ACD index number, i.e. which aircraft type are we flying.
         public byte[] tacanInfo;    //TACAN info (new in BMS4)
-        float lefPos;       // Ownship LEF position
-        float tefPos;       // Ownship TEF position
-        float vtolPos;      // Ownship VTOL exhaust angle
-        float flightData2VersionNum;
+        public float fuelFlow2;     // Ownship fuel flow2 (Lbs/Hour)
+        public byte[] RwrInfo;      //[512] New RWR Info
+        public float lefPos;       // Ownship LEF position
+        public float tefPos;       // Ownship TEF position
+        public float vtolPos;      // Ownship VTOL exhaust angle
+
+        public byte pilotsOnline;       // Number of pilots in an MP session
+
+        // RWRINFO_SIZE  512
+        // CALLSIGN_LEN  12
+        // MAX_CALLSIGNS  32
+        public string[] pilotsCallsign;   // [MAX_CALLSIGNS][CALLSIGN_LEN] List of pilots callsign connected to an MP session
+        public byte[] pilotsStatus;     // [MAX_CALLSIGNS] Status of the MP pilots, see enum FlyStates
 
         public OptionSelectButtonLabel[] leftMFD;
         public OptionSelectButtonLabel[] rightMFD;

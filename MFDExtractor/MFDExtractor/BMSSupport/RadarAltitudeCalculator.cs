@@ -46,7 +46,7 @@ namespace MFDExtractor.BMSSupport
 
 		private static bool WeightOnWheels(FlightData flightData)
 		{
-			return ((flightData.lightBits & (int)LightBits.WOW) == (int)LightBits.WOW);
+			return ((flightData.lightBits & (int)LightBits.ONGROUND) == (int)LightBits.ONGROUND);
 		}
 	}
 }

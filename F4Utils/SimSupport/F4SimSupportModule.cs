@@ -573,14 +573,6 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.TF) ==
                                                           LightBits.TF);
                         break;
-                    case F4SimOutputs.LEFT_EYEBROW_LIGHTS__ALTLOW:
-                        ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.ALT) ==
-                                                          LightBits.ALT);
-                        break;
-                    case F4SimOutputs.LEFT_EYEBROW_LIGHTS__OBSWRN:
-                        ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.OBS) ==
-                                                          LightBits.OBS);
-                        break;
                     case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__ENGFIRE:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.ENG_FIRE) ==
                                                           LightBits.ENG_FIRE);
@@ -592,10 +584,6 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__HYDOIL:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.HYD) ==
                                                           LightBits.HYD);
-                        break;
-                    case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__DUALFC:
-                        ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.DUAL) ==
-                                                          LightBits.DUAL);
                         break;
                     case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__FLCS:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.FLCS) ==
@@ -893,9 +881,9 @@ namespace F4Utils.SimSupport
                                                           HsiBits.MiddleMarker);
                         //TODO: make blink
                         break;
-                    case F4SimOutputs.AIRCRAFT__WOW:
-                        ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.WOW) ==
-                                                          LightBits.WOW);
+                    case F4SimOutputs.AIRCRAFT__ONGROUND:
+                        ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.ONGROUND) ==
+                                                          LightBits.ONGROUND);
                         break;
                     case F4SimOutputs.AIRCRAFT__ELEC_POWER_OFF:
                         ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
@@ -904,18 +892,7 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.AIRCRAFT__MAIN_POWER:
                         ((AnalogSignal) output).State = _lastFlightData.MainPower;
                         break;
-                    case F4SimOutputs.AIRCRAFT__ENGINE_2_FIRE:
-                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
-                                                           LightBits3.Eng2_Fire) == LightBits3.Eng2_Fire);
-                        break;
-                    case F4SimOutputs.SIM__SHOOT_CUE:
-                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 & LightBits3.Shoot) ==
-                                                          LightBits3.Shoot);
-                        break;
-                    case F4SimOutputs.SIM__LOCK_CUE:
-                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 & LightBits3.Lock) ==
-                                                          LightBits3.Lock);
-                        break;
+
                     case F4SimOutputs.SIM__BMS_PLAYER_IS_FLYING:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.Flying) ==
                                                           HsiBits.Flying);
@@ -1731,7 +1708,7 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "Middle marker flag",
                                                 (int) F4SimOutputs.MARKER_BEACON__MIDDLE_MARKER, typeof (bool)));
 
-            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Weight-On-Wheels Sensor", (int) F4SimOutputs.AIRCRAFT__WOW,
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Weight-On-Wheels Sensor", (int) F4SimOutputs.AIRCRAFT__ONGROUND,
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Electrical Power OFF flag",
                                                 (int) F4SimOutputs.AIRCRAFT__ELEC_POWER_OFF, typeof (bool)));

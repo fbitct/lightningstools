@@ -77,8 +77,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FalconDataFormats.cs" />
@@ -86,12 +84,13 @@
     <Compile Include="Headers\AltBits.cs" />
     <Compile Include="Headers\BlinkBits.cs" />
     <Compile Include="Headers\BMS4FlightData.cs" />
-    <Compile Include="Headers\BMS4FlightData2.cs" />
     <Compile Include="Headers\Bms4LightBits3.cs" />
+    <Compile Include="Headers\Callsign_LineOfText.cs" />
     <Compile Include="Headers\CmdsModes.cs" />
     <Compile Include="Headers\DED_PFL_LineOfText.cs" />
     <Compile Include="FlightData.cs" />
     <Compile Include="Headers\FlightData2.cs" />
+    <Compile Include="Headers\FlyStates.cs" />
     <Compile Include="Headers\HsiBits.cs" />
     <Compile Include="Headers\LightBits.cs" />
     <Compile Include="Headers\LightBits2.cs" />

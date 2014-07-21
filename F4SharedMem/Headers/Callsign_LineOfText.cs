@@ -6,9 +6,11 @@ namespace F4SharedMem.Headers
     [ComVisible(false)]
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct DED_PFL_LineOfText
+    public struct Callsign_LineOfText
     {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
+        public const int CALLSIGN_LEN = 12;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = CALLSIGN_LEN)]
         public sbyte[] chars;
     }
 }
