@@ -8,7 +8,6 @@ namespace MFDExtractor
     internal interface IRenderThreadSignaller
     {
         void Signal(
-            IList<WaitHandle> toWait,
             ExtractorState extractorState,
             IInstrument instrument,
             bool stateIsStale);
@@ -17,7 +16,6 @@ namespace MFDExtractor
     class RenderThreadSignaller : IRenderThreadSignaller
     {
         public void Signal(
-            IList<WaitHandle> toWait,
             ExtractorState extractorState,
             IInstrument instrument,
             bool stateIsStale
@@ -48,10 +46,6 @@ namespace MFDExtractor
                     if (instrument.StartSignal != null)
                     {
                         instrument.StartSignal.Set();
-                    }
-                    if (instrument.EndSignal != null)
-                    {
-                        toWait.Add(instrument.EndSignal);
                     }
                 }
             }

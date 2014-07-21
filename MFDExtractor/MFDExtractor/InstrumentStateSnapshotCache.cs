@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using Common.SimSupport;
+using MFDExtractor.Properties;
 using MFDExtractor.UI;
 
 namespace MFDExtractor
@@ -17,7 +18,7 @@ namespace MFDExtractor
 		public bool CaptureInstrumentStateSnapshotAndCheckIfStale(IInstrumentRenderer renderer, InstrumentForm instrumentForm)
 		{
 		    if (renderer == null) return false;
-			const int staleDataTimeout = 500;
+		    var staleDataTimeout = Settings.Default.PollingDelay;
 			var oldStateSnapshot = _instrumentStates.ContainsKey(renderer) ? _instrumentStates[renderer] : InstrumentStateSnapshot.Default;
 			var newStateSnapshot = CaptureStateSnapshot(renderer);
 			var hashesAreDifferent = (oldStateSnapshot.HashCode != newStateSnapshot.HashCode);
@@ -44,7 +45,17 @@ namespace MFDExtractor
 		{
 			public DateTime DateTime { get; set; }
 			public int HashCode { get; set; }
-			public static InstrumentStateSnapshot Default { get { return new InstrumentStateSnapshot { DateTime = DateTime.Now.Subtract(TimeSpan.FromDays(1)), HashCode = 0 }; } }
+			public static InstrumentStateSnapshot Default { 
+                get
+                {
+                    var yesterday = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+                    return new InstrumentStateSnapshot 
+                    { 
+                        DateTime = yesterday, 
+                        HashCode = yesterday.GetHashCode() 
+                    }; 
+                } 
+            }
 		}
 	}
 }

@@ -15,8 +15,8 @@ namespace MFDExtractor.Renderer
 	{
 		public MfdRenderer()
 		{
-			InstrumentState = new MfdRendererInstrumentState();
-			Options = new MfdRendererOptions {SourceRectangle = Rectangle.Empty};
+			InstrumentState = new MfdRendererInstrumentState{SourceRectangle = Rectangle.Empty};
+			Options = new MfdRendererOptions();
 		}
 		public override void Render(Graphics graphics, Rectangle bounds)
 		{
@@ -36,7 +36,7 @@ namespace MFDExtractor.Renderer
 			}
 			else
 			{
-				if (Options.SourceImage != null)
+				if (InstrumentState.SourceImage != null)
 				{
 				    RenderFromSharedmemSurface(graphics, bounds);
 				}
@@ -44,12 +44,12 @@ namespace MFDExtractor.Renderer
 		}
 	    private void RenderFromSharedmemSurface(Graphics graphics, Rectangle bounds)
 	    {
-            var image = Options.SourceImage;
+            var image = InstrumentState.SourceImage;
 	        try
 	        {
                 if (image.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
                 {
-                    graphics.DrawImage(image, bounds, Options.SourceRectangle, GraphicsUnit.Pixel);
+                    graphics.DrawImage(image, bounds, InstrumentState.SourceRectangle, GraphicsUnit.Pixel);
                 }
 	        }
 	        catch (AccessViolationException){}
@@ -69,14 +69,16 @@ namespace MFDExtractor.Renderer
 		{
 			public Image BlankImage { get; set; }
 			public Image TestAlignmentImage { get; set; }
-			public Image SourceImage { get; set; }
-			public Rectangle SourceRectangle { get; set; }
 		}
 		[Serializable]
 		public class MfdRendererInstrumentState : InstrumentStateBase
 		{
 			public bool Blank { get; set; }
 			public bool TestMode { get; set; }
+
+		    [NonSerialized] public Image SourceImage;
+            public Rectangle SourceRectangle { get; set; }
+		  
 		}
 	}
 }

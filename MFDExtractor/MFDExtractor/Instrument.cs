@@ -13,9 +13,8 @@ namespace MFDExtractor
         InstrumentForm Form { get;}
         IInstrumentRenderer Renderer { get; }
         AutoResetEvent StartSignal { get; }
-        AutoResetEvent EndSignal { get; }
         void Start(ExtractorState extractorState );
-        void Signal(IList<WaitHandle> waitHandles, ExtractorState extractorState);
+        void Signal( ExtractorState extractorState);
     }
 
     class Instrument : IInstrument
@@ -42,7 +41,6 @@ namespace MFDExtractor
         public InstrumentForm Form { get; internal set; }
         public IInstrumentRenderer Renderer { get; internal set; }
         public AutoResetEvent StartSignal { get; internal set; }
-        public AutoResetEvent EndSignal { get; internal set; }
         public void Start(ExtractorState extractorState )
         {
             _renderThreadFactory.CreateOrRecycle(ref _renderThread, 
@@ -55,9 +53,9 @@ namespace MFDExtractor
             }
         }
 
-        public void Signal(IList<WaitHandle> waitHandles, ExtractorState extractorState  )
+        public void Signal(ExtractorState extractorState  )
         {
-            _renderThreadSignaller.Signal(waitHandles, extractorState, this,IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted());
+            _renderThreadSignaller.Signal(extractorState, this,IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted());
         }
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted()
@@ -72,9 +70,11 @@ namespace MFDExtractor
             {
                 while (extractorState.KeepRunning)
                 {
-                    StartSignal.WaitOne();
+                    if (StartSignal != null)
+                    {
+                        StartSignal.WaitOne();
+                    }
                     Render(extractorState.NightMode);
-                    EndSignal.Set();
                 }
             }
             catch (ThreadAbortException) { }
@@ -83,21 +83,7 @@ namespace MFDExtractor
 
         private void Render(bool nightMode)
         {
-            var startTime = DateTime.Now;
-            if (DateTime.Now.Subtract(Form.LastRenderedOn).TotalMilliseconds < Settings.Default.PollingDelay)
-            {
-                return;
-            }
             _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
-            var endTime = DateTime.Now;
-            var elapsed = endTime.Subtract(startTime);
-            if (!(elapsed.TotalMilliseconds < 0)) return;
-            var toWait = new TimeSpan(0, 0, 0, 0, (int)(0 - elapsed.TotalMilliseconds));
-            if (toWait.TotalMilliseconds < 0)
-            {
-                toWait = new TimeSpan(0, 0, 0, 0, 0);
-            }
-            Thread.Sleep(toWait);
         }
         private void RecoverInstrumentForm(Screen screen)
         {
