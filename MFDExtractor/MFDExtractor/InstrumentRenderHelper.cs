@@ -37,19 +37,19 @@ namespace MFDExtractor
             bool highlightBorder,
             bool nightVisionMode)
         {
-            Bitmap image = null;
+            Bitmap renderSurface = null;
             try
             {
-                image = CreateRenderSurface(targetForm);
-                using (var graphics = Graphics.FromImage(image))
+                renderSurface = CreateRenderSurface(targetForm);
+                using (var destinationGraphics = Graphics.FromImage(renderSurface))
                 {
                     try
                     {
-                        renderer.Render(graphics, new Rectangle(0, 0, image.Width, image.Height));
+                        renderer.Render(destinationGraphics, new Rectangle(0, 0, renderSurface.Width, renderSurface.Height));
                         targetForm.LastRenderedOn = DateTime.Now;
                         if (highlightBorder)
                         {
-                            HighlightBorder(targetForm, graphics, image);
+                            HighlightBorder(targetForm, destinationGraphics, renderSurface);
                         }
                     }
                     catch (ThreadAbortException)
@@ -66,21 +66,21 @@ namespace MFDExtractor
                 }
                 if (rotation != RotateFlipType.RotateNoneFlipNone)
                 {
-                    image.RotateFlip(rotation);
+                    renderSurface.RotateFlip(rotation);
                 }
                 using (var graphics = targetForm.CreateGraphics())
                 {
                     if (nightVisionMode)
                     {
-                        RenderWithNightVisionEffect(targetForm, graphics, image);
+                        RenderWithNightVisionEffect(targetForm, graphics, renderSurface);
                     }
                     else if (monochrome)
                     {
-                        RenderWithMonochromeEffect(targetForm, graphics, image);
+                        RenderWithMonochromeEffect(targetForm, graphics, renderSurface);
                     }
                     else
                     {
-                        RenderWithStandardEffect(graphics, image);
+                        RenderWithStandardEffect(graphics, renderSurface);
                     }
                 }
             }
@@ -106,7 +106,7 @@ namespace MFDExtractor
             }
             finally
             {
-                Common.Util.DisposeObject(image);
+                Common.Util.DisposeObject(renderSurface);
             }
         }
 

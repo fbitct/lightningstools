@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using Common.SimSupport;
 using Common.UI;
+using log4net;
 using Util = Common.Imaging.Util;
 
 //TODO: add options to the options screen for setting pressure units, metric/standard velocity units, etc.
@@ -23,25 +24,15 @@ namespace LightningGauges.Renderers
 
     public class F16ISIS : InstrumentRendererBase, IF16ISIS
     {
-        #region Image Location Constants
-
         private const string ISIS_ILS_DOT_IMAGE_FILENAME = "isis_ilsdot.bmp";
-
         private static readonly string IMAGES_FOLDER_NAME =
             new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).FullName +
             Path.DirectorySeparatorChar + "images";
-
-        #endregion
-
-        #region Instance variables
-
         private static readonly PrivateFontCollection _fonts = new PrivateFontCollection();
         private static readonly object _imagesLock = new object();
         private static bool _imagesLoaded;
         private static Bitmap _markerDiamond;
-
-        #endregion
-
+        private static ILog _log = LogManager.GetLogger(typeof (F16ISIS));
         public F16ISIS()
         {
             InstrumentState = new F16ISISInstrumentState();
@@ -75,17 +66,18 @@ namespace LightningGauges.Renderers
         public F16ISISOptions Options { get; set; }
         public F16ISISInstrumentState InstrumentState { get; set; }
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
+            var startTime = DateTime.Now;
             if (!_imagesLoaded)
             {
                 LoadImageResources();
             }
-            var gfx = g;
+            var gfx = destinationGraphics;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
-                fullBright = new Bitmap(bounds.Size.Width, bounds.Size.Height, PixelFormat.Format32bppPArgb);
+                fullBright = new Bitmap(destinationRectangle.Size.Width, destinationRectangle.Size.Height, PixelFormat.Format32bppPArgb);
                 gfx = Graphics.FromImage(fullBright);
             }
             lock (_imagesLock)
@@ -96,12 +88,12 @@ namespace LightningGauges.Renderers
                 var width = 256;
                 var height = 256;
                 gfx.ResetTransform(); //clear any existing transforms
-                gfx.SetClip(bounds);
+                gfx.SetClip(destinationRectangle);
                 //set the clipping region on the graphics object to our render rectangle's boundaries
-                gfx.FillRectangle(Brushes.Black, bounds);
-                gfx.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                gfx.FillRectangle(Brushes.Black, destinationRectangle);
+                gfx.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                //g.TranslateTransform(0, 0);
+                //destinationGraphics.TranslateTransform(0, 0);
                 gfx.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
                 gfx.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
                 gfx.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
@@ -303,10 +295,13 @@ namespace LightningGauges.Renderers
                 var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
-                g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
+                destinationGraphics.DrawImage(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }
+            var endTime = DateTime.Now;
+            var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
+            _log.Info(string.Format("Exiting Render() method. Took {0} milliseconds.", elapsed ));
         }
 
         private void DrawIlsBars(Graphics g, int width, int height)

@@ -83,7 +83,7 @@ namespace LightningGauges.Renderers
 
         public F16VerticalVelocityIndicatorInstrumentState InstrumentState { get; set; }
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -92,26 +92,26 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = _background.Image.Width;
                 width -= 154;
                 var height = _background.Image.Height - 29;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-76, 0);
-                g.TranslateTransform(0, -15);
+                destinationGraphics.TranslateTransform(-76, 0);
+                destinationGraphics.TranslateTransform(0, -15);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
                 if (!InstrumentState.OffFlag)
                 {
                     //draw the number tape
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     float translateX = 110;
                     float translateY = 236;
                     var pixelsPerHundredFeet = 4.75f;
@@ -120,36 +120,36 @@ namespace LightningGauges.Renderers
                     var verticalVelocityThousands = vv/1000.0f;
                     translateY -= (-pixelsPerHundredFeet*verticalVelocityThousands*10.0f);
                     translateY -= _numberTape.Height/2.0f;
-                    g.TranslateTransform(translateX, translateY);
-                    g.ScaleTransform(0.79f, 0.79f);
-                    g.DrawImage(_numberTape, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    destinationGraphics.TranslateTransform(translateX, translateY);
+                    destinationGraphics.ScaleTransform(0.79f, 0.79f);
+                    destinationGraphics.DrawImage(_numberTape, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //draw the indicator line
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(0, 1);
-                g.DrawImage(_indicatorLine.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(0, 1);
+                destinationGraphics.DrawImage(_indicatorLine.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //draw the OFF flag
                 if (InstrumentState.OffFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(0, -3);
-                    g.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(0, -3);
+                    destinationGraphics.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

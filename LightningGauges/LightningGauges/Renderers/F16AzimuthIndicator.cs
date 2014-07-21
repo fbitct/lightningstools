@@ -200,17 +200,17 @@ namespace LightningGauges.Renderers
             g.FillPath(brush, fontPath);
         }
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
                 LoadImageResources();
             }
-            var gfx = g;
+            var gfx = destinationGraphics;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
-                fullBright = new Bitmap(bounds.Size.Width, bounds.Size.Height, PixelFormat.Format32bppPArgb);
+                fullBright = new Bitmap(destinationRectangle.Size.Width, destinationRectangle.Size.Height, PixelFormat.Format32bppPArgb);
                 gfx = Graphics.FromImage(fullBright);
             }
             lock (_imagesLock)
@@ -225,9 +225,9 @@ namespace LightningGauges.Renderers
 
                 //set up the canvas scale and clipping region
                 gfx.ResetTransform(); //clear any existing transforms
-                gfx.SetClip(bounds);
+                gfx.SetClip(destinationRectangle);
                 //set the clipping region on the graphics object to our render rectangle's boundaries
-                gfx.FillRectangle(Brushes.Black, bounds);
+                gfx.FillRectangle(Brushes.Black, destinationRectangle);
 
 
                 var okColor = _scopeGreenColor; //Color.FromArgb(255, 94, 184, 96);
@@ -283,8 +283,8 @@ namespace LightningGauges.Renderers
                     backgroundWidth = 256;
                     backgroundHeight = 256;
                 }
-                var scaleX = bounds.Width/(float) width;
-                var scaleY = bounds.Height/(float) height;
+                var scaleX = destinationRectangle.Width/(float) width;
+                var scaleY = destinationRectangle.Height/(float) height;
                 gfx.ScaleTransform(scaleX, scaleY); //set the initial scale transformation 
 
                 if (Options.Style == F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR ||
@@ -297,17 +297,17 @@ namespace LightningGauges.Renderers
 
 
                 float atdRingScale = 0;
-                if (bounds.Width < bounds.Height)
+                if (destinationRectangle.Width < destinationRectangle.Height)
                 {
-                    atdRingScale = bounds.Width/(float) width;
+                    atdRingScale = destinationRectangle.Width/(float) width;
                 }
-                else if (bounds.Width > bounds.Height)
+                else if (destinationRectangle.Width > destinationRectangle.Height)
                 {
-                    atdRingScale = bounds.Height/(float) height;
+                    atdRingScale = destinationRectangle.Height/(float) height;
                 }
                 else
                 {
-                    atdRingScale = bounds.Width/(float) width;
+                    atdRingScale = destinationRectangle.Width/(float) width;
                 }
 
 
@@ -353,9 +353,9 @@ namespace LightningGauges.Renderers
                 var atdOuterRingDiameter = 200.0f;
                 var outerRingLeft = ((width - atdOuterRingDiameter)/2.0f);
                 var outerRingTop = ((height - atdOuterRingDiameter)/2.0f);
-                var atdRingOffsetTranslateX = ((bounds.Width - (atdOuterRingDiameter*atdRingScale))/2.0f) -
+                var atdRingOffsetTranslateX = ((destinationRectangle.Width - (atdOuterRingDiameter*atdRingScale))/2.0f) -
                                               (outerRingLeft*atdRingScale);
-                var atdRingOffsetTranslateY = ((bounds.Height - (atdOuterRingDiameter*atdRingScale))/2.0f) -
+                var atdRingOffsetTranslateY = ((destinationRectangle.Height - (atdOuterRingDiameter*atdRingScale))/2.0f) -
                                               (outerRingTop*atdRingScale) + (chaffCountRectangle.Y*atdRingScale);
 
                 var atdMiddleRingDiameter = atdOuterRingDiameter/2.0f;
@@ -822,7 +822,7 @@ namespace LightningGauges.Renderers
                             gfx.DrawLine(grayPen, (atdMiddleRingDiameter / 2.0f), -(lineLength * 0.75f),
                                          (atdMiddleRingDiameter / 2.0f) + 7, -(lineLength * 0.75f));
 
-                            //g.Transform = previousTransform;
+                            //destinationGraphics.Transform = previousTransform;
                             gfx.Transform = toRestore;
                         }
 
@@ -840,8 +840,8 @@ namespace LightningGauges.Renderers
                             var legendColor = severeColor;
                             var legendPen = new Pen(legendColor);
                             Brush legendBrush = new SolidBrush(legendColor);
-                            //g.FillEllipse(legendBrush, rwrRectangle);
-                            //DrawString(g, "RWR", _otherLegendFont, Brushes.Black, rwrRectangle, rwrOffTextStringFormat);
+                            //destinationGraphics.FillEllipse(legendBrush, rwrRectangle);
+                            //DrawString(destinationGraphics, "RWR", _otherLegendFont, Brushes.Black, rwrRectangle, rwrOffTextStringFormat);
                             gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top),
                                          new PointF(rwrRectangle.Right, rwrRectangle.Bottom));
                             gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom),
@@ -1178,7 +1178,7 @@ namespace LightningGauges.Renderers
                 var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
-                g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
+                destinationGraphics.DrawImage(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }

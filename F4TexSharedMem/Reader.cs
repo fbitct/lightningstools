@@ -22,7 +22,6 @@ namespace F4TexSharedMem
 	{
         private const string SharedMemoryFileName = "FalconTexturesSharedMemoryArea";
         private bool _dataAvailable;
-        private bool _disposed;
         private PixelFormat _format = PixelFormat.Undefined;
         private bool _formatDetected;
         private IntPtr _hFileMappingObject = IntPtr.Zero;
@@ -190,17 +189,17 @@ namespace F4TexSharedMem
 	        if (_hFileMappingObject.Equals(IntPtr.Zero)) return;
 	        NativeMethods.UnmapViewOfFile(_lpStartAddress);
 	        NativeMethods.CloseHandle(_hFileMappingObject);
+            _dataAvailable=false;
+            _format=PixelFormat.Undefined;
+            _formatDetected=false;
+            _hFileMappingObject=IntPtr.Zero;
+            _lpStartAddress=IntPtr.Zero;
+            _surfaceDesc=new NativeMethods.DDSURFACEDESC2();
         }
 
         internal void Dispose(bool disposing)
         {
-	        if (_disposed) return;
-	        if (disposing)
-	        {
-		        CloseSM();
-	        }
-
-	        _disposed = true;
+		    CloseSM();
         }
     }
 }

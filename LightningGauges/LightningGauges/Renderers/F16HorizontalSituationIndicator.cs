@@ -333,7 +333,7 @@ namespace LightningGauges.Renderers
         #endregion
 
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -342,7 +342,7 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = 0;
@@ -351,76 +351,76 @@ namespace LightningGauges.Renderers
                 width = _hsiBackground.Image.Width - 47;
                 height = _hsiBackground.Image.Height - 49;
 
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
 
-                g.TranslateTransform(-24, -14);
+                destinationGraphics.TranslateTransform(-24, -14);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(0, -11);
-                g.DrawImage(_hsiBackground.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(0, -11);
+                destinationGraphics.DrawImage(_hsiBackground.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 float centerX = 128;
                 float centerY = 128;
 
 
                 //draw compass rose
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                g.TranslateTransform(-centerX, -centerY);
-                g.DrawImage(_compassRose.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(centerX, centerY);
+                destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                destinationGraphics.TranslateTransform(-centerX, -centerY);
+                destinationGraphics.DrawImage(_compassRose.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw inner wheel
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                g.RotateTransform(InstrumentState.DesiredCourseDegrees);
-                g.TranslateTransform(-centerX, -centerY);
-                g.TranslateTransform(0.5f, -2.0f);
-                g.DrawImage(_hsiInnerWheel.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(centerX, centerY);
+                destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                destinationGraphics.RotateTransform(InstrumentState.DesiredCourseDegrees);
+                destinationGraphics.TranslateTransform(-centerX, -centerY);
+                destinationGraphics.TranslateTransform(0.5f, -2.0f);
+                destinationGraphics.DrawImage(_hsiInnerWheel.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw heading bug
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(InstrumentState.DesiredHeadingDegrees - InstrumentState.MagneticHeadingDegrees);
-                g.TranslateTransform(-centerX, -centerY);
-                g.DrawImage(_hsiHeadingBug.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(centerX, centerY);
+                destinationGraphics.RotateTransform(InstrumentState.DesiredHeadingDegrees - InstrumentState.MagneticHeadingDegrees);
+                destinationGraphics.TranslateTransform(-centerX, -centerY);
+                destinationGraphics.DrawImage(_hsiHeadingBug.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //draw the bearing to beacon indicator needle
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-(InstrumentState.MagneticHeadingDegrees - InstrumentState.BearingToBeaconDegrees));
-                g.TranslateTransform(-centerX, -centerY);
-                g.TranslateTransform(1, 0);
-                g.DrawImage(_hsiBearingToBeaconNeedle.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(centerX, centerY);
+                destinationGraphics.RotateTransform(-(InstrumentState.MagneticHeadingDegrees - InstrumentState.BearingToBeaconDegrees));
+                destinationGraphics.TranslateTransform(-centerX, -centerY);
+                destinationGraphics.TranslateTransform(1, 0);
+                destinationGraphics.DrawImage(_hsiBearingToBeaconNeedle.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the CDI flag
                 if (InstrumentState.DeviationInvalidFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(centerX, centerY);
-                    g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                    g.RotateTransform(InstrumentState.DesiredCourseDegrees);
-                    g.TranslateTransform(-centerX, -centerY);
-                    g.DrawImage(_hsiCDIFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(centerX, centerY);
+                    destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                    destinationGraphics.RotateTransform(InstrumentState.DesiredCourseDegrees);
+                    destinationGraphics.TranslateTransform(-centerX, -centerY);
+                    destinationGraphics.DrawImage(_hsiCDIFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the range to the beacon
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     var distanceToBeacon = InstrumentState.DistanceToBeaconNauticalMiles;
                     if (distanceToBeacon > 999.9) distanceToBeacon = 999.9f;
                     var distanceToBeaconString = string.Format("{0:000.0}", distanceToBeacon);
@@ -436,18 +436,18 @@ namespace LightningGauges.Renderers
                     currentX = 29;
                     y = 45;
                     var spacingPixels = -5;
-                    g.DrawImage(distanceToBeaconHundredsImage, new Point(currentX, y));
+                    destinationGraphics.DrawImage(distanceToBeaconHundredsImage, new Point(currentX, y));
                     currentX += distanceToBeaconHundredsImage.Width + spacingPixels;
-                    g.DrawImage(distanceToBeaconTensImage, new Point(currentX, y));
+                    destinationGraphics.DrawImage(distanceToBeaconTensImage, new Point(currentX, y));
                     currentX += distanceToBeaconTensImage.Width + spacingPixels;
-                    g.DrawImage(distanceToBeaconOnesImage, new Point(currentX, y));
+                    destinationGraphics.DrawImage(distanceToBeaconOnesImage, new Point(currentX, y));
                     currentX += distanceToBeaconOnesImage.Width + spacingPixels;
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw desired course
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     var desiredCourseString = string.Format("{0:000}", InstrumentState.DesiredCourseDegrees);
                     var desiredCourseHundreds = desiredCourseString[0];
                     var desiredCourseTens = desiredCourseString[1];
@@ -461,85 +461,85 @@ namespace LightningGauges.Renderers
                     currentX = 182;
                     y = 45;
                     var spacingPixels = -5;
-                    g.DrawImage(desiredCourseHundredsImage, new Point(currentX, y));
+                    destinationGraphics.DrawImage(desiredCourseHundredsImage, new Point(currentX, y));
                     currentX += desiredCourseHundredsImage.Width + spacingPixels;
-                    g.DrawImage(desiredCourseTensImage, new Point(currentX, y));
+                    destinationGraphics.DrawImage(desiredCourseTensImage, new Point(currentX, y));
                     currentX += desiredCourseTensImage.Width + spacingPixels;
-                    g.DrawImage(desiredCourseOnesImage, new Point(currentX, y));
+                    destinationGraphics.DrawImage(desiredCourseOnesImage, new Point(currentX, y));
                     currentX += desiredCourseOnesImage.Width + spacingPixels;
 
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the TO flag 
                 if (InstrumentState.ShowToFromFlag && InstrumentState.ToFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(centerX, centerY);
-                    g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                    g.RotateTransform(InstrumentState.DesiredCourseDegrees);
-                    g.TranslateTransform(-centerX, -centerY);
-                    g.DrawImage(_toFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(centerX, centerY);
+                    destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                    destinationGraphics.RotateTransform(InstrumentState.DesiredCourseDegrees);
+                    destinationGraphics.TranslateTransform(-centerX, -centerY);
+                    destinationGraphics.DrawImage(_toFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the FROM flag 
                 if (InstrumentState.ShowToFromFlag && InstrumentState.FromFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(centerX, centerY);
-                    g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                    g.RotateTransform(InstrumentState.DesiredCourseDegrees);
-                    g.TranslateTransform(-centerX, -centerY);
-                    g.DrawImage(_fromFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(centerX, centerY);
+                    destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                    destinationGraphics.RotateTransform(InstrumentState.DesiredCourseDegrees);
+                    destinationGraphics.TranslateTransform(-centerX, -centerY);
+                    destinationGraphics.DrawImage(_fromFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the range flag
                 if (InstrumentState.DmeInvalidFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_hsiRangeFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_hsiRangeFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw course deviation indicator
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                g.RotateTransform(InstrumentState.DesiredCourseDegrees);
-                g.TranslateTransform(-centerX, -centerY);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(centerX, centerY);
+                destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
+                destinationGraphics.RotateTransform(InstrumentState.DesiredCourseDegrees);
+                destinationGraphics.TranslateTransform(-centerX, -centerY);
                 var cdiPct = InstrumentState.CourseDeviationDegrees/InstrumentState.CourseDeviationLimitDegrees;
                 var cdiRange = 46.0f;
                 var cdiPos = cdiPct*cdiRange;
-                g.TranslateTransform(cdiPos, -2);
+                destinationGraphics.TranslateTransform(cdiPos, -2);
                 try
                 {
-                    g.DrawImage(_hsiCourseDeviationIndicator.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImage(_hsiCourseDeviationIndicator.MaskedImage, new Point(0, 0));
                 }
                 catch (OverflowException)
                 {
                 }
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw airplane symbol
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(0, 5);
-                g.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(0, 5);
+                destinationGraphics.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the OFF flag
                 if (InstrumentState.OffFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.RotateTransform(-25);
-                    g.TranslateTransform(20, 50);
-                    g.DrawImage(_hsiOffFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.RotateTransform(-25);
+                    destinationGraphics.TranslateTransform(20, 50);
+                    destinationGraphics.DrawImage(_hsiOffFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
     }

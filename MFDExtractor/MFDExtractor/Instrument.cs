@@ -74,7 +74,11 @@ namespace MFDExtractor
                     {
                         StartSignal.WaitOne();
                     }
-                    Render(extractorState.NightMode);
+                    if (Form != null && Form.Settings != null && Form.Settings.Enabled)
+                    {
+                        Render(extractorState.NightMode);
+                    }
+                    Thread.Sleep(0);
                 }
             }
             catch (ThreadAbortException) { }

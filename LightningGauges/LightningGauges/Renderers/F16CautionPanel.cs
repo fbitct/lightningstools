@@ -422,7 +422,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -431,310 +431,310 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = 283;
                 var height = 217;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-115, -147);
+                destinationGraphics.TranslateTransform(-115, -147);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw FLCS FAULT light
                 if (InstrumentState.FLCSFault)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_flcsFault, new Rectangle(127, 154, 57, 19), new Rectangle(35, 54, 57, 17),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_flcsFault, new Rectangle(127, 154, 57, 19), new Rectangle(35, 54, 57, 17),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw ENGINE FAULT light
                 if (InstrumentState.EngineFault)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_engineFault, new Rectangle(193, 154, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_engineFault, new Rectangle(193, 154, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw AVIONICS FAULT light
                 if (InstrumentState.AvionicsFault)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_avionicsFault, new Rectangle(262, 154, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_avionicsFault, new Rectangle(262, 154, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw SEAT NOT ARMED light
                 if (InstrumentState.SeatNotArmed)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_seatNotArmed, new Rectangle(331, 154, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_seatNotArmed, new Rectangle(331, 154, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw ELEC SYS light
                 if (InstrumentState.ElecSys)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_elecSys, new Rectangle(124, 180, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_elecSys, new Rectangle(124, 180, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw SEC light
                 if (InstrumentState.SEC)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_sec, new Rectangle(193, 180, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_sec, new Rectangle(193, 180, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw EQUIP HOT light
                 if (InstrumentState.EquipHot)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_equipHot, new Rectangle(262, 180, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_equipHot, new Rectangle(262, 180, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw NWS FAIL light
                 if (InstrumentState.NWSFail)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_nwsFail, new Rectangle(331, 180, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_nwsFail, new Rectangle(331, 180, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw PROBE HEAT light
                 if (InstrumentState.ProbeHeat)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_probeHeat, new Rectangle(124, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_probeHeat, new Rectangle(124, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw FUEL OIL HOT light
                 if (InstrumentState.FuelOilHot)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_fuelOilHot, new Rectangle(193, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_fuelOilHot, new Rectangle(193, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw RADAR ALT light
                 if (InstrumentState.RadarAlt)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_radarAlt, new Rectangle(262, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_radarAlt, new Rectangle(262, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw ANTI SKID light
                 if (InstrumentState.AntiSkid)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_antiSkid, new Rectangle(331, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_antiSkid, new Rectangle(331, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw CADC light
                 if (InstrumentState.CADC)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_CADC, new Rectangle(124, 232, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_CADC, new Rectangle(124, 232, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw INLET ICING light
                 if (InstrumentState.InletIcing)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_inletIcing, new Rectangle(193, 232, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_inletIcing, new Rectangle(193, 232, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw IFF light
                 if (InstrumentState.IFF)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_iff, new Rectangle(262, 232, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_iff, new Rectangle(262, 232, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw HOOK light
                 if (InstrumentState.Hook)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_hook, new Rectangle(331, 232, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_hook, new Rectangle(331, 232, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw STORES CONFIG light
                 if (InstrumentState.StoresConfig)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_storesConfig, new Rectangle(124, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_storesConfig, new Rectangle(124, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw OVERHEAT light
                 if (InstrumentState.Overheat)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_overheat, new Rectangle(193, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_overheat, new Rectangle(193, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw NUCLEAR light
                 if (InstrumentState.Nuclear)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_nuclear, new Rectangle(262, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_nuclear, new Rectangle(262, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw OXY LOW light
                 if (InstrumentState.OxyLow)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_oxyLow, new Rectangle(331, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_oxyLow, new Rectangle(331, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw ATF NOT ENGAGED light
                 if (InstrumentState.ATFNotEngaged)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_atfNotEngaged, new Rectangle(124, 284, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_atfNotEngaged, new Rectangle(124, 284, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw EEC light
                 if (InstrumentState.EEC)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_EEC, new Rectangle(193, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_EEC, new Rectangle(193, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw ECM light
                 if (InstrumentState.ECM)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_ECM, new Rectangle(262, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_ECM, new Rectangle(262, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw CABIN PRESS light
                 if (InstrumentState.CabinPress)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_cabinPress, new Rectangle(331, 284, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_cabinPress, new Rectangle(331, 284, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw FWD FUEL LOW light
                 if (InstrumentState.FwdFuelLow)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_fwdFuelLow, new Rectangle(124, 310, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_fwdFuelLow, new Rectangle(124, 310, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw BUC light
                 if (InstrumentState.BUC)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_BUC, new Rectangle(193, 310, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_BUC, new Rectangle(193, 310, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw slot #27 light
                 if (InstrumentState.Slot27)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_slot27, new Rectangle(262, 310, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_slot27, new Rectangle(262, 310, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw slot #28 light
                 if (InstrumentState.Slot28)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_slot28, new Rectangle(331, 310, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_slot28, new Rectangle(331, 310, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw AFT FUEL LOW light
                 if (InstrumentState.AftFuelLow)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_aftFuelLow, new Rectangle(124, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_aftFuelLow, new Rectangle(124, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw slot #30 light
                 if (InstrumentState.Slot30)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_slot30, new Rectangle(193, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_slot30, new Rectangle(193, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw slot #31 light
                 if (InstrumentState.Slot31)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_slot31, new Rectangle(262, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_slot31, new Rectangle(262, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw slot #32 light
                 if (InstrumentState.Slot32)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_slot32, new Rectangle(331, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_slot32, new Rectangle(331, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
     }

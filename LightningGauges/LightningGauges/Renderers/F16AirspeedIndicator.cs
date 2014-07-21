@@ -163,7 +163,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -172,26 +172,26 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = 191;
                 var height = 191;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-31, -34);
+                destinationGraphics.TranslateTransform(-31, -34);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 var airspeed = InstrumentState.AirspeedKnots;
                 var airspeedIndex = InstrumentState.AirspeedIndexKnots;
@@ -205,46 +205,46 @@ namespace LightningGauges.Renderers
                 //compensate for pointer image not being oriented with zero up
 
                 //draw the mach wheel
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.ScaleTransform(1.13f, 1.13f);
-                g.TranslateTransform(-13.5f, -12.5f);
-                g.TranslateTransform(125.5F, 127.5F);
-                g.RotateTransform(machAngle);
-                g.TranslateTransform(-125.5F, -127.5F);
-                g.DrawImage(_machWheel.MaskedImage,
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.ScaleTransform(1.13f, 1.13f);
+                destinationGraphics.TranslateTransform(-13.5f, -12.5f);
+                destinationGraphics.TranslateTransform(125.5F, 127.5F);
+                destinationGraphics.RotateTransform(machAngle);
+                destinationGraphics.TranslateTransform(-125.5F, -127.5F);
+                destinationGraphics.DrawImage(_machWheel.MaskedImage,
                             new Rectangle(0, 0, _machWheel.MaskedImage.Width, _machWheel.MaskedImage.Height),
                             new Rectangle(0, 0, _machWheel.MaskedImage.Width, _machWheel.MaskedImage.Height),
                             GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the airspeed pointer wheel
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.ScaleTransform(1.13f, 1.13f);
-                g.TranslateTransform(-13.5f, -12.5f);
-                g.TranslateTransform(126F, 127F);
-                g.RotateTransform(airspeedAngle);
-                g.TranslateTransform(-126F, -127F);
-                g.DrawImage(_airspeedPointerWheel.MaskedImage,
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.ScaleTransform(1.13f, 1.13f);
+                destinationGraphics.TranslateTransform(-13.5f, -12.5f);
+                destinationGraphics.TranslateTransform(126F, 127F);
+                destinationGraphics.RotateTransform(airspeedAngle);
+                destinationGraphics.TranslateTransform(-126F, -127F);
+                destinationGraphics.DrawImage(_airspeedPointerWheel.MaskedImage,
                             new Rectangle(0, 0, _airspeedPointerWheel.MaskedImage.Width,
                                           _airspeedPointerWheel.MaskedImage.Height),
                             new Rectangle(0, 0, _airspeedPointerWheel.MaskedImage.Width,
                                           _airspeedPointerWheel.MaskedImage.Height), GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the airspeed index bug
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(126, 130);
-                g.RotateTransform(airspeedIndexAngle);
-                g.TranslateTransform(-126, -130);
-                g.DrawImage(_speedBug.MaskedImage,
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(126, 130);
+                destinationGraphics.RotateTransform(airspeedIndexAngle);
+                destinationGraphics.TranslateTransform(-126, -130);
+                destinationGraphics.DrawImage(_speedBug.MaskedImage,
                             new Rectangle(0, 0, _speedBug.MaskedImage.Width, _speedBug.MaskedImage.Height),
                             new Rectangle(0, 0, _speedBug.MaskedImage.Width, _speedBug.MaskedImage.Height),
                             GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

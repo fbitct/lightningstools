@@ -6,13 +6,13 @@ namespace Common.SimSupport
 {
     public interface IInstrumentRendererBase
     {
-        void Render(Graphics g, Rectangle bounds);
+        void Render(Graphics destinationGraphics, Rectangle destinationRectangle);
         InstrumentStateBase GetState();
     }
 
     public abstract class InstrumentRendererBase : IInstrumentRenderer, IInstrumentRendererBase
     {
-        public abstract void Render(Graphics g, Rectangle bounds);
+        public abstract void Render(Graphics destinationGraphics, Rectangle destinationRectangle);
         public InstrumentStateBase GetState()
         {
             var props = GetType().GetProperties();

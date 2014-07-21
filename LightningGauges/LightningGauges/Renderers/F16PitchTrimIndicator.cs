@@ -97,7 +97,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -106,41 +106,41 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = _background.Width - 148;
                 var height = _background.Height - 148;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-75, -68);
+                destinationGraphics.TranslateTransform(-75, -68);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the needle
                 var pt = InstrumentState.PitchTrimPercent;
                 var angle = (pt/100.0f)*90;
 
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(78, 95);
-                g.TranslateTransform(20, -25);
-                g.TranslateTransform(_needle.Width/2.0f, _needle.Height/2.0f);
-                g.RotateTransform(angle);
-                g.TranslateTransform(-_needle.Width/2.0f, -_needle.Height/2.0f);
-                g.DrawImage(_needle, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(78, 95);
+                destinationGraphics.TranslateTransform(20, -25);
+                destinationGraphics.TranslateTransform(_needle.Width/2.0f, _needle.Height/2.0f);
+                destinationGraphics.RotateTransform(angle);
+                destinationGraphics.TranslateTransform(-_needle.Width/2.0f, -_needle.Height/2.0f);
+                destinationGraphics.DrawImage(_needle, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
    }

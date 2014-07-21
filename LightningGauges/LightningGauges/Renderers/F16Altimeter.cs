@@ -236,7 +236,7 @@ namespace LightningGauges.Renderers
         #endregion
 
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -245,7 +245,7 @@ namespace LightningGauges.Renderers
             lock (ImagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
                 var absIndicatedAltitude = Math.Abs(InstrumentState.IndicatedAltitudeFeetMSL);
                 //set up the canvas scale and clipping region
                 var width = 0;
@@ -264,15 +264,15 @@ namespace LightningGauges.Renderers
                         break;
                 }
 
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-20, -8);
+                destinationGraphics.TranslateTransform(-20, -8);
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
                 //calculate digits
                 float tenThousands = (int) Math.Floor((Math.Abs(absIndicatedAltitude)/10000.0f)%10);
@@ -289,33 +289,33 @@ namespace LightningGauges.Renderers
                             const float translateY = -272;
 
                             //draw ten-thousands digit
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                            g.TranslateTransform(translateX, translateY);
-                            g.TranslateTransform(0, digitHeights*tenThousands);
-                            g.DrawImage(_tenThousandsDigitsElectroMechanical, new Point(0, 0));
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                            destinationGraphics.TranslateTransform(translateX, translateY);
+                            destinationGraphics.TranslateTransform(0, digitHeights*tenThousands);
+                            destinationGraphics.DrawImage(_tenThousandsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                             //draw thousands digit
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                            g.TranslateTransform(translateX, translateY);
-                            g.TranslateTransform(0, digitHeights*thousands);
-                            g.DrawImage(_thousandsDigitsElectroMechanical, new Point(0, 0));
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                            destinationGraphics.TranslateTransform(translateX, translateY);
+                            destinationGraphics.TranslateTransform(0, digitHeights*thousands);
+                            destinationGraphics.DrawImage(_thousandsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                             //draw hundreds digit
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                            g.TranslateTransform(translateX, translateY);
-                            g.TranslateTransform(0, digitHeights * hundreds);
-                            g.DrawImage(_hundredsDigitsElectroMechanical, new Point(0, 0));
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                            destinationGraphics.TranslateTransform(translateX, translateY);
+                            destinationGraphics.TranslateTransform(0, digitHeights * hundreds);
+                            destinationGraphics.DrawImage(_hundredsDigitsElectroMechanical, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                             //draw the barometric pressure area
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             var topRectangle = new RectangleF(0, 0, width, 42);
-                            g.FillRectangle(Brushes.Black, topRectangle);
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            destinationGraphics.FillRectangle(Brushes.Black, topRectangle);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             float barometricPressureAreaWidth = 65;
                             float unitAreaWidth = 65;
                             var barometricPressureStringFormat = new StringFormat();
@@ -358,11 +358,11 @@ namespace LightningGauges.Renderers
                                                                              136, unitAreaWidth,
                                                                              topRectangle.Height - 40);
                             }
-                            g.DrawString(baroString, new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point),
+                            destinationGraphics.DrawString(baroString, new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point),
                                            barometricPressureBrush, barometricPressureRectangle, barometricPressureStringFormat);
-                            g.DrawString(unitsString, new Font(_fonts.Families[0], 4, FontStyle.Bold, GraphicsUnit.Point),
+                            destinationGraphics.DrawString(unitsString, new Font(_fonts.Families[0], 4, FontStyle.Bold, GraphicsUnit.Point),
                                            barometricPressureBrush, unitsRectangle, barometricPressureStringFormat);
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);    
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);    
                         }
                         break;
                     case F16AltimeterOptions.F16AltimeterStyle.Electronic:
@@ -402,7 +402,7 @@ namespace LightningGauges.Renderers
                             var thousandsString = string.Format("{0:#0}", thousandscombined);
                             //if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
                             if (InstrumentState.IndicatedAltitudeFeetMSL < 0) thousandsString = "-" + thousandsString; //Falcas 16-08-12
-                            g.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
+                            destinationGraphics.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
                             var allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
                             var hundredsString = allHundredsString.Substring(0, 1);
 
@@ -410,18 +410,18 @@ namespace LightningGauges.Renderers
                                                            (int)Math.Floor(((Math.Abs(absIndicatedAltitude) / 10.0f) % 10.0f)));
                             const string onesString = "0";
 
-                            g.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
-                            g.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
-                            g.DrawString(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
+                            destinationGraphics.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
+                            destinationGraphics.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
+                            destinationGraphics.DrawString(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
 
                             //draw the barometric pressure area
                             //draw top rectangle
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             var topRectangle = new RectangleF(0, 0, width, 42);
-                            g.FillRectangle(Brushes.Black, topRectangle);
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            destinationGraphics.FillRectangle(Brushes.Black, topRectangle);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             float barometricPressureAreaWidth = 65;
                             float unitAreaWidth = 65;
                             var barometricPressureStringFormat = new StringFormat();
@@ -464,49 +464,49 @@ namespace LightningGauges.Renderers
                                                                              136, unitAreaWidth,
                                                                              topRectangle.Height - 35);
                             }
-                            g.DrawString(baroString, new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point),
+                            destinationGraphics.DrawString(baroString, new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point),
                                            digitsBrush, barometricPressureRectangle, barometricPressureStringFormat);
-                            g.DrawString(unitsString, new Font(_fonts.Families[1], 6, FontStyle.Bold, GraphicsUnit.Point),
+                            destinationGraphics.DrawString(unitsString, new Font(_fonts.Families[1], 6, FontStyle.Bold, GraphicsUnit.Point),
                                            digitsBrush, unitsRectangle, barometricPressureStringFormat);
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                         }
                         break;
                 }
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 switch (Options.Style)
                 {
                     case F16AltimeterOptions.F16AltimeterStyle.Electromechanical:
-                        g.TranslateTransform(0, -11);
-                        g.DrawImage(
+                        destinationGraphics.TranslateTransform(0, -11);
+                        destinationGraphics.DrawImage(
                             InstrumentState.PneumaticModeFlag
                                 ? _backgroundElectroMechanical.MaskedImage
                                 : _backgroundElectroMechanicalNoFlag.MaskedImage, new Point(0, 0));
                         break;
                     case F16AltimeterOptions.F16AltimeterStyle.Electronic:
-                        g.TranslateTransform(0, -11);
-                        g.DrawImage(
+                        destinationGraphics.TranslateTransform(0, -11);
+                        destinationGraphics.DrawImage(
                             InstrumentState.StandbyModeFlag
                                 ? _backgroundElectronic.MaskedImage
                                 : _backgroundElectronicNoFlag.MaskedImage, new Point(0, 0));
                         break;
                 }
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the altitude hand
                 var degrees = hundreds*36;
                 const float centerX = 128;
                 const float centerY = 117;
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(centerX, centerY);
-                g.RotateTransform(degrees);
-                g.TranslateTransform(-centerX, -centerY);
-                g.DrawImage(_needle.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(centerX, centerY);
+                destinationGraphics.RotateTransform(degrees);
+                destinationGraphics.TranslateTransform(-centerX, -centerY);
+                destinationGraphics.DrawImage(_needle.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

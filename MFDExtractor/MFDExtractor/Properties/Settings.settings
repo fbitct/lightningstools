@@ -56,9 +56,6 @@
     <Setting Name="RMFD_OutputDisplay" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="TestMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="LMFD_RotateFlipType" Type="System.Drawing.RotateFlipType" Scope="User">
       <Value Profile="(Default)">RotateNoneFlipNone</Value>
     </Setting>

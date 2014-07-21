@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Threading;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor
@@ -29,9 +27,7 @@ namespace MFDExtractor
             var renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
             if (instrument.Form != null && instrument.Form.Settings != null && instrument.Form.Settings.Enabled)
             {
-                if (
-                    //extractorState.TestMode || 
-                    !renderOnlyOnStateChanges || stateIsStale || (instrument.Form != null && instrument.Form.RenderImmediately))
+                if (!renderOnlyOnStateChanges || stateIsStale || (instrument.Form != null && instrument.Form.RenderImmediately))
                 {
                     if ((extractorState.RenderCycleNum % Math.Max(instrument.Form.Settings.RenderEveryN,1) != instrument.Form.Settings.RenderOnN - 1)
                         &&

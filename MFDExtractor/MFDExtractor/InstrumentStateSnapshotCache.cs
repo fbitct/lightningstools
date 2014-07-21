@@ -23,7 +23,7 @@ namespace MFDExtractor
 			var newStateSnapshot = CaptureStateSnapshot(renderer);
 			var hashesAreDifferent = (oldStateSnapshot.HashCode != newStateSnapshot.HashCode);
 			var timeSinceHashChanged = (int)Math.Floor(DateTime.Now.Subtract(oldStateSnapshot.DateTime).TotalMilliseconds);
-			var isStale= (hashesAreDifferent ||timeSinceHashChanged > staleDataTimeout);
+			var isStale= (hashesAreDifferent ||timeSinceHashChanged >= staleDataTimeout);
             if (isStale)
             {
                  _instrumentStates.AddOrUpdate(renderer, newStateSnapshot, (x, y) => newStateSnapshot);

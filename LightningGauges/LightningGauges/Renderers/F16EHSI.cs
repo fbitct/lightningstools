@@ -282,17 +282,17 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
                 LoadImageResources();
             }
-            var gfx = g;
+            var gfx = destinationGraphics;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
-                fullBright = new Bitmap(bounds.Size.Width, bounds.Size.Height, PixelFormat.Format32bppPArgb);
+                fullBright = new Bitmap(destinationRectangle.Size.Width, destinationRectangle.Size.Height, PixelFormat.Format32bppPArgb);
                 gfx = Graphics.FromImage(fullBright);
             }
             lock (_imagesLock)
@@ -304,27 +304,27 @@ namespace LightningGauges.Renderers
                 var width = 512;
                 var height = 512;
 
-                var scaleWidth = bounds.Width;
-                var scaleHeight = bounds.Height;
+                var scaleWidth = destinationRectangle.Width;
+                var scaleHeight = destinationRectangle.Height;
 
                 if (scaleHeight > scaleWidth) scaleHeight = scaleWidth;
                 if (scaleWidth > scaleHeight) scaleWidth = scaleHeight;
 
 
                 gfx.ResetTransform(); //clear any existing transforms
-                gfx.SetClip(bounds);
+                gfx.SetClip(destinationRectangle);
                 //set the clipping region on the graphics object to our render rectangle's boundaries
-                gfx.FillRectangle(Brushes.Black, bounds);
+                gfx.FillRectangle(Brushes.Black, destinationRectangle);
 
                 float translateX = 0;
                 float translateY = 0;
-                if (scaleWidth < bounds.Width)
+                if (scaleWidth < destinationRectangle.Width)
                 {
-                    translateX = (bounds.Width - scaleWidth)/2.0f;
+                    translateX = (destinationRectangle.Width - scaleWidth)/2.0f;
                 }
-                if (scaleHeight < bounds.Height)
+                if (scaleHeight < destinationRectangle.Height)
                 {
-                    translateY = (bounds.Height - scaleHeight)/2.0f;
+                    translateY = (destinationRectangle.Height - scaleHeight)/2.0f;
                 }
                 gfx.TranslateTransform(translateX, translateY);
                 gfx.ScaleTransform(scaleWidth/(float) width, scaleHeight/(float) height);
@@ -405,7 +405,7 @@ namespace LightningGauges.Renderers
                 var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
-                g.DrawImage(fullBright, bounds, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
+                destinationGraphics.DrawImage(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }

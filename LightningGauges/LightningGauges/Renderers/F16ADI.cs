@@ -294,7 +294,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -303,20 +303,20 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = _background.Image.Width - 66;
                 var height = _background.Image.Height - 55;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-32, -31);
+                destinationGraphics.TranslateTransform(-32, -31);
 
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
                 //draw the ball
                 var pixelsPerDegreePitch = 2.0f;
@@ -328,33 +328,33 @@ namespace LightningGauges.Renderers
                 var sourceRect = new RectangleF(leftPixelX, topPixelY, 160, 160);
                 var destRect = new RectangleF(48, 40, sourceRect.Width, sourceRect.Height);
 
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(128, 118);
-                g.RotateTransform(-rollDegrees);
-                g.TranslateTransform(-128, -118);
-                g.TranslateTransform(-2, 0);
-                g.DrawImage(_ball, destRect, sourceRect, GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(128, 118);
+                destinationGraphics.RotateTransform(-rollDegrees);
+                destinationGraphics.TranslateTransform(-128, -118);
+                destinationGraphics.TranslateTransform(-2, 0);
+                destinationGraphics.DrawImage(_ball, destRect, sourceRect, GraphicsUnit.Pixel);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the arrows
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(128, 118);
-                g.RotateTransform(-rollDegrees);
-                g.TranslateTransform(-128, -118);
-                g.TranslateTransform(0, -10);
-                g.DrawImage(_arrows.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(128, 118);
+                destinationGraphics.RotateTransform(-rollDegrees);
+                destinationGraphics.TranslateTransform(-128, -118);
+                destinationGraphics.TranslateTransform(0, -10);
+                destinationGraphics.DrawImage(_arrows.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the airplane symbol
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(0, -5);
-                g.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(0, -5);
+                destinationGraphics.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 if (InstrumentState.ShowCommandBars && !InstrumentState.OffFlag)
                 {
                     //draw the localizer bar
@@ -365,10 +365,10 @@ namespace LightningGauges.Renderers
                         {
                             var canvasRange = 36.0f;
                             var pos = (canvasRange*positionPct);
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                            g.TranslateTransform(pos, -10.0f);
-                            g.DrawImage(_verticalBar.MaskedImage, new Point(0, 0));
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                            destinationGraphics.TranslateTransform(pos, -10.0f);
+                            destinationGraphics.DrawImage(_verticalBar.MaskedImage, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                         }
                     }
 
@@ -378,12 +378,12 @@ namespace LightningGauges.Renderers
                                           InstrumentState.GlideslopeDeviationLimitDegrees;
                         if (Math.Abs(positionPct) <= 1.0f)
                         {
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             var canvasRange = 46.0f;
                             var pos = (-canvasRange*positionPct);
-                            g.TranslateTransform(0.0f, pos);
-                            g.DrawImage(_horizontalBar.MaskedImage, new Point(0, 0));
-                            GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                            destinationGraphics.TranslateTransform(0.0f, pos);
+                            destinationGraphics.DrawImage(_horizontalBar.MaskedImage, new Point(0, 0));
+                            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                         }
                     }
                 }
@@ -392,52 +392,52 @@ namespace LightningGauges.Renderers
                 //if (InstrumentState.LocalizerFlag || InstrumentState.OffFlag)
                 if (InstrumentState.LocalizerFlag ) //Falcas 28-10-2012 LOC flag is not linked to the OffFlag
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.RotateTransform(25);
-                    g.TranslateTransform(85, -133);
-                    g.DrawImage(_localizerFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.RotateTransform(25);
+                    destinationGraphics.TranslateTransform(85, -133);
+                    destinationGraphics.DrawImage(_localizerFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the glideslope flag
                 //if (InstrumentState.GlideslopeFlag || InstrumentState.OffFlag)
                 if (InstrumentState.GlideslopeFlag)//Falcas 28-10-2012 GS flag is not linked to the OffFlag
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.RotateTransform(-25);
-                    g.TranslateTransform(-113, -25);
-                    g.DrawImage(_glideslopeFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.RotateTransform(-25);
+                    destinationGraphics.TranslateTransform(-113, -25);
+                    destinationGraphics.DrawImage(_glideslopeFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the aux flag
                 if (InstrumentState.AuxFlag || InstrumentState.OffFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.RotateTransform(-25);
-                    g.TranslateTransform(-12, 102);
-                    g.DrawImage(_auxFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.RotateTransform(-25);
+                    destinationGraphics.TranslateTransform(-12, 102);
+                    destinationGraphics.DrawImage(_auxFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the off flag
                 if (InstrumentState.OffFlag)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.RotateTransform(25);
-                    g.TranslateTransform(-15, -8);
-                    g.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.RotateTransform(25);
+                    destinationGraphics.TranslateTransform(-15, -8);
+                    destinationGraphics.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the slip indicator ball
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_slipIndicatorBall.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_slipIndicatorBall.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

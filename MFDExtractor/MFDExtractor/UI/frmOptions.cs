@@ -840,15 +840,9 @@ namespace MFDExtractor.UI
             Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
             if (persist) //persist the user settings to disk
             {
-				bool testMode = Extractor.State.TestMode; //store whether we're in test mode
-                settings.TestMode = false; //clear test mode flag from the current settings cache (in-memory)
 				_extractorRunningStateOnFormOpen = Extractor.State.Running;
                 //store current Extractor instance's "isRunning" state
                 settings.Save(); //save our new settings to the current settings cache (on-disk)
-                settings.TestMode = testMode; //reset the test-mode flag in the current settings cache
-
-                //we have to do the above steps because we don't want the test-mode flag
-                //to be persisted to disk, but we do need it in memory to signal the Extractor
             }
             if (persist)
             {

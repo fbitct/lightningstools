@@ -98,7 +98,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -107,49 +107,49 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = _background.Image.Width - (92);
                 var height = _background.Image.Height - (101);
                 width -= 117;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
 
-                g.TranslateTransform(-46, -50);
-                g.TranslateTransform(-55, 0);
+                destinationGraphics.TranslateTransform(-46, -50);
+                destinationGraphics.TranslateTransform(-55, 0);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 if (InstrumentState.AoaAbove)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_aoaHigh.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_aoaHigh.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 if (InstrumentState.AoaBelow)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_aoaLow.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_aoaLow.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 if (InstrumentState.AoaOn)
                 {
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.DrawImage(_aoaOn.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.DrawImage(_aoaOn.MaskedImage, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

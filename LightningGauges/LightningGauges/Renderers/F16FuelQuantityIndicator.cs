@@ -190,7 +190,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -199,19 +199,19 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = 176;
                 var height = 176;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-40, -40);
+                destinationGraphics.TranslateTransform(-40, -40);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
                 var hundredsDigit = (InstrumentState.TotalFuelQuantityPounds/100.0f)%10.0f;
                 var thousandsDigit = (float) Math.Truncate((InstrumentState.TotalFuelQuantityPounds/1000.0f))%10.0f;
@@ -224,96 +224,96 @@ namespace LightningGauges.Renderers
                 {
                     xOffset = -100;
                     var yOffsetToActual = yOffsetToZero;
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(xOffset, yOffsetToActual);
-                    g.DrawImage(_digits, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
+                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the tens digit
                 {
                     xOffset = -116;
                     var yOffsetToActual = yOffsetToZero;
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(xOffset, yOffsetToActual);
-                    g.DrawImage(_digits, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
+                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the hundreds digit
                 {
                     xOffset = -132;
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(xOffset, yOffsetToActual);
-                    g.DrawImage(_digits, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
+                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the thousands digit
                 {
                     xOffset = -148;
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(xOffset, yOffsetToActual);
-                    g.DrawImage(_digits, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
+                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the ten-thousands digit
                 {
                     xOffset = -164;
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                    g.TranslateTransform(xOffset, yOffsetToActual);
-                    g.DrawImage(_digits, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                    destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
+                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background.MaskedImage,
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background.MaskedImage,
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 var baseAngle = 0.0f;
                 //draw the aft/left needle
                 var aftLeftNeedleAngle = baseAngle + GetAngle(InstrumentState.AftLeftFuelQuantityPounds);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(_background.MaskedImage.Width/2.0f, _background.MaskedImage.Height/2.0f);
-                g.RotateTransform(aftLeftNeedleAngle);
-                g.TranslateTransform(-_background.MaskedImage.Width/2.0f, -_background.MaskedImage.Height/2.0f);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(_background.MaskedImage.Width/2.0f, _background.MaskedImage.Height/2.0f);
+                destinationGraphics.RotateTransform(aftLeftNeedleAngle);
+                destinationGraphics.TranslateTransform(-_background.MaskedImage.Width/2.0f, -_background.MaskedImage.Height/2.0f);
                 if (Options.NeedleType == F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel)
                 {
-                    g.DrawImage(_aftLeftArrowCModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImage(_aftLeftArrowCModel.MaskedImage, new Point(0, 0));
                 }
                 else if (Options.NeedleType == F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel)
                 {
-                    g.DrawImage(_aftLeftArrowDModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImage(_aftLeftArrowDModel.MaskedImage, new Point(0, 0));
                 }
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the fore/right needle
                 var foreRightNeedleAngle = baseAngle + GetAngle(InstrumentState.ForeRightFuelQuantityPounds);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.TranslateTransform(_background.MaskedImage.Width/2.0f, _background.MaskedImage.Height/2.0f);
-                g.RotateTransform(foreRightNeedleAngle);
-                g.TranslateTransform(-_background.MaskedImage.Width/2.0f, -_background.MaskedImage.Height/2.0f);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.TranslateTransform(_background.MaskedImage.Width/2.0f, _background.MaskedImage.Height/2.0f);
+                destinationGraphics.RotateTransform(foreRightNeedleAngle);
+                destinationGraphics.TranslateTransform(-_background.MaskedImage.Width/2.0f, -_background.MaskedImage.Height/2.0f);
                 if (Options.NeedleType == F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel)
                 {
-                    g.DrawImage(_foreRightArrowCModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImage(_foreRightArrowCModel.MaskedImage, new Point(0, 0));
                 }
                 else if (Options.NeedleType == F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel)
                 {
-                    g.DrawImage(_foreRightArrowDModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImage(_foreRightArrowDModel.MaskedImage, new Point(0, 0));
                 }
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

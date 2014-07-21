@@ -150,7 +150,7 @@ namespace LightningGauges.Renderers
 
         #endregion
 
-        public override void Render(Graphics g, Rectangle bounds)
+        public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
             if (!_imagesLoaded)
             {
@@ -159,26 +159,26 @@ namespace LightningGauges.Renderers
             lock (_imagesLock)
             {
                 //store the canvas's transform and clip settings so we can restore them later
-                var initialState = g.Save();
+                var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
                 var width = 336;
                 var height = 88;
-                g.ResetTransform(); //clear any existing transforms
-                g.SetClip(bounds); //set the clipping region on the graphics object to our render rectangle's boundaries
-                g.FillRectangle(Brushes.Black, bounds);
-                g.ScaleTransform(bounds.Width/(float) width, bounds.Height/(float) height);
+                destinationGraphics.ResetTransform(); //clear any existing transforms
+                destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
+                destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
+                destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
                 //set the initial scale transformation 
-                g.TranslateTransform(-90, -29);
+                destinationGraphics.TranslateTransform(-90, -29);
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
-                var basicState = g.Save();
+                var basicState = destinationGraphics.Save();
 
 
                 //draw the background image
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
-                g.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+                destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
-                GraphicsUtil.RestoreGraphicsState(g, ref basicState);
+                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 float translateX = 162;
                 float translateY = 72;
@@ -195,7 +195,7 @@ namespace LightningGauges.Renderers
                         countString = "AUTO"; //Falcas 04/09/2012 to match what you see in BMS
                     }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    g.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 //draw the Other2 count
@@ -209,7 +209,7 @@ namespace LightningGauges.Renderers
                         countString = "DEGR";//Falcas 04/09/2012 to match what you see in BMS
                     }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    g.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 //draw the Chaff count
@@ -222,7 +222,7 @@ namespace LightningGauges.Renderers
                     //    countString = "GO";
                     //}
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    g.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 //draw the Flare count
@@ -235,33 +235,33 @@ namespace LightningGauges.Renderers
                     //    countString = "BYP";
                     //}
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    g.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 RectangleF dispenseReadyRectangle = new Rectangle(283, 36, 115, 21);
-                g.FillRectangle(Brushes.Black, dispenseReadyRectangle);
+                destinationGraphics.FillRectangle(Brushes.Black, dispenseReadyRectangle);
                 if (InstrumentState.DispenseReady)
                 {
-                    g.DrawString("DISPENSE RDY", _legendFont, _digitBrush, dispenseReadyRectangle, _digitStringFormat);
+                    destinationGraphics.DrawString("DISPENSE RDY", _legendFont, _digitBrush, dispenseReadyRectangle, _digitStringFormat);
                 }
 
                 RectangleF goRectangle = new Rectangle(220, 37, 25, 18);
-                g.FillRectangle(Brushes.Black, goRectangle);
+                destinationGraphics.FillRectangle(Brushes.Black, goRectangle);
                 if (InstrumentState.Go)
                 {
-                    g.DrawString("GO", _legendFont, _digitBrush, goRectangle, _digitStringFormat);
+                    destinationGraphics.DrawString("GO", _legendFont, _digitBrush, goRectangle, _digitStringFormat);
                 }
 
                 RectangleF noGoRectangle = new Rectangle(166, 36, 45, 21);
-                g.FillRectangle(Brushes.Black, noGoRectangle);
+                destinationGraphics.FillRectangle(Brushes.Black, noGoRectangle);
                 if (InstrumentState.NoGo)
                 {
-                    g.DrawString("NO GO", _legendFont, _digitBrush, noGoRectangle, _digitStringFormat);
+                    destinationGraphics.DrawString("NO GO", _legendFont, _digitBrush, noGoRectangle, _digitStringFormat);
                 }
 
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
-                g.Restore(initialState);
+                destinationGraphics.Restore(initialState);
             }
         }
 

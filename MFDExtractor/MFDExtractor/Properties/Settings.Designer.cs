@@ -241,18 +241,6 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool TestMode {
-            get {
-                return ((bool)(this["TestMode"]));
-            }
-            set {
-                this["TestMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("RotateNoneFlipNone")]
         public global::System.Drawing.RotateFlipType LMFD_RotateFlipType {
             get {

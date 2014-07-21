@@ -159,8 +159,8 @@ namespace MFDExtractor
             {
                 return;
             }
-            KeyFileUtils.ResetCurrentKeyFile();
             OnStarting();
+            KeyFileUtils.ResetCurrentKeyFile();
 	        _keySettings = _keySettingsReader.Read();
             if (Mediator != null)
             {
@@ -423,7 +423,6 @@ namespace MFDExtractor
                     var thisLoopFinishTime = DateTime.Now;
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
                     var millisToSleep = Settings.Default.PollingDelay - ((int) timeElapsed.TotalMilliseconds);
-                    if (State.TestMode) millisToSleep = 500;
                     var sleepUntil = DateTime.Now.Add(new TimeSpan(0, 0, 0, 0, millisToSleep));
                     while (DateTime.Now < sleepUntil)
                     {
@@ -433,10 +432,6 @@ namespace MFDExtractor
                         Application.DoEvents();
                     }
                     Application.DoEvents();
-                     if (State.TestMode)
-                    {
-                        Thread.Sleep(50);
-                    }
                 }
                 Debug.WriteLine("CaptureThreadWork has exited.");
             }
@@ -528,23 +523,6 @@ namespace MFDExtractor
 	                break;
 	        }
 	    }
-
-
-	    private static void WaitAllAndClearList(List<WaitHandle> waitHandles, int millisecondsTimeout)
-        {
-            if (waitHandles == null || waitHandles.Count <= 0) return;
-            try
-            {
-                WaitHandle.WaitAll(waitHandles.ToArray(), millisecondsTimeout);
-            }
-            catch (TimeoutException)
-            {
-            }
-            catch (DuplicateWaitObjectException) //this can happen somehow if our list is not cleared 
-            {
-            }
-            waitHandles.Clear();
-        }
 
         private void SimStatusMonitorThreadWork()
         {
