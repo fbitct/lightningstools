@@ -33,7 +33,7 @@ namespace MFDExtractor.FlightDataAdapters
 				mfd.InstrumentState.Blank = !extractorState.SimRunning;
 			    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Server)
 			    {
-			        ExtractorServer.SetInstrumentImagesSprite( mfd.InstrumentState.SourceImage, instrumentType);
+			        ExtractorServer.SetInstrumentImage( mfd.InstrumentState.SourceImage, instrumentType);
 			    }
 			}
 		}

@@ -69,6 +69,7 @@ namespace MFDExtractor.Networking
             _latestTexSharedmemImages.TryGetValue(instrumentType, out image);
             //TODO: check image format when BMS is set to 16-bit color, see if it's 565 or 555
             Util.ConvertPixelFormat(ref image, PixelFormat.Format16bppRgb565);
+            _latestTexSharedmemImages.AddOrUpdate(instrumentType, (x) => image, (x, y) => image);
             toReturn = Util.BytesFromBitmap(image, _compressionType, _imageFormat);
             return toReturn;
         }
@@ -207,7 +208,7 @@ namespace MFDExtractor.Networking
         internal static void SetInstrumentImage(Image bitmap, InstrumentType instrumentType)
         {
             var cloned = Util.CloneBitmap(bitmap);
-            _latestTexSharedmemImages.TryAdd(instrumentType, cloned);
+            _latestTexSharedmemImages.AddOrUpdate(instrumentType, (x) => cloned, (x, y) => cloned);
         }
 
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)
