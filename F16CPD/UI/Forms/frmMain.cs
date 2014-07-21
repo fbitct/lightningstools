@@ -574,7 +574,6 @@ namespace F16CPD.UI.Forms
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose();
             if (!_isDisposed)
             {
                 if (disposing)
@@ -585,6 +584,7 @@ namespace F16CPD.UI.Forms
             }
             // Code to dispose the un-managed resources of the class
             _isDisposed = true;
+
         }
 
         #endregion
