@@ -16,7 +16,7 @@ namespace MFDExtractor
         private readonly ISharedmemReaderFactory _sharedmemReaderFactory;
         private readonly IExtractorClient _extractorClient;
         public FlightDataRetriever(
-            IExtractorClient extractorClient,
+            IExtractorClient extractorClient=null,
             ISharedmemReaderFactory sharedmemReaderFactory= null
             )
         {
@@ -42,7 +42,7 @@ namespace MFDExtractor
 		        }
 			        break;
 		        case NetworkMode.Client:
-			        toReturn = _extractorClient.GetFlightData();
+			        toReturn = _extractorClient !=null ? _extractorClient.GetFlightData(): EmptyFlightData;
 			        break;
 	        }
 	        return toReturn ?? EmptyFlightData;

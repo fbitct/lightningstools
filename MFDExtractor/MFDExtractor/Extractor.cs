@@ -38,7 +38,7 @@ namespace MFDExtractor
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
         #region Output Window Coordinates
 
-        private readonly IFlightDataUpdater _flightDataUpdater;
+        private IFlightDataUpdater _flightDataUpdater;
 
         #endregion
 
@@ -137,7 +137,7 @@ namespace MFDExtractor
 			_keyUpEventHandler = keyUpEventHandler ??  new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
-            _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever(_client);
+            _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever();
 			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
 	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater(_texSmReader, _sharedMemorySpriteCoordinates, State);
         }
@@ -304,6 +304,8 @@ namespace MFDExtractor
                 _client = new ExtractorClient(_serverEndpoint, ServiceName);
                 _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
                 _flightDataRetriever = new FlightDataRetriever(_client);
+                _flightDataUpdater = new FlightDataUpdater(_texSmReader, _sharedMemorySpriteCoordinates, State, null, _client);
+
             }
             catch {}
         }
