@@ -25,7 +25,7 @@ namespace MFDExtractor
 		private readonly ExtractorState _extractorState;
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates;
-        private readonly ITerrainDBFactory _terrainDBFactory;
+
         public FlightDataUpdater(F4TexSharedMem.IReader texSharedmemReader, 
             SharedMemorySpriteCoordinates sharedMemorySpriteCoordinates, 
             ExtractorState extractorState, 
@@ -189,11 +189,11 @@ namespace MFDExtractor
                 renderers.ISIS.InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-            _flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.LMFD));
-            _flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.RMFD));
-            _flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.MFD3));
-            _flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.MFD4));
-            _flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, _texSharedmemReader.GetImage(_sharedMemorySpriteCoordinates.HUD));
+            _flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, _texSharedmemReader,_sharedMemorySpriteCoordinates.LMFD);
+            _flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, _texSharedmemReader,_sharedMemorySpriteCoordinates.RMFD);
+            _flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, _texSharedmemReader,_sharedMemorySpriteCoordinates.MFD3);
+            _flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, _texSharedmemReader,_sharedMemorySpriteCoordinates.MFD4);
+            _flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, _texSharedmemReader, _sharedMemorySpriteCoordinates.HUD);
 		}
 
         private static void SetISISPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)

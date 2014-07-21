@@ -35,7 +35,11 @@ namespace MFDExtractor.Renderer
 			}
 			else
 			{
-				if (InstrumentState.SourceImage != null)
+			    if (InstrumentState.SourceImage == null || InstrumentState.SourceRectangle == Rectangle.Empty)
+			    {
+                    destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle, new Rectangle(new Point(0, 0), Options.BlankImage.Size), GraphicsUnit.Pixel);
+			    }
+                else
 				{
 				    RenderFromSharedmemSurface(destinationGraphics, destinationRectangle);
 				}
