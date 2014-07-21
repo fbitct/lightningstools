@@ -204,10 +204,10 @@ namespace MFDExtractor.Networking
 
         
 
-        internal static void SetInstrumentImagesSprite(Image bitmap, InstrumentType instrumentType)
+        internal static void SetInstrumentImage(Image bitmap, InstrumentType instrumentType)
         {
             var cloned = Util.CloneBitmap(bitmap);
-            _latestTexSharedmemImages.TryAdd(instrumentType, bitmap);
+            _latestTexSharedmemImages.TryAdd(instrumentType, cloned);
         }
 
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)
