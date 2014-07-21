@@ -230,6 +230,7 @@ namespace F16CPD
             try
             {
                 _manager.ProcessPendingMessages();
+                _simSupportModule.UpdateManagerFlightData();
                 if (Settings.Default.RunAsServer)
                 {
                     return; //no rendering needed in server mode
