@@ -364,7 +364,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:.NETFramework,Version=v4.0"
+                "FrameworkVersion" = "8:.NETFramework,Version=v4.5.1"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9CFB2D51-5FF4-4491-B0E5-B386F32C0992"
                 }
