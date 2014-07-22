@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace F16CPD.SimSupport.Falcon4
+namespace Common.Statistics
 {
-    internal interface IMedianOfSamplesCalculator
+    public interface IMedianOfSamplesCalculator
     {
         float MedianSampleValue(List<TimestampedFloatValue> values);
     }
-    class MedianOfSamplesCalculator:IMedianOfSamplesCalculator
+    public class MedianOfSamplesCalculator:IMedianOfSamplesCalculator
     {
         public float MedianSampleValue(List<TimestampedFloatValue> values)
         {

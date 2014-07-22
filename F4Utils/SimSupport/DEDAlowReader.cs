@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace F16CPD.SimSupport.Falcon4
+namespace F4Utils.SimSupport
 {
-    internal interface IDEDAlowReader
+    public interface IDEDAlowReader
     {
         bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow);
     }
-    class DEDAlowReader:IDEDAlowReader
+    public class DEDAlowReader:IDEDAlowReader
     {
         public bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow)
         {

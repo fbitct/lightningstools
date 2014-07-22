@@ -170,7 +170,6 @@
     <Compile Include="SimSupport\Falcon4\EventHandlers\DecreaseAlowEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\AverageOfSamplesCalculator.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\DecreaseBaroEventHandler.cs" />
-    <Compile Include="SimSupport\Falcon4\DEDAlowReader.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\HeadingSelectDecreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\HeadingSelectIncreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\IncreaseAlowEventHandler.cs" />
@@ -187,7 +186,6 @@
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetHsiModeTcnEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\FalconDataFormatDetector.cs" />
     <Compile Include="SimSupport\Falcon4\IndicatedRateOfTurnCalculator.cs" />
-    <Compile Include="SimSupport\Falcon4\MedianOfSamplesCalculator.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransNormEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransWingFirstEventHandler.cs" />
@@ -195,7 +193,6 @@
     <Compile Include="SimSupport\Falcon4\Networking\ServerSideInboundMessageProcessor.cs" />
     <Compile Include="SimSupport\Falcon4\TacanBand.cs" />
     <Compile Include="SimSupport\Falcon4\TacanChannelSource.cs" />
-    <Compile Include="SimSupport\TimestampedFloatValue.cs" />
     <Compile Include="SimSupport\Falcon4\FalconCallbackSender.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\InputControlEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\OptionSelectButtonPressHandler.cs" />

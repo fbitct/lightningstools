@@ -13,6 +13,7 @@ using F16CPD.Properties;
 using F4KeyFile;
 using F4SharedMem;
 using F4SharedMem.Headers;
+using F4Utils.SimSupport;
 using F4Utils.Terrain;
 using log4net;
 using Message = F16CPD.Networking.Message;
