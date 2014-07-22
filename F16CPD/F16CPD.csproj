@@ -191,8 +191,6 @@
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransWingFirstEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\Networking\ClientSideInboundMessageProcessor.cs" />
     <Compile Include="SimSupport\Falcon4\Networking\ServerSideInboundMessageProcessor.cs" />
-    <Compile Include="SimSupport\Falcon4\TacanBand.cs" />
-    <Compile Include="SimSupport\Falcon4\TacanChannelSource.cs" />
     <Compile Include="SimSupport\Falcon4\FalconCallbackSender.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\InputControlEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\OptionSelectButtonPressHandler.cs" />
@@ -240,7 +238,6 @@
     <Compile Include="Mfd\Controls\MfdInputControl.cs" />
     <Compile Include="Mfd\MfdManager.cs" />
     <Compile Include="Mfd\Controls\MomentaryButtonMfdInputControl.cs" />
-    <Compile Include="MorseCode.cs" />
     <Compile Include="Mfd\Controls\OptionSelectButton.cs" />
     <Compile Include="FlightInstruments\Pfd.cs" />
     <Compile Include="Program.cs" />

@@ -14,7 +14,7 @@ namespace F16CPD.SimSupport.Falcon4
     {
         private TimestampedFloatValue _lastHeadingSample;
         private List<TimestampedFloatValue> _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
-        private IMedianOfSamplesCalculator _medianOfSamplesCalculator = new MedianOfSamplesCalculator();
+        private readonly IMedianOfSamplesCalculator _medianOfSamplesCalculator = new MedianOfSamplesCalculator();
         
         public void DetermineIndicatedRateOfTurn(FlightData flightData)
         {

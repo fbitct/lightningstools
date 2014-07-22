@@ -6,6 +6,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
+using Common.SimSupport;
 using F16CPD.FlightInstruments;
 using F16CPD.Mfd.Controls;
 using F16CPD.Networking;

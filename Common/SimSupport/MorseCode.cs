@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 
-namespace F16CPD
+namespace Common.SimSupport
 {
     public static class MorseCodeTest
     {

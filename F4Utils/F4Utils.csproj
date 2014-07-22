@@ -90,6 +90,8 @@
     <Compile Include="Campaign\Waypoint.cs" />
     <Compile Include="Campaign\WthFile.cs" />
     <Compile Include="SimSupport\DEDAlowReader.cs" />
+    <Compile Include="SimSupport\TacanBand.cs" />
+    <Compile Include="SimSupport\TacanChannelSource.cs" />
     <Compile Include="Terrain\ColumnAndRowElevationPostRecordRetriever.cs" />
     <Compile Include="Terrain\CurrentTheaterDotTdfLoader.cs" />
     <Compile Include="Terrain\CurrentTheaterNameDetector.cs" />

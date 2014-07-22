@@ -208,6 +208,7 @@
     <Compile Include="SimSupport\InstrumentRendererBase.cs" />
     <Compile Include="SimSupport\InstrumentStateBase.cs" />
     <Compile Include="SimSupport\ISimOutput.cs" />
+    <Compile Include="SimSupport\MorseCode.cs" />
     <Compile Include="SimSupport\SimCommand.cs" />
     <Compile Include="SimSupport\SimSupportModule.cs" />
     <Compile Include="SimSupport\SimSupportModuleRegistry.cs" />
