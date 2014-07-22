@@ -769,7 +769,7 @@ namespace F16CPD.FlightInstruments
 
             var groundSpeed = string.Format("{0:GS 000}",
                                             Manager.FlightData.GroundSpeedInDecimalFeetPerSecond/
-                                            Constants.FPS_PER_KNOT);
+                                            Common.Math.Constants.FPS_PER_KNOT);
             var mach = string.Format("{0:M 0.00}", Manager.FlightData.MachNumber);
             var alow = string.Format("{0:00000}", Manager.FlightData.AutomaticLowAltitudeWarningInFeet);
             var agl = Manager.FlightData.AltitudeAboveGroundLevelInDecimalFeet;
@@ -1238,7 +1238,7 @@ namespace F16CPD.FlightInstruments
                               new Size(airspeedStripBoundingBox.Width, 25));
 
             var airspeedFps = Manager.FlightData.IndicatedAirspeedInDecimalFeetPerSecond;
-            var airspeedKnots = (float) (Math.Round((airspeedFps/Constants.FPS_PER_KNOT), 1));
+            var airspeedKnots = (float) (Math.Round((airspeedFps/Common.Math.Constants.FPS_PER_KNOT), 1));
             float airspeedIndexKnots = Manager.AirspeedIndexInKnots;
 
 

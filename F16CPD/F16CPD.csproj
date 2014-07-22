@@ -165,7 +165,6 @@
     <Compile Include="Networking\IF16CPDClient.cs" />
     <Compile Include="Networking\IF16CPDServer.cs" />
     <Compile Include="Networking\Message.cs" />
-    <Compile Include="PdfRenderEngine.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\CourseSelectDecreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\CourseSelectIncreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\DecreaseAlowEventHandler.cs" />

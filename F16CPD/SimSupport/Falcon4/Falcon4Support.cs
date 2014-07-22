@@ -429,7 +429,7 @@ namespace F16CPD.SimSupport.Falcon4
             }
             else
             {
-                flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias * Constants.FPS_PER_KNOT;
+                flightData.IndicatedAirspeedInDecimalFeetPerSecond = fromFalcon.kias * Common.Math.Constants.FPS_PER_KNOT;
             }
         }
 

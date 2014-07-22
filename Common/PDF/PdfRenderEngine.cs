@@ -6,11 +6,11 @@ using System.Text.RegularExpressions;
 using log4net;
 using Microsoft.Win32;
 
-namespace F16CPD
+namespace Common.PDF
 {
     public static class PdfRenderEngine
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (PdfRenderEngine));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (PdfRenderEngine));
         private static bool _loaded;
         private static bool _checked;
 
@@ -90,7 +90,7 @@ namespace F16CPD
             }
             catch (Exception e)
             {
-                _log.Debug(e.Message, e);
+                Log.Debug(e.Message, e);
                 return false;
             }
 
@@ -159,24 +159,11 @@ namespace F16CPD
             return strBytes;
         }
 
-        private static string GetFileNameWithoutExtension(string filename)
-        {
-            if (filename == null) return null;
-            var fi = new FileInfo(filename);
-            var extension = fi.Extension;
-            var toReturn = filename;
-            if (fi.Extension != null && fi.Extension.Length > 0)
-            {
-                toReturn = toReturn.Substring(0, toReturn.Length - fi.Extension.Length);
-            }
-            return toReturn;
-        }
-
         public static Bitmap GeneratePageBitmap(string pdfPath, int page, Size size)
         {
             var outputFileName = Path.GetTempFileName();
-            var outputPath = Common.Win32.Paths.Util.GetShortPathName(outputFileName);
-            var inputPath = Common.Win32.Paths.Util.GetShortPathName(pdfPath);
+            var outputPath = Win32.Paths.Util.GetShortPathName(outputFileName);
+            var inputPath = Win32.Paths.Util.GetShortPathName(pdfPath);
             var fi = new FileInfo(outputPath);
 
             Bitmap toReturn = null;
@@ -194,7 +181,7 @@ namespace F16CPD
                     }
                     catch (Exception e)
                     {
-                        _log.Debug(e.Message, e);
+                        Log.Debug(e.Message, e);
                     }
                 }
             }
@@ -206,7 +193,7 @@ namespace F16CPD
                 }
                 catch (IOException e)
                 {
-                    _log.Debug(e.Message, e);
+                    Log.Debug(e.Message, e);
                 }
             }
             return toReturn;

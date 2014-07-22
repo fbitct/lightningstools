@@ -177,8 +177,8 @@ namespace F16CPD.SimSupport.Falcon4
 
             //calculate how much terrain distance to render at specified scale in order to fill the screen 
             var terrainWidthToRenderInNauticalMiles = (originalRenderDiameterInScreenInches / (1.0000000000f / mapScale)) /
-                                                      Constants.INCHES_PER_NAUTICAL_MILE;
-            var terrainWidthToRenderInFeet = terrainWidthToRenderInNauticalMiles * Constants.FEET_PER_NM;
+                                                      Common.Math.Constants.INCHES_PER_NAUTICAL_MILE;
+            var terrainWidthToRenderInFeet = terrainWidthToRenderInNauticalMiles * Common.Math.Constants.FEET_PER_NM;
 
             var outerMapRingDiameterPixelsUnscaled = ((rangeRingDiameterInNauticalMiles) /
                                                       terrainWidthToRenderInNauticalMiles) *
