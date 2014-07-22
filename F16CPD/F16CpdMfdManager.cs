@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,11 +15,11 @@ using F16CPD.FlightInstruments;
 using F16CPD.Mfd;
 using F16CPD.Mfd.Controls;
 using F16CPD.Mfd.Menus;
+using F16CPD.Mfd.Menus.InstrumentsDisplay;
 using F16CPD.Networking;
 using F16CPD.Properties;
 using F16CPD.SimSupport;
 using Message = F16CPD.Networking.Message;
-using F16CPD.Mfd.Menus.InstrumentsDisplay;
 
 namespace F16CPD
 {
@@ -39,7 +40,27 @@ namespace F16CPD
     {
         private const int MAX_BRIGHTNESS = 255;
         private const int NUM_BRIGHTNESS_STEPS = 30;
+        private readonly IBitmapAnnotationMenuPageFactory _bitmapAnnotationMenuPageFactory;
+        private readonly IBrightnessDecreaseButtonFactory _brightnessDecreaseButtonFactory;
+        private readonly IBrightnessIncreaseButtonFactory _brightnessIncreaseButtonFactory;
+        private readonly IChartsMenuPageFactory _chartsMenuPageFactory;
+        private readonly IChecklistMenuPageFactory _checklistMenuPageFactory;
+        private readonly IControlMapMenuPageFactory _controlMapMenuPageFactory;
+        private readonly IControlOverlayMenuPageFactory _controlOverlayMenuPageFactory;
+        private readonly IDayModeButtonFactory _dayModeButtonFactory;
+        private readonly IExtFuelTransSwitchFactory _extFuelTransSwitchFactory;
+        private readonly IFuelSelectSwitchFactory _fuelSelectSwitchFactory;
+        private readonly IHsiModeSlectorSwitchFactory _hsiModeSelectorSwitchFactory;
+        private readonly IInstrumentsDisplayMenuPageFactory _instrumentsDisplayMenuPageFactory;
         private readonly object _mapImageLock = new object();
+        private readonly IMessageMenuPageFactory _messagePageMenuFactory;
+        private readonly IMfdInputControlFinder _mfdInputControlFinder;
+        private readonly INightModeButtonFactory _nightModeButtonFactory;
+        private readonly IParamSelectKnobFactory _paramSelectKnobFactory;
+        private readonly IPrimaryMenuPageFactory _primaryMenuPageFactory;
+        private readonly ITADMenuPageFactory _tadMenuPageFactory;
+        private readonly ITargetingPodMenuPageFactory _targetingPodMenuPageFactory;
+        private readonly ITestMenuPageFactory _testMenuPageFactory;
         private int _airspeedIndexInKnots;
         private int _altitudeIndexInFeet;
         private int _brightness = 255;
@@ -68,53 +89,33 @@ namespace F16CPD
         private bool _nightMode;
         private RotaryEncoderMfdInputControl _paramAdjustKnob;
         private ISimSupportModule _simSupportModule;
-        private IPrimaryMenuPageFactory _primaryMenuPageFactory;
-        private IInstrumentsDisplayMenuPageFactory _instrumentsDisplayMenuPageFactory;
-        private ITestMenuPageFactory _testMenuPageFactory;
-        private ITargetingPodMenuPageFactory _targetingPodMenuPageFactory;
-        private IMessageMenuPageFactory _messagePageMenuFactory;
-        private ITADMenuPageFactory _tadMenuPageFactory;
-        private IChecklistMenuPageFactory _checklistMenuPageFactory;
-        private IChartsMenuPageFactory _chartsMenuPageFactory;
-        private IControlMapMenuPageFactory _controlMapMenuPageFactory;
-        private IControlOverlayMenuPageFactory _controlOverlayMenuPageFactory;
-        private IBitmapAnnotationMenuPageFactory _bitmapAnnotationMenuPageFactory;
-        private IMfdInputControlFinder _mfdInputControlFinder;
-        private IHsiModeSlectorSwitchFactory _hsiModeSelectorSwitchFactory;
-        private IFuelSelectSwitchFactory _fuelSelectSwitchFactory;
-        private IExtFuelTransSwitchFactory _extFuelTransSwitchFactory;
-        private IParamSelectKnobFactory _paramSelectKnobFactory;
-        private INightModeButtonFactory _nightModeButtonFactory;
-        private IDayModeButtonFactory _dayModeButtonFactory;
-        private IBrightnessIncreaseButtonFactory _brightnessIncreaseButtonFactory;
-        private IBrightnessDecreaseButtonFactory _brightnessDecreaseButtonFactory;
 
         internal F16CpdMfdManager(Size screenBoundsPixels,
-            IPrimaryMenuPageFactory primaryMenuPageFactory=null,
-            IInstrumentsDisplayMenuPageFactory instrumentsDisplayMenuPageFactory=null,
-            ITestMenuPageFactory testMenuPageFactory=null,
-            ITargetingPodMenuPageFactory targetingPodMenuPageFactory=null,
-            IMessageMenuPageFactory messageMenuPageFactory=null,
-            ITADMenuPageFactory tadMenuPageFactory=null,
-            IChecklistMenuPageFactory checklistMenuPageFactory=null,
-            IChartsMenuPageFactory chartsMenuPageFactory=null,
-            IControlMapMenuPageFactory controlMapMenuPageFactory=null,
-            IControlOverlayMenuPageFactory controlOverlayMenuPageFactory=null,
-            IBitmapAnnotationMenuPageFactory bitmapAnnotationMenuPageFactory=null,
-            IMfdInputControlFinder mfdInputControlFinder=null,
-            IHsiModeSlectorSwitchFactory hsiModeSelectorSwitchFactory=null,
-            IFuelSelectSwitchFactory fuelSelectSwitchFactory=null,
-            IExtFuelTransSwitchFactory extFuelTransSwitchFactory=null,
-            IParamSelectKnobFactory paramSelectKnobFactory=null,
-            INightModeButtonFactory nightModeButtonFactory=null,
-            IDayModeButtonFactory dayModeButtonFactory=null,
-            BrightnessIncreaseButtonFactory brightnessIncreaseButtonFactory=null,
-            IBrightnessDecreaseButtonFactory brightnessDecreaseButtonFactory=null
-
+            IPrimaryMenuPageFactory primaryMenuPageFactory = null,
+            IInstrumentsDisplayMenuPageFactory instrumentsDisplayMenuPageFactory = null,
+            ITestMenuPageFactory testMenuPageFactory = null,
+            ITargetingPodMenuPageFactory targetingPodMenuPageFactory = null,
+            IMessageMenuPageFactory messageMenuPageFactory = null,
+            ITADMenuPageFactory tadMenuPageFactory = null,
+            IChecklistMenuPageFactory checklistMenuPageFactory = null,
+            IChartsMenuPageFactory chartsMenuPageFactory = null,
+            IControlMapMenuPageFactory controlMapMenuPageFactory = null,
+            IControlOverlayMenuPageFactory controlOverlayMenuPageFactory = null,
+            IBitmapAnnotationMenuPageFactory bitmapAnnotationMenuPageFactory = null,
+            IMfdInputControlFinder mfdInputControlFinder = null,
+            IHsiModeSlectorSwitchFactory hsiModeSelectorSwitchFactory = null,
+            IFuelSelectSwitchFactory fuelSelectSwitchFactory = null,
+            IExtFuelTransSwitchFactory extFuelTransSwitchFactory = null,
+            IParamSelectKnobFactory paramSelectKnobFactory = null,
+            INightModeButtonFactory nightModeButtonFactory = null,
+            IDayModeButtonFactory dayModeButtonFactory = null,
+            BrightnessIncreaseButtonFactory brightnessIncreaseButtonFactory = null,
+            IBrightnessDecreaseButtonFactory brightnessDecreaseButtonFactory = null
             ) : base(screenBoundsPixels)
         {
             _primaryMenuPageFactory = primaryMenuPageFactory ?? new PrimaryMenuPageFactory(this);
-            _instrumentsDisplayMenuPageFactory = instrumentsDisplayMenuPageFactory ?? new InstrumentsDisplayMenuPageFactory(this);
+            _instrumentsDisplayMenuPageFactory = instrumentsDisplayMenuPageFactory ??
+                                                 new InstrumentsDisplayMenuPageFactory(this);
             _testMenuPageFactory = testMenuPageFactory ?? new TestMenuPageFactory(this);
             _targetingPodMenuPageFactory = targetingPodMenuPageFactory ?? new TargetingPodMenuPageFactory(this);
             _messagePageMenuFactory = messageMenuPageFactory ?? new MessageMenuPageFactory(this);
@@ -123,7 +124,8 @@ namespace F16CPD
             _chartsMenuPageFactory = chartsMenuPageFactory ?? new ChartsMenuPageFactory(this);
             _controlMapMenuPageFactory = controlMapMenuPageFactory ?? new ControlMapMenuPageFactory(this);
             _controlOverlayMenuPageFactory = controlOverlayMenuPageFactory ?? new ControlOverlayMenuPageFactory(this);
-            _bitmapAnnotationMenuPageFactory = bitmapAnnotationMenuPageFactory ?? new BitmapAnnotationMenuPageFactory(this);
+            _bitmapAnnotationMenuPageFactory = bitmapAnnotationMenuPageFactory ??
+                                               new BitmapAnnotationMenuPageFactory(this);
             _mfdInputControlFinder = mfdInputControlFinder ?? new MfdInputControlFinder(this);
             _hsiModeSelectorSwitchFactory = hsiModeSelectorSwitchFactory ?? new HsiModeSelectorSwitchFactory(this);
             _fuelSelectSwitchFactory = fuelSelectSwitchFactory ?? new FuelSelectSwitchFactory(this);
@@ -131,8 +133,10 @@ namespace F16CPD
             _paramSelectKnobFactory = paramSelectKnobFactory ?? new ParamSelectKnobFactory(this);
             _nightModeButtonFactory = nightModeButtonFactory ?? new NightModeButtonFactory(this);
             _dayModeButtonFactory = dayModeButtonFactory ?? new DayModeButtonFactory(this);
-            _brightnessDecreaseButtonFactory = brightnessDecreaseButtonFactory ?? new BrightnessDecreaseButtonFactory(this);
-            _brightnessIncreaseButtonFactory = brightnessIncreaseButtonFactory ?? new BrightnessIncreaseButtonFactory(this);
+            _brightnessDecreaseButtonFactory = brightnessDecreaseButtonFactory ??
+                                               new BrightnessDecreaseButtonFactory(this);
+            _brightnessIncreaseButtonFactory = brightnessIncreaseButtonFactory ??
+                                               new BrightnessIncreaseButtonFactory(this);
             SetupNetworking();
             BuildMfdPages();
             BuildNonOsbInputControls();
@@ -193,28 +197,6 @@ namespace F16CPD
         {
             get { return MAX_BRIGHTNESS; }
         }
-        public void DecreaseBrightness()
-        {
-            unchecked
-            {
-                const int brightnessStep = (int)(MAX_BRIGHTNESS / (float)NUM_BRIGHTNESS_STEPS);
-                _brightness -= brightnessStep;
-                if (_brightness < 0) _brightness = 0;
-                Settings.Default.Brightness = _brightness;
-                Util.SaveCurrentProperties();
-            }
-        }
-        public void IncreaseBrightness()
-        {
-            unchecked
-            {
-                const int brightnessStep = (int)(MAX_BRIGHTNESS / (float)NUM_BRIGHTNESS_STEPS);
-                _brightness += brightnessStep;
-                if (_brightness > MAX_BRIGHTNESS) _brightness = MAX_BRIGHTNESS;
-                Settings.Default.Brightness = _brightness;
-                Util.SaveCurrentProperties();
-            }
-        }
 
         public bool NightMode
         {
@@ -222,25 +204,70 @@ namespace F16CPD
             set { _nightMode = value; }
         }
 
+        internal float MapScale
+        {
+            get { return _mapScale; }
+        }
+
+        internal ToggleSwitchMfdInputControl HsiModeSelectorSwitch
+        {
+            get { return _hsiModeSelectorSwitch; }
+        }
+
+        internal RotaryEncoderMfdInputControl ParamAdjustKnob
+        {
+            get { return _paramAdjustKnob; }
+        }
+
+        internal ToggleSwitchMfdInputControl FuelSelectSwitch
+        {
+            get { return _fuelSelectControl; }
+        }
+
+        internal ToggleSwitchMfdInputControl ExtFuelTransSwitch
+        {
+            get { return _extFuelTransSwitch; }
+        }
+
+        public void DecreaseBrightness()
+        {
+            unchecked
+            {
+                const int brightnessStep = (int) (MAX_BRIGHTNESS/(float) NUM_BRIGHTNESS_STEPS);
+                _brightness -= brightnessStep;
+                if (_brightness < 0) _brightness = 0;
+                Settings.Default.Brightness = _brightness;
+                Util.SaveCurrentProperties();
+            }
+        }
+
+        public void IncreaseBrightness()
+        {
+            unchecked
+            {
+                const int brightnessStep = (int) (MAX_BRIGHTNESS/(float) NUM_BRIGHTNESS_STEPS);
+                _brightness += brightnessStep;
+                if (_brightness > MAX_BRIGHTNESS) _brightness = MAX_BRIGHTNESS;
+                Settings.Default.Brightness = _brightness;
+                Util.SaveCurrentProperties();
+            }
+        }
+
 
         private void SetupMapFetchingBackgroundWorker()
         {
-            if (Settings.Default.RunAsClient)
-            {
-                _mapFetchingBackgroundWorker = new BackgroundWorker();
-                _mapFetchingBackgroundWorker.DoWork += mapFetchingBackgroundWorker_DoWork;
-            }
+            if (!Settings.Default.RunAsClient) return;
+            _mapFetchingBackgroundWorker = new BackgroundWorker();
+            _mapFetchingBackgroundWorker.DoWork += mapFetchingBackgroundWorker_DoWork;
         }
 
         private static void TeardownService()
         {
-            if (Settings.Default.RunAsServer)
-            {
-                var portNumber = Settings.Default.ServerPortNum;
-                var port = 21153;
-                Int32.TryParse(portNumber, out port);
-                F16CPDServer.TearDownService(port);
-            }
+            if (!Settings.Default.RunAsServer) return;
+            var portNumber = Settings.Default.ServerPortNum;
+            int port;
+            Int32.TryParse(portNumber, out port);
+            F16CPDServer.TearDownService(port);
         }
 
         private void SetupNetworking()
@@ -248,7 +275,7 @@ namespace F16CPD
             if (Settings.Default.RunAsServer)
             {
                 var portNumber = Settings.Default.ServerPortNum;
-                var port = 21153;
+                int port;
                 Int32.TryParse(portNumber, out port);
                 F16CPDServer.CreateService("F16CPDService", port);
             }
@@ -256,9 +283,9 @@ namespace F16CPD
             {
                 var serverIPAddress = Settings.Default.ServerIPAddress;
                 var portNumber = Settings.Default.ServerPortNum;
-                var port = 21153;
+                int port;
                 Int32.TryParse(portNumber, out port);
-                var ipAddress = new IPAddress(new byte[] {127, 0, 0, 1});
+                IPAddress ipAddress;
                 IPAddress.TryParse(serverIPAddress, out ipAddress);
                 var endpoint = new IPEndPoint(ipAddress, port);
                 _client = new F16CPDClient(endpoint, "F16CPDService");
@@ -270,44 +297,37 @@ namespace F16CPD
         {
             if (!Settings.Default.RunAsServer) return;
             var pendingMessage = F16CPDServer.GetNextPendingServerMessage();
-            if (pendingMessage != null)
+            if (pendingMessage == null) return;
+            var processed = false;
+            if (_simSupportModule != null)
             {
-                var processed = false;
-                if (_simSupportModule != null)
-                {
-                    processed = _simSupportModule.ProcessPendingMessageToServerFromClient(pendingMessage);
-                }
-                if (!processed)
-                {
-                    switch (pendingMessage.MessageType)
+                processed = _simSupportModule.ProcessPendingMessageToServerFromClient(pendingMessage);
+            }
+            if (processed) return;
+            switch (pendingMessage.MessageType)
+            {
+                case "RequestNewMapImage":
+                    //any other "New Map Image Requested" messages in the queue will be removed at this time
+                    F16CPDServer.ClearPendingServerMessagesOfType("RequestNewMapImage");
+                    var payload = (Dictionary<string, object>) pendingMessage.Payload;
+                    var renderSize = (Size) payload["RenderSize"];
+                    var mapScale = (float) payload["MapScale"];
+                    var mapRangeDiameter = (int) payload["RangeRingsDiameter"];
+                    var renderedMap = RenderMapOnBehalfOfRemoteClient(renderSize, mapScale, mapRangeDiameter);
+                    if (renderedMap != null)
                     {
-                        case "RequestNewMapImage":
-                            //any other "New Map Image Requested" messages in the queue will be removed at this time
-                            F16CPDServer.ClearPendingServerMessagesOfType("RequestNewMapImage");
-                            var payload = (Dictionary<string, object>) pendingMessage.Payload;
-                            var renderSize = (Size) payload["RenderSize"];
-                            var mapScale = (float) payload["MapScale"];
-                            var mapRangeDiameter = (int) payload["RangeRingsDiameter"];
-                            var renderedMap = RenderMapOnBehalfOfRemoteClient(renderSize, mapScale, mapRangeDiameter);
-                            if (renderedMap != null)
-                            {
-                                using (var ms = new MemoryStream())
-                                {
-                                    renderedMap.Save(ms, ImageFormat.Png);
-                                    ms.Flush();
-                                    ms.Seek(0, SeekOrigin.Begin);
-                                    var rawBytes = new byte[ms.Length];
-                                    ms.Read(rawBytes, 0, (int) ms.Length);
-                                    F16CPDServer.SetSimProperty("CurrentMapImage", rawBytes);
-                                }
-                                Common.Util.DisposeObject(renderedMap);
-                            }
-                            processed = true;
-                            break;
-                        default:
-                            break;
+                        using (var ms = new MemoryStream())
+                        {
+                            renderedMap.Save(ms, ImageFormat.Png);
+                            ms.Flush();
+                            ms.Seek(0, SeekOrigin.Begin);
+                            var rawBytes = new byte[ms.Length];
+                            ms.Read(rawBytes, 0, (int) ms.Length);
+                            F16CPDServer.SetSimProperty("CurrentMapImage", rawBytes);
+                        }
+                        Common.Util.DisposeObject(renderedMap);
                     }
-                }
+                    break;
             }
         }
 
@@ -315,26 +335,19 @@ namespace F16CPD
         {
             if (!Settings.Default.RunAsClient) return;
             var pendingMessage = _client.GetNextPendingClientMessage();
-            if (pendingMessage != null)
+            if (pendingMessage == null) return;
+            var processed = false;
+            if (_simSupportModule != null)
             {
-                var processed = false;
-                if (_simSupportModule != null)
-                {
-                    processed = _simSupportModule.ProcessPendingMessageToClientFromServer(pendingMessage);
-                }
-                if (!processed)
-                {
-                    switch (pendingMessage.MessageType)
-                    {
-                        case "CpdInputControlChangedEvent":
-                            var controlThatChanged = (CpdInputControls) pendingMessage.Payload;
-                            FireHandler(controlThatChanged);
-                            processed = true;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                processed = _simSupportModule.ProcessPendingMessageToClientFromServer(pendingMessage);
+            }
+            if (processed) return;
+            switch (pendingMessage.MessageType)
+            {
+                case "CpdInputControlChangedEvent":
+                    var controlThatChanged = (CpdInputControls) pendingMessage.Payload;
+                    FireHandler(controlThatChanged);
+                    break;
             }
         }
 
@@ -344,7 +357,6 @@ namespace F16CPD
             _fuelSelectControl = _fuelSelectSwitchFactory.BuildFuelSelectSwitch();
             _extFuelTransSwitch = _extFuelTransSwitchFactory.BuildExtFuelTransSwitch();
             _paramAdjustKnob = _paramSelectKnobFactory.BuildParamSelectKnob();
-
         }
 
         private void InitializeFlightInstruments()
@@ -359,7 +371,7 @@ namespace F16CPD
             var primaryPage = _primaryMenuPageFactory.CreatePrimaryMenuPage();
             var instrumentsDisplayPage = _instrumentsDisplayMenuPageFactory.BuildInstrumentsDisplayMenuPage();
             var testPage = _testMenuPageFactory.BuildTestPage();
-            var tgpPage =_targetingPodMenuPageFactory.BuildTargetingPodMenuPage();
+            var tgpPage = _targetingPodMenuPageFactory.BuildTargetingPodMenuPage();
             var messagePage = _messagePageMenuFactory.BuildMessageMenuPage();
             var tadPage = _tadMenuPageFactory.BuildTADMenuPage();
             var checklistsPage = _checklistMenuPageFactory.BuildChecklistMenuPage();
@@ -368,13 +380,12 @@ namespace F16CPD
             var controlOverlayPage = _controlOverlayMenuPageFactory.BuildControlOverlayMenuPage();
             var bitmapAnnotationPage = _bitmapAnnotationMenuPageFactory.BuildBitmapAnnotationMenuPage();
             MenuPages = new[]
-                            {
-                                primaryPage, instrumentsDisplayPage, testPage, tgpPage, messagePage, tadPage,
-                                controlMapPage, controlOverlayPage, bitmapAnnotationPage, checklistsPage, chartsPage
-                            };
+            {
+                primaryPage, instrumentsDisplayPage, testPage, tgpPage, messagePage, tadPage,
+                controlMapPage, controlOverlayPage, bitmapAnnotationPage, checklistsPage, chartsPage
+            };
             foreach (var thisPage in MenuPages)
             {
-               
                 thisPage.OptionSelectButtons.Add(_nightModeButtonFactory.CreateNightModeButton(thisPage));
                 thisPage.OptionSelectButtons.Add(_dayModeButtonFactory.BuildDayModeButton(thisPage));
                 thisPage.OptionSelectButtons.Add(_brightnessIncreaseButtonFactory.BuildBrightnessIncreaseButton(thisPage));
@@ -382,7 +393,6 @@ namespace F16CPD
             }
             ActiveMenuPage = instrumentsDisplayPage;
         }
-
 
 
         internal MfdMenuPage FindMenuPageByName(string name)
@@ -422,43 +432,52 @@ namespace F16CPD
         {
             SetPage("TAD Page");
         }
+
         public void SwitchToMessagePage()
         {
             SetPage("Message Page");
         }
+
         public void SwitchToChecklistsPage()
         {
             SetPage("Checklists Page");
-            
         }
+
         public void SwitchToInstrumentsPage()
         {
             SetPage("Instruments Display Page");
         }
+
         public void SwitchToTargetingPodPage()
         {
             SetPage("Targeting Pod Page");
         }
+
         public void SwitchToChartsPage()
         {
             SetPage("Charts Page");
         }
+
         public void SwitchToImagingPage()
         {
             SetPage("Bitmap Annotation Page");
         }
+
         public void SwitchToControlOverlayPage()
         {
             SetPage("Control Overlay Page");
         }
+
         public void SwitchToControlMapPage()
         {
             SetPage("Control Map Page");
         }
+
         public void SwitchToTestPage()
         {
             SetPage("Test Page");
         }
+
         private void UpdateCurrentChecklistPageCount()
         {
             if (_currentChecklistFile != null)
@@ -483,7 +502,7 @@ namespace F16CPD
 
         internal void PrevChecklistFile()
         {
-            var files = GetChecklistsFiles();
+            FileInfo[] files = GetChecklistsFiles();
             _currentChecklistFile = GetPrevFile(_currentChecklistFile, files);
             UpdateCurrentChecklistPageCount();
         }
@@ -527,11 +546,7 @@ namespace F16CPD
             {
                 if (files[i].FullName == currentFile.FullName)
                 {
-                    if (i > 0)
-                    {
-                        return files[i - 1];
-                    }
-                    return files[files.Length - 1];
+                    return i > 0 ? files[i - 1] : files[files.Length - 1];
                 }
             }
             return files[files.Length - 1];
@@ -545,11 +560,7 @@ namespace F16CPD
             {
                 if (files[i].FullName == currentFile.FullName)
                 {
-                    if (files.Length - 1 > i)
-                    {
-                        return files[i + 1];
-                    }
-                    return files[0];
+                    return files.Length - 1 > i ? files[i + 1] : files[0];
                 }
             }
             return files[0];
@@ -559,24 +570,18 @@ namespace F16CPD
         {
             const string searchPattern = "*.pdf";
             var di = new DirectoryInfo(Application.ExecutablePath);
-            if (di.Parent != null)
-            {
-                var folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "checklists";
-                return GetFilesOfType(searchPattern, folderToSearch);
-            }
-            return null;
+            if (di.Parent == null) return null;
+            var folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "checklists";
+            return GetFilesOfType(searchPattern, folderToSearch);
         }
 
         private static FileInfo[] GetChartFiles()
         {
             const string searchPattern = "*.pdf";
             var di = new DirectoryInfo(Application.ExecutablePath);
-            if (di.Parent != null)
-            {
-                var folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "charts";
-                return GetFilesOfType(searchPattern, folderToSearch);
-            }
-            return null;
+            if (di.Parent == null) return null;
+            var folderToSearch = di.Parent.FullName + Path.DirectorySeparatorChar + "charts";
+            return GetFilesOfType(searchPattern, folderToSearch);
         }
 
         private static FileInfo[] GetFilesOfType(string searchPattern, string folderToSearch)
@@ -607,7 +612,7 @@ namespace F16CPD
             if (_mapRangeRingsDiameterInNauticalMiles < 0) _mapRangeRingsDiameterInNauticalMiles = 0;
         }
 
-        internal void  IncreaseMapRange()
+        internal void IncreaseMapRange()
         {
             if (_mapRangeRingsDiameterInNauticalMiles >= 20)
             {
@@ -619,14 +624,15 @@ namespace F16CPD
             }
             if (_mapRangeRingsDiameterInNauticalMiles > 5000) _mapRangeRingsDiameterInNauticalMiles = 5000;
         }
+
         internal string GetCADRGScaleTextForMapScale(float mapScale)
         {
             var toReturn = "1:";
 
-            var millions = (int)Math.Round(mapScale / (1000.0f * 1000.0f), 0);
-            var thousands = (int)Math.Round(mapScale / 1000.0f, 0);
-            var hundreds = (int)Math.Round(mapScale / 100.0f, 0);
-            var ones = (int)Math.Round(mapScale, 0);
+            var millions = (int) Math.Round(mapScale/(1000.0f*1000.0f), 0);
+            var thousands = (int) Math.Round(mapScale/1000.0f, 0);
+            var hundreds = (int) Math.Round(mapScale/100.0f, 0);
+            var ones = (int) Math.Round(mapScale, 0);
             if (millions > 0)
             {
                 toReturn += millions + " M";
@@ -637,17 +643,18 @@ namespace F16CPD
             }
             else if (hundreds > 0)
             {
-                toReturn += hundreds.ToString();
+                toReturn += hundreds.ToString(CultureInfo.InvariantCulture);
             }
             else
             {
-                toReturn += ones.ToString();
+                toReturn += ones.ToString(CultureInfo.InvariantCulture);
             }
             return toReturn;
         }
+
         private static float GetMapScaleForCADRGScaleText(string CADRGScaletext)
         {
-            var toReturn = float.NaN;
+            float toReturn = float.NaN;
             switch (CADRGScaletext)
             {
                 case "1:250 M":
@@ -695,16 +702,14 @@ namespace F16CPD
                 case "1:5 K":
                     toReturn = 5*1000;
                     break;
-                default:
-                    break;
             }
             return toReturn;
         }
 
         private float GetNextLowerMapScale(float mapScale)
         {
-            var toReturn = mapScale;
-            var mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
+            float toReturn = mapScale;
+            string mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
             switch (mapScaleText)
             {
                 case "1:250 M":
@@ -751,8 +756,6 @@ namespace F16CPD
                     break;
                 case "1:5 K":
                     toReturn = GetMapScaleForCADRGScaleText("1:10 K");
-                    break;
-                default:
                     break;
             }
             return toReturn;
@@ -760,8 +763,8 @@ namespace F16CPD
 
         private float GetNextHigherMapScale(float mapScale)
         {
-            var toReturn = mapScale;
-            var mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
+            float toReturn = mapScale;
+            string mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
             switch (mapScaleText)
             {
                 case "1:250 M":
@@ -808,8 +811,6 @@ namespace F16CPD
                     break;
                 case "1:5 K":
                     toReturn = GetMapScaleForCADRGScaleText("1:5 K");
-                    break;
-                default:
                     break;
             }
             return toReturn;
@@ -825,7 +826,6 @@ namespace F16CPD
             _mapScale = GetNextHigherMapScale(_mapScale);
         }
 
-        internal float MapScale { get { return _mapScale; } }
         private void SetPage(string pageName)
         {
             var newPage = FindMenuPageByName(pageName);
@@ -847,16 +847,11 @@ namespace F16CPD
                 ProcessPendingMessagesToClientFromServer();
             }
         }
-        internal ToggleSwitchMfdInputControl HsiModeSelectorSwitch { get { return _hsiModeSelectorSwitch; } }
-        internal RotaryEncoderMfdInputControl ParamAdjustKnob { get { return _paramAdjustKnob; } }
-        internal ToggleSwitchMfdInputControl FuelSelectSwitch { get { return _fuelSelectControl; } }
-        internal ToggleSwitchMfdInputControl ExtFuelTransSwitch { get { return _extFuelTransSwitch; } }
+
         public override void Render(Graphics g)
         {
-            Brush greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
+            var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
 
-            var startTime = DateTime.Now;
-            //Debug.WriteLine("here 1 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
             //g.Clear(Color.Transparent);
             var labelWidth = (int) (35*(ScreenBoundsPixels.Width/Constants.F_NATIVE_RES_WIDTH));
             var labelHeight = (int) (20*(ScreenBoundsPixels.Height/Constants.F_NATIVE_RES_HEIGHT));
@@ -864,200 +859,176 @@ namespace F16CPD
             OptionSelectButton button;
             var origTransform = g.Transform;
 
-            //Debug.WriteLine("here 2 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-            if (ActiveMenuPage.Name == "Instruments Display Page")
+            switch (ActiveMenuPage.Name)
             {
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AcknowledgeMessage");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("TestHdd");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AltitudeIndexIncrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ALT");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AltitudeIndexDecrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("BarometricPressureSettingIncrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByLabelText("BARO");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("BarometricPressureSettingDecrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("ToggleAltimeterModeElecPneu");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("LowAltitudeWarningThresholdIncrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ALOW");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("LowAltitudeWarningThresholdDecrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AirspeedIndexIncrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ASPD");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AirspeedIndexDecrease");
-                button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("CourseSelectIncrease");
-                button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByLabelText("CRS");
-                button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("CourseSelectDecrease");
-                button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
-
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("HeadingSelectIncrease");
-                button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByLabelText("HDG");
-                button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
-                button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("HeadingSelectDecrease");
-                button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
-            }
-            else if (ActiveMenuPage.Name == "TAD Page")
-            {
-                //Debug.WriteLine("here 3 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-                var scaleLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapScaleLabel");
-                var scaleString = "CADRG\r\n" + GetCADRGScaleTextForMapScale(_mapScale);
-                scaleLabel.LabelText = scaleString;
-
-                var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
-                var mapRangeString = _mapRangeRingsDiameterInNauticalMiles.ToString();
-                mapRangeLabel.LabelText = mapRangeString;
-                //Debug.WriteLine("here 4 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-            }
-            else if (ActiveMenuPage.Name == "Checklists Page")
-            {
-                if (_currentChecklistFile == null) NextChecklistFile();
-                var currentChecklistFileLabel =
-                    ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistFileLabel");
-                string shortName = null;
-                if (_currentChecklistFile != null)
+                case "Instruments Display Page":
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AcknowledgeMessage");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("TestHdd");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AltitudeIndexIncrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ALT");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AltitudeIndexDecrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("BarometricPressureSettingIncrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByLabelText("BARO");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("BarometricPressureSettingDecrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("ToggleAltimeterModeElecPneu");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("LowAltitudeWarningThresholdIncrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ALOW");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("LowAltitudeWarningThresholdDecrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AirspeedIndexIncrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ASPD");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AirspeedIndexDecrease");
+                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("CourseSelectIncrease");
+                    button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByLabelText("CRS");
+                    button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("CourseSelectDecrease");
+                    button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("HeadingSelectIncrease");
+                    button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByLabelText("HDG");
+                    button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
+                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("HeadingSelectDecrease");
+                    button.Visible = !FlightData.HsiOffFlag & FlightData.CpdPowerOnFlag;
+                    break;
+                case "TAD Page":
                 {
-                    shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChecklistFile.FullName);
-                    shortName = Common.Win32.Paths.Util.Compact(_currentChecklistFile.Name, 64);
-                    shortName = BreakStringIntoLines(shortName, 9);
-                }
-                if (shortName != null)
-                {
-                    var labelText = shortName.ToUpperInvariant();
-                    currentChecklistFileLabel.LabelText = labelText;
-                }
+                    //Debug.WriteLine("here 3 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
+                    var scaleLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapScaleLabel");
+                    var scaleString = "CADRG\r\n" + GetCADRGScaleTextForMapScale(_mapScale);
+                    scaleLabel.LabelText = scaleString;
 
-                var currentChecklistPageNumLabel =
-                    ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistPageNumLabel");
-                currentChecklistPageNumLabel.LabelText = _currentChecklistPageNum + "/" + _currentChecklistPagesTotal;
-            }
-            else if (ActiveMenuPage.Name == "Charts Page")
-            {
-                if (_currentChartFile == null) NextChartFile();
-                var currentChartFileLabel =
-                    ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartFileLabel");
-                string shortName = null;
-                if (_currentChartFile != null)
-                {
-                    shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChartFile.FullName);
-                    shortName = Common.Win32.Paths.Util.Compact(_currentChartFile.Name, 64);
-                    shortName = BreakStringIntoLines(shortName, 9);
+                    var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
+                    var mapRangeString = _mapRangeRingsDiameterInNauticalMiles.ToString(CultureInfo.InvariantCulture);
+                    mapRangeLabel.LabelText = mapRangeString;
+                    //Debug.WriteLine("here 4 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                 }
-                if (shortName != null)
+                    break;
+                case "Checklists Page":
                 {
-                    var labelText = shortName.ToUpperInvariant();
-                    currentChartFileLabel.LabelText = labelText;
-                }
+                    if (_currentChecklistFile == null) NextChecklistFile();
+                    var currentChecklistFileLabel =
+                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistFileLabel");
+                    string shortName = null;
+                    if (_currentChecklistFile != null)
+                    {
+                        shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChecklistFile.FullName);
+                        shortName = Common.Win32.Paths.Util.Compact(_currentChecklistFile.Name, 64);
+                        shortName = BreakStringIntoLines(shortName, 9);
+                    }
+                    if (shortName != null)
+                    {
+                        var labelText = shortName.ToUpperInvariant();
+                        currentChecklistFileLabel.LabelText = labelText;
+                    }
 
-                var currentChartPageNumLabel =
-                    ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartPageNumLabel");
-                currentChartPageNumLabel.LabelText = _currentChartPageNum + "/" + _currentChartPagesTotal;
+                    var currentChecklistPageNumLabel =
+                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistPageNumLabel");
+                    currentChecklistPageNumLabel.LabelText = _currentChecklistPageNum + "/" + _currentChecklistPagesTotal;
+                }
+                    break;
+                case "Charts Page":
+                {
+                    if (_currentChartFile == null) NextChartFile();
+                    var currentChartFileLabel =
+                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartFileLabel");
+                    string shortName = null;
+                    if (_currentChartFile != null)
+                    {
+                        shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChartFile.FullName);
+                        shortName = Common.Win32.Paths.Util.Compact(_currentChartFile.Name, 64);
+                        shortName = BreakStringIntoLines(shortName, 9);
+                    }
+                    if (shortName != null)
+                    {
+                        var labelText = shortName.ToUpperInvariant();
+                        currentChartFileLabel.LabelText = labelText;
+                    }
+
+                    var currentChartPageNumLabel =
+                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartPageNumLabel");
+                    currentChartPageNumLabel.LabelText = _currentChartPageNum + "/" + _currentChartPagesTotal;
+                }
+                    break;
             }
-            //Debug.WriteLine("here 5 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
             g.SetClip(overallRenderRectangle);
             g.TranslateTransform(overallRenderRectangle.X, overallRenderRectangle.Y);
             var originalSize = new Size(Constants.I_NATIVE_RES_WIDTH, Constants.I_NATIVE_RES_HEIGHT);
             g.ScaleTransform((overallRenderRectangle.Width/(float) originalSize.Width),
-                             (overallRenderRectangle.Height/(float) originalSize.Height));
-            //Debug.WriteLine("here 6 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
+                (overallRenderRectangle.Height/(float) originalSize.Height));
 
             if (!FlightData.CpdPowerOnFlag)
             {
                 const string toDisplay = "OFF";
                 var path = new GraphicsPath();
                 var sf = new StringFormat(StringFormatFlags.NoWrap)
-                             {
-                                 Alignment = StringAlignment.Center,
-                                 LineAlignment = StringAlignment.Center
-                             };
+                {
+                    Alignment = StringAlignment.Center,
+                    LineAlignment = StringAlignment.Center
+                };
                 var f = new Font(FontFamily.GenericMonospace, 20, FontStyle.Bold);
                 var textSize = g.MeasureString(toDisplay, f, overallRenderRectangle.Size, sf);
                 var leftX = (((Constants.I_NATIVE_RES_WIDTH - ((int) textSize.Width))/2));
                 var topY = (((Constants.I_NATIVE_RES_HEIGHT - ((int) textSize.Height))/2));
                 var target = new Rectangle(leftX, topY, (int) textSize.Width, (int) textSize.Height);
                 path.AddString(toDisplay, f.FontFamily, (int) f.Style, f.SizeInPoints, target, sf);
-                /*
-                g.FillRectangle(greenBrush, target);
-                g.FillPath(Brushes.Black, path); 
-                 */
                 g.FillPath(greenBrush, path);
                 return;
             }
 
-            //Debug.WriteLine("here 7 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
+            if (!FlightData.CpdPowerOnFlag) return;
+            g.Transform = origTransform;
 
-            if (FlightData.CpdPowerOnFlag)
+            switch (ActiveMenuPage.Name)
             {
-                g.Transform = origTransform;
-
-                if (ActiveMenuPage.Name == "Instruments Display Page")
+                case "Instruments Display Page":
                 {
-                    var pfdRenderStart = DateTime.Now;
                     var pfd = Pfd;
                     pfd.Manager = this;
                     var pfdRenderRectangle = new Rectangle(labelWidth + 1, labelHeight + 1,
-                                                           (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
-                                                           ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))/2) + 10);
+                        (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
+                        ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))/2) + 10);
                     pfdRenderRectangle = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Top,
-                                                       (pfdRenderRectangle.Width), (pfdRenderRectangle.Height));
+                        (pfdRenderRectangle.Width), (pfdRenderRectangle.Height));
                     var pfdRenderSize = new Size(610, 495);
                     g.SetClip(pfdRenderRectangle);
                     g.TranslateTransform(pfdRenderRectangle.X, pfdRenderRectangle.Y);
                     g.ScaleTransform((pfdRenderRectangle.Width/(float) pfdRenderSize.Width),
-                                     (pfdRenderRectangle.Height/(float) pfdRenderSize.Height));
+                        (pfdRenderRectangle.Height/(float) pfdRenderSize.Height));
                     pfd.Render(g, pfdRenderSize);
                     g.Transform = origTransform;
 
-                    var pfdRenderEnd = DateTime.Now;
-                    var pfdRenderTime = pfdRenderEnd.Subtract(pfdRenderStart);
-                    //Debug.WriteLine("PFD render time:" + pfdRenderTime.TotalMilliseconds);
-
-
-                    var hsiRenderStart = DateTime.Now;
                     var hsi = Hsi;
                     hsi.Manager = this;
                     var hsiRenderBounds = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Bottom + 5,
-                                                        pfdRenderRectangle.Width, pfdRenderRectangle.Height - 40);
+                        pfdRenderRectangle.Width, pfdRenderRectangle.Height - 40);
                     var hsiRenderSize = new Size(596, 391);
                     origTransform = g.Transform;
                     g.SetClip(hsiRenderBounds);
                     g.TranslateTransform(hsiRenderBounds.X, hsiRenderBounds.Y);
                     g.ScaleTransform((hsiRenderBounds.Width/(float) hsiRenderSize.Width),
-                                     (hsiRenderBounds.Height/(float) hsiRenderSize.Height));
+                        (hsiRenderBounds.Height/(float) hsiRenderSize.Height));
                     hsi.Render(g, hsiRenderSize);
                     g.Transform = origTransform;
-                    var hsiRenderEnd = DateTime.Now;
-                    var hsiRenderTime = hsiRenderEnd.Subtract(hsiRenderStart);
-                    //Debug.WriteLine("HSI render time:" + hsiRenderTime.TotalMilliseconds);
                 }
-                else if (ActiveMenuPage.Name == "TAD Page")
-                {
-                    //Debug.WriteLine("here 8 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-
+                    break;
+                case "TAD Page":
                     if (Settings.Default.RunAsClient)
                     {
-                        //Debug.WriteLine("here 9 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                         //render last map image we obtained from the server
                         lock (_mapImageLock)
                         {
@@ -1071,66 +1042,50 @@ namespace F16CPD
 
                         //send new request to server to generate a new map image 
                         var payload = new Dictionary<string, object>
-                                          {
-                                              {"RenderSize", ScreenBoundsPixels},
-                                              {"MapScale", _mapScale},
-                                              {"RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles}
-                                          };
+                        {
+                            {"RenderSize", ScreenBoundsPixels},
+                            {"MapScale", _mapScale},
+                            {"RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles}
+                        };
                         var message = new Message("RequestNewMapImage", payload);
                         Client.SendMessageToServer(message);
-                        //Debug.WriteLine("here 10 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                     }
                     else
                     {
-                        //Debug.WriteLine("here 11 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                         RenderMapLocally(g, _mapScale, _mapRangeRingsDiameterInNauticalMiles);
-                        //Debug.WriteLine("here 12 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                     }
-                }
-                else if (ActiveMenuPage.Name == "Checklists Page")
-                {
+                    break;
+                case "Checklists Page":
                     if (_currentChecklistFile != null)
                     {
                         var checklistRenderRectangle = new Rectangle(labelWidth + 1, labelHeight + 1,
-                                                                     (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
-                                                                     ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))));
+                            (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
+                            ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))));
                         RenderCurrentChecklist(g, checklistRenderRectangle);
                     }
-                }
-                else if (ActiveMenuPage.Name == "Charts Page")
-                {
+                    break;
+                case "Charts Page":
                     if (_currentChartFile != null)
                     {
                         var chartRenderRectangle = new Rectangle(labelWidth + 1, labelHeight + 1,
-                                                                 (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
-                                                                 ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))));
+                            (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
+                            ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))));
                         RenderCurrentChart(g, chartRenderRectangle);
                     }
-                }
-
-                //Debug.WriteLine("here 13 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-
-                g.Transform = origTransform;
-                g.SetClip(overallRenderRectangle);
-                g.TranslateTransform(overallRenderRectangle.X, overallRenderRectangle.Y);
-                g.ScaleTransform((overallRenderRectangle.Width/(float) originalSize.Width),
-                                 (overallRenderRectangle.Height/(float) originalSize.Height));
-                //Debug.WriteLine("here 14 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-
-                foreach (var thisButton in ActiveMenuPage.OptionSelectButtons)
-                {
-                    if (thisButton.Visible)
-                    {
-                        thisButton.DrawLabel(g);
-                    }
-                }
-                //Debug.WriteLine("here 15 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
-                g.Transform = origTransform;
-
-                var finishTime = DateTime.Now;
-                var elapsed = finishTime.Subtract(startTime);
-                //Debug.WriteLine("Overall CPD render time:" + elapsed.TotalMilliseconds);
+                    break;
             }
+
+            g.Transform = origTransform;
+            g.SetClip(overallRenderRectangle);
+            g.TranslateTransform(overallRenderRectangle.X, overallRenderRectangle.Y);
+            g.ScaleTransform((overallRenderRectangle.Width/(float) originalSize.Width),
+                (overallRenderRectangle.Height/(float) originalSize.Height));
+
+            foreach (var thisButton in ActiveMenuPage.OptionSelectButtons.Where(thisButton => thisButton.Visible))
+            {
+                thisButton.DrawLabel(g);
+            }
+            g.Transform = origTransform;
         }
 
         private static string BreakStringIntoLines(string toBreak, int maxLineLength)
@@ -1166,8 +1121,8 @@ namespace F16CPD
                 {
                     Common.Util.DisposeObject(_lastRenderedChecklistPdfPage);
                     _lastRenderedChecklistPdfPage = PdfRenderEngine.GeneratePageBitmap(_currentChecklistFile.FullName,
-                                                                                       _currentChecklistPageNum,
-                                                                                       new Size(150, 150));
+                        _currentChecklistPageNum,
+                        new Size(150, 150));
                     _lastRenderedChecklistPageNum = _currentChecklistPageNum;
                     _lastRenderedChecklistFile = _currentChecklistFile;
                 }
@@ -1179,14 +1134,14 @@ namespace F16CPD
                         using (var reverseVideo = (Bitmap) Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
                             target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
-                                             GraphicsUnit.Pixel);
+                                GraphicsUnit.Pixel);
                         }
                     }
                     else
                     {
                         target.DrawImage(_lastRenderedChecklistPdfPage, targetRect, 0, 0,
-                                         _lastRenderedChecklistPdfPage.Width, _lastRenderedChecklistPdfPage.Height,
-                                         GraphicsUnit.Pixel);
+                            _lastRenderedChecklistPdfPage.Width, _lastRenderedChecklistPdfPage.Height,
+                            GraphicsUnit.Pixel);
                     }
                 }
             }
@@ -1211,8 +1166,8 @@ namespace F16CPD
                 {
                     Common.Util.DisposeObject(_lastRenderedChartPdfPage);
                     _lastRenderedChartPdfPage = PdfRenderEngine.GeneratePageBitmap(_currentChartFile.FullName,
-                                                                                   _currentChartPageNum,
-                                                                                   new Size(150, 150));
+                        _currentChartPageNum,
+                        new Size(150, 150));
                     _lastRenderedChartPageNum = _currentChartPageNum;
                     _lastRenderedChartFile = _currentChartFile;
                 }
@@ -1224,13 +1179,13 @@ namespace F16CPD
                         using (var reverseVideo = (Bitmap) Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
                             target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
-                                             GraphicsUnit.Pixel);
+                                GraphicsUnit.Pixel);
                         }
                     }
                     else
                     {
                         target.DrawImage(_lastRenderedChartPdfPage, targetRect, 0, 0, _lastRenderedChartPdfPage.Width,
-                                         _lastRenderedChartPdfPage.Height, GraphicsUnit.Pixel);
+                            _lastRenderedChartPdfPage.Height, GraphicsUnit.Pixel);
                     }
                 }
             }
@@ -1241,12 +1196,10 @@ namespace F16CPD
 
         private void GetLatestMapImageFromServerAsync()
         {
-            if (_mapFetchingBackgroundWorker != null)
+            if (_mapFetchingBackgroundWorker == null) return;
+            if (!_mapFetchingBackgroundWorker.IsBusy)
             {
-                if (!_mapFetchingBackgroundWorker.IsBusy)
-                {
-                    _mapFetchingBackgroundWorker.RunWorkerAsync();
-                }
+                _mapFetchingBackgroundWorker.RunWorkerAsync();
             }
         }
 
@@ -1279,7 +1232,7 @@ namespace F16CPD
         }
 
         private Bitmap RenderMapOnBehalfOfRemoteClient(Size renderSize, float mapScale,
-                                                       int rangeRingDiameterInNauticalMiles)
+            int rangeRingDiameterInNauticalMiles)
         {
             var rendered = new Bitmap(renderSize.Width, renderSize.Height, PixelFormat.Format16bppRgb565);
             using (var g = Graphics.FromImage(rendered))
@@ -1297,15 +1250,14 @@ namespace F16CPD
         }
 
         private void RenderMapLocally(Graphics g, Rectangle renderRectangle, float mapScale,
-                                      int rangeRingDiameterInNauticalMiles)
+            int rangeRingDiameterInNauticalMiles)
         {
             if (Settings.Default.RunAsClient) return;
             var greenBrush = Brushes.Green;
-            var tadRenderStart = DateTime.Now;
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
             SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
-                                       MapRotationMode.CurrentHeadingOnTop);
+                MapRotationMode.CurrentHeadingOnTop);
 
             var scaleX = (tadRenderRectangle.Width)/Constants.F_NATIVE_RES_WIDTH;
             var scaleY = (tadRenderRectangle.Height)/Constants.F_NATIVE_RES_HEIGHT;
@@ -1317,8 +1269,8 @@ namespace F16CPD
             var latitudeDecDeg = FlightData.LatitudeInDecimalDegrees;
             var longitudeDecDeg = FlightData.LongitudeInDecimalDegrees;
 
-            float latitudeWholeDeg = (int) (latitudeDecDeg);
-            float longitudeWholeDeg = (int) (longitudeDecDeg);
+            var latitudeWholeDeg = (int) (latitudeDecDeg);
+            var longitudeWholeDeg = (int) (longitudeDecDeg);
 
             var latitudeMinutes = (latitudeDecDeg - latitudeWholeDeg)*60.0f;
             var longitudeMinutes = (longitudeDecDeg - longitudeWholeDeg)*60.0f;
@@ -1328,15 +1280,11 @@ namespace F16CPD
 
             var latString = latitudeQualifier + latitudeWholeDeg + " " + string.Format("{0:00.000}", latitudeMinutes);
             var longString = longitudeQualifier + longitudeWholeDeg + " " +
-                             string.Format("{0:00.000}", longitudeMinutes);
+                                string.Format("{0:00.000}", longitudeMinutes);
             var latLongString = latString + "  " + longString;
             var latLongFont = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
 
             g.DrawString(latLongString, latLongFont, greenBrush, latLongRect);
-
-            var tadRenderEnd = DateTime.Now;
-            var tadRenderTime = tadRenderEnd.Subtract(tadRenderStart);
-            //Debug.WriteLine("TAD render time:" + tadRenderTime.TotalMilliseconds);
         }
 
         private static void InformClientOfCpdInputControlChangedEvent(CpdInputControls control)
@@ -1354,7 +1302,7 @@ namespace F16CPD
             }
             else
             {
-                var inputControl = _mfdInputControlFinder.GetControl(ActiveMenuPage, control);
+                MfdInputControl inputControl = _mfdInputControlFinder.GetControl(ActiveMenuPage, control);
                 if (inputControl != null)
                 {
                     if (inputControl is MomentaryButtonMfdInputControl)
@@ -1377,13 +1325,11 @@ namespace F16CPD
             }
         }
 
-       
-
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up managed
-        ///   and unmanaged resources used by this object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up managed
+        ///     and unmanaged resources used by this object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -1392,8 +1338,8 @@ namespace F16CPD
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object is not
-        ///   manually disposed.  Ordinarily called only by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object is not
+        ///     manually disposed.  Ordinarily called only by the garbage collector.
         /// </summary>
         ~F16CpdMfdManager()
         {
@@ -1401,9 +1347,12 @@ namespace F16CPD
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually perform disposal.  Distinguishes the private method signature from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually perform disposal.  Distinguishes the private method
+        ///     signature from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)
