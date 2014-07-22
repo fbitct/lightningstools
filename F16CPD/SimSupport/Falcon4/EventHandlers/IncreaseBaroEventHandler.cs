@@ -25,13 +25,11 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
         {
             if (Settings.Default.RunAsClient)
             {
-                var message = new Message("Falcon4IncreaseBaro",
-                                          _mfdManager.FlightData.BarometricPressureInDecimalInchesOfMercury);
+                var message = new Message("Falcon4IncreaseBaro", null);
                 _mfdManager.Client.SendMessageToServer(message);
             }
             else
             {
-                _mfdManager.FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
                 _falconCallbackSender.SendCallbackToFalcon("SimAltPressInc");
             }
         }
