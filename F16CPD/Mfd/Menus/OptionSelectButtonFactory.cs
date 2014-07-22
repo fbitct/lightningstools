@@ -1,4 +1,5 @@
-﻿using F16CPD.Mfd.Controls;
+﻿using Common.UI.Layout;
+using F16CPD.Mfd.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;

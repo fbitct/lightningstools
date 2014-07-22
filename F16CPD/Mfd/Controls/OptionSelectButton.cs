@@ -1,24 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using F16CPD.Mfd.Menus;
+using Common.UI.Layout;
 
 namespace F16CPD.Mfd.Controls
 {
-    public enum HAlignment
-    {
-        Center,
-        Left,
-        Right,
-    }
-
-    public enum VAlignment
-    {
-        Center,
-        Top,
-        Bottom
-    }
-
     public class OptionSelectButton : MomentaryButtonMfdInputControl
     {
         protected MfdMenuPage _page;
