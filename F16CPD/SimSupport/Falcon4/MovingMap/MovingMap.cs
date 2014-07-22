@@ -113,7 +113,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 }
                 else
                 {
-                    _mapLoadingMessageRenderer.DisplayLoadingMessage(g, renderRectangle, _mapRenderProgress);
+                    _mapLoadingMessageRenderer.RenderLoadingMessage(g, renderRectangle, _mapRenderProgress);
                 }
             }
         }

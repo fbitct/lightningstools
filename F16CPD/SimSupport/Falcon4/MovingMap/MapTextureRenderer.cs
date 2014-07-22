@@ -6,7 +6,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal interface IMapTextureRenderer
     {
         void RenderMapTextureForCurrentElevationPost(uint lod, int detailTextureWidthPixels,
-            int leftXPost, int topYPost, Graphics h, int elevationPostY, int elevationPostX);
+            int mapBoundsLeftX, int mapBoundsTopY, Graphics h, int y, int x);
     }
 
     internal class MapTextureRenderer : IMapTextureRenderer
@@ -24,25 +24,28 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         }
 
         public void RenderMapTextureForCurrentElevationPost(uint lod, int detailTextureWidthPixels,
-            int leftXPost, int topYPost, Graphics h, int elevationPostY, int elevationPostX)
+            int mapBoundsLeftX, int mapBoundsTopY, Graphics h, int y, int x)
         {
             //retrieve the detail texture corresponding to the current elevation post offset 
-            var thisElevationPostDetailTexture = _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost
-                (elevationPostX, elevationPostY, lod, _terrainDB);
-            if (thisElevationPostDetailTexture == null) return;
+            var detailTexture = _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost (x, y, lod, _terrainDB);
+            if (detailTexture == null) return;
+           
             //now draw the detail texture onto the render target
-            var sourceRect = new Rectangle(0, 0, thisElevationPostDetailTexture.Width,
-                thisElevationPostDetailTexture.Height);
+            var sourceRect = new Rectangle(0, 0, detailTexture.Width, detailTexture.Height);
+            
             //determine the upper-left pixel at which to place this detail texture on the render target
             var destPoint = new Point(
-                (elevationPostX - leftXPost)*detailTextureWidthPixels,
-                (topYPost - elevationPostY - 1)*detailTextureWidthPixels
+                (x - mapBoundsLeftX) * detailTextureWidthPixels,
+                (mapBoundsTopY - y - 1) * detailTextureWidthPixels
                 );
+            
             //calculate the destination rectangle (in pixels) on the render target, that we'll be placing the detail texture inside of
             var destRect = new Rectangle(destPoint,
-                new Size(detailTextureWidthPixels + 2,
+                new Size(
+                    detailTextureWidthPixels + 2,
                     detailTextureWidthPixels + 2));
-            h.DrawImage(thisElevationPostDetailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
+
+            h.DrawImage(detailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
         }
     }
 }

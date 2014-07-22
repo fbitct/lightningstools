@@ -6,13 +6,13 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
     internal interface IMapLoadingMessageRenderer
     {
-        void DisplayLoadingMessage(Graphics g, Rectangle renderRectangle, int mapRenderProgressPercentage);
+        void RenderLoadingMessage(Graphics g, Rectangle renderRectangle, float mapRenderProgressPercentage);
     }
 
     internal class MapLoadingMessageRenderer : IMapLoadingMessageRenderer
     {
 
-        public void DisplayLoadingMessage(Graphics g, Rectangle renderRectangle, int mapRenderProgressPercentage)
+        public void RenderLoadingMessage(Graphics g, Rectangle renderRectangle, float mapRenderProgressPercentage)
         {
             var gTransform = g.Transform;
             g.ResetTransform();
