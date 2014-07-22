@@ -71,9 +71,6 @@ namespace F16CPD
         private FileInfo _currentChecklistFile;
         private int _currentChecklistPageNum = 1;
         private int _currentChecklistPagesTotal;
-        private ToggleSwitchMfdInputControl _extFuelTransSwitch;
-        private ToggleSwitchMfdInputControl _fuelSelectControl;
-        private ToggleSwitchMfdInputControl _hsiModeSelectorSwitch;
         private bool _isDisposed;
         private Bitmap _lastMapFromServer;
 
@@ -87,7 +84,6 @@ namespace F16CPD
         private int _mapRangeRingsDiameterInNauticalMiles = 40;
         private float _mapScale = 500000.0f;
         private bool _nightMode;
-        private RotaryEncoderMfdInputControl _paramAdjustKnob;
         private ISimSupportModule _simSupportModule;
 
         internal F16CpdMfdManager(Size screenBoundsPixels,
@@ -209,25 +205,13 @@ namespace F16CPD
             get { return _mapScale; }
         }
 
-        internal ToggleSwitchMfdInputControl HsiModeSelectorSwitch
-        {
-            get { return _hsiModeSelectorSwitch; }
-        }
+        internal ToggleSwitchMfdInputControl HsiModeSelectorSwitch { get; private set; }
 
-        internal RotaryEncoderMfdInputControl ParamAdjustKnob
-        {
-            get { return _paramAdjustKnob; }
-        }
+        internal RotaryEncoderMfdInputControl ParamAdjustKnob { get; private set; }
 
-        internal ToggleSwitchMfdInputControl FuelSelectSwitch
-        {
-            get { return _fuelSelectControl; }
-        }
+        internal ToggleSwitchMfdInputControl FuelSelectSwitch { get; private set; }
 
-        internal ToggleSwitchMfdInputControl ExtFuelTransSwitch
-        {
-            get { return _extFuelTransSwitch; }
-        }
+        internal ToggleSwitchMfdInputControl ExtFuelTransSwitch { get; private set; }
 
         public void DecreaseBrightness()
         {
@@ -353,10 +337,10 @@ namespace F16CPD
 
         private void BuildNonOsbInputControls()
         {
-            _hsiModeSelectorSwitch = _hsiModeSelectorSwitchFactory.CreateHsiModeSelectorSwitch();
-            _fuelSelectControl = _fuelSelectSwitchFactory.BuildFuelSelectSwitch();
-            _extFuelTransSwitch = _extFuelTransSwitchFactory.BuildExtFuelTransSwitch();
-            _paramAdjustKnob = _paramSelectKnobFactory.BuildParamSelectKnob();
+            HsiModeSelectorSwitch = _hsiModeSelectorSwitchFactory.CreateHsiModeSelectorSwitch();
+            FuelSelectSwitch = _fuelSelectSwitchFactory.BuildFuelSelectSwitch();
+            ExtFuelTransSwitch = _extFuelTransSwitchFactory.BuildExtFuelTransSwitch();
+            ParamAdjustKnob = _paramSelectKnobFactory.BuildParamSelectKnob();
         }
 
         private void InitializeFlightInstruments()
