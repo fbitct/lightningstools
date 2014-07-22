@@ -13,10 +13,12 @@ namespace F16CPD.SimSupport.Falcon4
     internal interface IMovingMap : IDisposable
     {
         void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale,
+            float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
             int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode);
 
         bool RenderMapAsync(Graphics g, Rectangle renderRectangle, float mapScale,
-            int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode, DoWorkEventArgs e);
+            float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
+            int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode, DoWorkEventArgs e );
     }
 
     internal class MovingMap : IMovingMap
@@ -25,7 +27,6 @@ namespace F16CPD.SimSupport.Falcon4
         private readonly IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever;
         private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         private readonly object _mapImageLock = new object();
-        private readonly F16CpdMfdManager _mfdManager;
         private readonly ITheaterMapBuilder _theaterMapBuilder;
         private bool _isDisposed;
         private float _lastMapScale;
@@ -36,11 +37,10 @@ namespace F16CPD.SimSupport.Falcon4
         private DoWorkEventHandler _mapRenderingBackgroundWorkerDoWorkDelegate;
         private TerrainDB _terrainDB;
 
-        public MovingMap(F16CpdMfdManager mfdManager, TerrainDB terrainDB, ITheaterMapBuilder theaterMapBuilder = null,
+        public MovingMap( TerrainDB terrainDB, ITheaterMapBuilder theaterMapBuilder = null,
             IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever = null,
             IElevationPostCoordinateClamper elevationPostCoordinateClamper = null)
         {
-            _mfdManager = mfdManager;
             _terrainDB = terrainDB;
             _theaterMapBuilder = theaterMapBuilder ?? new TheaterMapBuilder();
             _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever ??
@@ -48,7 +48,7 @@ namespace F16CPD.SimSupport.Falcon4
             _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
         }
 
-        public void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale,
+        public void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetNorth, float mapCoordinateFeetEast, float magneticHeadingDecimalDegrees,
             int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode)
         {
             //set up a background worker to do map rendering, if we haven't already set one up
@@ -84,7 +84,10 @@ namespace F16CPD.SimSupport.Falcon4
                     RenderRectangle = renderRectangle,
                     MapScale = mapScale,
                     RangeRingDiameterInNauticalMiles = rangeRingDiameterInNauticalMiles,
-                    RotationMode = rotationMode
+                    RotationMode = rotationMode,
+                    MapCoordinateFeetEast =  mapCoordinateFeetEast,
+                    MapCoordinateFeetNorth = mapCoordinateFeetNorth,
+                    MagneticHeadingDecimalDegrees = magneticHeadingDecimalDegrees
                 };
                 _mapRenderingBackgroundWorker.RunWorkerAsync(args);
             }
@@ -120,7 +123,7 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        public bool RenderMapAsync(Graphics g, Rectangle renderRectangle, float mapScale,
+        public bool RenderMapAsync(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
             int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode, DoWorkEventArgs e)
         {
             if (_terrainDB == null || _terrainDB.TerrainBasePath == null) return false;
@@ -154,8 +157,8 @@ namespace F16CPD.SimSupport.Falcon4
             var numL0ElevationPostsToRender =
                 (int) (Math.Ceiling(terrainWidthToRenderInFeet/feetBetweenL0ElevationPosts));
             if (numL0ElevationPostsToRender < 1) return false;
-            var posX = _mfdManager.FlightData.MapCoordinateFeetEast;
-            var posY = _mfdManager.FlightData.MapCoordinateFeetNorth;
+            var posX = mapCoordinateFeetEast;
+            var posY = mapCoordinateFeetNorth;
 
             //determine which Level of Detail to use for rendering the map
             //start with the lowest Level of Detail available (i.e. highest-resolution map) and work upward (i.e. toward lower-resolution maps covering greater areas)
@@ -260,7 +263,7 @@ namespace F16CPD.SimSupport.Falcon4
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
                         {
-                            RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(cropWidth, h);
+                            RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(cropWidth, h, magneticHeadingInDecimalDegrees);
                         }
 
                         h.ScaleTransform(toScale, toScale);
@@ -323,7 +326,7 @@ namespace F16CPD.SimSupport.Falcon4
                                                                          (renderRectangle.Height*renderRectangle.Height))/
                                                        originalRenderDiameterPixels;
 
-                    DrawMapRing(g, renderRectangle, outerMapRingDiameterPixelsUnscaled, renderRectangleScaleFactor);
+                    DrawMapRing(g, renderRectangle, outerMapRingDiameterPixelsUnscaled, renderRectangleScaleFactor, magneticHeadingInDecimalDegrees);
                 }
             }
             catch (Exception ex)
@@ -347,7 +350,7 @@ namespace F16CPD.SimSupport.Falcon4
             bool success;
             using (var g = Graphics.FromImage(renderSurface))
             {
-                success = RenderMapAsync(g, args.RenderRectangle, args.MapScale, args.RangeRingDiameterInNauticalMiles,
+                success = RenderMapAsync(g, args.RenderRectangle, args.MapScale, args.MapCoordinateFeetEast, args.MapCoordinateFeetNorth, args.MagneticHeadingDecimalDegrees,  args.RangeRingDiameterInNauticalMiles,
                     args.RotationMode, e);
             }
             if (success)
@@ -368,10 +371,10 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private void RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(int cropWidth, Graphics h)
+        private void RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(int cropWidth, Graphics h, float magneticHeadingInDecimalDegrees)
         {
             h.TranslateTransform(cropWidth/2.0f, cropWidth/2.0f);
-            h.RotateTransform(-(_mfdManager.FlightData.MagneticHeadingInDecimalDegrees));
+            h.RotateTransform(-(magneticHeadingInDecimalDegrees));
             h.TranslateTransform(-cropWidth/2.0f, -cropWidth/2.0f);
         }
 
@@ -399,7 +402,7 @@ namespace F16CPD.SimSupport.Falcon4
         }
 
         private void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingDiameterPixelsUnscaled,
-            float renderRectangleScaleFactor)
+            float renderRectangleScaleFactor, float magneticHeadingInDecimalDegrees)
         {
             var mapRingPen = new Pen(Color.Magenta);
             var mapRingBrush = new SolidBrush(Color.Magenta);
@@ -409,7 +412,7 @@ namespace F16CPD.SimSupport.Falcon4
             var originalGTransform = g.Transform;
 
             g.TranslateTransform(renderRectangle.Width/2.0f, renderRectangle.Height/2.0f);
-            g.RotateTransform(-_mfdManager.FlightData.MagneticHeadingInDecimalDegrees);
+            g.RotateTransform(-magneticHeadingInDecimalDegrees);
             g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
 
             int outerMapRingDiameterPixelsScaled;
@@ -462,7 +465,6 @@ namespace F16CPD.SimSupport.Falcon4
             g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom),
                 new Point(innerMapRingBoundingRectMiddleX,
                     innerMapRingBoundingRect.Bottom - mapRingLineWidths));
-            return;
         }
 
         private static void DrawOuterMapRangeCircle(Graphics g, Rectangle renderRectangle,
@@ -566,6 +568,9 @@ namespace F16CPD.SimSupport.Falcon4
             public int RangeRingDiameterInNauticalMiles;
             public Rectangle RenderRectangle;
             public MapRotationMode RotationMode;
+            public float MapCoordinateFeetNorth;
+            public float MapCoordinateFeetEast;
+            public float MagneticHeadingDecimalDegrees;
         }
 
         #endregion

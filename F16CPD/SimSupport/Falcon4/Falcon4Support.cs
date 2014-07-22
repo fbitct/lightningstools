@@ -110,14 +110,15 @@ namespace F16CPD.SimSupport.Falcon4
         }
 
 
-        public void RenderMap(Graphics g, Rectangle renderRect, float mapScale, int rangeRingDiameterInNauticalMiles,
+        public void RenderMap(Graphics g, Rectangle renderRect, float mapScale, 
+            int rangeRingDiameterInNauticalMiles,
             MapRotationMode rotationMode)
         {
             if (_movingMap == null)
             {
-                _movingMap = new MovingMap(Manager, _terrainDB);
+                _movingMap = new MovingMap(_terrainDB);
             }
-            _movingMap.RenderMap(g, renderRect, mapScale, rangeRingDiameterInNauticalMiles, rotationMode);
+            _movingMap.RenderMap(g, renderRect, mapScale, Manager.FlightData.MapCoordinateFeetNorth, Manager.FlightData.MapCoordinateFeetEast, Manager.FlightData.MagneticHeadingInDecimalDegrees, rangeRingDiameterInNauticalMiles, rotationMode);
         }
 
         #region Destructors
