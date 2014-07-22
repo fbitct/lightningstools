@@ -213,6 +213,7 @@
     <Compile Include="SimSupport\SimSupportModule.cs" />
     <Compile Include="SimSupport\SimSupportModuleRegistry.cs" />
     <Compile Include="SimSupport\TextSimOutput.cs" />
+    <Compile Include="Statistics\AverageOfSamplesCalculator.cs" />
     <Compile Include="Statistics\MedianOfSamplesCalculator.cs" />
     <Compile Include="Statistics\TimestampedFloatValue.cs" />
     <Compile Include="Strings\NumericComparer.cs" />

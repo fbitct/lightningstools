@@ -183,7 +183,7 @@ namespace F16CPD
         {
             if (_simSupportModule == null)
             {
-                _simSupportModule = new Falcon4Support(_manager, _mediator);
+                _simSupportModule = new Falcon4Support(_manager);
                 _manager.SimSupportModule = _simSupportModule;
             }
         }

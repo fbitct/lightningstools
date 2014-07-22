@@ -168,7 +168,6 @@
     <Compile Include="SimSupport\Falcon4\EventHandlers\CourseSelectDecreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\CourseSelectIncreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\DecreaseAlowEventHandler.cs" />
-    <Compile Include="SimSupport\Falcon4\AverageOfSamplesCalculator.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\DecreaseBaroEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\HeadingSelectDecreaseEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\HeadingSelectIncreaseEventHandler.cs" />
