@@ -1,12 +1,6 @@
 ﻿using F16CPD.Mfd.Controls;
 using F16CPD.SimSupport.Falcon4.EventHandlers;
-using F4KeyFile;
-using F4SharedMem;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F16CPD.SimSupport.Falcon4
 {
@@ -16,16 +10,14 @@ namespace F16CPD.SimSupport.Falcon4
     }
     class OptionSelectButtonPressHandler:IOptionSelectButtonPressHandler
     {
-        private F16CpdMfdManager _mfdManager;
-        private IFalconCallbackSender _falconCallbackSender;
-        private ICourseSelectIncreaseEventHandler _courseSelectIncreaseEventHandler;
-        private ICourseSelectDecreaseEventHandler _courseSelectDecreaseEventHandler;
-        private IHeadingSelectIncreaseEventHandler _headingSelectIncreaseEventHandler;
-        private IHeadingSelectDecreaseEventHandler _headingSelectDecreaseEventHandler;
-        private IIncreaseBaroEventHandler _increaseBaroEventHandler;
-        private IDecreaseBaroEventHandler _decreaseBaroEventHandler;
-        private IIncreaseAlowEventHandler _increaseAlowEventHandler;
-        private IDecreaseAlowEventHandler _decreaseAlowEventHandler;
+        private readonly ICourseSelectIncreaseEventHandler _courseSelectIncreaseEventHandler;
+        private readonly ICourseSelectDecreaseEventHandler _courseSelectDecreaseEventHandler;
+        private readonly IHeadingSelectIncreaseEventHandler _headingSelectIncreaseEventHandler;
+        private readonly IHeadingSelectDecreaseEventHandler _headingSelectDecreaseEventHandler;
+        private readonly IIncreaseBaroEventHandler _increaseBaroEventHandler;
+        private readonly IDecreaseBaroEventHandler _decreaseBaroEventHandler;
+        private readonly IIncreaseAlowEventHandler _increaseAlowEventHandler;
+        private readonly IDecreaseAlowEventHandler _decreaseAlowEventHandler;
         public OptionSelectButtonPressHandler(
             F16CpdMfdManager mfdManager,
             IFalconCallbackSender falconCallbackSender=null,
@@ -38,16 +30,16 @@ namespace F16CPD.SimSupport.Falcon4
             IIncreaseAlowEventHandler increaseAlowEventHandler=null,
             IDecreaseAlowEventHandler decreaseAlowEventHandler=null)
         {
-            _mfdManager = mfdManager;
-            _falconCallbackSender = falconCallbackSender ?? new FalconCallbackSender(_mfdManager);
-            _courseSelectIncreaseEventHandler=courseSelectIncreaseEventHandler ?? new CourseSelectIncreaseEventHandler(_falconCallbackSender);
-            _courseSelectDecreaseEventHandler = courseSelectDecreaseEventHandler ?? new CourseSelectDecreaseEventHandler(_falconCallbackSender);
-            _headingSelectIncreaseEventHandler = headingSelectIncreaseEventHandler ?? new HeadingSelectIncreaseEventHandler(_falconCallbackSender);
-            _headingSelectDecreaseEventHandler = headingSelectDecreaseEventHandler ?? new HeadingSelectDecreaseEventHandler(_falconCallbackSender);
-            _increaseBaroEventHandler = increaseBaroEventHandler ?? new IncreaseBaroEventHandler(_mfdManager, _falconCallbackSender);
-            _decreaseBaroEventHandler = decreaseBaroEventHandler ?? new DecreaseBaroEventHandler(_mfdManager, _falconCallbackSender);
-            _increaseAlowEventHandler = increaseAlowEventHandler ?? new IncreaseAlowEventHandler(_mfdManager, _falconCallbackSender);
-            _decreaseAlowEventHandler = decreaseAlowEventHandler ?? new DecreaseAlowEventHandler(_mfdManager, _falconCallbackSender);
+            F16CpdMfdManager mfdManager1 = mfdManager;
+            IFalconCallbackSender falconCallbackSender1 = falconCallbackSender ?? new FalconCallbackSender(mfdManager1);
+            _courseSelectIncreaseEventHandler=courseSelectIncreaseEventHandler ?? new CourseSelectIncreaseEventHandler(falconCallbackSender1);
+            _courseSelectDecreaseEventHandler = courseSelectDecreaseEventHandler ?? new CourseSelectDecreaseEventHandler(falconCallbackSender1);
+            _headingSelectIncreaseEventHandler = headingSelectIncreaseEventHandler ?? new HeadingSelectIncreaseEventHandler(falconCallbackSender1);
+            _headingSelectDecreaseEventHandler = headingSelectDecreaseEventHandler ?? new HeadingSelectDecreaseEventHandler(falconCallbackSender1);
+            _increaseBaroEventHandler = increaseBaroEventHandler ?? new IncreaseBaroEventHandler(mfdManager1, falconCallbackSender1);
+            _decreaseBaroEventHandler = decreaseBaroEventHandler ?? new DecreaseBaroEventHandler(mfdManager1, falconCallbackSender1);
+            _increaseAlowEventHandler = increaseAlowEventHandler ?? new IncreaseAlowEventHandler(mfdManager1, falconCallbackSender1);
+            _decreaseAlowEventHandler = decreaseAlowEventHandler ?? new DecreaseAlowEventHandler(mfdManager1, falconCallbackSender1);
         }
         public void HandleOptionSelectButtonPress(OptionSelectButton button)
         {
@@ -82,8 +74,6 @@ namespace F16CPD.SimSupport.Falcon4
                         break;
                     case "AcknowledgeMessage":
                         //SendCallbackToFalcon("SimICPFAck");
-                        break;
-                    default:
                         break;
                 }
             }
