@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace F4Utils.SimSupport
+namespace F16CPD
 {
     [Serializable]
     public enum NavModes
