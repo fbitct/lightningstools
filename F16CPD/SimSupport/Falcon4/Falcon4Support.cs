@@ -197,6 +197,9 @@ namespace F16CPD.SimSupport.Falcon4
 
                 flightData.RadarAltimeterOffFlag = ((fromFalcon.lightBits & (int) LightBits.RadarAlt) ==
                                                     (int) LightBits.RadarAlt);
+                flightData.AltimeterMode = ((fromFalcon.altBits & (int) AltBits.PneuFlag) == (int)AltBits.PneuFlag) ? AltimeterMode.Pneumatic : AltimeterMode.Electronic;
+                //TODO: support hPA alt calibration, not just inches hg
+                flightData.BarometricPressureInDecimalInchesOfMercury = (fromFalcon.AltCalReading/100.00f);
 
                 UpdateIndicatedAltitude(flightData, fromFalcon);
                 UpdateAltitudeAGL(flightData, fromFalcon);
@@ -256,8 +259,6 @@ namespace F16CPD.SimSupport.Falcon4
                 UpdateHSIData(flightData, fromFalcon, hsibits);
 
                 _indicatedRateOfTurnCalculator.DetermineIndicatedRateOfTurn(flightData);
-
-                ResetBaroPressureSettingIfAboveTransitionAltitude(flightData);
 
                 UpdateTACANChannel(flightData, fromFalcon);
                 UpdateMapPosition(flightData, fromFalcon);
@@ -346,14 +347,6 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private static void ResetBaroPressureSettingIfAboveTransitionAltitude(FlightData flightData)
-        {
-            if (flightData.VerticalVelocityInDecimalFeetPerSecond > 0 &&
-                flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet > flightData.TransitionAltitudeInFeet)
-            {
-                ResetBaroPressureSettingToStandard(flightData);
-            }
-        }
 
         private void UpdateTACANChannel(FlightData flightData, F4SharedMem.FlightData fromFalcon)
         {
@@ -678,15 +671,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             //TODO: move all these variables to private state inside the manager
             var existingFlightData = Manager.FlightData;
-            newServerFlightData.AltimeterMode = existingFlightData.AltimeterMode;
-            newServerFlightData.BarometricPressureInDecimalInchesOfMercury =
-                existingFlightData.BarometricPressureInDecimalInchesOfMercury;
             newServerFlightData.TransitionAltitudeInFeet = existingFlightData.TransitionAltitudeInFeet;
-        }
-
-        private static void ResetBaroPressureSettingToStandard(FlightData flightData)
-        {
-            flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
         }
 
         private void EnsureTerrainIsLoaded()
