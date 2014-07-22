@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Statistics;
+﻿using System.Collections.Generic;
 
-namespace F16CPD.SimSupport.Falcon4
+namespace Common.Statistics
 {
     internal interface IAverageOfSamplesCalculator
     {
