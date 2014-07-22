@@ -37,24 +37,25 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         private DoWorkEventHandler _mapRenderingBackgroundWorkerDoWorkDelegate;
         private TerrainDB _terrainDB;
         private readonly IMapTextureRenderer _mapTextureRenderer;
-        private readonly IOuterMapRangeCircleRenderer _outerMapRangeCircleRenderer;
         private readonly IMapLoadingMessageRenderer _mapLoadingMessageRenderer;
+        private readonly IMapRingRenderer _mapRingRenderer;
 
-        public MovingMap( TerrainDB terrainDB, ITheaterMapBuilder theaterMapBuilder = null,
+        public MovingMap( 
+            TerrainDB terrainDB, 
+            ITheaterMapBuilder theaterMapBuilder = null,
             IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever = null,
             IElevationPostCoordinateClamper elevationPostCoordinateClamper = null,
             IMapTextureRenderer mapTextureRenderer=null,
-            IOuterMapRangeCircleRenderer outerMapRangeCircleRenderer=null,
-            IMapLoadingMessageRenderer mapLoadingMessageRenderer = null)
+            IMapLoadingMessageRenderer mapLoadingMessageRenderer = null,
+            IMapRingRenderer mapRingRenderer=null)
         {
             _terrainDB = terrainDB;
             _theaterMapBuilder = theaterMapBuilder ?? new TheaterMapBuilder();
-            _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever ??
-                                                      new DetailTextureForElevationPostRetriever();
             _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
-            _mapTextureRenderer = mapTextureRenderer ?? new MapTextureRenderer(detailTextureForElevationPostRetriever, terrainDB);
-            _outerMapRangeCircleRenderer = outerMapRangeCircleRenderer ?? new OuterMapRangeCircleRenderer();
+            _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever ?? new DetailTextureForElevationPostRetriever();
+            _mapTextureRenderer = mapTextureRenderer ?? new MapTextureRenderer(terrainDB, detailTextureForElevationPostRetriever);
             _mapLoadingMessageRenderer = mapLoadingMessageRenderer ?? new MapLoadingMessageRenderer();
+            _mapRingRenderer = mapRingRenderer ?? new MapRingRenderer();
         }
 
         public void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetNorth, float mapCoordinateFeetEast, float magneticHeadingDecimalDegrees,
@@ -318,7 +319,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                                                                          (renderRectangle.Height*renderRectangle.Height))/
                                                        originalRenderDiameterPixels;
 
-                    DrawMapRing(g, renderRectangle, outerMapRingDiameterPixelsUnscaled, renderRectangleScaleFactor, magneticHeadingInDecimalDegrees);
+                    _mapRingRenderer.DrawMapRing(g, renderRectangle, outerMapRingDiameterPixelsUnscaled, renderRectangleScaleFactor, magneticHeadingInDecimalDegrees);
                 }
             }
             catch (Exception ex)
@@ -336,7 +337,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
 
         private void MapRenderingBackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            var args = (MapRenderAsyncArguments) e.Argument;
+            var args = (MovingMap.MapRenderAsyncArguments) e.Argument;
             var renderSurface = new Bitmap(args.RenderRectangle.Width, args.RenderRectangle.Height,
                 PixelFormat.Format16bppRgb565);
             bool success;
@@ -368,72 +369,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             h.TranslateTransform(cropWidth/2.0f, cropWidth/2.0f);
             h.RotateTransform(-(magneticHeadingInDecimalDegrees));
             h.TranslateTransform(-cropWidth/2.0f, -cropWidth/2.0f);
-        }
-
-        private void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingDiameterPixelsUnscaled,
-            float renderRectangleScaleFactor, float magneticHeadingInDecimalDegrees)
-        {
-            var mapRingPen = new Pen(Color.Magenta);
-            var mapRingBrush = new SolidBrush(Color.Magenta);
-            mapRingPen.Width = 1;
-            const int mapRingLineWidths = 25;
-
-            var originalGTransform = g.Transform;
-
-            g.TranslateTransform(renderRectangle.Width/2.0f, renderRectangle.Height/2.0f);
-            g.RotateTransform(-magneticHeadingInDecimalDegrees);
-            g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
-
-            int outerMapRingDiameterPixelsScaled;
-            _outerMapRangeCircleRenderer.DrawOuterMapRangeCircle(g, renderRectangle, outerMapRingDiameterPixelsUnscaled,
-                out outerMapRingDiameterPixelsScaled, renderRectangleScaleFactor, mapRingPen, mapRingLineWidths);
-
-            Rectangle innerMapRingBoundingRect;
-            int innerMapRingBoundingRectMiddleX;
-            DrawInnerMapRangeCircle(g, renderRectangle, mapRingPen, mapRingLineWidths,
-                outerMapRingDiameterPixelsScaled, out innerMapRingBoundingRect, out innerMapRingBoundingRectMiddleX);
-            DrawNorthMarkerOnInnerMapRangeCircle(g, mapRingBrush, innerMapRingBoundingRect,
-                innerMapRingBoundingRectMiddleX);
-            g.Transform = originalGTransform;
-        }
-
-        private static void DrawNorthMarkerOnInnerMapRangeCircle(Graphics g, Brush mapRingBrush,
-            Rectangle innerMapRingBoundingRect, int innerMapRingBoundingRectMiddleX)
-        {
-            //draw north marker on inner map range circle
-            var northMarkerPoints = new Point[3];
-            northMarkerPoints[0] = new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Top - 15);
-            northMarkerPoints[1] = new Point(innerMapRingBoundingRectMiddleX - 12,
-                innerMapRingBoundingRect.Top + 1);
-            northMarkerPoints[2] = new Point(innerMapRingBoundingRectMiddleX + 12,
-                innerMapRingBoundingRect.Top + 1);
-            g.FillPolygon(mapRingBrush, northMarkerPoints);
-        }
-
-        private static void DrawInnerMapRangeCircle(Graphics g, Rectangle renderRectangle, Pen mapRingPen, int mapRingLineWidths, int outerMapRingDiameterPixelsScaled, out Rectangle innerMapRingBoundingRect, out int innerMapRingBoundingRectMiddleX)
-        {
-            //draw inner map range circle
-            var innerMapRingDiameterPixelsScaled = (int) (Math.Floor(outerMapRingDiameterPixelsScaled/2.0f));
-            innerMapRingBoundingRect =
-                new Rectangle(((renderRectangle.Width - innerMapRingDiameterPixelsScaled)/2),
-                    ((renderRectangle.Height - innerMapRingDiameterPixelsScaled)/2),
-                    innerMapRingDiameterPixelsScaled, innerMapRingDiameterPixelsScaled);
-            g.DrawEllipse(mapRingPen, innerMapRingBoundingRect);
-            innerMapRingBoundingRectMiddleX = innerMapRingBoundingRect.X +
-                                              (int) (Math.Floor(innerMapRingBoundingRect.Width/(float) 2));
-            var innerMapRingBoundingRectMiddleY = innerMapRingBoundingRect.Y +
-                                                  (int) (Math.Floor(innerMapRingBoundingRect.Height/(float) 2));
-            g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRect.X, innerMapRingBoundingRectMiddleY),
-                new Point(innerMapRingBoundingRect.X + mapRingLineWidths, innerMapRingBoundingRectMiddleY));
-            g.DrawLine(mapRingPen,
-                new Point(innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width,
-                    innerMapRingBoundingRectMiddleY),
-                new Point(
-                    innerMapRingBoundingRect.X + innerMapRingBoundingRect.Width - mapRingLineWidths,
-                    innerMapRingBoundingRectMiddleY));
-            g.DrawLine(mapRingPen, new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Bottom),
-                new Point(innerMapRingBoundingRectMiddleX,
-                    innerMapRingBoundingRect.Bottom - mapRingLineWidths));
         }
 
         private void DrawAirplaneInCenter(Graphics g, Rectangle renderRectangle)

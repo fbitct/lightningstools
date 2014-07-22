@@ -14,10 +14,13 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         private readonly IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever;
         private readonly TerrainDB _terrainDB;
 
-        public MapTextureRenderer(IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever, TerrainDB terrainDB)
+        public MapTextureRenderer(
+            TerrainDB terrainDB,
+            IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever=null 
+            )
         {
             _terrainDB = terrainDB;
-            _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever;
+            _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever ?? new DetailTextureForElevationPostRetriever();
         }
 
         public void RenderMapTextureForCurrentElevationPost(uint lod, int detailTextureWidthPixels,

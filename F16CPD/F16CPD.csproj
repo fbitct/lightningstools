@@ -187,7 +187,10 @@
     <Compile Include="SimSupport\Falcon4\IndicatedRateOfTurnCalculator.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransNormEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransWingFirstEventHandler.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\InnerMapRangeCircleNorthMarkerRenderer.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\InnerMapRangeCircleRenderer.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap\MapLoadingMessageRenderer.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\MapRingRenderer.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap\MapTextureRenderer.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap\MovingMap.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap\OuterMapRangeCircleRenderer.cs" />
