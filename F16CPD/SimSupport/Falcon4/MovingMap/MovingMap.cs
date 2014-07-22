@@ -31,7 +31,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         private bool _isDisposed;
         private float _lastMapScale;
         private Bitmap _lastRenderedMapImage;
-        private Bitmap _mapAirplaneBitmap;
         private int _mapRenderProgress;
         private BackgroundWorker _mapRenderingBackgroundWorker;
         private DoWorkEventHandler _mapRenderingBackgroundWorkerDoWorkDelegate;
@@ -39,6 +38,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         private readonly IMapTextureRenderer _mapTextureRenderer;
         private readonly IMapLoadingMessageRenderer _mapLoadingMessageRenderer;
         private readonly IMapRingRenderer _mapRingRenderer;
+        private readonly ICenterAirplaneRenderer _centerAirplaneRenderer;
 
         public MovingMap( 
             TerrainDB terrainDB, 
@@ -47,7 +47,8 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             IElevationPostCoordinateClamper elevationPostCoordinateClamper = null,
             IMapTextureRenderer mapTextureRenderer=null,
             IMapLoadingMessageRenderer mapLoadingMessageRenderer = null,
-            IMapRingRenderer mapRingRenderer=null)
+            IMapRingRenderer mapRingRenderer=null,
+            ICenterAirplaneRenderer centerAirplaneRenderer=null)
         {
             _terrainDB = terrainDB;
             _theaterMapBuilder = theaterMapBuilder ?? new TheaterMapBuilder();
@@ -56,6 +57,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             _mapTextureRenderer = mapTextureRenderer ?? new MapTextureRenderer(terrainDB, detailTextureForElevationPostRetriever);
             _mapLoadingMessageRenderer = mapLoadingMessageRenderer ?? new MapLoadingMessageRenderer();
             _mapRingRenderer = mapRingRenderer ?? new MapRingRenderer();
+            _centerAirplaneRenderer = centerAirplaneRenderer ?? new CenterAirplaneRenderer();
         }
 
         public void RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetNorth, float mapCoordinateFeetEast, float magneticHeadingDecimalDegrees,
@@ -253,54 +255,12 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 {
                     using (var h = Graphics.FromImage(renderTarget))
                     {
-                        h.PixelOffsetMode = PixelOffsetMode.Half;
-                        if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
-                        {
-                            RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(cropWidth, h, magneticHeadingInDecimalDegrees);
-                        }
-
-                        h.ScaleTransform(toScale, toScale);
-                        h.TranslateTransform(-xOffset, -yOffset);
-
-                        var crapMap =
-                            _theaterMapBuilder.GetTheaterMap(_terrainDB.TheaterDotMap.NumLODs - 1, _terrainDB);
-                        if (crapMap != null)
-                        {
-                            h.Clear(crapMap.GetPixel(crapMap.Width - 1, crapMap.Height - 1));
-                        }
-                        var numPostsRendered = 0;
-                        for (var thisElevationPostY = clampBottomYPost;
-                            thisElevationPostY <= clampTopYPost;
-                            thisElevationPostY++)
-                        {
-                            for (var thisElevationPostX = clampLeftXPost;
-                                thisElevationPostX <= clampRightXPost;
-                                thisElevationPostX++)
-                            {
-                                if (_mapRenderingBackgroundWorker.CancellationPending)
-                                {
-                                    _mapRenderProgress = 0;
-                                    e.Cancel = true;
-                                    return false;
-                                }
-
-                                _mapTextureRenderer.RenderMapTextureForCurrentElevationPost(lod, thisLodDetailTextureWidthPixels, leftXPost,
-                                    topYPost, h, thisElevationPostY, thisElevationPostX);
-                                numPostsRendered++;
-                            }
-
-                            _mapRenderingBackgroundWorker.ReportProgress(
-                                (int) Math.Floor((
-                                    numPostsRendered/
-                                    (float) (
-                                        clampedElevationPostsToRenderBoundsSize.Width
-                                        *
-                                        clampedElevationPostsToRenderBoundsSize.Height
-                                        )
-                                    )*100.0f)
-                                );
-                            Application.DoEvents();
-                        }
+                        PrepareCanvas(magneticHeadingInDecimalDegrees, rotationMode, h, cropWidth, toScale, xOffset, yOffset);
+                        if (!RenderAllElevationPosts(
+                            e, 
+                            clampBottomYPost, clampTopYPost, clampLeftXPost, 
+                            clampRightXPost, lod, thisLodDetailTextureWidthPixels, 
+                            leftXPost, topYPost, h, clampedElevationPostsToRenderBoundsSize)) return false;
                     }
                     var clipRectangle =
                         new Rectangle((cropWidth/2) - (int) ((originalRenderSizeInPixels.Width*scaleFactor)/2),
@@ -313,7 +273,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                         clipRectangle,
                         GraphicsUnit.Pixel
                         );
-                    DrawAirplaneInCenter(g, renderRectangle);
+                    _centerAirplaneRenderer.DrawCenterAirplaneSymbol(g, renderRectangle);
 
                     var renderRectangleScaleFactor = (float) Math.Sqrt((renderRectangle.Width*renderRectangle.Width) +
                                                                          (renderRectangle.Height*renderRectangle.Height))/
@@ -328,6 +288,71 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 return false;
             }
             return true;
+        }
+
+        private void PrepareCanvas(float magneticHeadingInDecimalDegrees, MapRotationMode rotationMode, Graphics h,
+            int cropWidth, float toScale, int xOffset, int yOffset)
+        {
+            h.PixelOffsetMode = PixelOffsetMode.Half;
+            if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
+            {
+                RotateDestinationGraphicsSurfaceToPutCurrentHeadingOnTop(cropWidth, h, magneticHeadingInDecimalDegrees);
+            }
+
+            h.ScaleTransform(toScale, toScale);
+            h.TranslateTransform(-xOffset, -yOffset);
+
+            var crapMap =
+                _theaterMapBuilder.GetTheaterMap(_terrainDB.TheaterDotMap.NumLODs - 1, _terrainDB);
+            if (crapMap != null)
+            {
+                h.Clear(crapMap.GetPixel(crapMap.Width - 1, crapMap.Height - 1));
+            }
+        }
+
+        private bool RenderAllElevationPosts(DoWorkEventArgs e, int clampBottomYPost, int clampTopYPost, int clampLeftXPost,
+            int clampRightXPost, uint lod, int thisLodDetailTextureWidthPixels, int leftXPost, int topYPost, Graphics h,
+            Size clampedElevationPostsToRenderBoundsSize)
+        {
+            var numPostsRendered = 0;
+            for (var thisElevationPostY = clampBottomYPost;
+                thisElevationPostY <= clampTopYPost;
+                thisElevationPostY++)
+            {
+                for (var thisElevationPostX = clampLeftXPost;
+                    thisElevationPostX <= clampRightXPost;
+                    thisElevationPostX++)
+                {
+                    if (_mapRenderingBackgroundWorker.CancellationPending)
+                    {
+                        _mapRenderProgress = 0;
+                        e.Cancel = true;
+                        return false;
+                    }
+
+                    _mapTextureRenderer.RenderMapTextureForCurrentElevationPost(lod, thisLodDetailTextureWidthPixels, leftXPost,
+                        topYPost, h, thisElevationPostY, thisElevationPostX);
+                    numPostsRendered++;
+                }
+
+                ReportProgress(numPostsRendered, clampedElevationPostsToRenderBoundsSize);
+                Application.DoEvents();
+            }
+            return true;
+        }
+
+        private void ReportProgress(int numPostsRendered, Size clampedElevationPostsToRenderBoundsSize)
+        {
+            _mapRenderingBackgroundWorker.ReportProgress(
+                (int) Math.Floor((
+                    numPostsRendered/
+                    (float) (
+                        clampedElevationPostsToRenderBoundsSize.Width
+                        *
+                        clampedElevationPostsToRenderBoundsSize.Height
+                        )
+                    )*100.0f)
+                );
         }
 
         private void MapRenderingBackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -369,23 +394,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             h.TranslateTransform(cropWidth/2.0f, cropWidth/2.0f);
             h.RotateTransform(-(magneticHeadingInDecimalDegrees));
             h.TranslateTransform(-cropWidth/2.0f, -cropWidth/2.0f);
-        }
-
-        private void DrawAirplaneInCenter(Graphics g, Rectangle renderRectangle)
-        {
-            if (_mapAirplaneBitmap == null)
-            {
-                _mapAirplaneBitmap = (Bitmap) Resources.F16Symbol.Clone();
-                _mapAirplaneBitmap.MakeTransparent(Color.FromArgb(255, 0, 255));
-                _mapAirplaneBitmap =
-                    (Bitmap)
-                        Common.Imaging.Util.ResizeBitmap(_mapAirplaneBitmap,
-                            new Size(
-                                (int) Math.Floor(((float) _mapAirplaneBitmap.Width)),
-                                (int) Math.Floor(((float) _mapAirplaneBitmap.Height))));
-            }
-            g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width)/2)),
-                (((renderRectangle.Height - _mapAirplaneBitmap.Height)/2)));
         }
 
         #region Destructors
