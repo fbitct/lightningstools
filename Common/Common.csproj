@@ -221,6 +221,8 @@
     <Compile Include="Strings\Util.cs" />
     <Compile Include="Threading\Util.cs" />
     <Compile Include="UI\GDIPlusOptions.cs" />
+    <Compile Include="UI\Layout\HAlignment.cs" />
+    <Compile Include="UI\Layout\VAlignment.cs" />
     <Compile Include="UI\ListViewColumnSorter.cs" />
     <Compile Include="UI\TreeNodeNumericComparer.cs" />
     <Compile Include="UI\Wizard\Header.cs">

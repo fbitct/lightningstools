@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using Common.UI.Layout;
 using F16CPD.Mfd.Controls;
 using F16CPD.Properties;
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using F16CPD.Mfd.Controls;
 
 namespace F16CPD.Mfd.Controls
 {
