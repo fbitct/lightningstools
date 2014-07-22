@@ -7,6 +7,7 @@ using F16CPD.Mfd.Controls;
 using F16CPD.Networking;
 using F16CPD.Properties;
 using F16CPD.SimSupport.Falcon4.EventHandlers;
+using F16CPD.SimSupport.Falcon4.MovingMap;
 using F16CPD.SimSupport.Falcon4.Networking;
 using F4KeyFile;
 using F4SharedMem;
@@ -116,7 +117,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (_movingMap == null)
             {
-                _movingMap = new MovingMap(_terrainDB);
+                _movingMap = new MovingMap.MovingMap(_terrainDB);
             }
             _movingMap.RenderMap(g, renderRect, mapScale, Manager.FlightData.MapCoordinateFeetNorth, Manager.FlightData.MapCoordinateFeetEast, Manager.FlightData.MagneticHeadingInDecimalDegrees, rangeRingDiameterInNauticalMiles, rotationMode);
         }

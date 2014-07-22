@@ -185,9 +185,12 @@
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetHsiModeTcnEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\FalconDataFormatDetector.cs" />
     <Compile Include="SimSupport\Falcon4\IndicatedRateOfTurnCalculator.cs" />
-    <Compile Include="SimSupport\Falcon4\MovingMap.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransNormEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransWingFirstEventHandler.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\MapLoadingMessageRenderer.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\MapTextureRenderer.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\MovingMap.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\OuterMapRangeCircleRenderer.cs" />
     <Compile Include="SimSupport\Falcon4\Networking\ClientSideInboundMessageProcessor.cs" />
     <Compile Include="SimSupport\Falcon4\Networking\ServerSideInboundMessageProcessor.cs" />
     <Compile Include="SimSupport\Falcon4\FalconCallbackSender.cs" />
