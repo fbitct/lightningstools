@@ -200,7 +200,6 @@
     <Compile Include="SimSupport\Falcon4\FalconCallbackSender.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\InputControlEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\OptionSelectButtonPressHandler.cs" />
-    <Compile Include="UI\Util\DisplaySettingsManager.cs" />
     <Compile Include="UI\Forms\DraggableForm.cs">
       <SubType>Form</SubType>
     </Compile>
