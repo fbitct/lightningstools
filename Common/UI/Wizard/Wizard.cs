@@ -26,11 +26,6 @@ namespace Common.UI.Wizard
         private Button btnCancel;
 
         /// <summary>
-        ///   Required designer variable.
-        /// </summary>
-        private readonly Container components;
-
-        /// <summary>
         ///   Wizard control with designer support
         /// </summary>
         public Wizard()
@@ -58,13 +53,6 @@ namespace Common.UI.Wizard
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 
