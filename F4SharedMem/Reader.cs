@@ -86,7 +86,7 @@ namespace F4SharedMem
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpOsbSharedMemoryAreaBaseAddress, i));
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         break;
                     }
@@ -132,7 +132,7 @@ namespace F4SharedMem
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpSecondarySharedMemoryAreaBaseAddress, i));
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         break;
                     }
@@ -171,7 +171,7 @@ namespace F4SharedMem
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpPrimarySharedMemoryAreaBaseAddress, i));
                     }
-                    catch (Exception e)
+                    catch 
                     {
                         break;
                     }

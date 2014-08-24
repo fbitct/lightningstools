@@ -29,7 +29,7 @@ namespace AnalogDevices
                         b = stream.ReadByte();
                         if (b < 0)
                         {
-                            throw new InvalidDataException("Inexpected end of file");
+                            throw new InvalidDataException("Unexpected end of file");
                         }
                     } while (b != (byte) ':');
 
@@ -99,7 +99,7 @@ namespace AnalogDevices
             if (b >= (byte) 'A' && b <= (byte) 'F') return 10 + b - (byte) 'A';
             if (b == -1)
             {
-                throw new InvalidDataException("Inexpected end of file");
+                throw new InvalidDataException("Unexpected end of file");
             }
             throw new InvalidDataException("Hex digit expected: " + (char) b);
         }

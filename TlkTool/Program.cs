@@ -58,13 +58,11 @@ namespace TlkTool
                             break;
                         case ACTION_TLK2LH:
                             return TLK2COMPRESSED(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.LH, fileNum);
-                            break;
                         case ACTION_LH2TLK:
                             COMPRESSED2TLK(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.LH, fileNum);
                             break;
                         case ACTION_TLK2SPX:
                             return TLK2COMPRESSED(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.SPX, fileNum);
-                            break;
                         case ACTION_SPX2TLK:
                             COMPRESSED2TLK(inputFileOrFolderSpec, outputFileOrFolderSpec, CodecType.SPX, fileNum);
                             break;

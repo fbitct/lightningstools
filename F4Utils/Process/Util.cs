@@ -121,7 +121,7 @@ namespace F4Utils.Process
                             toReturn = FalconDataFormats.BMS4;
                         }
                     }
-                    catch (Exception e)
+                    catch 
                     {
 
                     }
@@ -137,7 +137,7 @@ namespace F4Utils.Process
                             toReturn = FalconDataFormats.BMS4;
                         }
                     }
-                    catch (Exception e)
+                    catch 
                     {
 
                     }

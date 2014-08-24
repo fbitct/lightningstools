@@ -199,7 +199,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 {
                     device.AnalogInputChanged -= analogInputChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }
@@ -209,7 +209,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 {
                     device.DigitalInputChanged -= digitalInputChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }
@@ -219,7 +219,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 {
                     device.I2CDataReceived -= i2cDataReceivedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

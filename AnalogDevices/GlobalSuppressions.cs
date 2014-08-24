@@ -142,3 +142,14 @@ using System.Diagnostics.CodeAnalysis;
 [assembly:
     SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Scope = "member",
         Target = "AnalogDevices.IhxFile.#IhxData")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#_log")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Usb", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#UsbDevice")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "GeneralPurposeIOPinState", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#GeneralPurposeIOPinState")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly", MessageId = "GeneralPurposeIOPinDirection", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#GeneralPurposeIOPinState")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "PEC", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#PECErrorOccurred")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#SetDacChannelDataSourceAllChannels(AnalogDevices.DacChannelDataSource)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1823:AvoidUnusedPrivateFields", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#_instanceStateLock")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#UploadFirmware(AnalogDevices.IhxFile)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes", Scope = "member", Target = "AnalogDevices.DenseDacEvalBoard.#UploadFirmware(AnalogDevices.IhxFile)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Scope = "member", Target = "AnalogDevices.Test.#Main(System.String[])")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Scope = "member", Target = "AnalogDevices.IhxFile.#.ctor(System.String)")]

@@ -8,7 +8,7 @@ namespace Common.MacroProgramming
         private long _currentValue;
         private DigitalSignal _in;
         private long _increment = 1;
-        private long _initialValue;
+        private long _initialValue = 0;
         private AnalogSignal _out;
         private DigitalSignal _reset;
 

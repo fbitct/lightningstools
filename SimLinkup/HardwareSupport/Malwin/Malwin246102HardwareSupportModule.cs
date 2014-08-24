@@ -121,7 +121,7 @@ namespace SimLinkup.HardwareSupport.Malwin
                     _cabinPressureAltitudeInputSignal.SignalChanged -=
                         _cabinPressureAltitudeInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }

@@ -207,7 +207,7 @@ namespace F4KeyFile
                     guid = new Guid(tokenList[7]);
                     isGuid = true;
                 }
-                catch (Exception e)
+                catch
                 {
                 }
                 if (isGuid)

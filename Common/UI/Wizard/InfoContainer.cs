@@ -11,11 +11,6 @@ namespace Common.UI.Wizard
     [Designer(typeof (InfoContainerDesigner))]
     public class InfoContainer : UserControl
     {
-        /// <summary>
-        ///   Required designer variable.
-        /// </summary>
-        private readonly Container components;
-
         private Label lblTitle;
         private PictureBox picImage;
 
@@ -53,13 +48,6 @@ namespace Common.UI.Wizard
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 

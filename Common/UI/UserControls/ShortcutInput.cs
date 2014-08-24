@@ -112,11 +112,6 @@ namespace Common.UI.UserControls
 
         private const byte MOD_ALT = 1, MOD_CONTROL = 2, MOD_SHIFT = 4;
 
-        /// <summary>
-        ///   Required designer variable.
-        /// </summary>
-        private readonly Container components;
-
         private CheckBox _cbxAlt;
         private CheckBox _cbxControl;
         private CheckBox _cbxShift;
@@ -165,10 +160,6 @@ namespace Common.UI.UserControls
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                Common.Util.DisposeObject(components);
-            }
             base.Dispose(disposing);
         }
 

@@ -130,7 +130,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 {
                     _pitchInputSignal.SignalChanged -= _pitchInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }
@@ -140,7 +140,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 {
                     _rollInputSignal.SignalChanged -= _rollInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

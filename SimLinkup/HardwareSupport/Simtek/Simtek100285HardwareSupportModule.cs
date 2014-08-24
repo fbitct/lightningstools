@@ -128,7 +128,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _altitudeInputSignal.SignalChanged -= _altitudeInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

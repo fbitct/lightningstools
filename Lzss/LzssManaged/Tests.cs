@@ -5,13 +5,11 @@ namespace Lzss
 {
     public static class Tests
     {
-        private const bool TORTURE = false;
 
         public static void Main(string[] args)
         {
-            var timesToRun = 1;
-            if (TORTURE) timesToRun = 5;
-            for (var i = 0; i < timesToRun; i++)
+            
+            for (var i = 0; i < 5; i++)
             {
                 TestCompressionLowLevelInterface();
                 TestCompressionStreamInterface();

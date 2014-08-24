@@ -116,7 +116,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
                 {
                     _fuelFlowInputSignal.SignalChanged -= _fuelFlowInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }

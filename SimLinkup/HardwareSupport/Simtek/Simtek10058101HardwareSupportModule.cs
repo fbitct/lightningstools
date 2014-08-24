@@ -125,7 +125,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _aoaInputSignal.SignalChanged -= _aoaInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }
@@ -135,7 +135,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _aoaPowerOffInputSignal.SignalChanged -= _aoaPowerInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

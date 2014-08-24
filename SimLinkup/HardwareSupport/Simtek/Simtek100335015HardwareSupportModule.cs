@@ -129,7 +129,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _pitchInputSignal.SignalChanged -= _pitchInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }
@@ -139,7 +139,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _rollInputSignal.SignalChanged -= _rollInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

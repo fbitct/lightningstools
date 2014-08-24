@@ -168,7 +168,7 @@ namespace F4SharedMemMirror
                     _mirror.Dispose();
                     _mirror = null;
                 }
-                catch (Exception e)
+                catch
                 {
                 }
             }

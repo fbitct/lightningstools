@@ -583,7 +583,7 @@ namespace PPJoy
                 {
                     Registry.CurrentUser.CreateSubKey(@"Control Panel\PPJoy");
                 }
-                catch (Exception)
+                catch 
                 {
                 }
                 currentRemoveDriverSetting =
@@ -603,7 +603,7 @@ namespace PPJoy
             {
                 Registry.CurrentUser.CreateSubKey(@"Control Panel\PPJoy");
             }
-            catch (Exception)
+            catch 
             {
             }
             Registry.CurrentUser.OpenSubKey(@"Control Panel\PPJoy", true).SetValue("RemoveDirectInput",
@@ -643,7 +643,7 @@ namespace PPJoy
             {
                 Registry.CurrentUser.CreateSubKey(@"Control Panel\PPJoy");
             }
-            catch (Exception)
+            catch 
             {
             }
 
@@ -700,7 +700,7 @@ namespace PPJoy
             //using PPJoy as its driver, so we need to dig deeper
             //and load the corresponding PPJoy device object
             //to see if it's a virtual joystick or a LPT1 joystick (physical)
-            if (vendor.Equals(PPJOY_VENDOR_ID_STRING, StringComparison.InvariantCultureIgnoreCase))
+            if (vendor.Equals(PPJOY_VENDOR_ID_STRING, StringComparison.OrdinalIgnoreCase))
             {
                 //get an array containing all registered PPJoy devices
                 var devices = GetAllDevices();
@@ -716,7 +716,7 @@ namespace PPJoy
 
                     //if the product ID string matches the supplied Product ID,
                     //check if it's a virtual device
-                    if (thisProdIdString.Equals(prod, StringComparison.InvariantCultureIgnoreCase))
+                    if (thisProdIdString.Equals(prod, StringComparison.OrdinalIgnoreCase))
                     {
                         if (thisDevice.DeviceType == JoystickTypes.Virtual_Joystick)
                         {

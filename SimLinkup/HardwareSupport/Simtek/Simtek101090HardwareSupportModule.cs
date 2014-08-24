@@ -116,7 +116,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _epuFuelPercentageInputSignal.SignalChanged -= _epuFuelPercentageInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

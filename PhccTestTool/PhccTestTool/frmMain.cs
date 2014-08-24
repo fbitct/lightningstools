@@ -63,7 +63,6 @@ namespace PhccTestTool
         private bool _allowAnOut1Sending = true;
         private short[] _analogInputs;
         private bool[] _digitalInputs;
-        private bool _loading;
         private Device _phccDevice = new Device();
         private ReadOnlyCollection<string> _serialPorts;
         private Point _sevenSegDecimalPointCenter = new Point(57, 58);
@@ -73,7 +72,6 @@ namespace PhccTestTool
 
         public frmMain()
         {
-            _loading = true;
             CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
         }
@@ -396,7 +394,6 @@ namespace PhccTestTool
             cbCharLcdDataMode.SelectedItem = "Display Data";
             txtI2CDataReceived.AppendText("Address:");
             txtI2CDataReceived.AppendText(Environment.NewLine + "Data:");
-            _loading = false;
             try
             {
                 _splashThread.Abort();

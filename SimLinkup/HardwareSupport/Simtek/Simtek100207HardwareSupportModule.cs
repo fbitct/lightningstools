@@ -115,7 +115,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _rpmInputSignal.SignalChanged -= _rpmInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }

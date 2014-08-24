@@ -116,7 +116,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _ftitInputSignal.SignalChanged -= _ftitInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }

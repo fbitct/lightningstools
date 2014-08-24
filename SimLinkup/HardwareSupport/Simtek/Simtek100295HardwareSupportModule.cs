@@ -118,7 +118,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _fuelFlowInputSignal.SignalChanged -= _fuelFlowInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }

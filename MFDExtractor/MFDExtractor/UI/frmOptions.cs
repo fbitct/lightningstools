@@ -644,7 +644,7 @@ namespace MFDExtractor.UI
             {
                 Close(); //TODO: handle this kind of stuff centrally
             }
-            catch (Exception e)
+            catch 
             {
             }
         }
@@ -1422,7 +1422,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1603,7 +1603,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1632,7 +1632,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1661,7 +1661,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1690,7 +1690,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1719,7 +1719,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1748,7 +1748,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch
             {
             }
             if (keyFromSettings != null)
@@ -1777,7 +1777,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1806,7 +1806,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1835,7 +1835,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1864,7 +1864,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1893,7 +1893,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1922,7 +1922,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)
@@ -1951,7 +1951,7 @@ namespace MFDExtractor.UI
                     (InputControlSelection)
                     Common.Serialization.Util.DeserializeFromXml(keyFromSettingsString, typeof (InputControlSelection));
             }
-            catch (Exception ex)
+            catch 
             {
             }
             if (keyFromSettings != null)

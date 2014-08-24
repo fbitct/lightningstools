@@ -315,7 +315,7 @@ namespace Phcc
         ///   A byte buffer to store the parsed values of the 
         ///   current analog input values list.
         /// </summary>
-        private volatile short[] _currentAnalogInputsParsed = new short[35];
+        private short[] _currentAnalogInputsParsed = new short[35];
 
         /// <summary>
         ///   A byte buffer to store the un-parsed values of the 
@@ -324,19 +324,19 @@ namespace Phcc
         /* Commenting out this declaration, which matches the implementation in PHCC2HostProtocol, but which does not match the actual implementation in Firmware14 *?
         //private volatile byte[] _currentAnalogInputsRaw = new byte[45];
         */
-        private volatile byte[] _currentAnalogInputsRaw = new byte[70]; //this matches the implementation in Firmware18
+        private byte[] _currentAnalogInputsRaw = new byte[70]; //this matches the implementation in Firmware18
 
         /// <summary>
         ///   A byte buffer to store the current values of the 
         ///   digital inputs.
         /// </summary>
-        private volatile byte[] _currentDigitalInputValues = new byte[128];
+        private byte[] _currentDigitalInputValues = new byte[128];
 
         /// <summary>
         ///   Flag for preventing the read buffer from being read 
         ///   during certain operations
         /// </summary>
-        private volatile bool _dontRead;
+        private bool _dontRead;
 
         /// <summary>
         ///   Boolean flag indicating whether this object instance has 
@@ -348,29 +348,29 @@ namespace Phcc
         ///   The name of the COM port to communicate over 
         ///   (i.e. "COM1", "COM2", etc.)
         /// </summary>
-        private volatile string _portName;
+        private string _portName;
 
         /// <summary>
         ///   A byte buffer to use when reading data from the PHCC.
         /// </summary>
-        private volatile byte[] _readBuffer = new byte[20];
+        private byte[] _readBuffer = new byte[20];
 
         /// <summary>
         ///   A <see cref = "System.IO.Ports.SerialPort" /> object that
         ///   hides the details of communicating via RS232 over a COM port.
         /// </summary>
-        private volatile SerialPort _serialPort;
+        private SerialPort _serialPort;
 
         /// <summary>
         ///   Flag to keep track of whether the PHCC motherboard is sending automatic change
         ///   notifications or not
         /// </summary>
-        private volatile bool _talking;
+        private bool _talking;
 
         /// <summary>
         ///   A byte buffer to use when writing data to the PHCC.
         /// </summary>
-        private volatile byte[] _writeBuffer = new byte[4];
+        private byte[] _writeBuffer = new byte[4];
 
         /// <summary>
         ///   Creates an instance of the <see cref = "Device" /> class.
@@ -560,7 +560,7 @@ namespace Phcc
                         }
                         _serialPort.Dispose();
                     }
-                    catch (Exception)
+                    catch 
                     {
                     }
 
@@ -1509,7 +1509,7 @@ namespace Phcc
                 {
                     ProcessBufferContents();
                 }
-                catch (Exception)
+                catch 
                 {
                 }
             }

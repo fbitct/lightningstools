@@ -393,7 +393,6 @@ namespace Phcc.DeviceManager.UI
                 {
                     case DialogResult.Cancel:
                         return;
-                        break;
                     case DialogResult.No:
                         break;
                     case DialogResult.Yes:

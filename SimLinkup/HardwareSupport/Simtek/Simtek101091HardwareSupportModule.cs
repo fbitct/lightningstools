@@ -117,7 +117,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _oilPressureInputSignal.SignalChanged -= _oilPressureInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }

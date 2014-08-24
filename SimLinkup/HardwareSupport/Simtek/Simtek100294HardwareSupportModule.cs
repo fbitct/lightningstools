@@ -138,7 +138,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _totalFuelInputSignal.SignalChanged -= _totalFuelInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }
@@ -150,7 +150,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _aftLeftFuelInputSignal.SignalChanged -= _aftLeftFuelInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }
@@ -160,7 +160,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _foreRightFuelInputSignal.SignalChanged -= _foreRightFuelInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

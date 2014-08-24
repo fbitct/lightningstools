@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_4662E0DA86A458B76C131A213E114394"
+        "MsmKey" = "8:_84AF633425F4624D3AE5E156BDA81A53"
         "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -28,13 +28,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
+        "OwnerKey" = "8:_84AF633425F4624D3AE5E156BDA81A53"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4662E0DA86A458B76C131A213E114394"
+        "OwnerKey" = "8:_980E5B407D5D4E51B1BA49713C3383A5"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -64,10 +64,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
                     }
                 }
             }
@@ -132,14 +132,14 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4662E0DA86A458B76C131A213E114394"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_84AF633425F4624D3AE5E156BDA81A53"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:Phcc, Version=0.2.2.0, Culture=neutral, PublicKeyToken=d747a6aa7a16ca9c, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_4662E0DA86A458B76C131A213E114394"
+                    "_84AF633425F4624D3AE5E156BDA81A53"
                     {
                     "Name" = "8:Phcc.dll"
                     "Attributes" = "3:512"
@@ -231,7 +231,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PHCC Test Tool"
         "ProductCode" = "8:{B7653035-1C98-404E-9207-E11777D3EC86}"
-        "PackageCode" = "8:{3B597710-3331-42B0-8EC4-30C7E52A7BC0}"
+        "PackageCode" = "8:{091473F8-FF96-4AD8-90E4-CAD9A16E096D}"
         "UpgradeCode" = "8:{7A3E44BE-41EF-4C67-B78F-E707504398FF}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

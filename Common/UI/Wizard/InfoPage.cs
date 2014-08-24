@@ -9,7 +9,6 @@ namespace Common.UI.Wizard
     /// </summary>
     public class InfoPage : InfoContainer
     {
-        private readonly IContainer components;
         private Label lblDescription;
 
         /// <summary>
@@ -38,13 +37,6 @@ namespace Common.UI.Wizard
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                if (components != null)
-                {
-                    components.Dispose();
-                }
-            }
             base.Dispose(disposing);
         }
 

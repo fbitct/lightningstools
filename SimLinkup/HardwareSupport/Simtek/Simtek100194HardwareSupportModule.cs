@@ -126,7 +126,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _machInputSignal.SignalChanged -= _machInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }
@@ -136,7 +136,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _airspeedInputSignal.SignalChanged -= _airspeedInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

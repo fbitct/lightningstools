@@ -213,7 +213,7 @@ namespace PPJoy
         ///</summary>
         ///<remarks>
         ///  Virtual joystick <see cref = "Device" />s will
-        ///  have <paramref name = "LptNum" /> = 0.
+        ///  have <see cref = "LptNum" /> = 0.
         ///</remarks>
         public int LptNum
         {

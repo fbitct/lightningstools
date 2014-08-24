@@ -125,7 +125,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _vviInputSignal.SignalChanged -= _vviInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException )
                 {
                 }
             }
@@ -135,7 +135,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _vviPowerInputSignal.SignalChanged -= _vviPowerInputSignalChangedEventHandler;
                 }
-                catch (RemotingException ex)
+                catch (RemotingException)
                 {
                 }
             }

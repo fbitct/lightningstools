@@ -2261,7 +2261,7 @@ namespace JoyMapper
                     proc.StartInfo.FileName = toStart;
                     proc.Start();
                 }
-                catch (Exception e)
+                catch 
                 {
                     MessageBox.Show(
                         string.Format(
