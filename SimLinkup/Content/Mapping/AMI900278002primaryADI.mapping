@@ -1,0 +1,81 @@
+﻿<?xml version="1.0"?>
+<MappingProfile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SignalMappings>
+
+    <!-- *********************************************************************-->
+    <!-- MAPPINGS FROM F4 SIM VALUES TO AMI 9002780-02 PRIMARY ADI HARDWARE SUPPORT MODULE INPUTS -->
+    <!-- *********************************************************************-->
+    <!-- PITCH DEGREES -->
+    <SignalMapping>
+      <!-- F4 ADI PITCH DEGREES OUTPUT-->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__PITCH_DEGREES</Id>
+      </Source>
+      <!-- AMI 9002780-02 ADI PITCH DEGREES INPUT-->
+      <Destination xsi:type="AnalogSignal">
+        <Id>900278002_Pitch_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- ROLL DEGREES -->
+    <SignalMapping>
+      <!-- F4 ADI ROLL DEGREES OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__ROLL_DEGREES</Id>
+      </Source>
+      <!-- AMI 9002780-02 ADI ROLL DEGREES INPUT -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>900278002_Roll_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+
+
+    <!-- *********************************************************************-->
+    <!-- MAPPINGS FROM AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
+    <!-- *********************************************************************-->
+    <!-- ROLL (SIN ) -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE ROLL (SIN) OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>900278002_Roll_SIN_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 19 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][19]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- ROLL (COS) -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE ROLL (COS) OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>900278002_Roll_COS_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 20 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][20]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+
+    <!-- PITCH -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE PITCH OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>900278002_Pitch_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 21 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][21]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    
+  </SignalMappings>
+</MappingProfile>

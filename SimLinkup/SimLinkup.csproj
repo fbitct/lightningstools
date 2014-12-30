@@ -84,6 +84,8 @@
     <Compile Include="Content\Scripts\Setup.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
+    <Compile Include="HardwareSupport\AMI\AMI9002780-02HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\AMI\AMI900278002HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\AnalogDevices\AnalogDevicesHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Astronautics\Astronautics12871HardwareSupportModuleConfig.cs" />
@@ -169,6 +171,7 @@
       <DependentUpon>Signals.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Content\Mapping\AMI900278002primaryADI.mapping" />
     <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
