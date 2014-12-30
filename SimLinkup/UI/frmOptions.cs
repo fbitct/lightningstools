@@ -56,11 +56,11 @@ namespace SimLinkup.UI
                 {
                     if (hsm != null)
                     {
-                        hsmSb.Append("\u2022 " + hsm.FriendlyName + "\n");
+                        hsmSb.Append("\u2022 " + hsm.FriendlyName + "\r\n");
                     }
                 }
             }
-            lblHardwareSupportModules.Text = hsmSb.ToString();
+            txtHardwareSupportModules.Text = hsmSb.ToString();
 
 
             var ssms = Runtime.Runtime.GetRegisteredSimSupportModules();
@@ -71,11 +71,11 @@ namespace SimLinkup.UI
                 {
                     if (ssm != null)
                     {
-                        ssmSb.Append("\u2022 " + ssm.FriendlyName + "\n");
+                        ssmSb.Append("\u2022 " + ssm.FriendlyName + "\r\n");
                     }
                 }
             }
-            lblSimSupportModules.Text = ssmSb.ToString();
+            txtSimSupportModules.Text = ssmSb.ToString();
         }
 
         private void LoadSettings()

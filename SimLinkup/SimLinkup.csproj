@@ -171,7 +171,9 @@
       <DependentUpon>Signals.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="Content\Mapping\AMI900278002primaryADI.mapping" />
+    <None Include="Content\Mapping\AMI900278002primaryADI.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

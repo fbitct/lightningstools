@@ -39,7 +39,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public override string FriendlyName
         {
-            get { return "Analog Devices AD536x/AD537x"; }
+            get { return String.Format( "Analog Devices AD536x/AD537x on {0}", _device==null? "{FAKE}": _device.SymbolicName); }
         }
 
         public static IHardwareSupportModule[] GetInstances()

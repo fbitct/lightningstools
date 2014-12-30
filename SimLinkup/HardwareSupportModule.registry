@@ -20,6 +20,9 @@
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek101091HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Malwin.Malwin246102HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Lilbern.Lilbern3239HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
-    <Module>SimLinkup.HardwareSupport.Astronautics.Astronautics12871HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
+<!--    <Module>SimLinkup.HardwareSupport.Astronautics.Astronautics12871HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>-->
+    
+    <Module>SimLinkup.HardwareSupport.AMI.AMI900278002HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
+
   </HardwareSupportModules>
 </HardwareSupportModuleRegistry>

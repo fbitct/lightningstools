@@ -42,9 +42,9 @@
             this.tabPlugins = new System.Windows.Forms.TabPage();
             this.tabPluginsSubtabs = new System.Windows.Forms.TabControl();
             this.tabHardwareSupport = new System.Windows.Forms.TabPage();
-            this.lblHardwareSupportModules = new System.Windows.Forms.Label();
+            this.txtHardwareSupportModules = new System.Windows.Forms.TextBox();
             this.tabSimSupport = new System.Windows.Forms.TabPage();
-            this.lblSimSupportModules = new System.Windows.Forms.Label();
+            this.txtSimSupportModules = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -228,7 +228,7 @@
             // tabHardwareSupport
             // 
             this.tabHardwareSupport.AutoScroll = true;
-            this.tabHardwareSupport.Controls.Add(this.lblHardwareSupportModules);
+            this.tabHardwareSupport.Controls.Add(this.txtHardwareSupportModules);
             this.tabHardwareSupport.Location = new System.Drawing.Point(4, 29);
             this.tabHardwareSupport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabHardwareSupport.Name = "tabHardwareSupport";
@@ -238,20 +238,23 @@
             this.tabHardwareSupport.Text = "Hardware Support Modules";
             this.tabHardwareSupport.UseVisualStyleBackColor = true;
             // 
-            // lblHardwareSupportModules
+            // txtHardwareSupportModules
             // 
-            this.lblHardwareSupportModules.AutoSize = true;
-            this.lblHardwareSupportModules.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblHardwareSupportModules.Location = new System.Drawing.Point(4, 5);
-            this.lblHardwareSupportModules.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblHardwareSupportModules.Name = "lblHardwareSupportModules";
-            this.lblHardwareSupportModules.Size = new System.Drawing.Size(0, 20);
-            this.lblHardwareSupportModules.TabIndex = 0;
+            this.txtHardwareSupportModules.AutoSize = true;
+            this.txtHardwareSupportModules.Multiline = true;
+            this.txtHardwareSupportModules.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtHardwareSupportModules.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtHardwareSupportModules.Location = new System.Drawing.Point(4, 5);
+            this.txtHardwareSupportModules.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.txtHardwareSupportModules.Name = "txtHardwareSupportModules";
+            this.txtHardwareSupportModules.Size = new System.Drawing.Size(0, 20);
+            this.txtHardwareSupportModules.TabIndex = 0;
+            this.txtHardwareSupportModules.ReadOnly = true;
             // 
             // tabSimSupport
             // 
             this.tabSimSupport.AutoScroll = true;
-            this.tabSimSupport.Controls.Add(this.lblSimSupportModules);
+            this.tabSimSupport.Controls.Add(this.txtSimSupportModules);
             this.tabSimSupport.Location = new System.Drawing.Point(4, 29);
             this.tabSimSupport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabSimSupport.Name = "tabSimSupport";
@@ -261,15 +264,18 @@
             this.tabSimSupport.Text = "Sim Support Modules";
             this.tabSimSupport.UseVisualStyleBackColor = true;
             // 
-            // lblSimSupportModules
+            // txtSimSupportModules
             // 
-            this.lblSimSupportModules.AutoSize = true;
-            this.lblSimSupportModules.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblSimSupportModules.Location = new System.Drawing.Point(4, 5);
-            this.lblSimSupportModules.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblSimSupportModules.Name = "lblSimSupportModules";
-            this.lblSimSupportModules.Size = new System.Drawing.Size(0, 20);
-            this.lblSimSupportModules.TabIndex = 0;
+            this.txtSimSupportModules.AutoSize = true;
+            this.txtSimSupportModules.Multiline = true;
+            this.txtSimSupportModules.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtSimSupportModules.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSimSupportModules.Location = new System.Drawing.Point(4, 5);
+            this.txtSimSupportModules.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.txtSimSupportModules.Name = "txtSimSupportModules";
+            this.txtSimSupportModules.Size = new System.Drawing.Size(0, 20);
+            this.txtSimSupportModules.TabIndex = 0;
+            this.txtSimSupportModules.ReadOnly = true;
             // 
             // frmOptions
             // 
@@ -325,7 +331,7 @@
         private System.Windows.Forms.CheckBox chkMinimizeToSystemTray;
         private System.Windows.Forms.CheckBox chkStartAutomaticallyWhenLaunched;
         private System.Windows.Forms.CheckBox chkLaunchAtSystemStartup;
-        private System.Windows.Forms.Label lblHardwareSupportModules;
-        private System.Windows.Forms.Label lblSimSupportModules;
+        private System.Windows.Forms.TextBox txtHardwareSupportModules;
+        private System.Windows.Forms.TextBox txtSimSupportModules;
     }
 }
