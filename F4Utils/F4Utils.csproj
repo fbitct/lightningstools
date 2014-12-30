@@ -117,7 +117,6 @@
     <Compile Include="Resources\F4ResourceBundleReader.cs" />
     <Compile Include="SimSupport\F4SimOutputs.cs" />
     <Compile Include="SimSupport\F4SimSupportModule.cs" />
-    <Compile Include="SimSupport\NonImplementedGaugeCalculations.cs" />
     <Compile Include="PlayerOp\SoundGroup.cs" />
     <Compile Include="Terrain\Constants.cs" />
     <Compile Include="Terrain\DetailTextureForElevationPostRetriever.cs" />

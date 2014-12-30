@@ -14,7 +14,6 @@ namespace F4Utils.SimSupport
         public const float FEET_PER_SECOND_PER_KNOT = 1.68780986f;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private FlightData _lastFlightData;
-        private double _origCabinAlt;
         private Reader _smReader;
 
         public Falcon4SimSupportModule()
@@ -185,8 +184,12 @@ namespace F4Utils.SimSupport
 
         private void UpdateSimOutputValues()
         {
+
             if (_simOutputs == null) return;
             GetNextFlightDataFromSharedMem();
+            var showToFromFlag = false;
+            var showCommandBars = false;
+            DetermineWhetherToShowILSCommandBarsAndToFromFlags(_lastFlightData, out showToFromFlag, out showCommandBars);
             if (_lastFlightData == null) return;
             foreach (var output in _simOutputs.Values)
             {
@@ -221,14 +224,7 @@ namespace F4Utils.SimSupport
                                       (_lastFlightData.yDot*_lastFlightData.yDot))/FEET_PER_SECOND_PER_KNOT;
                         break;
                     case F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL:
-                        if (_lastFlightData.DataFormat == FalconDataFormats.BMS4)
-                        {
-                            ((AnalogSignal) output).State = -_lastFlightData.aauz;
-                        }
-                        else
-                        {
-                            ((AnalogSignal) output).State = -_lastFlightData.z;
-                        }
+                        ((AnalogSignal) output).State = -_lastFlightData.aauz;
                         break;
                     case F4SimOutputs.TRUE_ALTITUDE__MSL:
                         ((AnalogSignal) output).State = -_lastFlightData.z;
@@ -297,15 +293,10 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.oilPressure2;
                         break;
                     case F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL:
-                        var pressurization = ((_lastFlightData.lightBits & (int) LightBits.CabinPress) ==
-                                              (int) LightBits.CabinPress);
-                        ((AnalogSignal) output).State = NonImplementedGaugeCalculations.CabinAlt((float) _origCabinAlt,
-                                                                                                 _lastFlightData.z,
-                                                                                                 pressurization);
-                        _origCabinAlt = ((AnalogSignal) output).State;
+                        ((AnalogSignal)output).State = _lastFlightData.cabinAlt;
                         break;
                     case F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.yaw;
+                        ((AnalogSignal)output).State = (360 + (_lastFlightData.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
                         break;
                     case F4SimOutputs.GEAR_PANEL__GEAR_POSITION:
                         ((AnalogSignal) output).State = _lastFlightData.gearPos;
@@ -388,6 +379,8 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.AOA) ==
                                                           HsiBits.AOA);
                         break;
+
+
                     case F4SimOutputs.HSI__COURSE_DEVIATION_INVALID_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.IlsWarning) ==
                                                           HsiBits.IlsWarning);
@@ -401,6 +394,9 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.courseDeviation;
+                        break;
+                    case F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES:
+                        ((AnalogSignal)output).State = _lastFlightData.deviationLimit;
                         break;
                     case F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES:
                         ((AnalogSignal) output).State = _lastFlightData.distanceToBeacon;
@@ -425,7 +421,7 @@ namespace F4Utils.SimSupport
                             var myCourseDeviationDecimalDegrees =
                                 Common.Math.Util.AngleDelta(_lastFlightData.desiredCourse,
                                                             _lastFlightData.bearingToBeacon);
-                            ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) <= 90;
+                            ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) <= 90 && showToFromFlag;
                         }
                         break;
                     case F4SimOutputs.HSI__FROM_FLAG:
@@ -433,16 +429,12 @@ namespace F4Utils.SimSupport
                             var myCourseDeviationDecimalDegrees =
                                 Common.Math.Util.AngleDelta(_lastFlightData.desiredCourse,
                                                             _lastFlightData.bearingToBeacon);
-                            ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) > 90;
+                            ((DigitalSignal) output).State = Math.Abs(myCourseDeviationDecimalDegrees) > 90 && showToFromFlag;
                         }
                         break;
                     case F4SimOutputs.HSI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.HSI_OFF) ==
                                                           HsiBits.HSI_OFF);
-                        break;
-                    case F4SimOutputs.HSI__NAVMODE_FLAG:
-                        ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.TotalFlags) ==
-                                                          HsiBits.TotalFlags);
                         break;
                     case F4SimOutputs.HSI__HSI_MODE:
                         ((AnalogSignal) output).State = _lastFlightData.navMode;
@@ -1158,6 +1150,9 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Position of localizer ILS bar",
                                                 (int) F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("ADI", "Glideslope and localizer ILS command bars enabled flag",
+                                                (int)F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
+
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "OFF flag", (int) F4SimOutputs.ADI__OFF_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "AUX flag", (int) F4SimOutputs.ADI__AUX_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "GS flag", (int) F4SimOutputs.ADI__GS_FLAG, typeof (bool)));
@@ -1200,7 +1195,6 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "TO Flag", (int) F4SimOutputs.HSI__TO_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "FROM Flag", (int) F4SimOutputs.HSI__FROM_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "OFF Flag", (int) F4SimOutputs.HSI__OFF_FLAG, typeof (bool)));
-            //            AddF4SimOutput(CreateNewF4SimOutput("HSI", "selected mode is NAV", (int)F4SimOutputs.HSI__SELECTED_MODE_IS_NAV, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "HSI mode (0=ILS/TCN, 1=TACAN, 2=NAV, 3=ILS/NAV)",
                                                 (int) F4SimOutputs.HSI__HSI_MODE, typeof (int)));
 
@@ -1780,5 +1774,40 @@ namespace F4Utils.SimSupport
             GetNextFlightDataFromSharedMem();
             UpdateSimOutputValues();
         }
+
+        private void DetermineWhetherToShowILSCommandBarsAndToFromFlags(FlightData flightData, out bool showToFromFlag, out bool showCommandBars)
+        {
+            showToFromFlag = true;
+             showCommandBars =  ((float)(Math.Abs(Math.Round(flightData.AdiIlsHorPos, 4))) != 0.1745f)
+                                &&
+                            ((Math.Abs((flightData.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= 1.0f)
+                                &&
+                            (Math.Abs((flightData.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= 5.0f));
+            
+            switch (flightData.navMode)
+            {
+                case 0: //NavModes.PlsTcn:
+                    showToFromFlag = false;
+                    break;
+                case 1: //NavModes.Tcn:
+                    showToFromFlag = true;
+                    showCommandBars = false;
+                    break;
+                case 2: //NavModes.Nav:
+                    showToFromFlag = false;
+                    showCommandBars = false;
+                    break;
+                case 3: //NavModes.PlsNav:
+                    showToFromFlag = false;
+                    break;
+            }
+
+            if (showCommandBars)
+            {
+                showToFromFlag = false;
+            }
+        }
     }
+
+
 }

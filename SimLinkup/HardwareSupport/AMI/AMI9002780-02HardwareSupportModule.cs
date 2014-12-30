@@ -235,15 +235,15 @@ namespace SimLinkup.HardwareSupport.AMI
 
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            UpdatePitchOutputValues(args.PreviousState);
+            UpdatePitchOutputValues(args.CurrentState);
         }
 
         private void roll_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            UpdateRollOutputValues(args.PreviousState);
+            UpdateRollOutputValues(args.CurrentState);
         }
 
-        private void UpdatePitchOutputValues(double previousPitchDegrees)
+        private void UpdatePitchOutputValues(double pitchDegrees)
         {
             if (_pitchInputSignal != null)
             {
@@ -270,7 +270,7 @@ namespace SimLinkup.HardwareSupport.AMI
             }
         }
 
-        private void UpdateRollOutputValues(double previousRollDegrees)
+        private void UpdateRollOutputValues(double rollDegrees)
         {
             if (_rollInputSignal != null)
             {
@@ -282,7 +282,6 @@ namespace SimLinkup.HardwareSupport.AMI
                 rollSinOutputValue = 10.0000 * Math.Sin(rollInputDegrees * Constants.RADIANS_PER_DEGREE);
                 rollCosOutputValue = 10.0000 * Math.Cos(rollInputDegrees * Constants.RADIANS_PER_DEGREE);
 
-                SimLinkup.UI.frmMain.SharedRuntime.InhibitOutputModuleUpdates();
                 if (_rollSinOutputSignal != null)
                 {
                     if (rollSinOutputValue < -10)
@@ -294,7 +293,6 @@ namespace SimLinkup.HardwareSupport.AMI
                         rollSinOutputValue = 10;
                     }
 
-                    Debug.WriteLine("Roll SIN output:" + _rollSinOutputSignal.State);
                     _rollSinOutputSignal.State = ((rollSinOutputValue + 10.0000) / 20.0000);
                 }
 
@@ -311,7 +309,6 @@ namespace SimLinkup.HardwareSupport.AMI
 
                     _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000) / 20.0000);
                 }
-                SimLinkup.UI.frmMain.SharedRuntime.AllowOutputModuleUpdates();
             }
         }
 

@@ -54,6 +54,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     foreach (var device in boards)
                     {
                         if (device == null) continue;
+                        device.SuspendAllDacOutputs();
                         device.Reset();
                         device.DacPrecision = DacPrecision.SixteenBit;
                         device.Group0Offset = 0x2000;
@@ -67,8 +68,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                             device.SetDacChannelDataValueA((ChannelAddress) j + 8, 0x7FFF);
                         }
                         device.UpdateAllDacOutputs();
-                        //device.ResumeAllDacOutputs();
-                        //device.UpdateAllDacOutputs();
+                        device.ResumeAllDacOutputs();
+                        device.UpdateAllDacOutputs();
 
                         IHardwareSupportModule thisHsm = new AnalogDevicesHardwareSupportModule(device, index);
                         toReturn.Add(thisHsm);
@@ -157,7 +158,6 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 {
                     _device.SetDacChannelDataValueA((ChannelAddress) outputSignal.Index.Value + 8,
                                                     (ushort) (outputSignal.State*0xFFFF));
-                    Synchronize();
                 }
             }
         }
@@ -172,7 +172,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         public override void Synchronize()
         {
 
-            if (_device != null && SimLinkup.UI.frmMain.SharedRuntime !=null && !SimLinkup.UI.frmMain.SharedRuntime.AreOutputModuleUpdatesInhibited)
+            if (_device != null)
             {
                 _device.UpdateAllDacOutputs();
             }
