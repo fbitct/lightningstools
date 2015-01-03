@@ -54,8 +54,14 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     foreach (var device in boards)
                     {
                         if (device == null) continue;
-                        device.SuspendAllDacOutputs();
                         device.Reset();
+                        if (device.IsOverTemperature)
+                        {
+                            device.IsTemperatureShutdownEnabled = false; //reset temperature shutdown after previous overtemperature event
+                        }
+                        device.IsTemperatureShutdownEnabled = true; //enable over-temperature auto shutdown
+                        
+                        device.SetDacChannelDataSourceAllChannels(DacChannelDataSource.DataValueA);
                         device.DacPrecision = DacPrecision.SixteenBit;
                         device.Group0Offset = 0x2000;
                         device.Group1Offset = 0x2000;
@@ -64,11 +70,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                         {
                             device.SetDacChannelOffset((ChannelAddress) j + 8, 0x8000);
                             device.SetDacChannelGain((ChannelAddress) j + 8, 0xFFFF);
-                            device.SetDacChannelDataSource((ChannelAddress) j + 8, DacChannelDataSource.DataValueA);
+                            //device.SetDacChannelDataSource((ChannelAddress) j + 8, DacChannelDataSource.DataValueA);
                             device.SetDacChannelDataValueA((ChannelAddress) j + 8, 0x7FFF);
                         }
-                        device.UpdateAllDacOutputs();
-                        device.ResumeAllDacOutputs();
                         device.UpdateAllDacOutputs();
 
                         IHardwareSupportModule thisHsm = new AnalogDevicesHardwareSupportModule(device, index);
@@ -139,6 +143,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0.500;
                 thisSignal.SignalChanged += DAC_OutputSignalChanged;
+                thisSignal.Precision = -1;
                 analogSignalsToReturn.Add(thisSignal);
             }
             analogSignals = analogSignalsToReturn.ToArray();
@@ -147,10 +152,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         private void DAC_OutputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
-            UpdateOutputSignal((AnalogSignal) sender);
+            UpdateOutputSignal((AnalogSignal) sender, args);
         }
 
-        private void UpdateOutputSignal(AnalogSignal outputSignal)
+        private void UpdateOutputSignal(AnalogSignal outputSignal, AnalogSignalChangedEventArgs args)
         {
             if (outputSignal.Index.HasValue)
             {
@@ -165,7 +170,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             foreach (var signal in _analogOutputSignals)
             {
-                UpdateOutputSignal(signal);
+                UpdateOutputSignal(signal, new AnalogSignalChangedEventArgs(0,0));
             }
             Synchronize();
         }

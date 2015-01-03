@@ -81,8 +81,6 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FalconDataFormats.cs" />
-    <Compile Include="Headers\AFFlightData.cs" />
     <Compile Include="Headers\AltBits.cs" />
     <Compile Include="Headers\BlinkBits.cs" />
     <Compile Include="Headers\BMS4FlightData.cs" />

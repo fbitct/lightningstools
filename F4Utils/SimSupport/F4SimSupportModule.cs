@@ -12,13 +12,16 @@ namespace F4Utils.SimSupport
     {
         public const float DEGREES_PER_RADIAN = 57.2957795f;
         public const float FEET_PER_SECOND_PER_KNOT = 1.68780986f;
+        private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
+        private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
+
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private FlightData _lastFlightData;
         private Reader _smReader;
 
         public Falcon4SimSupportModule()
         {
-            TryCreateSharedMemReader();
+            EnsureSharedmemReaderIsCreated();
             CreateSimOutputsList();
         }
 
@@ -27,16 +30,18 @@ namespace F4Utils.SimSupport
             get { return "Falcon 4"; }
         }
 
+        private DateTime? _lastFalconSimRunningCheckTime;
+        private bool _falconWasRunningOnLastCheck = false;
         public override bool IsSimRunning
         {
             get
             {
-                if (!TestMode)
+                if (!_lastFalconSimRunningCheckTime.HasValue ||  DateTime.Now.Subtract(_lastFalconSimRunningCheckTime.Value).Duration().TotalMilliseconds > 500)
                 {
-                    TryCreateSharedMemReader();
-                    if (_smReader == null) return false;
-                    return _smReader.IsFalconRunning;
+                    _lastFalconSimRunningCheckTime = DateTime.Now;
+                    _falconWasRunningOnLastCheck = F4Utils.Process.Util.IsFalconRunning();
                 }
+                return _falconWasRunningOnLastCheck; 
                 return true;
             }
         }
@@ -51,136 +56,22 @@ namespace F4Utils.SimSupport
             get { return new Dictionary<string, SimCommand>(); }
         }
 
-        private void TryCreateSharedMemReader()
+        private void EnsureSharedmemReaderIsCreated()
         {
-            var dataFormat = Util.DetectFalconFormat();
-            if (dataFormat.HasValue)
+           
+            if (_smReader == null || !_smReader.IsFalconRunning)
             {
-                if (_smReader != null && _smReader.DataFormat != dataFormat.Value)
-                {
-                    Common.Util.DisposeObject(_smReader);
-                    _smReader = null;
-                }
-                if (_smReader == null)
-                {
-                    _smReader = new Reader(dataFormat.Value);
-                }
+                Common.Util.DisposeObject(_smReader);
+                _smReader = new Reader();
             }
         }
 
         private void GetNextFlightDataFromSharedMem()
         {
-            if (TestMode)
-            {
-                _lastFlightData = GetFakeFlightData();
-            }
-            else
-            {
-                if (_smReader == null) return;
-                _lastFlightData = _smReader.GetCurrentData();
-            }
+            if (_smReader == null) return;
+            _lastFlightData = _smReader.GetCurrentData();
         }
 
-        private static FlightData GetFakeFlightData()
-        {
-            var toReturn = new FlightData();
-            var rnd = new Random();
-            toReturn.x = (float) (rnd.NextDouble()*10000);
-            toReturn.y = (float) (rnd.NextDouble()*10000);
-            toReturn.z = (float) (rnd.NextDouble()*10000);
-            toReturn.xDot = (float) (rnd.NextDouble()*100);
-            toReturn.yDot = (float) (rnd.NextDouble()*100);
-            toReturn.zDot = (float) (rnd.NextDouble()*100);
-            toReturn.alpha = (float) (rnd.NextDouble()*66) - 33;
-            toReturn.beta = 0;
-            toReturn.gamma = 0;
-            toReturn.alpha = (float) (rnd.NextDouble()*180) - 90;
-            toReturn.roll = (float) (rnd.NextDouble()*360) - 180;
-            toReturn.yaw = (float) (rnd.NextDouble()*360) - 180;
-            toReturn.mach = (float) (rnd.NextDouble()*2.5);
-            toReturn.kias = (float) (rnd.NextDouble()*1000);
-            toReturn.vt = (float) (rnd.NextDouble()*1000);
-            toReturn.gs = (float) (rnd.NextDouble()*9.9);
-            toReturn.windOffset = (float) (rnd.NextDouble()*((2*Math.PI)/180)*30);
-            toReturn.nozzlePos = (float) (rnd.NextDouble()*100);
-            toReturn.nozzlePos2 = (float) (rnd.NextDouble()*100);
-            toReturn.internalFuel = (float) (rnd.NextDouble()*10000);
-            toReturn.externalFuel = (float) (rnd.NextDouble()*10000);
-            toReturn.fuelFlow = (float) (rnd.NextDouble()*99999);
-            toReturn.rpm = (float) (rnd.NextDouble()*103);
-            toReturn.rpm2 = (float) (rnd.NextDouble()*103);
-            toReturn.ftit = (float) (rnd.NextDouble()*700);
-            toReturn.ftit2 = (float) (rnd.NextDouble()*700);
-            toReturn.gearPos = (float) (rnd.NextDouble()*1);
-            toReturn.speedBrake = (float) (rnd.NextDouble()*1);
-            toReturn.epuFuel = (float) (rnd.NextDouble()*1);
-            toReturn.oilPressure = (float) (rnd.NextDouble()*1);
-            toReturn.oilPressure2 = (float) (rnd.NextDouble()*1);
-            toReturn.lightBits = (int) (rnd.NextDouble()*0xFFFFFFFF);
-            toReturn.lightBits2 = (int) (rnd.NextDouble()*0xFFFFFFFF);
-            toReturn.lightBits3 = (int) (rnd.NextDouble()*0xFFFFFFFF);
-            toReturn.ChaffCount = (float) (rnd.NextDouble()*99);
-            toReturn.FlareCount = (float) (rnd.NextDouble()*99);
-            toReturn.NoseGearPos = (float) (rnd.NextDouble()*1);
-            toReturn.LeftGearPos = (float) (rnd.NextDouble()*1);
-            toReturn.RightGearPos = (float) (rnd.NextDouble()*1);
-            toReturn.AdiIlsHorPos = (float) (rnd.NextDouble()*2) - 1;
-            toReturn.AdiIlsVerPos = (float) (rnd.NextDouble()*2) - 1;
-            toReturn.courseState = (rnd.NextDouble()*1 > 0.50) ? 1 : 0;
-            toReturn.headingState = (rnd.NextDouble()*1 > 0.50) ? 1 : 0;
-            toReturn.totalStates = (rnd.NextDouble()*1 > 0.50) ? 1 : 0;
-            toReturn.courseDeviation = (float) (rnd.NextDouble()*90);
-            toReturn.desiredCourse = (float) (rnd.NextDouble()*360);
-            toReturn.distanceToBeacon = (float) (rnd.NextDouble()*999);
-            toReturn.bearingToBeacon = (float) (rnd.NextDouble()*360);
-            toReturn.currentHeading = (float) (rnd.NextDouble()*360);
-            toReturn.desiredHeading = (float) (rnd.NextDouble()*360);
-            toReturn.deviationLimit = 5;
-            toReturn.halfDeviationLimit = 2.5f;
-            toReturn.localizerCourse = (float) (rnd.NextDouble()*360);
-            toReturn.TrimPitch = ((float) (rnd.NextDouble()*1) - 0.5f)*2;
-            toReturn.TrimRoll = ((float) (rnd.NextDouble()*1) - 0.5f)*2;
-            toReturn.TrimYaw = ((float) (rnd.NextDouble()*1) - 0.5f)*2;
-            toReturn.hsiBits = (int) (rnd.NextDouble()*0xFFFFFFFF);
-            toReturn.DEDLines = new[]
-                                    {
-                                        new string('x', 25), new string('x', 25), new string('x', 25),
-                                        new string('x', 25),
-                                        new string('x', 25)
-                                    };
-            toReturn.Invert = new[]
-                                  {
-                                      new string((char) 2, 25), new string((char) 2, 25), new string((char) 2, 25),
-                                      new string((char) 2, 25), new string((char) 2, 25)
-                                  };
-            toReturn.PFLLines = toReturn.DEDLines;
-            toReturn.PFLInvert = toReturn.Invert;
-            toReturn.UFCTChan = (int) (rnd.NextDouble()*999);
-            toReturn.AUXTChan = (int) (rnd.NextDouble()*999);
-            toReturn.RwrObjectCount = (int) (rnd.NextDouble()*40);
-            toReturn.RWRsymbol = new int[40];
-            toReturn.bearing = new float[40];
-            toReturn.missileActivity = new int[40];
-            toReturn.missileLaunch = new int[40];
-            toReturn.selected = new int[40];
-            toReturn.lethality = new float[40];
-            toReturn.newDetection = new int[40];
-            for (var i = 0; i < toReturn.RwrObjectCount; i++)
-            {
-                toReturn.bearing[i] = (float) (rnd.NextDouble()*360);
-                toReturn.missileActivity[i] = rnd.NextDouble() > 0.5 ? 0 : 1;
-                toReturn.missileLaunch[i] = rnd.NextDouble() > 0.5 ? 0 : 1;
-                toReturn.selected[i] = rnd.NextDouble() > 0.5 ? 0 : 1;
-                toReturn.lethality[i] = (float) (rnd.NextDouble()*2);
-            }
-            toReturn.fwd = (float) (rnd.NextDouble()*10000);
-            toReturn.aft = (float) (rnd.NextDouble()*10000);
-            toReturn.total = toReturn.fwd + toReturn.aft;
-            toReturn.navMode = (byte) (rnd.NextDouble()*3);
-            toReturn.aauz = toReturn.z;
-            toReturn.DataFormat = FalconDataFormats.BMS4;
-            return toReturn;
-        }
 
         private void UpdateSimOutputValues()
         {
@@ -196,7 +87,7 @@ namespace F4Utils.SimSupport
                 F4SimOutputs? simOutputEnumMatch = null;
                 F4SimOutputs triedParse;
                 var key = ((Signal) output).Id;
-                var firstBracketLocation = key.IndexOf("[");
+                var firstBracketLocation = key.IndexOf("[", StringComparison.OrdinalIgnoreCase);
                 if (firstBracketLocation > 0)
                 {
                     key = key.Substring(0, firstBracketLocation);
@@ -337,11 +228,18 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.roll*DEGREES_PER_RADIAN;
                         break;
                     case F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.AdiIlsVerPos;
+                        ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
                         break;
                     case F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.AdiIlsHorPos;
+                        ((AnalogSignal) output).State = _lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN / LOCALIZER_DEVIATION_LIMIT_DEGREES;
                         break;
+                    case F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS:
+                        ((DigitalSignal) output).State = showCommandBars;
+                        break;
+                    case F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION:
+                        ((AnalogSignal)output).State = 0.0f;
+                        break;
+
                     case F4SimOutputs.ADI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_OFF) ==
                                                           HsiBits.ADI_OFF);
@@ -1004,7 +902,7 @@ namespace F4Utils.SimSupport
                                Id = "F4_" + Enum.GetName(typeof (F4SimOutputs), simOutputEnumVal) + indexString,
                                Index = index,
                                PublisherObject = this,
-                               Source = TestMode ? this : (object) _smReader,
+                               Source =  (object) _smReader,
                                SourceFriendlyName = "Falcon 4"
                            };
             }
@@ -1017,7 +915,7 @@ namespace F4Utils.SimSupport
                                Id = "F4_" + Enum.GetName(typeof (F4SimOutputs), simOutputEnumVal) + indexString,
                                Index = index,
                                PublisherObject = this,
-                               Source = TestMode ? this : (object) _smReader,
+                               Source = (object) _smReader,
                                SourceFriendlyName = "Falcon 4"
                            };
             }
@@ -1028,7 +926,7 @@ namespace F4Utils.SimSupport
                            Id = "F4_" + Enum.GetName(typeof (F4SimOutputs), simOutputEnumVal) + indexString,
                            Index = index,
                            PublisherObject = this,
-                           Source = TestMode ? this : (object) _smReader,
+                           Source = (object) _smReader,
                            SourceFriendlyName = "Falcon 4",
                        };
         }
@@ -1152,13 +1050,15 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Glideslope and localizer ILS command bars enabled flag",
                                                 (int)F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
-
+            AddF4SimOutput(CreateNewF4SimOutput("ADI", "Rate of Turn Indicator Position",
+                                                (int)F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float)));
+            
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "OFF flag", (int) F4SimOutputs.ADI__OFF_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "AUX flag", (int) F4SimOutputs.ADI__AUX_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "GS flag", (int) F4SimOutputs.ADI__GS_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "LOC flag", (int) F4SimOutputs.ADI__LOC_FLAG, typeof (bool)));
 
-            AddF4SimOutput(CreateNewF4SimOutput("STBY ADI", "OFF flag", (int) F4SimOutputs.STBY_ADI__OFF_FLAG,
+            AddF4SimOutput(CreateNewF4SimOutput("STBY ADI", "ADI OFF flag", (int) F4SimOutputs.STBY_ADI__OFF_FLAG,
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("STBY ADI", "Pitch (degrees)",
                                                 (int) F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof (float)));
@@ -1778,11 +1678,16 @@ namespace F4Utils.SimSupport
         private void DetermineWhetherToShowILSCommandBarsAndToFromFlags(FlightData flightData, out bool showToFromFlag, out bool showCommandBars)
         {
             showToFromFlag = true;
-             showCommandBars =  ((float)(Math.Abs(Math.Round(flightData.AdiIlsHorPos, 4))) != 0.1745f)
-                                &&
-                            ((Math.Abs((flightData.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= 1.0f)
-                                &&
-                            (Math.Abs((flightData.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= 5.0f));
+            showCommandBars =
+                           ((Math.Abs((flightData.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= GLIDESLOPE_DEVIATION_LIMIT_DEGREES)
+                               &&
+                           (Math.Abs((flightData.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= LOCALIZER_DEVIATION_LIMIT_DEGREES))
+                               &&
+                           !(((HsiBits)flightData.hsiBits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
+                           &&
+                           !(((HsiBits)flightData.hsiBits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
+                           &&
+                           !(((HsiBits)flightData.hsiBits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
             
             switch (flightData.navMode)
             {

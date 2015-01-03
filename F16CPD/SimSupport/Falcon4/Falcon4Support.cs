@@ -32,7 +32,6 @@ namespace F16CPD.SimSupport.Falcon4
         private const bool CpdPowerOn = true;
         private readonly IClientSideInboundMessageProcessor _clientSideInboundMessageProcessor;
         private readonly IDEDAlowReader _dedAlowReader;
-        private readonly IFalconDataFormatDetector _falconDataFormatDetector;
 
         private readonly IIndicatedRateOfTurnCalculator _indicatedRateOfTurnCalculator =
             new IndicatedRateOfTurnCalculator();
@@ -44,7 +43,7 @@ namespace F16CPD.SimSupport.Falcon4
         private readonly IServerSideInboundMessageProcessor _serverSideInboundMessageProcessor;
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private readonly ITerrainHeightCalculator _terrainHeightCalulator = new TerrainHeightCalculator();
-        private FalconDataFormats? _curFalconDataFormat;
+
         private bool _isDisposed;
         private KeyFile _keyFile;
         private bool _morseCodeSignalLineValue;
@@ -66,7 +65,6 @@ namespace F16CPD.SimSupport.Falcon4
             _morseCodeGenerator.UnitTimeTick += MorseCodeUnitTimeTick;
             _dedAlowReader = new DEDAlowReader();
             _inputControlEventHandler = new InputControlEventHandler(Manager);
-            _falconDataFormatDetector = new FalconDataFormatDetector(Manager);
             new FalconCallbackSender(Manager);
 
             _clientSideInboundMessageProcessor = new ClientSideInboundMessageProcessor();
@@ -227,7 +225,6 @@ namespace F16CPD.SimSupport.Falcon4
 
             FlightData flightData = Manager.FlightData;
 
-            _curFalconDataFormat = _falconDataFormatDetector.DetectFalconDataFormat();
             string exePath = F4Utils.Process.Util.GetFalconExePath();
             CreateSharedMemReaderIfNotExists();
             F4SharedMem.FlightData fromFalcon = ReadF4SharedMem();
@@ -303,17 +300,8 @@ namespace F16CPD.SimSupport.Falcon4
                     flightData.AdiIlsLocalizerDeviationInDecimalDegrees = fromFalcon.AdiIlsHorPos/
                                                                           Common.Math.Constants.RADIANS_PER_DEGREE;
 
-
-                    if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
-                    {
-                        UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityBasedOnBMS4NavMode(flightData,
-                            fromFalcon);
-                    }
-                    else
-                    {
-                        UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityUsingLegacyTechnique(flightData,
-                            fromFalcon, hsibits);
-                    }
+                    UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityBasedOnBMS4NavMode(flightData,fromFalcon);
+                   
                 }
 
 
@@ -364,27 +352,17 @@ namespace F16CPD.SimSupport.Falcon4
 
         private void UpdateCpdPowerState(FlightData flightData, F4SharedMem.FlightData fromFalcon)
         {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
-            {
-                flightData.CpdPowerOnFlag = ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) !=
-                                             (int) Bms4LightBits3.Power_Off);
-            }
-            else
-            {
-                flightData.CpdPowerOnFlag = CpdPowerOn;
-            }
+            
+            flightData.CpdPowerOnFlag = ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) !=
+                                            (int) Bms4LightBits3.Power_Off);
+            
         }
 
         private void UpdateIndicatedAltitude(FlightData flightData, F4SharedMem.FlightData fromFalcon)
         {
-            if (_curFalconDataFormat.HasValue && _curFalconDataFormat.Value == FalconDataFormats.BMS4)
-            {
-                flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.aauz;
-            }
-            else
-            {
-                flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.z;
-            }
+            
+            flightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet = -fromFalcon.aauz;
+            
         }
 
         private static void UpdateHSIData(FlightData flightData, F4SharedMem.FlightData fromFalcon, HsiBits hsibits)
@@ -508,8 +486,7 @@ namespace F16CPD.SimSupport.Falcon4
                     ||
                     (
                         ((fromFalcon.lightBits3 & (int) Bms4LightBits3.OnGround) == (int) Bms4LightBits3.OnGround)
-                        &&
-                        _curFalconDataFormat == FalconDataFormats.BMS4
+                        
                         )
                     )
                 {
@@ -551,7 +528,7 @@ namespace F16CPD.SimSupport.Falcon4
             {
                 flightData.HsiDisplayToFromFlag = false;
             }
-                //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
+                //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode 
             else if (
                 (
                     ((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
@@ -759,11 +736,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (_sharedMemReader == null && !Settings.Default.RunAsClient)
             {
-                _curFalconDataFormat = _falconDataFormatDetector.DetectFalconDataFormat();
-                if (_curFalconDataFormat.HasValue)
-                {
-                    _sharedMemReader = new Reader(_curFalconDataFormat.Value);
-                }
+                _sharedMemReader = new Reader();
             }
         }
 

@@ -28,6 +28,7 @@ namespace MFDExtractor
             {
                 Type = instrumentType,
                 StartSignal = new AutoResetEvent(false),
+                EndSignal = new AutoResetEvent(false),
                 Renderer = _instrumentRendererSet[instrumentType],
                 Form = _instrumentFormFactory.Create(
                     instrumentType.ToString(),

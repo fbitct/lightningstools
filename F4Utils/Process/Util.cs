@@ -16,8 +16,6 @@ namespace F4Utils.Process
         private const string MODULENAME_F4 = "F4";
         private const string MODULENAME_FALCON = "FALCON";
         private const string WINDOW_CLASS_FALCONDISPLAY = "FalconDisplay";
-        private const string EXE_NAME__F4AF = "FalconAF.exe";
-        private const string EXENAME__BMS4 = "Falcon BMS.exe";
         private static readonly ILog Log = LogManager.GetLogger(typeof (Util));
 
         public static void ActivateFalconWindow()
@@ -75,8 +73,14 @@ namespace F4Utils.Process
             }
             return toReturn;
         }
+        private static int? _lastFalconExeProcessId;
+        private static string _lastFalconExePath;
         private static string ExePath(int processId)
         {
+            if (_lastFalconExeProcessId.HasValue && _lastFalconExeProcessId == processId && _lastFalconExePath !=null )
+            {
+                return _lastFalconExePath;
+            }
             var wmiQueryString = string.Format("SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process WHERE ProcessId={0}", processId);
             using (var searcher = new ManagementObjectSearcher(wmiQueryString))
             using (var results = searcher.Get())
@@ -90,7 +94,10 @@ namespace F4Utils.Process
                                 Path = (string)mo["ExecutablePath"],
                                 CommandLine = (string)mo["CommandLine"],
                             }).FirstOrDefault();
-                return item != null ? item.Path : null;
+                var exePath= item != null ? item.Path : null;
+                _lastFalconExeProcessId = processId;
+                _lastFalconExePath = exePath;
+                return exePath;
             }
         }
 
@@ -100,51 +107,5 @@ namespace F4Utils.Process
             return hWnd;
         }
 
-        public static FalconDataFormats? DetectFalconFormat()
-        {
-            FalconDataFormats? toReturn = null;
-            var exePath = GetFalconExePath();
-            if (exePath != null)
-            {
-                if (exePath.ToLowerInvariant().Contains(EXE_NAME__F4AF.ToLowerInvariant()))
-                {
-                    toReturn = FalconDataFormats.AlliedForce;
-                }
-                else if (exePath.ToLowerInvariant().Contains(EXENAME__BMS4.ToLowerInvariant()))
-                {
-                    try
-                    {
-                        var verInfo = FileVersionInfo.GetVersionInfo(exePath);
-
-                        if (verInfo.ProductMajorPart >= 4)
-                        {
-                            toReturn = FalconDataFormats.BMS4;
-                        }
-                    }
-                    catch 
-                    {
-
-                    }
-                }
-                else if (exePath.ToLowerInvariant().Contains("falcon bms test.exe")) //Added by Falcas to make it possible to run with test exe files
-                {
-                    try
-                    {
-                        var verInfo = FileVersionInfo.GetVersionInfo(exePath);
-
-                        if (verInfo.ProductMajorPart >= 4)
-                        {
-                            toReturn = FalconDataFormats.BMS4;
-                        }
-                    }
-                    catch 
-                    {
-
-                    }
-                }
-            }
-
-            return toReturn;
-        }
     }
 }

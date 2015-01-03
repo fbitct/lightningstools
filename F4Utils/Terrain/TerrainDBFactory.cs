@@ -25,17 +25,13 @@ namespace F4Utils.Terrain
         public TerrainDB Create(bool loadAllLods)
         {
             var terrainDB = new TerrainDB();
-            terrainDB.FalconDataFormat = Process.Util.DetectFalconFormat();
-            if (!terrainDB.FalconDataFormat.HasValue) return null;
             terrainDB.FalconExePath = GetFalconExePath();
+            if (terrainDB.FalconExePath == null) return null;
 
-            var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(terrainDB.FalconExePath, terrainDB.FalconDataFormat.Value);
+            var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(terrainDB.FalconExePath);
             if (currentTheaterTdf == null) return null;
             
-            if (terrainDB.FalconDataFormat.Value == FalconDataFormats.BMS4)
-            {
-                terrainDB.DataPath = terrainDB.FalconExePath + "..\\..\\data";
-            }
+            terrainDB.DataPath = terrainDB.FalconExePath + "..\\..\\data";
             terrainDB.TerrainBasePath = terrainDB.DataPath + Path.DirectorySeparatorChar + currentTheaterTdf.terrainDir;
             terrainDB.CurrentTheaterTextureBaseFolderPath = terrainDB.TerrainBasePath + Path.DirectorySeparatorChar + "texture";
             terrainDB.TheaterDotMapFilePath = terrainDB.TerrainBasePath + Path.DirectorySeparatorChar + "terrain" + Path.DirectorySeparatorChar + "THEATER.MAP";

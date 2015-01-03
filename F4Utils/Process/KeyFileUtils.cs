@@ -83,48 +83,31 @@ namespace F4Utils.Process
         {
             KeyFile toReturn = null;
             var exeFilePath = Util.GetFalconExePath();
-            var currentDataFormat = Util.DetectFalconFormat();
+            
             if (exeFilePath != null)
             {
                 var callsign = CallsignUtils.DetectCurrentCallsign();
                 var configFolder = string.Empty;
 
-                if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.BMS4)
-                {
-                    configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar
-                        + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + 
-                                   USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
-                }
-                else
-                {
-                    configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar +
-                                   CONFIG_DIRECTORY_NAME;
-                }
+               
+                configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar
+                    + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + 
+                                USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
+                
                 string pilotOptionsPath;
-                if (currentDataFormat.HasValue && currentDataFormat.Value == FalconDataFormats.AlliedForce)
+                
+                pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
+                                    PLAYER_OPTS_FILE_EXTENSION;
+                if (!new FileInfo(pilotOptionsPath).Exists)
                 {
-                    pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
-                                       PLAYER_OPTS_V2_FILE_EXTENSION;
-                    if (!new FileInfo(pilotOptionsPath).Exists)
-                    {
-                        pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + PLAYER_OPTS_V2_FILENAME_DEFAULT;
-                    }
+                    pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + PLAYER_OPTS_FILENAME__DEFAULT;
                 }
-                else
-                {
-                    pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
-                                       PLAYER_OPTS_FILE_EXTENSION;
-                    if (!new FileInfo(pilotOptionsPath).Exists)
-                    {
-                        pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + PLAYER_OPTS_FILENAME__DEFAULT;
-                    }
-                }
-
+                
 
                 string keyFileName = null;
                 if (new FileInfo(pilotOptionsPath).Exists)
                 {
-                    keyFileName = GetKeyFileNameFromPlayerOptsRaw(currentDataFormat, pilotOptionsPath);
+                    keyFileName = GetKeyFileNameFromPlayerOptsRaw(pilotOptionsPath);
                 }
                 if (keyFileName == null) keyFileName = KEYSTROKE_FILE_NAME__DEFAULT;
 
@@ -146,18 +129,13 @@ namespace F4Utils.Process
             return toReturn;
         }
        
-        private static string GetKeyFileNameFromPlayerOptsRaw(FalconDataFormats? currentDataFormat,
-                                                              string playerOptionsFilePath)
+        private static string GetKeyFileNameFromPlayerOptsRaw(string playerOptionsFilePath)
         {
             string keyFileName = null;
             try
             {
                 var optionsFileContents = File.ReadAllBytes(playerOptionsFilePath);
-                var startLoc = 159;
-                if (currentDataFormat.HasValue && (currentDataFormat.Value == FalconDataFormats.BMS4))
-                {
-                    startLoc = 231;
-                }
+                var startLoc = 231;
                 if (optionsFileContents.Length > startLoc)
                 {
                     var nullLoc = -1;

@@ -26,15 +26,11 @@ namespace MFDExtractor.EventSystem.Handlers
 			}
 			else
 			{
-				var format = Util.DetectFalconFormat();
 				var useDecrementByOne = false;
-				if (format.HasValue && format.Value == FalconDataFormats.BMS4)
+				var decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
+				if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int)ScanCodes.NotAssigned)
 				{
-					var decByOneCallback = KeyFileUtils.FindKeyBinding("SimHsiCrsDecBy1");
-					if (decByOneCallback != null && decByOneCallback.Key.ScanCode != (int)ScanCodes.NotAssigned)
-					{
-						useDecrementByOne = true;
-					}
+					useDecrementByOne = true;
 				}
 				KeyFileUtils.SendCallbackToFalcon(useDecrementByOne ? "SimHsiCrsDecBy1" : "SimHsiCourseDec");
 			}

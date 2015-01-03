@@ -40,7 +40,7 @@ namespace Common.MacroProgramming
 
         [field: NonSerializedAttribute] private static ILog _log = LogManager.GetLogger(typeof (AnalogSignal));
 
-        private int _precision = 5; //# decimal places to compare to determine if change is present 
+        private int _precision = -1; //# decimal places to round values to
         private double _previousState;
         private double _state;
 
@@ -56,11 +56,15 @@ namespace Common.MacroProgramming
             get { return _state; }
             set
             {
-                //if magnitude of change is at least in the minimum order of magnitude, forward it on
-                if (System.Math.Abs(_state - value) > (System.Math.Pow(10, -_precision)))
+                var newVal = 
+                    _precision != -1 
+                        ? System.Math.Round(value, _precision) 
+                        : value;
+            
+                if (newVal != _state)
                 {
                     _previousState = _state;
-                    _state = value;
+                    _state = newVal;
                     UpdateEventListeners();
                 }
             }

@@ -1,11 +1,15 @@
 ﻿using System;
 using MFDExtractor.Properties;
+using System.Threading;
+using System.Collections.Generic;
+using MFDExtractor.Renderer;
 
 namespace MFDExtractor
 {
     internal interface IRenderThreadSignaller
     {
         void Signal(
+            IList<WaitHandle> toWait,
             ExtractorState extractorState,
             IInstrument instrument,
             bool stateIsStale);
@@ -14,6 +18,7 @@ namespace MFDExtractor
     class RenderThreadSignaller : IRenderThreadSignaller
     {
         public void Signal(
+            IList<WaitHandle> toWait,
             ExtractorState extractorState,
             IInstrument instrument,
             bool stateIsStale
@@ -37,11 +42,15 @@ namespace MFDExtractor
                     }
                     if (instrument.Form != null)
                     {
-                        instrument.Form.RenderImmediately = false;
+                        instrument.Form.RenderImmediately = (instrument.Renderer is MfdRenderer);
                     }
                     if (instrument.StartSignal != null)
                     {
                         instrument.StartSignal.Set();
+                    }
+                    if (instrument.EndSignal != null && toWait !=null)
+                    {
+                        toWait.Add(instrument.EndSignal);
                     }
                 }
             }

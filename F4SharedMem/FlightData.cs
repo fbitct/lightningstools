@@ -20,15 +20,9 @@ namespace F4SharedMem
         public FlightData()
         {
         }
-        internal FlightData(Headers.AFFlightData data)
-        {
-            PopulateFromStruct(data);
-            DataFormat = FalconDataFormats.AlliedForce;            
-        }
         internal FlightData(Headers.BMS4FlightData data)
         {
             PopulateFromStruct(data);
-            DataFormat = FalconDataFormats.BMS4;
         }
 
         internal void PopulateFromStruct(object data)
@@ -311,7 +305,6 @@ namespace F4SharedMem
 
         public OptionSelectButtonLabel[] leftMFD;
         public OptionSelectButtonLabel[] rightMFD;
-        public FalconDataFormats DataFormat;
         public object ExtensionData;
 
         public bool UfcTacanIsAA { get { return (tacanInfo !=null && ((tacanInfo[(int)Headers.TacanSources.UFC] & (byte)Headers.TacanBits.mode) != 0) ? true : false); } }

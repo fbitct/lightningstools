@@ -13,8 +13,9 @@ namespace MFDExtractor
         InstrumentForm Form { get;}
         IInstrumentRenderer Renderer { get; }
         AutoResetEvent StartSignal { get; }
+        AutoResetEvent EndSignal { get; }
         void Start(ExtractorState extractorState );
-        void Signal( ExtractorState extractorState);
+        void Signal(IList<WaitHandle> waitHandles, ExtractorState extractorState);
     }
 
     class Instrument : IInstrument
@@ -41,6 +42,7 @@ namespace MFDExtractor
         public InstrumentForm Form { get; internal set; }
         public IInstrumentRenderer Renderer { get; internal set; }
         public AutoResetEvent StartSignal { get; internal set; }
+        public AutoResetEvent EndSignal { get; internal set; }
         public void Start(ExtractorState extractorState )
         {
             _renderThreadFactory.CreateOrRecycle(ref _renderThread, 
@@ -53,9 +55,9 @@ namespace MFDExtractor
             }
         }
 
-        public void Signal(ExtractorState extractorState  )
+        public void Signal(IList<WaitHandle> waitHandles, ExtractorState extractorState  )
         {
-            _renderThreadSignaller.Signal(extractorState, this,IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted());
+            _renderThreadSignaller.Signal(waitHandles, extractorState, this,IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted());
         }
 
         private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted()
@@ -64,21 +66,25 @@ namespace MFDExtractor
             return stateIsStale || HighlightingBorderShouldBeDisplayedOnTargetForm(Form);
         }
 
+        private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
+        {
+            return targetForm != null && targetForm.SizingOrMovingCursorsAreDisplayed && Settings.Default.HighlightOutputWindows;
+        }
+
         private void ThreadWork(ExtractorState extractorState)
         {
             try
             {
                 while (extractorState.KeepRunning)
                 {
-                    if (StartSignal != null)
-                    {
-                        StartSignal.WaitOne();
-                    }
+                    StartSignal.WaitOne();
                     if (Form != null && Form.Settings != null && Form.Settings.Enabled)
                     {
                         Render(extractorState.NightMode);
                     }
+                    EndSignal.Set();
                     Thread.Sleep(0);
+                    Application.DoEvents();
                 }
             }
             catch (ThreadAbortException) { }
@@ -87,7 +93,13 @@ namespace MFDExtractor
 
         private void Render(bool nightMode)
         {
+            var startTime = DateTime.Now;
             _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
+            var endTime = DateTime.Now;
+            var elapsed = endTime.Subtract(startTime);
+            var toWait = (int)(Settings.Default.PollingDelay - elapsed.TotalMilliseconds);
+            if (toWait < 5) toWait = 5;
+            Thread.Sleep(toWait);
         }
         private void RecoverInstrumentForm(Screen screen)
         {
@@ -96,9 +108,5 @@ namespace MFDExtractor
             Form.BringToFront();
         }
 
-        private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
-        {
-            return targetForm != null && targetForm.SizingOrMovingCursorsAreDisplayed && Settings.Default.HighlightOutputWindows;
-        }
     }
 }

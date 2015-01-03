@@ -17,31 +17,17 @@ namespace MFDExtractor
 
         public Reader Create()
         {
-            EnsureCachedReaderDataFormatMatchesDetectedFormat();
+            if (_cachedReader != null)
+            {
+                DisposeReader();
+            }
+            if (F4Utils.Process.Util.IsFalconRunning())
+            {
+                _cachedReader = new Reader();
+            }
             return _cachedReader;
         }
 
-        private void EnsureCachedReaderDataFormatMatchesDetectedFormat()
-        {
-            var falconDataFormat = F4Utils.Process.Util.DetectFalconFormat();
-            if (falconDataFormat == null) DisposeReader();
-            if (_cachedReader == null)
-            {
-                CreateReader(falconDataFormat);
-            }
-            else if (falconDataFormat.HasValue && falconDataFormat.Value != _cachedReader.DataFormat)
-            {
-                DisposeReader();
-                _cachedReader = new Reader(falconDataFormat.Value);
-            }
-        }
-
-        private void CreateReader(FalconDataFormats? falconDataFormat)
-        {
-            _cachedReader = falconDataFormat.HasValue
-                ? new Reader(falconDataFormat.Value)
-                : new Reader();
-        }
         private void DisposeReader()
         {
             Common.Util.DisposeObject(_cachedReader);

@@ -12,7 +12,7 @@ namespace F4Utils.Terrain
 {
     internal interface ICurrentTheaterDotTdfLoader
     {
-        TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath, FalconDataFormats version);
+        TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath);
     }
     class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
     {
@@ -24,7 +24,7 @@ namespace F4Utils.Terrain
             _currentTheaterNameDetector = currentTheaterNameDetector ?? new CurrentTheaterNameDetector();
             _theaterDotTdfFileReader = theaterDotTdfFileReader ?? new TheaterDotTdfFileReader();
         }
-        public TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath, FalconDataFormats version)
+        public TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath)
         {
             if (exePath == null) return null;
             var currentTheaterName = _currentTheaterNameDetector.DetectCurrentTheaterName();

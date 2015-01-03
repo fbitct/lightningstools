@@ -30,8 +30,58 @@
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
+    
+    <!-- HORIZONTAL COMMAND BAR  -->
+    <SignalMapping>
+      <!-- F4 HORIZONTAL COMMAND BAR OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__ILS_HORIZONTAL_BAR_POSITION</Id>
+      </Source>
+      <!-- AMI 9002780-02 HORIZONTAL COMMAND BAR INPUT -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>900278002_Horizontal_Command_Bar_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+    
+    <!-- VERTICAL COMMAND BAR  -->
+    <SignalMapping>
+      <!-- F4 VERTICAL COMMAND BAR OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__ILS_VERTICAL_BAR_POSITION</Id>
+      </Source>
+      <!-- AMI 9002780-02 VERTICAL COMMAND BAR INPUT -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>900278002_Vertical_Command_Bar_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
 
-
+    <!-- SHOW COMMAND BARS  -->
+    <SignalMapping>
+      <!-- F4 SHOW COMMAND BARS OUTPUT-->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__ILS_SHOW_COMMAND_BARS</Id>
+      </Source>
+      <!-- AMI 9002780-02 ADI SHOW COMMAND BARS INPUT-->
+      <Destination xsi:type="AnalogSignal">
+        <Id>900278002_Show_Command_Bars_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+    
+    <!-- RATE OF TURN INDICATOR  -->
+    <SignalMapping>
+      <!-- F4 RATE OF TURN OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__RATE_OF_TURN_INDICATOR_POSITION</Id>
+      </Source>
+      <!-- AMI 9002780-02 RATE OF TURN INPUT -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>900278002_Rate_Of_Turn_Indicator_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
 
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
@@ -76,6 +126,44 @@
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
+    <!-- HORIZONTAL COMMAND BAR -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE HORIZONTAL COMMAND BAR OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>900278002_Horizontal_Command_Bar_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 22 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][22]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+    
+  <!-- VERTICAL COMMAND BAR -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE VERTICAL COMMAND BAR OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>900278002_Vertical_Command_Bar_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 25 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][25]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
+    <!-- RATE OF TURN INDICATOR -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE RATE OF TURN INDICATOR OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>900278002_Rate_Of_Turn_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 24 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][24]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
     
   </SignalMappings>
 </MappingProfile>

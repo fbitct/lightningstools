@@ -26,7 +26,7 @@ namespace MFDExtractor.BMSSupport
 			if (
 				WeightOnWheels(flightData) 
 					||
-				(OnGround(flightData) && flightData.DataFormat == FalconDataFormats.BMS4)
+				(OnGround(flightData) )
 			)
 			{
 				ralt = 0;

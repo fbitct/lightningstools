@@ -19,7 +19,7 @@ namespace F4Utils.Terrain
             NearTileTextures = new Dictionary<uint, Bitmap>();
            TextureDotZipFileEntries = new Dictionary<string, ZipEntry>();
         }
-        public FalconDataFormats? FalconDataFormat { get; set; }
+   
         public string FalconExePath { get; set; }
         public string DataPath { get; set; }
         public string TerrainBasePath { get; set; }

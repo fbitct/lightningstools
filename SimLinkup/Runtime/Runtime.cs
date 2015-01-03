@@ -69,6 +69,7 @@ namespace SimLinkup.Runtime
                     RunLoopScripts();
                 }
                 Application.DoEvents();
+                Thread.Sleep(5);
             }
             _isRunning = false;
         }

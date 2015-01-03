@@ -17,12 +17,12 @@ namespace MFDExtractor
             IInstrumentRendererSet renderers,
             FlightData flightData,
             TerrainDB terrainDB,
-            Action updateEHSIBrightnessLabelVisibility);
+            Action updateEHSIBrightnessLabelVisibility,
+            F4TexSharedMem.IReader texSharedmemReader);
     }
 
     internal class FlightDataUpdater : IFlightDataUpdater
     {
-	    private readonly F4TexSharedMem.IReader _texSharedmemReader;
 		private readonly ExtractorState _extractorState;
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _textureSharedMemoryImageCoordinates;
@@ -33,7 +33,6 @@ namespace MFDExtractor
             IFlightDataAdapterSet flightDataAdapterSet = null,
             IExtractorClient extractorClient=null)
         {
-	        _texSharedmemReader = texSharedmemReader;
 	        _textureSharedMemoryImageCoordinates = textureSharedMemoryImageCoordinates;
 	        _extractorState = extractorState;
             _flightDataAdapterSet = flightDataAdapterSet ?? new FlightDataAdapterSet();
@@ -43,7 +42,8 @@ namespace MFDExtractor
             IInstrumentRendererSet renderers,
             FlightData flightData,
             TerrainDB terrainDB,
-            Action updateEHSIBrightnessLabelVisibility)
+            Action updateEHSIBrightnessLabelVisibility,
+            F4TexSharedMem.IReader texSharedmemReader)
         {
 			if (flightData == null || (_extractorState.NetworkMode != NetworkMode.Client && !_extractorState.SimRunning))
             {
@@ -96,7 +96,7 @@ namespace MFDExtractor
                         renderers.HSI.InstrumentState.ShowToFromFlag = false;
                         renderers.EHSI.InstrumentState.ShowToFromFlag = false;
                     }
-                        //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode (except in F4AF which always has the bit turned on)
+                        //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode 
                     else if ((((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
                         ||
                         ((hsibits & HsiBits.FromTrue) == HsiBits.FromTrue)))
@@ -192,11 +192,11 @@ namespace MFDExtractor
                 renderers.ISIS.InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-            _flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, _texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
-            _flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, _texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
-            _flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, _texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
-            _flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, _texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
-            _flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, _texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
+            _flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
+            _flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
+            _flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
+            _flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
+            _flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
 		}
 
         private static void SetISISPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)
@@ -236,45 +236,38 @@ namespace MFDExtractor
 
         private static void UpdateNavigationMode(IInstrumentRendererSet renderers, FlightData flightData)
         {
-            if (flightData.DataFormat == FalconDataFormats.BMS4)
-            {
-                /*
-                    This value is called navMode and is unsigned char type with 4 possible values: ILS_TACAN = 0, and TACAN = 1,
-                    NAV = 2, ILS_NAV = 3
-                    */
+            /*
+                This value is called navMode and is unsigned char type with 4 possible values: ILS_TACAN = 0, and TACAN = 1,
+                NAV = 2, ILS_NAV = 3
+                */
 
-                byte bmsNavMode = flightData.navMode;
-                switch (bmsNavMode)
-                {
-                    case 0: //NavModes.PlsTcn:
-                        renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsTacan;
-                        break;
-                    case 1: //NavModes.Tcn:
-                        renderers.HSI.InstrumentState.ShowToFromFlag = true;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = true;
-                        renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan;
-                        renderers.ADI.InstrumentState.ShowCommandBars = false;
-                        renderers.ISIS.InstrumentState.ShowCommandBars = false;
-                        break;
-                    case 2: //NavModes.Nav:
-                        renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Nav;
-                        renderers.ADI.InstrumentState.ShowCommandBars = false;
-                        renderers.ISIS.InstrumentState.ShowCommandBars = false;
-                        break;
-                    case 3: //NavModes.PlsNav:
-                        renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav;
-                        break;
-                }
-            }
-            else
+            byte bmsNavMode = flightData.navMode;
+            switch (bmsNavMode)
             {
-                renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Unknown;
+                case 0: //NavModes.PlsTcn:
+                    renderers.HSI.InstrumentState.ShowToFromFlag = false;
+                    renderers.EHSI.InstrumentState.ShowToFromFlag = false;
+                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsTacan;
+                    break;
+                case 1: //NavModes.Tcn:
+                    renderers.HSI.InstrumentState.ShowToFromFlag = true;
+                    renderers.EHSI.InstrumentState.ShowToFromFlag = true;
+                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan;
+                    renderers.ADI.InstrumentState.ShowCommandBars = false;
+                    renderers.ISIS.InstrumentState.ShowCommandBars = false;
+                    break;
+                case 2: //NavModes.Nav:
+                    renderers.HSI.InstrumentState.ShowToFromFlag = false;
+                    renderers.EHSI.InstrumentState.ShowToFromFlag = false;
+                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Nav;
+                    renderers.ADI.InstrumentState.ShowCommandBars = false;
+                    renderers.ISIS.InstrumentState.ShowCommandBars = false;
+                    break;
+                case 3: //NavModes.PlsNav:
+                    renderers.HSI.InstrumentState.ShowToFromFlag = false;
+                    renderers.EHSI.InstrumentState.ShowToFromFlag = false;
+                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav;
+                    break;
             }
         }
 
