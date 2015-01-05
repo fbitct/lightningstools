@@ -34,7 +34,6 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal _rateOfTurnInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _rateOfTurnInputSignalChangedEventHandler;
         private DigitalSignal _showCommandBarsInputSignal;
-        private AnalogSignal.AnalogSignalChangedEventHandler _showCommandBarsInputSignalChangedEventHandler;
 
         private AnalogSignal _pitchOutputSignal;
         private AnalogSignal _rollSinOutputSignal;
@@ -129,7 +128,6 @@ namespace SimLinkup.HardwareSupport.AMI
             _horizontalCommandBarInputSignalChangedEventHandler = null;
             _verticalCommandBarInputSignalChangedEventHandler = null;
             _rateOfTurnInputSignalChangedEventHandler = null;
-            _showCommandBarsInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
