@@ -91,6 +91,9 @@
             this.lblDevice = new System.Windows.Forms.Label();
             this.cboDevices = new System.Windows.Forms.ComboBox();
             this.gbDeviceOptions = new System.Windows.Forms.GroupBox();
+            this.lblTemperatureStatus = new System.Windows.Forms.Label();
+            this.txtOverTempStatus = new System.Windows.Forms.TextBox();
+            this.chkOverTempShutdownEnabled = new System.Windows.Forms.CheckBox();
             this.lblVREF0 = new System.Windows.Forms.Label();
             this.btnReset = new System.Windows.Forms.Button();
             this.txtVREF0 = new System.Windows.Forms.TextBox();
@@ -634,14 +637,16 @@
             // 
             // txtVoutCalculated
             // 
+            this.txtVoutCalculated.BackColor = System.Drawing.SystemColors.Control;
             this.txtVoutCalculated.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
-            this.txtVoutCalculated.Enabled = false;
+            this.txtVoutCalculated.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtVoutCalculated.Location = new System.Drawing.Point(286, 35);
             this.txtVoutCalculated.Name = "txtVoutCalculated";
             this.txtVoutCalculated.ReadOnly = true;
-            this.txtVoutCalculated.Size = new System.Drawing.Size(51, 20);
+            this.txtVoutCalculated.Size = new System.Drawing.Size(68, 20);
             this.txtVoutCalculated.TabIndex = 25;
             this.txtVoutCalculated.TabStop = false;
+            this.txtVoutCalculated.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblVout
             // 
@@ -783,6 +788,9 @@
             // 
             // gbDeviceOptions
             // 
+            this.gbDeviceOptions.Controls.Add(this.lblTemperatureStatus);
+            this.gbDeviceOptions.Controls.Add(this.txtOverTempStatus);
+            this.gbDeviceOptions.Controls.Add(this.chkOverTempShutdownEnabled);
             this.gbDeviceOptions.Controls.Add(this.lblVREF0);
             this.gbDeviceOptions.Controls.Add(this.btnReset);
             this.gbDeviceOptions.Controls.Add(this.txtVREF0);
@@ -800,6 +808,37 @@
             this.gbDeviceOptions.TabIndex = 26;
             this.gbDeviceOptions.TabStop = false;
             this.gbDeviceOptions.Text = "Device Options";
+            // 
+            // lblTemperatureStatus
+            // 
+            this.lblTemperatureStatus.AutoSize = true;
+            this.lblTemperatureStatus.Location = new System.Drawing.Point(261, 71);
+            this.lblTemperatureStatus.Name = "lblTemperatureStatus";
+            this.lblTemperatureStatus.Size = new System.Drawing.Size(100, 13);
+            this.lblTemperatureStatus.TabIndex = 38;
+            this.lblTemperatureStatus.Text = "Temperature Status";
+            // 
+            // txtOverTempStatus
+            // 
+            this.txtOverTempStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtOverTempStatus.Location = new System.Drawing.Point(367, 68);
+            this.txtOverTempStatus.Name = "txtOverTempStatus";
+            this.txtOverTempStatus.ReadOnly = true;
+            this.txtOverTempStatus.Size = new System.Drawing.Size(49, 20);
+            this.txtOverTempStatus.TabIndex = 37;
+            this.txtOverTempStatus.TabStop = false;
+            this.txtOverTempStatus.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // chkOverTempShutdownEnabled
+            // 
+            this.chkOverTempShutdownEnabled.AutoSize = true;
+            this.chkOverTempShutdownEnabled.Location = new System.Drawing.Point(18, 70);
+            this.chkOverTempShutdownEnabled.Name = "chkOverTempShutdownEnabled";
+            this.chkOverTempShutdownEnabled.Size = new System.Drawing.Size(230, 17);
+            this.chkOverTempShutdownEnabled.TabIndex = 36;
+            this.chkOverTempShutdownEnabled.Text = "Over-Temperature Auto Shutdown Enabled";
+            this.chkOverTempShutdownEnabled.UseVisualStyleBackColor = true;
+            this.chkOverTempShutdownEnabled.CheckedChanged += new System.EventHandler(this.chkOverTempShutdownEnabled_CheckedChanged);
             // 
             // lblVREF0
             // 
@@ -1021,6 +1060,9 @@
         private System.Windows.Forms.GroupBox gbDeviceOptions;
         private System.Windows.Forms.GroupBox gbDataValues;
         private System.Windows.Forms.TextBox txtVoutCalculated;
+        private System.Windows.Forms.Label lblTemperatureStatus;
+        private System.Windows.Forms.TextBox txtOverTempStatus;
+        private System.Windows.Forms.CheckBox chkOverTempShutdownEnabled;
 
     }
 }

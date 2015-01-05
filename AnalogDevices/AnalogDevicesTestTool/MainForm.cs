@@ -29,6 +29,7 @@ namespace AnalogDevicesTestTool
             AddEventHandlersForAllDACChannelSelectRadioButtions();
             SelectDACChannel0();
             UpdateCalculatedOutputVoltage();
+            UpdateOverTemperatureValuesInUIFromDevice();
 
         }
         private void SetApplicationTitle()
@@ -159,9 +160,37 @@ namespace AnalogDevicesTestTool
         private void cboDevices_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedDevice = (AnalogDevices.DenseDacEvalBoard)cboDevices.SelectedItem;
+            UpdateOverTemperatureValuesInUIFromDevice();
             UpdateGroupOffsetDataInUIWithDataFromDevice();
             SelectDACChannel0();
             UpdateCalculatedOutputVoltage();
+        }
+        private void UpdateOverTemperatureValuesInUIFromDevice()
+        {
+            if (_selectedDevice != null)
+            {
+                var isOverTemp = _selectedDevice.IsOverTemperature;
+                if (isOverTemp)
+                {
+                    txtOverTempStatus.Text = "HOT";
+                    txtOverTempStatus.BackColor = Color.Red;
+                    txtOverTempStatus.ForeColor = Color.White;
+                }
+                else
+                {
+                    txtOverTempStatus.Text = "OK";
+                    txtOverTempStatus.BackColor = Color.Green;
+                    txtOverTempStatus.ForeColor = Color.White;
+                }
+                var overTempShutdownEnabled = _selectedDevice.IsTemperatureShutdownEnabled;
+                chkOverTempShutdownEnabled.Checked = overTempShutdownEnabled;
+            }
+            else
+            {
+                txtOverTempStatus.Text = "N/A";
+                txtOverTempStatus.BackColor = Color.Empty;
+                txtOverTempStatus.ForeColor = Color.Black;
+            }
         }
         private void SelectDACChannel0()
         {
@@ -215,6 +244,7 @@ namespace AnalogDevicesTestTool
 
         private void btnUpdateAllDacOutputs_Click(object sender, EventArgs e)
         {
+            UpdateCalculatedOutputVoltage();
             if (_selectedDevice != null)
             {
                 _selectedDevice.UpdateAllDacOutputs();
@@ -223,6 +253,7 @@ namespace AnalogDevicesTestTool
 
         private void btnResumeAllDACOutputs_Click(object sender, EventArgs e)
         {
+            UpdateCalculatedOutputVoltage();
             if (_selectedDevice != null)
             {
                 _selectedDevice.ResumeAllDacOutputs();
@@ -231,6 +262,7 @@ namespace AnalogDevicesTestTool
 
         private void btnSuspendAllDACOutputs_Click(object sender, EventArgs e)
         {
+            UpdateCalculatedOutputVoltage();
             if (_selectedDevice != null)
             {
                 _selectedDevice.SuspendAllDacOutputs();
@@ -541,6 +573,14 @@ namespace AnalogDevicesTestTool
         private void txtDataValueB_Click(object sender, EventArgs e)
         {
             txtDataValueB.SelectAll();
+        }
+
+        private void chkOverTempShutdownEnabled_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_selectedDevice != null)
+            {
+                _selectedDevice.IsTemperatureShutdownEnabled = chkOverTempShutdownEnabled.Checked;
+            }
         }
 
        
