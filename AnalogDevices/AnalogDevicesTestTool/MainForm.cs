@@ -197,7 +197,7 @@ namespace AnalogDevicesTestTool
             bool parsed = ushort.TryParse(text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out val);
             if (!parsed || val < low || val > high)
             {
-                errorProvider1.SetError(control, string.Format("Value must be a positive hexadecimal integer between {0} and {1}", low, high));
+                errorProvider1.SetError(control, string.Format("Value must be a positive hexadecimal integer between {0:X} and {1:X}", low, high));
             }
             return val;
         }
