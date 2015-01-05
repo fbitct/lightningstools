@@ -187,7 +187,7 @@ namespace AnalogDevices
             }
         }
 
-        public bool PECErrorOccurred
+        public bool PacketErrorCheckErrorOccurred
         {
             get
             {
