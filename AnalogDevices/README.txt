@@ -1,5 +1,4 @@
-This project requires LibUsbDotNet, available at 
- http://sourceforge.net/projects/libusbdotnet/
+This project makes use ofLibUsbDotNet 2.2.7 (http://sourceforge.net/projects/libusbdotnet/) to connect to the Analog Devices eval board over USB.
 
-Known to work with the 2.2.7 installer available at:
-http://voxel.dl.sourceforge.net/project/libusbdotnet/LibUsbDotNet/LibUsbDotNet%20v2.2.7/LibUsbDotNet_Setup.2.2.7.exe
+You can use the Zadig driver installer (http://zadig.akeo.ie/) to install the win32/libusb0.sys LibUSB drivers.  
+
