@@ -495,5 +495,48 @@ namespace AnalogDevicesTestTool
 
         }
 
+        private void txtVREF0_Click(object sender, EventArgs e)
+        {
+            txtVREF0.SelectAll();
+        }
+
+        private void txtVREF1_Click(object sender, EventArgs e)
+        {
+            txtVREF1.SelectAll();
+        }
+
+        private void txtOffsetDAC0_Click(object sender, EventArgs e)
+        {
+            txtOffsetDAC0.SelectAll();
+        }
+
+        private void txtOffsetDAC1_Click(object sender, EventArgs e)
+        {
+            txtOffsetDAC1.SelectAll();
+        }
+
+        private void txtDACChannelOffset_Click(object sender, EventArgs e)
+        {
+            txtDACChannelOffset.SelectAll();
+        }
+
+        private void txtDACChannelGain_Click(object sender, EventArgs e)
+        {
+            txtDACChannelGain.SelectAll();
+        }
+
+        private void txtDataValueA_Click(object sender, EventArgs e)
+        {
+            txtDataValueA.SelectAll();
+        }
+
+        private void txtDataValueB_Click(object sender, EventArgs e)
+        {
+            txtDataValueB.SelectAll();
+        }
+
+       
+      
+
     }
 }

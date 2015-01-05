@@ -76,6 +76,7 @@
             this.rdoDAC1 = new System.Windows.Forms.RadioButton();
             this.rdoDAC0 = new System.Windows.Forms.RadioButton();
             this.gbDataValues = new System.Windows.Forms.GroupBox();
+            this.txtVoutCalculated = new System.Windows.Forms.TextBox();
             this.lblVout = new System.Windows.Forms.Label();
             this.txtDACChannelOffset = new System.Windows.Forms.TextBox();
             this.lblDACChannelOffset = new System.Windows.Forms.Label();
@@ -102,7 +103,6 @@
             this.lblOffsetDAC0 = new System.Windows.Forms.Label();
             this.txtOffsetDAC1 = new System.Windows.Forms.TextBox();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.txtVoutCalculated = new System.Windows.Forms.TextBox();
             this.mainPanel.SuspendLayout();
             this.gbDACOutputs.SuspendLayout();
             this.gbDataValues.SuspendLayout();
@@ -182,7 +182,7 @@
             this.rdoDAC39.Location = new System.Drawing.Point(440, 111);
             this.rdoDAC39.Name = "rdoDAC39";
             this.rdoDAC39.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC39.TabIndex = 9;
+            this.rdoDAC39.TabIndex = 47;
             this.rdoDAC39.Text = "DAC 39";
             this.rdoDAC39.UseVisualStyleBackColor = true;
             // 
@@ -192,7 +192,7 @@
             this.rdoDAC38.Location = new System.Drawing.Point(378, 111);
             this.rdoDAC38.Name = "rdoDAC38";
             this.rdoDAC38.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC38.TabIndex = 8;
+            this.rdoDAC38.TabIndex = 46;
             this.rdoDAC38.Text = "DAC 38";
             this.rdoDAC38.UseVisualStyleBackColor = true;
             // 
@@ -202,7 +202,7 @@
             this.rdoDAC31.Location = new System.Drawing.Point(440, 88);
             this.rdoDAC31.Name = "rdoDAC31";
             this.rdoDAC31.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC31.TabIndex = 9;
+            this.rdoDAC31.TabIndex = 39;
             this.rdoDAC31.Text = "DAC 31";
             this.rdoDAC31.UseVisualStyleBackColor = true;
             // 
@@ -212,7 +212,7 @@
             this.rdoDAC37.Location = new System.Drawing.Point(316, 111);
             this.rdoDAC37.Name = "rdoDAC37";
             this.rdoDAC37.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC37.TabIndex = 7;
+            this.rdoDAC37.TabIndex = 45;
             this.rdoDAC37.Text = "DAC 37";
             this.rdoDAC37.UseVisualStyleBackColor = true;
             // 
@@ -222,7 +222,7 @@
             this.rdoDAC30.Location = new System.Drawing.Point(378, 88);
             this.rdoDAC30.Name = "rdoDAC30";
             this.rdoDAC30.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC30.TabIndex = 8;
+            this.rdoDAC30.TabIndex = 38;
             this.rdoDAC30.Text = "DAC 30";
             this.rdoDAC30.UseVisualStyleBackColor = true;
             // 
@@ -232,7 +232,7 @@
             this.rdoDAC36.Location = new System.Drawing.Point(254, 111);
             this.rdoDAC36.Name = "rdoDAC36";
             this.rdoDAC36.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC36.TabIndex = 6;
+            this.rdoDAC36.TabIndex = 44;
             this.rdoDAC36.Text = "DAC 36";
             this.rdoDAC36.UseVisualStyleBackColor = true;
             // 
@@ -242,7 +242,7 @@
             this.rdoDAC23.Location = new System.Drawing.Point(440, 65);
             this.rdoDAC23.Name = "rdoDAC23";
             this.rdoDAC23.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC23.TabIndex = 9;
+            this.rdoDAC23.TabIndex = 31;
             this.rdoDAC23.Text = "DAC 23";
             this.rdoDAC23.UseVisualStyleBackColor = true;
             // 
@@ -252,7 +252,7 @@
             this.rdoDAC35.Location = new System.Drawing.Point(192, 111);
             this.rdoDAC35.Name = "rdoDAC35";
             this.rdoDAC35.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC35.TabIndex = 5;
+            this.rdoDAC35.TabIndex = 43;
             this.rdoDAC35.Text = "DAC 35";
             this.rdoDAC35.UseVisualStyleBackColor = true;
             // 
@@ -262,7 +262,7 @@
             this.rdoDAC29.Location = new System.Drawing.Point(316, 88);
             this.rdoDAC29.Name = "rdoDAC29";
             this.rdoDAC29.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC29.TabIndex = 7;
+            this.rdoDAC29.TabIndex = 37;
             this.rdoDAC29.Text = "DAC 29";
             this.rdoDAC29.UseVisualStyleBackColor = true;
             // 
@@ -272,7 +272,7 @@
             this.rdoDAC34.Location = new System.Drawing.Point(130, 111);
             this.rdoDAC34.Name = "rdoDAC34";
             this.rdoDAC34.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC34.TabIndex = 4;
+            this.rdoDAC34.TabIndex = 42;
             this.rdoDAC34.Text = "DAC 34";
             this.rdoDAC34.UseVisualStyleBackColor = true;
             // 
@@ -282,7 +282,7 @@
             this.rdoDAC22.Location = new System.Drawing.Point(378, 65);
             this.rdoDAC22.Name = "rdoDAC22";
             this.rdoDAC22.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC22.TabIndex = 8;
+            this.rdoDAC22.TabIndex = 30;
             this.rdoDAC22.Text = "DAC 22";
             this.rdoDAC22.UseVisualStyleBackColor = true;
             // 
@@ -291,7 +291,7 @@
             this.btnUpdateAllDACOutputs.Location = new System.Drawing.Point(378, 149);
             this.btnUpdateAllDACOutputs.Name = "btnUpdateAllDACOutputs";
             this.btnUpdateAllDACOutputs.Size = new System.Drawing.Size(154, 23);
-            this.btnUpdateAllDACOutputs.TabIndex = 11;
+            this.btnUpdateAllDACOutputs.TabIndex = 54;
             this.btnUpdateAllDACOutputs.Text = "Update All DAC Outputs";
             this.btnUpdateAllDACOutputs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnUpdateAllDACOutputs.UseVisualStyleBackColor = true;
@@ -303,7 +303,7 @@
             this.rdoDAC33.Location = new System.Drawing.Point(68, 111);
             this.rdoDAC33.Name = "rdoDAC33";
             this.rdoDAC33.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC33.TabIndex = 3;
+            this.rdoDAC33.TabIndex = 41;
             this.rdoDAC33.Text = "DAC 33";
             this.rdoDAC33.UseVisualStyleBackColor = true;
             // 
@@ -312,7 +312,7 @@
             this.btnResumeAllDACOutputs.Location = new System.Drawing.Point(378, 201);
             this.btnResumeAllDACOutputs.Name = "btnResumeAllDACOutputs";
             this.btnResumeAllDACOutputs.Size = new System.Drawing.Size(154, 23);
-            this.btnResumeAllDACOutputs.TabIndex = 10;
+            this.btnResumeAllDACOutputs.TabIndex = 56;
             this.btnResumeAllDACOutputs.Text = "Resume All DAC Outputs";
             this.btnResumeAllDACOutputs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnResumeAllDACOutputs.UseVisualStyleBackColor = true;
@@ -324,7 +324,7 @@
             this.rdoDAC28.Location = new System.Drawing.Point(254, 88);
             this.rdoDAC28.Name = "rdoDAC28";
             this.rdoDAC28.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC28.TabIndex = 6;
+            this.rdoDAC28.TabIndex = 36;
             this.rdoDAC28.Text = "DAC 28";
             this.rdoDAC28.UseVisualStyleBackColor = true;
             // 
@@ -333,7 +333,7 @@
             this.btnSuspendAllDACOutputs.Location = new System.Drawing.Point(378, 176);
             this.btnSuspendAllDACOutputs.Name = "btnSuspendAllDACOutputs";
             this.btnSuspendAllDACOutputs.Size = new System.Drawing.Size(154, 23);
-            this.btnSuspendAllDACOutputs.TabIndex = 9;
+            this.btnSuspendAllDACOutputs.TabIndex = 55;
             this.btnSuspendAllDACOutputs.Text = "Suspend All DAC Outputs";
             this.btnSuspendAllDACOutputs.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnSuspendAllDACOutputs.UseVisualStyleBackColor = true;
@@ -345,7 +345,7 @@
             this.rdoDAC32.Location = new System.Drawing.Point(6, 111);
             this.rdoDAC32.Name = "rdoDAC32";
             this.rdoDAC32.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC32.TabIndex = 2;
+            this.rdoDAC32.TabIndex = 40;
             this.rdoDAC32.Text = "DAC 32";
             this.rdoDAC32.UseVisualStyleBackColor = true;
             // 
@@ -355,7 +355,7 @@
             this.rdoDAC15.Location = new System.Drawing.Point(440, 42);
             this.rdoDAC15.Name = "rdoDAC15";
             this.rdoDAC15.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC15.TabIndex = 9;
+            this.rdoDAC15.TabIndex = 23;
             this.rdoDAC15.Text = "DAC 15";
             this.rdoDAC15.UseVisualStyleBackColor = true;
             // 
@@ -365,7 +365,7 @@
             this.rdoDAC27.Location = new System.Drawing.Point(192, 88);
             this.rdoDAC27.Name = "rdoDAC27";
             this.rdoDAC27.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC27.TabIndex = 5;
+            this.rdoDAC27.TabIndex = 35;
             this.rdoDAC27.Text = "DAC 27";
             this.rdoDAC27.UseVisualStyleBackColor = true;
             // 
@@ -375,7 +375,7 @@
             this.rdoDAC21.Location = new System.Drawing.Point(316, 65);
             this.rdoDAC21.Name = "rdoDAC21";
             this.rdoDAC21.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC21.TabIndex = 7;
+            this.rdoDAC21.TabIndex = 29;
             this.rdoDAC21.Text = "DAC 21";
             this.rdoDAC21.UseVisualStyleBackColor = true;
             // 
@@ -385,7 +385,7 @@
             this.rdoDAC26.Location = new System.Drawing.Point(130, 88);
             this.rdoDAC26.Name = "rdoDAC26";
             this.rdoDAC26.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC26.TabIndex = 4;
+            this.rdoDAC26.TabIndex = 34;
             this.rdoDAC26.Text = "DAC 26";
             this.rdoDAC26.UseVisualStyleBackColor = true;
             // 
@@ -395,7 +395,7 @@
             this.rdoDAC7.Location = new System.Drawing.Point(440, 19);
             this.rdoDAC7.Name = "rdoDAC7";
             this.rdoDAC7.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC7.TabIndex = 9;
+            this.rdoDAC7.TabIndex = 15;
             this.rdoDAC7.Text = "DAC 7";
             this.rdoDAC7.UseVisualStyleBackColor = true;
             // 
@@ -405,7 +405,7 @@
             this.rdoDAC25.Location = new System.Drawing.Point(68, 88);
             this.rdoDAC25.Name = "rdoDAC25";
             this.rdoDAC25.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC25.TabIndex = 3;
+            this.rdoDAC25.TabIndex = 33;
             this.rdoDAC25.Text = "DAC 25";
             this.rdoDAC25.UseVisualStyleBackColor = true;
             // 
@@ -415,7 +415,7 @@
             this.rdoDAC20.Location = new System.Drawing.Point(254, 65);
             this.rdoDAC20.Name = "rdoDAC20";
             this.rdoDAC20.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC20.TabIndex = 6;
+            this.rdoDAC20.TabIndex = 28;
             this.rdoDAC20.Text = "DAC 20";
             this.rdoDAC20.UseVisualStyleBackColor = true;
             // 
@@ -425,7 +425,7 @@
             this.rdoDAC24.Location = new System.Drawing.Point(6, 88);
             this.rdoDAC24.Name = "rdoDAC24";
             this.rdoDAC24.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC24.TabIndex = 2;
+            this.rdoDAC24.TabIndex = 32;
             this.rdoDAC24.Text = "DAC 24";
             this.rdoDAC24.UseVisualStyleBackColor = true;
             // 
@@ -435,7 +435,7 @@
             this.rdoDAC14.Location = new System.Drawing.Point(378, 42);
             this.rdoDAC14.Name = "rdoDAC14";
             this.rdoDAC14.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC14.TabIndex = 8;
+            this.rdoDAC14.TabIndex = 22;
             this.rdoDAC14.Text = "DAC 14";
             this.rdoDAC14.UseVisualStyleBackColor = true;
             // 
@@ -445,7 +445,7 @@
             this.rdoDAC19.Location = new System.Drawing.Point(192, 65);
             this.rdoDAC19.Name = "rdoDAC19";
             this.rdoDAC19.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC19.TabIndex = 5;
+            this.rdoDAC19.TabIndex = 27;
             this.rdoDAC19.Text = "DAC 19";
             this.rdoDAC19.UseVisualStyleBackColor = true;
             // 
@@ -455,7 +455,7 @@
             this.rdoDAC6.Location = new System.Drawing.Point(378, 19);
             this.rdoDAC6.Name = "rdoDAC6";
             this.rdoDAC6.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC6.TabIndex = 8;
+            this.rdoDAC6.TabIndex = 14;
             this.rdoDAC6.Text = "DAC 6";
             this.rdoDAC6.UseVisualStyleBackColor = true;
             // 
@@ -465,7 +465,7 @@
             this.rdoDAC18.Location = new System.Drawing.Point(130, 65);
             this.rdoDAC18.Name = "rdoDAC18";
             this.rdoDAC18.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC18.TabIndex = 4;
+            this.rdoDAC18.TabIndex = 26;
             this.rdoDAC18.Text = "DAC 18";
             this.rdoDAC18.UseVisualStyleBackColor = true;
             // 
@@ -475,7 +475,7 @@
             this.rdoDAC13.Location = new System.Drawing.Point(316, 42);
             this.rdoDAC13.Name = "rdoDAC13";
             this.rdoDAC13.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC13.TabIndex = 7;
+            this.rdoDAC13.TabIndex = 21;
             this.rdoDAC13.Text = "DAC 13";
             this.rdoDAC13.UseVisualStyleBackColor = true;
             // 
@@ -485,7 +485,7 @@
             this.rdoDAC17.Location = new System.Drawing.Point(68, 65);
             this.rdoDAC17.Name = "rdoDAC17";
             this.rdoDAC17.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC17.TabIndex = 3;
+            this.rdoDAC17.TabIndex = 25;
             this.rdoDAC17.Text = "DAC 17";
             this.rdoDAC17.UseVisualStyleBackColor = true;
             // 
@@ -495,7 +495,7 @@
             this.rdoDAC5.Location = new System.Drawing.Point(316, 19);
             this.rdoDAC5.Name = "rdoDAC5";
             this.rdoDAC5.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC5.TabIndex = 7;
+            this.rdoDAC5.TabIndex = 13;
             this.rdoDAC5.Text = "DAC 5";
             this.rdoDAC5.UseVisualStyleBackColor = true;
             // 
@@ -505,7 +505,7 @@
             this.rdoDAC16.Location = new System.Drawing.Point(6, 65);
             this.rdoDAC16.Name = "rdoDAC16";
             this.rdoDAC16.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC16.TabIndex = 2;
+            this.rdoDAC16.TabIndex = 24;
             this.rdoDAC16.Text = "DAC 16";
             this.rdoDAC16.UseVisualStyleBackColor = true;
             // 
@@ -515,7 +515,7 @@
             this.rdoDAC12.Location = new System.Drawing.Point(254, 42);
             this.rdoDAC12.Name = "rdoDAC12";
             this.rdoDAC12.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC12.TabIndex = 6;
+            this.rdoDAC12.TabIndex = 20;
             this.rdoDAC12.Text = "DAC 12";
             this.rdoDAC12.UseVisualStyleBackColor = true;
             // 
@@ -525,7 +525,7 @@
             this.rdoDAC4.Location = new System.Drawing.Point(254, 19);
             this.rdoDAC4.Name = "rdoDAC4";
             this.rdoDAC4.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC4.TabIndex = 6;
+            this.rdoDAC4.TabIndex = 12;
             this.rdoDAC4.Text = "DAC 4";
             this.rdoDAC4.UseVisualStyleBackColor = true;
             // 
@@ -535,7 +535,7 @@
             this.rdoDAC11.Location = new System.Drawing.Point(192, 42);
             this.rdoDAC11.Name = "rdoDAC11";
             this.rdoDAC11.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC11.TabIndex = 5;
+            this.rdoDAC11.TabIndex = 19;
             this.rdoDAC11.Text = "DAC 11";
             this.rdoDAC11.UseVisualStyleBackColor = true;
             // 
@@ -545,7 +545,7 @@
             this.rdoDAC3.Location = new System.Drawing.Point(192, 19);
             this.rdoDAC3.Name = "rdoDAC3";
             this.rdoDAC3.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC3.TabIndex = 5;
+            this.rdoDAC3.TabIndex = 11;
             this.rdoDAC3.Text = "DAC 3";
             this.rdoDAC3.UseVisualStyleBackColor = true;
             // 
@@ -555,7 +555,7 @@
             this.rdoDAC10.Location = new System.Drawing.Point(130, 42);
             this.rdoDAC10.Name = "rdoDAC10";
             this.rdoDAC10.Size = new System.Drawing.Size(62, 17);
-            this.rdoDAC10.TabIndex = 4;
+            this.rdoDAC10.TabIndex = 18;
             this.rdoDAC10.Text = "DAC 10";
             this.rdoDAC10.UseVisualStyleBackColor = true;
             // 
@@ -565,7 +565,7 @@
             this.rdoDAC2.Location = new System.Drawing.Point(130, 19);
             this.rdoDAC2.Name = "rdoDAC2";
             this.rdoDAC2.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC2.TabIndex = 4;
+            this.rdoDAC2.TabIndex = 10;
             this.rdoDAC2.Text = "DAC 2";
             this.rdoDAC2.UseVisualStyleBackColor = true;
             // 
@@ -575,7 +575,7 @@
             this.rdoDAC9.Location = new System.Drawing.Point(68, 42);
             this.rdoDAC9.Name = "rdoDAC9";
             this.rdoDAC9.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC9.TabIndex = 3;
+            this.rdoDAC9.TabIndex = 17;
             this.rdoDAC9.Text = "DAC 9";
             this.rdoDAC9.UseVisualStyleBackColor = true;
             // 
@@ -585,7 +585,7 @@
             this.rdoDAC8.Location = new System.Drawing.Point(6, 42);
             this.rdoDAC8.Name = "rdoDAC8";
             this.rdoDAC8.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC8.TabIndex = 2;
+            this.rdoDAC8.TabIndex = 16;
             this.rdoDAC8.Text = "DAC 8";
             this.rdoDAC8.UseVisualStyleBackColor = true;
             // 
@@ -595,7 +595,7 @@
             this.rdoDAC1.Location = new System.Drawing.Point(68, 19);
             this.rdoDAC1.Name = "rdoDAC1";
             this.rdoDAC1.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC1.TabIndex = 3;
+            this.rdoDAC1.TabIndex = 9;
             this.rdoDAC1.Text = "DAC 1";
             this.rdoDAC1.UseVisualStyleBackColor = true;
             // 
@@ -606,7 +606,7 @@
             this.rdoDAC0.Location = new System.Drawing.Point(6, 19);
             this.rdoDAC0.Name = "rdoDAC0";
             this.rdoDAC0.Size = new System.Drawing.Size(56, 17);
-            this.rdoDAC0.TabIndex = 2;
+            this.rdoDAC0.TabIndex = 8;
             this.rdoDAC0.TabStop = true;
             this.rdoDAC0.Text = "DAC 0";
             this.rdoDAC0.UseVisualStyleBackColor = true;
@@ -632,6 +632,17 @@
             this.gbDataValues.TabStop = false;
             this.gbDataValues.Text = "Data Values";
             // 
+            // txtVoutCalculated
+            // 
+            this.txtVoutCalculated.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.txtVoutCalculated.Enabled = false;
+            this.txtVoutCalculated.Location = new System.Drawing.Point(286, 35);
+            this.txtVoutCalculated.Name = "txtVoutCalculated";
+            this.txtVoutCalculated.ReadOnly = true;
+            this.txtVoutCalculated.Size = new System.Drawing.Size(51, 20);
+            this.txtVoutCalculated.TabIndex = 25;
+            this.txtVoutCalculated.TabStop = false;
+            // 
             // lblVout
             // 
             this.lblVout.AutoSize = true;
@@ -643,12 +654,14 @@
             // 
             // txtDACChannelOffset
             // 
+            this.txtDACChannelOffset.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtDACChannelOffset.Location = new System.Drawing.Point(54, 23);
             this.txtDACChannelOffset.MaxLength = 4;
             this.txtDACChannelOffset.Name = "txtDACChannelOffset";
             this.txtDACChannelOffset.Size = new System.Drawing.Size(34, 20);
-            this.txtDACChannelOffset.TabIndex = 14;
+            this.txtDACChannelOffset.TabIndex = 48;
             this.txtDACChannelOffset.Text = "8000";
+            this.txtDACChannelOffset.Click += new System.EventHandler(this.txtDACChannelOffset_Click);
             this.txtDACChannelOffset.Validating += new System.ComponentModel.CancelEventHandler(this.txtDACChannelOffset_Validating);
             this.txtDACChannelOffset.Validated += new System.EventHandler(this.txtDACChannelOffset_Validated);
             // 
@@ -667,18 +680,20 @@
             this.rdoDataValueB.Location = new System.Drawing.Point(113, 52);
             this.rdoDataValueB.Name = "rdoDataValueB";
             this.rdoDataValueB.Size = new System.Drawing.Size(14, 13);
-            this.rdoDataValueB.TabIndex = 23;
+            this.rdoDataValueB.TabIndex = 52;
             this.rdoDataValueB.UseVisualStyleBackColor = true;
             this.rdoDataValueB.CheckedChanged += new System.EventHandler(this.rdoDataValueB_CheckedChanged);
             // 
             // txtDACChannelGain
             // 
+            this.txtDACChannelGain.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtDACChannelGain.Location = new System.Drawing.Point(54, 49);
             this.txtDACChannelGain.MaxLength = 4;
             this.txtDACChannelGain.Name = "txtDACChannelGain";
             this.txtDACChannelGain.Size = new System.Drawing.Size(34, 20);
-            this.txtDACChannelGain.TabIndex = 16;
+            this.txtDACChannelGain.TabIndex = 49;
             this.txtDACChannelGain.Text = "FFFF";
+            this.txtDACChannelGain.Click += new System.EventHandler(this.txtDACChannelGain_Click);
             this.txtDACChannelGain.Validating += new System.ComponentModel.CancelEventHandler(this.txtDACChannelGain_Validating);
             this.txtDACChannelGain.Validated += new System.EventHandler(this.txtDACChannelGain_Validated);
             // 
@@ -698,19 +713,21 @@
             this.rdoDataValueA.Location = new System.Drawing.Point(113, 26);
             this.rdoDataValueA.Name = "rdoDataValueA";
             this.rdoDataValueA.Size = new System.Drawing.Size(14, 13);
-            this.rdoDataValueA.TabIndex = 22;
+            this.rdoDataValueA.TabIndex = 50;
             this.rdoDataValueA.TabStop = true;
             this.rdoDataValueA.UseVisualStyleBackColor = true;
             this.rdoDataValueA.CheckedChanged += new System.EventHandler(this.rdoDataValueA_CheckedChanged);
             // 
             // txtDataValueA
             // 
+            this.txtDataValueA.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtDataValueA.Location = new System.Drawing.Point(203, 22);
             this.txtDataValueA.MaxLength = 4;
             this.txtDataValueA.Name = "txtDataValueA";
             this.txtDataValueA.Size = new System.Drawing.Size(30, 20);
-            this.txtDataValueA.TabIndex = 18;
+            this.txtDataValueA.TabIndex = 51;
             this.txtDataValueA.Text = "FFFF";
+            this.txtDataValueA.Click += new System.EventHandler(this.txtDataValueA_Click);
             this.txtDataValueA.Validating += new System.ComponentModel.CancelEventHandler(this.txtDataValueA_Validating);
             this.txtDataValueA.Validated += new System.EventHandler(this.txtDataValueA_Validated);
             // 
@@ -734,12 +751,14 @@
             // 
             // txtDataValueB
             // 
+            this.txtDataValueB.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtDataValueB.Location = new System.Drawing.Point(204, 49);
             this.txtDataValueB.MaxLength = 4;
             this.txtDataValueB.Name = "txtDataValueB";
             this.txtDataValueB.Size = new System.Drawing.Size(30, 20);
-            this.txtDataValueB.TabIndex = 20;
+            this.txtDataValueB.TabIndex = 53;
             this.txtDataValueB.Text = "0";
+            this.txtDataValueB.Click += new System.EventHandler(this.txtDataValueB_Click);
             this.txtDataValueB.Validating += new System.ComponentModel.CancelEventHandler(this.txtDataValueB_Validating);
             this.txtDataValueB.Validated += new System.EventHandler(this.txtDataValueB_Validated);
             // 
@@ -759,7 +778,7 @@
             this.cboDevices.Location = new System.Drawing.Point(65, 12);
             this.cboDevices.Name = "cboDevices";
             this.cboDevices.Size = new System.Drawing.Size(541, 21);
-            this.cboDevices.TabIndex = 21;
+            this.cboDevices.TabIndex = 0;
             this.cboDevices.SelectedIndexChanged += new System.EventHandler(this.cboDevices_SelectedIndexChanged);
             // 
             // gbDeviceOptions
@@ -796,19 +815,21 @@
             this.btnReset.Location = new System.Drawing.Point(422, 15);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(154, 20);
-            this.btnReset.TabIndex = 30;
+            this.btnReset.TabIndex = 7;
             this.btnReset.Text = "Reset";
             this.btnReset.UseVisualStyleBackColor = true;
             this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // txtVREF0
             // 
+            this.txtVREF0.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtVREF0.Location = new System.Drawing.Point(65, 15);
             this.txtVREF0.MaxLength = 5;
             this.txtVREF0.Name = "txtVREF0";
             this.txtVREF0.Size = new System.Drawing.Size(40, 20);
-            this.txtVREF0.TabIndex = 23;
+            this.txtVREF0.TabIndex = 1;
             this.txtVREF0.Text = "5";
+            this.txtVREF0.Click += new System.EventHandler(this.txtVREF0_Click);
             this.txtVREF0.Validating += new System.ComponentModel.CancelEventHandler(this.txtVREF0_Validating);
             // 
             // btnPerformSoftPowerDown
@@ -816,7 +837,7 @@
             this.btnPerformSoftPowerDown.Location = new System.Drawing.Point(262, 40);
             this.btnPerformSoftPowerDown.Name = "btnPerformSoftPowerDown";
             this.btnPerformSoftPowerDown.Size = new System.Drawing.Size(154, 20);
-            this.btnPerformSoftPowerDown.TabIndex = 29;
+            this.btnPerformSoftPowerDown.TabIndex = 6;
             this.btnPerformSoftPowerDown.Text = "Perform Soft Power Down";
             this.btnPerformSoftPowerDown.UseVisualStyleBackColor = true;
             this.btnPerformSoftPowerDown.Click += new System.EventHandler(this.btnPerformSoftPowerDown_Click);
@@ -835,29 +856,33 @@
             this.btnSoftPowerUp.Location = new System.Drawing.Point(262, 14);
             this.btnSoftPowerUp.Name = "btnSoftPowerUp";
             this.btnSoftPowerUp.Size = new System.Drawing.Size(154, 20);
-            this.btnSoftPowerUp.TabIndex = 28;
+            this.btnSoftPowerUp.TabIndex = 5;
             this.btnSoftPowerUp.Text = "Perform Soft Power Up";
             this.btnSoftPowerUp.UseVisualStyleBackColor = true;
             this.btnSoftPowerUp.Click += new System.EventHandler(this.btnSoftPowerUp_Click);
             // 
             // txtVREF1
             // 
+            this.txtVREF1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtVREF1.Location = new System.Drawing.Point(65, 41);
             this.txtVREF1.MaxLength = 5;
             this.txtVREF1.Name = "txtVREF1";
             this.txtVREF1.Size = new System.Drawing.Size(40, 20);
-            this.txtVREF1.TabIndex = 25;
+            this.txtVREF1.TabIndex = 2;
             this.txtVREF1.Text = "5";
+            this.txtVREF1.Click += new System.EventHandler(this.txtVREF1_Click);
             this.txtVREF1.Validating += new System.ComponentModel.CancelEventHandler(this.txtVREF1_Validating);
             // 
             // txtOffsetDAC0
             // 
+            this.txtOffsetDAC0.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtOffsetDAC0.Location = new System.Drawing.Point(203, 15);
             this.txtOffsetDAC0.MaxLength = 4;
             this.txtOffsetDAC0.Name = "txtOffsetDAC0";
             this.txtOffsetDAC0.Size = new System.Drawing.Size(30, 20);
-            this.txtOffsetDAC0.TabIndex = 32;
+            this.txtOffsetDAC0.TabIndex = 3;
             this.txtOffsetDAC0.Text = "2000";
+            this.txtOffsetDAC0.Click += new System.EventHandler(this.txtOffsetDAC0_Click);
             this.txtOffsetDAC0.Validating += new System.ComponentModel.CancelEventHandler(this.txtOffsetDAC0_Validating);
             this.txtOffsetDAC0.Validated += new System.EventHandler(this.txtOffsetDAC0_Validated);
             // 
@@ -881,12 +906,14 @@
             // 
             // txtOffsetDAC1
             // 
+            this.txtOffsetDAC1.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtOffsetDAC1.Location = new System.Drawing.Point(202, 41);
             this.txtOffsetDAC1.MaxLength = 4;
             this.txtOffsetDAC1.Name = "txtOffsetDAC1";
             this.txtOffsetDAC1.Size = new System.Drawing.Size(31, 20);
-            this.txtOffsetDAC1.TabIndex = 34;
+            this.txtOffsetDAC1.TabIndex = 4;
             this.txtOffsetDAC1.Text = "2000";
+            this.txtOffsetDAC1.Click += new System.EventHandler(this.txtOffsetDAC1_Click);
             this.txtOffsetDAC1.Validating += new System.ComponentModel.CancelEventHandler(this.txtOffsetDAC1_Validating);
             this.txtOffsetDAC1.Validated += new System.EventHandler(this.txtOffsetDAC1_Validated);
             // 
@@ -894,16 +921,9 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // txtVoutCalculated
-            // 
-            this.txtVoutCalculated.Enabled = false;
-            this.txtVoutCalculated.Location = new System.Drawing.Point(286, 35);
-            this.txtVoutCalculated.Name = "txtVoutCalculated";
-            this.txtVoutCalculated.Size = new System.Drawing.Size(51, 20);
-            this.txtVoutCalculated.TabIndex = 25;
-            // 
             // MainForm
             // 
+            this.AcceptButton = this.btnUpdateAllDACOutputs;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(618, 403);
