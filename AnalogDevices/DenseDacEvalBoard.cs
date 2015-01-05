@@ -89,19 +89,19 @@ namespace AnalogDevices
             }
         }
 
-        public ushort Group0Offset
+        public ushort OffsetDAC0
         {
             get { return ReadbackOSF0Register(); }
             set { WriteOSF0Register(value); }
         }
 
-        public ushort Group1Offset
+        public ushort OffsetDAC1
         {
             get { return ReadbackOSF1Register(); }
             set { WriteOSF1Register(value); }
         }
 
-        public ushort Groups2Thru4Offset
+        public ushort OffsetDAC2
         {
             get { return ReadbackOSF2Register(); }
             set { WriteOSF2Register(value); }
