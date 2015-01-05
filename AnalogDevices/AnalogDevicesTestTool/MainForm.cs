@@ -368,6 +368,14 @@ namespace AnalogDevicesTestTool
         private float Vout(ushort dacChannelDataValue, ushort dacChannelOffsetValue, ushort dacChannelGainValue, ushort offsetDACvalue, float Vref)
         {
             var dac_code = (ushort) (((long)dacChannelDataValue * ((long)dacChannelGainValue + (long)1)) / (long)65536) + (long)dacChannelOffsetValue - (long)32768;
+            if (dac_code >= 65535)
+            {
+                dac_code = 65535;
+            }
+            if (dac_code < 0)
+            {
+                dac_code = 0;
+            }
             var Vout = (ulong)4 * Vref * (((long)dac_code - ((long)4 * (long)offsetDACvalue)) / (float)65536);
             return Vout;
         }
