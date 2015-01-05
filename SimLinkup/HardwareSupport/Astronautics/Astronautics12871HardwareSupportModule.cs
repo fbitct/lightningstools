@@ -22,15 +22,25 @@ namespace SimLinkup.HardwareSupport.Astronautics
         #region Instance variables
 
         private bool _isDisposed;
-        private AnalogSignal _pitchCosOutputSignal;
         private AnalogSignal _pitchInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _pitchInputSignalChangedEventHandler;
-        private AnalogSignal _pitchSinOutputSignal;
-        private AnalogSignal _rollCosOutputSignal;
         private AnalogSignal _rollInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _rollInputSignalChangedEventHandler;
-        private AnalogSignal _rollSinOutputSignal;
+        private AnalogSignal _horizontalCommandBarInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _horizontalCommandBarInputSignalChangedEventHandler;
+        private AnalogSignal _verticalCommandBarInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _verticalCommandBarInputSignalChangedEventHandler;
+        private AnalogSignal _rateOfTurnInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _rateOfTurnInputSignalChangedEventHandler;
+        private DigitalSignal _showCommandBarsInputSignal;
 
+        private AnalogSignal _pitchSinOutputSignal;
+        private AnalogSignal _pitchCosOutputSignal;
+        private AnalogSignal _rollCosOutputSignal;
+        private AnalogSignal _rollSinOutputSignal;
+        private AnalogSignal _horizontalCommandBarOutputSignal;
+        private AnalogSignal _verticalCommandBarOutputSignal;
+        private AnalogSignal _rateOfTurnOutputSignal;
         #endregion
 
         #region Constructors
@@ -72,17 +82,17 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] {_pitchInputSignal, _rollInputSignal}; }
+            get { return new[] { _pitchInputSignal, _rollInputSignal, _horizontalCommandBarInputSignal, _verticalCommandBarInputSignal, _rateOfTurnInputSignal }; }
         }
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return null; }
+            get { return new[] { _showCommandBarsInputSignal }; }
         }
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] {_pitchSinOutputSignal, _pitchCosOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal}; }
+            get { return new[] { _pitchSinOutputSignal, _pitchCosOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal, _horizontalCommandBarOutputSignal, _verticalCommandBarOutputSignal, _rateOfTurnOutputSignal }; }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -102,12 +112,21 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 new AnalogSignal.AnalogSignalChangedEventHandler(pitch_InputSignalChanged);
             _rollInputSignalChangedEventHandler =
                 new AnalogSignal.AnalogSignalChangedEventHandler(roll_InputSignalChanged);
+            _horizontalCommandBarInputSignalChangedEventHandler =
+                new AnalogSignal.AnalogSignalChangedEventHandler(horizontalCommandBar_InputSignalChanged);
+            _verticalCommandBarInputSignalChangedEventHandler =
+                new AnalogSignal.AnalogSignalChangedEventHandler(verticalCommandBar_InputSignalChanged);
+            _rateOfTurnInputSignalChangedEventHandler =
+                new AnalogSignal.AnalogSignalChangedEventHandler(rateOfTurn_InputSignalChanged);
         }
 
         private void AbandonInputEventHandlers()
         {
             _pitchInputSignalChangedEventHandler = null;
             _rollInputSignalChangedEventHandler = null;
+            _horizontalCommandBarInputSignalChangedEventHandler = null;
+            _verticalCommandBarInputSignalChangedEventHandler = null;
+            _rateOfTurnInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
@@ -120,6 +139,19 @@ namespace SimLinkup.HardwareSupport.Astronautics
             {
                 _rollInputSignal.SignalChanged += _rollInputSignalChangedEventHandler;
             }
+            if (_horizontalCommandBarInputSignal != null)
+            {
+                _horizontalCommandBarInputSignal.SignalChanged += _horizontalCommandBarInputSignalChangedEventHandler;
+            }
+            if (_verticalCommandBarInputSignal != null)
+            {
+                _verticalCommandBarInputSignal.SignalChanged += _verticalCommandBarInputSignalChangedEventHandler;
+            }
+            if (_rateOfTurnInputSignal != null)
+            {
+                _rateOfTurnInputSignal.SignalChanged += _rateOfTurnInputSignalChangedEventHandler;
+            }
+
         }
 
         private void UnregisterForInputEvents()
@@ -144,6 +176,36 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 {
                 }
             }
+            if (_horizontalCommandBarInputSignalChangedEventHandler != null && _horizontalCommandBarInputSignal != null)
+            {
+                try
+                {
+                    _horizontalCommandBarInputSignal.SignalChanged -= _horizontalCommandBarInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_verticalCommandBarInputSignalChangedEventHandler != null && _verticalCommandBarInputSignal != null)
+            {
+                try
+                {
+                    _verticalCommandBarInputSignal.SignalChanged -= _verticalCommandBarInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_rateOfTurnInputSignalChangedEventHandler != null && _rateOfTurnInputSignal != null)
+            {
+                try
+                {
+                    _rateOfTurnInputSignal.SignalChanged -= _rateOfTurnInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
         }
 
         #endregion
@@ -154,6 +216,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             _pitchInputSignal = CreatePitchInputSignal();
             _rollInputSignal = CreateRollInputSignal();
+            _horizontalCommandBarInputSignal = CreateHorizontalCommandBarInputSignal();
+            _verticalCommandBarInputSignal = CreateVerticalCommandBarInputSignal();
+            _rateOfTurnInputSignal = CreateRateOfTurnInputSignal();
+            _showCommandBarsInputSignal = CreateShowCommandBarsInputSignal();
         }
 
         private AnalogSignal CreatePitchInputSignal()
@@ -183,13 +249,119 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.State = 0;
             return thisSignal;
         }
-
+        private AnalogSignal CreateHorizontalCommandBarInputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Inputs";
+            thisSignal.FriendlyName = "Horizontal Command Bar (Degrees)";
+            thisSignal.Id = "12871_Horizontal_Command_Bar_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = 0;
+            return thisSignal;
+        }
+        private AnalogSignal CreateVerticalCommandBarInputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Inputs";
+            thisSignal.FriendlyName = "Vertical Command Bar (Degrees)";
+            thisSignal.Id = "12871_Vertical_Command_Bar_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = 0;
+            return thisSignal;
+        }
+        private AnalogSignal CreateRateOfTurnInputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Inputs";
+            thisSignal.FriendlyName = "Rate of Turn Indicator (Degrees)";
+            thisSignal.Id = "12871_Rate_Of_Turn_Indicator_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = 0;
+            return thisSignal;
+        }
+        private DigitalSignal CreateAuxFlagInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "AUX Flag";
+            thisSignal.Id = "12871_AUX_Flag_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateOffFlagInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "12871_OFF_Flag_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateGSFlagInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "GS Flag";
+            thisSignal.Id = "12871_GS_Flag_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateLOCFlagInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "LOC Flag";
+            thisSignal.Id = "12871_LOC_Flag_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateShowCommandBarsInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "Show Command Bars";
+            thisSignal.Id = "12871_Show_Command_Bars_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
         private void CreateOutputSignals()
         {
             _pitchSinOutputSignal = CreatePitchSinOutputSignal();
             _pitchCosOutputSignal = CreatePitchCosOutputSignal();
             _rollSinOutputSignal = CreateRollSinOutputSignal();
             _rollCosOutputSignal = CreateRollCosOutputSignal();
+            _horizontalCommandBarOutputSignal = CreateHorizontalCommandBarOutputSignal();
+            _verticalCommandBarOutputSignal = CreateVerticalCommandBarOutputSignal();
+            _rateOfTurnOutputSignal = CreateRateOfTurnOutputSignal();
         }
 
         private AnalogSignal CreatePitchSinOutputSignal()
@@ -247,7 +419,45 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
-
+        private AnalogSignal CreateHorizontalCommandBarOutputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Outputs";
+            thisSignal.FriendlyName = "Horizontal Command Bar";
+            thisSignal.Id = "12871_Horizontal_Command_Bar_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
+            return thisSignal;
+        }
+        private AnalogSignal CreateVerticalCommandBarOutputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Outputs";
+            thisSignal.FriendlyName = "Vertical Command Bar";
+            thisSignal.Id = "12871_Vertical_Command_Bar_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
+            return thisSignal;
+        }
+        private AnalogSignal CreateRateOfTurnOutputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Outputs";
+            thisSignal.FriendlyName = "Rate of Turn Indicator";
+            thisSignal.Id = "12871_Rate_Of_Turn_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
+            return thisSignal;
+        }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdatePitchOutputValues(args.CurrentState);
@@ -256,6 +466,18 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private void roll_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateRollOutputValues(args.CurrentState);
+        }
+        private void horizontalCommandBar_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        {
+            UpdateHorizontalCommandBarOutputValues();
+        }
+        private void verticalCommandBar_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        {
+            UpdateVerticalCommandBarOutputValues();
+        }
+        private void rateOfTurn_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        {
+            UpdateRateOfTurnOutputValues();
         }
 
         private void UpdatePitchOutputValues(double pitchDegrees)
@@ -341,7 +563,98 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 }
             }
         }
+        private void UpdateHorizontalCommandBarOutputValues()
+        {
+            if (_horizontalCommandBarInputSignal != null)
+            {
+                var percentDeflection = _horizontalCommandBarInputSignal.State;
 
+                double outputValue = 0;
+
+                if (_showCommandBarsInputSignal.State)
+                {
+                    outputValue = 4 * percentDeflection;
+                }
+                else
+                {
+                    outputValue = 10;
+                }
+
+                if (_horizontalCommandBarOutputSignal != null)
+                {
+                    if (outputValue < -10)
+                    {
+                        outputValue = -10;
+                    }
+                    else if (outputValue > 10)
+                    {
+                        outputValue = 10;
+                    }
+
+                    _horizontalCommandBarOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                }
+
+            }
+        }
+        private void UpdateVerticalCommandBarOutputValues()
+        {
+            if (_verticalCommandBarInputSignal != null)
+            {
+                var percentDeflection = _verticalCommandBarInputSignal.State;
+
+                double outputValue = 0;
+
+                if (_showCommandBarsInputSignal.State)
+                {
+                    outputValue = 4 * percentDeflection;
+                }
+                else
+                {
+                    outputValue = 10;
+                }
+
+                if (_verticalCommandBarOutputSignal != null)
+                {
+                    if (outputValue < -10)
+                    {
+                        outputValue = -10;
+                    }
+                    else if (outputValue > 10)
+                    {
+                        outputValue = 10;
+                    }
+
+                    _verticalCommandBarOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                }
+
+            }
+        }
+        private void UpdateRateOfTurnOutputValues()
+        {
+            if (_rateOfTurnInputSignal != null)
+            {
+                var percentDeflection = _rateOfTurnInputSignal.State;
+
+                double outputValue = 0;
+
+                outputValue = 10.0000 * percentDeflection;
+
+                if (_rateOfTurnOutputSignal != null)
+                {
+                    if (outputValue < -10)
+                    {
+                        outputValue = -10;
+                    }
+                    else if (outputValue > 10)
+                    {
+                        outputValue = 0;
+                    }
+
+                    _rateOfTurnOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                }
+
+            }
+        }
         #endregion
 
         #endregion
