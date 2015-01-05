@@ -44,6 +44,10 @@ namespace AnalogDevicesTestTool
                 var availableDevices = AnalogDevices.DenseDacEvalBoard.Enumerate();
                 cboDevices.Items.AddRange(availableDevices);
                 cboDevices.DisplayMember = "SymbolicName";
+                if (availableDevices.Count() > 0)
+                {
+                    cboDevices.SelectedItem = cboDevices.Items[0];
+                }
             }
             catch (Exception e)
             {
@@ -62,15 +66,6 @@ namespace AnalogDevicesTestTool
 
         void DACChannelSelectRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (_selectedDevice != null)
-            {
-                var dacChannel = DetermineSelectedDACChannelAddress();
-                txtDACChannelGain.Text = _selectedDevice.GetDacChannelGain(dacChannel).ToString("x");
-                txtDACChannelOffset.Text = _selectedDevice.GetDacChannelOffset(dacChannel).ToString("x");
-                var dacChannelDataSource = _selectedDevice.GetDacChannelDataSource(dacChannel);
-                rdoDataValueA.Checked = dacChannelDataSource == AnalogDevices.DacChannelDataSource.DataValueA;
-                rdoDataValueB.Checked = dacChannelDataSource == AnalogDevices.DacChannelDataSource.DataValueB;
-            }
             UpdateCalculatedOutputVoltage();
         }
         private AnalogDevices.ChannelAddress DetermineSelectedDACChannelAddress()
@@ -124,6 +119,11 @@ namespace AnalogDevicesTestTool
         }
         private void txtDACChannelOffset_Validated(object sender, EventArgs e)
         {
+            SetDACChannelOffset();
+        }
+
+        private void SetDACChannelOffset()
+        {
             ushort dacChannelOffset;
             var parsed = ushort.TryParse(txtDACChannelOffset.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dacChannelOffset);
             if (parsed)
@@ -135,8 +135,14 @@ namespace AnalogDevicesTestTool
                     _selectedDevice.SetDacChannelOffset(selectedDacChannel, dacChannelOffset);
                 }
             }
+            
         }
         private void txtDACChannelGain_Validated(object sender, EventArgs e)
+        {
+            SetDACChannelGain();
+        }
+
+        private void SetDACChannelGain()
         {
             ushort dacChannelGain;
             var parsed = ushort.TryParse(txtDACChannelGain.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dacChannelGain);
@@ -148,8 +154,8 @@ namespace AnalogDevicesTestTool
                     var selectedDacChannel = DetermineSelectedDACChannelAddress();
                     _selectedDevice.SetDacChannelGain(selectedDacChannel, dacChannelGain);
                 }
-                
             }
+            
         }
         private void txtDACChannelGain_Validating(object sender, CancelEventArgs e)
         {
@@ -247,10 +253,33 @@ namespace AnalogDevicesTestTool
             UpdateCalculatedOutputVoltage();
             if (_selectedDevice != null)
             {
+                UpdateOffsetDAC0();
+                UpdateOffsetDAC1();
+                SetDACChannelOffset();
+                SetDACChannelGain();
+                UpdateDataValueA();
+                UpdateDataValueB();
+                SetDACChannelDataSource();
+
                 _selectedDevice.UpdateAllDacOutputs();
             }
         }
+        private void SetDACChannelDataSource()
+        {
+            if (_selectedDevice != null)
+            {
+                var selectedDacChannel = DetermineSelectedDACChannelAddress();
+                if (rdoDataValueA.Checked)
+                {
+                    _selectedDevice.SetDacChannelDataSource(selectedDacChannel, AnalogDevices.DacChannelDataSource.DataValueA);
+                }
+                else
+                {
+                    _selectedDevice.SetDacChannelDataSource(selectedDacChannel, AnalogDevices.DacChannelDataSource.DataValueB);
+                }
+            }
 
+        }
         private void btnResumeAllDACOutputs_Click(object sender, EventArgs e)
         {
             UpdateCalculatedOutputVoltage();
@@ -293,29 +322,12 @@ namespace AnalogDevicesTestTool
             }
         }
 
-        private void UpdateDACValuesFromDevice(AnalogDevices.ChannelAddress dacChannel)
-        {
-            if (_selectedDevice != null)
-            {
-                txtDataValueA.Text = _selectedDevice.GetDacChannelDataValueA(dacChannel).ToString();
-                txtDataValueB.Text = _selectedDevice.GetDacChannelDataValueB(dacChannel).ToString();
-
-            }
-        }
-
-
-
        
         private void rdoDataValueA_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoDataValueA.Checked)
             {
                 UpdateCalculatedOutputVoltage();
-                if (_selectedDevice != null)
-                {
-                    var selectedDacChannel = DetermineSelectedDACChannelAddress();
-                    _selectedDevice.SetDacChannelDataSource(selectedDacChannel, AnalogDevices.DacChannelDataSource.DataValueA);
-                }
             }
         }
 
@@ -324,15 +336,15 @@ namespace AnalogDevicesTestTool
             if (rdoDataValueB.Checked)
             {
                 UpdateCalculatedOutputVoltage();
-                if (_selectedDevice != null)
-                {
-                    var selectedDacChannel = DetermineSelectedDACChannelAddress();
-                    _selectedDevice.SetDacChannelDataSource(selectedDacChannel, AnalogDevices.DacChannelDataSource.DataValueB);
-                }
             }
         }
 
         private void txtOffsetDAC0_Validated(object sender, EventArgs e)
+        {
+            UpdateOffsetDAC0();
+        }
+
+        private void UpdateOffsetDAC0()
         {
             ushort offsetDAC0;
             var parsed = ushort.TryParse(txtOffsetDAC0.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDAC0);
@@ -348,6 +360,11 @@ namespace AnalogDevicesTestTool
 
         private void txtOffsetDAC1_Validated(object sender, EventArgs e)
         {
+            UpdateOffsetDAC1();
+        }
+
+        private void UpdateOffsetDAC1()
+        {
             ushort offsetDAC1;
             var parsed = ushort.TryParse(txtOffsetDAC1.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDAC1);
             if (parsed)
@@ -361,6 +378,11 @@ namespace AnalogDevicesTestTool
         }
 
         private void txtDataValueA_Validated(object sender, EventArgs e)
+        {
+            UpdateDataValueA();
+        }
+
+        private void UpdateDataValueA()
         {
             ushort dataValueA;
             var parsed = ushort.TryParse(txtDataValueA.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dataValueA);
@@ -376,6 +398,11 @@ namespace AnalogDevicesTestTool
         }
 
         private void txtDataValueB_Validated(object sender, EventArgs e)
+        {
+            UpdateDataValueB();
+        }
+
+        private void UpdateDataValueB()
         {
             ushort dataValueB;
             var parsed = ushort.TryParse(txtDataValueB.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dataValueB);
@@ -413,125 +440,91 @@ namespace AnalogDevicesTestTool
         }
         private float Vout(AnalogDevices.ChannelAddress dacChannel)
         {
-            if (_selectedDevice != null)
+            var dacChannelDataSource = rdoDataValueA.Checked ? AnalogDevices.DacChannelDataSource.DataValueA: AnalogDevices.DacChannelDataSource.DataValueB;
+            ushort dataValueA;
+            ushort dataValueB;
+
+            bool parsed = ushort.TryParse(txtDataValueA.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dataValueA);
+            if (!parsed)
             {
-
-                var dacChannelDataSource = _selectedDevice.GetDacChannelDataSource(dacChannel);
-                var dacChannelDataValue = (dacChannelDataSource == AnalogDevices.DacChannelDataSource.DataValueA)
-                    ? _selectedDevice.GetDacChannelDataValueA(dacChannel)
-                    : _selectedDevice.GetDacChannelDataValueB(dacChannel);
-                var dacChannelOffsetValue = _selectedDevice.GetDacChannelOffset(dacChannel);
-                var dacChannelGainValue = _selectedDevice.GetDacChannelGain(dacChannel);
-                ushort offsetDACValue;
-                float vRef;
-                if (dacChannel >= AnalogDevices.ChannelAddress.Group0Channel0 && dacChannel <= AnalogDevices.ChannelAddress.Group0Channel7)
-                {
-                    offsetDACValue = _selectedDevice.OffsetDAC0;
-                    bool parsed = float.TryParse(txtVREF0.Text, out vRef);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                }
-                else if (dacChannel >= AnalogDevices.ChannelAddress.Group1Channel0 && dacChannel <= AnalogDevices.ChannelAddress.Group4Channel7)
-                {
-                    offsetDACValue = _selectedDevice.OffsetDAC1;
-                    bool parsed = float.TryParse(txtVREF1.Text, out vRef);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                }
-
-                else
-                {
-                    offsetDACValue = _selectedDevice.OffsetDAC0;
-                    bool parsed = float.TryParse(txtVREF0.Text, out vRef);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                }
-                return Vout(dacChannelDataValue, dacChannelOffsetValue, dacChannelGainValue, offsetDACValue, vRef);
+                _log.ErrorFormat("Could not parse contents of txtDataValueA");
+                return 0;
             }
+            parsed = ushort.TryParse(txtDataValueB.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dataValueB);
+            if (!parsed)
+            {
+                _log.ErrorFormat("Could not parse contents of txtDataValueB");
+                return 0;
+            }
+
+            var dacChannelDataValue = (dacChannelDataSource == AnalogDevices.DacChannelDataSource.DataValueA)
+                ? dataValueA
+                : dataValueB;
+
+            ushort dacChannelOffsetValue;
+            parsed = ushort.TryParse(txtDACChannelOffset.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dacChannelOffsetValue);
+            if (!parsed)
+            {
+                _log.ErrorFormat("Could not parse contents of txtDACChannelOffset");
+                return 0;
+            }
+            ushort dacChannelGainValue;
+            parsed = ushort.TryParse(txtDACChannelGain.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dacChannelGainValue);
+            if (!parsed)
+            {
+                _log.ErrorFormat("Could not parse contents of txtDACChannelGain");
+                return 0;
+            }
+
+            ushort offsetDACValue;
+            float vRef;
+            if (dacChannel >= AnalogDevices.ChannelAddress.Group0Channel0 && dacChannel <= AnalogDevices.ChannelAddress.Group0Channel7)
+            {
+                parsed= ushort.TryParse(txtOffsetDAC0.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDACValue);
+                if (!parsed)
+                {
+                    _log.ErrorFormat("Could not parse contents of txtOffsetDAC0");
+                    return 0;
+                }
+                parsed = float.TryParse(txtVREF0.Text, out vRef);
+                if (!parsed)
+                {
+                    _log.ErrorFormat("Could not parse contents of txtVREF0");
+                    return 0;
+                }
+            }
+            else if (dacChannel >= AnalogDevices.ChannelAddress.Group1Channel0 && dacChannel <= AnalogDevices.ChannelAddress.Group4Channel7)
+            {
+                parsed = ushort.TryParse(txtOffsetDAC1.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDACValue);
+                if (!parsed)
+                {
+                    _log.ErrorFormat("Could not parse contents of txtOffsetDAC1");
+                    return 0;
+                }
+                parsed = float.TryParse(txtVREF1.Text, out vRef);
+                if (!parsed)
+                {
+                    _log.ErrorFormat("Could not parse contents of txtVREF1");
+                    return 0;
+                }
+            }
+
             else
             {
-                var dacChannelDataSource = rdoDataValueA.Checked ? AnalogDevices.DacChannelDataSource.DataValueA: AnalogDevices.DacChannelDataSource.DataValueB;
-                ushort dataValueA;
-                ushort dataValueB;
-
-                bool parsed = ushort.TryParse(txtDataValueA.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dataValueA);
+                parsed = ushort.TryParse(txtOffsetDAC0.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDACValue);
                 if (!parsed)
                 {
+                    _log.ErrorFormat("Could not parse contents of txtOffsetDAC0");
                     return 0;
                 }
-                parsed = ushort.TryParse(txtDataValueB.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dataValueB);
+                parsed = float.TryParse(txtVREF0.Text, out vRef);
                 if (!parsed)
                 {
+                    _log.ErrorFormat("Could not parse contents of txtVREF0");
                     return 0;
                 }
-
-                var dacChannelDataValue = (dacChannelDataSource == AnalogDevices.DacChannelDataSource.DataValueA)
-                    ? dataValueA
-                    : dataValueB;
-
-                ushort dacChannelOffsetValue;
-                parsed = ushort.TryParse(txtDACChannelOffset.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dacChannelOffsetValue);
-                if (!parsed)
-                {
-                    return 0;
-                }
-                ushort dacChannelGainValue;
-                parsed = ushort.TryParse(txtDACChannelGain.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out dacChannelGainValue);
-                if (!parsed)
-                {
-                    return 0;
-                }
-
-                ushort offsetDACValue;
-                float vRef;
-                if (dacChannel >= AnalogDevices.ChannelAddress.Group0Channel0 && dacChannel <= AnalogDevices.ChannelAddress.Group0Channel7)
-                {
-                    parsed= ushort.TryParse(txtOffsetDAC0.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDACValue);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                    parsed = float.TryParse(txtVREF0.Text, out vRef);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                }
-                else if (dacChannel >= AnalogDevices.ChannelAddress.Group1Channel0 && dacChannel <= AnalogDevices.ChannelAddress.Group4Channel7)
-                {
-                    parsed = ushort.TryParse(txtOffsetDAC1.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDACValue);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                    parsed = float.TryParse(txtVREF1.Text, out vRef);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                }
-
-                else
-                {
-                    parsed = ushort.TryParse(txtOffsetDAC0.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out offsetDACValue);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                    parsed = float.TryParse(txtVREF0.Text, out vRef);
-                    if (!parsed)
-                    {
-                        return 0;
-                    }
-                }
-                return Vout(dacChannelDataValue, dacChannelOffsetValue, dacChannelGainValue, offsetDACValue, vRef);
             }
+            return Vout(dacChannelDataValue, dacChannelOffsetValue, dacChannelGainValue, offsetDACValue, vRef);
 
         }
 

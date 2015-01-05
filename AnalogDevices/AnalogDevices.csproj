@@ -103,16 +103,16 @@
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AD5371SPI.hex">
+    <Content Include="AD5371SPI.hex">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="sn.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LibUsbDotNet.dll">
+    <None Include="LibUsbDotNet.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="log4net.dll" />
+    </None>
+    <None Include="log4net.dll" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
