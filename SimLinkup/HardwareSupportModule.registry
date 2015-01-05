@@ -27,6 +27,7 @@
     <Module>SimLinkup.HardwareSupport.Astronautics.Astronautics12871HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     
     <!--<Module>SimLinkup.HardwareSupport.AMI.AMI900278002HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>-->
+    <!--<Module>SimLinkup.HardwareSupport.AMI.AMI99001580012HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>-->
 
   </HardwareSupportModules>
 </HardwareSupportModuleRegistry>
