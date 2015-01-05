@@ -26,6 +26,9 @@ namespace AnalogDevicesTestTool
         {
             EnumerateDevices();
             AddEventHandlersForAllDACChannelSelectRadioButtions();
+            SelectDACChannel0();
+            UpdateCalculatedOutputVoltage();
+
         }
         private void EnumerateDevices()
         {
@@ -150,7 +153,7 @@ namespace AnalogDevicesTestTool
         }
         private void SelectDACChannel0()
         {
-            var DAC0RadioButton = gbDACOutputs.Controls.OfType<RadioButton>().FirstOrDefault();
+            var DAC0RadioButton = gbDACOutputs.Controls.OfType<RadioButton>().Where(x=>x.Text=="DAC 0").FirstOrDefault();
             if (DAC0RadioButton != null)
             {
                 DAC0RadioButton.Checked = true;
