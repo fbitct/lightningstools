@@ -120,7 +120,7 @@
             this.mainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(546, 443);
+            this.mainPanel.Size = new System.Drawing.Size(618, 403);
             this.mainPanel.TabIndex = 1;
             // 
             // gbDACOutputs
@@ -171,7 +171,7 @@
             this.gbDACOutputs.Controls.Add(this.gbDataValues);
             this.gbDACOutputs.Location = new System.Drawing.Point(18, 150);
             this.gbDACOutputs.Name = "gbDACOutputs";
-            this.gbDACOutputs.Size = new System.Drawing.Size(511, 277);
+            this.gbDACOutputs.Size = new System.Drawing.Size(588, 238);
             this.gbDACOutputs.TabIndex = 0;
             this.gbDACOutputs.TabStop = false;
             this.gbDACOutputs.Text = "DAC Outputs";
@@ -288,7 +288,7 @@
             // 
             // btnUpdateAllDACOutputs
             // 
-            this.btnUpdateAllDACOutputs.Location = new System.Drawing.Point(329, 243);
+            this.btnUpdateAllDACOutputs.Location = new System.Drawing.Point(378, 149);
             this.btnUpdateAllDACOutputs.Name = "btnUpdateAllDACOutputs";
             this.btnUpdateAllDACOutputs.Size = new System.Drawing.Size(154, 23);
             this.btnUpdateAllDACOutputs.TabIndex = 11;
@@ -309,7 +309,7 @@
             // 
             // btnResumeAllDACOutputs
             // 
-            this.btnResumeAllDACOutputs.Location = new System.Drawing.Point(169, 243);
+            this.btnResumeAllDACOutputs.Location = new System.Drawing.Point(378, 201);
             this.btnResumeAllDACOutputs.Name = "btnResumeAllDACOutputs";
             this.btnResumeAllDACOutputs.Size = new System.Drawing.Size(154, 23);
             this.btnResumeAllDACOutputs.TabIndex = 10;
@@ -330,7 +330,7 @@
             // 
             // btnSuspendAllDACOutputs
             // 
-            this.btnSuspendAllDACOutputs.Location = new System.Drawing.Point(7, 243);
+            this.btnSuspendAllDACOutputs.Location = new System.Drawing.Point(378, 176);
             this.btnSuspendAllDACOutputs.Name = "btnSuspendAllDACOutputs";
             this.btnSuspendAllDACOutputs.Size = new System.Drawing.Size(154, 23);
             this.btnSuspendAllDACOutputs.TabIndex = 9;
@@ -766,7 +766,7 @@
             this.cboDevices.FormattingEnabled = true;
             this.cboDevices.Location = new System.Drawing.Point(65, 12);
             this.cboDevices.Name = "cboDevices";
-            this.cboDevices.Size = new System.Drawing.Size(464, 21);
+            this.cboDevices.Size = new System.Drawing.Size(541, 21);
             this.cboDevices.TabIndex = 21;
             this.cboDevices.SelectedIndexChanged += new System.EventHandler(this.cboDevices_SelectedIndexChanged);
             // 
@@ -785,7 +785,7 @@
             this.gbDeviceOptions.Controls.Add(this.txtOffsetDAC1);
             this.gbDeviceOptions.Location = new System.Drawing.Point(18, 38);
             this.gbDeviceOptions.Name = "gbDeviceOptions";
-            this.gbDeviceOptions.Size = new System.Drawing.Size(511, 96);
+            this.gbDeviceOptions.Size = new System.Drawing.Size(588, 96);
             this.gbDeviceOptions.TabIndex = 26;
             this.gbDeviceOptions.TabStop = false;
             this.gbDeviceOptions.Text = "Device Options";
@@ -801,7 +801,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(262, 66);
+            this.btnReset.Location = new System.Drawing.Point(422, 15);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(154, 20);
             this.btnReset.TabIndex = 30;
@@ -906,7 +906,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(546, 443);
+            this.ClientSize = new System.Drawing.Size(618, 403);
             this.Controls.Add(this.mainPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
