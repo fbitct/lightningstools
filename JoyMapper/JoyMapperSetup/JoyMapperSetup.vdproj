@@ -257,11 +257,6 @@
                     "Name" = "8:Microsoft DirectX 9c Web"
                     "ProductCode" = "8:Microsoft.DirectX.9c"
                     }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5.SP1"
-                    {
-                    "Name" = "8:.NET Framework 3.5 SP1"
-                    "ProductCode" = "8:Microsoft.Net.Framework.3.5.SP1"
-                    }
                 }
             }
         }

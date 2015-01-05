@@ -26,7 +26,7 @@ namespace Phcc
         /// <param name = "index">The index of the digital input 
         ///   whose value has changed.</param>
         /// <param name = "newValue">The new value of the digital input 
-        ///   indicated by the <paramref name = "Address" /> parameter.</param>
+        ///   indicated by the <paramref name = "index" /> parameter.</param>
         public DigitalInputChangedEventArgs(short index, bool newValue)
         {
             Index = index;

@@ -42,7 +42,6 @@ namespace F4Utils.SimSupport
                     _falconWasRunningOnLastCheck = F4Utils.Process.Util.IsFalconRunning();
                 }
                 return _falconWasRunningOnLastCheck; 
-                return true;
             }
         }
 

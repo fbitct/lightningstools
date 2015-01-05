@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_064A55C142C7E5D134A0E07A48FC32F2"
-        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_25E31EB765944F9A9472ED9B1FAB936F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -33,6 +27,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4950AB678A24C1A74CE4FF98DEAA07C6"
+        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
         "MsmSig" = "8:_UNDEFINED"
@@ -40,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_064A55C142C7E5D134A0E07A48FC32F2"
+        "OwnerKey" = "8:_4950AB678A24C1A74CE4FF98DEAA07C6"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -102,10 +102,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.2.0"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
                     {
-                    "Name" = "8:.NET Framework 2.0 (x86)"
-                    "ProductCode" = "8:Microsoft.Net.Framework.2.0"
+                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
                     }
                 }
             }
@@ -138,14 +138,34 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_064A55C142C7E5D134A0E07A48FC32F2"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_25E31EB765944F9A9472ED9B1FAB936F"
+            {
+            "SourcePath" = "8:..\\F4SharedMemMirror\\SharedMemMirror.ico"
+            "TargetName" = "8:SharedMemMirror.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4950AB678A24C1A74CE4FF98DEAA07C6"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:F4SharedMem, Version=3.0.0.0, Culture=neutral, PublicKeyToken=98c24c6603c8861c, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_064A55C142C7E5D134A0E07A48FC32F2"
+                    "_4950AB678A24C1A74CE4FF98DEAA07C6"
                     {
                     "Name" = "8:F4SharedMem.dll"
                     "Attributes" = "3:512"
@@ -167,26 +187,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_25E31EB765944F9A9472ED9B1FAB936F"
-            {
-            "SourcePath" = "8:..\\F4SharedMemMirror\\SharedMemMirror.ico"
-            "TargetName" = "8:SharedMemMirror.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -257,7 +257,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon 4 Shared Memory Mirror"
         "ProductCode" = "8:{D5EEC1EC-D895-49CD-AB32-03AF2AC2558D}"
-        "PackageCode" = "8:{26214AD0-5E20-4C2E-B9D7-EC614A24D727}"
+        "PackageCode" = "8:{CE7C6A10-8D81-4565-8C3F-7679EA936CC4}"
         "UpgradeCode" = "8:{88DCE1F7-00D3-40D0-AA6F-3A1288486DFC}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -792,7 +792,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_25E879C23B4D45DFABDCF669E7F6E043"
             {
-            "SourcePath" = "8:..\\F4SharedMemMirror\\obj\\x86\\Debug\\F4SharedMemMirror.exe"
+            "SourcePath" = "8:..\\F4SharedMemMirror\\obj\\x86\\Release\\F4SharedMemMirror.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"

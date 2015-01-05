@@ -211,7 +211,9 @@ namespace Phcc
     [ComVisible(false)]
     public delegate void I2CDataReceivedEventHandler(object sender, I2CDataReceivedEventArgs e);
 
-    //Seven-segment display bitmasks
+    /// <summary>
+    /// Seven-segment display bitmasks
+    /// </summary>
     [ComVisible(true)]
     [Flags]
     public enum SevenSegmentBits : byte

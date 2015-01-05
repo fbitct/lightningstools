@@ -76,7 +76,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1CB9AEB5CCF927716038F091A598BA69"
+        "OwnerKey" = "8:_1E3D8DC6EE3841019AEEF7EDECFAD584"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -100,13 +100,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1E3D8DC6EE3841019AEEF7EDECFAD584"
+        "OwnerKey" = "8:_6A59AA30376DAC7BD5BBF285A0ADF518"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6A59AA30376DAC7BD5BBF285A0ADF518"
+        "OwnerKey" = "8:_1CB9AEB5CCF927716038F091A598BA69"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -127,6 +127,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -143,6 +151,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.5.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.1"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -384,7 +408,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analog Devices AD53xx DenseDAC Eval Board Test Tool"
         "ProductCode" = "8:{E3B42BD6-C052-44BC-BBCD-574735C42970}"
-        "PackageCode" = "8:{6B069487-9946-4E91-9805-B3BC020E1919}"
+        "PackageCode" = "8:{2C2F7D35-41B3-499A-B979-408270FD8AA7}"
         "UpgradeCode" = "8:{195C81CC-EA3D-45E1-A817-42713D1E1A31}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

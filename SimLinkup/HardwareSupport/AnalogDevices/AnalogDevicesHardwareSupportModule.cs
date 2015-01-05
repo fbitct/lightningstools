@@ -63,9 +63,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                         
                         device.SetDacChannelDataSourceAllChannels(DacChannelDataSource.DataValueA);
                         device.DacPrecision = DacPrecision.SixteenBit;
-                        device.Group0Offset = 0x2000;
-                        device.Group1Offset = 0x2000;
-                        //device.Groups2Thru4Offset = 0x2000;
+                        device.OffsetDAC0 = 0x2000;
+                        device.OffsetDAC1 = 0x2000;
+                        device.OffsetDAC2 = 0x2000;
                         for (var j = 0; j < 40; j++)
                         {
                             device.SetDacChannelOffset((ChannelAddress) j + 8, 0x8000);
