@@ -76,7 +76,6 @@
             this.rdoDAC1 = new System.Windows.Forms.RadioButton();
             this.rdoDAC0 = new System.Windows.Forms.RadioButton();
             this.gbDataValues = new System.Windows.Forms.GroupBox();
-            this.lblVOutCalculated = new System.Windows.Forms.Label();
             this.lblVout = new System.Windows.Forms.Label();
             this.txtDACChannelOffset = new System.Windows.Forms.TextBox();
             this.lblDACChannelOffset = new System.Windows.Forms.Label();
@@ -103,6 +102,7 @@
             this.lblOffsetDAC0 = new System.Windows.Forms.Label();
             this.txtOffsetDAC1 = new System.Windows.Forms.TextBox();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.txtVoutCalculated = new System.Windows.Forms.TextBox();
             this.mainPanel.SuspendLayout();
             this.gbDACOutputs.SuspendLayout();
             this.gbDataValues.SuspendLayout();
@@ -613,7 +613,7 @@
             // 
             // gbDataValues
             // 
-            this.gbDataValues.Controls.Add(this.lblVOutCalculated);
+            this.gbDataValues.Controls.Add(this.txtVoutCalculated);
             this.gbDataValues.Controls.Add(this.lblVout);
             this.gbDataValues.Controls.Add(this.txtDACChannelOffset);
             this.gbDataValues.Controls.Add(this.lblDACChannelOffset);
@@ -631,14 +631,6 @@
             this.gbDataValues.TabIndex = 26;
             this.gbDataValues.TabStop = false;
             this.gbDataValues.Text = "Data Values";
-            // 
-            // lblVOutCalculated
-            // 
-            this.lblVOutCalculated.AutoSize = true;
-            this.lblVOutCalculated.Location = new System.Drawing.Point(292, 38);
-            this.lblVOutCalculated.Name = "lblVOutCalculated";
-            this.lblVOutCalculated.Size = new System.Drawing.Size(0, 13);
-            this.lblVOutCalculated.TabIndex = 25;
             // 
             // lblVout
             // 
@@ -672,7 +664,7 @@
             // rdoDataValueB
             // 
             this.rdoDataValueB.AutoSize = true;
-            this.rdoDataValueB.Location = new System.Drawing.Point(98, 52);
+            this.rdoDataValueB.Location = new System.Drawing.Point(113, 52);
             this.rdoDataValueB.Name = "rdoDataValueB";
             this.rdoDataValueB.Size = new System.Drawing.Size(14, 13);
             this.rdoDataValueB.TabIndex = 23;
@@ -703,7 +695,7 @@
             // 
             this.rdoDataValueA.AutoSize = true;
             this.rdoDataValueA.Checked = true;
-            this.rdoDataValueA.Location = new System.Drawing.Point(98, 26);
+            this.rdoDataValueA.Location = new System.Drawing.Point(113, 26);
             this.rdoDataValueA.Name = "rdoDataValueA";
             this.rdoDataValueA.Size = new System.Drawing.Size(14, 13);
             this.rdoDataValueA.TabIndex = 22;
@@ -713,7 +705,7 @@
             // 
             // txtDataValueA
             // 
-            this.txtDataValueA.Location = new System.Drawing.Point(188, 22);
+            this.txtDataValueA.Location = new System.Drawing.Point(203, 22);
             this.txtDataValueA.MaxLength = 4;
             this.txtDataValueA.Name = "txtDataValueA";
             this.txtDataValueA.Size = new System.Drawing.Size(30, 20);
@@ -725,7 +717,7 @@
             // lblDataValueA
             // 
             this.lblDataValueA.AutoSize = true;
-            this.lblDataValueA.Location = new System.Drawing.Point(112, 26);
+            this.lblDataValueA.Location = new System.Drawing.Point(127, 26);
             this.lblDataValueA.Name = "lblDataValueA";
             this.lblDataValueA.Size = new System.Drawing.Size(70, 13);
             this.lblDataValueA.TabIndex = 19;
@@ -734,7 +726,7 @@
             // lblDataValueB
             // 
             this.lblDataValueB.AutoSize = true;
-            this.lblDataValueB.Location = new System.Drawing.Point(112, 52);
+            this.lblDataValueB.Location = new System.Drawing.Point(127, 52);
             this.lblDataValueB.Name = "lblDataValueB";
             this.lblDataValueB.Size = new System.Drawing.Size(70, 13);
             this.lblDataValueB.TabIndex = 21;
@@ -742,7 +734,7 @@
             // 
             // txtDataValueB
             // 
-            this.txtDataValueB.Location = new System.Drawing.Point(189, 49);
+            this.txtDataValueB.Location = new System.Drawing.Point(204, 49);
             this.txtDataValueB.MaxLength = 4;
             this.txtDataValueB.Name = "txtDataValueB";
             this.txtDataValueB.Size = new System.Drawing.Size(30, 20);
@@ -902,6 +894,14 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // txtVoutCalculated
+            // 
+            this.txtVoutCalculated.Enabled = false;
+            this.txtVoutCalculated.Location = new System.Drawing.Point(286, 35);
+            this.txtVoutCalculated.Name = "txtVoutCalculated";
+            this.txtVoutCalculated.Size = new System.Drawing.Size(51, 20);
+            this.txtVoutCalculated.TabIndex = 25;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -997,10 +997,10 @@
         private System.Windows.Forms.Label lblVREF0;
         private System.Windows.Forms.ComboBox cboDevices;
         private System.Windows.Forms.ErrorProvider errorProvider1;
-        private System.Windows.Forms.Label lblVOutCalculated;
         private System.Windows.Forms.Label lblVout;
         private System.Windows.Forms.GroupBox gbDeviceOptions;
         private System.Windows.Forms.GroupBox gbDataValues;
+        private System.Windows.Forms.TextBox txtVoutCalculated;
 
     }
 }

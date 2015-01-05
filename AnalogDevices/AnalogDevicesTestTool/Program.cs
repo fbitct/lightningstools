@@ -27,19 +27,20 @@ namespace AnalogDevicesTestTool
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            _log.Error("Unhandled exception caught", e.ExceptionObject as Exception);
+            _log.Error((e.ExceptionObject as Exception).Message, e.ExceptionObject as Exception);
         }
 
         private static void App_UnhandledException(object sender,
                                                     Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs
                                                         e)
         {
+            _log.Error(e.Exception.Message, e.Exception);
             e.ExitApplication = false;
         }
 
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
         {
-            _log.Error("Unhandled exception caught", t.Exception);
+            _log.Error(t.Exception.Message, t.Exception);
         }
 
         private static Process PriorProcess()

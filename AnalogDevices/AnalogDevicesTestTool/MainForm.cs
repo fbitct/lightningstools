@@ -37,10 +37,17 @@ namespace AnalogDevicesTestTool
         }
         private void EnumerateDevices()
         {
-            cboDevices.Items.Clear();
-            var availableDevices = AnalogDevices.DenseDacEvalBoard.Enumerate();
-            cboDevices.Items.AddRange(availableDevices);
-            cboDevices.DisplayMember = "SymbolicName";
+            try
+            {
+                cboDevices.Items.Clear();
+                var availableDevices = AnalogDevices.DenseDacEvalBoard.Enumerate();
+                cboDevices.Items.AddRange(availableDevices);
+                cboDevices.DisplayMember = "SymbolicName";
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
 
         }
         private void AddEventHandlersForAllDACChannelSelectRadioButtions()
@@ -356,7 +363,7 @@ namespace AnalogDevicesTestTool
             var calculatedOutputVoltage = Vout(dacChannel);
             var asText = calculatedOutputVoltage.ToString("F4");
             if (calculatedOutputVoltage >=0) asText = "+" + asText;
-            lblVOutCalculated.Text = asText;
+            txtVoutCalculated.Text = asText;
         }
         private float Vout(ushort dacChannelDataValue, ushort dacChannelOffsetValue, ushort dacChannelGainValue, ushort offsetDACvalue, float Vref)
         {
