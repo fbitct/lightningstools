@@ -8,6 +8,17 @@ namespace F4SharedMem.Headers
     [StructLayout(LayoutKind.Sequential, Pack = 8)]
     public struct FlightData2
     {
+        // changelog:
+        // 1: initial BMS 4.33 version
+        // 2: added AltCalReading, altBits, BupUhfPreset, powerBits, blinkBits, cmdsMode
+        // 3: added VersionNum, hydPressureA/B, cabinAlt, BupUhfFreq, currentTime, vehicleACD
+        // 4: added fuelflow2
+        // 5: added RwrInfo, lefPos, tefPos
+        // 6: added vtolPos
+        // 7: bit fields are now unsigned instead of signed
+        // 8: increased RwrInfo size to 512
+        // 9: added human pilot names and their status in a session
+
         public const int RWRINFO_SIZE = 512;
         public const int MAX_CALLSIGNS = 32;
 
