@@ -7,7 +7,6 @@ namespace F4Utils.PlayerOp
     public class PlayerOp
     {
         public const int PL_FNAME_LEN = 32;
-        public const int RAMP_MINUTES = 20;
         public int ACMIFileSize;
         public int BldDeaggLevel;
         public int CampAirDefenseRatio;
@@ -30,6 +29,8 @@ namespace F4Utils.PlayerOp
         public float HDRBloom;
         public float HDRBlur;
         public int IVCvsAIBalance;
+        public int[] InitVol = new int[(int)SoundGroups.NUM_SOUND_GROUPS];
+
         public int KeyboardPOVPanningSensitivity;
         public float MouseLookSensitivity;
         public int MouseWheelSensitivity;
@@ -66,10 +67,10 @@ namespace F4Utils.PlayerOp
         public bool enableFFB;
         public bool enableMouseLook;
         public bool infoBar;
-        public Guid joystick;
         public byte[] keyfile = new byte[PL_FNAME_LEN];
         public int pit3DPanMode;
         public bool rollLinkedNWS;
+        public int RAMP_MINUTES;
         public byte skycol;
         public bool sticky3dPitSnapViews;
         public bool subTitles;
@@ -126,10 +127,14 @@ namespace F4Utils.PlayerOp
                 {
                     TempVol[i] = br.ReadInt32();
                 }
+                for (var i = 0; i < (int)SoundGroups.NUM_SOUND_GROUPS; i++)
+                {
+                    InitVol[i] = br.ReadInt32();
+                }
                 IVCvsAIBalance = br.ReadInt32();
                 Realism = br.ReadSingle();
                 keyfile = br.ReadBytes(PL_FNAME_LEN);
-                joystick = new Guid(br.ReadBytes(16));
+                RAMP_MINUTES = br.ReadInt32();
                 skycol = br.ReadByte();
                 PlayerRadioVoice = br.ReadBoolean();
                 UIComms = br.ReadBoolean();

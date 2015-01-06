@@ -74,7 +74,7 @@ namespace F4KeyFile
                     }
 
                     var tokenList = Util.Tokenize(currentLine);
-                    if (tokenList == null || tokenList.Count == 0)
+                    if (tokenList == null || tokenList.Count == 0 || (tokenList[0] !=null && tokenList[0].StartsWith("#")))
                     {
                         continue;
                     }

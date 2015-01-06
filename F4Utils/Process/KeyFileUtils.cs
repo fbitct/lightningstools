@@ -11,11 +11,9 @@ namespace F4Utils.Process
 {
     public class KeyFileUtils
     {
-        private const string KEYSTROKE_FILE_NAME__DEFAULT = "keystrokes.key";
+        private const string KEYSTROKE_FILE_NAME__DEFAULT = "BMS.key";
         private const string PLAYER_OPTS_FILENAME__DEFAULT = "viper.pop";
         private const string PLAYER_OPTS_FILE_EXTENSION = ".pop";
-        private const string PLAYER_OPTS_V2_FILENAME_DEFAULT = "viper.pop2";
-        private const string PLAYER_OPTS_V2_FILE_EXTENSION = ".pop2";
         private const string KEYFILE_EXENSION_DEFAULT = ".key";
         private const string CONFIG_DIRECTORY_NAME = "config";
         private const string USEROPTS_DIRECTORY_NAME = "User";
@@ -107,7 +105,7 @@ namespace F4Utils.Process
                 string keyFileName = null;
                 if (new FileInfo(pilotOptionsPath).Exists)
                 {
-                    keyFileName = GetKeyFileNameFromPlayerOptsRaw(pilotOptionsPath);
+                    keyFileName = GetKeyFileNameFromPlayerOpts(pilotOptionsPath);
                 }
                 if (keyFileName == null) keyFileName = KEYSTROKE_FILE_NAME__DEFAULT;
 
@@ -128,39 +126,34 @@ namespace F4Utils.Process
             }
             return toReturn;
         }
-       
-        private static string GetKeyFileNameFromPlayerOptsRaw(string playerOptionsFilePath)
+        private static string GetKeyFileNameFromPlayerOpts(string playerOptionsFilePath)
         {
-            string keyFileName = null;
+            PlayerOp.PlayerOp playerOptionsFile = null;
             try
             {
-                var optionsFileContents = File.ReadAllBytes(playerOptionsFilePath);
-                var startLoc = 231;
-                if (optionsFileContents.Length > startLoc)
+                using (var fs = new FileStream(playerOptionsFilePath, FileMode.Open, FileAccess.Read))
                 {
-                    var nullLoc = -1;
-                    for (var x = startLoc; x < optionsFileContents.Length; x++)
-                    {
-                        if (optionsFileContents[x] == 0)
-                        {
-                            nullLoc = x;
-                            break;
-                        }
-                    }
-                    if (nullLoc >= 0)
-                    {
-                        keyFileName = Encoding.ASCII.GetString(optionsFileContents, startLoc + 1,
-                                                               nullLoc - (startLoc + 1));
-                    }
+                      playerOptionsFile= new PlayerOp.PlayerOp(fs);
                 }
-                if (keyFileName != null) keyFileName += KEYFILE_EXENSION_DEFAULT;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _log.Error(ex.Message, ex);
+                _log.Error(e.Message, e);
             }
-            return keyFileName;
+            if (playerOptionsFile != null && playerOptionsFile.keyfile !=null && playerOptionsFile.keyfile.Length > 0)
+            {
+                var keyFileName = Encoding.ASCII.GetString(playerOptionsFile.keyfile, 0, playerOptionsFile.keyfile.Length);
+                var firstNull = keyFileName.IndexOf('\0');
+                if (firstNull > 0)
+                {
+                    keyFileName = keyFileName.Substring(0, firstNull);
+                    keyFileName += KEYFILE_EXENSION_DEFAULT;
+                    return keyFileName;
+                }
+            }
+            return null;
         }
+       
 
         private static void SendClearingKeystrokes()
         {
