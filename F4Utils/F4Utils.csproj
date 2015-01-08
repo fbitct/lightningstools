@@ -92,9 +92,6 @@
     <Compile Include="SimSupport\DEDAlowReader.cs" />
     <Compile Include="SimSupport\TacanBand.cs" />
     <Compile Include="SimSupport\TacanChannelSource.cs" />
-    <Compile Include="Terrain\ColumnAndRowElevationPostRecordRetriever.cs" />
-    <Compile Include="Terrain\CurrentTheaterDotTdfLoader.cs" />
-    <Compile Include="Terrain\CurrentTheaterNameDetector.cs" />
     <Compile Include="PlayerOp\AutoPilotModeType.cs" />
     <Compile Include="PlayerOp\AvionicsType.cs" />
     <Compile Include="PlayerOp\FlightModelType.cs" />
@@ -118,37 +115,6 @@
     <Compile Include="SimSupport\F4SimOutputs.cs" />
     <Compile Include="SimSupport\F4SimSupportModule.cs" />
     <Compile Include="PlayerOp\SoundGroup.cs" />
-    <Compile Include="Terrain\Constants.cs" />
-    <Compile Include="Terrain\DetailTextureForElevationPostRetriever.cs" />
-    <Compile Include="Terrain\DistanceBetweenElevationPostsCalculator.cs" />
-    <Compile Include="Terrain\ElevationPostCoordinateClamper.cs" />
-    <Compile Include="Terrain\FarTileBackgroundLoader.cs" />
-    <Compile Include="Terrain\FarTilesDotPalFileReader.cs" />
-    <Compile Include="Terrain\FarTileTextureRetriever.cs" />
-    <Compile Include="Terrain\LatLongCalculator.cs" />
-    <Compile Include="Terrain\LodTextureKey.cs" />
-    <Compile Include="Terrain\NearestElevationPostColumnAndRowCalculator.cs" />
-    <Compile Include="Terrain\NearTileTextureLoader.cs" />
-    <Compile Include="Terrain\Structs\FarTilesDotPalFileInfo.cs" />
-    <Compile Include="Terrain\Structs\TextureBinAreaRecord.cs" />
-    <Compile Include="Terrain\Structs\TextureBinPathRecord.cs" />
-    <Compile Include="Terrain\Structs\TextureBinSetRecord.cs" />
-    <Compile Include="Terrain\Structs\TextureBinTileRecord.cs" />
-    <Compile Include="Terrain\Structs\TextureDotBinFileInfo.cs" />
-    <Compile Include="Terrain\Structs\TheaterDotLxFileInfo.cs" />
-    <Compile Include="Terrain\Structs\TheaterDotLxFileRecord.cs" />
-    <Compile Include="Terrain\Structs\TheaterDotMapFileInfo.cs" />
-    <Compile Include="Terrain\Structs\TheaterDotOxFlieRecord.cs" />
-    <Compile Include="Terrain\Structs\TheaterDotTdfFileInfo.cs" />
-    <Compile Include="Terrain\TerrainDB.cs" />
-    <Compile Include="Terrain\TerrainDBFactory.cs" />
-    <Compile Include="Terrain\TerrainHeightCalculator.cs" />
-    <Compile Include="Terrain\TerrainTextureByTextureIdRetriever.cs" />
-    <Compile Include="Terrain\TextureDotBinFileReader.cs" />
-    <Compile Include="Terrain\TheaterDotLxFileReader.cs" />
-    <Compile Include="Terrain\TheaterDotMapFileReader.cs" />
-    <Compile Include="Terrain\TheaterDotTdfFileReader.cs" />
-    <Compile Include="Terrain\TheaterMapBuilder.cs" />
     <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>

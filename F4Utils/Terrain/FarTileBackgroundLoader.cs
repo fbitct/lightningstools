@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+
 
 namespace F4Utils.Terrain
 {
@@ -99,7 +99,6 @@ namespace F4Utils.Terrain
                     while (_backgroundWorker != null && _backgroundWorker.IsBusy &&
                            waitCount < 1000)
                     {
-                        Application.DoEvents();
                         Thread.Sleep(5);
                         waitCount++;
                     }
