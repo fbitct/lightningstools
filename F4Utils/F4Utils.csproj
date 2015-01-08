@@ -56,21 +56,6 @@
     <Compile Include="SimSupport\DEDAlowReader.cs" />
     <Compile Include="SimSupport\TacanBand.cs" />
     <Compile Include="SimSupport\TacanChannelSource.cs" />
-    <Compile Include="PlayerOp\AutoPilotModeType.cs" />
-    <Compile Include="PlayerOp\AvionicsType.cs" />
-    <Compile Include="PlayerOp\FlightModelType.cs" />
-    <Compile Include="PlayerOp\PadlockModeType.cs" />
-    <Compile Include="PlayerOp\Pit3DPanMode.cs" />
-    <Compile Include="PlayerOp\PlayerOp.cs" />
-    <Compile Include="PlayerOp\PoDispFlags.cs" />
-    <Compile Include="PlayerOp\PoGenFlags.cs" />
-    <Compile Include="PlayerOp\PoObjFlags.cs" />
-    <Compile Include="PlayerOp\PoSimFlags.cs" />
-    <Compile Include="PlayerOp\RefuelModeType.cs" />
-    <Compile Include="PlayerOp\SimStartFlags.cs" />
-    <Compile Include="PlayerOp\TrackIRVector.cs" />
-    <Compile Include="PlayerOp\VisualCueType.cs" />
-    <Compile Include="PlayerOp\WeaponEffectType.cs" />
     <Compile Include="Process\CallsignUtils.cs" />
     <Compile Include="Process\KeyFileUtils.cs" />
     <Compile Include="Process\Util.cs" />
@@ -78,7 +63,6 @@
     <Compile Include="Resources\F4ResourceBundleReader.cs" />
     <Compile Include="SimSupport\F4SimOutputs.cs" />
     <Compile Include="SimSupport\F4SimSupportModule.cs" />
-    <Compile Include="PlayerOp\SoundGroup.cs" />
     <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +86,10 @@
     <ProjectReference Include="..\F4SharedMem\F4SharedMem.csproj">
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
       <Name>F4SharedMem</Name>
+    </ProjectReference>
+    <ProjectReference Include="PlayerOp\F4Utils.PlayerOp.csproj">
+      <Project>{ea92153f-08e5-42b1-b6c5-6b22366e7cf2}</Project>
+      <Name>F4Utils.PlayerOp</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

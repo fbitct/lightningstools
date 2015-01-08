@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{04157D6E-AFE0-4399-94D5-306CF4AADAC1}</ProjectGuid>
+    <ProjectGuid>{EA92153F-08E5-42B1-B6C5-6B22366E7CF2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common.Imaging</RootNamespace>
-    <AssemblyName>Common.Imaging</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <RootNamespace>F4Utils.PlayerOp</RootNamespace>
+    <AssemblyName>F4Utils.PlayerOp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,7 +37,6 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -48,18 +46,10 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FreeImageNET">
-      <HintPath>..\ThirdParty\FreeImage\FreeImageNET.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\ThirdParty\Log4Net\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,18 +57,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DDS.cs" />
-    <Compile Include="ImageMaskPair.cs" />
-    <Compile Include="Internal\PCXHeader.cs" />
-    <Compile Include="PCX.cs" />
+    <Compile Include="AutoPilotModeType.cs" />
+    <Compile Include="AvionicsType.cs" />
+    <Compile Include="FlightModelType.cs" />
+    <Compile Include="PadlockModeType.cs" />
+    <Compile Include="Pit3DPanMode.cs" />
+    <Compile Include="PlayerOp.cs" />
+    <Compile Include="PoDispFlags.cs" />
+    <Compile Include="PoGenFlags.cs" />
+    <Compile Include="PoObjFlags.cs" />
+    <Compile Include="PoSimFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common.csproj">
-      <Project>{aba9cc75-b778-4e46-a6f6-afec27f2eb59}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
+    <Compile Include="RefuelModeType.cs" />
+    <Compile Include="SimStartFlags.cs" />
+    <Compile Include="SoundGroup.cs" />
+    <Compile Include="TrackIRVector.cs" />
+    <Compile Include="VisualCueType.cs" />
+    <Compile Include="WeaponEffectType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
