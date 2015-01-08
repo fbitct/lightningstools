@@ -69,7 +69,6 @@ namespace Common.InputSupport.Phcc
         private readonly int _axisRangeMin;
 
         private readonly PHCCPhysicalDeviceInfo _deviceInfo;
-        private readonly PHCCDeviceManager _manager;
         private readonly object _stateLock = new object();
         private Device _deviceInterface;
         private PHCCInputState? _prevState;
@@ -494,17 +493,7 @@ namespace Common.InputSupport.Phcc
             {
                 if (disposing)
                 {
-                    if (_manager != null)
-                    {
-                        try
-                        {
-                            _manager.Dispose();
-                        }
-                        catch (ApplicationException e)
-                        {
-                            _log.Debug(e.Message, e);
-                        }
-                    }
+                    //dispose of managed resources
                 }
             }
             // Code to dispose the un-managed resources of the class
