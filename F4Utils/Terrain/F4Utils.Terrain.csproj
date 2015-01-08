@@ -118,10 +118,6 @@
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
       <Name>F4SharedMem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\F4Utils.csproj">
-      <Project>{ba414112-2eab-496b-83dc-2005018a827c}</Project>
-      <Name>F4Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

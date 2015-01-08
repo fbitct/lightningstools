@@ -52,9 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Process\CallsignUtils.cs" />
-    <Compile Include="Process\KeyFileUtils.cs" />
-    <Compile Include="Process\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -61,7 +61,7 @@ namespace F4Utils.Terrain
         private string GetFalconExePath()
         {
             //TODO: check these against other theaters, for correct way to read theater installation locations
-            var exePath = Process.Util.GetFalconExePath();
+            var exePath = System.Process.Util.GetFalconExePath();
             if (exePath == null) return null;
             var f4BasePathFI = new FileInfo(exePath);
             return f4BasePathFI.DirectoryName + Path.DirectorySeparatorChar;
