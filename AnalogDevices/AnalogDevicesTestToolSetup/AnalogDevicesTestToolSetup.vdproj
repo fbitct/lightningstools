@@ -21,12 +21,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1CB9AEB5CCF927716038F091A598BA69"
-        "OwnerKey" = "8:_98599CB75F6D8A3075636A572ADD2C68"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1E3D8DC6EE3841019AEEF7EDECFAD584"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -65,6 +59,12 @@
         {
         "MsmKey" = "8:_6F64D3D4556638FFDAF155A45334919A"
         "OwnerKey" = "8:_1F78E2B8FF5345D5A21422547E5F6F6D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6F64D3D4556638FFDAF155A45334919A"
+        "OwnerKey" = "8:_98599CB75F6D8A3075636A572ADD2C68"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -313,7 +313,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -416,7 +416,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analog Devices AD53xx DenseDAC Eval Board Test Tool"
         "ProductCode" = "8:{E3B42BD6-C052-44BC-BBCD-574735C42970}"
-        "PackageCode" = "8:{2A85D7BB-D821-4243-A0B5-62AC700C2FB0}"
+        "PackageCode" = "8:{1122891F-357B-4EF0-9382-C63AE3CE20CC}"
         "UpgradeCode" = "8:{195C81CC-EA3D-45E1-A817-42713D1E1A31}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

@@ -33,12 +33,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_24A6A84F524B4DEC8D9A6A5FC6ADF114"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_39F8B2D246C5AB3DA705DE7A8005B85A"
         "OwnerKey" = "8:_40F3FC14A815D996939F93C18F1C5DA4"
         "MsmSig" = "8:_UNDEFINED"
@@ -463,26 +457,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_24A6A84F524B4DEC8D9A6A5FC6ADF114"
-            {
-            "SourcePath" = "8:..\\..\\Common\\squishinterface_x64.dll"
-            "TargetName" = "8:squishinterface_x64.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_9141180F222E4DCAB363AEC87B799CCA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_39F8B2D246C5AB3DA705DE7A8005B85A"
