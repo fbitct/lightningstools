@@ -231,7 +231,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -416,7 +416,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Analog Devices AD53xx DenseDAC Eval Board Test Tool"
         "ProductCode" = "8:{E3B42BD6-C052-44BC-BBCD-574735C42970}"
-        "PackageCode" = "8:{78C1E331-261E-4C88-A309-BEA7B3EE0AE3}"
+        "PackageCode" = "8:{2A85D7BB-D821-4243-A0B5-62AC700C2FB0}"
         "UpgradeCode" = "8:{195C81CC-EA3D-45E1-A817-42713D1E1A31}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
