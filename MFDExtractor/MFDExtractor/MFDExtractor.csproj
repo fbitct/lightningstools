@@ -363,6 +363,10 @@
       <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
       <Name>F4Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\F4Utils\Terrain\F4Utils.Terrain.csproj">
+      <Project>{305b6164-1c7d-4627-9774-db6bd5cf50e8}</Project>
+      <Name>F4Utils.Terrain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\LightningGauges\LightningGauges\LightningGauges.csproj">
       <Project>{E3E09957-DD05-4DEC-961A-915A082C0BC4}</Project>
       <Name>LightningGauges</Name>
