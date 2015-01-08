@@ -69,11 +69,19 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="7SegmentBits.cs" />
     <Compile Include="AnalogInputChangedEventArgs.cs" />
+    <Compile Include="CharTo7SegConverter.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Host2PhccCommands.cs" />
     <Compile Include="I2CDataReceivedEventArgs.cs" />
     <Compile Include="DigitalInputChangedEventArgs.cs" />
+    <Compile Include="LCDDataModes.cs" />
+    <Compile Include="MotorDirections.cs" />
+    <Compile Include="MotorStepTypes.cs" />
+    <Compile Include="Phcc2HostPacketTypes.cs" />
+    <Compile Include="PhccEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
