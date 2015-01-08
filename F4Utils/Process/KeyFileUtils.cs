@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using Common.MacroProgramming;
 using F4KeyFile;
-using F4SharedMem;
 using log4net;
 
 namespace F4Utils.Process

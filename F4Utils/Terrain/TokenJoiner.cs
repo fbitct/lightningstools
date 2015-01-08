@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace F4Utils
+namespace F4Utils.Terrain
 {
     internal interface ITokenJoiner
     {

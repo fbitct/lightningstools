@@ -363,6 +363,10 @@
       <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
       <Name>F4Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\F4Utils\SimSupport\F4Utils.SimSupport.csproj">
+      <Project>{6967bfc5-944d-405c-960b-5a4900ebfd92}</Project>
+      <Name>F4Utils.SimSupport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\F4Utils\Terrain\F4Utils.Terrain.csproj">
       <Project>{305b6164-1c7d-4627-9774-db6bd5cf50e8}</Project>
       <Name>F4Utils.Terrain</Name>

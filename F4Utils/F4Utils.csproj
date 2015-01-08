@@ -49,21 +49,13 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimSupport\DEDAlowReader.cs" />
-    <Compile Include="SimSupport\TacanBand.cs" />
-    <Compile Include="SimSupport\TacanChannelSource.cs" />
     <Compile Include="Process\CallsignUtils.cs" />
     <Compile Include="Process\KeyFileUtils.cs" />
     <Compile Include="Process\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\F4ResourceBundleReader.cs" />
-    <Compile Include="SimSupport\F4SimOutputs.cs" />
-    <Compile Include="SimSupport\F4SimSupportModule.cs" />
-    <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -72,20 +64,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
+      <Project>{aba9cc75-b778-4e46-a6f6-afec27f2eb59}</Project>
       <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\Imaging\Common.Imaging.csproj">
-      <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
-      <Name>Common.Imaging</Name>
     </ProjectReference>
     <ProjectReference Include="..\F4KeyFile\F4KeyFile.csproj">
       <Project>{EEED5595-6EB8-473D-B487-334B45D753A6}</Project>
       <Name>F4KeyFile</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\F4SharedMem\F4SharedMem.csproj">
-      <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
-      <Name>F4SharedMem</Name>
     </ProjectReference>
     <ProjectReference Include="PlayerOp\F4Utils.PlayerOp.csproj">
       <Project>{ea92153f-08e5-42b1-b6c5-6b22366e7cf2}</Project>

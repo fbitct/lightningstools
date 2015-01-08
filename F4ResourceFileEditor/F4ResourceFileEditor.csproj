@@ -122,9 +122,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\F4Utils\F4Utils.csproj">
-      <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
-      <Name>F4Utils</Name>
+    <ProjectReference Include="..\F4Utils\Resources\F4Utils.Resources.csproj">
+      <Project>{a95b675e-e59b-4d44-b66e-8e642b2d825f}</Project>
+      <Name>F4Utils.Resources</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

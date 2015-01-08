@@ -5,24 +5,22 @@ using log4net.Config;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("F4Utils.Terrain")]
+[assembly: AssemblyTitle("F4Utils.SimSupport")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("F4Utils.Terrain")]
+[assembly: AssemblyProduct("F4Utils.SimSupport")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: XmlConfigurator]
-
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("4a63f7bd-4b20-4524-947b-37fcb7ff7cbf")]
-
+[assembly: Guid("35c43cef-eecb-4246-8dfd-139ab48b3c52")]
 
 // Version information for an assembly consists of the following four values:
 //

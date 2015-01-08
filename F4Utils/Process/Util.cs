@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Common.Win32;
-using F4SharedMem;
 using log4net;
 using System.ComponentModel;
 using System.Management;
