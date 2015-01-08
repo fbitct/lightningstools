@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace Phcc
 {
@@ -1373,7 +1372,7 @@ namespace Phcc
                     {
                         done = true;
                     }
-                    //System.Windows.Forms.Application.DoEvents();
+                    Thread.Sleep(0);
                 }
                 Rs232DiscardInBuffer(); //now discard whatever's left in the buffer
             }
@@ -1761,7 +1760,7 @@ namespace Phcc
                         {
                             throw new TimeoutException();
                         }
-                        Application.DoEvents();
+                        Thread.Sleep(15);
                     }
                     _serialPort.Read(buffer, index, count);
                     if (Rs232BytesAvailable() > 0)
