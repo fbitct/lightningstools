@@ -33,7 +33,7 @@ namespace F4KeyFile
                                   DirectInputBindingType bindingType, PovDirections povDirection,
                                   KeyWithModifiers comboKey, Guid deviceGuid)
         {
-            Callback = callback;
+            Callback = callback != null ? callback.Trim() : null;
             ButtonIndex = buttonIndex;
             CockpitItemId = cockpitItemId;
             BindingType = bindingType;

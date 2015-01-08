@@ -19,33 +19,19 @@ namespace F4Utils.Process
         private const string USEROPTS_DIRECTORY_NAME = "User";
 
         private static readonly ILog _log = LogManager.GetLogger(typeof (KeyFileUtils));
-        private static Dictionary<string, KeyBinding> _knownCallbacks = new Dictionary<string, KeyBinding>();
         private static KeyFile _keyFile;
         private static readonly object _keySenderLock = new object();
 
         public static void ResetCurrentKeyFile()
         {
             _keyFile = null;
-            _knownCallbacks = new Dictionary<string, KeyBinding>();
         }
 
         public static KeyBinding FindKeyBinding(string callback)
         {
             if (_keyFile == null) _keyFile = GetCurrentKeyFile();
             if (_keyFile == null) return null;
-            if (!_knownCallbacks.ContainsKey(callback))
-            {
-                var binding = _keyFile.FindBindingForCallback(callback) as KeyBinding;
-                if (binding != null)
-                {
-                    _knownCallbacks.Add(callback, binding);
-                }
-            }
-            if (_knownCallbacks.ContainsKey(callback))
-            {
-                return _knownCallbacks[callback];
-            }
-            return null;
+           return _keyFile.FindBindingForCallback(callback) as KeyBinding;
         }
 
         public static void SendCallbackToFalcon(string callback)

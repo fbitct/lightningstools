@@ -44,7 +44,7 @@ namespace F4KeyFile
                 Bindings.FirstOrDefault(
                     thisBinding =>
                     thisBinding.Callback != null && callback != null &&
-                    thisBinding.Callback.ToLowerInvariant().Trim() == callback.ToLowerInvariant().Trim());
+                    string.Equals(thisBinding.Callback, callback, StringComparison.OrdinalIgnoreCase));
         }
 
         public void Load()
@@ -82,7 +82,7 @@ namespace F4KeyFile
                     }
                     if (tokenList.Count < 7)
                     {
-                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
+                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName));
                     }
                     KeyBinding keyBinding = null;
                     DirectInputBinding directInputBinding = null;
