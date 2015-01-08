@@ -335,10 +335,6 @@
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
       <Name>F4SharedMem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\F4Utils\F4Utils.csproj">
-      <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
-      <Name>F4Utils</Name>
-    </ProjectReference>
     <ProjectReference Include="..\F4Utils\SimSupport\F4Utils.SimSupport.csproj">
       <Project>{6967bfc5-944d-405c-960b-5a4900ebfd92}</Project>
       <Name>F4Utils.SimSupport</Name>

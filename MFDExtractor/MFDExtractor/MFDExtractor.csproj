@@ -359,9 +359,9 @@
       <Project>{E930BA7B-7474-49D7-B7CF-25106C450190}</Project>
       <Name>F4TexSharedMem</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\F4Utils\F4Utils.csproj">
-      <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
-      <Name>F4Utils</Name>
+    <ProjectReference Include="..\..\F4Utils\Process\F4Utils.Process.csproj">
+      <Project>{66242024-b7e5-4f66-ac1a-f0e2f1d70899}</Project>
+      <Name>F4Utils.Process</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\F4Utils\SimSupport\F4Utils.SimSupport.csproj">
       <Project>{6967bfc5-944d-405c-960b-5a4900ebfd92}</Project>

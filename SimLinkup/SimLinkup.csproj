@@ -300,11 +300,6 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\F4Utils\F4Utils.csproj">
-      <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
-      <Name>F4Utils</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\LightningGauges\LightningGauges\LightningGauges.csproj">
       <Project>{E3E09957-DD05-4DEC-961A-915A082C0BC4}</Project>
       <Name>LightningGauges</Name>
