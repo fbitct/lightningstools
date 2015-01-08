@@ -41,9 +41,6 @@
     <RootNamespace>F4Utils</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\Common\ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
@@ -56,39 +53,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Campaign\AirTaskingManager.cs" />
-    <Compile Include="Campaign\AirUnit.cs" />
-    <Compile Include="Campaign\ATMAirbase.cs" />
-    <Compile Include="Campaign\Battalion.cs" />
-    <Compile Include="Campaign\Brigade.cs" />
-    <Compile Include="Campaign\Campaign.cs" />
-    <Compile Include="Campaign\CampaignBase.cs" />
-    <Compile Include="Campaign\CampaignManager.cs" />
-    <Compile Include="Campaign\ClassTable.cs" />
-    <Compile Include="Campaign\CmpFile.cs" />
-    <Compile Include="Campaign\EvtFile.cs" />
-    <Compile Include="Campaign\F4CampaignFileBundleReader.cs" />
-    <Compile Include="Campaign\F4Structs.cs" />
-    <Compile Include="Campaign\Flight.cs" />
-    <Compile Include="Campaign\GroundTaskingManager.cs" />
-    <Compile Include="Campaign\GroundUnit.cs" />
-    <Compile Include="Campaign\NavalTaskingManager.cs" />
-    <Compile Include="Campaign\ObdFile.cs" />
-    <Compile Include="Campaign\Objective.cs" />
-    <Compile Include="Campaign\ObjFile.cs" />
-    <Compile Include="Campaign\Package.cs" />
-    <Compile Include="Campaign\Pilot.cs" />
-    <Compile Include="Campaign\PltFile.cs" />
-    <Compile Include="Campaign\PolFile.cs" />
-    <Compile Include="Campaign\PstFile.cs" />
-    <Compile Include="Campaign\Squadron.cs" />
-    <Compile Include="Campaign\TaskForce.cs" />
-    <Compile Include="Campaign\TeaFile.cs" />
-    <Compile Include="Campaign\Team.cs" />
-    <Compile Include="Campaign\UniFile.cs" />
-    <Compile Include="Campaign\Unit.cs" />
-    <Compile Include="Campaign\Waypoint.cs" />
-    <Compile Include="Campaign\WthFile.cs" />
     <Compile Include="SimSupport\DEDAlowReader.cs" />
     <Compile Include="SimSupport\TacanBand.cs" />
     <Compile Include="SimSupport\TacanChannelSource.cs" />
@@ -118,7 +82,9 @@
     <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">
@@ -136,10 +102,6 @@
     <ProjectReference Include="..\F4SharedMem\F4SharedMem.csproj">
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
       <Name>F4SharedMem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lzss\LzssManaged\LzssManaged.csproj">
-      <Project>{04F20E15-844A-4D30-9EC4-E8FD61A043A9}</Project>
-      <Name>LzssManaged</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -169,7 +131,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

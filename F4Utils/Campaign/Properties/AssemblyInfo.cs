@@ -1,32 +1,26 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using log4net.Config;
-using System.Runtime.CompilerServices;
-
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-
-[assembly: AssemblyTitle("F4Utils")]
+[assembly: AssemblyTitle("F4Utils.Campaign")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("F4Utils")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyProduct("F4Utils.Campaign")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: XmlConfigurator]
-[assembly: InternalsVisibleTo("F4Utils.Terrain")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
-
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-
-[assembly: Guid("34bbd18b-10da-4f60-b958-dd1ed1045bc2")]
+[assembly: Guid("cd89f576-4ef9-487d-a6ad-80f4540354dc")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -38,6 +32,5 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
