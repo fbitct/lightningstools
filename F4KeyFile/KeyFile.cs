@@ -31,12 +31,16 @@ namespace F4KeyFile
             set
             {
                 _lines = value;
-                _callbackBindings.Clear();
-
-                _lines.OfType<KeyBinding>().Cast<IBinding>()
-                    .Union(_lines.OfType<DirectInputBinding>()).Cast<IBinding>()
-                    .Select<IBinding, object>(x => _callbackBindings[x.Callback] = x);
+                UpdateIndexOfCallbacks();
             }
+        }
+
+        private void UpdateIndexOfCallbacks()
+        {
+            _callbackBindings.Clear();
+            _lines.OfType<KeyBinding>().Cast<IBinding>()
+                .Union(_lines.OfType<DirectInputBinding>()).Cast<IBinding>()
+                .Select<IBinding, object>(x => _callbackBindings[x.Callback] = x);
         }
         public IBinding GetBindingForCallback(string callback)
         {
@@ -53,6 +57,8 @@ namespace F4KeyFile
             {
                 throw new ArgumentNullException("file");
             }
+            _lines.Clear();
+            _callbackBindings.Clear();
             using (var sr = file.OpenText())
             {
                 var lineNum = 0;
@@ -113,6 +119,7 @@ namespace F4KeyFile
                     }
                 }
             }
+            UpdateIndexOfCallbacks();
         }
 
         public void Save()
