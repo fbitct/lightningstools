@@ -179,6 +179,10 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Imaging\Common.Imaging.csproj">
+      <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
+      <Name>Common.Imaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\F4Utils\F4Utils.csproj">
       <Project>{BA414112-2EAB-496B-83DC-2005018A827C}</Project>
       <Name>F4Utils</Name>

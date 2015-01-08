@@ -343,6 +343,10 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Imaging\Common.Imaging.csproj">
+      <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
+      <Name>Common.Imaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\F4KeyFile\F4KeyFile.csproj">
       <Project>{EEED5595-6EB8-473D-B487-334B45D753A6}</Project>
       <Name>F4KeyFile</Name>

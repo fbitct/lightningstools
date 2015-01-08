@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common.csproj", "{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHCC", "..\PHCC\PHCC.csproj", "{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPJoyWrapper", "..\PPJoyWrapper\PPJoyWrapper.csproj", "{78555A0E-5D2F-4328-A4F0-67B5D7E51871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Imaging", "Imaging\Common.Imaging.csproj", "{04157D6E-AFE0-4399-94D5-306CF4AADAC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Debug|x86.Build.0 = Debug|x86
 		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|x86.ActiveCfg = Release|x86
 		{78555A0E-5D2F-4328-A4F0-67B5D7E51871}.Release|x86.Build.0 = Release|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Debug|x86.ActiveCfg = Debug|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Debug|x86.Build.0 = Debug|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.ActiveCfg = Release|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

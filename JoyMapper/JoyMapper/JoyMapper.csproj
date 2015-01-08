@@ -194,6 +194,10 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Imaging\Common.Imaging.csproj">
+      <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
+      <Name>Common.Imaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\PHCC\PHCC.csproj">
       <Project>{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}</Project>
       <Name>PHCC</Name>
