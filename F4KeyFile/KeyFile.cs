@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-
+using log4net;
 namespace F4KeyFile
 {
     [ComVisible(true)]
@@ -11,7 +11,9 @@ namespace F4KeyFile
     [Serializable]
     public sealed class KeyFile
     {
+        private static readonly ILog _log = LogManager.GetLogger(typeof(KeyFile));
         private readonly FileInfo _file;
+
         private List<IBinding> _bindings = new List<IBinding>();
 
         public KeyFile()
@@ -80,7 +82,7 @@ namespace F4KeyFile
                     }
                     if (tokenList.Count < 7)
                     {
-                        throw new InvalidDataException("Invalid file format detected at line:" + lineNum);
+                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
                     }
                     KeyBinding keyBinding = null;
                     DirectInputBinding directInputBinding = null;
@@ -100,7 +102,7 @@ namespace F4KeyFile
                     }
                     catch (Exception e)
                     {
-                        throw new InvalidDataException("Invalid file format detected at line:" + lineNum, e);
+                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
                     }
                     if (directInputBinding != null)
                     {
