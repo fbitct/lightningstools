@@ -4,14 +4,14 @@ using System.IO;
 
 public class CSSCodeProvider
 {
-    public static ICodeCompiler CreateCompiler(string sourceFile)
+    public static CodeDomProvider CreateCodeDomProvider(string sourceFile)
     {
         var sourceFileExtension = Path.GetExtension(sourceFile);
         if (CodeDomProvider.IsDefinedExtension(sourceFileExtension))
         {
             var language = CodeDomProvider.GetLanguageFromExtension(sourceFileExtension);
             var provider = CodeDomProvider.CreateProvider(language);
-            return provider.CreateCompiler();
+            return provider;
         }
         else
         {

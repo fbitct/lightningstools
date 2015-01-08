@@ -10,7 +10,7 @@ namespace SimLinkup.Scripting
     [Serializable]
     public class Script
     {
-        private readonly string _code;
+        private string _code;
 
         [XmlAttribute(AttributeName = "language", DataType = "string", Form = XmlSchemaForm.None)]
         public string Language { get; set; }
@@ -25,7 +25,10 @@ namespace SimLinkup.Scripting
         public string Code
         {
             get { return _code; }
-            set { Assembly = Compile(Language, value); }
+            set {
+                _code = value;
+                Assembly = Compile(Language, value);  
+            }
         }
 
         [XmlIgnore]
