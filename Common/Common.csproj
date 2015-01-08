@@ -304,20 +304,6 @@
     <Content Include="UI\Wizard\wizBigOnlineFolder.gif" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BIUSBWrapper\BIUSBWrapper.csproj">
-      <Project>{6A686BC3-E2A2-4E46-A175-B318FF0A2646}</Project>
-      <Name>BIUSBWrapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PHCC\PHCC.csproj">
-      <Project>{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}</Project>
-      <Name>PHCC</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PPJoyWrapper\PPJoyWrapper.csproj">
-      <Project>{78555A0E-5D2F-4328-A4F0-67B5D7E51871}</Project>
-      <Name>PPJoyWrapper</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
@@ -339,7 +325,20 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\BIUSBWrapper\BIUSBWrapper.csproj">
+      <Project>{6a686bc3-e2a2-4e46-a175-b318ff0a2646}</Project>
+      <Name>BIUSBWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PHCC\PHCC.csproj">
+      <Project>{75fa2030-c9ca-4b2d-8534-8f48eea13ca3}</Project>
+      <Name>PHCC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PPJoyWrapper\PPJoyWrapper.csproj">
+      <Project>{78555a0e-5d2f-4328-a4f0-67b5d7e51871}</Project>
+      <Name>PPJoyWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

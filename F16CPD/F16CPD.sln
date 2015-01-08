@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F16CPD", "F16CPD.csproj", "{00B0AF4E-9949-40D9-92DB-C5C4DE871834}"
 EndProject
@@ -13,8 +13,6 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "F16CpdSetup", "F16CpdSetup\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils", "..\F4Utils\F4Utils.csproj", "{BA414112-2EAB-496B-83DC-2005018A827C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PHCC", "..\PHCC\PHCC.csproj", "{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIUSBWrapper", "..\BIUSBWrapper\BIUSBWrapper.csproj", "{6A686BC3-E2A2-4E46-A175-B318FF0A2646}"
@@ -24,6 +22,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LzssManaged", "..\Lzss\LzssManaged\LzssManaged.csproj", "{04F20E15-844A-4D30-9EC4-E8FD61A043A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CCB32DF0-170E-40EE-85CA-EE4B2573B52E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Imaging", "..\Common\Imaging\Common.Imaging.csproj", "{04157D6E-AFE0-4399-94D5-306CF4AADAC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.SimSupport", "..\F4Utils\SimSupport\F4Utils.SimSupport.csproj", "{6967BFC5-944D-405C-960B-5A4900EBFD92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Process", "..\F4Utils\Process\F4Utils.Process.csproj", "{66242024-B7E5-4F66-AC1A-F0E2F1D70899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Terrain", "..\F4Utils\Terrain\F4Utils.Terrain.csproj", "{305B6164-1C7D-4627-9774-DB6BD5CF50E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.PlayerOp", "..\F4Utils\PlayerOp\F4Utils.PlayerOp.csproj", "{EA92153F-08E5-42B1-B6C5-6B22366E7CF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +59,6 @@ Global
 		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Debug|x86.Build.0 = Debug|x86
 		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Release|x86.ActiveCfg = Release|x86
 		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}.Release|x86.Build.0 = Release|x86
-		{BA414112-2EAB-496B-83DC-2005018A827C}.Debug|x86.ActiveCfg = Debug|x86
-		{BA414112-2EAB-496B-83DC-2005018A827C}.Debug|x86.Build.0 = Debug|x86
-		{BA414112-2EAB-496B-83DC-2005018A827C}.Release|x86.ActiveCfg = Release|x86
-		{BA414112-2EAB-496B-83DC-2005018A827C}.Release|x86.Build.0 = Release|x86
 		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Debug|x86.ActiveCfg = Debug|x86
 		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Debug|x86.Build.0 = Debug|x86
 		{75FA2030-C9CA-4B2D-8534-8F48EEA13CA3}.Release|x86.ActiveCfg = Release|x86
@@ -71,6 +75,26 @@ Global
 		{04F20E15-844A-4D30-9EC4-E8FD61A043A9}.Debug|x86.Build.0 = Debug|x86
 		{04F20E15-844A-4D30-9EC4-E8FD61A043A9}.Release|x86.ActiveCfg = Release|x86
 		{04F20E15-844A-4D30-9EC4-E8FD61A043A9}.Release|x86.Build.0 = Release|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Debug|x86.ActiveCfg = Debug|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Debug|x86.Build.0 = Debug|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.ActiveCfg = Release|x86
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.Build.0 = Release|x86
+		{6967BFC5-944D-405C-960B-5A4900EBFD92}.Debug|x86.ActiveCfg = Debug|x86
+		{6967BFC5-944D-405C-960B-5A4900EBFD92}.Debug|x86.Build.0 = Debug|x86
+		{6967BFC5-944D-405C-960B-5A4900EBFD92}.Release|x86.ActiveCfg = Release|x86
+		{6967BFC5-944D-405C-960B-5A4900EBFD92}.Release|x86.Build.0 = Release|x86
+		{66242024-B7E5-4F66-AC1A-F0E2F1D70899}.Debug|x86.ActiveCfg = Debug|x86
+		{66242024-B7E5-4F66-AC1A-F0E2F1D70899}.Debug|x86.Build.0 = Debug|x86
+		{66242024-B7E5-4F66-AC1A-F0E2F1D70899}.Release|x86.ActiveCfg = Release|x86
+		{66242024-B7E5-4F66-AC1A-F0E2F1D70899}.Release|x86.Build.0 = Release|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Debug|x86.ActiveCfg = Debug|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Debug|x86.Build.0 = Debug|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Release|x86.ActiveCfg = Release|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Release|x86.Build.0 = Release|x86
+		{EA92153F-08E5-42B1-B6C5-6B22366E7CF2}.Debug|x86.ActiveCfg = Debug|x86
+		{EA92153F-08E5-42B1-B6C5-6B22366E7CF2}.Debug|x86.Build.0 = Debug|x86
+		{EA92153F-08E5-42B1-B6C5-6B22366E7CF2}.Release|x86.ActiveCfg = Release|x86
+		{EA92153F-08E5-42B1-B6C5-6B22366E7CF2}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

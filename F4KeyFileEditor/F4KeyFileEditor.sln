@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4KeyFileEditor", "F4KeyFileEditor.csproj", "{91754154-EA85-4117-A570-71014BEC82AE}"
 EndProject
@@ -36,6 +36,7 @@ Global
 		{EEED5595-6EB8-473D-B487-334B45D753A6}.Release|x86.ActiveCfg = Release|x86
 		{EEED5595-6EB8-473D-B487-334B45D753A6}.Release|x86.Build.0 = Release|x86
 		{F413DC65-2AE9-4BEC-B014-2C23F235DCA3}.Debug|x86.ActiveCfg = Debug
+		{F413DC65-2AE9-4BEC-B014-2C23F235DCA3}.Debug|x86.Build.0 = Debug
 		{F413DC65-2AE9-4BEC-B014-2C23F235DCA3}.Release|x86.ActiveCfg = Release
 		{F413DC65-2AE9-4BEC-B014-2C23F235DCA3}.Release|x86.Build.0 = Release
 		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|x86.ActiveCfg = Debug|x86

@@ -187,7 +187,7 @@ namespace TlkTool.UI
                 {
                     _player.Stop();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             }
@@ -245,7 +245,7 @@ namespace TlkTool.UI
                 {
                     _player.Dispose();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
                 _player = null;

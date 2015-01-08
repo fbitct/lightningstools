@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("PHCC Interface Library for .NET and COM")]
-[assembly: AssemblyDescription("PHCC Interface Library for .NET and COM")]
+[assembly: AssemblyTitle("PHCC Interface Library")]
+[assembly: AssemblyDescription("PHCC Interface Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("PHCC Interface Library for .NET and COM")]
-[assembly: AssemblyCopyright("Copyright ©  2008")]
+[assembly: AssemblyProduct("PHCC Interface Library")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
