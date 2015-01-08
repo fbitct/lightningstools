@@ -1060,9 +1060,9 @@
         {
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_A58EB792E44A4F2C8B16204D2DA88E91"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
+            "DefaultLocation" = "8:[ProgramFilesFolder]\\[ProductName]"
             "Name" = "8:#1925"
-            "AlwaysCreate" = "11:FALSE"
+            "AlwaysCreate" = "11:TRUE"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Property" = "8:TARGETDIR"
@@ -1120,7 +1120,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:SimLinkupSetup"
         "ProductCode" = "8:{CE7C181F-804E-424C-8456-DB2D6AFD0C20}"
-        "PackageCode" = "8:{7D2274E6-109F-499F-B5B8-07C77AB8DB77}"
+        "PackageCode" = "8:{F2A38A1E-0FC9-432D-A856-5D2DA3500812}"
         "UpgradeCode" = "8:{6381D6D0-4BF6-4E04-8EA0-9D60DF044590}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1251,7 +1251,7 @@
             "Target" = "8:_2B6D1ECA26B54BA8A3D3D235937615CD"
             "Folder" = "8:_C5C601F6D1A740C788BB168A0CE33E56"
             "WorkingFolder" = "8:_A58EB792E44A4F2C8B16204D2DA88E91"
-            "Icon" = "8:"
+            "Icon" = "8:_235DB5C3372642E98C079B7E7660E4F2"
             "Feature" = "8:"
             }
         }
