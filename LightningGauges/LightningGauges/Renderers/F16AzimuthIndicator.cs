@@ -713,33 +713,14 @@ namespace LightningGauges.Renderers
                         var tstLegendRectangle = new Rectangle(sysLegendRectangle.Right + pageLegendSeparation,
                                                                tacLegendRectangle.Y, pageLegendWidth, pageLegendHeight);
 
-                        if (true)
-                        {
-                            //draw highlighted TAC legend
-                            gfx.FillRectangle(Brushes.White, tacLegendRectangle);
-                            DrawString(gfx, "TAC", _pageLegendFont, Brushes.Black, tacLegendRectangle,
-                                       pageLegendStringFormat);
-                        }
-                        else
-                        {
-                            //draw non-highlighted TAC legend
-                            DrawString(gfx, "TAC", _pageLegendFont, Brushes.White, tacLegendRectangle,
-                                       pageLegendStringFormat);
-                        }
-
-                        if (false)
-                        {
-                            //draw highlighted SYS legend
-                            gfx.FillRectangle(Brushes.White, sysLegendRectangle);
-                            DrawString(gfx, "SYS", _pageLegendFont, Brushes.Black, sysLegendRectangle,
-                                       pageLegendStringFormat);
-                        }
-                        else
-                        {
-                            //draw non-highlighted SYS legend
-                            DrawString(gfx, "SYS", _pageLegendFont, Brushes.White, sysLegendRectangle,
-                                       pageLegendStringFormat);
-                        }
+                        //draw highlighted TAC legend
+                        gfx.FillRectangle(Brushes.White, tacLegendRectangle);
+                        DrawString(gfx, "TAC", _pageLegendFont, Brushes.Black, tacLegendRectangle,
+                                    pageLegendStringFormat);
+                    
+                        //draw non-highlighted SYS legend
+                        DrawString(gfx, "SYS", _pageLegendFont, Brushes.White, sysLegendRectangle,
+                                    pageLegendStringFormat);
 
                         if (InstrumentState.RWRTest1 || InstrumentState.RWRTest2) //Added Falcas 10-11-2012
                         {
