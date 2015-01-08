@@ -31,7 +31,7 @@ namespace F4Utils.Process
         {
             if (_keyFile == null) _keyFile = GetCurrentKeyFile();
             if (_keyFile == null) return null;
-           return _keyFile.FindBindingForCallback(callback) as KeyBinding;
+           return _keyFile.GetBindingForCallback(callback) as KeyBinding;
         }
 
         public static void SendCallbackToFalcon(string callback)

@@ -14,8 +14,8 @@ namespace F4KeyFile
         private static readonly ILog _log = LogManager.GetLogger(typeof(KeyFile));
         private readonly FileInfo _file;
 
-        private List<IBinding> _bindings = new List<IBinding>();
-
+        private IList<ILineInFile> _lines = new List<ILineInFile>();
+        private IDictionary<string, IBinding> _callbackBindings = new Dictionary<string, IBinding>();
         public KeyFile()
         {
         }
@@ -25,28 +25,23 @@ namespace F4KeyFile
             _file = file;
         }
 
-        public IBinding[] Bindings
+        public ILineInFile[] Lines
         {
-            get
+            get { return _lines.ToArray(); }
+            set
             {
-                if (_bindings != null)
-                {
-                    return _bindings.ToArray();
-                }
-                return null;
+                _lines = value;
+                _callbackBindings.Clear();
+
+                _lines.OfType<KeyBinding>().Cast<IBinding>()
+                    .Union(_lines.OfType<DirectInputBinding>()).Cast<IBinding>()
+                    .Select<IBinding, object>(x => _callbackBindings[x.Callback] = x);
             }
-            set { _bindings = new List<IBinding>(value); }
         }
-
-        public IBinding FindBindingForCallback(string callback)
+        public IBinding GetBindingForCallback(string callback)
         {
-            return
-                Bindings.FirstOrDefault(
-                    thisBinding =>
-                    thisBinding.Callback != null && callback != null &&
-                    string.Equals(thisBinding.Callback, callback, StringComparison.OrdinalIgnoreCase));
+            return _callbackBindings[callback];
         }
-
         public void Load()
         {
             Load(_file);
@@ -68,21 +63,23 @@ namespace F4KeyFile
                     if (currentLine != null)
                     {
                         var currentLineTrim = currentLine.Trim();
-                        if (currentLineTrim.StartsWith("/"))
+                        if (currentLineTrim.StartsWith("/") || currentLineTrim.StartsWith("#"))
                         {
-                            _bindings.Add(new CommentLine(currentLine) {LineNum = lineNum});
+                            _lines.Add(new CommentLine(currentLine) {LineNum = lineNum});
                             continue;
                         }
                     }
 
                     var tokenList = Util.Tokenize(currentLine);
-                    if (tokenList == null || tokenList.Count == 0 || (tokenList[0] !=null && tokenList[0].StartsWith("#")))
+                    if (tokenList == null || tokenList.Count == 0)
                     {
                         continue;
                     }
                     if (tokenList.Count < 7)
                     {
+                        _lines.Add(new CommentLine(currentLine) { LineNum = lineNum });
                         _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName));
+                        continue;
                     }
                     KeyBinding keyBinding = null;
                     DirectInputBinding directInputBinding = null;
@@ -102,15 +99,17 @@ namespace F4KeyFile
                     }
                     catch (Exception e)
                     {
-                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
+                        _lines.Add(new CommentLine(currentLine) { LineNum = lineNum });
+                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName),e);
+                        continue;
                     }
                     if (directInputBinding != null)
                     {
-                        _bindings.Add(directInputBinding);
+                        _lines.Add(directInputBinding);
                     }
                     else
                     {
-                        _bindings.Add(keyBinding);
+                        _lines.Add(keyBinding);
                     }
                 }
             }
@@ -131,7 +130,7 @@ namespace F4KeyFile
             using (var fs = file.OpenWrite())
             using (var sw = new StreamWriter(fs))
             {
-                foreach (var binding in _bindings)
+                foreach (var binding in _lines)
                 {
                     sw.WriteLine(binding.ToString());
                 }

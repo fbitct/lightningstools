@@ -326,9 +326,9 @@ namespace F4KeyFileEditor
             gridDirectInputBindings.SuspendLayout();
             gridDirectInputBindings.Rows.Clear();
 
-            if (_editorState.KeyFile.Bindings != null)
+            if (_editorState.KeyFile.Lines != null)
             {
-                foreach (var binding in _editorState.KeyFile.Bindings)
+                foreach (var binding in _editorState.KeyFile.Lines)
                 {
                     if (binding is DirectInputBinding)
                     {

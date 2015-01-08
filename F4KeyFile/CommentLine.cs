@@ -6,7 +6,7 @@ namespace F4KeyFile
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Serializable]
-    public sealed class CommentLine : IBinding
+    public sealed class CommentLine : ILineInFile
     {
         private string _text;
 
@@ -40,12 +40,6 @@ namespace F4KeyFile
         }
 
         #region IBinding Members
-
-        public string Callback
-        {
-            get { return null; }
-            set { throw new InvalidOperationException(); }
-        }
 
         public int LineNum { get; set; }
 
