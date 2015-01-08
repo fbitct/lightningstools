@@ -51,7 +51,7 @@ namespace F16CPD.SimSupport.Falcon4
         private KeyWithModifiers _pendingComboKeys;
         private Queue<bool> _pendingMorseCodeUnits = new Queue<bool>();
         private Reader _sharedMemReader;
-        private const TacanChannelSource TacanChannelSource = F4Utils.SimSupport.TacanChannelSource.Ufc;
+        private TacanChannelSource TacanChannelSource = F4Utils.SimSupport.TacanChannelSource.Ufc;
         private TerrainDB _terrainDB;
 
         #endregion
