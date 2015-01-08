@@ -71,6 +71,8 @@ Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "AnalogDevicesTestToolSetup"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Imaging", "..\Common\Imaging\Common.Imaging.csproj", "{04157D6E-AFE0-4399-94D5-306CF4AADAC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Terrain", "..\F4Utils\Terrain\F4Utils.Terrain.csproj", "{305B6164-1C7D-4627-9774-DB6BD5CF50E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -331,6 +333,14 @@ Global
 		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.ActiveCfg = Release|x86
 		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.Build.0 = Release|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Debug|x86.ActiveCfg = Debug|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Debug|x86.Build.0 = Debug|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Release|x86.ActiveCfg = Release|x86
+		{305B6164-1C7D-4627-9774-DB6BD5CF50E8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
