@@ -697,7 +697,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                     {
                         StopTalking(_device);
                     }
-                    catch (Exception ex) 
+                    catch (Exception) 
                     {
                     }
 #endif
