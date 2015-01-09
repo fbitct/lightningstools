@@ -43,7 +43,7 @@ namespace MFDExtractor
                 case ControlType.Pov:
                     if (currentVal.HasValue)
                     {
-                        return Util.GetPovDirection(currentVal.Value) == hotkey.PovDirection;
+                        return Common.InputSupport.Util.GetPovDirection(currentVal.Value) == hotkey.PovDirection;
                     }
                     return false;
                 case ControlType.Key:

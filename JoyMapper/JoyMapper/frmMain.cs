@@ -1480,7 +1480,7 @@ namespace JoyMapper
             //physical joystick.  If it's physical, enumerate its controls.
             foreach (DeviceInstance instance in detectedJoysticks)
             {
-                Microsoft.DirectX.DirectInput.Device device = Common.InputSupport.Util.GetDIDevice(instance.InstanceGuid);
+                Microsoft.DirectX.DirectInput.Device device = Common.InputSupport.DirectInput.Util.GetDIDevice(instance.InstanceGuid);
 
                 //get the vendor ID and product ID of the current device
                 int? productId = device.Properties.VendorIdentityProductId;

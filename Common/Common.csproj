@@ -112,6 +112,7 @@
     <Compile Include="InputSupport\BetaInnovations\BIPhysicalControlInfo.cs" />
     <Compile Include="InputSupport\BetaInnovations\BIPhysicalDeviceInfo.cs" />
     <Compile Include="InputSupport\DirectInput\KeyConverter.cs" />
+    <Compile Include="InputSupport\DirectInput\Util.cs" />
     <Compile Include="InputSupport\Phcc\PHCCDeviceManager.cs" />
     <Compile Include="InputSupport\Phcc\PHCCDeviceMonitor.cs" />
     <Compile Include="InputSupport\Phcc\PHCCInputState.cs" />
