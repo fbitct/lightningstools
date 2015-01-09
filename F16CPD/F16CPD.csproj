@@ -298,6 +298,10 @@
       <Project>{0cdb21ca-a5f7-446c-837e-c7c37238f2d7}</Project>
       <Name>Common.Application</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Collections\Common.Collections.csproj">
+      <Project>{fac45bd1-9fba-47b5-b6db-d2d6cc706819}</Project>
+      <Name>Common.Collections</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>

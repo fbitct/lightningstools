@@ -92,7 +92,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Collections\SerializableDictionary.cs" />
     <Compile Include="Compression\Zip\Util.cs" />
     <Compile Include="Exceptions\OperationFailedException.cs" />
     <Compile Include="Generic\PropertyInvoker.cs" />
