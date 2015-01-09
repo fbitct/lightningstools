@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LzssManaged", "..\Lzss\Lzss
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Imaging", "..\Common\Imaging\Common.Imaging.csproj", "{04157D6E-AFE0-4399-94D5-306CF4AADAC1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{99CE05A0-D8F5-4D89-9B46-4A209BC6664D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "..\Common\Application\Common.Application.csproj", "{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -63,8 +67,17 @@ Global
 		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Debug|x86.Build.0 = Debug|x86
 		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.ActiveCfg = Release|x86
 		{04157D6E-AFE0-4399-94D5-306CF4AADAC1}.Release|x86.Build.0 = Release|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Debug|x86.ActiveCfg = Debug|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Debug|x86.Build.0 = Debug|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Release|x86.ActiveCfg = Release|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59} = {99CE05A0-D8F5-4D89-9B46-4A209BC6664D}
+		{04157D6E-AFE0-4399-94D5-306CF4AADAC1} = {99CE05A0-D8F5-4D89-9B46-4A209BC6664D}
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7} = {99CE05A0-D8F5-4D89-9B46-4A209BC6664D}
 	EndGlobalSection
 EndGlobal

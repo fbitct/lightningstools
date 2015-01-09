@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhccDeviceManager", "PhccDeviceManager.csproj", "{52AB07AF-C7BB-4586-BC5E-34759831CB08}"
 EndProject
@@ -12,6 +12,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPJoyWrapper", "..\PPJoyWrapper\PPJoyWrapper.csproj", "{78555A0E-5D2F-4328-A4F0-67B5D7E51871}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BIUSBWrapper", "..\BIUSBWrapper\BIUSBWrapper.csproj", "{6A686BC3-E2A2-4E46-A175-B318FF0A2646}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{6B86BCE6-25E2-4946-A5F6-310F3539A635}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "..\Common\Application\Common.Application.csproj", "{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,8 +43,16 @@ Global
 		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Debug|x86.Build.0 = Debug|x86
 		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|x86.ActiveCfg = Release|x86
 		{6A686BC3-E2A2-4E46-A175-B318FF0A2646}.Release|x86.Build.0 = Release|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Debug|x86.ActiveCfg = Debug|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Debug|x86.Build.0 = Debug|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Release|x86.ActiveCfg = Release|x86
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59} = {6B86BCE6-25E2-4946-A5F6-310F3539A635}
+		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7} = {6B86BCE6-25E2-4946-A5F6-310F3539A635}
 	EndGlobalSection
 EndGlobal
