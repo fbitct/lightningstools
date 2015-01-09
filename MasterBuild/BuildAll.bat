@@ -1,51 +1,51 @@
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\AnalogDevices\AnalogDevices.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\AnalogDevices\AnalogDevices.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\BIUSBWrapper\BIUSBWrapper.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\BIUSBWrapper\BIUSBWrapper.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\Common\Common.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\Common\Common.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F16CPD\F16CPD.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F16CPD\F16CPD.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4KeyFile\F4KeyFile.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4KeyFile\F4KeyFile.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4KeyFileEditor\F4KeyFileEditor.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4KeyFileEditor\F4KeyFileEditor.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4ResourceFileEditor\F4ResourceFileEditor.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4ResourceFileEditor\F4ResourceFileEditor.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4SharedMem\F4SharedMem.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4SharedMem\F4SharedMem.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4SharedMemMirror\F4SharedMemMirror.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4SharedMemMirror\F4SharedMemMirror.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4TexSharedMem\F4TexSharedMem.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4TexSharedMem\F4TexSharedMem.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4TexSharedMemTester\F4TexSharedMemTester.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4TexSharedMemTester\F4TexSharedMemTester.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4Utils\F4Utils.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4Utils\F4Utils.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\F4Utils\Speech\F4Utils.Speech.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4Utils\Speech\F4Utils.Speech.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\JoyMapper\JoyMapper.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\JoyMapper\JoyMapper.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\LightningGauges\LightningGauges.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\LightningGauges\LightningGauges.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\Lzss\Lzss.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\Lzss\Lzss.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\MasterBuild\BuildAll.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\MasterBuild\BuildAll.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\MFDExtractor\MFDExtractor.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\MFDExtractor\MFDExtractor.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\PHCC\PHCC.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\PHCC\PHCC.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\PhccDeviceManager\PhccDeviceManager.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\PhccDeviceManager\PhccDeviceManager.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\PhccTestTool\PhccTestTool\PhccTestTool.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\PhccTestTool\PhccTestTool\PhccTestTool.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\PPJoyWrapper\PPJoyWrapper.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\PPJoyWrapper\PPJoyWrapper.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\SimLinkup\SimLinkup.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\SimLinkup\SimLinkup.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\SpeexInvoke\SpeexInvoke.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\SpeexInvoke\SpeexInvoke.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\TlkTool\TlkTool.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\TlkTool\TlkTool.sln
 pause
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" ..\TlkTool\UI\TlkTool.UI\TlkTool.UI.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\TlkTool\UI\TlkTool.UI\TlkTool.UI.sln

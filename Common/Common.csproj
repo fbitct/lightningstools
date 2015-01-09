@@ -92,7 +92,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\SingleInstanceApplication.cs" />
     <Compile Include="Collections\SerializableDictionary.cs" />
     <Compile Include="Compression\Zip\Util.cs" />
     <Compile Include="Exceptions\OperationFailedException.cs" />
@@ -337,6 +336,10 @@
     <ProjectReference Include="..\PPJoyWrapper\PPJoyWrapper.csproj">
       <Project>{78555a0e-5d2f-4328-a4f0-67b5d7e51871}</Project>
       <Name>PPJoyWrapper</Name>
+    </ProjectReference>
+    <ProjectReference Include="Application\Common.Application.csproj">
+      <Project>{0cdb21ca-a5f7-446c-837e-c7c37238f2d7}</Project>
+      <Name>Common.Application</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
