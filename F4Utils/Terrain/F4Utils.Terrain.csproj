@@ -93,6 +93,10 @@
       <Project>{aba9cc75-b778-4e46-a6f6-afec27f2eb59}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Compression\Common.Compression.csproj">
+      <Project>{1e857490-c70d-4ef8-9edd-a1fdbcf98ab6}</Project>
+      <Name>Common.Compression</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Imaging\Common.Imaging.csproj">
       <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
       <Name>Common.Imaging</Name>

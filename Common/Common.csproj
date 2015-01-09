@@ -66,9 +66,6 @@
     <NoWarn>0618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>ThirdParty\SharpZipLib\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
@@ -92,7 +89,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Compression\Zip\Util.cs" />
     <Compile Include="Exceptions\OperationFailedException.cs" />
     <Compile Include="Generic\PropertyInvoker.cs" />
     <Compile Include="HardwareSupport\CompositeControl.cs" />

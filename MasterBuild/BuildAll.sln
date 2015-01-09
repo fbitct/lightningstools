@@ -115,6 +115,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "..\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Collections", "..\Common\Collections\Common.Collections.csproj", "{FAC45BD1-9FBA-47B5-B6DB-D2D6CC706819}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Compression", "..\Common\Compression\Common.Compression.csproj", "{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -476,6 +478,14 @@ Global
 		{FAC45BD1-9FBA-47B5-B6DB-D2D6CC706819}.Release|Mixed Platforms.Build.0 = Release|x86
 		{FAC45BD1-9FBA-47B5-B6DB-D2D6CC706819}.Release|x86.ActiveCfg = Release|x86
 		{FAC45BD1-9FBA-47B5-B6DB-D2D6CC706819}.Release|x86.Build.0 = Release|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Debug|x86.ActiveCfg = Debug|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Debug|x86.Build.0 = Debug|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Release|Mixed Platforms.Build.0 = Release|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Release|x86.ActiveCfg = Release|x86
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -520,5 +530,6 @@ Global
 		{689C0FBB-46F1-4F2E-9ACD-8A3206262505} = {98B0238C-6513-4F86-89ED-398A1E7D2CE4}
 		{0CDB21CA-A5F7-446C-837E-C7C37238F2D7} = {C4A34955-72A3-4269-9790-40335BFEF688}
 		{FAC45BD1-9FBA-47B5-B6DB-D2D6CC706819} = {C4A34955-72A3-4269-9790-40335BFEF688}
+		{1E857490-C70D-4EF8-9EDD-A1FDBCF98AB6} = {C4A34955-72A3-4269-9790-40335BFEF688}
 	EndGlobalSection
 EndGlobal
