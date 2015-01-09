@@ -8,6 +8,7 @@ using Common.Imaging;
 using Common.SimSupport;
 using MFDExtractor.UI;
 using log4net;
+using System.Collections.Generic;
 
 namespace MFDExtractor
 {
@@ -25,6 +26,7 @@ namespace MFDExtractor
     class InstrumentRenderHelper : IInstrumentRenderHelper
     {
         private readonly ILog _log;
+        private readonly Dictionary<Form, Bitmap> _renderSurfaces = new Dictionary<Form, Bitmap>();
         public InstrumentRenderHelper(ILog log = null)
         {
             _log = log ?? LogManager.GetLogger(GetType());
@@ -40,7 +42,7 @@ namespace MFDExtractor
             Bitmap renderSurface = null;
             try
             {
-                renderSurface = CreateRenderSurface(targetForm);
+                renderSurface = ObtainRenderSurface(targetForm);
                 using (var destinationGraphics = Graphics.FromImage(renderSurface))
                 {
                     try
@@ -106,7 +108,7 @@ namespace MFDExtractor
             }
             finally
             {
-                Common.Util.DisposeObject(renderSurface);
+                //Common.Util.DisposeObject(renderSurface);
             }
         }
 
@@ -141,11 +143,16 @@ namespace MFDExtractor
             }
         }
 
-        private static Bitmap CreateRenderSurface(InstrumentForm targetForm)
+        private Bitmap ObtainRenderSurface(InstrumentForm targetForm)
         {
-            return targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270") 
-                ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width,PixelFormat.Format32bppPArgb)
-                : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height,PixelFormat.Format32bppPArgb);
+            if (!_renderSurfaces.ContainsKey(targetForm) || _renderSurfaces[targetForm].Width != targetForm.Width || _renderSurfaces[targetForm].Height != targetForm.Height)
+            {
+                _renderSurfaces[targetForm] =
+                       (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")
+                       ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width, PixelFormat.Format32bppPArgb)
+                       : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height, PixelFormat.Format32bppPArgb));
+            }
+            return _renderSurfaces[targetForm];
         }
 
         private static void HighlightBorder(InstrumentForm targetForm, Graphics graphics, Bitmap image)

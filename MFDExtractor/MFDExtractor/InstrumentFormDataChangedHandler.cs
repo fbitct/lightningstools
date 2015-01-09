@@ -4,6 +4,8 @@ using System.Windows.Forms;
 using MFDExtractor.Configuration;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
+using System.Threading;
+using System.ComponentModel;
 
 namespace MFDExtractor
 {
@@ -43,14 +45,6 @@ namespace MFDExtractor
             }
 			settings.Enabled = _instrumentForm.Visible;
 			_instrumentFormSettingsWriter.Write(_instrumentName, settings);
-            
-            SaveSettings();
-
-        }
-
-        private static void SaveSettings()
-        {
-            new TaskFactory().StartNew(()=> Settings.Default.Save());
         }
     }
 }

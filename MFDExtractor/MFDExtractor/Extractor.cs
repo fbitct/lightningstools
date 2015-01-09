@@ -21,6 +21,7 @@ using Common.Networking;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
 using F4Utils.Terrain;
+using System.Threading.Tasks;
 
 namespace MFDExtractor
 {
@@ -383,14 +384,17 @@ namespace MFDExtractor
             t.Start();
         }
 
-       
 
+        private DateTime _whenLastSettingsSaved = DateTime.MinValue;
         private void CaptureOrchestrationThreadWork()
         {
             try
             {
+                Settings.Default.Save();
                 while (State.KeepRunning)
                 {
+                    var thisLoopStartTime = DateTime.Now;
+
                     Application.DoEvents();
                     if (State.RenderCycleNum < 10000)
                     {
@@ -400,7 +404,6 @@ namespace MFDExtractor
                     {
                         State.RenderCycleNum = 0;
                     }
-                    var thisLoopStartTime = DateTime.Now;
 
                     ProcessNetworkMessages();
                     if (_terrainDB == null)
@@ -441,6 +444,7 @@ namespace MFDExtractor
                         Application.DoEvents();
                         Thread.Sleep(50);
                     }
+
                 }
                 Debug.WriteLine("CaptureThreadWork has exited.");
             }
@@ -450,6 +454,7 @@ namespace MFDExtractor
             catch (ThreadInterruptedException)
             {
             }
+            Settings.Default.Save();
         }
 
 		private List<WaitHandle> SignalInstrumentRenderThreadsToStart()
@@ -534,7 +539,7 @@ namespace MFDExtractor
 	                break;
 	        }
 	    }
-
+       
         private void SimStatusMonitorThreadWork()
         {
             try
