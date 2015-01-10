@@ -56,7 +56,6 @@
     <Compile Include="UserControls\ShortcutInput.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Util.cs" />
     <Compile Include="Wizard\Header.cs">
       <SubType>UserControl</SubType>
     </Compile>
