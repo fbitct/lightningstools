@@ -10,7 +10,7 @@ namespace Common.InputSupport.Phcc
     ///   Represents a specific physical PHCC device
     /// </summary>
     [Serializable]
-    public sealed class PHCCPhysicalDeviceInfo : PhysicalDeviceInfo
+    public class PHCCPhysicalDeviceInfo : PhysicalDeviceInfo
     {
         #region Instance variable declarations
 
@@ -51,7 +51,7 @@ namespace Common.InputSupport.Phcc
         ///   is not currently communicating, then the controls list will remain
         ///   unpopulated.
         /// </summary>
-        internal override void LoadControls()
+        protected override void LoadControls()
         {
             if (_controlsLoaded)
             {

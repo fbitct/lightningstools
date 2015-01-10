@@ -1,6 +1,5 @@
 using System;
 using System.Xml.Serialization;
-using Common.SimSupport;
 using log4net;
 
 namespace Common.MacroProgramming
@@ -29,7 +28,6 @@ namespace Common.MacroProgramming
     }
 
     [Serializable]
-    [XmlInclude(typeof (AnalogSimOutput))]
     public class AnalogSignal : Signal
     {
         #region Delegates

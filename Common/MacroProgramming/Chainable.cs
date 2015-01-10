@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml.Serialization;
-using Common.SimSupport;
 
 namespace Common.MacroProgramming
 {
@@ -35,7 +34,6 @@ namespace Common.MacroProgramming
     [XmlInclude(typeof (BinaryCodedDecimalDigitDecoder))]
     [XmlInclude(typeof (BinaryCodedDecimalDigitEncoder))]
     [XmlInclude(typeof (AnalogSignalNormalizer))]
-    [XmlInclude(typeof (SimCommand))]
     public class Chainable
     {
         public string FriendlyName { get; set; }

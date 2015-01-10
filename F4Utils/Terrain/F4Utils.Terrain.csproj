@@ -42,13 +42,7 @@
       <HintPath>..\..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColumnAndRowElevationPostRecordRetriever.cs" />
@@ -100,6 +94,10 @@
     <ProjectReference Include="..\..\Common\Imaging\Common.Imaging.csproj">
       <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
       <Name>Common.Imaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Win32\Common.Win32.csproj">
+      <Project>{188090e9-8b00-457b-85eb-f48bcdd94b0b}</Project>
+      <Name>Common.Win32</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\F4SharedMem\F4SharedMem.csproj">
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>

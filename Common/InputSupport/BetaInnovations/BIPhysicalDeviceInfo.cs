@@ -6,7 +6,7 @@ namespace Common.InputSupport.BetaInnovations
     ///   Represents a specific physical BetaInnovations input device
     /// </summary>
     [Serializable]
-    public sealed class BIPhysicalDeviceInfo : PhysicalDeviceInfo
+    public class BIPhysicalDeviceInfo : PhysicalDeviceInfo
     {
         #region Instance variable declarations
 
@@ -47,7 +47,7 @@ namespace Common.InputSupport.BetaInnovations
         ///   is not currently registered, then the controls list will remain
         ///   unpopulated.
         /// </summary>
-        internal override void LoadControls()
+        protected override void LoadControls()
         {
             if (_controlsLoaded)
             {

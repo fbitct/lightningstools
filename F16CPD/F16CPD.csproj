@@ -298,10 +298,6 @@
       <Project>{0cdb21ca-a5f7-446c-837e-c7c37238f2d7}</Project>
       <Name>Common.Application</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common\Collections\Common.Collections.csproj">
-      <Project>{fac45bd1-9fba-47b5-b6db-d2d6cc706819}</Project>
-      <Name>Common.Collections</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
@@ -309,6 +305,42 @@
     <ProjectReference Include="..\Common\Imaging\Common.Imaging.csproj">
       <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
       <Name>Common.Imaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\BetaInnovations\Common.InputSupport.BetaInnovations.csproj">
+      <Project>{12474929-ec83-42d9-bd0c-167c40d51182}</Project>
+      <Name>Common.InputSupport.BetaInnovations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\Common.InputSupport.csproj">
+      <Project>{90b49895-9bf5-48c9-87fe-972e47cddae5}</Project>
+      <Name>Common.InputSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\DirectInput\Common.InputSupport.DirectInput.csproj">
+      <Project>{07a76e17-57ae-4952-a309-2a670ce3d7dd}</Project>
+      <Name>Common.InputSupport.DirectInput</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\Phcc\Common.InputSupport.Phcc.csproj">
+      <Project>{738063da-f792-4081-a70a-4a3190dbc6d2}</Project>
+      <Name>Common.InputSupport.Phcc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\UI\Common.InputSupport.UI.csproj">
+      <Project>{01adfc8a-742b-4824-8501-8e0db931b94f}</Project>
+      <Name>Common.InputSupport.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\PDF\Common.PDF.csproj">
+      <Project>{5130f409-0e66-4d02-9de9-7bfb11174c13}</Project>
+      <Name>Common.PDF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\SimSupport\Common.SimSupport.csproj">
+      <Project>{275c5e8d-a56a-45d2-8f70-93b0797c2e7b}</Project>
+      <Name>Common.SimSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\UI\Common.UI.csproj">
+      <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
+      <Name>Common.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Win32\Common.Win32.csproj">
+      <Project>{188090e9-8b00-457b-85eb-f48bcdd94b0b}</Project>
+      <Name>Common.Win32</Name>
     </ProjectReference>
     <ProjectReference Include="..\F4KeyFile\F4KeyFile.csproj">
       <Project>{EEED5595-6EB8-473D-B487-334B45D753A6}</Project>

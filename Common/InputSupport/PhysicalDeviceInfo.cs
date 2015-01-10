@@ -71,7 +71,7 @@ namespace Common.InputSupport
         ///   is not currently registered, then the controls list will remain
         ///   unpopulated.
         /// </summary>
-        internal virtual void LoadControls()
+        protected virtual void LoadControls()
         {
             throw new NotImplementedException();
         }

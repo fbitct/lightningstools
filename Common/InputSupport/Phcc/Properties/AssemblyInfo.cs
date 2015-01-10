@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Common.Collections")]
+[assembly: AssemblyTitle("Common.InputSupport.Phcc")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Common.Collections")]
+[assembly: AssemblyProduct("Common.InputSupport.Phcc")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("629ef2a2-a7d6-4356-a5a1-3c66ac7de734")]
+[assembly: Guid("f772d801-a8a4-4210-a55a-1ccbe67bc314")]
 
 // Version information for an assembly consists of the following four values:
 //

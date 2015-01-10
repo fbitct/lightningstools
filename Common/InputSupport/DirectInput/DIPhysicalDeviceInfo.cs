@@ -11,7 +11,7 @@ namespace Common.InputSupport.DirectInput
     ///   such as a joystick, gaming wheel, etc.
     /// </summary>
     [Serializable]
-    public sealed class DIPhysicalDeviceInfo : PhysicalDeviceInfo
+    public class DIPhysicalDeviceInfo : PhysicalDeviceInfo
     {
         #region Instance variable declarations
 
@@ -58,7 +58,7 @@ namespace Common.InputSupport.DirectInput
         ///   is not currently registered, then the controls list will remain
         ///   unpopulated.
         /// </summary>
-        internal override void LoadControls()
+        protected override void LoadControls()
         {
             if (ControlsLoaded)
                 return;

@@ -134,11 +134,10 @@ namespace Common.InputSupport.BetaInnovations
         protected override void Prepare()
         {
             var elapsed = 0;
-            const int timeout = 1000;
+            const int timeout = 500;
             while (_preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);
-                System.Windows.Forms.Application.DoEvents();
                 elapsed += 20;
             }
             if (!_preparing)

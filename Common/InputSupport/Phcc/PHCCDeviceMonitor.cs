@@ -237,7 +237,7 @@ namespace Common.InputSupport.Phcc
                 try
                 {
                     firmwareVersion = _deviceInterface.FirmwareVersion;
-                    Debug.WriteLine(firmwareVersion);
+                    _log.DebugFormat("PHCC firmware version: {0}",firmwareVersion);
                 }
                 catch (InvalidOperationException e)
                 {
@@ -268,12 +268,11 @@ namespace Common.InputSupport.Phcc
         protected override void Prepare()
         {
             var elapsed = 0;
-            const int timeout = 3000;
+            const int timeout = 500;
 
             while (_preparing && elapsed <= timeout)
             {
                 Thread.Sleep(20);
-                System.Windows.Forms.Application.DoEvents();
                 elapsed += 20;
             }
             if (!_preparing)

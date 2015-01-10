@@ -300,6 +300,38 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\HardwareSupport\Common.HardwareSupport.csproj">
+      <Project>{b8fcc824-2b39-4637-a447-64d60cf60811}</Project>
+      <Name>Common.HardwareSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\BetaInnovations\Common.InputSupport.BetaInnovations.csproj">
+      <Project>{12474929-ec83-42d9-bd0c-167c40d51182}</Project>
+      <Name>Common.InputSupport.BetaInnovations</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\Common.InputSupport.csproj">
+      <Project>{90b49895-9bf5-48c9-87fe-972e47cddae5}</Project>
+      <Name>Common.InputSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\DirectInput\Common.InputSupport.DirectInput.csproj">
+      <Project>{07a76e17-57ae-4952-a309-2a670ce3d7dd}</Project>
+      <Name>Common.InputSupport.DirectInput</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\InputSupport\Phcc\Common.InputSupport.Phcc.csproj">
+      <Project>{738063da-f792-4081-a70a-4a3190dbc6d2}</Project>
+      <Name>Common.InputSupport.Phcc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\MacroProgramming\Common.MacroProgramming.csproj">
+      <Project>{320431c6-2454-4d95-8d3c-d27c8e2288e9}</Project>
+      <Name>Common.MacroProgramming</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\SimSupport\Common.SimSupport.csproj">
+      <Project>{275c5e8d-a56a-45d2-8f70-93b0797c2e7b}</Project>
+      <Name>Common.SimSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\UI\Common.UI.csproj">
+      <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
+      <Name>Common.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LightningGauges\LightningGauges\LightningGauges.csproj">
       <Project>{E3E09957-DD05-4DEC-961A-915A082C0BC4}</Project>
       <Name>LightningGauges</Name>

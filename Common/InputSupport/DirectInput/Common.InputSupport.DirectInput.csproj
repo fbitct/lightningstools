@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6967BFC5-944D-405C-960B-5A4900EBFD92}</ProjectGuid>
+    <ProjectGuid>{07A76E17-57AE-4952-A309-2A670CE3D7DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>F4Utils.SimSupport</RootNamespace>
-    <AssemblyName>F4Utils.SimSupport</AssemblyName>
+    <RootNamespace>Common.InputSupport.DirectInput</RootNamespace>
+    <AssemblyName>Common.InputSupport.DirectInput</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -32,45 +32,38 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DIDeviceMonitor.cs" />
+    <Compile Include="DIPhysicalControlInfo.cs" />
+    <Compile Include="DIPhysicalDeviceInfo.cs" />
+    <Compile Include="DIStateChangedEventArgs.cs" />
+    <Compile Include="KeyConverter.cs" />
+    <Compile Include="Mediator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="log4net">
-      <HintPath>..\..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
+      <HintPath>..\..\ThirdParty\Log4Net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.DirectX.DirectInput, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Windows\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DEDAlowReader.cs" />
-    <Compile Include="F4SimOutputs.cs" />
-    <Compile Include="F4SimSupportModule.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TacanBand.cs" />
-    <Compile Include="TacanChannelSource.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
+    <ProjectReference Include="..\..\Common.csproj">
       <Project>{aba9cc75-b778-4e46-a6f6-afec27f2eb59}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\MacroProgramming\Common.MacroProgramming.csproj">
-      <Project>{320431c6-2454-4d95-8d3c-d27c8e2288e9}</Project>
-      <Name>Common.MacroProgramming</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\SimSupport\Common.SimSupport.csproj">
-      <Project>{275c5e8d-a56a-45d2-8f70-93b0797c2e7b}</Project>
-      <Name>Common.SimSupport</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\F4SharedMem\F4SharedMem.csproj">
-      <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
-      <Name>F4SharedMem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Process\F4Utils.Process.csproj">
-      <Project>{66242024-b7e5-4f66-ac1a-f0e2f1d70899}</Project>
-      <Name>F4Utils.Process</Name>
+    <ProjectReference Include="..\Common.InputSupport.csproj">
+      <Project>{90b49895-9bf5-48c9-87fe-972e47cddae5}</Project>
+      <Name>Common.InputSupport</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using log4net;
 using Microsoft.VisualBasic.Devices;
-using PPJoy;
 
 namespace Common.InputSupport.Phcc
 {
@@ -11,7 +10,8 @@ namespace Common.InputSupport.Phcc
         private static PHCCDeviceManager _instance;
         private static readonly ILog _log = LogManager.GetLogger(typeof (PHCCDeviceManager));
         private bool _isDisposed;
-
+        private const int MinAnalogDataSourceVal = 1;
+        private const int MaxAnalogDataSourceVal = 32767;
         private PHCCDeviceManager()
         {
         }
@@ -28,8 +28,8 @@ namespace Common.InputSupport.Phcc
                 throw new ArgumentNullException("device");
             }
             return
-                PHCCDeviceMonitor.GetInstance(device, VirtualJoystick.MinAnalogDataSourceVal,
-                                              VirtualJoystick.MaxAnalogDataSourceVal).IsDeviceAttached(true);
+                PHCCDeviceMonitor.GetInstance(device, MinAnalogDataSourceVal,
+                                              MaxAnalogDataSourceVal).IsDeviceAttached(true);
         }
 
         public bool IsDeviceAttached(PHCCPhysicalDeviceInfo device, bool throwOnFail)
@@ -39,8 +39,8 @@ namespace Common.InputSupport.Phcc
                 throw new ArgumentNullException("device");
             }
             return
-                PHCCDeviceMonitor.GetInstance(device, VirtualJoystick.MinAnalogDataSourceVal,
-                                              VirtualJoystick.MaxAnalogDataSourceVal).IsDeviceAttached(throwOnFail);
+                PHCCDeviceMonitor.GetInstance(device, MinAnalogDataSourceVal,
+                                              MaxAnalogDataSourceVal).IsDeviceAttached(throwOnFail);
         }
 
         public PHCCPhysicalControlInfo[] GetControlsOnDevice(PHCCPhysicalDeviceInfo device)
@@ -86,8 +86,8 @@ namespace Common.InputSupport.Phcc
                 try
                 {
                     if (
-                        PHCCDeviceMonitor.GetInstance(deviceInfo, VirtualJoystick.MinAnalogDataSourceVal,
-                                                      VirtualJoystick.MaxAnalogDataSourceVal).IsDeviceAttached(false))
+                        PHCCDeviceMonitor.GetInstance(deviceInfo, MinAnalogDataSourceVal,
+                                                      MaxAnalogDataSourceVal).IsDeviceAttached(false))
                     {
                         devices.Add(deviceInfo);
                     }

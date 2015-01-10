@@ -183,6 +183,14 @@
       <Project>{04157d6e-afe0-4399-94d5-306cf4aadac1}</Project>
       <Name>Common.Imaging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\SimSupport\Common.SimSupport.csproj">
+      <Project>{275c5e8d-a56a-45d2-8f70-93b0797c2e7b}</Project>
+      <Name>Common.SimSupport</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\UI\Common.UI.csproj">
+      <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
+      <Name>Common.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\accelerometerface.bmp">

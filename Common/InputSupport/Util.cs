@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using log4net;
-using Microsoft.DirectX.DirectInput;
 
 namespace Common.InputSupport
 {

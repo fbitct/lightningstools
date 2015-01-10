@@ -1,6 +1,5 @@
 using System;
 using System.Xml.Serialization;
-using Common.SimSupport;
 
 namespace Common.MacroProgramming
 {
@@ -28,7 +27,6 @@ namespace Common.MacroProgramming
     }
 
     [Serializable]
-    [XmlInclude(typeof (DigitalSimOutput))]
     public class DigitalSignal : Signal
     {
         #region Delegates

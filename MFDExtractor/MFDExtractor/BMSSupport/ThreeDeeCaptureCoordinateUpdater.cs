@@ -69,11 +69,11 @@ namespace MFDExtractor.BMSSupport
 			}
 			if (isDoubleResolution)
 			{
-                _coordinates.LMFD = Common.Math.Util.MultiplyRectangle(_coordinates.LMFD, 2);
-                _coordinates.RMFD = Common.Math.Util.MultiplyRectangle(_coordinates.RMFD, 2);
-                _coordinates.MFD3 = Common.Math.Util.MultiplyRectangle(_coordinates.MFD3, 2);
-                _coordinates.MFD4 = Common.Math.Util.MultiplyRectangle(_coordinates.MFD4, 2);
-                _coordinates.HUD = Common.Math.Util.MultiplyRectangle(_coordinates.HUD, 2);
+                _coordinates.LMFD = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.LMFD, 2);
+                _coordinates.RMFD = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.RMFD, 2);
+                _coordinates.MFD3 = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.MFD3, 2);
+                _coordinates.MFD4 = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.MFD4, 2);
+                _coordinates.HUD = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.HUD, 2);
 			}
 		}
 
