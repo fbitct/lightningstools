@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Lzss;
+using log4net;
 
 namespace F4Utils.Campaign
 {
@@ -13,6 +14,7 @@ namespace F4Utils.Campaign
         #endregion
 
         protected int _version;
+        private ILog _log = LogManager.GetLogger(typeof(UniFile));
 
         protected UniFile()
         {
@@ -106,7 +108,7 @@ namespace F4Utils.Campaign
                 }
                 else
                 {
-                    Debug.WriteLine(string.Format("unexpected unit type:{0} at location: {1}", thisUnitType, curByte));
+                    _log.Debug(string.Format("unexpected unit type:{0} at location: {1}", thisUnitType, curByte));
                 }
             }
 

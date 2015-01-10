@@ -1,3 +1,4 @@
+using Common.Win32;
 using System;
 
 namespace Common.MacroProgramming

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Common.MacroProgramming;
 using F4KeyFile;
 using log4net;
+using Common.Win32;
 
 namespace F4Utils.Process
 {

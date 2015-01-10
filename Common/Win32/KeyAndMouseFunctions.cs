@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Common.MacroProgramming
+namespace Common.Win32
 {
     public static class KeyAndMouseFunctions
     {
