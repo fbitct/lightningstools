@@ -1,11 +1,4 @@
-﻿using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace F4Utils.Terrain
+﻿namespace F4Utils.Terrain
 {
     internal interface IDistanceBetweenElevationPostsCalculator
     {

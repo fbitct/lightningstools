@@ -1,15 +1,10 @@
-﻿using Common.Imaging;
-using Common.Win32;
-using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using Common.Imaging;
+using Common.Win32;
 
 namespace F4Utils.Terrain
 {

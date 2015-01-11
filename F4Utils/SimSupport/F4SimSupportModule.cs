@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.MacroProgramming;
+using Common.Math;
 using Common.SimSupport;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using F4Utils.Process;
+using Util = F4Utils.Process.Util;
 
 namespace F4Utils.SimSupport
 {
@@ -39,7 +40,7 @@ namespace F4Utils.SimSupport
                 if (!_lastFalconSimRunningCheckTime.HasValue ||  DateTime.Now.Subtract(_lastFalconSimRunningCheckTime.Value).Duration().TotalMilliseconds > 500)
                 {
                     _lastFalconSimRunningCheckTime = DateTime.Now;
-                    _falconWasRunningOnLastCheck = F4Utils.Process.Util.IsFalconRunning();
+                    _falconWasRunningOnLastCheck = Util.IsFalconRunning();
                 }
                 return _falconWasRunningOnLastCheck; 
             }
@@ -186,7 +187,7 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal)output).State = _lastFlightData.cabinAlt;
                         break;
                     case F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES:
-                        ((AnalogSignal)output).State = (360 + (_lastFlightData.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
+                        ((AnalogSignal)output).State = (360 + (_lastFlightData.yaw / Constants.RADIANS_PER_DEGREE)) % 360;
                         break;
                     case F4SimOutputs.GEAR_PANEL__GEAR_POSITION:
                         ((AnalogSignal) output).State = _lastFlightData.gearPos;
@@ -1678,9 +1679,9 @@ namespace F4Utils.SimSupport
         {
             showToFromFlag = true;
             showCommandBars =
-                           ((Math.Abs((flightData.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= GLIDESLOPE_DEVIATION_LIMIT_DEGREES)
+                           ((Math.Abs((flightData.AdiIlsVerPos / Constants.RADIANS_PER_DEGREE)) <= GLIDESLOPE_DEVIATION_LIMIT_DEGREES)
                                &&
-                           (Math.Abs((flightData.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= LOCALIZER_DEVIATION_LIMIT_DEGREES))
+                           (Math.Abs((flightData.AdiIlsHorPos / Constants.RADIANS_PER_DEGREE)) <= LOCALIZER_DEVIATION_LIMIT_DEGREES))
                                &&
                            !(((HsiBits)flightData.hsiBits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
                            &&

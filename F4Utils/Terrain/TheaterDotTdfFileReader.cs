@@ -1,11 +1,7 @@
-﻿using F4Utils;
-using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Common.Strings;
+using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {
@@ -15,7 +11,7 @@ namespace F4Utils.Terrain
     }
     internal class TheaterDotTdfFileReader:ITheaterDotTdfFileReader
     {
-        private ITokenJoiner _tokenJoiner;
+        private readonly ITokenJoiner _tokenJoiner;
         public TheaterDotTdfFileReader(ITokenJoiner tokenJoiner = null) 
         {
             _tokenJoiner = tokenJoiner?? new TokenJoiner();
@@ -35,7 +31,7 @@ namespace F4Utils.Terrain
                 while (!sw.EndOfStream)
                 {
                     var thisLine = sw.ReadLine();
-                    var thisLineTokens = Common.Strings.Util.Tokenize(thisLine);
+                    var thisLineTokens = Util.Tokenize(thisLine);
                     if (thisLineTokens.Count > 0)
                     {
                         if (thisLineTokens[0].ToLower() == "name")

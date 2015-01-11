@@ -1,13 +1,10 @@
-﻿using Common.Imaging;
-using ICSharpCode.SharpZipLib.Zip;
-using log4net;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Common.Imaging;
+using ICSharpCode.SharpZipLib.Zip;
+using log4net;
+using Util = Common.Compression.Zip.Util;
 
 namespace F4Utils.Terrain
 {
@@ -51,7 +48,7 @@ namespace F4Utils.Terrain
             }
             if (terrainDB.TextureDotZipFileEntries == null || terrainDB.TextureDotZipFileEntries.Count == 0)
             {
-                terrainDB.TextureDotZipFileEntries = Common.Compression.Zip.Util.GetZipFileEntries(terrainDB.TextureZipFile);
+                terrainDB.TextureDotZipFileEntries = Util.GetZipFileEntries(terrainDB.TextureZipFile);
             }
             if (!terrainDB.TextureDotZipFileEntries.ContainsKey(tileName.ToLowerInvariant())) return null;
             var thisEntry = terrainDB.TextureDotZipFileEntries[tileName.ToLowerInvariant()];

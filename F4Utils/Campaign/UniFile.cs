@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using Lzss;
 using log4net;
+using Lzss;
 
 namespace F4Utils.Campaign
 {
@@ -14,7 +13,7 @@ namespace F4Utils.Campaign
         #endregion
 
         protected int _version;
-        private ILog _log = LogManager.GetLogger(typeof(UniFile));
+        private readonly ILog _log = LogManager.GetLogger(typeof(UniFile));
 
         protected UniFile()
         {

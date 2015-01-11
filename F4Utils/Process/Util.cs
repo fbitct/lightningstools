@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading;
 using Common.Win32;
 using log4net;
-using System.ComponentModel;
-using System.Management;
 
 namespace F4Utils.Process
 {

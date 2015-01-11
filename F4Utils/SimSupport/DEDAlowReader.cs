@@ -1,14 +1,15 @@
 ﻿using System;
+using F4SharedMem;
 
 namespace F4Utils.SimSupport
 {
     public interface IDEDAlowReader
     {
-        bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow);
+        bool CheckDED_ALOW(FlightData fromFalcon, out int newAlow);
     }
     public class DEDAlowReader:IDEDAlowReader
     {
-        public bool CheckDED_ALOW(F4SharedMem.FlightData fromFalcon, out int newAlow)
+        public bool CheckDED_ALOW(FlightData fromFalcon, out int newAlow)
         {
             var alowString = fromFalcon.DEDLines[1];
             var alowInverseString = fromFalcon.Invert[1];

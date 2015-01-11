@@ -1,11 +1,4 @@
-﻿using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace F4Utils.Terrain
+﻿namespace F4Utils.Terrain
 {
     public interface ITerrainHeightCalculator
     {
@@ -13,9 +6,9 @@ namespace F4Utils.Terrain
     }
     public class TerrainHeightCalculator:ITerrainHeightCalculator
     {
-        private IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever;
-        private IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
-        private INearestElevationPostColumnAndRowCalculator _nearestElevationPostColumnAndRowCalculator;
+        private readonly IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever;
+        private readonly IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
+        private readonly INearestElevationPostColumnAndRowCalculator _nearestElevationPostColumnAndRowCalculator;
         internal TerrainHeightCalculator(
             IColumnAndRowElevationPostRecordRetriever columnAndRowElevationPostRecordRetriever = null,
             IDistanceBetweenElevationPostsCalculator distanceBetweenElevationPostsCalculator = null,

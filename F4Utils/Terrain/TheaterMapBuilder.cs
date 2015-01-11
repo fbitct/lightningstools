@@ -1,12 +1,6 @@
-﻿using F4Utils.Terrain;
-using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {

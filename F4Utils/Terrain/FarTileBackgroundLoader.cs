@@ -1,8 +1,7 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Threading;
-
+using log4net;
 
 namespace F4Utils.Terrain
 {
@@ -15,8 +14,8 @@ namespace F4Utils.Terrain
         private bool _isDisposed=false;
         private static readonly ILog Log = LogManager.GetLogger(typeof(FarTileBackgroundLoader));
         private BackgroundWorker _backgroundWorker;
-        private TerrainDB _terrainDB;
-        private IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever;
+        private readonly TerrainDB _terrainDB;
+        private readonly IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever;
         public FarTileBackgroundLoader(TerrainDB terrainDB, IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever =null)
         {
             _terrainDB = terrainDB;

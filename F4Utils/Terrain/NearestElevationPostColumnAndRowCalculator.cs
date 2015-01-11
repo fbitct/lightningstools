@@ -1,9 +1,4 @@
-﻿using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace F4Utils.Terrain
 {
@@ -13,8 +8,8 @@ namespace F4Utils.Terrain
     }
     class NearestElevationPostColumnAndRowCalculator:INearestElevationPostColumnAndRowCalculator
     {
-        private IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
-        private IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
+        private readonly IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
+        private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         public NearestElevationPostColumnAndRowCalculator(
             IDistanceBetweenElevationPostsCalculator distanceBetweenElevationPostsCalculator = null,
             IElevationPostCoordinateClamper elevationPostCoordinateClamper = null) {

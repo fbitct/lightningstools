@@ -1,12 +1,5 @@
-﻿using F4Utils.Terrain;
-using F4Utils.Terrain.Structs;
-using ICSharpCode.SharpZipLib.Zip;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
+using Common.Imaging;
 
 namespace F4Utils.Terrain
 {
@@ -16,9 +9,9 @@ namespace F4Utils.Terrain
     }
     public class DetailTextureForElevationPostRetriever:IDetailTextureForElevationPostRetriever
     {
-        private IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
-        private ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever;
-        private IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRetriever;
+        private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
+        private readonly ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever;
+        private readonly IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRetriever;
         public DetailTextureForElevationPostRetriever(
             IElevationPostCoordinateClamper elevationPostCoordinateClamper=null,
             ITerrainTextureByTextureIdRetriever terrainTextureByTextureIdRetriever=null,
@@ -75,7 +68,7 @@ namespace F4Utils.Terrain
 
                     var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
 
-                    toReturn = (Bitmap)Common.Imaging.Util.CropBitmap(bigTexture, sourceRect);
+                    toReturn = (Bitmap)Util.CropBitmap(bigTexture, sourceRect);
                     terrainDB.ElevationPostTextures.Add(key, toReturn);
                 }
             }

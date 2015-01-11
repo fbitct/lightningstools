@@ -1,10 +1,5 @@
-﻿using F4Utils.Terrain;
+﻿using System;
 using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
@@ -14,7 +9,7 @@ namespace F4Utils.Terrain
     }
     public class ColumnAndRowElevationPostRecordRetriever:IColumnAndRowElevationPostRecordRetriever
     {
-        private IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
+        private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         public ColumnAndRowElevationPostRecordRetriever(IElevationPostCoordinateClamper elevationPostCoordinateClamper = null)
         {
             _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();

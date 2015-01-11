@@ -1,13 +1,8 @@
-﻿using F4SharedMem;
+﻿using System;
+using System.IO;
+using F4Utils.Process;
 using log4net;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
@@ -15,13 +10,13 @@ namespace F4Utils.Terrain
     {
         string DetectCurrentTheaterName();
     }
-    public class CurrentTheaterNameDetector : Terrain.ICurrentTheaterNameDetector
+    public class CurrentTheaterNameDetector : ICurrentTheaterNameDetector
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CurrentTheaterNameDetector));
         public string DetectCurrentTheaterName()
         {
             string theaterName = null;
-            var exePath = Process.Util.GetFalconExePath();
+            var exePath = Util.GetFalconExePath();
 
            
             try

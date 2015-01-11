@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Common.Serialization;
 
 namespace F4Utils.Terrain
 {
@@ -16,7 +13,7 @@ namespace F4Utils.Terrain
 
         public override string ToString()
         {
-            return (Common.Serialization.Util.ToRawBytes(this));
+            return (Util.ToRawBytes(this));
         }
 
         public override int GetHashCode()

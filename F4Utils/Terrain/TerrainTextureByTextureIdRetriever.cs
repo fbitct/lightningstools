@@ -1,12 +1,4 @@
-﻿using F4Utils.Terrain;
-using F4Utils.Terrain.Structs;
-using ICSharpCode.SharpZipLib.Zip;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace F4Utils.Terrain
 {
@@ -16,8 +8,8 @@ namespace F4Utils.Terrain
     }
     public class TerrainTextureByTextureIdRetriever:ITerrainTextureByTextureIdRetriever
     {
-        private INearTileTextureLoader _nearTileTextureLoader;
-        private IFarTileTextureRetriever _farTileTextureRetriever;
+        private readonly INearTileTextureLoader _nearTileTextureLoader;
+        private readonly IFarTileTextureRetriever _farTileTextureRetriever;
         public TerrainTextureByTextureIdRetriever(INearTileTextureLoader nearTileTextureLoader = null, IFarTileTextureRetriever farTileTextureRetriever = null)
         {
             _nearTileTextureLoader = nearTileTextureLoader ?? new NearTileTextureLoader();

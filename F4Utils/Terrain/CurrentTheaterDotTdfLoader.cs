@@ -1,12 +1,5 @@
-﻿using F4SharedMem;
-using F4Utils.Terrain;
+﻿using System.IO;
 using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {
@@ -16,8 +9,8 @@ namespace F4Utils.Terrain
     }
     class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
     {
-        private ICurrentTheaterNameDetector _currentTheaterNameDetector;
-        private ITheaterDotTdfFileReader _theaterDotTdfFileReader;
+        private readonly ICurrentTheaterNameDetector _currentTheaterNameDetector;
+        private readonly ITheaterDotTdfFileReader _theaterDotTdfFileReader;
         public CurrentTheaterDotTdfLoader(ICurrentTheaterNameDetector currentTheaterNameDetector = null,
             ITheaterDotTdfFileReader theaterDotTdfFileReader = null)
         {
