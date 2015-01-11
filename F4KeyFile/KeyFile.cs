@@ -38,9 +38,13 @@ namespace F4KeyFile
         private void UpdateIndexOfCallbacks()
         {
             _callbackBindings.Clear();
-            _lines.OfType<KeyBinding>().Cast<IBinding>()
-                .Union(_lines.OfType<DirectInputBinding>())
-                .Select<IBinding, object>(x => _callbackBindings[x.Callback] = x);
+            foreach (var binding in 
+                            _lines.OfType<KeyBinding>().Cast<IBinding>()
+                    .Union(_lines.OfType<DirectInputBinding>()))
+            {
+                _callbackBindings[binding.Callback] = binding;
+            }
+                
         }
         public IBinding GetBindingForCallback(string callback)
         {
