@@ -15,7 +15,7 @@ namespace F4KeyFile
         private readonly FileInfo _file;
 
         private IList<ILineInFile> _lines = new List<ILineInFile>();
-        private IDictionary<string, IBinding> _callbackBindings = new Dictionary<string, IBinding>();
+        private readonly IDictionary<string, IBinding> _callbackBindings = new Dictionary<string, IBinding>();
         public KeyFile()
         {
         }
@@ -39,13 +39,14 @@ namespace F4KeyFile
         {
             _callbackBindings.Clear();
             _lines.OfType<KeyBinding>().Cast<IBinding>()
-                .Union(_lines.OfType<DirectInputBinding>()).Cast<IBinding>()
+                .Union(_lines.OfType<DirectInputBinding>())
                 .Select<IBinding, object>(x => _callbackBindings[x.Callback] = x);
         }
         public IBinding GetBindingForCallback(string callback)
         {
-            return _callbackBindings[callback];
+            return _callbackBindings.ContainsKey(callback) ? _callbackBindings[callback] : null;
         }
+
         public void Load()
         {
             Load(_file);
