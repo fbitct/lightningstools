@@ -30,20 +30,26 @@ namespace MFDExtractor
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            _log.Error(e.ExceptionObject.ToString(), (Exception) e.ExceptionObject);
-        }
-
-        private static void App_UnhandledException(object sender,
-                                                   Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs
-                                                       e)
-        {
-            _log.Error(e.Exception.Message, e.Exception);
-            e.ExitApplication = false;
+            if (e !=null && !(e.ExceptionObject is ThreadAbortException || e.ExceptionObject is ThreadInterruptedException))
+            {
+                try
+                {
+                    _log.Error(((Exception) e.ExceptionObject).Message, (Exception) e.ExceptionObject);
+                }
+                catch { }
+            }
         }
 
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
         {
-            _log.Error(t.Exception.Message, t.Exception);
+            if (t !=null && t.Exception != null && !(t.Exception is ThreadAbortException || t.Exception is ThreadInterruptedException))
+            {
+                try
+                {
+                    _log.Error(t.Exception.Message, t.Exception);
+                }
+                catch { }
+            }
         }
 
         private static Process PriorProcess()
@@ -84,6 +90,7 @@ namespace MFDExtractor
             // Add the event handler for handling non-UI thread exceptions to the event. 
             AppDomain.CurrentDomain.UnhandledException +=
                 CurrentDomain_UnhandledException;
+            
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
             mainForm = new frmMain();
