@@ -12,6 +12,7 @@ using System.Text;
 using System.Windows.Forms;
 using Common.PDF;
 using F16CPD.FlightInstruments;
+using F16CPD.FlightInstruments.Pfd;
 using F16CPD.Mfd;
 using F16CPD.Mfd.Controls;
 using F16CPD.Mfd.Menus;

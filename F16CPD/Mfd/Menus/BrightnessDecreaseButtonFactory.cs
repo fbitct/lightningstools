@@ -1,12 +1,7 @@
-﻿using F16CPD.Mfd.Menus;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
+using F16CPD.Mfd.Controls;
 
-namespace F16CPD.Mfd.Controls
+namespace F16CPD.Mfd.Menus
 {
     internal interface IBrightnessDecreaseButtonFactory 
     {

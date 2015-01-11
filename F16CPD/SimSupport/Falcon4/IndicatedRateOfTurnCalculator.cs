@@ -2,6 +2,7 @@
 using F16CPD.FlightInstruments;
 using System;
 using System.Collections.Generic;
+using F16CPD.FlightInstruments.Pfd;
 
 namespace F16CPD.SimSupport.Falcon4
 {

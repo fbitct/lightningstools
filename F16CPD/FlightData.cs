@@ -1,5 +1,6 @@
 ﻿using System;
 using F16CPD.FlightInstruments;
+using F16CPD.FlightInstruments.Pfd;
 
 namespace F16CPD
 {

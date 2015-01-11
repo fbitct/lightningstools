@@ -1,11 +1,6 @@
-﻿using F4SharedMem;
-using F4Utils.Terrain.Structs;
-using System;
-using System.Collections.Generic;
+﻿using F4Utils.Terrain.Structs;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
@@ -16,11 +11,11 @@ namespace F4Utils.Terrain
     }
     public class TerrainDBFactory : ITerrainDBFactory
     {
-        private ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader = new CurrentTheaterDotTdfLoader();
-        private ITheaterDotMapFileReader _theaterDotMapFileReader = new TheaterDotMapFileReader();
-        private ITextureDotBinFileReader _textureDotBinFileReader = new TextureDotBinFileReader();
-        private IFarTilesDotPalFileReader _farTilesDotPalFileReader = new FarTilesDotPalFileReader();
-        private ITheaterDotLxFileReader _theaterDotLxFileReader = new TheaterDotLxFileReader();
+        private readonly ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader = new CurrentTheaterDotTdfLoader();
+        private readonly ITheaterDotMapFileReader _theaterDotMapFileReader = new TheaterDotMapFileReader();
+        private readonly ITextureDotBinFileReader _textureDotBinFileReader = new TextureDotBinFileReader();
+        private readonly IFarTilesDotPalFileReader _farTilesDotPalFileReader = new FarTilesDotPalFileReader();
+        private readonly ITheaterDotLxFileReader _theaterDotLxFileReader = new TheaterDotLxFileReader();
 
         public TerrainDB Create(bool loadAllLods)
         {
@@ -44,10 +39,11 @@ namespace F4Utils.Terrain
             terrainDB.TheaterMaps = new Bitmap[terrainDB.TheaterDotMap.NumLODs];
             if (loadAllLods)
             {
-                for (uint i = 0; i < terrainDB.TheaterDotMap.NumLODs; i++)
+                Parallel.For(0, terrainDB.TheaterDotMap.NumLODs, i =>
                 {
-                    terrainDB.TheaterDotLxFiles[i] = _theaterDotLxFileReader.LoadTheaterDotLxFile(i, terrainDB.TheaterDotMapFilePath);
-                }
+                    terrainDB.TheaterDotLxFiles[i] = _theaterDotLxFileReader.LoadTheaterDotLxFile((uint)i,
+                        terrainDB.TheaterDotMapFilePath);
+                });
             }
             else
             {

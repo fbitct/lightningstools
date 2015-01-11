@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Common.SimSupport;
-using F16CPD.FlightInstruments;
 using F16CPD.Mfd.Controls;
 using F16CPD.Networking;
 using F16CPD.Properties;
@@ -503,61 +502,6 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private static void UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityUsingLegacyTechnique(
-            FlightData flightData, F4SharedMem.FlightData fromFalcon, HsiBits hsibits)
-        {
-            //The following floating data is also crossed up in the flightData.h File:
-            //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
-            //float AdiIlsVerPos;       // Position of vertical ILS bar-----horizontal
-            bool commandBarsOn = ((float) (Math.Abs(Math.Round(fromFalcon.AdiIlsHorPos, 4))) != 0.1745f);
-            if (
-                (Math.Abs((fromFalcon.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
-                 Pfd.ADI_ILS_GLIDESLOPE_DEVIATION_LIMIT_DECIMAL_DEGREES)
-                ||
-                (Math.Abs((fromFalcon.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE)) >
-                 Pfd.ADI_ILS_LOCALIZER_DEVIATION_LIMIT_DECIMAL_DEGREES)
-                )
-            {
-                commandBarsOn = false;
-            }
-            flightData.HsiDisplayToFromFlag = true;
-
-
-            //if the TOTALFLAGS flag is off, then we're most likely in NAV mode
-            if ((hsibits & HsiBits.TotalFlags) != HsiBits.TotalFlags)
-            {
-                flightData.HsiDisplayToFromFlag = false;
-            }
-                //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode 
-            else if (
-                (
-                    ((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
-                    ||
-                    ((hsibits & HsiBits.FromTrue) == HsiBits.FromTrue)
-                    )
-                )
-            {
-                if (!commandBarsOn) //better make sure we're not in any ILS mode too though
-                {
-                    flightData.HsiDisplayToFromFlag = true;
-                }
-            }
-
-
-            //if the glideslope or localizer flags on the ADI are turned on, then we must be in an ILS mode and therefore we 
-            //know we don't need to show the HSI TO/FROM flags.
-            if (
-                ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
-                ||
-                ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
-                )
-            {
-                flightData.HsiDisplayToFromFlag = false;
-            }
-            if (commandBarsOn) flightData.HsiDisplayToFromFlag = false;
-
-            flightData.AdiEnableCommandBars = commandBarsOn;
-        }
 
         private static void UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityBasedOnBMS4NavMode(
             FlightData flightData, F4SharedMem.FlightData fromFalcon)

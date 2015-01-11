@@ -1,12 +1,7 @@
-﻿using F4SharedMem;
-using F4Utils.Terrain.Structs;
+﻿using F4Utils.Terrain.Structs;
 using ICSharpCode.SharpZipLib.Zip;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4Utils.Terrain
 {

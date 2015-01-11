@@ -1,11 +1,6 @@
-﻿using F16CPD.SimSupport;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using F16CPD.Mfd.Controls;
 
-namespace F16CPD.Mfd.Controls
+namespace F16CPD.Mfd.Menus
 {
     internal interface IFuelSelectSwitchFactory
     {

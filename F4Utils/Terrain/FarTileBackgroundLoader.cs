@@ -1,12 +1,7 @@
-﻿using F4Utils.Terrain.Structs;
-using log4net;
+﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 
 namespace F4Utils.Terrain
