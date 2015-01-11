@@ -69,17 +69,14 @@ namespace F4Utils.Process
             if (exeFilePath != null)
             {
                 var callsign = CallsignUtils.DetectCurrentCallsign();
-                var configFolder = string.Empty;
 
-               
-                configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar
-                    + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + 
-                                USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
-                
-                string pilotOptionsPath;
-                
-                pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
-                                    PLAYER_OPTS_FILE_EXTENSION;
+
+                var configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar
+                                      + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + 
+                                      USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
+
+                var pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
+                                          PLAYER_OPTS_FILE_EXTENSION;
                 if (!new FileInfo(pilotOptionsPath).Exists)
                 {
                     pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + PLAYER_OPTS_FILENAME__DEFAULT;
