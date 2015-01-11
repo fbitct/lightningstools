@@ -8,7 +8,6 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
-using Common.InputSupport.UI;
 using Common.UI;
 using F4SharedMem;
 using F4Utils.Process;
@@ -21,7 +20,6 @@ using Common.Networking;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
 using F4Utils.Terrain;
-using System.Threading.Tasks;
 
 namespace MFDExtractor
 {
@@ -355,7 +353,6 @@ namespace MFDExtractor
             State.Running = true;
             SetupNetworking();
             State.KeepRunning = true;
-            _rendererSetInitializer.Initialize(_gdiPlusOptions);
             SetupThreads();
             StartThreads();
 
