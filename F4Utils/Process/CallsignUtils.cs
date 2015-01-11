@@ -6,7 +6,7 @@ using Microsoft.Win32;
 
 namespace F4Utils.Process
 {
-    public class CallsignUtils
+    public static class CallsignUtils
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof (CallsignUtils));
 

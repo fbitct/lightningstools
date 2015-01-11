@@ -251,6 +251,14 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.AltimeterMode = ((fromFalcon.altBits & (int) AltBits.PneuFlag) == (int) AltBits.PneuFlag)
                     ? AltimeterMode.Pneumatic
                     : AltimeterMode.Electronic;
+
+                Manager
+                    .FindMenuPageByName("Instruments Display Page")
+                    .FindOptionSelectButtonByFunctionName("ToggleAltimeterModeElecPneu")
+                    .LabelText = flightData.AltimeterMode == AltimeterMode.Electronic ? "ELEC" : "PNEU";
+
+
+
                 //TODO: support hPA alt calibration, not just inches hg
                 flightData.BarometricPressureInDecimalInchesOfMercury = (fromFalcon.AltCalReading/100.00f);
 

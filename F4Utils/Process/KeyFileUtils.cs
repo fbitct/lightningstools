@@ -1,13 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using Common.Win32;
 using F4KeyFile;
 using log4net;
 
 namespace F4Utils.Process
 {
-    public class KeyFileUtils
+    public static class KeyFileUtils
     {
         private const string KEYSTROKE_FILE_NAME__DEFAULT = "BMS.key";
         private const string PLAYER_OPTS_FILENAME__DEFAULT = "viper.pop";
@@ -35,28 +36,33 @@ namespace F4Utils.Process
         public static void SendCallbackToFalcon(string callback)
         {
             Util.ActivateFalconWindow();
+            Thread.Sleep(100);
             var binding = FindKeyBinding(callback);
             if (binding != null)
             {
-                if (Util.IsFalconWindowForeground())
+                lock (_keySenderLock)
                 {
-                    lock (_keySenderLock)
-                    {
-                        var primaryKeyWithModifiers = binding.Key;
-                        var comboKeyWithModifiers = binding.ComboKey;
+                    var primaryKeyWithModifiers = binding.Key;
+                    var comboKeyWithModifiers = binding.ComboKey;
 
-                        SendClearingKeystrokes();
+                    SendClearingKeystrokes();
+                    Thread.Sleep(30);
 
-                        SendUpKeystrokes(primaryKeyWithModifiers);
-                        SendDownKeystrokes(primaryKeyWithModifiers);
-                        SendUpKeystrokes(primaryKeyWithModifiers);
+                    SendUpKeystrokes(primaryKeyWithModifiers);
+                    Thread.Sleep(30);
+                    SendDownKeystrokes(primaryKeyWithModifiers);
+                    Thread.Sleep(30);
+                    SendUpKeystrokes(primaryKeyWithModifiers);
+                    Thread.Sleep(30);
 
-                        SendUpKeystrokes(comboKeyWithModifiers);
-                        SendDownKeystrokes(comboKeyWithModifiers);
-                        SendUpKeystrokes(comboKeyWithModifiers);
+                    SendUpKeystrokes(comboKeyWithModifiers);
+                    Thread.Sleep(30);
+                    SendDownKeystrokes(comboKeyWithModifiers);
+                    Thread.Sleep(30);
+                    SendUpKeystrokes(comboKeyWithModifiers);
+                    Thread.Sleep(30);
 
-                        SendClearingKeystrokes();
-                    }
+                    SendClearingKeystrokes();
                 }
             }
         }

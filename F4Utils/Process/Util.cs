@@ -4,40 +4,23 @@ using System.Management;
 using System.Text;
 using System.Threading;
 using Common.Win32;
-using log4net;
 
 namespace F4Utils.Process
 {
     public static class Util
     {
-        private const string MODULENAME_F4 = "F4";
-        private const string MODULENAME_FALCON = "FALCON";
         private const string WINDOW_CLASS_FALCONDISPLAY = "FalconDisplay";
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Util));
 
         public static void ActivateFalconWindow()
-        {
-            if (!IsFalconWindowForeground())
-            {
-                var windowHandle = GetFalconWindowHandle();
-                if (windowHandle != IntPtr.Zero)
-                {
-                    NativeMethods.SetForegroundWindow(windowHandle);
-                    Thread.SpinWait(20);
-                }
-            }
-        }
-
-        public static bool IsFalconWindowForeground()
         {
             var windowHandle = GetFalconWindowHandle();
             if (windowHandle != IntPtr.Zero)
             {
-                var foregroundWindowHandle = NativeMethods.GetForegroundWindow();
-                return foregroundWindowHandle == windowHandle;
+                NativeMethods.SetForegroundWindow(windowHandle);
+                Thread.SpinWait(20);
             }
-            return false;
         }
+
 
         public static string GetFalconWindowTitle()
         {

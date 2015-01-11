@@ -29,10 +29,10 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
             var thisPage = new MfdMenuPage(_mfdManager);
             var buttons = new List<OptionSelectButton>();
             const int triangleLegLengthPixels = 25;
-            
-            var pneuButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 3, "PNEU", false);
-            pneuButton.FunctionName = "ToggleAltimeterModeElecPneu";
-            pneuButton.Pressed += pneuElecButton_Press;
+
+            var altimeterModeButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 3, "PNEU", false);
+            altimeterModeButton.FunctionName = "ToggleAltimeterModeElecPneu";
+            altimeterModeButton.Pressed += pneuElecButton_Press;
 
             var ackButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 4, "ACK", false);
             ackButton.FunctionName = "AcknowledgeMessage";
@@ -131,7 +131,7 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
             airspeedIndexSelectUpButton.FunctionName = "AirspeedIndexIncrease";
             airspeedIndexSelectUpButton.Pressed += airspeedIndexSelectUpButton_Press;
 
-            buttons.Add(pneuButton);
+            buttons.Add(altimeterModeButton);
             buttons.Add(ackButton);
             buttons.Add(testPageSelectButton);
             buttons.Add(altitudeIndexUpButton);
@@ -168,17 +168,6 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
         }
         private void pneuElecButton_Press(object sender, EventArgs args)
         {
-            var button = (OptionSelectButton)sender;
-            if (_mfdManager.FlightData.AltimeterMode == AltimeterMode.Electronic)
-            {
-                _mfdManager.FlightData.AltimeterMode = AltimeterMode.Pneumatic;
-                button.LabelText = "PNEU";
-            }
-            else
-            {
-                button.LabelText = "ELEC";
-                _mfdManager.FlightData.AltimeterMode = AltimeterMode.Electronic;
-            }
             if (_mfdManager.SimSupportModule != null)
                 _mfdManager.SimSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton3, (OptionSelectButton)sender);
         }
