@@ -573,11 +573,11 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = 4 * percentDeflection;
+                    outputValue = 1 * percentDeflection;
                 }
                 else
                 {
-                    outputValue = 10;
+                    outputValue = 6;
                 }
 
                 if (_horizontalCommandBarOutputSignal != null)
@@ -606,11 +606,11 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = 4 * percentDeflection;
+                    outputValue = 1 * percentDeflection;
                 }
                 else
                 {
-                    outputValue = 10;
+                    outputValue = 6;
                 }
 
                 if (_verticalCommandBarOutputSignal != null)
