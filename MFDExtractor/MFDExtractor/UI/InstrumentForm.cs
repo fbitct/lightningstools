@@ -96,10 +96,18 @@ namespace MFDExtractor.UI
                 OnDataChanged(new EventArgs());
             }
         }
+
+        private Point _lastMousePosition = Point.Empty;
+        private DateTime _lastMousePositionTime = DateTime.MinValue;
 	    public bool SizingOrMovingCursorsAreDisplayed
 	    {
 		    get
 		    {
+		        if (DateTime.Now.Subtract(_lastMousePositionTime).TotalMilliseconds > 100)
+		        {
+		            _lastMousePositionTime = DateTime.Now;
+		            _lastMousePosition = MousePosition;
+		        }
 			    return (
 				    (
 					    Cursor == Cursors.SizeAll
@@ -113,7 +121,7 @@ namespace MFDExtractor.UI
 					    Cursor == Cursors.SizeWE
 					    )
 					    ||
-				    new Rectangle(Location, Size).Contains(Cursor.Position)
+                    new Rectangle(Location, Size).Contains(_lastMousePosition)
 				    );
 		    }
 	    }
