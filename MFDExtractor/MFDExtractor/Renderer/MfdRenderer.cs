@@ -23,33 +23,52 @@ namespace MFDExtractor.Renderer
 			{
 				if (Options.BlankImage != null)
 				{
-					destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle, new Rectangle(new Point(0, 0), Options.BlankImage.Size),GraphicsUnit.Pixel);
+				    try
+				    {
+				        destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle,
+				            new Rectangle(new Point(0, 0), Options.BlankImage.Size), GraphicsUnit.Pixel);
+				    }
+                    catch { }
 				}
 			}
 			else if (InstrumentState.TestMode)
 			{
 				if (Options.TestAlignmentImage != null)
 				{
-					destinationGraphics.DrawImage(Options.TestAlignmentImage, destinationRectangle, new Rectangle(new Point(0, 0), Options.TestAlignmentImage.Size), GraphicsUnit.Pixel);
+                    try
+				    {
+				        destinationGraphics.DrawImage(Options.TestAlignmentImage, destinationRectangle,
+				            new Rectangle(new Point(0, 0), Options.TestAlignmentImage.Size), GraphicsUnit.Pixel);
+				    }
+                    catch {}
 				}
 			}
 			else
 			{
 			    if (InstrumentState.SourceImage == null || InstrumentState.SourceRectangle == Rectangle.Empty)
 			    {
-                    destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle, new Rectangle(new Point(0, 0), Options.BlankImage.Size), GraphicsUnit.Pixel);
+			        try
+			        {
+			            destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle,
+			                new Rectangle(new Point(0, 0), Options.BlankImage.Size), GraphicsUnit.Pixel);
+			        }
+                    catch { }
 			    }
                 else
 				{
-				    RenderFromSharedmemSurface(destinationGraphics, destinationRectangle);
+				    try
+				    {
+				        RenderFromSharedmemSurface(destinationGraphics, destinationRectangle);
+				    }
+                    catch { }
 				}
 			}
 		}
 	    private void RenderFromSharedmemSurface(Graphics destinationGraphics, Rectangle destinationRectangle)
 	    {
-            var mfdImage = InstrumentState.SourceImage;
 	        try
 	        {
+                var mfdImage = InstrumentState.SourceImage;
                 if (mfdImage.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
                 {
                     destinationGraphics.DrawImage(mfdImage, destinationRectangle, InstrumentState.SourceRectangle, GraphicsUnit.Pixel);

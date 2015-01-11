@@ -1,27 +1,25 @@
 using System;
-using System.Runtime.InteropServices;
-using F4SharedMem.Win32;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using F4SharedMem.Headers;
+using F4SharedMem.Win32;
+
 namespace F4SharedMem
 {
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public sealed class Reader : IDisposable
     {
-        private string _primarySharedMemoryAreaFileName = "FalconSharedMemoryArea";
-        private IntPtr _hPrimarySharedMemoryAreaFileMappingObject = IntPtr.Zero;
-        private IntPtr _lpPrimarySharedMemoryAreaBaseAddress = IntPtr.Zero;
-        private string _secondarySharedMemoryFileName = "FalconSharedMemoryArea2";
-        private IntPtr _hSecondarySharedMemoryAreaFileMappingObject = IntPtr.Zero;
-        private IntPtr _lpSecondarySharedMemoryAreaBaseAddress = IntPtr.Zero;
-        private string _OsbSharedMemoryAreaFileName = "FalconSharedOsbMemoryArea";
+        private const string PrimarySharedMemoryAreaFileName = "FalconSharedMemoryArea";
+        private const string SecondarySharedMemoryFileName = "FalconSharedMemoryArea2";
+        private const string OsbSharedMemoryAreaFileName = "FalconSharedOsbMemoryArea";
+        private bool _disposed;
         private IntPtr _hOsbSharedMemoryAreaFileMappingObject = IntPtr.Zero;
+        private IntPtr _hPrimarySharedMemoryAreaFileMappingObject = IntPtr.Zero;
+        private IntPtr _hSecondarySharedMemoryAreaFileMappingObject = IntPtr.Zero;
         private IntPtr _lpOsbSharedMemoryAreaBaseAddress = IntPtr.Zero;
-        private bool _disposed = false;
-        
-        public Reader()
-        {
-        }
+        private IntPtr _lpPrimarySharedMemoryAreaBaseAddress = IntPtr.Zero;
+        private IntPtr _lpSecondarySharedMemoryAreaBaseAddress = IntPtr.Zero;
 
         public bool IsFalconRunning
         {
@@ -30,14 +28,7 @@ namespace F4SharedMem
                 try
                 {
                     ConnectToFalcon();
-                    if (_lpPrimarySharedMemoryAreaBaseAddress != IntPtr.Zero)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                       return false;
-                    }
+                    return _lpPrimarySharedMemoryAreaBaseAddress != IntPtr.Zero;
                 }
                 catch (Exception)
                 {
@@ -45,9 +36,13 @@ namespace F4SharedMem
                 }
             }
         }
-        
-        
-        
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         [ComVisible(false)]
         public byte[] GetRawOSBData()
         {
@@ -59,41 +54,34 @@ namespace F4SharedMem
             {
                 return null;
             }
-            List<byte> bytesRead = new List<byte>();
+            var bytesRead = new List<byte>();
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                long fileSizeBytes = GetMaxMemFileSize(_lpOsbSharedMemoryAreaBaseAddress);
-                if (fileSizeBytes > Marshal.SizeOf(typeof(Headers.OSBData))) fileSizeBytes = Marshal.SizeOf(typeof(Headers.OSBData));
-                for (int i = 0; i < fileSizeBytes; i++)
+                var fileSizeBytes = GetMaxMemFileSize(_lpOsbSharedMemoryAreaBaseAddress);
+                if (fileSizeBytes > Marshal.SizeOf(typeof (OSBData))) fileSizeBytes = Marshal.SizeOf(typeof (OSBData));
+                for (var i = 0; i < fileSizeBytes; i++)
                 {
                     try
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpOsbSharedMemoryAreaBaseAddress, i));
                     }
-                    catch 
+                    catch
                     {
                         break;
                     }
                 }
             }
-            byte[] toReturn = bytesRead.ToArray();
-            if (toReturn.Length == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return toReturn;
-            }
+            var toReturn = bytesRead.ToArray();
+            return toReturn.Length == 0 ? null : toReturn;
         }
-        
-        private long GetMaxMemFileSize(IntPtr pMemAreaBaseAddr)
+
+        private static long GetMaxMemFileSize(IntPtr pMemAreaBaseAddr)
         {
-            NativeMethods.MEMORY_BASIC_INFORMATION mbi = new NativeMethods.MEMORY_BASIC_INFORMATION();
+            var mbi = new NativeMethods.MEMORY_BASIC_INFORMATION();
             NativeMethods.VirtualQuery(ref pMemAreaBaseAddr, ref mbi, new IntPtr(Marshal.SizeOf(mbi)));
             return mbi.RegionSize.ToInt64();
         }
-        
+
         [ComVisible(false)]
         public byte[] GetRawFlightData2()
         {
@@ -105,32 +93,26 @@ namespace F4SharedMem
             {
                 return null;
             }
-            List<byte> bytesRead = new List<byte>();
+            var bytesRead = new List<byte>();
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                long fileSizeBytes = GetMaxMemFileSize(_lpSecondarySharedMemoryAreaBaseAddress);
-                if (fileSizeBytes > Marshal.SizeOf(typeof(Headers.FlightData2))) fileSizeBytes = Marshal.SizeOf(typeof(Headers.FlightData2));
-                for (int i = 0; i < fileSizeBytes; i++)
+                var fileSizeBytes = GetMaxMemFileSize(_lpSecondarySharedMemoryAreaBaseAddress);
+                if (fileSizeBytes > Marshal.SizeOf(typeof (FlightData2)))
+                    fileSizeBytes = Marshal.SizeOf(typeof (FlightData2));
+                for (var i = 0; i < fileSizeBytes; i++)
                 {
                     try
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpSecondarySharedMemoryAreaBaseAddress, i));
                     }
-                    catch 
+                    catch
                     {
                         break;
                     }
                 }
             }
-            byte[] toReturn = bytesRead.ToArray();
-            if (toReturn.Length == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return toReturn;
-            }
+            var toReturn = bytesRead.ToArray();
+            return toReturn.Length == 0 ? null : toReturn;
         }
 
         [ComVisible(false)]
@@ -144,73 +126,78 @@ namespace F4SharedMem
             {
                 return null;
             }
-            List<byte> bytesRead = new List<byte>();
+            var bytesRead = new List<byte>();
             if (!_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                long fileSizeBytes = GetMaxMemFileSize(_lpPrimarySharedMemoryAreaBaseAddress);
-                if (fileSizeBytes > Marshal.SizeOf(typeof(Headers.BMS4FlightData))) fileSizeBytes = Marshal.SizeOf(typeof(Headers.BMS4FlightData));
-                for (int i = 0; i < fileSizeBytes; i++)
+                var fileSizeBytes = GetMaxMemFileSize(_lpPrimarySharedMemoryAreaBaseAddress);
+                if (fileSizeBytes > Marshal.SizeOf(typeof (BMS4FlightData)))
+                    fileSizeBytes = Marshal.SizeOf(typeof (BMS4FlightData));
+                for (var i = 0; i < fileSizeBytes; i++)
                 {
                     try
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpPrimarySharedMemoryAreaBaseAddress, i));
                     }
-                    catch 
+                    catch
                     {
                         break;
                     }
                 }
             }
-            byte[] toReturn = bytesRead.ToArray();
-            if (toReturn.Length == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return toReturn;
-            }
+            var toReturn = bytesRead.ToArray();
+            return toReturn.Length == 0 ? null : toReturn;
         }
-        
+
         public FlightData GetCurrentData()
         {
-            Type dataType=typeof(Headers.BMS4FlightData);
+            var dataType = typeof (BMS4FlightData);
 
-            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals (IntPtr.Zero)) {
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
                 ConnectToFalcon();
             }
-            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals (IntPtr.Zero)) {
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
                 return null;
             }
-            object data = Convert.ChangeType(Marshal.PtrToStructure(_lpPrimarySharedMemoryAreaBaseAddress, dataType), dataType);
-            var len = Marshal.SizeOf(dataType);
-            FlightData toReturn=new FlightData((Headers.BMS4FlightData)data);
-                  
+            var data = Convert.ChangeType(Marshal.PtrToStructure(_lpPrimarySharedMemoryAreaBaseAddress, dataType),
+                dataType);
+            Marshal.SizeOf(dataType);
+            var toReturn = new FlightData((BMS4FlightData) data);
+
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof(Headers.FlightData2)));
+                data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof (FlightData2)));
                 toReturn.PopulateFromStruct(data);
             }
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
-                data = (Marshal.PtrToStructure(_lpOsbSharedMemoryAreaBaseAddress, typeof(Headers.OSBData)));
+                data = (Marshal.PtrToStructure(_lpOsbSharedMemoryAreaBaseAddress, typeof (OSBData)));
                 toReturn.PopulateFromStruct(data);
             }
-           
+
             return toReturn;
         }
-        
+
         private void ConnectToFalcon()
         {
-            Disconnect();
-            _hPrimarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false, _primarySharedMemoryAreaFileName);
-            _lpPrimarySharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hPrimarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
-            _hSecondarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false, _secondarySharedMemoryFileName);
-            _lpSecondarySharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hSecondarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
-            _hOsbSharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false, _OsbSharedMemoryAreaFileName);
-            _lpOsbSharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hOsbSharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
+            if (!_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero)) return;
+            _hPrimarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ,
+                false, PrimarySharedMemoryAreaFileName);
+            _lpPrimarySharedMemoryAreaBaseAddress =
+                NativeMethods.MapViewOfFile(_hPrimarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ,
+                    0, 0, IntPtr.Zero);
+            _hSecondarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(
+                NativeMethods.SECTION_MAP_READ, false, SecondarySharedMemoryFileName);
+            _lpSecondarySharedMemoryAreaBaseAddress =
+                NativeMethods.MapViewOfFile(_hSecondarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ,
+                    0, 0, IntPtr.Zero);
+            _hOsbSharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
+                OsbSharedMemoryAreaFileName);
+            _lpOsbSharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hOsbSharedMemoryAreaFileMappingObject,
+                NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
         }
-        
+
         private void Disconnect()
         {
             if (!_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
@@ -229,24 +216,21 @@ namespace F4SharedMem
                 NativeMethods.CloseHandle(_hOsbSharedMemoryAreaFileMappingObject);
             }
         }
-        
+
         internal void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    Disconnect();
-                }
-
-                _disposed = true;
+                Disconnect();
             }
+
+            _disposed = true;
         }
-        
-        public void Dispose()
+
+        ~Reader()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            Dispose(false);
         }
     }
 }

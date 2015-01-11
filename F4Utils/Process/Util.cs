@@ -35,10 +35,18 @@ namespace F4Utils.Process
             return toReturn;
         }
 
+        private static DateTime _lastFalconRunningCheck = DateTime.MinValue;
+        private static bool _falconWasRunningOnLastCheck = false;
         public static bool IsFalconRunning()
         {
-            var windowHandle = GetFalconWindowHandle();
-            return (windowHandle != IntPtr.Zero);
+            if (DateTime.Now.Subtract(_lastFalconRunningCheck).TotalMilliseconds > 500)
+            {
+
+                var windowHandle = GetFalconWindowHandle();
+                _falconWasRunningOnLastCheck = (windowHandle != IntPtr.Zero);
+                _lastFalconRunningCheck = DateTime.Now;
+            }
+            return _falconWasRunningOnLastCheck;
         }
 
         public static string GetFalconExePath()

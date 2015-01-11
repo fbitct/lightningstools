@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using Common.SimSupport;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
@@ -83,8 +82,6 @@ namespace MFDExtractor
                         Render(extractorState.NightMode);
                     }
                     EndSignal.Set();
-                    Thread.Sleep(0);
-                    Application.DoEvents();
                 }
             }
             catch (ThreadAbortException) { }
@@ -101,12 +98,5 @@ namespace MFDExtractor
             if (toWait < 5) toWait = 5;
             Thread.Sleep(toWait);
         }
-        private void RecoverInstrumentForm(Screen screen)
-        {
-            Form.StretchToFill = false;
-            Form.Location = screen.Bounds.Location;
-            Form.BringToFront();
-        }
-
     }
 }
