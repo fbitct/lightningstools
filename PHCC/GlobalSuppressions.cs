@@ -185,3 +185,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Doa", Scope = "member", Target = "Phcc.Device.#DoaSendRaw(System.Byte,System.Byte,System.Byte)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Scope = "member", Target = "Phcc.Device.#_serialPort_DataReceived(System.Object,System.IO.Ports.SerialDataReceivedEventArgs)")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Scope = "member", Target = "Phcc.Device.#CharTo7Seg(System.Char)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Scope = "member", Target = "Phcc.CharTo7SegConverter.#ConvertCharTo7Seg(System.Char)")]
