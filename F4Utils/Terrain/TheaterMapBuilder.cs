@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
-using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {
@@ -18,8 +17,6 @@ namespace F4Utils.Terrain
             var bmp = new Bitmap((int)mapInfo.LODMapWidths[lodInfo.LoDLevel] * postsAcross,
                                  (int)mapInfo.LODMapHeights[lodInfo.LoDLevel] * postsAcross,
                                  PixelFormat.Format8bppIndexed);
-            TheaterDotOxFileRecord block;
-            TheaterDotLxFileRecord lRecord;
             var palette = bmp.Palette;
             for (var i = 0; i < 256; i++)
             {
@@ -38,7 +35,7 @@ namespace F4Utils.Terrain
                 for (var blockCol = 0; blockCol < (mapInfo.LODMapWidths[lodInfo.LoDLevel]); blockCol++)
                 {
                     var oIndex = (int)(blockRow * mapInfo.LODMapHeights[lodInfo.LoDLevel]) + blockCol;
-                    block = lodInfo.O[oIndex];
+                    var block = lodInfo.O[oIndex];
                     for (var postRow = 0; postRow < postsAcross; postRow++)
                     {
                         for (var postCol = 0; postCol < postsAcross; postCol++)
@@ -47,7 +44,7 @@ namespace F4Utils.Terrain
                                 (int)
                                 (((block.LRecordStartingOffset / (lodInfo.LRecordSizeBytes * postsAcross * postsAcross)) *
                                   postsAcross * postsAcross) + ((postRow * postsAcross) + postCol));
-                            lRecord = lodInfo.L[lIndex];
+                            var lRecord = lodInfo.L[lIndex];
                             var xCoord = (blockCol * postsAcross) + postCol;
                             var yCoord = height - 1 - (blockRow * postsAcross) - postRow;
                             *((byte*)startPtr + (yCoord * width) + xCoord) = lRecord.Pallete;

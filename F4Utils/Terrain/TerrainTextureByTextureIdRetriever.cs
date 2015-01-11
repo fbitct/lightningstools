@@ -23,7 +23,6 @@ namespace F4Utils.Terrain
             if (lod <= terrainDB.TheaterDotMap.LastNearTiledLOD)
             {
                 var textureBinInfo = terrainDB.TextureDotBin;
-                var textureBaseFolderPath = terrainDB.CurrentTheaterTextureBaseFolderPath;
                 textureId -= lodInfo.minTexOffset;
                 if (terrainDB.NearTileTextures.ContainsKey(textureId)) return terrainDB.NearTileTextures[textureId];
 
