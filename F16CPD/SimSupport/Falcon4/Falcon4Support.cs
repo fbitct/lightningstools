@@ -28,7 +28,6 @@ namespace F16CPD.SimSupport.Falcon4
         #region Instance variables
 
         private const TacanBand BackupTacanBand = TacanBand.X;
-        private const bool CpdPowerOn = true;
         private readonly IClientSideInboundMessageProcessor _clientSideInboundMessageProcessor;
         private readonly IDEDAlowReader _dedAlowReader;
 
@@ -50,7 +49,7 @@ namespace F16CPD.SimSupport.Falcon4
         private KeyWithModifiers _pendingComboKeys;
         private Queue<bool> _pendingMorseCodeUnits = new Queue<bool>();
         private Reader _sharedMemReader;
-        private TacanChannelSource TacanChannelSource = F4Utils.SimSupport.TacanChannelSource.Ufc;
+        private TacanChannelSource TacanChannelSource = TacanChannelSource.Ufc;
         private TerrainDB _terrainDB;
 
         #endregion
@@ -64,7 +63,6 @@ namespace F16CPD.SimSupport.Falcon4
             _morseCodeGenerator.UnitTimeTick += MorseCodeUnitTimeTick;
             _dedAlowReader = new DEDAlowReader();
             _inputControlEventHandler = new InputControlEventHandler(Manager);
-            new FalconCallbackSender(Manager);
 
             _clientSideInboundMessageProcessor = new ClientSideInboundMessageProcessor();
             _serverSideInboundMessageProcessor = new ServerSideInboundMessageProcessor(Manager);
@@ -612,7 +610,7 @@ namespace F16CPD.SimSupport.Falcon4
             float latMinutes;
             int longWholeDegrees;
             float longMinutes;
-            _latLongCalculator.CalculateLatLong(_terrainDB, fromFalcon.x, fromFalcon.y, out latWholeDegrees,
+            _latLongCalculator.CalculateLatLong(_terrainDB.TheaterDotMap.baseLat, _terrainDB.TheaterDotMap.baseLong, fromFalcon.x, fromFalcon.y, out latWholeDegrees,
                 out latMinutes,
                 out longWholeDegrees, out longMinutes);
             flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes/60.0f);

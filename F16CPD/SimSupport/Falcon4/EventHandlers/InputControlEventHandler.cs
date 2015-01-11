@@ -1,10 +1,4 @@
 ﻿using F16CPD.Mfd.Controls;
-using F16CPD.SimSupport.Falcon4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F16CPD.SimSupport.Falcon4.EventHandlers
 {
@@ -14,21 +8,19 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
     }
     class InputControlEventHandler:IInputControlEventHandler
     {
-        private F16CpdMfdManager _mfdManager;
-        private IFalconCallbackSender _falconCallbackSender;
-        private IOptionSelectButtonPressHandler _optionSelectButtonPressHandler;
-        private ISetHsiModeTcnEventHandler _setHsiModeTcnEventHandler;
-        private ISetHsiModePlsNavEventHandler _setHsiModePlsNavEventHandler;
-        private ISetHsiModePlsTcnEventHandler _setHsiModePlsTcnEventHandler;
-        private ISetHsiModeNavEventHandler _setHsiModeNavEventHandler;
-        private ISetFuelSelectNormEventHandler _setFuelSelectNormEventHandler;
-        private ISetFuelSelectTestEventHandler _setFuelSelectTestEventHandler;
-        private ISetFuelSelectRsvrEventHandler _setFuelSelectRsvrEventHandler;
-        private ISetFuelSelectIntWingEventHandler _setFuelSelectIntWingEventHandler;
-        private ISetFuelSelectExtWingEventHandler _setFuelSelectExtWingEventHandler;
-        private ISetFuelSelectExtCtrEventHandler _setFuelSelectExtCtrEventHandler;
-        private ISetExtFuelSwitchTransNormEventHandler _setExtFuelSwitchTransNormEventHandler;
-        private ISetExtFuelSwitchTransWingFirstEventHandler _setExtFuelSwitchTransWingFirstEventHandler;
+        private readonly IOptionSelectButtonPressHandler _optionSelectButtonPressHandler;
+        private readonly ISetHsiModeTcnEventHandler _setHsiModeTcnEventHandler;
+        private readonly ISetHsiModePlsNavEventHandler _setHsiModePlsNavEventHandler;
+        private readonly ISetHsiModePlsTcnEventHandler _setHsiModePlsTcnEventHandler;
+        private readonly ISetHsiModeNavEventHandler _setHsiModeNavEventHandler;
+        private readonly ISetFuelSelectNormEventHandler _setFuelSelectNormEventHandler;
+        private readonly ISetFuelSelectTestEventHandler _setFuelSelectTestEventHandler;
+        private readonly ISetFuelSelectRsvrEventHandler _setFuelSelectRsvrEventHandler;
+        private readonly ISetFuelSelectIntWingEventHandler _setFuelSelectIntWingEventHandler;
+        private readonly ISetFuelSelectExtWingEventHandler _setFuelSelectExtWingEventHandler;
+        private readonly ISetFuelSelectExtCtrEventHandler _setFuelSelectExtCtrEventHandler;
+        private readonly ISetExtFuelSwitchTransNormEventHandler _setExtFuelSwitchTransNormEventHandler;
+        private readonly ISetExtFuelSwitchTransWingFirstEventHandler _setExtFuelSwitchTransWingFirstEventHandler;
         public InputControlEventHandler(
             F16CpdMfdManager mfdManager,
             IFalconCallbackSender falconCallbackSender = null,
@@ -47,21 +39,19 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
             ISetExtFuelSwitchTransWingFirstEventHandler setExtFuelSwitchTransWingFirstEventHandler=null
             )
         {
-            _mfdManager = mfdManager;
-            _falconCallbackSender = falconCallbackSender ?? new FalconCallbackSender (_mfdManager);
-            _optionSelectButtonPressHandler = optionSelectButtonPressHandler ?? new OptionSelectButtonPressHandler(_mfdManager, _falconCallbackSender);
-            _setHsiModeTcnEventHandler = setHsiModeTcnEventHandler ?? new SetHsiModeTcnEventHandler(_falconCallbackSender);
-            _setHsiModePlsNavEventHandler = setHsiModePlsNavEventHandler ?? new SetHsiModePlsNavEventHandler(_falconCallbackSender);
-            _setHsiModePlsTcnEventHandler = setHsiModePlsTcnEventHandler ?? new SetHsiModePlsTcnEventHandler(_falconCallbackSender);
-            _setHsiModeNavEventHandler = setHsiModeNavEventHandler ?? new SetHsiModeNavEventHandler(_falconCallbackSender);
-            _setFuelSelectNormEventHandler = setFuelSelectNormEventHandler ?? new SetFuelSelectNormEventHandler(_falconCallbackSender);
-            _setFuelSelectTestEventHandler = setFuelSelectTestEventHandler ?? new SetFuelSelectTestEventHandler(_falconCallbackSender);
-            _setFuelSelectRsvrEventHandler = setFuelSelectRsvrEventHandler ?? new SetFuelSelectRsvrEventHandler(_falconCallbackSender);
-            _setFuelSelectIntWingEventHandler = setFuelSelectIntWingEventHandler ?? new SetFuelSelectIntWingEventHandler(_falconCallbackSender);
-            _setFuelSelectExtWingEventHandler = setFuelSelectExtWingEventHandler ?? new SetFuelSelectExtWingEventHandler(_falconCallbackSender);
-            _setFuelSelectExtCtrEventHandler = setFuelSelectExtCtrEventHandler ?? new SetFuelSelectExtCtrEventHandler(_falconCallbackSender);
-            _setExtFuelSwitchTransNormEventHandler = setExtFuelSwitchTransNormEventHandler ?? new SetExtFuelSwitchTransNormEventHandler(_falconCallbackSender);
-            _setExtFuelSwitchTransWingFirstEventHandler = setExtFuelSwitchTransWingFirstEventHandler ?? new SetExtFuelSwitchTransWingFirstEventHandler(_falconCallbackSender);
+            _optionSelectButtonPressHandler = optionSelectButtonPressHandler ?? new OptionSelectButtonPressHandler(mfdManager, falconCallbackSender);
+            _setHsiModeTcnEventHandler = setHsiModeTcnEventHandler ?? new SetHsiModeTcnEventHandler(falconCallbackSender);
+            _setHsiModePlsNavEventHandler = setHsiModePlsNavEventHandler ?? new SetHsiModePlsNavEventHandler(falconCallbackSender);
+            _setHsiModePlsTcnEventHandler = setHsiModePlsTcnEventHandler ?? new SetHsiModePlsTcnEventHandler(falconCallbackSender);
+            _setHsiModeNavEventHandler = setHsiModeNavEventHandler ?? new SetHsiModeNavEventHandler(falconCallbackSender);
+            _setFuelSelectNormEventHandler = setFuelSelectNormEventHandler ?? new SetFuelSelectNormEventHandler(falconCallbackSender);
+            _setFuelSelectTestEventHandler = setFuelSelectTestEventHandler ?? new SetFuelSelectTestEventHandler(falconCallbackSender);
+            _setFuelSelectRsvrEventHandler = setFuelSelectRsvrEventHandler ?? new SetFuelSelectRsvrEventHandler(falconCallbackSender);
+            _setFuelSelectIntWingEventHandler = setFuelSelectIntWingEventHandler ?? new SetFuelSelectIntWingEventHandler(falconCallbackSender);
+            _setFuelSelectExtWingEventHandler = setFuelSelectExtWingEventHandler ?? new SetFuelSelectExtWingEventHandler(falconCallbackSender);
+            _setFuelSelectExtCtrEventHandler = setFuelSelectExtCtrEventHandler ?? new SetFuelSelectExtCtrEventHandler(falconCallbackSender);
+            _setExtFuelSwitchTransNormEventHandler = setExtFuelSwitchTransNormEventHandler ?? new SetExtFuelSwitchTransNormEventHandler(falconCallbackSender);
+            _setExtFuelSwitchTransWingFirstEventHandler = setExtFuelSwitchTransWingFirstEventHandler ?? new SetExtFuelSwitchTransWingFirstEventHandler(falconCallbackSender);
         }
         public void HandleInputControlEvent(CpdInputControls eventSource, MfdInputControl control)
         {

@@ -1,11 +1,6 @@
 ﻿using F16CPD.Networking;
 using F16CPD.Properties;
-using F16CPD.SimSupport.Falcon4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace F16CPD.SimSupport.Falcon4.EventHandlers
 {
@@ -15,12 +10,12 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
     }
     class IncreaseAlowEventHandler : IIncreaseAlowEventHandler
     {
-        private F16CpdMfdManager _mfdManager;
-        private IFalconCallbackSender _falconCallbackSender;
-        public IncreaseAlowEventHandler(F16CpdMfdManager mfdManager, IFalconCallbackSender falconCallbackSender = null)
+        private readonly F16CpdMfdManager _mfdManager;
+        private readonly IFalconCallbackSender _falconCallbackSender;
+        public IncreaseAlowEventHandler(F16CpdMfdManager mfdManager, IFalconCallbackSender falconCallbackSender)
         {
             _mfdManager = mfdManager;
-            _falconCallbackSender = falconCallbackSender ?? new FalconCallbackSender(_mfdManager);
+            _falconCallbackSender = falconCallbackSender;
         }
         public void IncreaseAlow()
         {

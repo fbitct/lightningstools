@@ -1,11 +1,4 @@
-﻿using F4SharedMem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace F16CPD.SimSupport.Falcon4.EventHandlers
+﻿namespace F16CPD.SimSupport.Falcon4.EventHandlers
 {
     internal interface ISetFuelSelectIntWingEventHandler
     {
@@ -13,7 +6,7 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
     }
     class SetFuelSelectIntWingEventHandler : ISetFuelSelectIntWingEventHandler
     {
-        private IFalconCallbackSender _falconCallbackSender;
+        private readonly IFalconCallbackSender _falconCallbackSender;
         public SetFuelSelectIntWingEventHandler(IFalconCallbackSender falconCallbackSender)
         {
             _falconCallbackSender = falconCallbackSender;

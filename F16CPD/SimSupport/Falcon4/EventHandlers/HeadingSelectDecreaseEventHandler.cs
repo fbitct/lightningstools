@@ -1,9 +1,5 @@
 ﻿using F4KeyFile;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace F16CPD.SimSupport.Falcon4.EventHandlers
 {
@@ -13,7 +9,7 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
     }
     class HeadingSelectDecreaseEventHandler : IHeadingSelectDecreaseEventHandler
     {
-        private IFalconCallbackSender _falconCallbackSender;
+        private readonly IFalconCallbackSender _falconCallbackSender;
         public HeadingSelectDecreaseEventHandler(IFalconCallbackSender falconCallbackSender)
         {
             _falconCallbackSender = falconCallbackSender;

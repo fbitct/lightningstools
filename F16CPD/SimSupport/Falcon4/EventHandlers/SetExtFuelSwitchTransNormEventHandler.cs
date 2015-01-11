@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace F16CPD.SimSupport.Falcon4.EventHandlers
 {
     internal interface ISetExtFuelSwitchTransNormEventHandler
@@ -12,7 +7,7 @@ namespace F16CPD.SimSupport.Falcon4.EventHandlers
     }
     class SetExtFuelSwitchTransNormEventHandler : ISetExtFuelSwitchTransNormEventHandler
     {
-        private IFalconCallbackSender _falconCallbackSender;
+        private readonly IFalconCallbackSender _falconCallbackSender;
         public SetExtFuelSwitchTransNormEventHandler(IFalconCallbackSender falconCallbackSender)
         {
             _falconCallbackSender = falconCallbackSender;

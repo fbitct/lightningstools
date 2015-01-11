@@ -30,16 +30,15 @@ namespace F16CPD.SimSupport.Falcon4
             IIncreaseAlowEventHandler increaseAlowEventHandler=null,
             IDecreaseAlowEventHandler decreaseAlowEventHandler=null)
         {
-            F16CpdMfdManager mfdManager1 = mfdManager;
-            IFalconCallbackSender falconCallbackSender1 = falconCallbackSender ?? new FalconCallbackSender(mfdManager1);
+            IFalconCallbackSender falconCallbackSender1 = falconCallbackSender ?? new FalconCallbackSender(mfdManager);
             _courseSelectIncreaseEventHandler=courseSelectIncreaseEventHandler ?? new CourseSelectIncreaseEventHandler(falconCallbackSender1);
             _courseSelectDecreaseEventHandler = courseSelectDecreaseEventHandler ?? new CourseSelectDecreaseEventHandler(falconCallbackSender1);
             _headingSelectIncreaseEventHandler = headingSelectIncreaseEventHandler ?? new HeadingSelectIncreaseEventHandler(falconCallbackSender1);
             _headingSelectDecreaseEventHandler = headingSelectDecreaseEventHandler ?? new HeadingSelectDecreaseEventHandler(falconCallbackSender1);
-            _increaseBaroEventHandler = increaseBaroEventHandler ?? new IncreaseBaroEventHandler(mfdManager1, falconCallbackSender1);
-            _decreaseBaroEventHandler = decreaseBaroEventHandler ?? new DecreaseBaroEventHandler(mfdManager1, falconCallbackSender1);
-            _increaseAlowEventHandler = increaseAlowEventHandler ?? new IncreaseAlowEventHandler(mfdManager1, falconCallbackSender1);
-            _decreaseAlowEventHandler = decreaseAlowEventHandler ?? new DecreaseAlowEventHandler(mfdManager1, falconCallbackSender1);
+            _increaseBaroEventHandler = increaseBaroEventHandler ?? new IncreaseBaroEventHandler(mfdManager, falconCallbackSender1);
+            _decreaseBaroEventHandler = decreaseBaroEventHandler ?? new DecreaseBaroEventHandler(mfdManager, falconCallbackSender1);
+            _increaseAlowEventHandler = increaseAlowEventHandler ?? new IncreaseAlowEventHandler(mfdManager, falconCallbackSender1);
+            _decreaseAlowEventHandler = decreaseAlowEventHandler ?? new DecreaseAlowEventHandler(mfdManager, falconCallbackSender1);
         }
         public void HandleOptionSelectButtonPress(OptionSelectButton button)
         {
