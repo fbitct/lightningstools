@@ -4,13 +4,6 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
 
-// Requires unmanaged code
-
-[assembly: SecurityPermission(SecurityAction.RequestMinimum, UnmanagedCode = true)]
-// Requires ability to create any window type
-
-[assembly: UIPermissionAttribute(SecurityAction.RequestMinimum, Window = UIPermissionWindow.AllWindows)]
-
 namespace Common.UI.UserControls
 {
     /// <summary>

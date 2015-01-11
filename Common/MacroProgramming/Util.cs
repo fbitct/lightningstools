@@ -1,4 +1,5 @@
 using System.Threading;
+#pragma warning disable 618
 
 namespace Common.MacroProgramming
 {
