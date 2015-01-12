@@ -68,11 +68,12 @@ namespace MFDExtractor.Renderer
 	    {
 	        try
 	        {
-                var mfdImage = InstrumentState.SourceImage;
-                if (mfdImage.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
+	            var mfdImage = InstrumentState.SourceImage;
+                if (mfdImage !=null  && mfdImage.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
                 {
-                    destinationGraphics.DrawImage(mfdImage, destinationRectangle, InstrumentState.SourceRectangle, GraphicsUnit.Pixel);
-                }
+	                destinationGraphics.DrawImage(mfdImage, destinationRectangle, InstrumentState.SourceRectangle,
+	                    GraphicsUnit.Pixel);
+	            }
 	        }
 	        catch (AccessViolationException){}
 	        catch (InvalidOperationException){}

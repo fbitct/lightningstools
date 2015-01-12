@@ -31,6 +31,7 @@ namespace MFDExtractor
         {
             _log = log ?? LogManager.GetLogger(GetType());
         }
+
         public void Render(
             IInstrumentRenderer renderer, 
             InstrumentForm targetForm, 
@@ -39,15 +40,20 @@ namespace MFDExtractor
             bool highlightBorder,
             bool nightVisionMode)
         {
-            Bitmap renderSurface = null;
             try
             {
-                renderSurface = ObtainRenderSurface(targetForm);
+                if (!targetForm.Visible)
+                {
+                    return;
+                }
+                var renderSurface = ObtainRenderSurface(targetForm);
+                
                 using (var destinationGraphics = Graphics.FromImage(renderSurface))
                 {
                     try
                     {
-                        renderer.Render(destinationGraphics, new Rectangle(0, 0, renderSurface.Width, renderSurface.Height));
+                        renderer.Render(destinationGraphics,
+                            new Rectangle(0, 0, renderSurface.Width, renderSurface.Height));
                         targetForm.LastRenderedOn = DateTime.Now;
                         if (highlightBorder)
                         {
@@ -145,7 +151,7 @@ namespace MFDExtractor
 
         private Bitmap ObtainRenderSurface(InstrumentForm targetForm)
         {
-            if (!_renderSurfaces.ContainsKey(targetForm) || _renderSurfaces[targetForm].Width != targetForm.Width || _renderSurfaces[targetForm].Height != targetForm.Height)
+            if (!_renderSurfaces.ContainsKey(targetForm) || _renderSurfaces[targetForm].Width != targetForm.ClientRectangle.Width || _renderSurfaces[targetForm].Height != targetForm.ClientRectangle.Height)
             {
                 _renderSurfaces[targetForm] =
                        (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")

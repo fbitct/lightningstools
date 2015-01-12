@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -32,6 +31,10 @@ namespace MFDExtractor.UI
     /// </summary>
     public partial class frmOptions : Form
     {
+        public frmOptions()
+        {
+            InitializeComponent();
+        }
         private static readonly ILog _log = LogManager.GetLogger(typeof (frmOptions));
 
         /// <summary>
@@ -46,14 +49,6 @@ namespace MFDExtractor.UI
         /// </summary>
         private bool _extractorRunningStateOnFormOpen;
         private bool _formLoading = true;
-
-        /// <summary>
-        ///     Default constructor for the Options Form
-        /// </summary>
-        public frmOptions()
-        {
-            InitializeComponent();
-        }
 
 
         /// <summary>
@@ -668,8 +663,8 @@ namespace MFDExtractor.UI
                         {
                             _extractor.Stop(); //stop the Extractor if it's currently running
                         }
-                        _extractor.LoadSettings(); //tell the Extractor to reload its settings (will use the in-
-                    }
+                    _extractor.LoadSettings(); //tell the Extractor to reload its settings (will use the in-
+                }
                 }
                 else
                 {

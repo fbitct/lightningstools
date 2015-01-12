@@ -25,8 +25,6 @@ namespace MFDExtractor
 {
 	public sealed class Extractor : IDisposable
     {
-        #region Instance Variables
-
         private static readonly ILog Log = LogManager.GetLogger(typeof (Extractor));
         private static Extractor _extractor;
         private bool _disposed;
@@ -35,20 +33,10 @@ namespace MFDExtractor
 		private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
         private readonly IRendererSetInitializer _rendererSetInitializer;
         private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
-        #region Output Window Coordinates
-
         private IFlightDataUpdater _flightDataUpdater;
-
-        #endregion
-
-        #region Falcon 4 Sharedmem Readers & status flags
-
         private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
         private ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private TerrainDB _terrainDB;
-        #endregion
-
-       
 
         #region Network Configuration
 
@@ -97,9 +85,8 @@ namespace MFDExtractor
 		private readonly IThreeDeeCaptureCoordinateUpdater _threeDeeCaptureCoordinateUpdater;
 	    private  IFlightDataRetriever _flightDataRetriever;
 		private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
-		#endregion
 
-        #endregion
+	    #endregion
 
 
         private Extractor(
@@ -144,9 +131,11 @@ namespace MFDExtractor
         {
             foreach (InstrumentType instrumentType in Enum.GetValues(typeof (InstrumentType)))
             {
-                var instrument = _instrumentFactory.Create(instrumentType);
-                _instruments[instrumentType] = instrument;
-                instrument.Start(State);
+                if (!_instruments.ContainsKey(instrumentType))
+                {
+                    var instrument = _instrumentFactory.Create(instrumentType);
+                    _instruments[instrumentType] = instrument;
+                }
             }
         }
         
@@ -179,21 +168,14 @@ namespace MFDExtractor
 	    public void Stop()
         {
             OnStopping();
+	        Settings.Default.Save();
             State.KeepRunning = false;
             if (Mediator != null)
             {
                 Mediator.PhysicalControlStateChanged -= _mediatorEventHandler.HandleStateChange;
             }
 
-            var threadsToKill = new[]
-                {
-                    _captureOrchestrationThread,
-                    _simStatusMonitorThread,
-                    _keyboardWatcherThread
-                };
-            WaitForThreadEndThenAbort(ref threadsToKill, new TimeSpan(0, 0, 1));
-
-            CloseOutputWindowForms();
+            HideOutputWindowForms();
             if (State.NetworkMode == NetworkMode.Server)
             {
                 TearDownImageServer();
@@ -202,24 +184,16 @@ namespace MFDExtractor
             State.Running = false;
             OnStopped();
         }
-        private void CloseOutputWindowForms()
-        {       
-            foreach (var instrument in _instruments)
-            {
-                CloseAndDisposeForm(instrument.Value.Form);
-            }
-        }
-        private void CloseAndDisposeForm(Form form)
-        {
-            if (form == null) return;
-            try
-            {
-                form.Close();
-                form.Dispose();
-            }
-            catch {}
-        }
-        
+
+	    private void HideOutputWindowForms()
+	    {
+	        if (_instruments == null) return;
+	        foreach (var instrument in _instruments.Where(instrument => instrument.Value != null && instrument.Value.Form != null))
+	        {
+	            instrument.Value.Form.Hide();
+	        }
+	    }
+
 	    private void OnStopped()
 	    {
 	        if (Stopped != null)
@@ -382,7 +356,6 @@ namespace MFDExtractor
         }
 
 
-        private DateTime _whenLastSettingsSaved = DateTime.MinValue;
         private void CaptureOrchestrationThreadWork()
         {
             try
@@ -393,14 +366,6 @@ namespace MFDExtractor
                     var thisLoopStartTime = DateTime.Now;
 
                     Application.DoEvents();
-                    if (State.RenderCycleNum < 10000)
-                    {
-                        State.RenderCycleNum++;
-                    }
-                    else
-                    {
-                        State.RenderCycleNum = 0;
-                    }
 
                     ProcessNetworkMessages();
                     if (_terrainDB == null)
@@ -421,26 +386,16 @@ namespace MFDExtractor
                         SetFlightData(flightDataToSet);
                         _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
                     }
-
-                   var toWait= SignalInstrumentRenderThreadsToStart();
-
+                    Application.DoEvents();
                     var thisLoopFinishTime = DateTime.Now;
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
                     var millisToSleep = Settings.Default.PollingDelay - ((int)timeElapsed.TotalMilliseconds);
                     if (millisToSleep < 5) millisToSleep = 5;
-                    Common.Threading.Util.WaitAllHandlesInListAndClearList(toWait,millisToSleep);
-                    Application.DoEvents();
                     if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.TestMode)
                     {
-                        Application.DoEvents();
-                        Thread.Sleep(5);
-                            //sleep an additional half-second or so here if we're not a client and there's no sim running and we're not in test mode
+                        millisToSleep += 50;
                     }
-                    else if (State.TestMode)
-                    {
-                        Application.DoEvents();
-                        Thread.Sleep(50);
-                    }
+                    Thread.Sleep((millisToSleep));
 
                 }
                 Debug.WriteLine("CaptureThreadWork has exited.");
@@ -454,77 +409,7 @@ namespace MFDExtractor
             Settings.Default.Save();
         }
 
-		private List<WaitHandle> SignalInstrumentRenderThreadsToStart()
-		{
-            var toWait = new List<WaitHandle>();
-			try
-			{
-                _instruments[InstrumentType.HUD].Signal(toWait, State);
-                _instruments[InstrumentType.LMFD].Signal(toWait, State);
-                _instruments[InstrumentType.RMFD].Signal(toWait, State);
-                _instruments[InstrumentType.MFD3].Signal(toWait, State);
-                _instruments[InstrumentType.MFD4].Signal(toWait, State);
-
-
-
-				_instruments[InstrumentType.RWR].Signal(toWait, State);
-				_instruments[InstrumentType.ADI].Signal(toWait, State);
-				_instruments[InstrumentType.ISIS].Signal(toWait, State);
-				_instruments[InstrumentType.HSI].Signal(toWait, State);
-				_instruments[InstrumentType.EHSI].Signal(toWait, State);
-				_instruments[InstrumentType.Altimeter].Signal(toWait, State);
-				_instruments[InstrumentType.ASI].Signal(toWait, State);
-				_instruments[InstrumentType.BackupADI].Signal(toWait, State);
-				_instruments[InstrumentType.VVI].Signal(toWait, State);
-				_instruments[InstrumentType.AOAIndicator].Signal(toWait, State);
-				_instruments[InstrumentType.Compass].Signal(toWait, State);
-				_instruments[InstrumentType.Accelerometer].Signal(toWait, State);
-
-				_instruments[InstrumentType.FuelFlow].Signal(toWait, State);
-				_instruments[InstrumentType.FuelQuantity].Signal(toWait, State);
-				_instruments[InstrumentType.EPUFuel].Signal(toWait, State);
-				_instruments[InstrumentType.AOAIndexer].Signal(toWait, State);
-				_instruments[InstrumentType.NWSIndexer].Signal(toWait, State);
-
-				_instruments[InstrumentType.FTIT1].Signal(toWait, State);
-				_instruments[InstrumentType.NOZ1].Signal(toWait, State);
-				_instruments[InstrumentType.OIL1].Signal(toWait, State);
-				_instruments[InstrumentType.RPM1].Signal(toWait, State);
-
-				_instruments[InstrumentType.FTIT2].Signal(toWait, State);
-				_instruments[InstrumentType.NOZ2].Signal(toWait, State);
-				_instruments[InstrumentType.OIL2].Signal(toWait, State);
-				_instruments[InstrumentType.RPM2].Signal(toWait, State);
-
-				_instruments[InstrumentType.HYDA].Signal(toWait, State);
-				_instruments[InstrumentType.HYDB].Signal(toWait, State);
-				_instruments[InstrumentType.CabinPress].Signal(toWait, State);
-				_instruments[InstrumentType.RollTrim].Signal(toWait, State);
-				_instruments[InstrumentType.PitchTrim].Signal(toWait, State);
-
-				_instruments[InstrumentType.DED].Signal(toWait, State);
-				_instruments[InstrumentType.PFL].Signal(toWait, State);
-
-				_instruments[InstrumentType.CautionPanel].Signal(toWait, State);
-				_instruments[InstrumentType.CMDS].Signal(toWait, State);
-
-				_instruments[InstrumentType.GearLights].Signal(toWait, State);
-				_instruments[InstrumentType.Speedbrake].Signal(toWait, State);
-			}
-			catch (ThreadInterruptedException)
-			{
-			}
-			catch (ThreadAbortException)
-			{
-			}
-			catch (Exception e)
-			{
-				Log.Error(e.Message, e);
-			}
-            return toWait;
-		}
-        
-		private void ProcessNetworkMessages()
+	    private void ProcessNetworkMessages()
 	    {
 	        switch (State.NetworkMode)
 	        {
@@ -636,66 +521,6 @@ namespace MFDExtractor
             _texSmReader = null;
 
         }
-
-        #region Thread Teardown
-
-        private void WaitForThreadEndThenAbort(ref Thread[] threads, TimeSpan timeout)
-        {
-            if (threads == null) return;
-            var startTime = DateTime.Now;
-
-            for (var i = 0; i < threads.Length; i++)
-            {
-                var t = threads[i];
-
-                if (t == null)
-                {
-                    continue;
-                }
-                try { t.Interrupt(); } catch {}
-            }
-
-            for (var i = 0; i < threads.Length; i++)
-            {
-                var thread = threads[i];
-
-                if (thread == null)
-                {
-                    continue;
-                }
-
-                var now = DateTime.Now;
-                var elapsed = now.Subtract(startTime);
-                var timeRemaining = elapsed.Subtract(timeout);
-                if (timeRemaining.TotalMilliseconds <= 0) timeRemaining = new TimeSpan(0, 0, 0, 0, 1);
-
-                try
-                {
-                    thread.Join(timeRemaining);
-                    threads[i] = null;
-                }
-                catch{}
-            }
-
-            for (var i = 0; i < threads.Length; i++)
-            {
-                var thread = threads[i];
-
-                if (thread == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    Common.Threading.Util.AbortThread(ref thread);
-                }
-                catch {}
-            }
-        }
-
-        #endregion
-
         #region Thread Setup
 
         private void SetupThreads()
@@ -703,9 +528,7 @@ namespace MFDExtractor
             SetupSimStatusMonitorThread();
             SetupCaptureOrchestrationThread();
             SetupKeyboardWatcherThread();
-
             SetupInstruments();
-
         }
 
         private void SetupKeyboardWatcherThread()

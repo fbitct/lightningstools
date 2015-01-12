@@ -51,7 +51,7 @@
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -189,8 +189,6 @@
     <Compile Include="RendererFactories\VVIRendererFactory.cs" />
     <Compile Include="RendererSetInitializer.cs" />
     <Compile Include="Renderer\MfdRenderer.cs" />
-    <Compile Include="RenderThreadSignaller.cs" />
-    <Compile Include="RenderThreadFactory.cs" />
     <Compile Include="SettingReader.cs" />
     <Compile Include="SettingsWriter.cs" />
     <Compile Include="SharedmemReaderFactory.cs" />

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Common.SimSupport;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
 using System.Threading;
+using log4net;
 
 namespace MFDExtractor
 {
@@ -11,59 +11,47 @@ namespace MFDExtractor
     {
         InstrumentForm Form { get;}
         IInstrumentRenderer Renderer { get; }
-        AutoResetEvent StartSignal { get; }
-        AutoResetEvent EndSignal { get; }
         void Start(ExtractorState extractorState );
-        void Signal(IList<WaitHandle> waitHandles, ExtractorState extractorState);
     }
 
     class Instrument : IInstrument
     {
         private readonly IInstrumentRenderHelper _instrumentRenderHelper;
-        private readonly IRenderThreadFactory _renderThreadFactory;
-        private readonly IRenderThreadSignaller _renderThreadSignaller;
         private readonly IInstrumentStateSnapshotCache _instrumentStateSnapshotCache;
         private Thread _renderThread;
+        private readonly ILog _log = LogManager.GetLogger(typeof (Instrument));
+        private ExtractorState _extractorState;
+        private int _renderCycle;
         internal Instrument(
             IInstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
-            IInstrumentRenderHelper instrumentRenderHelper = null, 
-            IRenderThreadFactory renderThreadFactory = null, 
-            IRenderThreadSignaller renderThreadSignaller = null
+            IInstrumentRenderHelper instrumentRenderHelper = null
             )
         {
             _instrumentStateSnapshotCache = instrumentStateSnapshotCache ?? new InstrumentStateSnapshotCache();
             _instrumentRenderHelper = instrumentRenderHelper ?? new InstrumentRenderHelper();
-            _renderThreadFactory = renderThreadFactory ?? new RenderThreadFactory();
-            _renderThreadSignaller = renderThreadSignaller ?? new RenderThreadSignaller();
-
         }
         public InstrumentType Type { get; internal set; }
         public InstrumentForm Form { get; internal set; }
         public IInstrumentRenderer Renderer { get; internal set; }
-        public AutoResetEvent StartSignal { get; internal set; }
-        public AutoResetEvent EndSignal { get; internal set; }
         public void Start(ExtractorState extractorState )
         {
-            _renderThreadFactory.CreateOrRecycle(ref _renderThread, 
-                Settings.Default.ThreadPriority, null,
-                () => Form !=null && Form.Settings !=null && Form.Settings.Enabled, 
-                ()=>ThreadWork(extractorState));
-            if (_renderThread != null)
+            _extractorState = extractorState;
+            if (Form != null && !Form.Visible)
+            {
+                Form.Show();
+            }
+            if (Form != null && (_renderThread == null || (_renderThread.ThreadState & ThreadState.Stopped) == ThreadState.Stopped))
+            {
+                Common.Util.DisposeObject(_renderThread);
+                _renderThread = new Thread(()=>ThreadWork(extractorState)) { IsBackground = true, Name = Renderer.GetType().FullName, Priority= Settings.Default.ThreadPriority };
+            }
+
+            if (_renderThread != null && (_renderThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
             {
                 _renderThread.Start();
             }
         }
 
-        public void Signal(IList<WaitHandle> waitHandles, ExtractorState extractorState  )
-        {
-            _renderThreadSignaller.Signal(waitHandles, extractorState, this,IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted());
-        }
-
-        private bool IsInstrumentStateStaleOrChangedOrIsInstrumentWindowHighlighted()
-        {
-            var stateIsStale = _instrumentStateSnapshotCache.CaptureInstrumentStateSnapshotAndCheckIfStale(Renderer, Form);
-            return stateIsStale || HighlightingBorderShouldBeDisplayedOnTargetForm(Form);
-        }
 
         private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
         {
@@ -72,31 +60,61 @@ namespace MFDExtractor
 
         private void ThreadWork(ExtractorState extractorState)
         {
-            try
+            while (_extractorState.Running && _extractorState.KeepRunning)
             {
-                while (extractorState.KeepRunning)
+                var startTime = DateTime.Now;
+                _renderCycle++;
+                if (_renderCycle > 999) _renderCycle = 0;
+                if (!ShouldRenderNow())
                 {
-                    StartSignal.WaitOne();
-                    if (Form != null && Form.Settings != null && Form.Settings.Enabled)
-                    {
-                        Render(extractorState.NightMode);
-                    }
-                    EndSignal.Set();
+                    continue;
                 }
+                try
+                {
+                    Render(extractorState.NightMode);
+                    if (Form != null)
+                    {
+                        Form.RenderImmediately = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e.Message, e);
+                }
+                var endTime = DateTime.Now;
+                var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
+                var toWait = Settings.Default.PollingDelay - elapsed;
+                if (toWait < 1) toWait = 1;
+                Thread.Sleep((int)toWait);
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
+        private bool ShouldRenderNow()
+        {
+            if (!(_extractorState.Running && _extractorState.KeepRunning))
+            {
+                return false;
+            }
+
+            var stateIsStale = _instrumentStateSnapshotCache.CaptureInstrumentStateSnapshotAndCheckIfStale(Renderer, Form);
+            var renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
+            return (Form != null)
+                        &&
+                   (
+                       (Form.RenderImmediately)
+                            ||
+                       ((renderOnlyOnStateChanges && stateIsStale) || !renderOnlyOnStateChanges)
+                            ||
+                       (
+                           (Form.Settings != null && Form.Settings.Enabled)
+                                &&
+                           (_renderCycle % Math.Max(Form.Settings.RenderEveryN, 1) == Form.Settings.RenderOnN - 1)
+                       )
+                  );
+        }
         private void Render(bool nightMode)
         {
-            var startTime = DateTime.Now;
             _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
-            var endTime = DateTime.Now;
-            var elapsed = endTime.Subtract(startTime);
-            var toWait = (int)(Settings.Default.PollingDelay - elapsed.TotalMilliseconds);
-            if (toWait < 5) toWait = 5;
-            Thread.Sleep(toWait);
         }
     }
 }
