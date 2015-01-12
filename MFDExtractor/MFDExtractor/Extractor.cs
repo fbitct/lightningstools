@@ -51,7 +51,6 @@ namespace MFDExtractor
 
         #region Public Events
 
-        public event EventHandler DataChanged;
         public event EventHandler Started;
         public event EventHandler Stopping;
         public event EventHandler Stopped;
@@ -132,17 +131,18 @@ namespace MFDExtractor
         {
             foreach (InstrumentType instrumentType in Enum.GetValues(typeof (InstrumentType)))
             {
-                if (!_instruments.ContainsKey(instrumentType))
-                {
+                //if (!_instruments.ContainsKey(instrumentType))
+                //{
                     var instrument = _instrumentFactory.Create(instrumentType);
                     _instruments[instrumentType] = instrument;
-                }
+                //}
             }
         }
         
         
         public void Start()
         {
+            LoadSettings();
             if (State.Running)
             {
                 return;
@@ -235,10 +235,6 @@ namespace MFDExtractor
             _threadPriority = settings.ThreadPriority;
             _compressionType = settings.CompressionType;
             _imageFormat = settings.NetworkImageFormat;
-            if (DataChanged != null)
-            {
-                DataChanged.Invoke(null, new EventArgs());
-            }
         }
 
         #region Public Properties

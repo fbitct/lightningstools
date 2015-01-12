@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MFDExtractor.Configuration;
-using MFDExtractor.Properties;
 using MFDExtractor.UI;
-using System.Threading;
-using System.ComponentModel;
 
 namespace MFDExtractor
 {

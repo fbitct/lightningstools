@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Mime;
 using Common.SimSupport;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;

@@ -66,9 +66,6 @@ namespace MFDExtractor.UI
                 _extractor.Stop();
             }
 
-            //register for the Extractor's DataChanged event
-            _extractor.DataChanged += extractor_DataChanged;
-
             //put the Extractor into Test mode (displays the Test/Blank images)
 			Extractor.State.TestMode = true;
             //set the titlebar for the Options form
@@ -257,24 +254,6 @@ namespace MFDExtractor.UI
             }
         }
 
-        /// <summary>
-        ///     Event handler for the Extractor engine's DataChanged event
-        /// </summary>
-        /// <param name="sender">The object raising this event</param>
-        /// <param name="e">EventArgs class for the Extractor engine's DataChanged event</param>
-        private void extractor_DataChanged(object sender, EventArgs e)
-        {
-            //store the currently-selected user control on the Options form (required because
-            //when we reload the user settings in the next step, the currenty-selected
-            //control will go out of focus
-            Control currentControl = ActiveControl;
-
-            //reload user settings from the in-memory user config
-            LoadSettings();
-
-            //refocus the control that was in focus before we reloaded the user settings
-            ActiveControl = currentControl;
-        }
 
         /// <summary>
         ///     Reloads user settings from the in-memory user settings class (Properties.Settings)
