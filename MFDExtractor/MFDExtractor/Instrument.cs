@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Net.Mime;
 using Common.SimSupport;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
 using System.Threading;
 using log4net;
+using System.Windows.Forms;
 
 namespace MFDExtractor
 {
@@ -12,6 +14,7 @@ namespace MFDExtractor
         InstrumentForm Form { get;}
         IInstrumentRenderer Renderer { get; }
         void Start(ExtractorState extractorState );
+        void Stop();
     }
 
     class Instrument : IInstrument
@@ -52,6 +55,15 @@ namespace MFDExtractor
             }
         }
 
+        public void Stop()
+        {
+            while (_renderThread !=null && _renderThread.IsAlive)
+            {
+                Application.DoEvents();
+                Thread.Sleep(1);
+            }
+            Common.Util.DisposeObject(_renderThread);
+        }
 
         private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
         {

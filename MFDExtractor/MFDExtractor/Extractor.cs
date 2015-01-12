@@ -20,6 +20,7 @@ using Common.Networking;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
 using F4Utils.Terrain;
+using System.Threading.Tasks;
 
 namespace MFDExtractor
 {
@@ -168,20 +169,19 @@ namespace MFDExtractor
 	    public void Stop()
         {
             OnStopping();
-	        Settings.Default.Save();
             State.KeepRunning = false;
             if (Mediator != null)
             {
                 Mediator.PhysicalControlStateChanged -= _mediatorEventHandler.HandleStateChange;
             }
-
+	        StopAllInstruments();
             HideOutputWindowForms();
             if (State.NetworkMode == NetworkMode.Server)
             {
                 TearDownImageServer();
             }
-            CloseAndDisposeSharedmemReaders();
             State.Running = false;
+            Settings.Default.Save();
             OnStopped();
         }
 
@@ -348,6 +348,10 @@ namespace MFDExtractor
 	    {
 	        _instruments.Select(i => i.Value).ToList().ForEach(i => i.Start(State));
 	    }
+        private void StopAllInstruments()
+        {
+            Parallel.ForEach(_instruments.Select(i => i.Value).ToList(), x => x.Stop());
+        }
 
 	    private static void StartThread(Thread t)
         {
@@ -457,8 +461,6 @@ namespace MFDExtractor
                             }
                             if (simWasRunning && !State.SimRunning)
                             {
-                                CloseAndDisposeSharedmemReaders();
-
                                 if (State.NetworkMode == NetworkMode.Server)
                                 {
                                     TearDownImageServer();
@@ -585,6 +587,7 @@ namespace MFDExtractor
                 if (disposing)
                 {
                     Stop();
+                    CloseAndDisposeSharedmemReaders();
                     Common.Util.DisposeObject(_texSmReader);
                 }
             }

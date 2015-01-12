@@ -45,6 +45,7 @@ namespace MFDExtractor.FlightDataAdapters
                     }
                 }
                 catch (InvalidOperationException) { }
+                catch (AccessViolationException) { }
                 
 			}
 		}
