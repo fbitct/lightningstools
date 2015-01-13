@@ -361,6 +361,7 @@ namespace MFDExtractor
             try
             {
                 Settings.Default.Save();
+                var pollingDelay = Settings.Default.PollingDelay;
                 while (State.KeepRunning)
                 {
                     var thisLoopStartTime = DateTime.Now;
@@ -389,7 +390,7 @@ namespace MFDExtractor
                     Application.DoEvents();
                     var thisLoopFinishTime = DateTime.Now;
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
-                    var millisToSleep = Settings.Default.PollingDelay - ((int)timeElapsed.TotalMilliseconds);
+                    var millisToSleep = pollingDelay - ((int)timeElapsed.TotalMilliseconds);
                     if (millisToSleep < 5) millisToSleep = 5;
                     if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.TestMode)
                     {
