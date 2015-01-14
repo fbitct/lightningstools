@@ -88,7 +88,6 @@
     <Compile Include="IODirection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecialFunctionCode.cs" />
-    <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AD5371SPI.hex">

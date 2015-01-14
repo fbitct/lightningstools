@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Common.UI.Screen;
 using MFDExtractor.Configuration;
 using MFDExtractor.UI;
 
@@ -30,7 +31,7 @@ namespace MFDExtractor
             var location = _instrumentForm.DesktopLocation;
             var screen = Screen.FromRectangle(_instrumentForm.DesktopBounds);
 	        var settings = _instrumentForm.Settings;
-	        settings.OutputDisplay = Common.Screen.Util.CleanDeviceName(screen.DeviceName);
+	        settings.OutputDisplay = Util.CleanDeviceName(screen.DeviceName);
             if (!_instrumentForm.StretchToFill)
             {
                 var size = _instrumentForm.Size;

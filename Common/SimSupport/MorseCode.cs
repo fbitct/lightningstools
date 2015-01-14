@@ -1,40 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Common.SimSupport
 {
-    public static class MorseCodeTest
-    {
-        public static void Test()
-        {
-            var blink = new MorseCode {PlainText = "Paris"};
-            blink.UnitTimeTick += BlinkUnitTimeTick;
-            blink.StartSending();
-            Thread.Sleep(5000);
-        }
-
-        private static void BlinkUnitTimeTick(object sender, UnitTimeTickEventArgs e)
-        {
-            Debug.Write(e.CurrentSignalLineState ? "1" : "0");
-        }
-    }
-
-    public class UnitTimeTickEventArgs : EventArgs
-    {
-        public UnitTimeTickEventArgs()
-        {
-        }
-
-        public UnitTimeTickEventArgs(bool currentSignalLineState)
-        {
-            CurrentSignalLineState = currentSignalLineState;
-        }
-
-        public bool CurrentSignalLineState { get; set; }
-    }
-
     public class MorseCode : IDisposable
     {
         private int _charactersPerMinute; //CPM
@@ -170,9 +139,6 @@ namespace Common.SimSupport
                     break;
                 case '>': //medium gap (between words)
                     toReturn += "0000000";
-                    break;
-
-                default:
                     break;
             }
             return toReturn;
@@ -341,8 +307,6 @@ namespace Common.SimSupport
                     break;
                 case '@':
                     toReturn = ".--.-.";
-                    break;
-                default:
                     break;
             }
             return toReturn;

@@ -15,11 +15,6 @@ namespace Common.UI
         private int _columnToSort;
 
         /// <summary>
-        ///   Case insensitive comparer object
-        /// </summary>
-        private StringLogicalComparer _objectCompare;
-
-        /// <summary>
         ///   Specifies the order in which to sort (i.e. 'Ascending').
         /// </summary>
         private SortOrder _orderOfSort;
@@ -35,8 +30,6 @@ namespace Common.UI
             // Initialize the sort order to 'none'
             _orderOfSort = SortOrder.None;
 
-            // Initialize the CaseInsensitiveComparer object
-            _objectCompare = new StringLogicalComparer();
         }
 
         /// <summary>

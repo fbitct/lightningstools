@@ -44,6 +44,7 @@
     <Compile Include="SimSupportModule.cs" />
     <Compile Include="SimSupportModuleRegistry.cs" />
     <Compile Include="TextSimOutput.cs" />
+    <Compile Include="UnitTimeTickEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="log4net">

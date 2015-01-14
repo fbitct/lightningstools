@@ -140,8 +140,8 @@ namespace Common.Imaging
                 }
                 using (var ms = new MemoryStream())
                 {
-                    var encoderValue = -1;
-                    var codecMimeType = "image/tiff";
+                    int encoderValue;
+                    string codecMimeType;
                     switch (compressionType)
                     {
                         case "LZW":

@@ -6,7 +6,7 @@ using System.Windows.Forms.VisualStyles;
 using Common.Win32;
 using log4net;
 
-namespace Common.Screen
+namespace Common.UI.Screen
 {
     public static class Util
     {
@@ -106,9 +106,9 @@ namespace Common.Screen
             //formToOpen.Show(parentForm);
             if (makeCurrentThreadIntoUIThread)
             {
-                System.Windows.Forms.Application.UseWaitCursor = false;
-                System.Windows.Forms.Application.VisualStyleState = VisualStyleState.NoneEnabled;
-                System.Windows.Forms.Application.Run(formToOpen);
+                Application.UseWaitCursor = false;
+                Application.VisualStyleState = VisualStyleState.NoneEnabled;
+                Application.Run(formToOpen);
             }
             else
             {

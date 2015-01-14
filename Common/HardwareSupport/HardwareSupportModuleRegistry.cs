@@ -9,7 +9,7 @@ namespace Common.HardwareSupport
     [Serializable]
     public class HardwareSupportModuleRegistry
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (HardwareSupportModuleRegistry));
+        private static readonly ILog Log = LogManager.GetLogger(typeof (HardwareSupportModuleRegistry));
 
         [XmlArray(ElementName = "HardwareSupportModules")]
         [XmlArrayItem("Module")]
@@ -58,7 +58,7 @@ namespace Common.HardwareSupport
                 }
                 catch (Exception e)
                 {
-                    _log.Error(e.Message, e);
+                    Log.Error(e.Message, e);
                 }
             }
             return toReturn;
