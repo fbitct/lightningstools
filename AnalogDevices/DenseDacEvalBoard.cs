@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Threading;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
-using log4net;
 
 namespace AnalogDevices
 {
@@ -14,14 +13,9 @@ namespace AnalogDevices
 
         #region Class Constructors
 
-        private static ILog _log = LogManager.GetLogger(typeof (DenseDacEvalBoard));
-
         public DenseDacEvalBoard(UsbDevice device)
         {
-            //lock (_instanceStateLock)
-            //{
             _usbDevice = device;
-            //}
             UploadFirmware(new IhxFile("AD5371SPI.hex"));
         }
 
@@ -49,14 +43,7 @@ namespace AnalogDevices
                     throw new InvalidOperationException(
                         "GeneralPurposeIOPinDirection must be set to Output in order to set the GeneralPurposeIOPinState property.");
                 }
-                if (value)
-                {
-                    SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, 0x03);
-                }
-                else
-                {
-                    SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, 0x02);
-                }
+                SendSpecialFunction(SpecialFunctionCode.GPIOConfigureAndWrite, value ? (byte)0x03 : (byte)0x02);
             }
         }
 
@@ -113,21 +100,12 @@ namespace AnalogDevices
             {
                 var source = ChannelMonitorSource.None;
                 byte channelNumberOrInputPinNumber = 0;
-                //lock (_instanceStateLock)
-                //{
                 if ((_monitorFlags & 0x20) == 0x20)
                 {
                     if ((_monitorFlags & 0x10) == 0x10) //if input pin monitoring is on
                     {
                         source = ChannelMonitorSource.InputPin;
-                        if ((_monitorFlags & 0x01) == 0x01) //if input pin 1 is being monitored
-                        {
-                            channelNumberOrInputPinNumber = 1;
-                        }
-                        else
-                        {
-                            channelNumberOrInputPinNumber = 0; //else input pin 0 is being monitored
-                        }
+                        channelNumberOrInputPinNumber = (_monitorFlags & 0x01) == 0x01 ? (byte)0x1 : (byte)0x0;
                     }
                     else //Dac monitoring is on
                     {
@@ -135,11 +113,7 @@ namespace AnalogDevices
                         channelNumberOrInputPinNumber = (byte) (_monitorFlags & 0x0F);
                     }
                 }
-                else
-                {
-                    //source already == ChannelMonitorSources.None
-                }
-                //}
+                
                 var toReturn = new ChannelMonitorOptions(source, channelNumberOrInputPinNumber);
                 toReturn.PropertyChanged += MonitorOptionsPropertyChangedHandler;
                 return toReturn;
@@ -173,17 +147,11 @@ namespace AnalogDevices
         {
             get
             {
-                //lock (_instanceStateLock)
-                //{
                 return _thisDevicePrecision;
-                //}
             }
             set
             {
-                //lock (_instanceStateLock)
-                //{
                 _thisDevicePrecision = value;
-                //}
             }
         }
 
@@ -387,7 +355,7 @@ namespace AnalogDevices
             var channelNum = (byte) ((byte) channel - 8);
             byte currentSourceSelections = 0x00;
             var code = SpecialFunctionCode.NOP;
-            if (channelNum >= 0 && channelNum < 8)
+            if (channelNum < 8)
             {
                 code = SpecialFunctionCode.WriteToABSelectRegister0;
                 currentSourceSelections = ReadbackABSelect0Register();
@@ -436,7 +404,7 @@ namespace AnalogDevices
             }
             var channelNum = (byte) ((byte) channel - 8);
             byte currentSourceSelections = 0x00;
-            if (channelNum >= 0 && channelNum < 8)
+            if (channelNum < 8)
             {
                 currentSourceSelections = ReadbackABSelect0Register();
             }
@@ -502,8 +470,6 @@ namespace AnalogDevices
                     break;
                 case ChannelGroup.Group4:
                     code = SpecialFunctionCode.WriteToABSelectRegister4;
-                    break;
-                default:
                     break;
             }
             toSend &= 0xFF;
@@ -575,10 +541,7 @@ namespace AnalogDevices
             {
                 return ReadbackX1ARegister(channel);
             }
-            else
-            {
-                throw new ArgumentOutOfRangeException("channel");
-            }
+            throw new ArgumentOutOfRangeException("channel");
         }
 
         public ushort GetDacChannelDataValueB(ChannelAddress channel)
@@ -587,10 +550,7 @@ namespace AnalogDevices
             {
                 return ReadbackX1BRegister(channel);
             }
-            else
-            {
-                throw new ArgumentOutOfRangeException("channel");
-            }
+            throw new ArgumentOutOfRangeException("channel");
         }
 
         public void SetDacChannelDataValueA(ChannelAddress channels, ushort newVal)
@@ -629,10 +589,7 @@ namespace AnalogDevices
             {
                 return ReadbackCRegister(channel);
             }
-            else
-            {
-                throw new ArgumentOutOfRangeException("channel");
-            }
+            throw new ArgumentOutOfRangeException("channel");
         }
 
         public void SetDacChannelOffset(ChannelAddress channels, ushort newVal)
@@ -653,10 +610,7 @@ namespace AnalogDevices
             {
                 return ReadbackMRegister(channel);
             }
-            else
-            {
-                throw new ArgumentOutOfRangeException("channel");
-            }
+            throw new ArgumentOutOfRangeException("channel");
         }
 
         public void SetDacChannelGain(ChannelAddress channels, ushort newVal)
@@ -716,74 +670,9 @@ namespace AnalogDevices
 
         #region Nested type: DeviceCommand
 
-        private enum DeviceCommand : byte
-        {
-            /// <summary>
-            ///   Loads Firmware to the device
-            /// </summary>
-            LoadFirmware = 0xA0,
-            /// <summary>
-            ///   Sets RESET pin high
-            /// </summary>
-            SetRESETPinHigh = 0xDA,
-            /// <summary>
-            ///   Sets RESET pin low
-            /// </summary>
-            SetRESETPinLow = 0xDB,
-            /// <summary>
-            ///   Sets CLR pin high
-            /// </summary>
-            SetCLRPinHigh = 0xDC,
-            /// <summary>
-            ///   Sends 24-bit word over SPI
-            /// </summary>
-            SendSPI = 0xDD,
-            /// <summary>
-            ///   Pulse LDac pin
-            /// </summary>
-            PulseLDacPin = 0xDE,
-            /// <summary>
-            ///   Sets CLR pin low
-            /// </summary>
-            SetCLRPinLow = 0xDF,
-            /// <summary>
-            ///   Initializes the SPI pins
-            /// </summary>
-            InitializeSPIPins = 0xE0,
-            /// <summary>
-            ///   Sets the LDac pin high
-            /// </summary>
-            SetLDacPinHigh = 0xE2,
-            /// <summary>
-            ///   Sets the LDac pin low
-            /// </summary>
-            SetLDacPinLow = 0xE3,
-        }
-
         #endregion
 
         #region Nested type: SpecialFunctionCode
-
-        private enum SpecialFunctionCode
-        {
-            /// <summary>
-            ///   No-op
-            /// </summary>
-            NOP = 0,
-            WriteControlRegister = 1,
-            WriteOSF0Register = 2,
-            WriteOSF1Register = 3,
-            WriteOSF2Register = 4,
-            SelectRegisterForReadback = 5,
-            WriteToABSelectRegister0 = 6,
-            WriteToABSelectRegister1 = 7,
-            WriteToABSelectRegister2 = 8,
-            WriteToABSelectRegister3 = 9,
-            WriteToABSelectRegister4 = 10,
-            BlockWriteABSelectRegisters = 11,
-            ConfigureMonitoring = 12,
-            GPIOConfigureAndWrite = 13
-        }
 
         #endregion
 
@@ -793,7 +682,6 @@ namespace AnalogDevices
 
         private readonly byte[] _emptyBuf = new byte[0];
         private readonly UsbDevice _usbDevice;
-        private object _instanceStateLock = new object();
         private byte _monitorFlags;
         private bool _spiInitialized;
         private DacPrecision _thisDevicePrecision = DacPrecision.SixteenBit;
@@ -806,8 +694,6 @@ namespace AnalogDevices
         {
             if (value == null) throw new ArgumentNullException("value");
 
-            //lock (_instanceStateLock)
-            //{
             if (value.ChannelMonitorSource == ChannelMonitorSource.None)
             {
                 _monitorFlags &= 0xDF;
@@ -846,7 +732,6 @@ namespace AnalogDevices
                 }
             }
             SendSpecialFunction(SpecialFunctionCode.ConfigureMonitoring, _monitorFlags);
-            //}
         }
 
         private void MonitorOptionsPropertyChangedHandler(object sender, PropertyChangedEventArgs e)
@@ -1035,11 +920,8 @@ namespace AnalogDevices
 
         private void InitializeSPIPins()
         {
-            //lock (_instanceStateLock)
-            //{
             SendDeviceCommand(DeviceCommand.InitializeSPIPins, 0);
             _spiInitialized = true;
-            //}
         }
 
         #endregion
@@ -1058,24 +940,22 @@ namespace AnalogDevices
 
         private ushort ReadSPI()
         {
-            //lock (_instanceStateLock)
-            //{
             if (!_spiInitialized)
             {
                 InitializeSPIPins();
             }
-            //}
-            var bRequest = (byte) DeviceCommand.SendSPI;
 
-            ushort len = 3;
+            const ushort len = 3;
             var buf = new byte[len];
-            var setupPacket = new UsbSetupPacket();
-            setupPacket.Request = (DeviceRequestType) bRequest;
-            setupPacket.Index = 0;
-            setupPacket.RequestType = UsbRequestType.TypeVendor | UsbRequestType.EndpointIn;
-            setupPacket.Length = (short) len;
-            setupPacket.Value = 0;
-            var lengthTransferred = 0;
+            var setupPacket = new UsbSetupPacket
+            {
+                Request = (DeviceRequestType) DeviceCommand.SendSPI,
+                Index = 0,
+                RequestType = UsbRequestType.TypeVendor | UsbRequestType.EndpointIn,
+                Length = (short) len,
+                Value = 0
+            };
+            int lengthTransferred;
             UsbControlTransfer(ref setupPacket, buf, buf.Length, out lengthTransferred);
             return (ushort) (buf[0] + (ushort) (buf[1]*256));
         }
@@ -1083,10 +963,7 @@ namespace AnalogDevices
         private void UsbControlTransfer(ref UsbSetupPacket setupPacket, object buffer, int bufferLength,
                                         out int lengthTransferred)
         {
-            //lock (_usbDevice)
-            //{
             _usbDevice.ControlTransfer(ref setupPacket, buffer, bufferLength, out lengthTransferred);
-            //}
         }
 
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData)
@@ -1096,18 +973,17 @@ namespace AnalogDevices
 
         private int SendDeviceCommand(DeviceCommand command, UInt32 setupData, byte[] data)
         {
-            //lock (_instanceStateLock)
-            //{
             if (!_spiInitialized && command != DeviceCommand.InitializeSPIPins) InitializeSPIPins();
-            //}
             var bRequest = (byte) command;
-            var setupPacket = new UsbSetupPacket();
-            setupPacket.Request = (DeviceRequestType) bRequest;
-            setupPacket.Value = (short) (setupData & 0xFFFF);
-            setupPacket.Index = (short) ((setupData & 0xFF0000)/0x10000);
-            setupPacket.RequestType = UsbRequestType.TypeVendor;
-            setupPacket.Length = 0;
-            var lengthTransferred = 0;
+            var setupPacket = new UsbSetupPacket
+            {
+                Request = (DeviceRequestType) bRequest,
+                Value = (short) (setupData & 0xFFFF),
+                Index = (short) ((setupData & 0xFF0000)/0x10000),
+                RequestType = UsbRequestType.TypeVendor,
+                Length = 0
+            };
+            int lengthTransferred;
             UsbControlTransfer(ref setupPacket, data, data.Length, out lengthTransferred);
             return lengthTransferred;
         }
@@ -1121,15 +997,17 @@ namespace AnalogDevices
         private void ResetDevice(bool r)
         {
             byte[] buffer = {(byte) (r ? 1 : 0)};
-            var setupPacket = new UsbSetupPacket();
-            setupPacket.RequestType = UsbRequestType.TypeVendor;
-            setupPacket.Request = (DeviceRequestType) 0xA0;
+            var setupPacket = new UsbSetupPacket
+            {
+                RequestType = UsbRequestType.TypeVendor,
+                Request = (DeviceRequestType) 0xA0
+            };
             unchecked
             {
                 setupPacket.Value = (short) 0xE600;
             }
             setupPacket.Index = 0;
-            var lengthTransferred = 0;
+            int lengthTransferred;
             UsbControlTransfer(ref setupPacket, buffer, buffer.Length, out lengthTransferred);
             Thread.Sleep(r ? 50 : 400); // give the firmware some time for initialization
         }
@@ -1141,7 +1019,7 @@ namespace AnalogDevices
 
             ResetDevice(true); // reset = 1
 
-            var t0 = DateTime.Now;
+            var startTime = DateTime.Now;
             var j = 0;
             for (var i = 0; i <= ihxFile.IhxData.Length; i++)
             {
@@ -1149,12 +1027,14 @@ namespace AnalogDevices
                 {
                     if (j > 0)
                     {
-                        var setupPacket = new UsbSetupPacket();
-                        setupPacket.RequestType = UsbRequestType.TypeVendor;
-                        setupPacket.Request = (DeviceRequestType) 0xA0;
-                        setupPacket.Value = (short) (i - j);
-                        setupPacket.Index = 0;
-                        var k = 0;
+                        var setupPacket = new UsbSetupPacket
+                        {
+                            RequestType = UsbRequestType.TypeVendor,
+                            Request = (DeviceRequestType) 0xA0,
+                            Value = (short) (i - j),
+                            Index = 0
+                        };
+                        int k;
                         UsbControlTransfer(ref setupPacket, buffer, j, out k);
                         if (k < 0 || k != j)
                         {
@@ -1165,16 +1045,14 @@ namespace AnalogDevices
                     j = 0;
                 }
 
-                if (i < ihxFile.IhxData.Length && ihxFile.IhxData[i] >= 0 && ihxFile.IhxData[i] <= 255)
-                {
-                    buffer[j] = (byte) ihxFile.IhxData[i];
-                    j += 1;
-                }
+                if (i >= ihxFile.IhxData.Length || ihxFile.IhxData[i] < 0 || ihxFile.IhxData[i] > 255) continue;
+                buffer[j] = (byte) ihxFile.IhxData[i];
+                j += 1;
             }
-            var t1 = DateTime.Now;
+            var endTime = DateTime.Now;
 
             ResetDevice(false); //error (may caused re-numeration) can be ignored
-            return (long) t1.Subtract(t0).TotalMilliseconds;
+            return (long) endTime.Subtract(startTime).TotalMilliseconds;
         }
 
         #endregion

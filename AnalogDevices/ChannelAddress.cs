@@ -1,34 +1,5 @@
 ﻿namespace AnalogDevices
 {
-
-    #region Public Enums
-
-    public enum DeviceType
-    {
-        Unknown = 0,
-        DacEvalBoard,
-    }
-
-    public enum ChannelMonitorSource
-    {
-        None = 0,
-        InputPin,
-        DacChannel
-    }
-
-    public enum DacPrecision
-    {
-        Unknown = 0,
-        FourteenBit = 1,
-        SixteenBit = 2
-    }
-
-    public enum DacChannelDataSource
-    {
-        DataValueA = 0,
-        DataValueB = 1
-    }
-
     public enum ChannelAddress
     {
         AllGroupsAllChannels = 0,
@@ -103,21 +74,4 @@
         Group1Through4Channel6 = 62,
         Group1Through4Channel7 = 63,
     }
-
-    public enum ChannelGroup
-    {
-        Group0 = 0,
-        Group1 = 1,
-        Group2 = 2,
-        Group3 = 3,
-        Group4 = 4
-    }
-
-    public enum IODirection
-    {
-        Output,
-        Input
-    }
-
-    #endregion
 }
