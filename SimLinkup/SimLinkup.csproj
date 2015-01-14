@@ -332,6 +332,10 @@
       <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
       <Name>Common.UI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\F4Utils\SimSupport\F4Utils.SimSupport.csproj">
+      <Project>{6967bfc5-944d-405c-960b-5a4900ebfd92}</Project>
+      <Name>F4Utils.SimSupport</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LightningGauges\LightningGauges\LightningGauges.csproj">
       <Project>{E3E09957-DD05-4DEC-961A-915A082C0BC4}</Project>
       <Name>LightningGauges</Name>

@@ -358,7 +358,7 @@
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 15 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][15]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][0]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
