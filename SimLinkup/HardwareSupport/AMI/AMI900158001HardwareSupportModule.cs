@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Drawing.Text;
 using System.IO;
 using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
+using Common.UI.UserControls;
 using log4net;
 
 namespace SimLinkup.HardwareSupport.AMI
@@ -154,17 +155,17 @@ namespace SimLinkup.HardwareSupport.AMI
                 new DigitalSignal.SignalChangedEventHandler(fromFlag_InputSignalChanged);
 
             _compassInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(compass_InputSignalChanged);
+                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
             _headingInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(heading_InputSignalChanged);
+                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
             _courseInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(course_InputSignalChanged);
+                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
             _bearingInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(bearing_InputSignalChanged);
+                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
             _DMEInputSignalChangedEventHandler =
                 new AnalogSignal.AnalogSignalChangedEventHandler(dme_InputSignalChanged);
             _courseDeviationInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(courseDeviation_InputSignalChanged);
+                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
         }
 
         private void AbandonInputEventHandlers()
@@ -790,29 +791,18 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             UpdateFromFlagOutputValue();
         }
-        private void compass_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        private void HSI_Directional_InputSignalsChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateCompassOutputValue();
-        }
-        private void heading_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
-        {
             UpdateHeadingOutputValue();
-        }
-        private void course_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
-        {
             UpdateCourseOutputValue();
-        }
-        private void bearing_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
-        {
             UpdateBearingOutputValue();
+            UpdateCourseDeviationOutputValue();
         }
+
         private void dme_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateDMEOutputValue();
-        }
-        private void courseDeviation_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
-        {
-            UpdateCourseDeviationOutputValue();
         }
 
         private void UpdateOffFlagOutputValue() 
@@ -882,8 +872,10 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             if (_headingInputSignal !=null && _headingSINOutputSignal !=null && _headingCOSOutputSignal !=null) 
             {
-                var headingDegrees = _headingInputSignal.State;
-                var headingSINOutputValue = 10.0000 * Math.Sin(headingDegrees * Constants.RADIANS_PER_DEGREE);
+                var desiredHeadingDegrees = _headingInputSignal.State;
+                var magneticHeadingDegrees = _compassInputSignal.State;
+
+                var headingSINOutputValue = 10.0000 * Math.Sin((desiredHeadingDegrees - magneticHeadingDegrees) * Constants.RADIANS_PER_DEGREE);
                 if (headingSINOutputValue < -10) 
                 {
                     headingSINOutputValue = -10; 
@@ -894,7 +886,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 }
                 _headingSINOutputSignal.State = ((headingSINOutputValue + 10.0000) /20.0000);
 
-                var headingCOSOutputValue = 10.0000 * Math.Cos(headingDegrees * Constants.RADIANS_PER_DEGREE);
+                var headingCOSOutputValue = 10.0000 * Math.Cos((desiredHeadingDegrees -magneticHeadingDegrees)* Constants.RADIANS_PER_DEGREE);
                 if (headingCOSOutputValue < -10) 
                 {
                     headingCOSOutputValue = -10; 
@@ -910,8 +902,9 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             if (_courseInputSignal !=null && _courseSINOutputSignal !=null && _courseCOSOutputSignal !=null) 
             {
-                var courseDegrees = _courseInputSignal.State;
-                var courseSINOutputValue = 10.0000 * Math.Sin(courseDegrees * Constants.RADIANS_PER_DEGREE);
+                var desiredCourseDegrees = _courseInputSignal.State;
+                var magneticHeadingDegrees = _compassInputSignal.State;
+                var courseSINOutputValue = 10.0000 * Math.Sin((desiredCourseDegrees - magneticHeadingDegrees) * Constants.RADIANS_PER_DEGREE);
                 if (courseSINOutputValue < -10) 
                 {
                     courseSINOutputValue = -10; 
@@ -922,7 +915,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 }
                 _courseSINOutputSignal.State = ((courseSINOutputValue + 10.0000) /20.0000);
 
-                var courseCOSOutputValue = 10.0000 * Math.Cos(courseDegrees * Constants.RADIANS_PER_DEGREE);
+                var courseCOSOutputValue = 10.0000 * Math.Cos((desiredCourseDegrees - magneticHeadingDegrees)* Constants.RADIANS_PER_DEGREE);
                 if (courseCOSOutputValue < -10) 
                 {
                     courseCOSOutputValue = -10; 
@@ -938,8 +931,10 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             if (_bearingInputSignal !=null && _bearingSINOutputSignal !=null && _bearingCOSOutputSignal !=null) 
             {
-                var bearingDegrees = _bearingInputSignal.State;
-                var bearingSINOutputValue = 10.0000 * Math.Sin(bearingDegrees * Constants.RADIANS_PER_DEGREE);
+                var bearingToBeaconDegrees = _bearingInputSignal.State;
+                var magneticHeadingDegrees = _compassInputSignal.State;
+
+                var bearingSINOutputValue = 10.0000 * Math.Sin((-(magneticHeadingDegrees - bearingToBeaconDegrees)) * Constants.RADIANS_PER_DEGREE);
                 if (bearingSINOutputValue < -10) 
                 {
                     bearingSINOutputValue = -10; 
@@ -950,7 +945,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 }
                 _bearingSINOutputSignal.State = ((bearingSINOutputValue + 10.0000) /20.0000);
 
-                var bearingCOSOutputValue = 10.0000 * Math.Cos(bearingDegrees * Constants.RADIANS_PER_DEGREE);
+                var bearingCOSOutputValue = 10.0000 * Math.Cos((-(magneticHeadingDegrees - bearingToBeaconDegrees)) * Constants.RADIANS_PER_DEGREE);
                 if (bearingCOSOutputValue < -10) 
                 {
                     bearingCOSOutputValue = -10; 
@@ -964,19 +959,24 @@ namespace SimLinkup.HardwareSupport.AMI
         }
         private void UpdateDMEOutputValue() 
         {
-            if (_DMEInputSignal !=null 
+            const double MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES = 999.9999d; 
+            if (_DMEInputSignal != null 
                 && _DMEx100SINOutputSignal !=null && _DMEx100COSOutputSignal !=null
                 && _DMEx10SINOutputSignal !=null && _DMEx10COSOutputSignal !=null
                 && _DMEx1SINOutputSignal !=null && _DMEx1COSOutputSignal !=null
                 ) 
             {
                 var distanceToBeaconNauticalMiles = _DMEInputSignal.State;
-                var DistanceToBeaconString = string.Format("{0:000}", distanceToBeaconNauticalMiles);
+                if (distanceToBeaconNauticalMiles > MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES)
+                {
+                    distanceToBeaconNauticalMiles = MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES;
+                }
+                var distanceToBeaconString = string.Format("{0:000}", distanceToBeaconNauticalMiles);
                 
 
-                var DMEx100 = Byte.Parse(DistanceToBeaconString.Substring(0, 1));
-                var DMEx10 = Byte.Parse(DistanceToBeaconString.Substring(1,1));
-                var DMEx1 = Byte.Parse(DistanceToBeaconString.Substring(2,1));
+                var DMEx100 = Byte.Parse(distanceToBeaconString.Substring(0, 1));
+                var DMEx10 = Byte.Parse(distanceToBeaconString.Substring(1,1));
+                var DMEx1 = Byte.Parse(distanceToBeaconString.Substring(2,1));
 
                 var DMEx100SINOutputValue = 10.0000 * Math.Sin((DMEx100/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
                 if (DMEx100SINOutputValue < -10) 
@@ -1050,12 +1050,19 @@ namespace SimLinkup.HardwareSupport.AMI
 
 
         }
-        private void UpdateCourseDeviationOutputValue() 
+        private void UpdateCourseDeviationOutputValue()
         {
+            const double DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES = 5.0d;
+
             if (_courseDeviationInputSignal !=null && _courseDeviationLimitInputSignal !=null && _courseDeviationOutputSignal !=null) 
             {
                 var courseDeviationDegrees = _courseDeviationInputSignal.State;
                 var courseDeviationLimitDegrees = _courseDeviationLimitInputSignal.State;
+                if (courseDeviationLimitDegrees ==0 || double.IsInfinity(courseDeviationLimitDegrees) ||
+                    double.IsNaN(courseDeviationLimitDegrees))
+                {
+                    courseDeviationLimitDegrees = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
+                }
                 var courseDeviationPct = courseDeviationDegrees / courseDeviationLimitDegrees;
 
                 var courseDeviationOutputValue = 10.0000 * courseDeviationPct;

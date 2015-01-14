@@ -81,6 +81,10 @@ namespace F4Utils.SimSupport
             var showToFromFlag = false;
             var showCommandBars = false;
             DetermineWhetherToShowILSCommandBarsAndToFromFlags(_lastFlightData, out showToFromFlag, out showCommandBars);
+            float courseDeviationDegrees;
+            float deviationLimitDegrees;
+            UpdateHsiData(_lastFlightData, out courseDeviationDegrees, out deviationLimitDegrees);
+
             if (_lastFlightData == null) return;
             foreach (var output in _simOutputs.Values)
             {
@@ -291,10 +295,10 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.desiredCourse;
                         break;
                     case F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.courseDeviation;
+                        ((AnalogSignal) output).State = courseDeviationDegrees;
                         break;
                     case F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES:
-                        ((AnalogSignal)output).State = _lastFlightData.deviationLimit;
+                        ((AnalogSignal)output).State = deviationLimitDegrees;
                         break;
                     case F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES:
                         ((AnalogSignal) output).State = _lastFlightData.distanceToBeacon;
@@ -308,10 +312,7 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.HSI__DESIRED_HEADING_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.desiredHeading;
                         break;
-                    case F4SimOutputs.HSI__LOCALIZER_NEEDLE_LIMIT_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.deviationLimit;
-                        break;
-                    case F4SimOutputs.HSI__LOCALIZER_NEEDLE_POSITION_DEGREES:
+                    case F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.localizerCourse;
                         break;
                     case F4SimOutputs.HSI__TO_FLAG:
@@ -1078,6 +1079,8 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.HSI__DESIRED_COURSE_DEGREES, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "Course deviation (degrees)",
                                                 (int) F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("HSI", "Course deviation limit (degrees)",
+                                                (int)F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "Distance to beacon (nautical miles)",
                                                 (int) F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES,
                                                 typeof (float)));
@@ -1087,10 +1090,8 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.HSI__CURRENT_HEADING_DEGREES, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "Desired heading (degrees)",
                                                 (int) F4SimOutputs.HSI__DESIRED_HEADING_DEGREES, typeof (float)));
-            AddF4SimOutput(CreateNewF4SimOutput("HSI", "Localizer needle limit(degrees)",
-                                                (int) F4SimOutputs.HSI__LOCALIZER_NEEDLE_LIMIT_DEGREES, typeof (float)));
-            AddF4SimOutput(CreateNewF4SimOutput("HSI", "Localizer needle position (degrees)",
-                                                (int) F4SimOutputs.HSI__LOCALIZER_NEEDLE_POSITION_DEGREES,
+            AddF4SimOutput(CreateNewF4SimOutput("HSI", "Localizer course (degrees)",
+                                                (int) F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES,
                                                 typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "TO Flag", (int) F4SimOutputs.HSI__TO_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "FROM Flag", (int) F4SimOutputs.HSI__FROM_FLAG, typeof (bool)));
@@ -1675,6 +1676,29 @@ namespace F4Utils.SimSupport
             UpdateSimOutputValues();
         }
 
+        private void UpdateHsiData(FlightData flightData, out float courseDeviationDecimalDegrees, out float deviationLimitDecimalDegrees )
+        {
+            deviationLimitDecimalDegrees = flightData.deviationLimit  % 180;
+            courseDeviationDecimalDegrees = flightData.courseDeviation;
+
+            if (courseDeviationDecimalDegrees < -90)
+            {
+                courseDeviationDecimalDegrees = Common.Math.Util.AngleDelta(Math.Abs(courseDeviationDecimalDegrees), 180) % 180;
+            }
+            else if (courseDeviationDecimalDegrees > 90)
+            {
+                courseDeviationDecimalDegrees = -Common.Math.Util.AngleDelta(courseDeviationDecimalDegrees, 180) % 180;
+            }
+            else
+            {
+                courseDeviationDecimalDegrees = -courseDeviationDecimalDegrees;
+            }
+            if (Math.Abs(courseDeviationDecimalDegrees) > deviationLimitDecimalDegrees)
+            {
+                courseDeviationDecimalDegrees = Math.Sign(courseDeviationDecimalDegrees) * deviationLimitDecimalDegrees;
+            }
+
+        }
         private void DetermineWhetherToShowILSCommandBarsAndToFromFlags(FlightData flightData, out bool showToFromFlag, out bool showCommandBars)
         {
             showToFromFlag = true;

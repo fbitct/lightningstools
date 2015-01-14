@@ -68,8 +68,14 @@
     <StartupObject>SimLinkup.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CSScriptLibrary, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL" />
+    <Reference Include="CSScriptLibrary, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\ThirdParty\CSScriptLibrary\CSScriptLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.JScript" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -170,53 +176,53 @@
       <DependentUpon>Signals.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="Content\Mapping\AMI900158001horizontalsituationindicator.mapping">
+    <Content Include="Content\Mapping\AMI900158001horizontalsituationindicator.mapping">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\AMI900278002primaryADI.mapping">
+    </Content>
+    <Content Include="Content\Mapping\AMI900278002primaryADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek100295fuelflowindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek100181altimeter.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek100181altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek100194machmeter.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek100194machmeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek100285altimeter.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek100285altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek10033501standbyADI1.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek10033501standbyADI1.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek10058101angleofattack1.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek10058101angleofattack1.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Simtek10058102verticalvelocity1.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Simtek10058102verticalvelocity1.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Astronautics128710primaryADI2.mapping">
+    </Content>
+    <Content Include="Content\Mapping\Astronautics128710primaryADI2.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\AMI900157501angleofattack.mapping">
+    </Content>
+    <Content Include="Content\Mapping\AMI900157501angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="HardwareSupportModule.registry">
+    </Content>
+    <Content Include="HardwareSupportModule.registry">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Content Include="SimLinkup.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -226,13 +232,14 @@
     <Content Include="phcc.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="SimSupportModule.registry">
+    <Content Include="SimSupportModule.registry">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -353,8 +360,6 @@
     <Content Include="Content\Scripts\Scripts.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="ThirdParty\log4net.dll" />
-    <Content Include="ThirdParty\CSScriptLibrary.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
