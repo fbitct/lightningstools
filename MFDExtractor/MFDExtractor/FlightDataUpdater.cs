@@ -8,6 +8,7 @@ using MFDExtractor.BMSSupport;
 using MFDExtractor.FlightDataAdapters;
 using F4Utils.Terrain;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.EHSI;
 using MFDExtractor.Networking;
 
 namespace MFDExtractor
@@ -248,26 +249,26 @@ namespace MFDExtractor
                 case 0: //NavModes.PlsTcn:
                     renderers.HSI.InstrumentState.ShowToFromFlag = false;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.PlsTacan;
+                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.PlsTacan;
                     break;
                 case 1: //NavModes.Tcn:
                     renderers.HSI.InstrumentState.ShowToFromFlag = true;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = true;
-                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.Tacan;
+                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.Tacan;
                     renderers.ADI.InstrumentState.ShowCommandBars = false;
                     renderers.ISIS.InstrumentState.ShowCommandBars = false;
                     break;
                 case 2: //NavModes.Nav:
                     renderers.HSI.InstrumentState.ShowToFromFlag = false;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.Nav;
+                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.Nav;
                     renderers.ADI.InstrumentState.ShowCommandBars = false;
                     renderers.ISIS.InstrumentState.ShowCommandBars = false;
                     break;
                 case 3: //NavModes.PlsNav:
                     renderers.HSI.InstrumentState.ShowToFromFlag = false;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.PlsNav;
+                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.PlsNav;
                     break;
             }
         }

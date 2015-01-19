@@ -1,6 +1,7 @@
 ﻿using F4Utils.Process;
 using LightningGauges.Renderers;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.EHSI;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
@@ -17,22 +18,22 @@ namespace MFDExtractor.EventSystem.Handlers
 		public void Handle()
 		{
 			var currentMode =_ehsi.InstrumentState.InstrumentMode;
-			EHSI.EHSIInstrumentState.InstrumentModes? newMode = null;
+			InstrumentModes? newMode = null;
 			switch (currentMode)
 			{
-				case EHSI.EHSIInstrumentState.InstrumentModes.Unknown:
+				case InstrumentModes.Unknown:
 					break;
-				case EHSI.EHSIInstrumentState.InstrumentModes.PlsTacan:
-					newMode = EHSI.EHSIInstrumentState.InstrumentModes.Nav;
+				case InstrumentModes.PlsTacan:
+					newMode = InstrumentModes.Nav;
 					break;
-				case EHSI.EHSIInstrumentState.InstrumentModes.Tacan:
-					newMode = EHSI.EHSIInstrumentState.InstrumentModes.PlsTacan;
+				case InstrumentModes.Tacan:
+					newMode = InstrumentModes.PlsTacan;
 					break;
-				case EHSI.EHSIInstrumentState.InstrumentModes.Nav:
-					newMode = EHSI.EHSIInstrumentState.InstrumentModes.PlsNav;
+				case InstrumentModes.Nav:
+					newMode = InstrumentModes.PlsNav;
 					break;
-				case EHSI.EHSIInstrumentState.InstrumentModes.PlsNav:
-					newMode = EHSI.EHSIInstrumentState.InstrumentModes.Tacan;
+				case InstrumentModes.PlsNav:
+					newMode = InstrumentModes.Tacan;
 					break;
 			}
 			if (newMode.HasValue)

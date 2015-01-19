@@ -1,6 +1,7 @@
 ﻿using System;
 using LightningGauges.Renderers;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.EHSI;
 
 namespace MFDExtractor.EventSystem
 {
