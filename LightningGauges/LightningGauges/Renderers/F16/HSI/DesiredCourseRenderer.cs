@@ -1,0 +1,31 @@
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
+namespace LightningGauges.Renderers.F16.HSI
+{
+    internal static class DesiredCourseRenderer
+    {
+        internal static void DrawDesiredCourse(Graphics destinationGraphics, ref GraphicsState basicState, InstrumentState instrumentState, FontGraphic rangeFontGraphic)
+        {
+            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+            var desiredCourseString = string.Format("{0:000}", instrumentState.DesiredCourseDegrees);
+            var desiredCourseHundreds = desiredCourseString[0];
+            var desiredCourseTens = desiredCourseString[1];
+            var desiredCourseOnes = desiredCourseString[2];
+            var desiredCourseHundredsImage = rangeFontGraphic.GetCharImage(desiredCourseHundreds);
+            var desiredCourseTensImage = rangeFontGraphic.GetCharImage(desiredCourseTens);
+            var desiredCourseOnesImage = rangeFontGraphic.GetCharImage(desiredCourseOnes);
+
+            var currentX = 182;
+            var y = 45;
+            const int spacingPixels = -5;
+            destinationGraphics.DrawImage(desiredCourseHundredsImage, new Point(currentX, y));
+            currentX += desiredCourseHundredsImage.Width + spacingPixels;
+            destinationGraphics.DrawImage(desiredCourseTensImage, new Point(currentX, y));
+            currentX += desiredCourseTensImage.Width + spacingPixels;
+            destinationGraphics.DrawImage(desiredCourseOnesImage, new Point(currentX, y));
+
+            GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
+        }
+    }
+}

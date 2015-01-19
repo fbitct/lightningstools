@@ -2,6 +2,7 @@
 using LightningGauges.Renderers;
 using LightningGauges.Renderers.F16;
 using LightningGauges.Renderers.F16.EHSI;
+using LightningGauges.Renderers.F16.HSI;
 using MFDExtractor.Properties;
 using MFDExtractor.Renderer;
 using MFDExtractor.RendererFactories;

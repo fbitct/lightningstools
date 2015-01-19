@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Renderers\F16\AzimuthIndicator\ALTLegendRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\BlipRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\CenterRWRSearchModeIndicationRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\ChaffCountRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EmitterCategoryRetriever.cs" />
@@ -96,7 +97,10 @@
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeSemiautomaticRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeStandbyRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\FlareCountRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\HeartbeatCrossRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\HeartbeatTickRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\HOFFLegendRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\InnerLethalityRingRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MiddleLethalityRingRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MissileActivitySymbolRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MissileLaunchLineRenderer.cs" />
@@ -124,6 +128,7 @@
     <Compile Include="Renderers\F16\AzimuthIndicator\SRCHLegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\StringRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\ThreatSymbols.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\UNKLegendRenderer.cs" />
     <Compile Include="Renderers\F16\DEDPFLFont.cs" />
     <Compile Include="FontGraphic.cs" />
     <Compile Include="GraphicsUtil.cs" />
@@ -142,6 +147,16 @@
     <Compile Include="Renderers\F16\EHSI\Options.cs" />
     <Compile Include="Renderers\F16\EHSI\InstrumentModes.cs" />
     <Compile Include="Renderers\F16\EHSI\TextWarningFlagRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\BearingToBeaconIndicatorRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\CompassRoseRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\CourseDeviationInvalidFlagRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\DesiredCourseRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\FromFlagRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\HeadingBugRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\InnerWheelRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\InstrumentState.cs" />
+    <Compile Include="Renderers\F16\HSI\RangeToBeaconRenderer.cs" />
+    <Compile Include="Renderers\F16\HSI\ToFlagRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\AirspeedDigitsRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\AirspeedTapeRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\AltitudeDigitsRenderer.cs" />
@@ -212,7 +227,7 @@
     <Compile Include="Renderers\F16\FanTurbineInletTemperature.cs" />
     <Compile Include="Renderers\F16\FuelFlow.cs" />
     <Compile Include="Renderers\F16\FuelQuantityIndicator.cs" />
-    <Compile Include="Renderers\F16\HorizontalSituationIndicator.cs" />
+    <Compile Include="Renderers\F16\HSI\HorizontalSituationIndicator.cs" />
     <Compile Include="Renderers\F16\HydraulicPressureGauge.cs" />
     <Compile Include="Renderers\F16\ISIS\ISIS.cs" />
     <Compile Include="Renderers\F16\LandingGearWheelsLights.cs" />
