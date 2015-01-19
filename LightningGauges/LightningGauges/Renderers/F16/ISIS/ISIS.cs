@@ -14,7 +14,7 @@ namespace LightningGauges.Renderers.F16.ISIS
 {
     public interface IISIS : IInstrumentRenderer
     {
-        ISISOptions Options { get; set; }
+        Options Options { get; set; }
         InstrumentState InstrumentState { get; set; }
     }
 
@@ -26,11 +26,11 @@ namespace LightningGauges.Renderers.F16.ISIS
         public ISIS()
         {
             InstrumentState = new InstrumentState();
-            Options = new ISISOptions();
+            Options = new Options();
             Fonts.AddFontFile("ISISDigits.ttf");
         }
 
-        public ISISOptions Options { get; set; }
+        public Options Options { get; set; }
         public InstrumentState InstrumentState { get; set; }
 
         public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)

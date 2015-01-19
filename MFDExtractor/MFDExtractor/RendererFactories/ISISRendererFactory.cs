@@ -16,7 +16,7 @@ namespace MFDExtractor.RendererFactories
 		{
 			var toReturn = new ISIS
 			{
-				Options = new ISISOptions
+				Options = new Options
 				{
 					PressureAltitudeUnits = (PressureUnits)Enum.Parse(typeof(PressureUnits), Settings.Default.ISIS_PressureUnits),
 					GDIPlusOptions = gdiPlusOptions
