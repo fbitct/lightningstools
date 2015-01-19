@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Drawing.Drawing2D;
+﻿using System.Drawing;
 using System.IO;
 using System.Reflection;
 using Common.Imaging;
@@ -201,31 +199,23 @@ namespace LightningGauges.Renderers.F16.HSI
                 var initialState = destinationGraphics.Save();
 
                 //set up the canvas scale and clipping region
-                var width = 0;
-                var height = 0;
-
-                width = _hsiBackground.Image.Width - 47;
-                height = _hsiBackground.Image.Height - 49;
+                var width = _hsiBackground.Image.Width - 47;
+                var height = _hsiBackground.Image.Height - 49;
 
                 destinationGraphics.ResetTransform(); //clear any existing transforms
                 destinationGraphics.SetClip(destinationRectangle); //set the clipping region on the graphics object to our render rectangle's boundaries
                 destinationGraphics.FillRectangle(Brushes.Black, destinationRectangle);
                 destinationGraphics.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
-                //set the initial scale transformation 
 
+                //set the initial scale transformation 
                 destinationGraphics.TranslateTransform(-24, -14);
+
                 //save the basic canvas transform and clip settings so we can revert to them later, as needed
                 var basicState = destinationGraphics.Save();
+                const float centerX = 128;
+                const float centerY = 128;
 
-                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.TranslateTransform(0, -11);
-                destinationGraphics.DrawImage(_hsiBackground.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-
-                float centerX = 128;
-                float centerY = 128;
-
-
+                BackgroundRenderer.DrawBackground(destinationGraphics, ref basicState, _hsiBackground.MaskedImage);
                 CompassRoseRenderer.DrawCompassRose(destinationGraphics, ref basicState, centerX, centerY, InstrumentState, _compassRose.MaskedImage);
                 InnerWheelRenderer.DrawInnerWheel(destinationGraphics, ref basicState, centerX, centerY, InstrumentState, _hsiInnerWheel.MaskedImage);
                 HeadingBugRenderer.DrawHeadingBug(destinationGraphics, ref basicState, centerX, centerY, InstrumentState, _hsiHeadingBug.MaskedImage );
@@ -235,49 +225,10 @@ namespace LightningGauges.Renderers.F16.HSI
                 DesiredCourseRenderer.DrawDesiredCourse(destinationGraphics, ref basicState, InstrumentState, _rangeFont);
                 ToFlagRenderer.DrawToFlag(destinationGraphics, ref basicState, centerX, centerY, InstrumentState, _toFlag.MaskedImage);
                 FromFlagRenderer.DrawFromFlag(destinationGraphics, ref basicState, centerX, centerY, InstrumentState, _fromFlag.MaskedImage);
-
-                //draw the range flag
-                if (InstrumentState.DmeInvalidFlag)
-                {
-                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_hsiRangeFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                }
-
-                //draw course deviation indicator
-                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.TranslateTransform(centerX, centerY);
-                destinationGraphics.RotateTransform(-InstrumentState.MagneticHeadingDegrees);
-                destinationGraphics.RotateTransform(InstrumentState.DesiredCourseDegrees);
-                destinationGraphics.TranslateTransform(-centerX, -centerY);
-                var cdiPct = InstrumentState.CourseDeviationDegrees/InstrumentState.CourseDeviationLimitDegrees;
-                var cdiRange = 46.0f;
-                var cdiPos = cdiPct*cdiRange;
-                destinationGraphics.TranslateTransform(cdiPos, -2);
-                try
-                {
-                    destinationGraphics.DrawImage(_hsiCourseDeviationIndicator.MaskedImage, new Point(0, 0));
-                }
-                catch (OverflowException)
-                {
-                }
-                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-
-                //draw airplane symbol
-                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.TranslateTransform(0, 5);
-                destinationGraphics.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
-                GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-
-                //draw the OFF flag
-                if (InstrumentState.OffFlag)
-                {
-                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.RotateTransform(-25);
-                    destinationGraphics.TranslateTransform(20, 50);
-                    destinationGraphics.DrawImage(_hsiOffFlag.MaskedImage, new Point(0, 0));
-                    GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                }
+                RangeFlagRenderer.DrawRangeFlag(destinationGraphics, ref basicState, InstrumentState, _hsiRangeFlag.MaskedImage);
+                CourseDeviationIndicatorRenderer.DrawCourseDeviationIndicator(destinationGraphics, ref basicState, centerX, centerY, InstrumentState, _hsiCourseDeviationIndicator.MaskedImage);
+                AirplaneSymbolRenderer.DrawAirplaneSymbol(destinationGraphics, ref basicState, _airplaneSymbol.MaskedImage);
+                OffFlagRenderer.DrawOffFlag(destinationGraphics, ref basicState, InstrumentState, _hsiOffFlag.MaskedImage);
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method
                 destinationGraphics.Restore(initialState);
