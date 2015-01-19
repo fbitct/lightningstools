@@ -2,9 +2,9 @@ using Common.UI;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
-    public class ISISOptions
+    public class Options
     {
-        public ISISOptions()
+        public Options()
         {
             PressureAltitudeUnits = PressureUnits.InchesOfMercury;
             RadarAltitudeUnits = AltitudeUnits.Feet;

@@ -6,7 +6,7 @@ namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class RadarAltimeterAreaRenderer
     {
-        internal static void DrawRadarAltimeterArea(Graphics gfx, ref GraphicsState basicState, RectangleF topRectangle, InstrumentState instrumentState, ISISOptions options, PrivateFontCollection fonts)
+        internal static void DrawRadarAltimeterArea(Graphics gfx, ref GraphicsState basicState, RectangleF topRectangle, InstrumentState instrumentState, Options options, PrivateFontCollection fonts)
         {
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
             const float raltRectangleWidth = 80;
