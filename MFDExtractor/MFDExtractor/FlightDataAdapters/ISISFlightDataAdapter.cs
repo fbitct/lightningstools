@@ -26,8 +26,8 @@ namespace MFDExtractor.FlightDataAdapters
             isis.InstrumentState.AirspeedKnots = flightData.kias;
             isis.InstrumentState.IndicatedAltitudeFeetMSL = -flightData.aauz;
 	        isis.Options.PressureAltitudeUnits = ((altbits & AltBits.CalType) == AltBits.CalType) 
-				? ISIS.ISISOptions.PressureUnits.InchesOfMercury 
-				: ISIS.ISISOptions.PressureUnits.Millibars;
+				? PressureUnits.InchesOfMercury 
+				: PressureUnits.Millibars;
 
 	        isis.InstrumentState.BarometricPressure = flightData.AltCalReading;
 			isis.InstrumentState.RadarAltitudeAGL = _radarAltitudeCalculator.ComputeRadarAltitude(flightData, terrainDB);
