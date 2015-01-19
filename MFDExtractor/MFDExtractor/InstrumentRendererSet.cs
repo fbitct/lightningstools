@@ -1,6 +1,7 @@
 ﻿using Common.SimSupport;
 using LightningGauges.Renderers;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.AzimuthIndicator;
 using LightningGauges.Renderers.F16.EHSI;
 using LightningGauges.Renderers.F16.ISIS;
 using MFDExtractor.Renderer;

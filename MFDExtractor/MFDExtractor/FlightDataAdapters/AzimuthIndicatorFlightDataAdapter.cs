@@ -4,6 +4,7 @@ using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.AzimuthIndicator;
 
 namespace MFDExtractor.FlightDataAdapters
 {
@@ -21,13 +22,13 @@ namespace MFDExtractor.FlightDataAdapters
             var rwrObjectCount = flightData.RwrObjectCount;
             if (flightData.RWRsymbol != null)
             {
-                var blips = new AzimuthIndicator.AzimuthIndicatorInstrumentState.Blip[flightData.RWRsymbol.Length];
+                var blips = new Blip[flightData.RWRsymbol.Length];
                 azimuthIndicator.InstrumentState.Blips = blips;
                 if (flightData.RWRsymbol != null)
                 {
                     for (var i = 0; i < flightData.RWRsymbol.Length; i++)
                     {
-                        var thisBlip = new AzimuthIndicator.AzimuthIndicatorInstrumentState.Blip();
+                        var thisBlip = new Blip();
                         if (i < rwrObjectCount) thisBlip.Visible = true;
                         if (flightData.bearing != null)
                         {

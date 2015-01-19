@@ -80,6 +80,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Renderers\F16\AzimuthIndicator\Options.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\Blip.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\EmitterCategory.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\EWMSMode.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\InstrumentState.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\ThreatSymbols.cs" />
     <Compile Include="Renderers\F16\DEDPFLFont.cs" />
     <Compile Include="FontGraphic.cs" />
     <Compile Include="GraphicsUtil.cs" />
@@ -183,7 +189,7 @@
     <Compile Include="Renderers\F16\VerticalVelocityIndicatorEU.cs" />
     <Compile Include="Renderers\F16\VerticalVelocityIndicatorInstrumentState.cs" />
     <Compile Include="Renderers\F16\VerticalVelocityIndicatorUSA.cs" />
-    <Compile Include="Renderers\F16\AzimuthIndicator.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\AzimuthIndicator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

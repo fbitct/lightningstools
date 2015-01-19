@@ -10,7 +10,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             const float airplaneFuselageLength = 45;
             const float airplaneTailWidth = 23;
             const float airplaneWingWidth = 45;
-            var gap = airplaneFuselageLength/2.0f;
+            const float gap = airplaneFuselageLength/2.0f;
 
             var symbolPen = new Pen(Color.White) {Width = 3};
 

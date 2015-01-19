@@ -18,6 +18,7 @@ using Microsoft.Win32;
 using log4net;
 using Common.Networking;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.AzimuthIndicator;
 
 namespace MFDExtractor.UI
 {
@@ -354,11 +355,11 @@ namespace MFDExtractor.UI
 
             string azimuthIndicatorType = settings.AzimuthIndicatorType;
             var azimuthIndicatorStyle =
-                (AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle)
-                Enum.Parse(typeof (AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle), azimuthIndicatorType);
+                (AzimuthIndicator.InstrumentStyle)
+                Enum.Parse(typeof (AzimuthIndicator.InstrumentStyle), azimuthIndicatorType);
             switch (azimuthIndicatorStyle)
             {
-                case AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR:
+                case AzimuthIndicator.InstrumentStyle.IP1310ALR:
                     if (settings.AzimuthIndicator_ShowBezel)
                     {
                         rdoAzimuthIndicatorStyleDigital.Checked = false;
@@ -378,7 +379,7 @@ namespace MFDExtractor.UI
                         rdoAzimuthIndicatorStyleScope.Checked = true;
                     }
                     break;
-                case AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.HAF:
+                case AzimuthIndicator.InstrumentStyle.HAF:
                     rdoAzimuthIndicatorStyleDigital.Checked = false;
                     rdoRWRIP1310BezelType.Checked = false;
                     rdoATDPlus.Checked = false;
@@ -386,7 +387,7 @@ namespace MFDExtractor.UI
                     rdoRWRHAFBezelType.Checked = true;
                     rdoAzimuthIndicatorStyleScope.Checked = true;
                     break;
-                case AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay:
+                case AzimuthIndicator.InstrumentStyle.AdvancedThreatDisplay:
                     rdoAzimuthIndicatorStyleScope.Checked = false;
                     rdoRWRIP1310BezelType.Checked = false;
                     rdoRWRHAFBezelType.Checked = false;
@@ -745,26 +746,26 @@ namespace MFDExtractor.UI
                 if (rdoRWRIP1310BezelType.Checked)
                 {
                     settings.AzimuthIndicatorType =
-                        AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                        AzimuthIndicator.InstrumentStyle.IP1310ALR.ToString();
                     settings.AzimuthIndicator_ShowBezel = true;
                 }
                 else if (rdoRWRHAFBezelType.Checked)
                 {
                     settings.AzimuthIndicatorType =
-                        AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
+                        AzimuthIndicator.InstrumentStyle.HAF.ToString();
                     settings.AzimuthIndicator_ShowBezel = true;
                 }
                 else if (rdoAzimuthIndicatorNoBezel.Checked)
                 {
                     settings.AzimuthIndicatorType =
-                        AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                        AzimuthIndicator.InstrumentStyle.IP1310ALR.ToString();
                     settings.AzimuthIndicator_ShowBezel = false;
                 }
             }
             else if (rdoAzimuthIndicatorStyleDigital.Checked)
             {
                 settings.AzimuthIndicatorType =
-                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
+                    AzimuthIndicator.InstrumentStyle.AdvancedThreatDisplay.ToString();
             }
 
             if (rdoVVIStyleNeedle.Checked)
@@ -1436,7 +1437,7 @@ namespace MFDExtractor.UI
             if (rdoRWRIP1310BezelType.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                    AzimuthIndicator.InstrumentStyle.IP1310ALR.ToString();
                 Settings.Default.AzimuthIndicator_ShowBezel = true;
                 //StopAndRestartExtractor();
             }
@@ -1447,7 +1448,7 @@ namespace MFDExtractor.UI
             if (rdoRWRHAFBezelType.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
+                    AzimuthIndicator.InstrumentStyle.HAF.ToString();
                 Settings.Default.AzimuthIndicator_ShowBezel = true;
                 //StopAndRestartExtractor();
             }
@@ -1458,7 +1459,7 @@ namespace MFDExtractor.UI
             if (rdoAzimuthIndicatorNoBezel.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                    AzimuthIndicator.InstrumentStyle.IP1310ALR.ToString();
                 Settings.Default.AzimuthIndicator_ShowBezel = false;
                 //StopAndRestartExtractor();
             }
@@ -1482,7 +1483,7 @@ namespace MFDExtractor.UI
             if (rdoATDPlus.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
+                    AzimuthIndicator.InstrumentStyle.AdvancedThreatDisplay.ToString();
                 //StopAndRestartExtractor();
             }
         }
