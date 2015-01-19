@@ -103,6 +103,7 @@
     <Compile Include="Renderers\F16\AzimuthIndicator\EmitterCategory.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWMSMode.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\InstrumentState.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\PageLegendsRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\PowerOffFlagRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\PRILegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\RWRTestPage1Renderer.cs" />
