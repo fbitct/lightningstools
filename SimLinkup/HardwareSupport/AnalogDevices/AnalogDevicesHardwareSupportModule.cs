@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AnalogDevices;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
@@ -19,7 +18,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #region Instance variables
 
         private readonly AnalogSignal[] _analogOutputSignals;
-        private DenseDacEvalBoard _device;
+        private a.DenseDacEvalBoard _device;
         private bool _isDisposed;
 
         #endregion
@@ -30,7 +29,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
         }
 
-        private AnalogDevicesHardwareSupportModule(DenseDacEvalBoard device, int deviceIndex) : this()
+        private AnalogDevicesHardwareSupportModule(a.DenseDacEvalBoard device, int deviceIndex) : this()
         {
             //if (device == null) throw new ArgumentNullException("device");
             _device = device;
@@ -39,7 +38,11 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         public override string FriendlyName
         {
-            get { return String.Format( "Analog Devices AD536x/AD537x on {0}", _device==null? "{FAKE}": _device.SymbolicName); }
+            get
+            {
+                return String.Format("Analog Devices AD536x/AD537x on {0}",
+                    _device == null ? "{FAKE}" : _device.SymbolicName);
+            }
         }
 
         public static IHardwareSupportModule[] GetInstances()
@@ -48,7 +51,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             try
             {
                 var index = 0;
-                var boards = DenseDacEvalBoard.Enumerate();
+                var boards = a.DenseDacEvalBoard.Enumerate();
                 if (boards != null && boards.Length > 0)
                 {
                     foreach (var device in boards)
@@ -57,21 +60,22 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                         device.Reset();
                         if (device.IsOverTemperature)
                         {
-                            device.IsTemperatureShutdownEnabled = false; //reset temperature shutdown after previous overtemperature event
+                            device.IsTemperatureShutdownEnabled = false;
+                                //reset temperature shutdown after previous overtemperature event
                         }
                         device.IsTemperatureShutdownEnabled = true; //enable over-temperature auto shutdown
-                        
-                        device.SetDacChannelDataSourceAllChannels(DacChannelDataSource.DataValueA);
-                        device.DacPrecision = DacPrecision.SixteenBit;
+
+                        device.SetDacChannelDataSourceAllChannels(a.DacChannelDataSource.DataValueA);
+                        device.DacPrecision = a.DacPrecision.SixteenBit;
                         device.OffsetDAC0 = 0x2000;
                         device.OffsetDAC1 = 0x2000;
                         device.OffsetDAC2 = 0x2000;
                         for (var j = 0; j < 40; j++)
                         {
-                            device.SetDacChannelOffset((ChannelAddress) j + 8, 0x8000);
-                            device.SetDacChannelGain((ChannelAddress) j + 8, 0xFFFF);
+                            device.SetDacChannelOffset((a.ChannelAddress) j + 8, 0x8000);
+                            device.SetDacChannelGain((a.ChannelAddress) j + 8, 0xFFFF);
                             //device.SetDacChannelDataSource((ChannelAddress) j + 8, DacChannelDataSource.DataValueA);
-                            device.SetDacChannelDataValueA((ChannelAddress) j + 8, 0x7FFF);
+                            device.SetDacChannelDataValueA((a.ChannelAddress) j + 8, 0x7FFF);
                         }
                         device.UpdateAllDacOutputs();
 
@@ -123,7 +127,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
 
         #region Signal Creation
 
-        private void CreateOutputSignals(DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
+        private void CreateOutputSignals(a.DenseDacEvalBoard device, int deviceIndex, out AnalogSignal[] analogSignals)
         {
             //if (device == null) throw new ArgumentNullException("device");
             var analogSignalsToReturn = new List<AnalogSignal>();
@@ -161,22 +165,23 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             {
                 if (_device != null)
                 {
-                    _device.SetDacChannelDataValueA((ChannelAddress) outputSignal.Index.Value + 8,
-                                                    (ushort) (outputSignal.State*0xFFFF));
+                    _device.SetDacChannelDataValueA((a.ChannelAddress) outputSignal.Index.Value + 8,
+                        (ushort) (outputSignal.State*0xFFFF));
                 }
             }
         }
+
         private void Initialize()
         {
             foreach (var signal in _analogOutputSignals)
             {
-                UpdateOutputSignal(signal, new AnalogSignalChangedEventArgs(0,0));
+                UpdateOutputSignal(signal, new AnalogSignalChangedEventArgs(0, 0));
             }
             Synchronize();
         }
+
         public override void Synchronize()
         {
-
             if (_device != null)
             {
                 _device.UpdateAllDacOutputs();
@@ -190,9 +195,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -201,9 +206,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~AnalogDevicesHardwareSupportModule()
         {
@@ -211,11 +216,13 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

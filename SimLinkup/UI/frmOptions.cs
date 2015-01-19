@@ -109,7 +109,7 @@ namespace SimLinkup.UI
                             c.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
                     {
                         startupKey.SetValue(Application.ProductName, Application.ExecutablePath,
-                                            RegistryValueKind.String);
+                            RegistryValueKind.String);
                     }
                 }
                 catch (Exception ex)

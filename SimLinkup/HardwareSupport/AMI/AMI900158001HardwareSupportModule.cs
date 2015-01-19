@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.IO;
 using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
-using Common.UI.UserControls;
 using log4net;
 
 namespace SimLinkup.HardwareSupport.AMI
@@ -16,7 +14,7 @@ namespace SimLinkup.HardwareSupport.AMI
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof(AMI900158001HardwareSupportModule));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (AMI900158001HardwareSupportModule));
 
         #endregion
 
@@ -73,9 +71,6 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal _DMEx1COSOutputSignal;
         private AnalogSignal _courseDeviationOutputSignal;
 
-        
-
-
         #endregion
 
         #region Constructors
@@ -95,12 +90,11 @@ namespace SimLinkup.HardwareSupport.AMI
 
         public static IHardwareSupportModule[] GetInstances()
         {
-            var toReturn = new List<IHardwareSupportModule>();
-            toReturn.Add(new AMI900158001HardwareSupportModule());
+            var toReturn = new List<IHardwareSupportModule> {new AMI900158001HardwareSupportModule()};
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                     "AMI900158001HardwareSupportModuleConfig.config");
+                    "AMI900158001HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     AMI900158001HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
@@ -117,22 +111,52 @@ namespace SimLinkup.HardwareSupport.AMI
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] { _compassInputSignal,_headingInputSignal,_courseInputSignal,_bearingInputSignal, _DMEInputSignal, _courseDeviationInputSignal, _courseDeviationLimitInputSignal}; }
+            get
+            {
+                return new[]
+                {
+                    _compassInputSignal, _headingInputSignal, _courseInputSignal, _bearingInputSignal, _DMEInputSignal,
+                    _courseDeviationInputSignal, _courseDeviationLimitInputSignal
+                };
+            }
         }
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return new[] { _offFlagInputSignal, _deviationFlagInputSignal, _dmeShutterInputSignal, _toFlagInputSignal, _fromFlagInputSignal }; }
+            get
+            {
+                return new[]
+                {
+                    _offFlagInputSignal, _deviationFlagInputSignal, _dmeShutterInputSignal, _toFlagInputSignal,
+                    _fromFlagInputSignal
+                };
+            }
         }
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] {_compassSINOutputSignal,_compassCOSOutputSignal,_headingSINOutputSignal,_headingCOSOutputSignal,_courseSINOutputSignal,_courseCOSOutputSignal,_bearingSINOutputSignal,_bearingCOSOutputSignal,_DMEx100SINOutputSignal,_DMEx100COSOutputSignal,_DMEx10SINOutputSignal,_DMEx10COSOutputSignal,_DMEx1SINOutputSignal,_DMEx1COSOutputSignal,_courseDeviationOutputSignal}; }
+            get
+            {
+                return new[]
+                {
+                    _compassSINOutputSignal, _compassCOSOutputSignal, _headingSINOutputSignal, _headingCOSOutputSignal,
+                    _courseSINOutputSignal, _courseCOSOutputSignal, _bearingSINOutputSignal, _bearingCOSOutputSignal,
+                    _DMEx100SINOutputSignal, _DMEx100COSOutputSignal, _DMEx10SINOutputSignal, _DMEx10COSOutputSignal,
+                    _DMEx1SINOutputSignal, _DMEx1COSOutputSignal, _courseDeviationOutputSignal
+                };
+            }
         }
 
         public override DigitalSignal[] DigitalOutputs
         {
-            get { return new[]{_offFlagOutputSignal,_deviationFlagOutputSignal,_dmeShutterOutputSignal,_toFlagOutputSignal,_fromFlagOutputSignal}; }
+            get
+            {
+                return new[]
+                {
+                    _offFlagOutputSignal, _deviationFlagOutputSignal, _dmeShutterOutputSignal, _toFlagOutputSignal,
+                    _fromFlagOutputSignal
+                };
+            }
         }
 
         #endregion
@@ -144,42 +168,42 @@ namespace SimLinkup.HardwareSupport.AMI
         private void CreateInputEventHandlers()
         {
             _offFlagInputSignalChangedEventHandler =
-                new DigitalSignal.SignalChangedEventHandler(offFlag_InputSignalChanged);
+                offFlag_InputSignalChanged;
             _dmeShutterInputSignalChangedEventHandler =
-                new DigitalSignal.SignalChangedEventHandler(dmeShutter_InputSignalChanged);
-             _deviationFlagInputSignalChangedEventHandler =
-                new DigitalSignal.SignalChangedEventHandler(deviationFlag_InputSignalChanged);
+                dmeShutter_InputSignalChanged;
+            _deviationFlagInputSignalChangedEventHandler =
+                deviationFlag_InputSignalChanged;
             _toFlagInputSignalChangedEventHandler =
-                new DigitalSignal.SignalChangedEventHandler(toFlag_InputSignalChanged);
+                toFlag_InputSignalChanged;
             _fromFlagInputSignalChangedEventHandler =
-                new DigitalSignal.SignalChangedEventHandler(fromFlag_InputSignalChanged);
+                fromFlag_InputSignalChanged;
 
             _compassInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
+                HSI_Directional_InputSignalsChanged;
             _headingInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
+                HSI_Directional_InputSignalsChanged;
             _courseInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
+                HSI_Directional_InputSignalsChanged;
             _bearingInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
+                HSI_Directional_InputSignalsChanged;
             _DMEInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(dme_InputSignalChanged);
+                dme_InputSignalChanged;
             _courseDeviationInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(HSI_Directional_InputSignalsChanged);
+                HSI_Directional_InputSignalsChanged;
         }
 
         private void AbandonInputEventHandlers()
         {
-             _offFlagInputSignalChangedEventHandler = null;
+            _offFlagInputSignalChangedEventHandler = null;
             _dmeShutterInputSignalChangedEventHandler = null;
-             _deviationFlagInputSignalChangedEventHandler= null;
+            _deviationFlagInputSignalChangedEventHandler = null;
             _toFlagInputSignalChangedEventHandler = null;
             _fromFlagInputSignalChangedEventHandler = null;
 
-            _compassInputSignalChangedEventHandler= null;
+            _compassInputSignalChangedEventHandler = null;
             _headingInputSignalChangedEventHandler = null;
-            _courseInputSignalChangedEventHandler= null;
-            _bearingInputSignalChangedEventHandler= null;
+            _courseInputSignalChangedEventHandler = null;
+            _bearingInputSignalChangedEventHandler = null;
             _DMEInputSignalChangedEventHandler = null;
             _courseDeviationInputSignalChangedEventHandler = null;
         }
@@ -226,7 +250,7 @@ namespace SimLinkup.HardwareSupport.AMI
             {
                 _DMEInputSignal.SignalChanged += _DMEInputSignalChangedEventHandler;
             }
-             if (_courseDeviationInputSignal != null)
+            if (_courseDeviationInputSignal != null)
             {
                 _courseDeviationInputSignal.SignalChanged += _courseDeviationInputSignalChangedEventHandler;
             }
@@ -234,78 +258,115 @@ namespace SimLinkup.HardwareSupport.AMI
 
         private void UnregisterForInputEvents()
         {
-            if (_offFlagInputSignal != null && _offFlagInputSignalChangedEventHandler !=null)
+            if (_offFlagInputSignal != null && _offFlagInputSignalChangedEventHandler != null)
             {
-                try 
+                try
                 {
                     _offFlagInputSignal.SignalChanged -= _offFlagInputSignalChangedEventHandler;
                 }
-                catch (RemotingException){}
-            }
-            if (_dmeShutterInputSignal != null && _dmeShutterInputSignalChangedEventHandler !=null)
-            {
-                try 
+                catch (RemotingException)
                 {
-                 _dmeShutterInputSignal.SignalChanged -= _dmeShutterInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                }
             }
-            if (_deviationFlagInputSignal != null && _deviationFlagInputSignalChangedEventHandler!=null)
+            if (_dmeShutterInputSignal != null && _dmeShutterInputSignalChangedEventHandler != null)
             {
-                try 
+                try
+                {
+                    _dmeShutterInputSignal.SignalChanged -= _dmeShutterInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_deviationFlagInputSignal != null && _deviationFlagInputSignalChangedEventHandler != null)
+            {
+                try
                 {
                     _deviationFlagInputSignal.SignalChanged -= _deviationFlagInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                }
+                catch (RemotingException)
+                {
+                }
             }
-            if (_toFlagInputSignal != null && _toFlagInputSignalChangedEventHandler !=null)
+            if (_toFlagInputSignal != null && _toFlagInputSignalChangedEventHandler != null)
             {
-                try 
+                try
                 {
                     _toFlagInputSignal.SignalChanged -= _toFlagInputSignalChangedEventHandler;
                 }
-                catch (RemotingException) {}
-
+                catch (RemotingException)
+                {
+                }
             }
-            if (_fromFlagInputSignal != null && _fromFlagInputSignalChangedEventHandler !=null)
+            if (_fromFlagInputSignal != null && _fromFlagInputSignalChangedEventHandler != null)
             {
-                try {
-                _fromFlagInputSignal.SignalChanged -= _fromFlagInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                try
+                {
+                    _fromFlagInputSignal.SignalChanged -= _fromFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
-            if (_compassInputSignal != null && _compassInputSignalChangedEventHandler !=null)
+            if (_compassInputSignal != null && _compassInputSignalChangedEventHandler != null)
             {
-                try {
-                _compassInputSignal.SignalChanged -= _compassInputSignalChangedEventHandler;
-                }catch (RemotingException) {}
+                try
+                {
+                    _compassInputSignal.SignalChanged -= _compassInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
-            if (_headingInputSignal != null && _headingInputSignalChangedEventHandler !=null)
+            if (_headingInputSignal != null && _headingInputSignalChangedEventHandler != null)
             {
-                try {
-                _headingInputSignal.SignalChanged -= _headingInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                try
+                {
+                    _headingInputSignal.SignalChanged -= _headingInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
-            if (_courseInputSignal != null && _courseInputSignalChangedEventHandler !=null)
+            if (_courseInputSignal != null && _courseInputSignalChangedEventHandler != null)
             {
-                try {
-                _courseInputSignal.SignalChanged -= _courseInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                try
+                {
+                    _courseInputSignal.SignalChanged -= _courseInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
-            if (_bearingInputSignal != null && _bearingInputSignalChangedEventHandler !=null)
+            if (_bearingInputSignal != null && _bearingInputSignalChangedEventHandler != null)
             {
-                try {
-                _bearingInputSignal.SignalChanged -= _bearingInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                try
+                {
+                    _bearingInputSignal.SignalChanged -= _bearingInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
-            if (_DMEInputSignal != null && _DMEInputSignalChangedEventHandler !=null)
+            if (_DMEInputSignal != null && _DMEInputSignalChangedEventHandler != null)
             {
-                try {
-                _DMEInputSignal.SignalChanged -= _DMEInputSignalChangedEventHandler;
-                } catch (RemotingException) {}
+                try
+                {
+                    _DMEInputSignal.SignalChanged -= _DMEInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
-             if (_courseDeviationInputSignal != null && _courseDeviationInputSignalChangedEventHandler !=null)
+            if (_courseDeviationInputSignal != null && _courseDeviationInputSignalChangedEventHandler != null)
             {
-                 try {
-                _courseDeviationInputSignal.SignalChanged += _courseDeviationInputSignalChangedEventHandler;
-                 } catch (RemotingException) {}
+                try
+                {
+                    _courseDeviationInputSignal.SignalChanged += _courseDeviationInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
             }
         }
 
@@ -331,82 +392,100 @@ namespace SimLinkup.HardwareSupport.AMI
 
         private DigitalSignal CreateOffFlagInputSignal()
         {
-            var thisSignal = new DigitalSignal();
-            thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "Off flag";
-            thisSignal.Id = "900158001_Off_Flag_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            var thisSignal = new DigitalSignal
+            {
+                CollectionName = "Digital Inputs",
+                FriendlyName = "Off flag",
+                Id = "900158001_Off_Flag_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = false
+            };
             return thisSignal;
         }
+
         private DigitalSignal CreateDeviationFlagInputSignal()
         {
-            var thisSignal = new DigitalSignal();
-            thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "Deviation flag";
-            thisSignal.Id = "900158001_Deviation_Flag_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            var thisSignal = new DigitalSignal
+            {
+                CollectionName = "Digital Inputs",
+                FriendlyName = "Deviation flag",
+                Id = "900158001_Deviation_Flag_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = false
+            };
             return thisSignal;
         }
+
         private DigitalSignal CreateDMEShutterInputSignal()
         {
-            var thisSignal = new DigitalSignal();
-            thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "DME Shutter flag";
-            thisSignal.Id = "900158001_DME_Shutter_Flag_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            var thisSignal = new DigitalSignal
+            {
+                CollectionName = "Digital Inputs",
+                FriendlyName = "DME Shutter flag",
+                Id = "900158001_DME_Shutter_Flag_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = false
+            };
             return thisSignal;
         }
+
         private DigitalSignal CreateToFlagInputSignal()
         {
-            var thisSignal = new DigitalSignal();
-            thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "TO flag";
-            thisSignal.Id = "900158001_TO_Flag_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            var thisSignal = new DigitalSignal
+            {
+                CollectionName = "Digital Inputs",
+                FriendlyName = "TO flag",
+                Id = "900158001_TO_Flag_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = false
+            };
             return thisSignal;
         }
+
         private DigitalSignal CreateFromFlagInputSignal()
         {
-            var thisSignal = new DigitalSignal();
-            thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "FROM flag";
-            thisSignal.Id = "900158001_FROM_Flag_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = false;
+            var thisSignal = new DigitalSignal
+            {
+                CollectionName = "Digital Inputs",
+                FriendlyName = "FROM flag",
+                Id = "900158001_FROM_Flag_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = false
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateCompassInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Compass";
-            thisSignal.Id = "900158001_Compass_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Inputs",
+                FriendlyName = "Compass",
+                Id = "900158001_Compass_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateHeadingInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -420,72 +499,87 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private AnalogSignal CreateCourseInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Course";
-            thisSignal.Id = "900158001_Course_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Inputs",
+                FriendlyName = "Course",
+                Id = "900158001_Course_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateBearingInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Bearing";
-            thisSignal.Id = "900158001_Bearing_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Inputs",
+                FriendlyName = "Bearing",
+                Id = "900158001_Bearing_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "DME";
-            thisSignal.Id = "900158001_DME_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Inputs",
+                FriendlyName = "DME",
+                Id = "900158001_DME_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateCourseDeviationInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Course Deviation";
-            thisSignal.Id = "900158001_Course_Deviation_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Inputs",
+                FriendlyName = "Course Deviation",
+                Id = "900158001_Course_Deviation_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateCourseDeviationLimitInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Course Deviation Limit";
-            thisSignal.Id = "900158001_Course_Deviation_Limit_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Inputs",
+                FriendlyName = "Course Deviation Limit",
+                Id = "900158001_Course_Deviation_Limit_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0
+            };
             return thisSignal;
         }
-        
+
         private void CreateOutputSignals()
         {
             _compassSINOutputSignal = CreateCompassSINOutputSignal();
@@ -512,17 +606,20 @@ namespace SimLinkup.HardwareSupport.AMI
 
         private AnalogSignal CreateCompassSINOutputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Compass (SIN)";
-            thisSignal.Id = "900158001_Compass_SIN_To_Instrument";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Outputs",
+                FriendlyName = "Compass (SIN)",
+                Id = "900158001_Compass_SIN_To_Instrument",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = (0.00 + 10.00)/20.00
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateCompassCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -533,9 +630,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateHeadingSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -546,22 +644,26 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateHeadingCOSOutputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Heading (COS)";
-            thisSignal.Id = "900158001_Heading_COS_To_Instrument";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            var thisSignal = new AnalogSignal
+            {
+                CollectionName = "Analog Outputs",
+                FriendlyName = "Heading (COS)",
+                Id = "900158001_Heading_COS_To_Instrument",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = (10.00 + 10.00)/20.00
+            };
             return thisSignal;
         }
+
         private AnalogSignal CreateCourseSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -572,9 +674,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateCourseCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -585,9 +688,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateBearingSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -598,9 +702,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateBearingCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -611,9 +716,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEx100SINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -624,9 +730,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEx100COSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -637,9 +744,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEx10SINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -650,9 +758,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEx10COSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -663,9 +772,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEx1SINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -676,9 +786,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateDMEx1COSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -689,9 +800,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateCourseDeviationOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -702,9 +814,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private DigitalSignal CreateOffFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -718,6 +831,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateDeviationFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -731,6 +845,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateDMEShutterOutputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -744,6 +859,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateToFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -757,6 +873,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateFromFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -770,27 +887,32 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
-        
+
         private void offFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateOffFlagOutputValue();
         }
+
         private void dmeShutter_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateDMEShutterOutputValue();
         }
+
         private void deviationFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateDeviationFlagOutputValue();
         }
+
         private void toFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateToFlagOutputValue();
         }
+
         private void fromFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateFromFlagOutputValue();
         }
+
         private void HSI_Directional_InputSignalsChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateCompassOutputValue();
@@ -805,166 +927,182 @@ namespace SimLinkup.HardwareSupport.AMI
             UpdateDMEOutputValue();
         }
 
-        private void UpdateOffFlagOutputValue() 
+        private void UpdateOffFlagOutputValue()
         {
-            if (_offFlagInputSignal !=null && _offFlagOutputSignal !=null) 
+            if (_offFlagInputSignal != null && _offFlagOutputSignal != null)
             {
                 _offFlagOutputSignal.State = _offFlagInputSignal.State;
             }
         }
-         private void UpdateDMEShutterOutputValue() 
+
+        private void UpdateDMEShutterOutputValue()
         {
-            if (_dmeShutterInputSignal !=null && _dmeShutterOutputSignal !=null) 
+            if (_dmeShutterInputSignal != null && _dmeShutterOutputSignal != null)
             {
                 _dmeShutterOutputSignal.State = _dmeShutterInputSignal.State;
             }
         }
-        private void UpdateDeviationFlagOutputValue() 
+
+        private void UpdateDeviationFlagOutputValue()
         {
-            if (_deviationFlagInputSignal !=null && _deviationFlagOutputSignal !=null) 
+            if (_deviationFlagInputSignal != null && _deviationFlagOutputSignal != null)
             {
                 _deviationFlagOutputSignal.State = _deviationFlagInputSignal.State;
             }
         }
-        private void UpdateToFlagOutputValue() 
+
+        private void UpdateToFlagOutputValue()
         {
-            if (_toFlagInputSignal !=null && _toFlagOutputSignal !=null) 
+            if (_toFlagInputSignal != null && _toFlagOutputSignal != null)
             {
                 _toFlagOutputSignal.State = _toFlagInputSignal.State;
             }
         }
-        private void UpdateFromFlagOutputValue() 
+
+        private void UpdateFromFlagOutputValue()
         {
-            if (_fromFlagInputSignal !=null && _fromFlagOutputSignal !=null) 
+            if (_fromFlagInputSignal != null && _fromFlagOutputSignal != null)
             {
                 _fromFlagOutputSignal.State = _fromFlagInputSignal.State;
             }
         }
-        private void UpdateCompassOutputValue() 
+
+        private void UpdateCompassOutputValue()
         {
-            if (_compassInputSignal !=null && _compassSINOutputSignal !=null && _compassCOSOutputSignal !=null) 
+            if (_compassInputSignal != null && _compassSINOutputSignal != null && _compassCOSOutputSignal != null)
             {
                 var compassDegrees = _compassInputSignal.State;
-                var compassSINOutputValue = 10.0000 * Math.Sin(compassDegrees * Constants.RADIANS_PER_DEGREE);
-                if (compassSINOutputValue < -10) 
+                var compassSINOutputValue = 10.0000*Math.Sin(compassDegrees*Constants.RADIANS_PER_DEGREE);
+                if (compassSINOutputValue < -10)
                 {
-                    compassSINOutputValue = -10; 
+                    compassSINOutputValue = -10;
                 }
-                if (compassSINOutputValue >10) 
+                if (compassSINOutputValue > 10)
                 {
                     compassSINOutputValue = 10;
                 }
-                _compassSINOutputSignal.State = ((compassSINOutputValue + 10.0000) /20.0000);
+                _compassSINOutputSignal.State = ((compassSINOutputValue + 10.0000)/20.0000);
 
-                var compassCOSOutputValue = 10.0000 * Math.Cos(compassDegrees * Constants.RADIANS_PER_DEGREE);
-                if (compassCOSOutputValue < -10) 
+                var compassCOSOutputValue = 10.0000*Math.Cos(compassDegrees*Constants.RADIANS_PER_DEGREE);
+                if (compassCOSOutputValue < -10)
                 {
-                    compassCOSOutputValue = -10; 
+                    compassCOSOutputValue = -10;
                 }
-                if (compassCOSOutputValue >10) 
+                if (compassCOSOutputValue > 10)
                 {
                     compassCOSOutputValue = 10;
                 }
-                _compassCOSOutputSignal.State = ((compassCOSOutputValue + 10.0000) /20.0000);
+                _compassCOSOutputSignal.State = ((compassCOSOutputValue + 10.0000)/20.0000);
             }
         }
-        private void UpdateHeadingOutputValue() 
+
+        private void UpdateHeadingOutputValue()
         {
-            if (_headingInputSignal !=null && _headingSINOutputSignal !=null && _headingCOSOutputSignal !=null) 
+            if (_headingInputSignal != null && _headingSINOutputSignal != null && _headingCOSOutputSignal != null)
             {
                 var desiredHeadingDegrees = _headingInputSignal.State;
                 var magneticHeadingDegrees = _compassInputSignal.State;
 
-                var headingSINOutputValue = 10.0000 * Math.Sin((desiredHeadingDegrees - magneticHeadingDegrees) * Constants.RADIANS_PER_DEGREE);
-                if (headingSINOutputValue < -10) 
+                var headingSINOutputValue = 10.0000*
+                                            Math.Sin((desiredHeadingDegrees - magneticHeadingDegrees)*
+                                                     Constants.RADIANS_PER_DEGREE);
+                if (headingSINOutputValue < -10)
                 {
-                    headingSINOutputValue = -10; 
+                    headingSINOutputValue = -10;
                 }
-                if (headingSINOutputValue >10) 
+                if (headingSINOutputValue > 10)
                 {
                     headingSINOutputValue = 10;
                 }
-                _headingSINOutputSignal.State = ((headingSINOutputValue + 10.0000) /20.0000);
+                _headingSINOutputSignal.State = ((headingSINOutputValue + 10.0000)/20.0000);
 
-                var headingCOSOutputValue = 10.0000 * Math.Cos((desiredHeadingDegrees -magneticHeadingDegrees)* Constants.RADIANS_PER_DEGREE);
-                if (headingCOSOutputValue < -10) 
+                var headingCOSOutputValue = 10.0000*
+                                            Math.Cos((desiredHeadingDegrees - magneticHeadingDegrees)*
+                                                     Constants.RADIANS_PER_DEGREE);
+                if (headingCOSOutputValue < -10)
                 {
-                    headingCOSOutputValue = -10; 
+                    headingCOSOutputValue = -10;
                 }
-                if (headingCOSOutputValue >10) 
+                if (headingCOSOutputValue > 10)
                 {
                     headingCOSOutputValue = 10;
                 }
-                _headingCOSOutputSignal.State = ((headingCOSOutputValue + 10.0000) /20.0000);
+                _headingCOSOutputSignal.State = ((headingCOSOutputValue + 10.0000)/20.0000);
             }
         }
-         private void UpdateCourseOutputValue() 
+
+        private void UpdateCourseOutputValue()
         {
-            if (_courseInputSignal !=null && _courseSINOutputSignal !=null && _courseCOSOutputSignal !=null) 
+            if (_courseInputSignal != null && _courseSINOutputSignal != null && _courseCOSOutputSignal != null)
             {
                 var desiredCourseDegrees = _courseInputSignal.State;
-                var magneticHeadingDegrees = _compassInputSignal.State;
-                var courseSINOutputValue = 10.0000 * Math.Sin((desiredCourseDegrees - magneticHeadingDegrees) * Constants.RADIANS_PER_DEGREE);
-                if (courseSINOutputValue < -10) 
+                var courseSINOutputValue = 10.0000*Math.Sin((desiredCourseDegrees)*Constants.RADIANS_PER_DEGREE);
+                if (courseSINOutputValue < -10)
                 {
-                    courseSINOutputValue = -10; 
+                    courseSINOutputValue = -10;
                 }
-                if (courseSINOutputValue >10) 
+                if (courseSINOutputValue > 10)
                 {
                     courseSINOutputValue = 10;
                 }
-                _courseSINOutputSignal.State = ((courseSINOutputValue + 10.0000) /20.0000);
+                _courseSINOutputSignal.State = ((courseSINOutputValue + 10.0000)/20.0000);
 
-                var courseCOSOutputValue = 10.0000 * Math.Cos((desiredCourseDegrees - magneticHeadingDegrees)* Constants.RADIANS_PER_DEGREE);
-                if (courseCOSOutputValue < -10) 
+                var courseCOSOutputValue = 10.0000*Math.Cos((desiredCourseDegrees)*Constants.RADIANS_PER_DEGREE);
+                if (courseCOSOutputValue < -10)
                 {
-                    courseCOSOutputValue = -10; 
+                    courseCOSOutputValue = -10;
                 }
-                if (courseCOSOutputValue >10) 
+                if (courseCOSOutputValue > 10)
                 {
                     courseCOSOutputValue = 10;
                 }
-                _courseCOSOutputSignal.State = ((courseCOSOutputValue + 10.0000) /20.0000);
+                _courseCOSOutputSignal.State = ((courseCOSOutputValue + 10.0000)/20.0000);
             }
         }
-        private void UpdateBearingOutputValue() 
+
+        private void UpdateBearingOutputValue()
         {
-            if (_bearingInputSignal !=null && _bearingSINOutputSignal !=null && _bearingCOSOutputSignal !=null) 
+            if (_bearingInputSignal != null && _bearingSINOutputSignal != null && _bearingCOSOutputSignal != null)
             {
                 var bearingToBeaconDegrees = _bearingInputSignal.State;
                 var magneticHeadingDegrees = _compassInputSignal.State;
 
-                var bearingSINOutputValue = 10.0000 * Math.Sin((-(magneticHeadingDegrees - bearingToBeaconDegrees)) * Constants.RADIANS_PER_DEGREE);
-                if (bearingSINOutputValue < -10) 
+                var bearingSINOutputValue = 10.0000*
+                                            Math.Sin((-(magneticHeadingDegrees - bearingToBeaconDegrees))*
+                                                     Constants.RADIANS_PER_DEGREE);
+                if (bearingSINOutputValue < -10)
                 {
-                    bearingSINOutputValue = -10; 
+                    bearingSINOutputValue = -10;
                 }
-                if (bearingSINOutputValue >10) 
+                if (bearingSINOutputValue > 10)
                 {
                     bearingSINOutputValue = 10;
                 }
-                _bearingSINOutputSignal.State = ((bearingSINOutputValue + 10.0000) /20.0000);
+                _bearingSINOutputSignal.State = ((bearingSINOutputValue + 10.0000)/20.0000);
 
-                var bearingCOSOutputValue = 10.0000 * Math.Cos((-(magneticHeadingDegrees - bearingToBeaconDegrees)) * Constants.RADIANS_PER_DEGREE);
-                if (bearingCOSOutputValue < -10) 
+                var bearingCOSOutputValue = 10.0000*
+                                            Math.Cos((-(magneticHeadingDegrees - bearingToBeaconDegrees))*
+                                                     Constants.RADIANS_PER_DEGREE);
+                if (bearingCOSOutputValue < -10)
                 {
-                    bearingCOSOutputValue = -10; 
+                    bearingCOSOutputValue = -10;
                 }
-                if (bearingCOSOutputValue >10) 
+                if (bearingCOSOutputValue > 10)
                 {
                     bearingCOSOutputValue = 10;
                 }
-                _bearingCOSOutputSignal.State = ((bearingCOSOutputValue + 10.0000) /20.0000);
+                _bearingCOSOutputSignal.State = ((bearingCOSOutputValue + 10.0000)/20.0000);
             }
         }
-        private void UpdateDMEOutputValue() 
+
+        private void UpdateDMEOutputValue()
         {
-            const double MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES = 999.9999d; 
-            if (_DMEInputSignal != null 
-                && _DMEx100SINOutputSignal !=null && _DMEx100COSOutputSignal !=null
-                && _DMEx10SINOutputSignal !=null && _DMEx10COSOutputSignal !=null
-                && _DMEx1SINOutputSignal !=null && _DMEx1COSOutputSignal !=null
-                ) 
+            const double MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES = 999.9999d;
+            if (_DMEInputSignal != null
+                && _DMEx100SINOutputSignal != null && _DMEx100COSOutputSignal != null
+                && _DMEx10SINOutputSignal != null && _DMEx10COSOutputSignal != null
+                && _DMEx1SINOutputSignal != null && _DMEx1COSOutputSignal != null
+                )
             {
                 var distanceToBeaconNauticalMiles = _DMEInputSignal.State;
                 if (distanceToBeaconNauticalMiles > MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES)
@@ -972,112 +1110,110 @@ namespace SimLinkup.HardwareSupport.AMI
                     distanceToBeaconNauticalMiles = MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES;
                 }
                 var distanceToBeaconString = string.Format("{0:000}", distanceToBeaconNauticalMiles);
-                
+
 
                 var DMEx100 = Byte.Parse(distanceToBeaconString.Substring(0, 1));
-                var DMEx10 = Byte.Parse(distanceToBeaconString.Substring(1,1));
-                var DMEx1 = Byte.Parse(distanceToBeaconString.Substring(2,1));
+                var DMEx10 = Byte.Parse(distanceToBeaconString.Substring(1, 1));
+                var DMEx1 = Byte.Parse(distanceToBeaconString.Substring(2, 1));
 
-                var DMEx100SINOutputValue = 10.0000 * Math.Sin((DMEx100/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
-                if (DMEx100SINOutputValue < -10) 
+                var DMEx100SINOutputValue = 10.0000*Math.Sin((DMEx100/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
+                if (DMEx100SINOutputValue < -10)
                 {
-                    DMEx100SINOutputValue = -10; 
+                    DMEx100SINOutputValue = -10;
                 }
-                if (DMEx100SINOutputValue >10) 
+                if (DMEx100SINOutputValue > 10)
                 {
                     DMEx100SINOutputValue = 10;
                 }
-                _DMEx100SINOutputSignal.State = ((DMEx100SINOutputValue + 10.0000) /20.0000);
+                _DMEx100SINOutputSignal.State = ((DMEx100SINOutputValue + 10.0000)/20.0000);
 
-                var DMEx100COSOutputValue = 10.0000 * Math.Cos((DMEx100/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
-                if (DMEx100COSOutputValue < -10) 
+                var DMEx100COSOutputValue = 10.0000*Math.Cos((DMEx100/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
+                if (DMEx100COSOutputValue < -10)
                 {
-                    DMEx100COSOutputValue = -10; 
+                    DMEx100COSOutputValue = -10;
                 }
-                if (DMEx100COSOutputValue >10) 
+                if (DMEx100COSOutputValue > 10)
                 {
                     DMEx100COSOutputValue = 10;
                 }
-                _DMEx100COSOutputSignal.State = ((DMEx100COSOutputValue + 10.0000) /20.0000);
+                _DMEx100COSOutputSignal.State = ((DMEx100COSOutputValue + 10.0000)/20.0000);
 
-            
-                var DMEx10SINOutputValue = 10.0000 * Math.Sin((DMEx10/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
-                if (DMEx10SINOutputValue < -10) 
+
+                var DMEx10SINOutputValue = 10.0000*Math.Sin((DMEx10/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
+                if (DMEx10SINOutputValue < -10)
                 {
-                    DMEx10SINOutputValue = -10; 
+                    DMEx10SINOutputValue = -10;
                 }
-                if (DMEx10SINOutputValue >10) 
+                if (DMEx10SINOutputValue > 10)
                 {
                     DMEx10SINOutputValue = 10;
                 }
-                _DMEx10SINOutputSignal.State = ((DMEx10SINOutputValue + 10.0000) /20.0000);
+                _DMEx10SINOutputSignal.State = ((DMEx10SINOutputValue + 10.0000)/20.0000);
 
-                var DMEx10COSOutputValue = 10.0000 * Math.Cos((DMEx10/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
-                if (DMEx10COSOutputValue < -10) 
+                var DMEx10COSOutputValue = 10.0000*Math.Cos((DMEx10/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
+                if (DMEx10COSOutputValue < -10)
                 {
-                    DMEx10COSOutputValue = -10; 
+                    DMEx10COSOutputValue = -10;
                 }
-                if (DMEx10COSOutputValue >10) 
+                if (DMEx10COSOutputValue > 10)
                 {
                     DMEx10COSOutputValue = 10;
                 }
-                _DMEx10COSOutputSignal.State = ((DMEx10COSOutputValue + 10.0000) /20.0000);
+                _DMEx10COSOutputSignal.State = ((DMEx10COSOutputValue + 10.0000)/20.0000);
 
 
-                var DMEx1SINOutputValue = 10.0000 * Math.Sin((DMEx1/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
-                if (DMEx1SINOutputValue < -10) 
+                var DMEx1SINOutputValue = 10.0000*Math.Sin((DMEx1/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
+                if (DMEx1SINOutputValue < -10)
                 {
-                    DMEx1SINOutputValue = -10; 
+                    DMEx1SINOutputValue = -10;
                 }
-                if (DMEx1SINOutputValue >10) 
+                if (DMEx1SINOutputValue > 10)
                 {
                     DMEx1SINOutputValue = 10;
                 }
-                _DMEx1SINOutputSignal.State = ((DMEx1SINOutputValue + 10.0000) /20.0000);
+                _DMEx1SINOutputSignal.State = ((DMEx1SINOutputValue + 10.0000)/20.0000);
 
-                var DMEx1COSOutputValue = 10.0000 * Math.Cos((DMEx1/10.0000) * 360.0000 * Constants.RADIANS_PER_DEGREE);
-                if (DMEx1COSOutputValue < -10) 
+                var DMEx1COSOutputValue = 10.0000*Math.Cos((DMEx1/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
+                if (DMEx1COSOutputValue < -10)
                 {
-                    DMEx1COSOutputValue = -10; 
+                    DMEx1COSOutputValue = -10;
                 }
-                if (DMEx1COSOutputValue >10) 
+                if (DMEx1COSOutputValue > 10)
                 {
                     DMEx1COSOutputValue = 10;
                 }
-                _DMEx1COSOutputSignal.State = ((DMEx1COSOutputValue + 10.0000) /20.0000);
-            
+                _DMEx1COSOutputSignal.State = ((DMEx1COSOutputValue + 10.0000)/20.0000);
             }
-
-
         }
+
         private void UpdateCourseDeviationOutputValue()
         {
             const double DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES = 5.0d;
 
-            if (_courseDeviationInputSignal !=null && _courseDeviationLimitInputSignal !=null && _courseDeviationOutputSignal !=null) 
+            if (_courseDeviationInputSignal != null && _courseDeviationLimitInputSignal != null &&
+                _courseDeviationOutputSignal != null)
             {
                 var courseDeviationDegrees = _courseDeviationInputSignal.State;
                 var courseDeviationLimitDegrees = _courseDeviationLimitInputSignal.State;
-                if (courseDeviationLimitDegrees ==0 || double.IsInfinity(courseDeviationLimitDegrees) ||
+                if (courseDeviationLimitDegrees == 0 || double.IsInfinity(courseDeviationLimitDegrees) ||
                     double.IsNaN(courseDeviationLimitDegrees))
                 {
                     courseDeviationLimitDegrees = DEFAULT_COURSE_DEVIATION_LIMIT_DEGREES;
                 }
-                var courseDeviationPct = courseDeviationDegrees / courseDeviationLimitDegrees;
+                var courseDeviationPct = courseDeviationDegrees/courseDeviationLimitDegrees;
 
-                var courseDeviationOutputValue = 10.0000 * courseDeviationPct;
-                if (courseDeviationOutputValue < -10) 
+                var courseDeviationOutputValue = 10.0000*courseDeviationPct;
+                if (courseDeviationOutputValue < -10)
                 {
-                    courseDeviationOutputValue = -10; 
+                    courseDeviationOutputValue = -10;
                 }
-                if (courseDeviationOutputValue >10) 
+                if (courseDeviationOutputValue > 10)
                 {
                     courseDeviationOutputValue = 10;
                 }
-                _courseDeviationOutputSignal.State = ((courseDeviationOutputValue + 10.0000) /20.0000);
+                _courseDeviationOutputSignal.State = ((courseDeviationOutputValue + 10.0000)/20.0000);
             }
         }
-
 
         #endregion
 
@@ -1086,9 +1222,9 @@ namespace SimLinkup.HardwareSupport.AMI
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -1097,9 +1233,9 @@ namespace SimLinkup.HardwareSupport.AMI
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~AMI900158001HardwareSupportModule()
         {
@@ -1107,11 +1243,13 @@ namespace SimLinkup.HardwareSupport.AMI
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

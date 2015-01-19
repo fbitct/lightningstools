@@ -15,6 +15,78 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         #endregion
 
+        #region Signals Handling
+
+        #region Signal Creation
+
+        private void CreateInputSignals(DIPhysicalDeviceInfo device, out AnalogSignal[] analogSignals,
+            out DigitalSignal[] digitalSignals)
+        {
+            if (device == null) throw new ArgumentNullException("device");
+            var analogSignalsToReturn = new List<AnalogSignal>();
+            var digitalSignalsToReturn = new List<DigitalSignal>();
+
+            foreach (var button in device.Buttons)
+            {
+                var thisSignal = new DigitalSignal();
+                thisSignal.CollectionName = "Digital Inputs";
+                thisSignal.FriendlyName = button.Alias;
+                thisSignal.Id = button.ToString();
+                thisSignal.Index = button.ControlNum;
+                thisSignal.PublisherObject = this;
+                thisSignal.Source = device;
+                thisSignal.SourceFriendlyName = device.Alias;
+                thisSignal.SourceAddress = device.Guid.ToString();
+                thisSignal.SubSource = null;
+                thisSignal.SubSourceFriendlyName = null;
+                thisSignal.SubSourceAddress = null;
+                thisSignal.State = false;
+                digitalSignalsToReturn.Add(thisSignal);
+            }
+
+            foreach (var axis in device.Axes)
+            {
+                var thisSignal = new AnalogSignal();
+                thisSignal.CollectionName = "Analog Inputs";
+                thisSignal.FriendlyName = axis.Alias;
+                thisSignal.Id = axis.ToString();
+                thisSignal.Index = axis.ControlNum;
+                thisSignal.PublisherObject = this;
+                thisSignal.Source = device;
+                thisSignal.SourceFriendlyName = device.Alias;
+                thisSignal.SourceAddress = device.Guid.ToString();
+                thisSignal.SubSource = null;
+                thisSignal.SubSourceFriendlyName = null;
+                thisSignal.SubSourceAddress = null;
+                thisSignal.State = 0;
+                analogSignalsToReturn.Add(thisSignal);
+            }
+
+            foreach (var axis in device.Povs)
+            {
+                var thisSignal = new AnalogSignal();
+                thisSignal.CollectionName = "Analog Inputs";
+                thisSignal.FriendlyName = axis.Alias;
+                thisSignal.Id = axis.ToString();
+                thisSignal.Index = axis.ControlNum;
+                thisSignal.PublisherObject = this;
+                thisSignal.Source = device;
+                thisSignal.SourceFriendlyName = device.Alias;
+                thisSignal.SourceAddress = device.Guid.ToString();
+                thisSignal.SubSource = null;
+                thisSignal.SubSourceFriendlyName = null;
+                thisSignal.SubSourceAddress = null;
+                thisSignal.State = 0;
+                analogSignalsToReturn.Add(thisSignal);
+            }
+            analogSignals = analogSignalsToReturn.ToArray();
+            digitalSignals = digitalSignalsToReturn.ToArray();
+        }
+
+        #endregion
+
+        #endregion
+
         #region Instance variables
 
         private readonly AnalogSignal[] _analogInputSignals;
@@ -90,84 +162,12 @@ namespace SimLinkup.HardwareSupport.DirectInput
 
         #endregion
 
-        #region Signals Handling
-
-        #region Signal Creation
-
-        private void CreateInputSignals(DIPhysicalDeviceInfo device, out AnalogSignal[] analogSignals,
-                                        out DigitalSignal[] digitalSignals)
-        {
-            if (device == null) throw new ArgumentNullException("device");
-            var analogSignalsToReturn = new List<AnalogSignal>();
-            var digitalSignalsToReturn = new List<DigitalSignal>();
-
-            foreach (var button in device.Buttons)
-            {
-                var thisSignal = new DigitalSignal();
-                thisSignal.CollectionName = "Digital Inputs";
-                thisSignal.FriendlyName = button.Alias;
-                thisSignal.Id = button.ToString();
-                thisSignal.Index = button.ControlNum;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = device.Alias;
-                thisSignal.SourceAddress = device.Guid.ToString();
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = false;
-                digitalSignalsToReturn.Add(thisSignal);
-            }
-
-            foreach (var axis in device.Axes)
-            {
-                var thisSignal = new AnalogSignal();
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = axis.Alias;
-                thisSignal.Id = axis.ToString();
-                thisSignal.Index = axis.ControlNum;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = device.Alias;
-                thisSignal.SourceAddress = device.Guid.ToString();
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                analogSignalsToReturn.Add(thisSignal);
-            }
-
-            foreach (var axis in device.Povs)
-            {
-                var thisSignal = new AnalogSignal();
-                thisSignal.CollectionName = "Analog Inputs";
-                thisSignal.FriendlyName = axis.Alias;
-                thisSignal.Id = axis.ToString();
-                thisSignal.Index = axis.ControlNum;
-                thisSignal.PublisherObject = this;
-                thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = device.Alias;
-                thisSignal.SourceAddress = device.Guid.ToString();
-                thisSignal.SubSource = null;
-                thisSignal.SubSourceFriendlyName = null;
-                thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0;
-                analogSignalsToReturn.Add(thisSignal);
-            }
-            analogSignals = analogSignalsToReturn.ToArray();
-            digitalSignals = digitalSignalsToReturn.ToArray();
-        }
-
-        #endregion
-
-        #endregion
-
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -176,9 +176,9 @@ namespace SimLinkup.HardwareSupport.DirectInput
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~DirectInputHardwareSupportModule()
         {
@@ -186,11 +186,13 @@ namespace SimLinkup.HardwareSupport.DirectInput
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

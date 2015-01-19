@@ -13,10 +13,7 @@ public class CSSCodeProvider
             var provider = CodeDomProvider.CreateProvider(language);
             return provider;
         }
-        else
-        {
-            throw new InvalidOperationException(string.Format("No compiler defined for code files with extension {0}",
-                                                              sourceFileExtension));
-        }
+        throw new InvalidOperationException(string.Format("No compiler defined for code files with extension {0}",
+            sourceFileExtension));
     }
 }

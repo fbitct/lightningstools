@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
-using Common.Math;
 using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
@@ -14,7 +13,7 @@ namespace SimLinkup.HardwareSupport.Simtek
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof(Simtek100294HardwareSupportModule));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek100294HardwareSupportModule));
 
         #endregion
 
@@ -55,7 +54,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                     "Simtek100294HardwareSupportModuleConfig.config");
+                    "Simtek100294HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     Simtek100294HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
@@ -72,7 +71,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] { _totalFuelInputSignal, _foreRightFuelInputSignal, _aftLeftFuelInputSignal }; }
+            get { return new[] {_totalFuelInputSignal, _foreRightFuelInputSignal, _aftLeftFuelInputSignal}; }
         }
 
         public override DigitalSignal[] DigitalInputs
@@ -82,7 +81,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] { _foreRightOutputSignal, _aftLeftOutputSignal, _counterOutputSignal }; }
+            get { return new[] {_foreRightOutputSignal, _aftLeftOutputSignal, _counterOutputSignal}; }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -99,11 +98,11 @@ namespace SimLinkup.HardwareSupport.Simtek
         private void CreateInputEventHandlers()
         {
             _totalFuelInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(fuel_InputSignalChanged);
+                fuel_InputSignalChanged;
             _aftLeftFuelInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(fuel_InputSignalChanged);
+                fuel_InputSignalChanged;
             _foreRightFuelInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(fuel_InputSignalChanged);
+                fuel_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -115,7 +114,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void RegisterForInputEvents()
         {
-            if (_totalFuelInputSignal!= null)
+            if (_totalFuelInputSignal != null)
             {
                 _totalFuelInputSignal.SignalChanged += _totalFuelInputSignalChangedEventHandler;
             }
@@ -127,12 +126,11 @@ namespace SimLinkup.HardwareSupport.Simtek
             {
                 _foreRightFuelInputSignal.SignalChanged += _foreRightFuelInputSignalChangedEventHandler;
             }
-
         }
 
         private void UnregisterForInputEvents()
         {
-            if (_totalFuelInputSignalChangedEventHandler != null && _totalFuelInputSignal !=null)
+            if (_totalFuelInputSignalChangedEventHandler != null && _totalFuelInputSignal != null)
             {
                 try
                 {
@@ -144,7 +142,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             }
 
 
-            if (_aftLeftFuelInputSignalChangedEventHandler != null && _aftLeftFuelInputSignal!= null)
+            if (_aftLeftFuelInputSignalChangedEventHandler != null && _aftLeftFuelInputSignal != null)
             {
                 try
                 {
@@ -154,7 +152,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                 }
             }
-            if (_foreRightFuelInputSignalChangedEventHandler  != null && _foreRightFuelInputSignal!= null)
+            if (_foreRightFuelInputSignalChangedEventHandler != null && _foreRightFuelInputSignal != null)
             {
                 try
                 {
@@ -164,9 +162,6 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                 }
             }
-
-
-
         }
 
         #endregion
@@ -193,6 +188,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private AnalogSignal CreateAftLeftFuelInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -206,6 +202,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private AnalogSignal CreateForeRightFuelInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -266,7 +263,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State =0.00;
+            thisSignal.State = 0.00;
             return thisSignal;
         }
 
@@ -279,20 +276,17 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_foreRightOutputSignal != null)
             {
-                _foreRightOutputSignal.State = (_foreRightFuelInputSignal.State / 1000.00) / 42.00;
+                _foreRightOutputSignal.State = (_foreRightFuelInputSignal.State/1000.00)/42.00;
             }
-            if (_aftLeftOutputSignal!= null)
+            if (_aftLeftOutputSignal != null)
             {
-                _aftLeftOutputSignal.State = (_aftLeftFuelInputSignal.State / 1000.00) / 42.00;
+                _aftLeftOutputSignal.State = (_aftLeftFuelInputSignal.State/1000.00)/42.00;
             }
             if (_counterOutputSignal != null)
             {
-                _counterOutputSignal.State = _totalFuelInputSignal.State / 9900;
+                _counterOutputSignal.State = _totalFuelInputSignal.State/9900;
             }
-             
         }
-
-       
 
         #endregion
 
@@ -301,9 +295,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -312,9 +306,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~Simtek100294HardwareSupportModule()
         {
@@ -322,11 +316,13 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

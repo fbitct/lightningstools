@@ -10,6 +10,7 @@ namespace SimLinkup.Scripting
     {
         private IHardwareSupportModule[] _hsms;
         private SimSupportModule[] _ssms;
+
         public SimSupportModule[] SimSupportModules
         {
             get { return _ssms; }
@@ -32,10 +33,7 @@ namespace SimLinkup.Scripting
 
         public DigitalSignal[] DigitalSignals
         {
-            get
-            {
-                return Values.OfType<DigitalSignal>().ToArray();
-            }
+            get { return Values.OfType<DigitalSignal>().ToArray(); }
         }
 
         public SignalList<AnalogSignal> AnalogSignals

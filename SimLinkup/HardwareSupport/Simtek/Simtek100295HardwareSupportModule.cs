@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
-using Common.Math;
 using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
@@ -14,7 +13,7 @@ namespace SimLinkup.HardwareSupport.Simtek
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof(Simtek100295HardwareSupportModule ));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek100295HardwareSupportModule));
 
         #endregion
 
@@ -49,7 +48,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                     "Simtek100295HardwareSupportModuleConfig.config");
+                    "Simtek100295HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     Simtek100295HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
@@ -66,7 +65,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] { _fuelFlowInputSignal }; }
+            get { return new[] {_fuelFlowInputSignal}; }
         }
 
         public override DigitalSignal[] DigitalInputs
@@ -76,7 +75,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] { _fuelFlowOutputSignal }; }
+            get { return new[] {_fuelFlowOutputSignal}; }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -93,7 +92,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private void CreateInputEventHandlers()
         {
             _fuelFlowInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(fuelFlow_InputSignalChanged);
+                fuelFlow_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -107,7 +106,6 @@ namespace SimLinkup.HardwareSupport.Simtek
             {
                 _fuelFlowInputSignal.SignalChanged += _fuelFlowInputSignalChangedEventHandler;
             }
-
         }
 
         private void UnregisterForInputEvents()
@@ -118,11 +116,10 @@ namespace SimLinkup.HardwareSupport.Simtek
                 {
                     _fuelFlowInputSignal.SignalChanged -= _fuelFlowInputSignalChangedEventHandler;
                 }
-                catch (RemotingException )
+                catch (RemotingException)
                 {
                 }
             }
-
         }
 
         #endregion
@@ -169,7 +166,6 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
 
-
         private void fuelFlow_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateOutputValues();
@@ -179,12 +175,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_fuelFlowOutputSignal != null)
             {
-                _fuelFlowOutputSignal.State = _fuelFlowInputSignal.State / 9900.00;
+                _fuelFlowOutputSignal.State = _fuelFlowInputSignal.State/9900.00;
             }
-
         }
-
-
 
         #endregion
 
@@ -193,9 +186,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -204,9 +197,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~Simtek100295HardwareSupportModule()
         {
@@ -214,11 +207,13 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

@@ -5,7 +5,6 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
-using Phcc;
 using Phcc.DeviceManager.Config;
 using p = Phcc;
 
@@ -19,6 +18,16 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         #endregion
 
+        #region Configuration
+
+        private static ConfigurationManager LoadConfiguration(string phccConfigFile)
+        {
+            var toReturn = ConfigurationManager.Load(phccConfigFile);
+            return toReturn;
+        }
+
+        #endregion
+
         #region Instance variables
 
         private readonly AnalogSignal[] _analogInputSignals;
@@ -27,10 +36,10 @@ namespace SimLinkup.HardwareSupport.Phcc
         private readonly DigitalSignal[] _digitalOutputSignals;
         private readonly Dictionary<string, byte[]> _peripheralByteStates = new Dictionary<string, byte[]>();
         private readonly Dictionary<string, double[]> _peripheralFloatStates = new Dictionary<string, double[]>();
-        private AnalogInputChangedEventHandler _analogInputChangedEventHandler;
-        private Device _device;
-        private DigitalInputChangedEventHandler _digitalInputChangedEventHandler;
-        private I2CDataReceivedEventHandler _i2cDataReceivedEventHandler;
+        private p.AnalogInputChangedEventHandler _analogInputChangedEventHandler;
+        private p.Device _device;
+        private p.DigitalInputChangedEventHandler _digitalInputChangedEventHandler;
+        private p.I2CDataReceivedEventHandler _i2cDataReceivedEventHandler;
         private bool _isDisposed;
         private Motherboard _motherboard;
 
@@ -55,11 +64,11 @@ namespace SimLinkup.HardwareSupport.Phcc
             _analogInputSignals = CreateAnalogInputSignals(_device, motherboard.ComPort);
             _digitalInputSignals = CreateDigitalInputSignals(_device, motherboard.ComPort);
             CreateOutputSignals(_device, motherboard, out _digitalOutputSignals, out _analogOutputSignals,
-                                out _peripheralByteStates, out _peripheralFloatStates);
+                out _peripheralByteStates, out _peripheralFloatStates);
 
             CreateInputEventHandlers();
             RegisterForInputEvents(_device, _analogInputChangedEventHandler, _digitalInputChangedEventHandler,
-                                   _i2cDataReceivedEventHandler);
+                _i2cDataReceivedEventHandler);
 #if PHCC_COMMUNICATION_DISABLED
 #else
             SendCalibrations(_device, motherboard);
@@ -98,13 +107,13 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         #region Device Communications
 
-        private static Device CreateDevice(string comPort, bool openComPortNow)
+        private static p.Device CreateDevice(string comPort, bool openComPortNow)
         {
-            var device = new Device(comPort, openComPortNow);
+            var device = new p.Device(comPort, openComPortNow);
             return device;
         }
 
-        private static void SendCalibrations(Device device, Motherboard motherboard)
+        private static void SendCalibrations(p.Device device, Motherboard motherboard)
         {
             if (device == null) throw new ArgumentNullException("device");
             if (motherboard == null) throw new ArgumentNullException("motherboard");
@@ -129,14 +138,14 @@ namespace SimLinkup.HardwareSupport.Phcc
             }
         }
 
-        private static void SendAnOut1Calibrations(Device device, DoaAnOut1 anOut1Config)
+        private static void SendAnOut1Calibrations(p.Device device, DoaAnOut1 anOut1Config)
         {
             if (device == null) throw new ArgumentNullException("device");
             if (anOut1Config == null) throw new ArgumentNullException("anOut1Config");
             device.DoaSendAnOut1GainAllChannels(anOut1Config.Address, anOut1Config.GainAllChannels);
         }
 
-        private static void SendServoCalibrations(Device device, Doa8Servo servoConfig)
+        private static void SendServoCalibrations(p.Device device, Doa8Servo servoConfig)
         {
             if (device == null) throw new ArgumentNullException("device");
             if (servoConfig == null) throw new ArgumentNullException("servoConfig");
@@ -145,17 +154,17 @@ namespace SimLinkup.HardwareSupport.Phcc
             foreach (var calibration in servoConfig.ServoCalibrations)
             {
                 device.DoaSend8ServoCalibration(servoConfig.Address, (byte) calibration.ServoNum,
-                                                calibration.CalibrationOffset);
+                    calibration.CalibrationOffset);
                 device.DoaSend8ServoGain(servoConfig.Address, (byte) calibration.ServoNum, calibration.Gain);
             }
         }
 
-        private static void StopTalking(Device device)
+        private static void StopTalking(p.Device device)
         {
             device.StopTalking();
         }
 
-        private static void StartTalking(Device device)
+        private static void StartTalking(p.Device device)
         {
             device.StartTalking();
         }
@@ -166,10 +175,10 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         #region Input Event Handler Setup and Teardown
 
-        private static void RegisterForInputEvents(Device device,
-                                                   AnalogInputChangedEventHandler analogInputChangedEventHandler,
-                                                   DigitalInputChangedEventHandler digitalInputChangedEventHandler,
-                                                   I2CDataReceivedEventHandler i2cDataReceivedEventHandler)
+        private static void RegisterForInputEvents(p.Device device,
+            p.AnalogInputChangedEventHandler analogInputChangedEventHandler,
+            p.DigitalInputChangedEventHandler digitalInputChangedEventHandler,
+            p.I2CDataReceivedEventHandler i2cDataReceivedEventHandler)
         {
             if (device == null) return;
 
@@ -187,10 +196,10 @@ namespace SimLinkup.HardwareSupport.Phcc
             }
         }
 
-        private static void UnregisterForInputEvents(Device device,
-                                                     AnalogInputChangedEventHandler analogInputChangedEventHandler,
-                                                     DigitalInputChangedEventHandler digitalInputChangedEventHandler,
-                                                     I2CDataReceivedEventHandler i2cDataReceivedEventHandler)
+        private static void UnregisterForInputEvents(p.Device device,
+            p.AnalogInputChangedEventHandler analogInputChangedEventHandler,
+            p.DigitalInputChangedEventHandler digitalInputChangedEventHandler,
+            p.I2CDataReceivedEventHandler i2cDataReceivedEventHandler)
         {
             if (device == null) return;
             if (analogInputChangedEventHandler != null)
@@ -227,9 +236,9 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         private void CreateInputEventHandlers()
         {
-            _analogInputChangedEventHandler = new AnalogInputChangedEventHandler(device_AnalogInputChanged);
-            _digitalInputChangedEventHandler = new DigitalInputChangedEventHandler(device_DigitalInputChanged);
-            _i2cDataReceivedEventHandler = new I2CDataReceivedEventHandler(device_I2CDataReceived);
+            _analogInputChangedEventHandler = device_AnalogInputChanged;
+            _digitalInputChangedEventHandler = device_DigitalInputChanged;
+            _i2cDataReceivedEventHandler = device_I2CDataReceived;
         }
 
         private void AbandonInputEventHandlers()
@@ -241,12 +250,12 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         #endregion
 
-        private void device_I2CDataReceived(object sender, I2CDataReceivedEventArgs e)
+        private void device_I2CDataReceived(object sender, p.I2CDataReceivedEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void device_DigitalInputChanged(object sender, DigitalInputChangedEventArgs e)
+        private void device_DigitalInputChanged(object sender, p.DigitalInputChangedEventArgs e)
         {
             if (_digitalInputSignals != null && _digitalInputSignals.Length > e.Index)
             {
@@ -255,23 +264,13 @@ namespace SimLinkup.HardwareSupport.Phcc
             }
         }
 
-        private void device_AnalogInputChanged(object sender, AnalogInputChangedEventArgs e)
+        private void device_AnalogInputChanged(object sender, p.AnalogInputChangedEventArgs e)
         {
             if (_analogInputSignals != null && _analogInputSignals.Length > e.Index)
             {
                 var signal = _analogInputSignals[e.Index];
                 signal.State = e.NewValue;
             }
-        }
-
-        #endregion
-
-        #region Configuration
-
-        private static ConfigurationManager LoadConfiguration(string phccConfigFile)
-        {
-            var toReturn = ConfigurationManager.Load(phccConfigFile);
-            return toReturn;
         }
 
         #endregion
@@ -304,7 +303,7 @@ namespace SimLinkup.HardwareSupport.Phcc
 
         #region Signal Creation
 
-        private AnalogSignal[] CreateAnalogInputSignals(Device device, string portName)
+        private AnalogSignal[] CreateAnalogInputSignals(p.Device device, string portName)
         {
             var toReturn = new List<AnalogSignal>();
             for (var i = 0; i < 35; i++)
@@ -324,7 +323,7 @@ namespace SimLinkup.HardwareSupport.Phcc
             return toReturn.ToArray();
         }
 
-        private DigitalSignal[] CreateDigitalInputSignals(Device device, string portName)
+        private DigitalSignal[] CreateDigitalInputSignals(p.Device device, string portName)
         {
             var toReturn = new List<DigitalSignal>();
             for (var i = 0; i < 1024; i++)
@@ -344,10 +343,10 @@ namespace SimLinkup.HardwareSupport.Phcc
             return toReturn.ToArray();
         }
 
-        private void CreateOutputSignals(Device device, Motherboard motherboard, out DigitalSignal[] digitalSignals,
-                                         out AnalogSignal[] analogSignals,
-                                         out Dictionary<string, byte[]> peripheralByteStates,
-                                         out Dictionary<string, double[]> peripheralFloatStates)
+        private void CreateOutputSignals(p.Device device, Motherboard motherboard, out DigitalSignal[] digitalSignals,
+            out AnalogSignal[] analogSignals,
+            out Dictionary<string, byte[]> peripheralByteStates,
+            out Dictionary<string, double[]> peripheralFloatStates)
         {
             if (motherboard == null) throw new ArgumentNullException("motherboard");
             var portName = motherboard.ComPort;
@@ -393,8 +392,8 @@ namespace SimLinkup.HardwareSupport.Phcc
                             var thisSignal = new DigitalSignal();
                             thisSignal.CollectionName = "Digital Outputs";
                             thisSignal.FriendlyName = string.Format("Display {0}, Output Line {1}",
-                                                                    string.Format("{0:0}", j + 1),
-                                                                    string.Format("{0:0}", i + 1));
+                                string.Format("{0:0}", j + 1),
+                                string.Format("{0:0}", i + 1));
                             thisSignal.Id = string.Format("DOA_7SEG[{0}][{1}][{2}][{3}]", portName, baseAddress, j, i);
                             thisSignal.Index = (i*8) + j;
                             thisSignal.PublisherObject = this;
@@ -508,9 +507,6 @@ namespace SimLinkup.HardwareSupport.Phcc
                     }
                     peripheralFloatStates[baseAddress] = new double[4];
                 }
-                else
-                {
-                }
             }
             analogSignals = analogSignalsToReturn.ToArray();
             digitalSignals = digitalSignalsToReturn.ToArray();
@@ -528,20 +524,20 @@ namespace SimLinkup.HardwareSupport.Phcc
                 var motorNumZeroBase = source.Index.Value;
                 var baseAddress = source.SubSourceAddress;
                 var baseAddressByte = Byte.Parse(baseAddress);
-                var device = source.Source as Device;
+                var device = source.Source as p.Device;
                 if (device != null)
                 {
                     var motorNum = motorNumZeroBase + 1;
                     var newPosition = args.CurrentState;
                     var oldPosition = _peripheralFloatStates[baseAddress][motorNumZeroBase];
                     var numSteps = (int) Math.Abs(newPosition - oldPosition);
-                    var direction = MotorDirections.Clockwise;
+                    var direction = p.MotorDirections.Clockwise;
                     if (oldPosition < newPosition)
                     {
-                        direction = MotorDirections.Counterclockwise;
+                        direction = p.MotorDirections.Counterclockwise;
                     }
                     device.DoaSendStepperMotor(baseAddressByte, (byte) motorNum, direction, (byte) numSteps,
-                                               MotorStepTypes.FullStep);
+                        p.MotorStepTypes.FullStep);
                     _peripheralFloatStates[baseAddress][motorNumZeroBase] = newPosition;
                 }
             }
@@ -555,7 +551,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 var channelNumZeroBase = source.Index.Value;
                 var baseAddress = source.SubSourceAddress;
                 var baseAddressByte = Byte.Parse(baseAddress);
-                var device = source.Source as Device;
+                var device = source.Source as p.Device;
                 if (device != null)
                 {
                     var channelNum = channelNumZeroBase + 1;
@@ -574,7 +570,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 var motorNumZeroBase = source.Index.Value;
                 var baseAddress = source.SubSourceAddress;
                 var baseAddressByte = Byte.Parse(baseAddress);
-                var device = source.Source as Device;
+                var device = source.Source as p.Device;
                 if (device != null)
                 {
                     var motorNum = motorNumZeroBase + 1;
@@ -593,7 +589,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 var servoNumZeroBase = source.Index.Value;
                 var baseAddress = source.SubSourceAddress;
                 var baseAddressByte = Byte.Parse(baseAddress);
-                var device = source.Source as Device;
+                var device = source.Source as p.Device;
                 if (device != null)
                 {
                     var servoNum = servoNumZeroBase + 1;
@@ -612,7 +608,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 var outputLineNum = source.Index.Value;
                 var baseAddress = source.SubSourceAddress;
                 var baseAddressByte = Byte.Parse(baseAddress);
-                var device = source.Source as Device;
+                var device = source.Source as p.Device;
                 if (device != null)
                 {
                     var newBitVal = args.CurrentState;
@@ -636,7 +632,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 var outputNum = source.Index.Value;
                 var baseAddress = source.SubSourceAddress;
                 var baseAddressByte = Byte.Parse(baseAddress);
-                var device = source.Source as Device;
+                var device = source.Source as p.Device;
                 if (device != null)
                 {
                     var newBitVal = args.CurrentState;
@@ -659,9 +655,9 @@ namespace SimLinkup.HardwareSupport.Phcc
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -670,9 +666,9 @@ namespace SimLinkup.HardwareSupport.Phcc
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~PhccHardwareSupportModule()
         {
@@ -680,11 +676,13 @@ namespace SimLinkup.HardwareSupport.Phcc
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)
@@ -693,16 +691,16 @@ namespace SimLinkup.HardwareSupport.Phcc
                 {
 #if PHCC_COMMUNICATION_DISABLED
 #else
-                    try 
+                    try
                     {
                         StopTalking(_device);
                     }
-                    catch (Exception) 
+                    catch (Exception)
                     {
                     }
 #endif
                     UnregisterForInputEvents(_device, _analogInputChangedEventHandler, _digitalInputChangedEventHandler,
-                                             _i2cDataReceivedEventHandler);
+                        _i2cDataReceivedEventHandler);
                     AbandonInputEventHandlers();
                     Common.Util.DisposeObject(_device); //disconnect from the PHCC
                     _device = null;

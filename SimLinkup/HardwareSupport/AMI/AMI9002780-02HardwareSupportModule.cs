@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.Remoting;
 using Common.HardwareSupport;
@@ -15,14 +14,14 @@ namespace SimLinkup.HardwareSupport.AMI
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof(AMI900278002HardwareSupportModule));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (AMI900278002HardwareSupportModule));
 
         #endregion
 
         #region Instance variables
 
         private bool _isDisposed;
- 
+
         private AnalogSignal _pitchInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _pitchInputSignalChangedEventHandler;
         private AnalogSignal _rollInputSignal;
@@ -66,7 +65,7 @@ namespace SimLinkup.HardwareSupport.AMI
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                     "AMI900278002HardwareSupportModuleConfig.config");
+                    "AMI900278002HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     AMI900278002HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
@@ -83,17 +82,31 @@ namespace SimLinkup.HardwareSupport.AMI
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] { _pitchInputSignal, _rollInputSignal, _horizontalCommandBarInputSignal, _verticalCommandBarInputSignal, _rateOfTurnInputSignal }; }
+            get
+            {
+                return new[]
+                {
+                    _pitchInputSignal, _rollInputSignal, _horizontalCommandBarInputSignal, _verticalCommandBarInputSignal,
+                    _rateOfTurnInputSignal
+                };
+            }
         }
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return new[] { _showCommandBarsInputSignal }; }
+            get { return new[] {_showCommandBarsInputSignal}; }
         }
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] { _pitchOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal, _horizontalCommandBarOutputSignal, _verticalCommandBarOutputSignal, _rateOfTurnOutputSignal }; }
+            get
+            {
+                return new[]
+                {
+                    _pitchOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal, _horizontalCommandBarOutputSignal,
+                    _verticalCommandBarOutputSignal, _rateOfTurnOutputSignal
+                };
+            }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -110,15 +123,15 @@ namespace SimLinkup.HardwareSupport.AMI
         private void CreateInputEventHandlers()
         {
             _pitchInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(pitch_InputSignalChanged);
+                pitch_InputSignalChanged;
             _rollInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(roll_InputSignalChanged);
-            _horizontalCommandBarInputSignalChangedEventHandler = 
-                new AnalogSignal.AnalogSignalChangedEventHandler(horizontalCommandBar_InputSignalChanged);
+                roll_InputSignalChanged;
+            _horizontalCommandBarInputSignalChangedEventHandler =
+                horizontalCommandBar_InputSignalChanged;
             _verticalCommandBarInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(verticalCommandBar_InputSignalChanged);
+                verticalCommandBar_InputSignalChanged;
             _rateOfTurnInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(rateOfTurn_InputSignalChanged);
+                rateOfTurn_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -152,8 +165,6 @@ namespace SimLinkup.HardwareSupport.AMI
             {
                 _rateOfTurnInputSignal.SignalChanged += _rateOfTurnInputSignalChangedEventHandler;
             }
-
-
         }
 
         private void UnregisterForInputEvents()
@@ -182,7 +193,8 @@ namespace SimLinkup.HardwareSupport.AMI
             {
                 try
                 {
-                    _horizontalCommandBarInputSignal.SignalChanged -= _horizontalCommandBarInputSignalChangedEventHandler;
+                    _horizontalCommandBarInputSignal.SignalChanged -=
+                        _horizontalCommandBarInputSignalChangedEventHandler;
                 }
                 catch (RemotingException)
                 {
@@ -251,6 +263,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private AnalogSignal CreateHorizontalCommandBarInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -264,6 +277,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private AnalogSignal CreateVerticalCommandBarInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -277,6 +291,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private AnalogSignal CreateRateOfTurnInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -290,6 +305,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = 0;
             return thisSignal;
         }
+
         private DigitalSignal CreateAuxFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -303,6 +319,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateOffFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -316,6 +333,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateGSFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -329,6 +347,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateLOCFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -342,6 +361,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private DigitalSignal CreateShowCommandBarsInputSignal()
         {
             var thisSignal = new DigitalSignal();
@@ -355,6 +375,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+
         private void CreateOutputSignals()
         {
             _pitchOutputSignal = CreatePitchOutputSignal();
@@ -375,7 +396,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -389,7 +410,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -403,9 +424,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateHorizontalCommandBarOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -416,9 +438,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateVerticalCommandBarOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -429,9 +452,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
+
         private AnalogSignal CreateRateOfTurnOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -442,7 +466,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (10.00 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -455,18 +479,22 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             UpdateRollOutputValues();
         }
+
         private void horizontalCommandBar_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateHorizontalCommandBarOutputValues();
         }
+
         private void verticalCommandBar_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateVerticalCommandBarOutputValues();
         }
+
         private void rateOfTurn_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateRateOfTurnOutputValues();
         }
+
         private void UpdatePitchOutputValues()
         {
             if (_pitchInputSignal != null)
@@ -475,7 +503,7 @@ namespace SimLinkup.HardwareSupport.AMI
 
                 double pitchOutputValue = 0;
 
-                pitchOutputValue = 10.0000 * (pitchInputDegrees / 90.0);
+                pitchOutputValue = 10.0000*(pitchInputDegrees/90.0);
 
                 if (_pitchOutputSignal != null)
                 {
@@ -488,9 +516,8 @@ namespace SimLinkup.HardwareSupport.AMI
                         pitchOutputValue = 10;
                     }
 
-                    _pitchOutputSignal.State = ((pitchOutputValue + 10.0000) / 20.0000);
+                    _pitchOutputSignal.State = ((pitchOutputValue + 10.0000)/20.0000);
                 }
-
             }
         }
 
@@ -498,14 +525,15 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             if (_rollInputSignal != null)
             {
-                var rollInputDegrees = _rollInputSignal.State - 15; //HACK: compensating for lack of ability to calibrate devices in software right now, so hard-coding this offset for Dave R. instrument
+                var rollInputDegrees = _rollInputSignal.State - 15;
+                    //HACK: compensating for lack of ability to calibrate devices in software right now, so hard-coding this offset for Dave R. instrument
 
 
                 double rollSinOutputValue = 0;
                 double rollCosOutputValue = 0;
 
-                rollSinOutputValue = 10.0000 * Math.Sin(rollInputDegrees * Constants.RADIANS_PER_DEGREE);
-                rollCosOutputValue = 10.0000 * Math.Cos(rollInputDegrees * Constants.RADIANS_PER_DEGREE);
+                rollSinOutputValue = 10.0000*Math.Sin(rollInputDegrees*Constants.RADIANS_PER_DEGREE);
+                rollCosOutputValue = 10.0000*Math.Cos(rollInputDegrees*Constants.RADIANS_PER_DEGREE);
 
                 if (_rollSinOutputSignal != null)
                 {
@@ -518,7 +546,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         rollSinOutputValue = 10;
                     }
 
-                    _rollSinOutputSignal.State = ((rollSinOutputValue + 10.0000) / 20.0000);
+                    _rollSinOutputSignal.State = ((rollSinOutputValue + 10.0000)/20.0000);
                 }
 
                 if (_rollCosOutputSignal != null)
@@ -532,10 +560,11 @@ namespace SimLinkup.HardwareSupport.AMI
                         rollCosOutputValue = 10;
                     }
 
-                    _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000) / 20.0000);
+                    _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000)/20.0000);
                 }
             }
         }
+
         private void UpdateHorizontalCommandBarOutputValues()
         {
             if (_horizontalCommandBarInputSignal != null)
@@ -546,7 +575,7 @@ namespace SimLinkup.HardwareSupport.AMI
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = 4 * percentDeflection;
+                    outputValue = 4*percentDeflection;
                 }
                 else
                 {
@@ -564,22 +593,22 @@ namespace SimLinkup.HardwareSupport.AMI
                         outputValue = 10;
                     }
 
-                    _horizontalCommandBarOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                    _horizontalCommandBarOutputSignal.State = ((outputValue + 10.0000)/20.0000);
                 }
-
             }
         }
+
         private void UpdateVerticalCommandBarOutputValues()
         {
             if (_verticalCommandBarInputSignal != null)
             {
                 var percentDeflection = _verticalCommandBarInputSignal.State;
-                
+
                 double outputValue = 0;
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = 4 * percentDeflection;
+                    outputValue = 4*percentDeflection;
                 }
                 else
                 {
@@ -597,11 +626,11 @@ namespace SimLinkup.HardwareSupport.AMI
                         outputValue = 10;
                     }
 
-                    _verticalCommandBarOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                    _verticalCommandBarOutputSignal.State = ((outputValue + 10.0000)/20.0000);
                 }
-
             }
         }
+
         private void UpdateRateOfTurnOutputValues()
         {
             if (_rateOfTurnInputSignal != null)
@@ -610,7 +639,7 @@ namespace SimLinkup.HardwareSupport.AMI
 
                 double outputValue = 0;
 
-                outputValue = 10.0000 * percentDeflection;
+                outputValue = 10.0000*percentDeflection;
 
                 if (_rateOfTurnOutputSignal != null)
                 {
@@ -623,11 +652,11 @@ namespace SimLinkup.HardwareSupport.AMI
                         outputValue = 0;
                     }
 
-                    _rateOfTurnOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                    _rateOfTurnOutputSignal.State = ((outputValue + 10.0000)/20.0000);
                 }
-
             }
         }
+
         #endregion
 
         #endregion
@@ -635,9 +664,9 @@ namespace SimLinkup.HardwareSupport.AMI
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -646,9 +675,9 @@ namespace SimLinkup.HardwareSupport.AMI
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~AMI900278002HardwareSupportModule()
         {
@@ -656,11 +685,13 @@ namespace SimLinkup.HardwareSupport.AMI
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

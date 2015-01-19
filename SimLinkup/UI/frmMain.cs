@@ -14,7 +14,6 @@ namespace SimLinkup.UI
             InitializeComponent();
         }
 
-
         private void mnuFileExit_Click(object sender, EventArgs e)
         {
             FileExit();
@@ -235,13 +234,11 @@ namespace SimLinkup.UI
             try
             {
                 CreateRuntime();
-                var form= new Signals {Mappings = SharedRuntime.Mappings};
+                var form = new Signals {Mappings = SharedRuntime.Mappings};
                 var result = form.ShowDialog(this);
                 if ((result == DialogResult.OK))
                 {
-                    
                 }
-
             }
             finally
             {

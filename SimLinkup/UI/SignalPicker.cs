@@ -91,7 +91,7 @@ namespace SimLinkup.UI
                             var lvi = new ListViewItem();
                             lvi.Text = signal.FriendlyName;
                             lvi.SubItems.Add(new ListViewItem.ListViewSubItem
-                                                 {Name = "Signal Type", Text = signal.SignalType});
+                            {Name = "Signal Type", Text = signal.SignalType});
                             lvi.Tag = signal;
                             lvg.Items.Add(lvi);
                             lvSignals.Items.Add(lvi);
@@ -106,7 +106,7 @@ namespace SimLinkup.UI
                         lvi.Text = signal.FriendlyName;
                         lvi.Tag = signal;
                         lvi.SubItems.Add(new ListViewItem.ListViewSubItem
-                                             {Name = "Signal Type", Text = signal.SignalType});
+                        {Name = "Signal Type", Text = signal.SignalType});
                         lvSignals.Items.Add(lvi);
                     }
                 }
@@ -169,12 +169,12 @@ namespace SimLinkup.UI
 
         private void cmdOK_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void cmdCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

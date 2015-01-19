@@ -54,7 +54,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                                                     "Simtek100335015HardwareSupportModuleConfig.config");
+                    "Simtek100335015HardwareSupportModuleConfig.config");
                 var hsmConfig =
                     Simtek100335015HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
@@ -81,7 +81,10 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] {_pitchSinOutputSignal, _pitchCosOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal}; }
+            get
+            {
+                return new[] {_pitchSinOutputSignal, _pitchCosOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal};
+            }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -98,9 +101,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         private void CreateInputEventHandlers()
         {
             _pitchInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(pitch_InputSignalChanged);
+                pitch_InputSignalChanged;
             _rollInputSignalChangedEventHandler =
-                new AnalogSignal.AnalogSignalChangedEventHandler(roll_InputSignalChanged);
+                roll_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -346,9 +349,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         #region Destructors
 
         /// <summary>
-        ///   Public implementation of IDisposable.Dispose().  Cleans up 
-        ///   managed and unmanaged resources used by this 
-        ///   object before allowing garbage collection
+        ///     Public implementation of IDisposable.Dispose().  Cleans up
+        ///     managed and unmanaged resources used by this
+        ///     object before allowing garbage collection
         /// </summary>
         public void Dispose()
         {
@@ -357,9 +360,9 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        ///   Standard finalizer, which will call Dispose() if this object 
-        ///   is not manually disposed.  Ordinarily called only 
-        ///   by the garbage collector.
+        ///     Standard finalizer, which will call Dispose() if this object
+        ///     is not manually disposed.  Ordinarily called only
+        ///     by the garbage collector.
         /// </summary>
         ~Simtek100335015HardwareSupportModule()
         {
@@ -367,11 +370,13 @@ namespace SimLinkup.HardwareSupport.Simtek
         }
 
         /// <summary>
-        ///   Private implementation of Dispose()
+        ///     Private implementation of Dispose()
         /// </summary>
-        /// <param name = "disposing">flag to indicate if we should actually
-        ///   perform disposal.  Distinguishes the private method signature 
-        ///   from the public signature.</param>
+        /// <param name="disposing">
+        ///     flag to indicate if we should actually
+        ///     perform disposal.  Distinguishes the private method signature
+        ///     from the public signature.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!_isDisposed)

@@ -14,7 +14,7 @@ using SimLinkup.UI;
 namespace SimLinkup
 {
     /// <summary>
-    ///   Main program class.  Contains the startup method for the application.
+    ///     Main program class.  Contains the startup method for the application.
     /// </summary>
     public static class Program
     {
@@ -34,8 +34,8 @@ namespace SimLinkup
         }
 
         private static void App_UnhandledException(object sender,
-                                                   Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs
-                                                       e)
+            Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs
+                e)
         {
             _log.Error(e.Exception.Message, e.Exception);
             e.ExitApplication = false;
@@ -64,7 +64,7 @@ namespace SimLinkup
         }
 
         /// <summary>
-        ///   The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
         [STAThread]
         public static void Main()

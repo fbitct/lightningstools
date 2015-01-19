@@ -21,34 +21,19 @@ namespace SimLinkup.Runtime
 
         #endregion
 
-        #region Instance variables
-
-        private readonly List<Chainable> _passthroughs = new List<Chainable>();
-        private bool _initialized;
-        private bool _isRunning;
-        private bool _keepRunning;
-        private Script[] _loopScripts;
-        private ScriptingContext _scriptingContext;
-        private Script[] _setupScripts;
-        private Script[] _teardownScripts;
-        private readonly List<SignalMapping> _mappings = new List<SignalMapping>();
-        #endregion
-
         public Runtime()
         {
             Initialize();
         }
 
-        public bool IsRunning
+        public bool IsRunning { get; private set; }
+        public ScriptingContext ScriptingContext { get; private set; }
+
+        public IEnumerable<SignalMapping> Mappings
         {
-            get { return _isRunning; }
+            get { return _mappings; }
         }
 
-        public ScriptingContext ScriptingContext
-        {
-            get { return _scriptingContext; }
-        }
-        public IEnumerable<SignalMapping> Mappings { get { return _mappings; } }
         public void Start()
         {
             RunSetupScripts();
@@ -58,7 +43,7 @@ namespace SimLinkup.Runtime
         private void MainLoop()
         {
             _keepRunning = true;
-            _isRunning = true;
+            IsRunning = true;
             while (_keepRunning)
             {
                 var startTime = DateTime.Now;
@@ -71,14 +56,14 @@ namespace SimLinkup.Runtime
                 Application.DoEvents();
                 Thread.Sleep(5);
             }
-            _isRunning = false;
+            IsRunning = false;
         }
 
         private void Synchronize()
         {
-            if (_scriptingContext.HardwareSupportModules != null)
+            if (ScriptingContext.HardwareSupportModules != null)
             {
-                foreach (var hsm in _scriptingContext.HardwareSupportModules)
+                foreach (var hsm in ScriptingContext.HardwareSupportModules)
                 {
                     try
                     {
@@ -94,9 +79,9 @@ namespace SimLinkup.Runtime
 
         private void UpdateSimSignals()
         {
-            if (_scriptingContext.SimSupportModules != null)
+            if (ScriptingContext.SimSupportModules != null)
             {
-                foreach (var ssm in _scriptingContext.SimSupportModules)
+                foreach (var ssm in ScriptingContext.SimSupportModules)
                 {
                     if (ssm.IsSimRunning)
                     {
@@ -110,25 +95,25 @@ namespace SimLinkup.Runtime
         {
             _keepRunning = false;
             var startWaitingTime = DateTime.Now;
-            while (_isRunning)
+            while (IsRunning)
             {
                 Thread.Sleep(5);
                 var currentTime = DateTime.Now;
                 var elapsed = currentTime.Subtract(startWaitingTime);
                 if (elapsed.TotalSeconds > 5)
                 {
-                    _isRunning = false;
+                    IsRunning = false;
                 }
             }
             RunTeardownScripts();
-            _isRunning = false;
+            IsRunning = false;
         }
 
         private void RunSetupScripts()
         {
             if (_setupScripts != null && _setupScripts.Length > 0)
             {
-                _isRunning = true;
+                IsRunning = true;
                 RunScripts(_setupScripts, false);
             }
         }
@@ -162,9 +147,9 @@ namespace SimLinkup.Runtime
                         try
                         {
                             var invoker = scriptAssembly.GetStaticMethod();
-                            if (!checkIsRunning || (checkIsRunning && _isRunning && _keepRunning))
+                            if (!checkIsRunning || (checkIsRunning && IsRunning && _keepRunning))
                             {
-                                invoker.Invoke(_scriptingContext);
+                                invoker.Invoke(ScriptingContext);
                             }
                             else
                             {
@@ -184,11 +169,11 @@ namespace SimLinkup.Runtime
         private void Initialize()
         {
             if (_initialized) return;
-            _scriptingContext = new ScriptingContext
-                                    {
-                                        SimSupportModules = GetRegisteredSimSupportModules(),
-                                        HardwareSupportModules = GetRegisteredHardwareSupportModules()
-                                    };
+            ScriptingContext = new ScriptingContext
+            {
+                SimSupportModules = GetRegisteredSimSupportModules(),
+                HardwareSupportModules = GetRegisteredHardwareSupportModules()
+            };
 
             LoadScripts();
             InitializeMappings();
@@ -198,7 +183,11 @@ namespace SimLinkup.Runtime
         private Signal ResolveSignal(Signal signalToResolve)
         {
             if (signalToResolve == null) return null;
-            return ScriptingContext.AllSignals.FirstOrDefault(signal => signal.Id != null && signalToResolve.Id != null && signal.Id.Trim().Equals(signalToResolve.Id.Trim(), StringComparison.InvariantCultureIgnoreCase));
+            return
+                ScriptingContext.AllSignals.FirstOrDefault(
+                    signal =>
+                        signal.Id != null && signalToResolve.Id != null &&
+                        signal.Id.Trim().Equals(signalToResolve.Id.Trim(), StringComparison.InvariantCultureIgnoreCase));
         }
 
         private void InitializeMappings()
@@ -270,10 +259,7 @@ namespace SimLinkup.Runtime
             {
                 return modules.ToArray();
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static IHardwareSupportModule[] GetRegisteredHardwareSupportModules()
@@ -349,6 +335,17 @@ namespace SimLinkup.Runtime
                 _teardownScripts = teardownScripts.ToArray();
             }
         }
-       
+
+        #region Instance variables
+
+        private readonly List<Chainable> _passthroughs = new List<Chainable>();
+        private bool _initialized;
+        private bool _keepRunning;
+        private Script[] _loopScripts;
+        private Script[] _setupScripts;
+        private Script[] _teardownScripts;
+        private readonly List<SignalMapping> _mappings = new List<SignalMapping>();
+
+        #endregion
     }
 }

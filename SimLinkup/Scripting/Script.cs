@@ -25,9 +25,10 @@ namespace SimLinkup.Scripting
         public string Code
         {
             get { return _code; }
-            set {
+            set
+            {
                 _code = value;
-                Assembly = Compile(Language, value);  
+                Assembly = Compile(Language, value);
             }
         }
 
