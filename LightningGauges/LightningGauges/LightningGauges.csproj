@@ -132,7 +132,7 @@
     <Compile Include="Renderers\F16FuelQuantityIndicator.cs" />
     <Compile Include="Renderers\F16HorizontalSituationIndicator.cs" />
     <Compile Include="Renderers\F16HydraulicPressureGauge.cs" />
-    <Compile Include="Renderers\F16ISIS.cs" />
+    <Compile Include="Renderers\F16\ISIS\F16ISIS.cs" />
     <Compile Include="Renderers\F16LandingGearWheelsLights.cs" />
     <Compile Include="Renderers\F16NosewheelSteeringIndexer.cs" />
     <Compile Include="Renderers\F16NozzlePositionIndicator.cs" />

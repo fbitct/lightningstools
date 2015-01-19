@@ -1,6 +1,7 @@
 ﻿using System;
 using Common.UI;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16.ISIS;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor.RendererFactories

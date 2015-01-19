@@ -1,5 +1,6 @@
 ﻿using Common.SimSupport;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16.ISIS;
 using MFDExtractor.Renderer;
 
 namespace MFDExtractor
