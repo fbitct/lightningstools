@@ -6,9 +6,9 @@ namespace MFDExtractor.EventSystem.Handlers
 	public interface IISISBrightButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
 	public class ISISBrightButtonDepressedEventHandler : IISISBrightButtonDepressedEventHandler
 	{
-		private readonly IF16ISIS _isis;
+		private readonly IISIS _isis;
 
-		public ISISBrightButtonDepressedEventHandler(IF16ISIS isis)
+		public ISISBrightButtonDepressedEventHandler(IISIS isis)
 		{
 			_isis = isis;
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.EventSystem
 {
@@ -18,9 +19,9 @@ namespace MFDExtractor.EventSystem
 		public DateTime? RightKnobLastActivityTime { get; set; }
 		public DateTime? RightKnobReleasedTime { get; set; }
 		public bool RightKnobIsPressed {  get { return RightKnobDepressedTime.HasValue; } }
-		private readonly IF16EHSI _ehsi;
+		private readonly IEHSI _ehsi;
 
-		public EHSIStateTracker(IF16EHSI ehsi)
+		public EHSIStateTracker(IEHSI ehsi)
 		{
 			_ehsi = ehsi;
 		}

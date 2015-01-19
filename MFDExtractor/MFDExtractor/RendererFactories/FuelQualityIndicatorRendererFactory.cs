@@ -1,25 +1,26 @@
 ﻿using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor.RendererFactories
 {
 	internal interface IFuelQualityIndicatorRendererFactory
 	{
-		IF16FuelQuantityIndicator Create();
+		IFuelQuantityIndicator Create();
 	}
 
 	class FuelQualityIndicatorRendererFactory : IFuelQualityIndicatorRendererFactory
 	{
-		public IF16FuelQuantityIndicator Create()
+		public IFuelQuantityIndicator Create()
 		{
-			return new F16FuelQuantityIndicator
+			return new FuelQuantityIndicator
 			{
 				Options =
 				{
 					NeedleType =
 						Settings.Default.FuelQuantityIndicator_NeedleCModel
-							? F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel
-							: F16FuelQuantityIndicator.F16FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel
+							? FuelQuantityIndicator.FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel
+							: FuelQuantityIndicator.FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel
 				}
 			};
 		}

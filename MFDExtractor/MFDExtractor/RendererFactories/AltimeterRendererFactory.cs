@@ -1,29 +1,30 @@
 ﻿using System;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor.RendererFactories
 {
 	internal interface IAltimeterRendererFactory
 	{
-		IF16Altimeter Create();
+		IAltimeter Create();
 	}
 
 	class AltimeterRendererFactory : IAltimeterRendererFactory
 	{
-		public IF16Altimeter Create()
+		public IAltimeter Create()
 		{
-			return new F16Altimeter
+			return new Altimeter
 			{
-				Options = new F16Altimeter.F16AltimeterOptions
+				Options = new Altimeter.AltimeterOptions
 				{
 
 					Style =
-						(F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)
-							Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), Settings.Default.Altimeter_Style),
+						(Altimeter.AltimeterOptions.F16AltimeterStyle)
+							Enum.Parse(typeof (Altimeter.AltimeterOptions.F16AltimeterStyle), Settings.Default.Altimeter_Style),
 					PressureAltitudeUnits =
-						(F16Altimeter.F16AltimeterOptions.PressureUnits)
-							Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.PressureUnits), Settings.Default.Altimeter_PressureUnits)
+						(Altimeter.AltimeterOptions.PressureUnits)
+							Enum.Parse(typeof (Altimeter.AltimeterOptions.PressureUnits), Settings.Default.Altimeter_PressureUnits)
 				}
 			};
 		}

@@ -8,17 +8,17 @@ namespace MFDExtractor.RendererFactories
 {
 	public interface IISISRendererFactory
 	{
-		IF16ISIS Create(GdiPlusOptions gdiPlusOptions); 
+		IISIS Create(GdiPlusOptions gdiPlusOptions); 
 	}
 	class ISISRendererFactory:IISISRendererFactory
 	{
-		public IF16ISIS Create(GdiPlusOptions gdiPlusOptions)
+		public IISIS Create(GdiPlusOptions gdiPlusOptions)
 		{
-			var toReturn = new F16ISIS
+			var toReturn = new ISIS
 			{
-				Options = new F16ISIS.F16ISISOptions
+				Options = new ISIS.ISISOptions
 				{
-					PressureAltitudeUnits = (F16ISIS.F16ISISOptions.PressureUnits)Enum.Parse(typeof(F16ISIS.F16ISISOptions.PressureUnits), Settings.Default.ISIS_PressureUnits),
+					PressureAltitudeUnits = (ISIS.ISISOptions.PressureUnits)Enum.Parse(typeof(ISIS.ISISOptions.PressureUnits), Settings.Default.ISIS_PressureUnits),
 					GDIPlusOptions = gdiPlusOptions
 				}
 			};

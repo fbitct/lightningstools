@@ -1,17 +1,18 @@
 ﻿using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.FlightDataAdapters
 {
     internal interface ICMDSFlightDataAdapter
     {
-        void Adapt(IF16CMDSPanel cmdsPanel, FlightData flightData);
+        void Adapt(ICMDSPanel cmdsPanel, FlightData flightData);
     }
 
     class CMDSFlightDataAdapter : ICMDSFlightDataAdapter
     {
-        public void Adapt(IF16CMDSPanel cmdsPanel, FlightData flightData)
+        public void Adapt(ICMDSPanel cmdsPanel, FlightData flightData)
         {
             cmdsPanel.InstrumentState.Degraded = ((flightData.lightBits2 & (int)LightBits2.Degr) == (int)LightBits2.Degr);
             cmdsPanel.InstrumentState.ChaffCount = (int)flightData.ChaffCount;

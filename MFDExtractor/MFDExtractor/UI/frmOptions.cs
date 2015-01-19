@@ -17,6 +17,7 @@ using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using log4net;
 using Common.Networking;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.UI
 {
@@ -353,11 +354,11 @@ namespace MFDExtractor.UI
 
             string azimuthIndicatorType = settings.AzimuthIndicatorType;
             var azimuthIndicatorStyle =
-                (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle)
-                Enum.Parse(typeof (F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle), azimuthIndicatorType);
+                (AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle)
+                Enum.Parse(typeof (AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle), azimuthIndicatorType);
             switch (azimuthIndicatorStyle)
             {
-                case F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR:
+                case AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR:
                     if (settings.AzimuthIndicator_ShowBezel)
                     {
                         rdoAzimuthIndicatorStyleDigital.Checked = false;
@@ -377,7 +378,7 @@ namespace MFDExtractor.UI
                         rdoAzimuthIndicatorStyleScope.Checked = true;
                     }
                     break;
-                case F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF:
+                case AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.HAF:
                     rdoAzimuthIndicatorStyleDigital.Checked = false;
                     rdoRWRIP1310BezelType.Checked = false;
                     rdoATDPlus.Checked = false;
@@ -385,7 +386,7 @@ namespace MFDExtractor.UI
                     rdoRWRHAFBezelType.Checked = true;
                     rdoAzimuthIndicatorStyleScope.Checked = true;
                     break;
-                case F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay:
+                case AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay:
                     rdoAzimuthIndicatorStyleScope.Checked = false;
                     rdoRWRIP1310BezelType.Checked = false;
                     rdoRWRHAFBezelType.Checked = false;
@@ -399,15 +400,15 @@ namespace MFDExtractor.UI
 
             string altimeterStyleString = Settings.Default.Altimeter_Style;
             var altimeterStyle =
-                (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle)
-                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.F16AltimeterStyle), altimeterStyleString);
+                (Altimeter.AltimeterOptions.F16AltimeterStyle)
+                Enum.Parse(typeof (Altimeter.AltimeterOptions.F16AltimeterStyle), altimeterStyleString);
             switch (altimeterStyle)
             {
-                case F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical:
+                case Altimeter.AltimeterOptions.F16AltimeterStyle.Electromechanical:
                     rdoAltimeterStyleElectromechanical.Checked = true;
                     rdoAltimeterStyleDigital.Checked = false;
                     break;
-                case F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electronic:
+                case Altimeter.AltimeterOptions.F16AltimeterStyle.Electronic:
                     rdoAltimeterStyleElectromechanical.Checked = false;
                     rdoAltimeterStyleDigital.Checked = true;
                     break;
@@ -415,15 +416,15 @@ namespace MFDExtractor.UI
 
             string pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
             var pressureUnits =
-                (F16Altimeter.F16AltimeterOptions.PressureUnits)
-                Enum.Parse(typeof (F16Altimeter.F16AltimeterOptions.PressureUnits), pressureUnitsString);
+                (Altimeter.AltimeterOptions.PressureUnits)
+                Enum.Parse(typeof (Altimeter.AltimeterOptions.PressureUnits), pressureUnitsString);
             switch (pressureUnits)
             {
-                case F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury:
+                case Altimeter.AltimeterOptions.PressureUnits.InchesOfMercury:
                     rdoInchesOfMercury.Checked = true;
                     rdoMillibars.Checked = false;
                     break;
-                case F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars:
+                case Altimeter.AltimeterOptions.PressureUnits.Millibars:
                     rdoInchesOfMercury.Checked = false;
                     rdoMillibars.Checked = true;
                     break;
@@ -721,22 +722,22 @@ namespace MFDExtractor.UI
 
             if (rdoMillibars.Checked)
             {
-                settings.Altimeter_PressureUnits = F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars.ToString();
+                settings.Altimeter_PressureUnits = Altimeter.AltimeterOptions.PressureUnits.Millibars.ToString();
             }
             else if (rdoInchesOfMercury.Checked)
             {
                 settings.Altimeter_PressureUnits =
-                    F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
+                    Altimeter.AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
             }
 
             if (rdoAltimeterStyleDigital.Checked)
             {
-                settings.Altimeter_Style = F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
+                settings.Altimeter_Style = Altimeter.AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
             }
             else if (rdoAltimeterStyleElectromechanical.Checked)
             {
                 settings.Altimeter_Style =
-                    F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
+                    Altimeter.AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
             }
 
             if (rdoAzimuthIndicatorStyleScope.Checked)
@@ -744,26 +745,26 @@ namespace MFDExtractor.UI
                 if (rdoRWRIP1310BezelType.Checked)
                 {
                     settings.AzimuthIndicatorType =
-                        F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                        AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                     settings.AzimuthIndicator_ShowBezel = true;
                 }
                 else if (rdoRWRHAFBezelType.Checked)
                 {
                     settings.AzimuthIndicatorType =
-                        F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
+                        AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
                     settings.AzimuthIndicator_ShowBezel = true;
                 }
                 else if (rdoAzimuthIndicatorNoBezel.Checked)
                 {
                     settings.AzimuthIndicatorType =
-                        F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                        AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                     settings.AzimuthIndicator_ShowBezel = false;
                 }
             }
             else if (rdoAzimuthIndicatorStyleDigital.Checked)
             {
                 settings.AzimuthIndicatorType =
-                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
+                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
             }
 
             if (rdoVVIStyleNeedle.Checked)
@@ -1435,7 +1436,7 @@ namespace MFDExtractor.UI
             if (rdoRWRIP1310BezelType.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                 Settings.Default.AzimuthIndicator_ShowBezel = true;
                 //StopAndRestartExtractor();
             }
@@ -1446,7 +1447,7 @@ namespace MFDExtractor.UI
             if (rdoRWRHAFBezelType.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
+                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.HAF.ToString();
                 Settings.Default.AzimuthIndicator_ShowBezel = true;
                 //StopAndRestartExtractor();
             }
@@ -1457,7 +1458,7 @@ namespace MFDExtractor.UI
             if (rdoAzimuthIndicatorNoBezel.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
+                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.IP1310ALR.ToString();
                 Settings.Default.AzimuthIndicator_ShowBezel = false;
                 //StopAndRestartExtractor();
             }
@@ -1481,7 +1482,7 @@ namespace MFDExtractor.UI
             if (rdoATDPlus.Checked)
             {
                 Settings.Default.AzimuthIndicatorType =
-                    F16AzimuthIndicator.F16AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
+                    AzimuthIndicator.AzimuthIndicatorOptions.InstrumentStyle.AdvancedThreatDisplay.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -1492,7 +1493,7 @@ namespace MFDExtractor.UI
             if (rdoAltimeterStyleElectromechanical.Checked)
             {
                 Settings.Default.Altimeter_Style =
-                    F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
+                    Altimeter.AltimeterOptions.F16AltimeterStyle.Electromechanical.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -1502,7 +1503,7 @@ namespace MFDExtractor.UI
             if (rdoAltimeterStyleDigital.Checked)
             {
                 Settings.Default.Altimeter_Style =
-                    F16Altimeter.F16AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
+                    Altimeter.AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -1512,7 +1513,7 @@ namespace MFDExtractor.UI
             if (rdoInchesOfMercury.Checked)
             {
                 Settings.Default.Altimeter_PressureUnits =
-                    F16Altimeter.F16AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
+                    Altimeter.AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
                 //StopAndRestartExtractor();
             }
         }
@@ -1522,7 +1523,7 @@ namespace MFDExtractor.UI
             if (rdoMillibars.Checked)
             {
                 Settings.Default.Altimeter_PressureUnits =
-                    F16Altimeter.F16AltimeterOptions.PressureUnits.Millibars.ToString();
+                    Altimeter.AltimeterOptions.PressureUnits.Millibars.ToString();
                 //StopAndRestartExtractor();
             }
         }

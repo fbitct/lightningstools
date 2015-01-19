@@ -7,6 +7,7 @@ using LightningGauges.Renderers;
 using MFDExtractor.BMSSupport;
 using MFDExtractor.FlightDataAdapters;
 using F4Utils.Terrain;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Networking;
 
 namespace MFDExtractor
@@ -174,13 +175,13 @@ namespace MFDExtractor
 			}
             else //Falcon's not running
             {
-                if (renderers.VVI is F16VerticalVelocityIndicatorEU)
+                if (renderers.VVI is VerticalVelocityIndicatorEU)
                 {
-                    ((F16VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.OffFlag = true;
+                    ((VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.OffFlag = true;
                 }
-                else if (renderers.VVI is F16VerticalVelocityIndicatorUSA)
+                else if (renderers.VVI is VerticalVelocityIndicatorUSA)
                 {
-                    ((F16VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.OffFlag = true;
+                    ((VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.OffFlag = true;
                 }
                 renderers.AOAIndicator.InstrumentState.OffFlag = true;
                 renderers.HSI.InstrumentState.OffFlag = true;
@@ -247,26 +248,26 @@ namespace MFDExtractor
                 case 0: //NavModes.PlsTcn:
                     renderers.HSI.InstrumentState.ShowToFromFlag = false;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsTacan;
+                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.PlsTacan;
                     break;
                 case 1: //NavModes.Tcn:
                     renderers.HSI.InstrumentState.ShowToFromFlag = true;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = true;
-                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Tacan;
+                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.Tacan;
                     renderers.ADI.InstrumentState.ShowCommandBars = false;
                     renderers.ISIS.InstrumentState.ShowCommandBars = false;
                     break;
                 case 2: //NavModes.Nav:
                     renderers.HSI.InstrumentState.ShowToFromFlag = false;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.Nav;
+                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.Nav;
                     renderers.ADI.InstrumentState.ShowCommandBars = false;
                     renderers.ISIS.InstrumentState.ShowCommandBars = false;
                     break;
                 case 3: //NavModes.PlsNav:
                     renderers.HSI.InstrumentState.ShowToFromFlag = false;
                     renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = F16EHSI.F16EHSIInstrumentState.InstrumentModes.PlsNav;
+                    renderers.EHSI.InstrumentState.InstrumentMode = EHSI.EHSIInstrumentState.InstrumentModes.PlsNav;
                     break;
             }
         }

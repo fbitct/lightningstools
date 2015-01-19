@@ -7,9 +7,9 @@ namespace MFDExtractor.EventSystem.Handlers
 	public interface IISISStandardButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
 	public class ISISStandardButtonDepressedEventHandler : IISISStandardButtonDepressedEventHandler
 	{
-		private readonly IF16ISIS _isis;
+		private readonly IISIS _isis;
 
-		public ISISStandardButtonDepressedEventHandler(IF16ISIS isis)
+		public ISISStandardButtonDepressedEventHandler(IISIS isis)
 		{
 			_isis = isis;
 		}

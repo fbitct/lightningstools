@@ -3,30 +3,31 @@ using Common.Math;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IAzimuthIndicatorFlightDataAdapter
     {
-        void Adapt(IF16AzimuthIndicator azimuthIndicator, FlightData flightData);
+        void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData);
     }
 
     class AzimuthIndicatorFlightDataAdapter : IAzimuthIndicatorFlightDataAdapter
     {
-        public void Adapt(IF16AzimuthIndicator azimuthIndicator, FlightData flightData)
+        public void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData)
         {
             azimuthIndicator.InstrumentState.MagneticHeadingDegrees = (360 + (flightData.yaw / Constants.RADIANS_PER_DEGREE)) % 360;
             azimuthIndicator.InstrumentState.RollDegrees = ((flightData.roll / Constants.RADIANS_PER_DEGREE));
             var rwrObjectCount = flightData.RwrObjectCount;
             if (flightData.RWRsymbol != null)
             {
-                var blips = new F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState.Blip[flightData.RWRsymbol.Length];
+                var blips = new AzimuthIndicator.AzimuthIndicatorInstrumentState.Blip[flightData.RWRsymbol.Length];
                 azimuthIndicator.InstrumentState.Blips = blips;
                 if (flightData.RWRsymbol != null)
                 {
                     for (var i = 0; i < flightData.RWRsymbol.Length; i++)
                     {
-                        var thisBlip = new F16AzimuthIndicator.F16AzimuthIndicatorInstrumentState.Blip();
+                        var thisBlip = new AzimuthIndicator.AzimuthIndicatorInstrumentState.Blip();
                         if (i < rwrObjectCount) thisBlip.Visible = true;
                         if (flightData.bearing != null)
                         {

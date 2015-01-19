@@ -1,17 +1,18 @@
 ﻿using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.FlightDataAdapters
 {
     internal interface INWSFlightDataAdapter
     {
-        void Adapt(IF16NosewheelSteeringIndexer nwsIndexer, FlightData flightData);
+        void Adapt(INosewheelSteeringIndexer nwsIndexer, FlightData flightData);
     }
 
     class NWSFlightDataAdapter : INWSFlightDataAdapter
     {
-        public void Adapt(IF16NosewheelSteeringIndexer nwsIndexer, FlightData flightData)
+        public void Adapt(INosewheelSteeringIndexer nwsIndexer, FlightData flightData)
 
         {
             nwsIndexer.InstrumentState.DISC = ((flightData.lightBits & (int)LightBits.RefuelDSC) == (int)LightBits.RefuelDSC);

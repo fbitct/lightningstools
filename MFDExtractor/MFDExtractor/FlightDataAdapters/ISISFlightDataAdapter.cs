@@ -10,7 +10,7 @@ namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IISISFlightDataAdapter
     {
-        void Adapt(IF16ISIS isis, FlightData flightData, TerrainDB terrainDB);
+        void Adapt(IISIS isis, FlightData flightData, TerrainDB terrainDB);
     }
     class ISISFlightDataAdapter:IISISFlightDataAdapter
     {
@@ -19,15 +19,15 @@ namespace MFDExtractor.FlightDataAdapters
 		{
 			_radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
 		}
-        public void Adapt(IF16ISIS isis, FlightData flightData, TerrainDB terrainDB)
+        public void Adapt(IISIS isis, FlightData flightData, TerrainDB terrainDB)
         {
             var altbits = (AltBits) flightData.altBits;
             var hsibits = (HsiBits) flightData.hsiBits;
             isis.InstrumentState.AirspeedKnots = flightData.kias;
             isis.InstrumentState.IndicatedAltitudeFeetMSL = -flightData.aauz;
 	        isis.Options.PressureAltitudeUnits = ((altbits & AltBits.CalType) == AltBits.CalType) 
-				? F16ISIS.F16ISISOptions.PressureUnits.InchesOfMercury 
-				: F16ISIS.F16ISISOptions.PressureUnits.Millibars;
+				? ISIS.ISISOptions.PressureUnits.InchesOfMercury 
+				: ISIS.ISISOptions.PressureUnits.Millibars;
 
 	        isis.InstrumentState.BarometricPressure = flightData.AltCalReading;
 			isis.InstrumentState.RadarAltitudeAGL = _radarAltitudeCalculator.ComputeRadarAltitude(flightData, terrainDB);

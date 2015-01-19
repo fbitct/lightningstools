@@ -80,11 +80,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DEDPFLFont.cs" />
+    <Compile Include="Renderers\F16\DEDPFLFont.cs" />
     <Compile Include="FontGraphic.cs" />
     <Compile Include="GraphicsUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderers\IF16VerticalVelocityIndicator.cs" />
+    <Compile Include="Renderers\F16\IVerticalVelocityIndicator.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -114,38 +114,38 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Renderers\F16Accelerometer.cs" />
-    <Compile Include="Renderers\F16ADI.cs" />
-    <Compile Include="Renderers\F16AirspeedIndicator.cs" />
-    <Compile Include="Renderers\F16Altimeter.cs" />
-    <Compile Include="Renderers\F16AngleOfAttackIndexer.cs" />
-    <Compile Include="Renderers\F16AngleOfAttackIndicator.cs" />
-    <Compile Include="Renderers\F16CabinPressureAltitudeIndicator.cs" />
-    <Compile Include="Renderers\F16CautionPanel.cs" />
-    <Compile Include="Renderers\F16Compass.cs" />
-    <Compile Include="Renderers\F16CMDSPanel.cs" />
-    <Compile Include="Renderers\F16DataEntryDisplayPilotFaultList.cs" />
-    <Compile Include="Renderers\F16EHSI.cs" />
-    <Compile Include="Renderers\F16EPUFuelGauge.cs" />
-    <Compile Include="Renderers\F16FanTurbineInletTemperature.cs" />
-    <Compile Include="Renderers\F16FuelFlow.cs" />
-    <Compile Include="Renderers\F16FuelQuantityIndicator.cs" />
-    <Compile Include="Renderers\F16HorizontalSituationIndicator.cs" />
-    <Compile Include="Renderers\F16HydraulicPressureGauge.cs" />
-    <Compile Include="Renderers\F16\ISIS\F16ISIS.cs" />
-    <Compile Include="Renderers\F16LandingGearWheelsLights.cs" />
-    <Compile Include="Renderers\F16NosewheelSteeringIndexer.cs" />
-    <Compile Include="Renderers\F16NozzlePositionIndicator.cs" />
-    <Compile Include="Renderers\F16OilPressureGauge.cs" />
-    <Compile Include="Renderers\F16PitchTrimIndicator.cs" />
-    <Compile Include="Renderers\F16RollTrimIndicator.cs" />
-    <Compile Include="Renderers\F16SpeedbrakeIndicator.cs" />
-    <Compile Include="Renderers\F16StandbyADI.cs" />
-    <Compile Include="Renderers\F16Tachometer.cs" />
-    <Compile Include="Renderers\F16VerticalVelocityIndicatorEU.cs" />
-    <Compile Include="Renderers\F16VerticalVelocityIndicatorInstrumentState.cs" />
-    <Compile Include="Renderers\F16VerticalVelocityIndicatorUSA.cs" />
-    <Compile Include="Renderers\F16AzimuthIndicator.cs" />
+    <Compile Include="Renderers\F16\Accelerometer.cs" />
+    <Compile Include="Renderers\F16\ADI.cs" />
+    <Compile Include="Renderers\F16\AirspeedIndicator.cs" />
+    <Compile Include="Renderers\F16\Altimeter.cs" />
+    <Compile Include="Renderers\F16\AngleOfAttackIndexer.cs" />
+    <Compile Include="Renderers\F16\AngleOfAttackIndicator.cs" />
+    <Compile Include="Renderers\F16\CabinPressureAltitudeIndicator.cs" />
+    <Compile Include="Renderers\F16\CautionPanel.cs" />
+    <Compile Include="Renderers\F16\Compass.cs" />
+    <Compile Include="Renderers\F16\CMDSPanel.cs" />
+    <Compile Include="Renderers\F16\DataEntryDisplayPilotFaultList.cs" />
+    <Compile Include="Renderers\F16\EHSI.cs" />
+    <Compile Include="Renderers\F16\EPUFuelGauge.cs" />
+    <Compile Include="Renderers\F16\FanTurbineInletTemperature.cs" />
+    <Compile Include="Renderers\F16\FuelFlow.cs" />
+    <Compile Include="Renderers\F16\FuelQuantityIndicator.cs" />
+    <Compile Include="Renderers\F16\HorizontalSituationIndicator.cs" />
+    <Compile Include="Renderers\F16\HydraulicPressureGauge.cs" />
+    <Compile Include="Renderers\F16\ISIS\ISIS.cs" />
+    <Compile Include="Renderers\F16\LandingGearWheelsLights.cs" />
+    <Compile Include="Renderers\F16\NosewheelSteeringIndexer.cs" />
+    <Compile Include="Renderers\F16\NozzlePositionIndicator.cs" />
+    <Compile Include="Renderers\F16\OilPressureGauge.cs" />
+    <Compile Include="Renderers\F16\PitchTrimIndicator.cs" />
+    <Compile Include="Renderers\F16\RollTrimIndicator.cs" />
+    <Compile Include="Renderers\F16\SpeedbrakeIndicator.cs" />
+    <Compile Include="Renderers\F16\StandbyADI.cs" />
+    <Compile Include="Renderers\F16\Tachometer.cs" />
+    <Compile Include="Renderers\F16\VerticalVelocityIndicatorEU.cs" />
+    <Compile Include="Renderers\F16\VerticalVelocityIndicatorInstrumentState.cs" />
+    <Compile Include="Renderers\F16\VerticalVelocityIndicatorUSA.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

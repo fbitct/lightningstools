@@ -1,5 +1,6 @@
 ﻿using System;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor.EventSystem.Handlers
@@ -7,9 +8,9 @@ namespace MFDExtractor.EventSystem.Handlers
 	public interface IAzimuthIndicatorBrightnessIncreasedEventHandler:IInputEventHandlerEventHandler{}
 	public class AzimuthIndicatorBrightnessIncreasedEventHandler : IAzimuthIndicatorBrightnessIncreasedEventHandler
 	{
-		private readonly IF16AzimuthIndicator _azimuthIndicator;
+		private readonly IAzimuthIndicator _azimuthIndicator;
 
-		public AzimuthIndicatorBrightnessIncreasedEventHandler(IF16AzimuthIndicator azimuthIndicator)
+		public AzimuthIndicatorBrightnessIncreasedEventHandler(IAzimuthIndicator azimuthIndicator)
 		{
 			_azimuthIndicator = azimuthIndicator;
 		}

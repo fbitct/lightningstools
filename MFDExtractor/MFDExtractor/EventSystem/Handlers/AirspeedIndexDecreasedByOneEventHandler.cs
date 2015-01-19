@@ -1,13 +1,14 @@
 ﻿using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
 	public interface IAirspeedIndexDecreasedByOneEventHandler:IInputEventHandlerEventHandler {}
 	public class AirspeedIndexDecreasedByOneEventHandler : IAirspeedIndexDecreasedByOneEventHandler
 	{
-		private readonly IF16AirspeedIndicator _airspeedIndicator;
+		private readonly IAirspeedIndicator _airspeedIndicator;
 
-		public AirspeedIndexDecreasedByOneEventHandler(IF16AirspeedIndicator airspeedIndicator)
+		public AirspeedIndexDecreasedByOneEventHandler(IAirspeedIndicator airspeedIndicator)
 		{
 			_airspeedIndicator = airspeedIndicator;
 		}

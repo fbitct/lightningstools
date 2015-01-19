@@ -3,6 +3,7 @@ using F4KeyFile;
 using F4SharedMem;
 using F4Utils.Process;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor.EventSystem.Handlers
@@ -11,8 +12,8 @@ namespace MFDExtractor.EventSystem.Handlers
 	public class EHSIRightKnobIncreasedByOneEventHandler : IEHSIRightKnobIncreasedByOneEventHandler
 	{
 		private readonly IEHSIStateTracker _ehsiStateTracker;
-		private readonly IF16EHSI _ehsi;
-		public EHSIRightKnobIncreasedByOneEventHandler(IEHSIStateTracker ehsiStateTracker, IF16EHSI ehsi)
+		private readonly IEHSI _ehsi;
+		public EHSIRightKnobIncreasedByOneEventHandler(IEHSIStateTracker ehsiStateTracker, IEHSI ehsi)
 		{
 			_ehsiStateTracker = ehsiStateTracker;
 			_ehsi = ehsi;

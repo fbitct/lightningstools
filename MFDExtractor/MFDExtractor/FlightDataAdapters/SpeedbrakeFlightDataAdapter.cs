@@ -1,17 +1,18 @@
 ﻿using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.FlightDataAdapters
 {
     internal interface ISpeedbrakeFlightDataAdapter
     {
-        void Adapt(IF16SpeedbrakeIndicator speedbrakeIndicator, FlightData flightData);
+        void Adapt(ISpeedbrakeIndicator speedbrakeIndicator, FlightData flightData);
     }
 
     class SpeedbrakeFlightDataAdapter : ISpeedbrakeFlightDataAdapter
     {
-        public void Adapt(IF16SpeedbrakeIndicator speedbrakeIndicator, FlightData flightData)
+        public void Adapt(ISpeedbrakeIndicator speedbrakeIndicator, FlightData flightData)
         {
             speedbrakeIndicator.InstrumentState.PercentOpen = flightData.speedBrake * 100.0f;
             speedbrakeIndicator.InstrumentState.PowerLoss = ((flightData.lightBits3 & (int)Bms4LightBits3.Power_Off) == (int)Bms4LightBits3.Power_Off);

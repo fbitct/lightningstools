@@ -1,17 +1,18 @@
 ﻿using System.Text;
 using F4SharedMem;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IDEDFlightDataAdapter
     {
-        void Adapt(IF16DataEntryDisplayPilotFaultList ded, FlightData flightData);
+        void Adapt(IDataEntryDisplayPilotFaultList ded, FlightData flightData);
     }
 
     class DEDFlightDataAdapter : IDEDFlightDataAdapter
     {
-        public void Adapt(IF16DataEntryDisplayPilotFaultList ded, FlightData flightData)
+        public void Adapt(IDataEntryDisplayPilotFaultList ded, FlightData flightData)
         {
             if (flightData.DEDLines != null)
             {

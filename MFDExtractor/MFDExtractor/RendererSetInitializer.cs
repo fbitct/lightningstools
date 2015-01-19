@@ -1,5 +1,6 @@
 ﻿using Common.UI;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Properties;
 using MFDExtractor.Renderer;
 using MFDExtractor.RendererFactories;
@@ -146,19 +147,19 @@ namespace MFDExtractor
 
         private void SetupRPM2Renderer()
         {
-            _renderers.RPM2 = new F16Tachometer();
-            ((F16Tachometer)_renderers.RPM2).Options.IsSecondary = true;
+            _renderers.RPM2 = new Tachometer();
+            ((Tachometer)_renderers.RPM2).Options.IsSecondary = true;
         }
 
         private void SetupRPM1Renderer()
         {
-            _renderers.RPM1 = new F16Tachometer();
-            ((F16Tachometer)_renderers.RPM1).Options.IsSecondary = false;
+            _renderers.RPM1 = new Tachometer();
+            ((Tachometer)_renderers.RPM1).Options.IsSecondary = false;
         }
 
         private void SetupSpeedbrakeRenderer()
         {
-            _renderers.Speedbrake = new F16SpeedbrakeIndicator();
+            _renderers.Speedbrake = new SpeedbrakeIndicator();
         }
 
         private void SetupRWRRenderer(GdiPlusOptions gdiPlusOptions)
@@ -168,47 +169,47 @@ namespace MFDExtractor
 
         private void SetupOil2Renderer()
         {
-            _renderers.OIL2 = new F16OilPressureGauge();
-            ((F16OilPressureGauge)_renderers.OIL2).Options.IsSecondary = true;
+            _renderers.OIL2 = new OilPressureGauge();
+            ((OilPressureGauge)_renderers.OIL2).Options.IsSecondary = true;
         }
 
         private void SetupOil1Renderer()
         {
-            _renderers.OIL1 = new F16OilPressureGauge();
-            ((F16OilPressureGauge)_renderers.OIL1).Options.IsSecondary = false;
+            _renderers.OIL1 = new OilPressureGauge();
+            ((OilPressureGauge)_renderers.OIL1).Options.IsSecondary = false;
         }
 
         private void SetupNOZ2Renderer()
         {
-            _renderers.NOZ2 = new F16NozzlePositionIndicator();
-            ((F16NozzlePositionIndicator)_renderers.NOZ2).Options.IsSecondary = true;
+            _renderers.NOZ2 = new NozzlePositionIndicator();
+            ((NozzlePositionIndicator)_renderers.NOZ2).Options.IsSecondary = true;
         }
 
         private void SetupNOZ1Renderer()
         {
-            _renderers.NOZ1 = new F16NozzlePositionIndicator();
-            ((F16NozzlePositionIndicator)_renderers.NOZ1).Options.IsSecondary = false;
+            _renderers.NOZ1 = new NozzlePositionIndicator();
+            ((NozzlePositionIndicator)_renderers.NOZ1).Options.IsSecondary = false;
         }
 
         private void SetupNWSIndexerRenderer()
         {
-            _renderers.NWSIndexer = new F16NosewheelSteeringIndexer();
+            _renderers.NWSIndexer = new NosewheelSteeringIndexer();
         }
 
         private void SetupLandingGearLightsRenderer()
         {
-            _renderers.GearLights = new F16LandingGearWheelsLights();
+            _renderers.GearLights = new LandingGearWheelsLights();
         }
 
         private void SetupHSIRenderer()
         {
-            _renderers.HSI = new F16HorizontalSituationIndicator();
+            _renderers.HSI = new HorizontalSituationIndicator();
         }
 
         private void SetupEHSIRenderer(GdiPlusOptions gdiPlusOptions)
         {
-            _renderers.EHSI = new F16EHSI();
-            ((F16EHSI)_renderers.EHSI).Options.GDIPlusOptions = gdiPlusOptions;
+            _renderers.EHSI = new EHSI();
+            ((EHSI)_renderers.EHSI).Options.GDIPlusOptions = gdiPlusOptions;
         }
 
         private void SetupFuelQuantityRenderer()
@@ -218,7 +219,7 @@ namespace MFDExtractor
 
         private void SetupFuelFlowRenderer()
         {
-            _renderers.FuelFlow = new F16FuelFlow();
+            _renderers.FuelFlow = new FuelFlow();
         }
 
         private void SetupISISRenderer(GdiPlusOptions gdiPlusOptions)
@@ -228,59 +229,59 @@ namespace MFDExtractor
 
         private void SetupAccelerometerRenderer()
         {
-            _renderers.Accelerometer = new F16Accelerometer();
+            _renderers.Accelerometer = new Accelerometer();
         }
 
         private void SetupFTIT2Renderer()
         {
-            _renderers.FTIT2 = new F16FanTurbineInletTemperature();
-            ((F16FanTurbineInletTemperature)_renderers.FTIT2).Options.IsSecondary = true;
+            _renderers.FTIT2 = new FanTurbineInletTemperature();
+            ((FanTurbineInletTemperature)_renderers.FTIT2).Options.IsSecondary = true;
         }
 
         private void SetupFTIT1Renderer()
         {
-            _renderers.FTIT1 = new F16FanTurbineInletTemperature();
-            ((F16FanTurbineInletTemperature)_renderers.FTIT1).Options.IsSecondary = false;
+            _renderers.FTIT1 = new FanTurbineInletTemperature();
+            ((FanTurbineInletTemperature)_renderers.FTIT1).Options.IsSecondary = false;
         }
 
         private void SetupEPUFuelRenderer()
         {
-            _renderers.EPUFuel = new F16EPUFuelGauge();
+            _renderers.EPUFuel = new EPUFuelGauge();
         }
 
         private void SetupPFLRenderer()
         {
-            _renderers.PFL = new F16DataEntryDisplayPilotFaultList();
+            _renderers.PFL = new DataEntryDisplayPilotFaultList();
         }
 
         private void SetupDEDRenderer()
         {
-            _renderers.DED = new F16DataEntryDisplayPilotFaultList();
+            _renderers.DED = new DataEntryDisplayPilotFaultList();
         }
 
         private void SetupCompassRenderer()
         {
-            _renderers.Compass = new F16Compass();
+            _renderers.Compass = new Compass();
         }
 
         private void SetupCMDSPanelRenderer()
         {
-            _renderers.CMDS = new F16CMDSPanel();
+            _renderers.CMDS = new CMDSPanel();
         }
 
         private void SetupCautionPanelRenderer()
         {
-            _renderers.CautionPanel = new F16CautionPanel();
+            _renderers.CautionPanel = new CautionPanel();
         }
 
         private void SetupAOAIndicatorRenderer()
         {
-            _renderers.AOAIndicator = new F16AngleOfAttackIndicator();
+            _renderers.AOAIndicator = new AngleOfAttackIndicator();
         }
 
         private void SetupAOAIndexerRenderer()
         {
-            _renderers.AOAIndexer = new F16AngleOfAttackIndexer();
+            _renderers.AOAIndexer = new AngleOfAttackIndexer();
         }
 
         private void SetupAltimeterRenderer()
@@ -290,42 +291,42 @@ namespace MFDExtractor
 
         private void SetupASIRenderer()
         {
-            _renderers.ASI = new F16AirspeedIndicator();
+            _renderers.ASI = new AirspeedIndicator();
         }
 
         private void SetupADIRenderer()
         {
-            _renderers.ADI = new F16ADI();
+            _renderers.ADI = new ADI();;
         }
 
         private void SetupBackupADIRenderer()
         {
-            _renderers.BackupADI = new F16StandbyADI();
+            _renderers.BackupADI = new StandbyADI();
         }
 
         private void SetupHydARenderer()
         {
-            _renderers.HYDA = new F16HydraulicPressureGauge();
+            _renderers.HYDA = new HydraulicPressureGauge();
         }
 
         private void SetupHydBRenderer()
         {
-            _renderers.HYDB = new F16HydraulicPressureGauge();
+            _renderers.HYDB = new HydraulicPressureGauge();
         }
 
         private void SetupCabinPressRenderer()
         {
-            _renderers.CabinPress = new F16CabinPressureAltitudeIndicator();
+            _renderers.CabinPress = new CabinPressureAltitudeIndicator();
         }
 
         private void SetupRollTrimRenderer()
         {
-            _renderers.RollTrim = new F16RollTrimIndicator();
+            _renderers.RollTrim = new RollTrimIndicator();
         }
 
         private void SetupPitchTrimRenderer()
         {
-            _renderers.PitchTrim = new F16PitchTrimIndicator();
+            _renderers.PitchTrim = new PitchTrimIndicator();
         }
         
     }

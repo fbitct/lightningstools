@@ -3,6 +3,7 @@ using F4KeyFile;
 using F4SharedMem;
 using F4Utils.Process;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 using MFDExtractor.Properties;
 
 namespace MFDExtractor.EventSystem.Handlers
@@ -10,8 +11,8 @@ namespace MFDExtractor.EventSystem.Handlers
 	public interface IEHSIRightKnobDecreasedByOneEventHandler:IInputEventHandlerEventHandler{}
 	public class EHSIRightKnobDecreasedByOneEventHandler : IEHSIRightKnobDecreasedByOneEventHandler
 	{
-		private readonly IF16EHSI _ehsi;
-		public EHSIRightKnobDecreasedByOneEventHandler(IF16EHSI ehsi)
+		private readonly IEHSI _ehsi;
+		public EHSIRightKnobDecreasedByOneEventHandler(IEHSI ehsi)
 		{
 			_ehsi = ehsi;
 		}

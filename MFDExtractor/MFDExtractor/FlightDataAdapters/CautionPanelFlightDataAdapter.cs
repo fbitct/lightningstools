@@ -1,17 +1,18 @@
 ﻿using F4SharedMem;
 using F4SharedMem.Headers;
 using LightningGauges.Renderers;
+using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.FlightDataAdapters
 {
     internal interface ICautionPanelFlightDataAdapter
     {
-        void Adapt(IF16CautionPanel cautionPanel, FlightData flightData);
+        void Adapt(ICautionPanel cautionPanel, FlightData flightData);
     }
 
     class CautionPanelFlightDataAdapter : ICautionPanelFlightDataAdapter
     {
-        public void Adapt(IF16CautionPanel cautionPanel, FlightData flightData)
+        public void Adapt(ICautionPanel cautionPanel, FlightData flightData)
         {
             //TODO: implement all-lights-on when test is detected
             cautionPanel.InstrumentState.AftFuelLow = ((flightData.lightBits2 &(int) LightBits2.AftFuelLow) ==(int) LightBits2.AftFuelLow);
