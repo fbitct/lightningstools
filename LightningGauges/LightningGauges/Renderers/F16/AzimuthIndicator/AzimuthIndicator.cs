@@ -1,10 +1,8 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using Common.SimSupport;
 using Util = Common.Imaging.Util;
 
@@ -295,43 +293,19 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                                                                   rightLegend3Rectangle.Width, verticalOsbLegendHeight);
 
                         //draw TTD-specific extra items
-                        if (
-                            InstrumentState.RWRPowerOn &&
-                            (
-                                InstrumentState.UnknownThreatScanMode
-                                ||
-                                (NonVisibleUnknownThreatsDetector.AreNonVisibleUnknownThreatsDetected(InstrumentState)
-                                    && DateTime.Now.Millisecond % 500 < 250
-                                )
-                            )
-                            ) //draw highlighted UNK legend 
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, leftLegend1Rectangle);
-                            StringRenderer.DrawString(gfx, "UNK", OSBLegendFont, Brushes.Black, leftLegend1Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
-                        else //draw non-highlighted UNK legend
-                        {
-                            StringRenderer.DrawString(gfx, "UNK", OSBLegendFont, OSBLegendBrush, leftLegend1Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
-
+                    UNKLegendRenderer.DrawUNKLegend(gfx, leftLegend1Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
                     HOFFLegendRenderer.DrawHOFFLegend(gfx, leftLegend2Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
                     SEPLegendRenderer.DrawSEPLegend(gfx, leftLegend3Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
                     PRILegendRenderer.DrawPRILegend(gfx, leftLegend4Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
                     NVLLegendRenderer.DrawNVLLegend(gfx, rightLegend1Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
                     SRCHLegendRenderer.DrawSRCHLegend(gfx, rightLegend2Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
                     ALTLegendRenderer.DrawALTLegend(gfx, rightLegend3Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
-
                     ChaffCountRenderer.DrawChaffCount(severeColor, warnColor, okColor, gfx, chaffCountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
                     FlareCountRenderer.DrawFlareCount(severeColor, warnColor, okColor, gfx, flareCountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
                     Other1CountRenderer.DrawOther1Count(severeColor, warnColor, okColor, gfx, other1CountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
                     Other2CountRenderer.DrawOther2Count(severeColor, warnColor, okColor, gfx, other2CountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
-
                     EWSDispenserStatusRenderer.DrawEWSDispenserStatus(gfx, goNogoRect, miscTextStringFormat, warnColor, okColor, rdyRectangle, pflRectangle, ScopeGreenColor, OtherLegendFont, InstrumentState);
-
                     EWSModeRenderer.DrawEWSMode(severeColor, gfx, ewmsModeRectangle, miscTextStringFormat, warnColor, okColor, InstrumentState, OtherLegendFont);
-
                     PageLegendsRenderer.DrawPageLegends(backgroundHeight, gfx, InstrumentState, PageLegendFont);
 
                     gfx.Transform = initialTransform;
@@ -340,18 +314,10 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                         gfx.ScaleTransform(atdRingScale, atdRingScale);
                         var grayPen = Pens.Gray;
                         const int lineLength = 10;
-                        //draw the outer lethality ring
-                        {
-                            OuterLethalityRingRenderer.DrawOuterLethalityRing(gfx, outerRingLeft, outerRingTop, grayPen, atdOuterRingDiameter, lineLength);
-                        }
+                        OuterLethalityRingRenderer.DrawOuterLethalityRing(gfx, outerRingLeft, outerRingTop, grayPen, atdOuterRingDiameter, lineLength);
+                        MiddleLethalityRingRenderer.DrawMiddleLethalityRing(gfx, middleRingLeft, middleRingTop, grayPen, atdMiddleRingDiameter, lineLength, InstrumentState);
 
-                        //draw the middle lethality ring 
-                        {
-                            MiddleLethalityRingRenderer.DrawMiddleLethalityRing(gfx, middleRingLeft, middleRingTop, grayPen, atdMiddleRingDiameter, lineLength, InstrumentState);
-                        }
-
-                        // draw the inner lethality ring
-                        gfx.DrawEllipse(grayPen, innerRingLeft, innerRingTop, atdInnerRingDiameter, atdInnerRingDiameter);
+                    InnerLethalityRingRenderer.DrawInnerLethalityRing(gfx, grayPen, innerRingLeft, innerRingTop, atdInnerRingDiameter);
 
                         if (!InstrumentState.RWRPowerOn) //draw RWR POWER OFF flag
                         {
@@ -369,36 +335,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     InstrumentState.RWRPowerOn && !InstrumentState.RWRTest1 && !InstrumentState.RWRTest2
                     ) //Added Falcas 07-11-2012, Do not draw when in RWR test.
                 {
-                    GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                    if (Options.Style == InstrumentStyle.AdvancedThreatDisplay)
-                    {
-                        gfx.Transform = initialTransform;
-                        gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
-                        gfx.ScaleTransform(atdRingScale, atdRingScale);
-                    }
-
-                    //draw heartbeat cross
-                    gfx.DrawLine(
-                        ScopeGreenPen,
-                        new PointF((backgroundWidth/2.0f) - 20, (backgroundHeight/2.0f)),
-                        new PointF((backgroundWidth/2.0f) - 10, (backgroundHeight/2.0f))
-                        );
-                    gfx.DrawLine(
-                        ScopeGreenPen,
-                        new PointF((backgroundWidth/2.0f) + 20, (backgroundHeight/2.0f)),
-                        new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f))
-                        );
-                    gfx.DrawLine(
-                        ScopeGreenPen,
-                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) - 20),
-                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) - 10)
-                        );
-                    gfx.DrawLine(
-                        ScopeGreenPen,
-                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 20),
-                        new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 10)
-                        );
-                    GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
+                    HeartbeatCrossRenderer.DrawHeartbeatCross(gfx, ref basicState, backgroundWidth, backgroundHeight, ScopeGreenPen);
 
                     //Added Falcas 07-11-2012, Center of RWR indication "S"
                     if (InstrumentState.SearchMode)
@@ -407,7 +344,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     }
                 }
 
-                
+
                 if (InstrumentState.RWRPowerOn)
                 {
                     //Added Falcas 07-11-2012
@@ -430,7 +367,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     }
                     if (!InstrumentState.RWRTest1 && !InstrumentState.RWRTest2) //Added Falcas 07-11-2012, Do not draw when in Test.
                     {
-                        DrawHeartbeatTick(gfx, backgroundWidth, backgroundHeight);
+                        HeartbeatTickRenderer.DrawHeartbeatTick(gfx, backgroundWidth, backgroundHeight, ScopeGreenPen);
                     }
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
@@ -456,26 +393,6 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             }
         }
 
-        private static void DrawHeartbeatTick(Graphics gfx, int backgroundWidth, int backgroundHeight)
-        {
-            if (DateTime.Now.Millisecond < 500)
-            {
-                gfx.DrawLine(
-                    ScopeGreenPen,
-                    new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
-                    new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) + 5)
-                    );
-            }
-            else
-            {
-                gfx.DrawLine(
-                    ScopeGreenPen,
-                    new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
-                    new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) - 5)
-                    );
-            }
-        }
-
         private void DrawBlips(Graphics gfx, GraphicsState basicState, Matrix initialTransform, float atdRingOffsetTranslateX,
             float atdRingOffsetTranslateY, float atdRingScale, int backgroundWidth, int backgroundHeight, Color missileColor,
             float outerRingTop, float innerRingTop, Color airborneThreatColor, Color groundThreatColor, Color searchThreatColor,
@@ -486,92 +403,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                 if (blip == null) continue;
                 if (!blip.Visible) continue;
 
-                GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-
-                if (Options.Style == InstrumentStyle.AdvancedThreatDisplay)
-                {
-                    gfx.Transform = initialTransform;
-                    gfx.TranslateTransform(atdRingOffsetTranslateX, atdRingOffsetTranslateY);
-                    gfx.ScaleTransform(atdRingScale, atdRingScale);
-                }
-                //calculate position of symbols
-                var lethality = blip.Lethality;
-                var translateY = 0.0f;
-                if (lethality > 1)
-                {
-                    translateY = -((2.0f - lethality)*100.0f)*0.95f;
-                    ;
-                }
-                else
-                {
-                    translateY = -((1.0f - lethality)*100.0f)*0.95f;
-                    ;
-                }
-                if (Options.Style == InstrumentStyle.AdvancedThreatDisplay)
-                {
-                    translateY *= 0.92f;
-                }
-                //rotate and translate symbol into place
-                var angle = -InstrumentState.MagneticHeadingDegrees + blip.BearingDegrees;
-                if (InstrumentState.Inverted)
-                {
-                    angle = -angle;
-                }
-                //rotate the background image so that this emitter's bearing line points toward the top
-                gfx.TranslateTransform(backgroundWidth/2.0f, backgroundHeight/2.0f);
-                gfx.RotateTransform(angle);
-                gfx.TranslateTransform(-(float) backgroundWidth/2.0f, -(float) backgroundHeight/2.0f);
-
-                Brush missileWarningBrush = new SolidBrush(missileColor);
-                var missileWarningFormat = new StringFormat
-                {
-                    Alignment = StringAlignment.Far,
-                    LineAlignment = StringAlignment.Center
-                };
-                var launchLinePen = new Pen(missileColor);
-                var center = new PointF(
-                    (backgroundWidth/2.0f),
-                    (backgroundHeight/2.0f)
-                    );
-
-                MissileLaunchLineRenderer.DrawMissileLaunchLine(gfx, outerRingTop, innerRingTop, center, blip, launchLinePen, angle, missileWarningBrush, Options, MissileWarningFont);
-                //position the emitter symbol at the correct distance from the center of the RWR, given its lethality
-                gfx.TranslateTransform(0, translateY);
-
-                //rotate the emitter symbol graphic so that it appears upright when background is rotated back and displayed to user
-                gfx.TranslateTransform(backgroundWidth/2.0f, backgroundHeight/2.0f);
-                gfx.RotateTransform(-angle);
-                gfx.TranslateTransform(-backgroundWidth/2.0f, -backgroundHeight/2.0f);
-
-                //draw the emitter symbol
-                var usePrimarySymbol = DateTime.Now.Millisecond < 500;
-                var useLargeSymbol = DateTime.Now.Millisecond < 500 && blip.NewDetection > 0;
-
-                var emitterColor = EmitterColorChooser.GetEmitterColor(ScopeGreenColor, missileColor, airborneThreatColor, groundThreatColor, searchThreatColor, navalThreatColor, unknownThreatColor, blip, Options);
-                var emitterSymbolDestinationRectangle =
-                    new RectangleF((int) ((backgroundWidth - RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS)/2.0f),
-                        (int) ((backgroundHeight - RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS)/2.0f),
-                        RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
-                EmitterSymbolRenderer.DrawEmitterSymbol(blip.SymbolID, gfx, emitterSymbolDestinationRectangle, useLargeSymbol,
-                    usePrimarySymbol, emitterColor, SymbolTextFontLarge, SymbolTextFontSmall, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
-
-                var emitterPen = new Pen(emitterColor);
-                gfx.TranslateTransform(-RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f,
-                    -RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS/2.0f);
-                if (blip.Selected > 0)
-                {
-                    SelectedThreatDiamondRenderer.DrawSelectedThreatDiamond(gfx, backgroundWidth, backgroundHeight, emitterPen, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
-                }
-                if ((blip.MissileActivity > 0 && blip.MissileLaunch == 0))
-                {
-                    MissileActivitySymbolRenderer.DrawMissileActivitySymbol(gfx, backgroundWidth, backgroundHeight, emitterPen, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
-                }
-                else if ((blip.MissileActivity > 0 && blip.MissileLaunch > 0))
-                {
-                    MissileLaunchSymbolRenderer.DrawMissileLaunchSymbol(gfx, backgroundWidth, backgroundHeight, emitterPen, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS);
-                }
-
-                GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
+                BlipRenderer.DrawBlip(gfx, ref basicState, initialTransform, atdRingOffsetTranslateX, atdRingOffsetTranslateY, atdRingScale, backgroundWidth, backgroundHeight, missileColor, outerRingTop, innerRingTop, ScopeGreenColor, airborneThreatColor, groundThreatColor, searchThreatColor, navalThreatColor, unknownThreatColor, blip, InstrumentState, Options, MissileWarningFont, RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS, SymbolTextFontLarge, SymbolTextFontSmall);
             } //next blip
         }
 
