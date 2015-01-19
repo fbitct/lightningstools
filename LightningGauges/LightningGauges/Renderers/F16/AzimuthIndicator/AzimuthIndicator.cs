@@ -300,8 +300,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                             (
                                 InstrumentState.UnknownThreatScanMode
                                 ||
-                                (
-                                    AreNonVisibleUnknownThreatsDetected()
+                                (NonVisibleUnknownThreatsDetector.AreNonVisibleUnknownThreatsDetected(InstrumentState)
                                     && DateTime.Now.Millisecond % 500 < 250
                                 )
                             )
@@ -316,92 +315,20 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                             StringRenderer.DrawString(gfx, "UNK", OSBLegendFont, OSBLegendBrush, leftLegend1Rectangle,
                                        verticalOsbLegendLHSFormat);
                         }
-                        if (InstrumentState.RWRPowerOn && InstrumentState.Handoff) //draw highlighted HOFF legend 
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, leftLegend2Rectangle);
-                            StringRenderer.DrawString(gfx, "HOFF", OSBLegendFont, Brushes.Black, leftLegend2Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
-                        else //draw non-highlighted UNK legend
-                        {
-                            StringRenderer.DrawString(gfx, "HOFF", OSBLegendFont, OSBLegendBrush, leftLegend2Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
 
-                        if (InstrumentState.RWRPowerOn && InstrumentState.SeparateMode) //draw highlighted SEP legend 
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, leftLegend3Rectangle);
-                            StringRenderer.DrawString(gfx, "SEP", OSBLegendFont, Brushes.Black, leftLegend3Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
-                        else //draw non-highlighted SEP legend
-                        {
-                            StringRenderer.DrawString(gfx, "SEP", OSBLegendFont, OSBLegendBrush, leftLegend3Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
+                    HOFFLegendRenderer.DrawHOFFLegend(gfx, leftLegend2Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
 
-                        if (InstrumentState.RWRPowerOn &&
-                            ((InstrumentState.PriorityMode && !AreNonVisiblePriorityThreatsDetected()) ||
-                             (InstrumentState.PriorityMode && AreNonVisiblePriorityThreatsDetected() &&
-                              DateTime.Now.Millisecond % 500 < 250)))
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, leftLegend4Rectangle);
-                            StringRenderer.DrawString(gfx, "PRI", OSBLegendFont, Brushes.Black, leftLegend4Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
-                        else //draw non-highlighted PRI legend
-                        {
-                            StringRenderer.DrawString(gfx, "PRI", OSBLegendFont, OSBLegendBrush, leftLegend4Rectangle,
-                                       verticalOsbLegendLHSFormat);
-                        }
+                    SEPLegendRenderer.DrawSEPLegend(gfx, leftLegend3Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
+
+                    PRILegendRenderer.DrawPRILegend(gfx, leftLegend4Rectangle, verticalOsbLegendLHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
 
 
-                        if (InstrumentState.RWRPowerOn &&
-                            (InstrumentState.NavalMode ||
-                             (AreNonVisibleNavalThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)))
-                        //draw highlighted NVL legend 
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, rightLegend1Rectangle);
-                            StringRenderer.DrawString(gfx, "NVL", OSBLegendFont, Brushes.Black, rightLegend1Rectangle,
-                                       verticalOsbLegendRHSFormat);
-                        }
-                        else //draw non-highlighted NVL legend
-                        {
-                            StringRenderer.DrawString(gfx, "NVL", OSBLegendFont, OSBLegendBrush, rightLegend1Rectangle,
-                                       verticalOsbLegendRHSFormat);
-                        }
+                    NVLLegendRenderer.DrawNVLLegend(gfx, rightLegend1Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
 
 
-                        if (InstrumentState.RWRPowerOn &&
-                            (InstrumentState.SearchMode ||
-                             (AreNonVisibleSearchThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)))
-                        //draw highlighted SRCH legend 
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, rightLegend2Rectangle);
-                            StringRenderer.DrawString(gfx, "SRCH", OSBLegendFont, Brushes.Black, rightLegend2Rectangle,
-                                       verticalOsbLegendRHSFormat);
-                        }
-                        else //draw non-highlighted SRCH legend
-                        {
-                            StringRenderer.DrawString(gfx, "SRCH", OSBLegendFont, OSBLegendBrush, rightLegend2Rectangle,
-                                       verticalOsbLegendRHSFormat);
-                        }
+                    SRCHLegendRenderer.DrawSRCHLegend(gfx, rightLegend2Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
 
-                        if (InstrumentState.RWRPowerOn
-                            && (
-                                   InstrumentState.LowAltitudeMode
-                            //|| (AreNonVisibleGroundThreatsDetected() && DateTime.Now.Millisecond % 500 < 250)
-                               )) //draw highlighted ALT legend 
-                        {
-                            gfx.FillRectangle(OSBLegendBrush, rightLegend3Rectangle);
-                            StringRenderer.DrawString(gfx, "ALT", OSBLegendFont, Brushes.Black, rightLegend3Rectangle,
-                                       verticalOsbLegendRHSFormat);
-                        }
-                        else //draw non-highlighted ALT legend
-                        {
-                            StringRenderer.DrawString(gfx, "ALT", OSBLegendFont, OSBLegendBrush, rightLegend3Rectangle,
-                                       verticalOsbLegendRHSFormat);
-                        }
+                        ALTLegendRenderer.DrawALTLegend(gfx, rightLegend3Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
 
                         //draw chaff count
 
@@ -633,7 +560,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     //Added Falcas 07-11-2012, Center of RWR indication "S"
                     if (InstrumentState.SearchMode)
                     {
-                        DrawCenterRWRSearchModeIndication(gfx);
+                        CenterRWRSearchModeIndicationRenderer.DrawCenterRWRSearchModeIndication(gfx, TestTextFontLarge);
                     }
                 }
 
@@ -736,21 +663,6 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) - 5)
                     );
             }
-        }
-
-        private static void DrawCenterRWRSearchModeIndication(Graphics gfx)
-        {
-            var pageLegendStringFormat = new StringFormat
-            {
-                Alignment = StringAlignment.Center,
-                LineAlignment = StringAlignment.Near,
-                Trimming = StringTrimming.None,
-                FormatFlags = StringFormatFlags.NoWrap
-            };
-
-            var RwrLegendRectangle = new Rectangle(113, 119, 30, 30);
-            StringRenderer.DrawString(gfx, "S", TestTextFontLarge, Brushes.Lime, RwrLegendRectangle,
-                pageLegendStringFormat);
         }
 
         private void DrawBlips(Graphics gfx, GraphicsState basicState, Matrix initialTransform, float atdRingOffsetTranslateX,
@@ -943,96 +855,6 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
 
                 GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
             } //next blip
-        }
-
-        private bool AreNonVisiblePriorityThreatsDetected()
-        {
-            if (InstrumentState == null || InstrumentState.Blips == null) return false;
-
-            if (InstrumentState.PriorityMode)
-            {
-                var trackingOwnshipCount = 0;
-                var visibleCount = 0;
-                for (var i = 0; i < InstrumentState.Blips.Length; i++)
-                {
-                    var thisBlip = InstrumentState.Blips[i];
-                    if (thisBlip == null) continue;
-                    if (thisBlip.Lethality == 0) continue;
-                    trackingOwnshipCount++;
-                    if (thisBlip.Visible)
-                    {
-                        visibleCount++;
-                        continue;
-                    }
-                }
-                if (visibleCount == 5 && trackingOwnshipCount > visibleCount) return true;
-            }
-            return false;
-        }
-
-        private bool AreNonVisibleNavalThreatsDetected()
-        {
-            if (InstrumentState == null || InstrumentState.Blips == null) return false;
-            for (var i = 0; i < InstrumentState.Blips.Length; i++)
-            {
-                var thisBlip = InstrumentState.Blips[i];
-                if (thisBlip == null) continue;
-                if (thisBlip.Lethality == 0) continue;
-                if (thisBlip.Visible) continue;
-                var symbolId = thisBlip.SymbolID;
-                if (symbolId == 18)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool AreNonVisibleSearchThreatsDetected()
-        {
-            if (InstrumentState == null || InstrumentState.Blips == null) return false;
-            if (InstrumentState.SearchMode) return false;
-            for (var i = 0; i < InstrumentState.Blips.Length; i++)
-            {
-                var thisBlip = InstrumentState.Blips[i];
-                if (thisBlip == null) continue;
-                if (thisBlip.Lethality == 0) continue;
-                if (thisBlip.Visible) continue;
-                var symbolId = thisBlip.SymbolID;
-                if (
-                    (
-                        (symbolId >= 5 && symbolId <= 17)
-                        ||
-                        (symbolId >= 19 && symbolId <= 26)
-                        ||
-                        (symbolId == 30)
-                        ||
-                        (symbolId >= 54 && symbolId <= 56)
-                    )
-                    )
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool AreNonVisibleUnknownThreatsDetected()
-        {
-            if (InstrumentState == null || InstrumentState.Blips == null) return false;
-            for (var i = 0; i < InstrumentState.Blips.Length; i++)
-            {
-                var thisBlip = InstrumentState.Blips[i];
-                if (thisBlip == null) continue;
-                if (thisBlip.Visible) continue;
-                if (thisBlip.Lethality == 0) continue;
-                var symbolId = thisBlip.SymbolID;
-                if (symbolId < 0 || symbolId == 1 || symbolId == 27 || symbolId == 28 || symbolId == 29)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private static void DrawEmitterSymbol(int symbolId, Graphics g, RectangleF bounds, bool largeSize, bool primarySymbol,

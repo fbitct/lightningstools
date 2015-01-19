@@ -80,6 +80,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Renderers\F16\AzimuthIndicator\ALTLegendRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\CenterRWRSearchModeIndicationRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EmitterCategoryRetriever.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeAutomaticRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeBypassRenderer.cs" />
@@ -89,15 +91,24 @@
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeRetriever.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeSemiautomaticRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWSModeStandbyRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\HOFFLegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MiddleLethalityRingRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\NonVisibleNavalThreatsDetector.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\NonVisiblePriorityThreatsDetector.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\NonVisibleSearchThreatsDetector.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\NonVisibleUnknownThreatsDetector.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\NVLLegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\Options.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\Blip.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EmitterCategory.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\EWMSMode.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\InstrumentState.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\PowerOffFlagRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\PRILegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\RWRTestPage1Renderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\RWRTestPage2Renderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\SEPLegendRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\SRCHLegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\StringRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\ThreatSymbols.cs" />
     <Compile Include="Renderers\F16\DEDPFLFont.cs" />
