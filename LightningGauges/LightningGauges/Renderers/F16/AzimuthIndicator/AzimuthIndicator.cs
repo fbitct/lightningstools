@@ -534,43 +534,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     (backgroundHeight/2.0f)
                     );
 
-                //draw missile launch line
-                if (Options.Style == InstrumentStyle.AdvancedThreatDisplay)
-                {
-                    var endPoint = new PointF(center.X, outerRingTop);
-                    // + (RWR_SYMBOL_SUBIMAGE_WIDTH_PIXELS / 2.0f));
-                    if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
-                    {
-                        gfx.DrawLine(launchLinePen, center.X, innerRingTop, endPoint.X, endPoint.Y);
-                    }
-
-                    if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
-                    {
-                        var angleToDisplay = angle%360;
-                        if (angleToDisplay < 0) angleToDisplay = 360 - Math.Abs(angleToDisplay);
-                        if (angleToDisplay == 0) angleToDisplay = 360;
-                        var angleString = string.Format("{0:000}", angleToDisplay);
-
-                        var textWidth = gfx.MeasureString(angleString, MissileWarningFont).Width;
-                        var missileWarningTextLocation = new PointF(
-                            endPoint.X,
-                            endPoint.Y - ((endPoint.Y - innerRingTop)/2.0f) - (textWidth/2.0f)
-                            );
-                        var oldTransform = gfx.Transform;
-                        gfx.TranslateTransform(missileWarningTextLocation.X, missileWarningTextLocation.Y);
-                        gfx.RotateTransform(-angle);
-                        gfx.TranslateTransform(-missileWarningTextLocation.X, -missileWarningTextLocation.Y);
-
-                        gfx.DrawString
-                            (
-                                angleString,
-                                MissileWarningFont,
-                                missileWarningBrush,
-                                missileWarningTextLocation
-                            );
-                        gfx.Transform = oldTransform;
-                    }
-                }
+                MissileLaunchLineRenderer.DrawMissileLaunchLine(gfx, outerRingTop, innerRingTop, center, blip, launchLinePen, angle, missileWarningBrush, Options, MissileWarningFont);
                 //position the emitter symbol at the correct distance from the center of the RWR, given its lethality
                 gfx.TranslateTransform(0, translateY);
 

@@ -99,6 +99,7 @@
     <Compile Include="Renderers\F16\AzimuthIndicator\HOFFLegendRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MiddleLethalityRingRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MissileActivitySymbolRenderer.cs" />
+    <Compile Include="Renderers\F16\AzimuthIndicator\MissileLaunchLineRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\MissileLaunchSymbolRenderer.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\NonVisibleNavalThreatsDetector.cs" />
     <Compile Include="Renderers\F16\AzimuthIndicator\NonVisiblePriorityThreatsDetector.cs" />
