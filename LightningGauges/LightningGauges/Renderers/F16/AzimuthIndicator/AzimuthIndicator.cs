@@ -323,10 +323,10 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     SRCHLegendRenderer.DrawSRCHLegend(gfx, rightLegend2Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendFont, OSBLegendBrush);
                     ALTLegendRenderer.DrawALTLegend(gfx, rightLegend3Rectangle, verticalOsbLegendRHSFormat, InstrumentState, OSBLegendBrush, OSBLegendFont);
 
-                    DrawChaffCount(severeColor, warnColor, okColor, gfx, chaffCountRectangle, chaffFlareCountStringFormat);
-                    DrawFlareCount(severeColor, warnColor, okColor, gfx, flareCountRectangle, chaffFlareCountStringFormat);
-                    DrawOther1Count(severeColor, warnColor, okColor, gfx, other1CountRectangle, chaffFlareCountStringFormat);
-                    DrawOther2Count(severeColor, warnColor, okColor, gfx, other2CountRectangle, chaffFlareCountStringFormat);
+                    ChaffCountRenderer.DrawChaffCount(severeColor, warnColor, okColor, gfx, chaffCountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
+                    FlareCountRenderer.DrawFlareCount(severeColor, warnColor, okColor, gfx, flareCountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
+                    Other1CountRenderer.DrawOther1Count(severeColor, warnColor, okColor, gfx, other1CountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
+                    Other2CountRenderer.DrawOther2Count(severeColor, warnColor, okColor, gfx, other2CountRectangle, chaffFlareCountStringFormat, InstrumentState, ChaffFlareCountLegendFont);
 
                     if (InstrumentState.EWSGo)
                         {
@@ -486,103 +486,6 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }
-        }
-
-        private void DrawOther2Count(Color severeColor, Color warnColor, Color okColor, Graphics gfx,
-            RectangleF other2CountRectangle, StringFormat chaffFlareCountStringFormat)
-        {
-            Color other2CountColor;
-            if (InstrumentState.Other2Count == 0)
-            {
-                other2CountColor = severeColor;
-            }
-            else if (InstrumentState.Other2Low)
-            {
-                other2CountColor = warnColor;
-            }
-            else
-            {
-                other2CountColor = okColor;
-            }
-            Brush other2CountBrush = new SolidBrush(other2CountColor);
-            StringRenderer.DrawString(gfx, "OTR2", ChaffFlareCountLegendFont, other2CountBrush, other2CountRectangle,
-                chaffFlareCountStringFormat);
-            other2CountRectangle.Offset(0, 12);
-            StringRenderer.DrawString(gfx, String.Format("{0:00}", InstrumentState.Other2Count), ChaffFlareCountLegendFont,
-                other2CountBrush, other2CountRectangle, chaffFlareCountStringFormat);
-        }
-
-        private void DrawOther1Count(Color severeColor, Color warnColor, Color okColor, Graphics gfx,
-            RectangleF other1CountRectangle, StringFormat chaffFlareCountStringFormat)
-        {
-            Color other1CountColor;
-            if (InstrumentState.Other1Count == 0)
-            {
-                other1CountColor = severeColor;
-            }
-            else if (InstrumentState.Other1Low)
-            {
-                other1CountColor = warnColor;
-            }
-            else
-            {
-                other1CountColor = okColor;
-            }
-            Brush other1CountBrush = new SolidBrush(other1CountColor);
-            StringRenderer.DrawString(gfx, "OTR1", ChaffFlareCountLegendFont, other1CountBrush, other1CountRectangle,
-                chaffFlareCountStringFormat);
-            other1CountRectangle.Offset(0, 12);
-            StringRenderer.DrawString(gfx, string.Format("{0:00}", InstrumentState.Other1Count), ChaffFlareCountLegendFont,
-                other1CountBrush, other1CountRectangle, chaffFlareCountStringFormat);
-        }
-
-        private void DrawFlareCount(Color severeColor, Color warnColor, Color okColor, Graphics gfx,
-            RectangleF flareCountRectangle, StringFormat chaffFlareCountStringFormat)
-        {
-            Color flareCountColor;
-            if (InstrumentState.FlareCount == 0)
-            {
-                flareCountColor = severeColor;
-            }
-            else if (InstrumentState.FlareLow)
-            {
-                flareCountColor = warnColor;
-            }
-            else
-            {
-                flareCountColor = okColor;
-            }
-            Brush flareCountBrush = new SolidBrush(flareCountColor);
-            StringRenderer.DrawString(gfx, "FLAR", ChaffFlareCountLegendFont, flareCountBrush, flareCountRectangle,
-                chaffFlareCountStringFormat);
-            flareCountRectangle.Offset(0, 12);
-            StringRenderer.DrawString(gfx, string.Format("{0:00}", InstrumentState.FlareCount), ChaffFlareCountLegendFont,
-                flareCountBrush, flareCountRectangle, chaffFlareCountStringFormat);
-        }
-
-        private void DrawChaffCount(Color severeColor, Color warnColor, Color okColor, Graphics gfx,
-            RectangleF chaffCountRectangle, StringFormat chaffFlareCountStringFormat)
-        {
-//draw chaff count
-            Color chaffCountColor;
-            if (InstrumentState.ChaffCount == 0)
-            {
-                chaffCountColor = severeColor;
-            }
-            else if (InstrumentState.ChaffLow)
-            {
-                chaffCountColor = warnColor;
-            }
-            else
-            {
-                chaffCountColor = okColor;
-            }
-            Brush chaffCountBrush = new SolidBrush(chaffCountColor);
-            StringRenderer.DrawString(gfx, "CHAF", ChaffFlareCountLegendFont, chaffCountBrush, chaffCountRectangle,
-                chaffFlareCountStringFormat);
-            chaffCountRectangle.Offset(0, 12);
-            StringRenderer.DrawString(gfx, string.Format("{0:00}", InstrumentState.ChaffCount), ChaffFlareCountLegendFont,
-                chaffCountBrush, chaffCountRectangle, chaffFlareCountStringFormat);
         }
 
         private static void DrawOuterLethalityRing(Graphics gfx, float outerRingLeft, float outerRingTop, Pen grayPen,
