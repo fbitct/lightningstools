@@ -169,6 +169,7 @@
     <Compile Include="Renderers\F16\ISIS\AltitudeUnits.cs" />
     <Compile Include="Renderers\F16\ISIS\AttitudeRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\BarometricPressureAreaRenderer.cs" />
+    <Compile Include="Renderers\F16\ISIS\ClimbPitchBarsRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\FixedAirplaneSymbolRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\GlideslopeCommandBarRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\GlideslopeMarkersRenderer.cs" />
@@ -180,12 +181,14 @@
     <Compile Include="Renderers\F16\ISIS\LocalizerCommandBarRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\LocalizerMarkersRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\MachRectangleRenderer.cs" />
+    <Compile Include="Renderers\F16\ISIS\PitchDigitRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\PitchLadderRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\PressureUnits.cs" />
     <Compile Include="Renderers\F16\ISIS\RadarAltimeterAreaRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\RollAngleIndexMarksRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\SkyPointerTriangleRenderer.cs" />
     <Compile Include="Renderers\F16\ISIS\TopRectangleRenderer.cs" />
+    <Compile Include="Renderers\F16\ISIS\ZenithNadirSymbolRenderer.cs" />
     <Compile Include="Renderers\F16\IVerticalVelocityIndicator.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

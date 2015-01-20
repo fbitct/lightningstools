@@ -104,7 +104,7 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                destinationGraphics.DrawImageFast(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
@@ -112,7 +112,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_offFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -138,7 +138,7 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.RotateTransform(angle);
                 destinationGraphics.TranslateTransform(-centerX, -centerY);
                 destinationGraphics.TranslateTransform(28, 0);
-                destinationGraphics.DrawImage(_needle.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_needle.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 

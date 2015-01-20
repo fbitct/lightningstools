@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -12,7 +13,7 @@ namespace LightningGauges.Renderers.F16.HSI
             destinationGraphics.TranslateTransform(centerX, centerY);
             destinationGraphics.RotateTransform(-instrumentState.MagneticHeadingDegrees);
             destinationGraphics.TranslateTransform(-centerX, -centerY);
-            destinationGraphics.DrawImage(compassRoseMaskedImage, new Point(0, 0));
+            destinationGraphics.DrawImageFast(compassRoseMaskedImage, new Point(0, 0));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }
     }

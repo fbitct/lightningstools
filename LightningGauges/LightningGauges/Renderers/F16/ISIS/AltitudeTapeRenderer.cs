@@ -2,46 +2,56 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class AltitudeTapeRenderer
     {
+        private static  Font _altitudeDigitFontSmall;
+        private static Font  _altitudeDigitFontLarge;
+        private static readonly StringFormat AltitudeDigitFormat = new StringFormat
+        {
+            Alignment = StringAlignment.Far,
+            FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap,
+            LineAlignment = StringAlignment.Center,
+            Trimming = StringTrimming.None
+        };
+        private static readonly Color AltitudeDigitColor = Color.White;
+        private static readonly Brush AltitudeDigitBrush = new SolidBrush(AltitudeDigitColor);
+        private static readonly Pen AltitudeDigitPen = new Pen(AltitudeDigitColor) { Width = 2 };
+        private static readonly Color BackgroundColor = Color.FromArgb(117, 123, 121);
+        private static readonly Brush BackgroundBrush = new SolidBrush(BackgroundColor);
+
         internal static void DrawAltitudeTape(Graphics gfx, ref GraphicsState basicState, int width, int height, InstrumentState instrumentState, PrivateFontCollection fonts)
         {
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
             var altitudeMsl = instrumentState.IndicatedAltitudeFeetMSL;
             const float altitudeTapeWidth = 55;
             gfx.TranslateTransform(width - altitudeTapeWidth, 0);
-            AltitudeTapeRenderer.DrawAltitudeTape(gfx, new SizeF(altitudeTapeWidth, height), altitudeMsl, fonts);
+            DrawAltitudeTape(gfx, new SizeF(altitudeTapeWidth, height), altitudeMsl, fonts);
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
         }
 
         private static void DrawAltitudeTape(Graphics g, SizeF size, float altitudeFeetMSL, PrivateFontCollection fonts)
         {
+            if (_altitudeDigitFontSmall == null)
+            {
+                _altitudeDigitFontSmall = new Font(fonts.Families[0], 16, FontStyle.Regular, GraphicsUnit.Point);
+            }
+            if (_altitudeDigitFontLarge == null)
+            {
+                _altitudeDigitFontLarge = new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point);
+            }
+
             var absAltitudeFeetMSL = Math.Abs(altitudeFeetMSL);
             var originalTransform = g.Transform;
-            var altitudeDigitFontSmall = new Font(fonts.Families[0], 16, FontStyle.Regular, GraphicsUnit.Point);
-            var altitudeDigitFontLarge = new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point);
-            var altitudeDigitFormat = new StringFormat
-            {
-                Alignment = StringAlignment.Far,
-                FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap,
-                LineAlignment = StringAlignment.Center,
-                Trimming = StringTrimming.None
-            };
-            var altitudeDigitColor = Color.White;
-            Brush altitudeDigitBrush = new SolidBrush(altitudeDigitColor);
-            var altitudeDigitPen = new Pen(altitudeDigitColor) {Width = 2};
-
-            var backgroundColor = Color.FromArgb(117, 123, 121);
-            Brush backgroundBrush = new SolidBrush(backgroundColor);
 
 
             //draw the background
-            g.FillRectangle(backgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
-            g.DrawLine(altitudeDigitPen, new PointF(0, 43), new PointF(size.Width, 43));
-            g.DrawLine(altitudeDigitPen, new PointF(0, 0), new PointF(0, size.Height));
+            g.FillRectangle(BackgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
+            g.DrawLineFast(AltitudeDigitPen, new PointF(0, 43), new PointF(size.Width, 43));
+            g.DrawLineFast(AltitudeDigitPen, new PointF(0, 0), new PointF(0, size.Height));
             var pixelsPerFoot = (size.Height/2.0f)/550.0f;
             g.TranslateTransform(0, pixelsPerFoot*altitudeFeetMSL);
             for (var i = -10000; i < 100000; i += 100)
@@ -58,32 +68,32 @@ namespace LightningGauges.Renderers.F16.ISIS
                     }
                     if (i < 0) thousandsString = "-" + thousandsString;
 
-                    var hundredsDisplaySize = g.MeasureString(hundredsString, altitudeDigitFontSmall, size,
-                        altitudeDigitFormat);
+                    var hundredsDisplaySize = g.MeasureString(hundredsString, _altitudeDigitFontSmall, size,
+                        AltitudeDigitFormat);
                     const float offsetBoth = 20;
                     const float offsetHundreds = 2;
                     const float offsetThousands = -6;
                     const float x = offsetBoth + offsetHundreds;
                     var y = (-i*pixelsPerFoot) - (hundredsDisplaySize.Height/2.0f) + (size.Height/2.0f);
                     var layoutRect = new RectangleF(x, y, hundredsDisplaySize.Width, hundredsDisplaySize.Height);
-                    g.DrawString(hundredsString, altitudeDigitFontSmall, altitudeDigitBrush, layoutRect,
-                        altitudeDigitFormat);
+                    g.DrawStringFast(hundredsString, _altitudeDigitFontSmall, AltitudeDigitBrush, layoutRect,
+                        AltitudeDigitFormat);
 
-                    var thousandsDisplaySize = g.MeasureString(thousandsString, altitudeDigitFontLarge, size,
-                        altitudeDigitFormat);
+                    var thousandsDisplaySize = g.MeasureString(thousandsString, _altitudeDigitFontLarge, size,
+                        AltitudeDigitFormat);
                     y = (-i*pixelsPerFoot) - (thousandsDisplaySize.Height/2.0f) + (size.Height/2.0f);
                     var layoutRect2 =
                         new RectangleF(
                             size.Width - hundredsDisplaySize.Width - thousandsDisplaySize.Width + offsetBoth +
                             offsetThousands, y, thousandsDisplaySize.Width, thousandsDisplaySize.Height);
-                    g.DrawString(thousandsString, altitudeDigitFontLarge, altitudeDigitBrush, layoutRect2,
-                        altitudeDigitFormat);
+                    g.DrawStringFast(thousandsString, _altitudeDigitFontLarge, AltitudeDigitBrush, layoutRect2,
+                        AltitudeDigitFormat);
                 }
                 else if (Math.Abs(i)%100 == 0)
                 {
                     const int lineWidth = 15;
                     var y = (-i*pixelsPerFoot) + (size.Height/2.0f);
-                    g.DrawLine(altitudeDigitPen, new PointF(0, y), new PointF(lineWidth, y));
+                    g.DrawLineFast(AltitudeDigitPen, new PointF(0, y), new PointF(lineWidth, y));
                 }
             }
 
@@ -109,7 +119,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 altitudeBoxHeight
                 );
             g.FillRectangle(Brushes.Black, outerRectangle);
-            g.DrawRectangle(altitudeDigitPen, (int) outerRectangle.X, (int) outerRectangle.Y, (int) outerRectangle.Width,
+            g.DrawRectangleFast(AltitudeDigitPen, (int)outerRectangle.X, (int)outerRectangle.Y, (int)outerRectangle.Width,
                 (int) outerRectangle.Height);
 
             var twentiesRectangle = new RectangleF(

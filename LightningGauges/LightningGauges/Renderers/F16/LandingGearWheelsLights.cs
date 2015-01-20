@@ -128,14 +128,14 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the left gear light
                 if (InstrumentState.LeftGearDown)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_leftGearLight.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_leftGearLight.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -143,7 +143,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.RightGearDown)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_rightGearLight.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_rightGearLight.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -151,7 +151,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.NoseGearDown)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_noseGearLight.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_noseGearLight.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 

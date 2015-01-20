@@ -333,12 +333,12 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.RotateTransform(-rollDegrees);
                 destinationGraphics.TranslateTransform(-128, -118);
                 destinationGraphics.TranslateTransform(-2, 0);
-                destinationGraphics.DrawImage(_ball, destRect, sourceRect, GraphicsUnit.Pixel);
+                destinationGraphics.DrawImageFast(_ball, destRect, sourceRect, GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the arrows
@@ -347,13 +347,13 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.RotateTransform(-rollDegrees);
                 destinationGraphics.TranslateTransform(-128, -118);
                 destinationGraphics.TranslateTransform(0, -10);
-                destinationGraphics.DrawImage(_arrows.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_arrows.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the airplane symbol
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 destinationGraphics.TranslateTransform(0, -5);
-                destinationGraphics.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_airplaneSymbol.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 if (InstrumentState.ShowCommandBars && !InstrumentState.OffFlag)
                 {
@@ -367,7 +367,7 @@ namespace LightningGauges.Renderers.F16
                             var pos = (canvasRange*positionPct);
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             destinationGraphics.TranslateTransform(pos, -10.0f);
-                            destinationGraphics.DrawImage(_verticalBar.MaskedImage, new Point(0, 0));
+                            destinationGraphics.DrawImageFast(_verticalBar.MaskedImage, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                         }
                     }
@@ -382,7 +382,7 @@ namespace LightningGauges.Renderers.F16
                             var canvasRange = 46.0f;
                             var pos = (-canvasRange*positionPct);
                             destinationGraphics.TranslateTransform(0.0f, pos);
-                            destinationGraphics.DrawImage(_horizontalBar.MaskedImage, new Point(0, 0));
+                            destinationGraphics.DrawImageFast(_horizontalBar.MaskedImage, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                         }
                     }
@@ -395,7 +395,7 @@ namespace LightningGauges.Renderers.F16
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.RotateTransform(25);
                     destinationGraphics.TranslateTransform(85, -133);
-                    destinationGraphics.DrawImage(_localizerFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_localizerFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -406,7 +406,7 @@ namespace LightningGauges.Renderers.F16
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.RotateTransform(-25);
                     destinationGraphics.TranslateTransform(-113, -25);
-                    destinationGraphics.DrawImage(_glideslopeFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_glideslopeFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -416,7 +416,7 @@ namespace LightningGauges.Renderers.F16
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.RotateTransform(-25);
                     destinationGraphics.TranslateTransform(-12, 102);
-                    destinationGraphics.DrawImage(_auxFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_auxFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -426,13 +426,13 @@ namespace LightningGauges.Renderers.F16
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.RotateTransform(25);
                     destinationGraphics.TranslateTransform(-15, -8);
-                    destinationGraphics.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_offFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the slip indicator ball
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_slipIndicatorBall.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_slipIndicatorBall.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 

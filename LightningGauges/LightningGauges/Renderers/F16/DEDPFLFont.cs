@@ -47,7 +47,7 @@ namespace LightningGauges.Renderers.F16
                 using (var g = Graphics.FromImage(thisCharBitmap))
                 {
                     g.FillRectangle(Brushes.Black, new Rectangle(0, 0, glyphWidth, glyphHeight));
-                    g.DrawImage(_font, new Rectangle(0, 0, glyphWidth, glyphHeight), toCut, GraphicsUnit.Pixel);
+                    g.DrawImageFast(_font, new Rectangle(0, 0, glyphWidth, glyphHeight), toCut, GraphicsUnit.Pixel);
                 }
                 glyphCache[someByte] = thisCharBitmap;
             }

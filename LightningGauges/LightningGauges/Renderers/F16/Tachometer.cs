@@ -143,12 +143,12 @@ namespace LightningGauges.Renderers.F16
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 if (Options.IsSecondary)
                 {
-                    destinationGraphics.DrawImage(_background2, new Rectangle(0, 0, _background.Width, _background.Height),
+                    destinationGraphics.DrawImageFast(_background2, new Rectangle(0, 0, _background.Width, _background.Height),
                                 new Rectangle(0, 0, _background2.Width, _background2.Height), GraphicsUnit.Pixel);
                 }
                 else
                 {
-                    destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                    destinationGraphics.DrawImageFast(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                                 new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
                 }
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
@@ -160,7 +160,7 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(_background.Width/2.0f, _background.Width/2.0f);
                 destinationGraphics.RotateTransform(angle);
                 destinationGraphics.TranslateTransform(-(float) _background.Width/2.0f, -(float) _background.Width/2.0f);
-                destinationGraphics.DrawImage(_needle.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_needle.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method

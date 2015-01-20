@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using Common.Imaging;
 using Common.SimSupport;
 using Util = Common.Imaging.Util;
 
@@ -256,7 +257,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                     )
                 {
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
-                    gfx.DrawImage(background, new Rectangle(0, 0, backgroundWidth, backgroundHeight),
+                    gfx.DrawImageFast(background, new Rectangle(0, 0, backgroundWidth, backgroundHeight),
                                   new Rectangle(0, 0, backgroundWidth, backgroundHeight), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
                 }
@@ -387,7 +388,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                 var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
-                destinationGraphics.DrawImage(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
+                destinationGraphics.DrawImageFast(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }

@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -45,11 +46,11 @@ namespace LightningGauges.Renderers.F16.ISIS
                     20, barometricPressureAreaWidth,
                     topRectangle.Height - 20);
             }
-            gfx.DrawString(baroString, new Font(fonts.Families[0], 20, FontStyle.Regular, GraphicsUnit.Point),
+            gfx.DrawStringFast(baroString, new Font(fonts.Families[0], 20, FontStyle.Regular, GraphicsUnit.Point),
                 barometricPressureBrush, barometricPressureRectangle, barometricPressureStringFormat);
 
             var unitsRectangle = new RectangleF(topRectangle.Width - 22, 18, 15, topRectangle.Height - 20);
-            gfx.DrawString(units, new Font(fonts.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point),
+            gfx.DrawStringFast(units, new Font(fonts.Families[0], 8, FontStyle.Regular, GraphicsUnit.Point),
                 barometricPressureBrush, unitsRectangle, barometricPressureStringFormat);
 
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);

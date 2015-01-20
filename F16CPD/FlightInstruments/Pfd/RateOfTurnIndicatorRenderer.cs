@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -19,7 +20,7 @@ namespace F16CPD.FlightInstruments.Pfd
             {
                 pen = i % 2 == 1 ? dashWhitePen : dashRedPen;
                 pen.Width = dashHeight;
-                g.DrawLine(pen, new Point(leftDashX + (dashWidth * (i - 1)), leftDashY),
+                g.DrawLineFast(pen, new Point(leftDashX + (dashWidth * (i - 1)), leftDashY),
                     new Point(leftDashX + (dashWidth * (i)), leftDashY));
             }
             const int rateOfTurnXRange = (int)((dashWidth * 4.0f));
@@ -31,9 +32,9 @@ namespace F16CPD.FlightInstruments.Pfd
                 rateOfTurnCenterXPos;
 
             whitePen.Width = 5;
-            g.DrawLine(whitePen, rateOfTurnCenterXPos - (dashWidth / 2), leftDashY + 7,
+            g.DrawLineFast(whitePen, rateOfTurnCenterXPos - (dashWidth / 2), leftDashY + 7,
                 rateOfTurnCenterXPos + (dashWidth / 2), leftDashY + 7);
-            g.DrawLine(whitePen, rateOfTurnCenterXPos, leftDashY + 7, rateOfTurnCenterXPos, leftDashY + 14);
+            g.DrawLineFast(whitePen, rateOfTurnCenterXPos, leftDashY + 7, rateOfTurnCenterXPos, leftDashY + 14);
         }
         private static float LimitRateOfTurn(float instantaneousRateOfTurnDegreesPerSecond)
         {

@@ -189,7 +189,7 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                destinationGraphics.DrawImageFast(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
@@ -211,7 +211,7 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(125.5F, 127.5F);
                 destinationGraphics.RotateTransform(machAngle);
                 destinationGraphics.TranslateTransform(-125.5F, -127.5F);
-                destinationGraphics.DrawImage(_machWheel.MaskedImage,
+                destinationGraphics.DrawImageFast(_machWheel.MaskedImage,
                             new Rectangle(0, 0, _machWheel.MaskedImage.Width, _machWheel.MaskedImage.Height),
                             new Rectangle(0, 0, _machWheel.MaskedImage.Width, _machWheel.MaskedImage.Height),
                             GraphicsUnit.Pixel);
@@ -224,7 +224,7 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(126F, 127F);
                 destinationGraphics.RotateTransform(airspeedAngle);
                 destinationGraphics.TranslateTransform(-126F, -127F);
-                destinationGraphics.DrawImage(_airspeedPointerWheel.MaskedImage,
+                destinationGraphics.DrawImageFast(_airspeedPointerWheel.MaskedImage,
                             new Rectangle(0, 0, _airspeedPointerWheel.MaskedImage.Width,
                                           _airspeedPointerWheel.MaskedImage.Height),
                             new Rectangle(0, 0, _airspeedPointerWheel.MaskedImage.Width,
@@ -236,7 +236,7 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(126, 130);
                 destinationGraphics.RotateTransform(airspeedIndexAngle);
                 destinationGraphics.TranslateTransform(-126, -130);
-                destinationGraphics.DrawImage(_speedBug.MaskedImage,
+                destinationGraphics.DrawImageFast(_speedBug.MaskedImage,
                             new Rectangle(0, 0, _speedBug.MaskedImage.Width, _speedBug.MaskedImage.Height),
                             new Rectangle(0, 0, _speedBug.MaskedImage.Width, _speedBug.MaskedImage.Height),
                             GraphicsUnit.Pixel);

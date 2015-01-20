@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -63,7 +64,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             Alignment = StringAlignment.Near,
                             LineAlignment = StringAlignment.Center
                         };
-                        g.DrawString(string.Format("{0:0}", i), labelFont, whiteBrush,
+                        g.DrawStringFast(string.Format("{0:0}", i), labelFont, whiteBrush,
                             new Point(0, pitchLineCenterY + 7), labelFormat);
                     }
                     var lhsPitchLineMinX = centerPointX - pitchLineWidthPixels - horizontalOffsetPixelsFromCenterLine;
@@ -74,14 +75,14 @@ namespace F16CPD.FlightInstruments.Pfd
                     var rhsPitchLineMaxX = centerPointX + pitchLineWidthPixels + horizontalOffsetPixelsFromCenterLine;
                     var rhsPitchLineExtenderBottomY = pitchLineCenterY + positivePitchLineExtenderHeightPixels;
 
-                    g.DrawLine(whitePen, lhsPitchLineMinX, pitchLineCenterY, lhsPitchLineMaxX, pitchLineCenterY);
+                    g.DrawLineFast(whitePen, lhsPitchLineMinX, pitchLineCenterY, lhsPitchLineMaxX, pitchLineCenterY);
                     //draw LHS pitch line
-                    g.DrawLine(whitePen, lhsPitchLineMinX, pitchLineCenterY, lhsPitchLineMinX,
+                    g.DrawLineFast(whitePen, lhsPitchLineMinX, pitchLineCenterY, lhsPitchLineMinX,
                         lhsPitchLineExtenderBottomY); //draw LHS pitch line extender
 
-                    g.DrawLine(whitePen, rhsPitchLineMinX, pitchLineCenterY, rhsPitchLineMaxX, pitchLineCenterY);
+                    g.DrawLineFast(whitePen, rhsPitchLineMinX, pitchLineCenterY, rhsPitchLineMaxX, pitchLineCenterY);
                     //draw RHS pitch line
-                    g.DrawLine(whitePen, rhsPitchLineMaxX, pitchLineCenterY, rhsPitchLineMaxX,
+                    g.DrawLineFast(whitePen, rhsPitchLineMaxX, pitchLineCenterY, rhsPitchLineMaxX,
                         rhsPitchLineExtenderBottomY); //draw RHS pitch line extender
                 }
 
@@ -94,7 +95,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             (positiveBoundingRectangle.Bottom - (90 * pixelsSeparationPerDegreeOfPitch) -
                              (zenithSymbolWidth / 2))), new Size(zenithSymbolWidth, zenithSymbolWidth));
                 g.DrawEllipse(whitePen, zenithRectangle);
-                g.DrawLine(whitePen, zenithRectangle.Left + (zenithRectangle.Width / 2), zenithRectangle.Bottom,
+                g.DrawLineFast(whitePen, zenithRectangle.Left + (zenithRectangle.Width / 2), zenithRectangle.Bottom,
                     zenithRectangle.Left + (zenithRectangle.Width / 2), zenithRectangle.Bottom + 10);
 
                 whitePen.Width = 2;
@@ -124,14 +125,14 @@ namespace F16CPD.FlightInstruments.Pfd
                     var rhsPitchLineOuterDashMaxX = rhsPitchLineMiddleDashMaxX + negativePitchDashGapPixels +
                                                     negativePitchOuterDashWidthPixels;
 
-                    g.DrawLine(whitePen, lhsPitchLineInsideDashMinX, pitchLineCenterY, lhsPitchLineInsideDashMaxX,
+                    g.DrawLineFast(whitePen, lhsPitchLineInsideDashMinX, pitchLineCenterY, lhsPitchLineInsideDashMaxX,
                         pitchLineCenterY); //draw LHS inside dash
-                    g.DrawLine(whitePen, lhsPitchLineMiddleDashMinX, pitchLineCenterY, lhsPitchLineMiddleDashMaxX,
+                    g.DrawLineFast(whitePen, lhsPitchLineMiddleDashMinX, pitchLineCenterY, lhsPitchLineMiddleDashMaxX,
                         pitchLineCenterY); //draw LHS middle dash
                     if (i % 10 == 0)
                     {
                         //if a major pitch line, then draw the LHS outer dash
-                        g.DrawLine(whitePen, lhsPitchLineOuterDashMinX, pitchLineCenterY, lhsPitchLineOuterDashMaxX,
+                        g.DrawLineFast(whitePen, lhsPitchLineOuterDashMinX, pitchLineCenterY, lhsPitchLineOuterDashMaxX,
                             pitchLineCenterY);
 
                         //print the label for this pitch line
@@ -141,25 +142,25 @@ namespace F16CPD.FlightInstruments.Pfd
                             Alignment = StringAlignment.Near,
                             LineAlignment = StringAlignment.Center
                         };
-                        g.DrawString(string.Format("{0:0}", Math.Abs(i)), labelFont, whiteBrush,
+                        g.DrawStringFast(string.Format("{0:0}", Math.Abs(i)), labelFont, whiteBrush,
                             new Point(0, pitchLineCenterY), labelFormat);
                     }
                     //draw the LHS pitch extender line
-                    g.DrawLine(whitePen, lhsPitchLineInsideDashMaxX, pitchLineCenterY, lhsPitchLineInsideDashMaxX,
+                    g.DrawLineFast(whitePen, lhsPitchLineInsideDashMaxX, pitchLineCenterY, lhsPitchLineInsideDashMaxX,
                         pitchLineExtenderY);
 
-                    g.DrawLine(whitePen, rhsPitchLineInsideDashMinX, pitchLineCenterY, rhsPitchLineInsideDashMaxX,
+                    g.DrawLineFast(whitePen, rhsPitchLineInsideDashMinX, pitchLineCenterY, rhsPitchLineInsideDashMaxX,
                         pitchLineCenterY); //draw RHS inside dash
-                    g.DrawLine(whitePen, rhsPitchLineMiddleDashMinX, pitchLineCenterY, rhsPitchLineMiddleDashMaxX,
+                    g.DrawLineFast(whitePen, rhsPitchLineMiddleDashMinX, pitchLineCenterY, rhsPitchLineMiddleDashMaxX,
                         pitchLineCenterY); //draw RHS middle dash
                     if (i % 10 == 0)
                     {
                         //if a major pitch line, then draw the RHS outer dash
-                        g.DrawLine(whitePen, rhsPitchLineOuterDashMinX, pitchLineCenterY, rhsPitchLineOuterDashMaxX,
+                        g.DrawLineFast(whitePen, rhsPitchLineOuterDashMinX, pitchLineCenterY, rhsPitchLineOuterDashMaxX,
                             pitchLineCenterY);
                     }
                     //draw the RHS pitch extender line
-                    g.DrawLine(whitePen, rhsPitchLineInsideDashMinX, pitchLineCenterY, rhsPitchLineInsideDashMinX,
+                    g.DrawLineFast(whitePen, rhsPitchLineInsideDashMinX, pitchLineCenterY, rhsPitchLineInsideDashMinX,
                         pitchLineExtenderY);
                 }
 
@@ -172,7 +173,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             (negativeBoundingRectangle.Top + (90 * pixelsSeparationPerDegreeOfPitch) -
                              (nadirSymbolWidth / 2))), new Size(nadirSymbolWidth, nadirSymbolWidth));
                 g.FillEllipse(whiteBrush, nadirRectangle);
-                g.DrawLine(whitePen, nadirRectangle.Left + (nadirRectangle.Width / 2), nadirRectangle.Top,
+                g.DrawLineFast(whitePen, nadirRectangle.Left + (nadirRectangle.Width / 2), nadirRectangle.Top,
                     nadirRectangle.Left + (nadirRectangle.Width / 2), nadirRectangle.Top - 10);
             }
 

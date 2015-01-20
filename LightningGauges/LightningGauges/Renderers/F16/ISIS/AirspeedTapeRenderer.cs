@@ -2,13 +2,32 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class AirspeedTapeRenderer
     {
+        private static readonly StringFormat AirspeedDigitFormat = new StringFormat
+        {
+            Alignment = StringAlignment.Far,
+            FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap,
+            LineAlignment = StringAlignment.Center,
+            Trimming = StringTrimming.None
+        };
+        private static readonly Color AirspeedDigitColor = Color.White;
+        private static readonly Brush AirspeedDigitBrush = new SolidBrush(AirspeedDigitColor);
+        private static readonly Pen AirspeedDigitPen = new Pen(AirspeedDigitColor) { Width = 2 };
+        private static readonly Color BackgroundColor = Color.FromArgb(117, 123, 121);
+        private static readonly Brush BackgroundBrush = new SolidBrush(BackgroundColor);
+        private static Font _airspeedDigitFont;
+
         internal static void DrawAirspeedTape(Graphics gfx, ref GraphicsState basicState, int height, InstrumentState instrumentState, PrivateFontCollection fonts)
         {
+            if (_airspeedDigitFont == null)
+            {
+                _airspeedDigitFont = new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point);
+            }
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
             var airspeedKnots = instrumentState.AirspeedKnots;
             const float airspeedTapeWidth = 42;
@@ -18,25 +37,11 @@ namespace LightningGauges.Renderers.F16.ISIS
 
         private static void DrawAirspeedTape(Graphics g, SizeF size, float airspeedKnots, PrivateFontCollection fonts)
         {
-            var airspeedDigitFont = new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point);
-            var airspeedDigitFormat = new StringFormat
-            {
-                Alignment = StringAlignment.Far,
-                FormatFlags = StringFormatFlags.NoClip | StringFormatFlags.NoWrap,
-                LineAlignment = StringAlignment.Center,
-                Trimming = StringTrimming.None
-            };
-            var airspeedDigitColor = Color.White;
-            Brush airspeedDigitBrush = new SolidBrush(airspeedDigitColor);
-            var airspeedDigitPen = new Pen(airspeedDigitColor) {Width = 2};
-
-            var backgroundColor = Color.FromArgb(117, 123, 121);
-            Brush backgroundBrush = new SolidBrush(backgroundColor);
 
 
             //draw the background
-            g.FillRectangle(backgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
-            g.DrawLine(airspeedDigitPen, new PointF(size.Width, 0), new PointF(size.Width, size.Height));
+            g.FillRectangle(BackgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
+            g.DrawLineFast(AirspeedDigitPen, new PointF(size.Width, 0), new PointF(size.Width, size.Height));
 
             var originalTransform = g.Transform;
             var pixelsPerKnot = (size.Height/2.0f)/70.0f;
@@ -47,18 +52,18 @@ namespace LightningGauges.Renderers.F16.ISIS
                 if (i%20 == 0)
                 {
                     var toDisplay = string.Format("{0:####0}", i);
-                    var toDisplaySize = g.MeasureString(toDisplay, airspeedDigitFont);
+                    var toDisplaySize = g.MeasureString(toDisplay, _airspeedDigitFont);
                     const float x = 3;
                     var y = (-i*pixelsPerKnot) - (toDisplaySize.Height/2.0f) + (size.Height/2.0f);
                     var layoutRect = new RectangleF(x, y, size.Width, toDisplaySize.Height);
-                    g.DrawString(toDisplay, airspeedDigitFont, airspeedDigitBrush, layoutRect, airspeedDigitFormat);
+                    g.DrawStringFast(toDisplay, _airspeedDigitFont, AirspeedDigitBrush, layoutRect, AirspeedDigitFormat);
                 }
                 else if (i%10 == 0)
                 {
                     const int lineWidth = 15;
                     var x = size.Width - lineWidth;
                     var y = (-i*pixelsPerKnot) + (size.Height/2.0f);
-                    g.DrawLine(airspeedDigitPen, new PointF(x, y), new PointF(size.Width, y));
+                    g.DrawLineFast(AirspeedDigitPen, new PointF(x, y), new PointF(size.Width, y));
                 }
             }
             g.Transform = originalTransform;
@@ -80,7 +85,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 airspeedBoxHeight
                 );
             g.FillRectangle(Brushes.Black, outerRectangle);
-            g.DrawRectangle(airspeedDigitPen, (int) outerRectangle.X, (int) outerRectangle.Y, (int) outerRectangle.Width,
+            g.DrawRectangleFast(AirspeedDigitPen, (int)outerRectangle.X, (int)outerRectangle.Y, (int)outerRectangle.Width,
                 (int) outerRectangle.Height);
             var onesRectangle = new RectangleF(
                 airspeedBoxWidth - (airspeedBoxWidth/3.0f),

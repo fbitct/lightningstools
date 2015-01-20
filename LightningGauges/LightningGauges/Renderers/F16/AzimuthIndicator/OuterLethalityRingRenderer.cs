@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -19,16 +20,16 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
                 gfx.TranslateTransform(-atdOuterRingDiameter/2.0f, -atdOuterRingDiameter/2.0f);
                 if (i%90 == 0)
                 {
-                    gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
+                    gfx.DrawLineFast(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
                         lineLength*2);
-                    gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
+                    gfx.DrawLineFast(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
                         atdOuterRingDiameter/2.0f, atdOuterRingDiameter - (lineLength*2));
                 }
                 else
                 {
-                    gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
+                    gfx.DrawLineFast(grayPen, atdOuterRingDiameter/2.0f, 0, atdOuterRingDiameter/2.0f,
                         lineLength);
-                    gfx.DrawLine(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
+                    gfx.DrawLineFast(grayPen, atdOuterRingDiameter/2.0f, atdOuterRingDiameter,
                         atdOuterRingDiameter/2.0f, atdOuterRingDiameter - lineLength);
                 }
                 gfx.Transform = previousTransform;

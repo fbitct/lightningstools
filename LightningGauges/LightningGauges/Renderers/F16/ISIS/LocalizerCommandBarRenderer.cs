@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -40,8 +41,8 @@ namespace LightningGauges.Renderers.F16.ISIS
                     localizerBarPen.DashOffset = 3;
                 }
                 //draw localizer command bar
-                g.DrawLine(localizerBarPen, ilsBarTop, ilsBarBottom);
-                g.DrawImage(ILSBarsRenderer.MarkerDiamond, currentIlsBarX - (ILSBarsRenderer.MarkerDiamond.Width/2),
+                g.DrawLineFast(localizerBarPen, ilsBarTop, ilsBarBottom);
+                g.DrawImageFast(ILSBarsRenderer.MarkerDiamond, currentIlsBarX - (ILSBarsRenderer.MarkerDiamond.Width/2),
                     farLeftLocalizerMarkerCenterPoint.Y - (ILSBarsRenderer.MarkerDiamond.Width/2));
             }
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using Common.Imaging;
 using F16CPD.Properties;
 
 namespace F16CPD.SimSupport.Falcon4.MovingMap
@@ -26,7 +27,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                                 (int) Math.Floor(((float) _mapAirplaneBitmap.Width)),
                                 (int) Math.Floor(((float) _mapAirplaneBitmap.Height))));
             }
-            g.DrawImage(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width)/2)),
+            g.DrawImageFast(_mapAirplaneBitmap, (((renderRectangle.Width - _mapAirplaneBitmap.Width) / 2)),
                 (((renderRectangle.Height - _mapAirplaneBitmap.Height)/2)));
         }
     }

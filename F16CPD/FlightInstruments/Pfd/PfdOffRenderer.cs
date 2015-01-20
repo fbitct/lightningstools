@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -19,7 +20,7 @@ namespace F16CPD.FlightInstruments.Pfd
             };
             var layoutRectangle = new Rectangle(new Point(0, 0), renderSize);
             path.AddString(toDisplay, FontFamily.GenericMonospace, (int) FontStyle.Bold, 20, layoutRectangle, sf);
-            g.FillPath(greenBrush, path);
+            g.FillPathFast(greenBrush, path);
             return;
         }
     }

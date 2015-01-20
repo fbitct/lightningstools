@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -33,7 +34,7 @@ namespace F16CPD.FlightInstruments.Pfd
                     new Rectangle(-(renderSize.Width / 2), centerY, (renderSize.Width * 2),
                         (int)(pixelsSeparationPerDegreeOfPitch * 180)));
                 var horizonLinePen = new Pen(Color.Black) { Width = 1 };
-                g.DrawLine(horizonLinePen, -1000, centerY, renderSize.Width + 1000, centerYPfd);
+                g.DrawLineFast(horizonLinePen, -1000, centerY, renderSize.Width + 1000, centerYPfd);
                 g.Transform = curTransform;
             }
         }

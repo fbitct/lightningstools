@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -20,7 +21,7 @@ namespace LightningGauges.Renderers.F16.HSI
             destinationGraphics.TranslateTransform(cdiPos, -2);
             try
             {
-                destinationGraphics.DrawImage(hsiCourseDeviationIndicatorMaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(hsiCourseDeviationIndicatorMaskedImage, new Point(0, 0));
             }
             catch (OverflowException)
             {

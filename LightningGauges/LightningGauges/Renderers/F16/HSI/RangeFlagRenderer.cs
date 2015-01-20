@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -10,7 +11,7 @@ namespace LightningGauges.Renderers.F16.HSI
             //draw the range flag
             if (!instrumentState.DmeInvalidFlag) return;
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-            destinationGraphics.DrawImage(hsiRangeFlagMaskedImage, new Point(0, 0));
+            destinationGraphics.DrawImageFast(hsiRangeFlagMaskedImage, new Point(0, 0));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }
     }

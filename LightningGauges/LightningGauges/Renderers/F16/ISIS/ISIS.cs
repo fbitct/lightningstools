@@ -2,8 +2,9 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using Common.Imaging;
 using Common.SimSupport;
-using log4net;
+
 using Util = Common.Imaging.Util;
 
 //TODO: add options to the options screen for setting pressure units, metric/standard velocity units, etc.
@@ -22,7 +23,6 @@ namespace LightningGauges.Renderers.F16.ISIS
     {
 
         private static readonly PrivateFontCollection Fonts = new PrivateFontCollection();
-        private static readonly ILog Log = LogManager.GetLogger(typeof (ISIS));
         public ISIS()
         {
             InstrumentState = new InstrumentState();
@@ -35,7 +35,6 @@ namespace LightningGauges.Renderers.F16.ISIS
 
         public override void Render(Graphics destinationGraphics, Rectangle destinationRectangle)
         {
-            var startTime = DateTime.Now;
             var gfx = destinationGraphics;
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
@@ -54,7 +53,6 @@ namespace LightningGauges.Renderers.F16.ISIS
             gfx.FillRectangle(Brushes.Black, destinationRectangle);
             gfx.ScaleTransform(destinationRectangle.Width/(float) width, destinationRectangle.Height/(float) height);
             //set the initial scale transformation 
-            //destinationGraphics.TranslateTransform(0, 0);
             gfx.InterpolationMode = Options.GDIPlusOptions.InterpolationMode;
             gfx.PixelOffsetMode = Options.GDIPlusOptions.PixelOffsetMode;
             gfx.SmoothingMode = Options.GDIPlusOptions.SmoothingMode;
@@ -105,13 +103,10 @@ namespace LightningGauges.Renderers.F16.ISIS
                 var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
-                destinationGraphics.DrawImage(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
+                destinationGraphics.DrawImageFast(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }
-            var endTime = DateTime.Now;
-            var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
-            Log.Info(string.Format("Exiting Render() method. Took {0} milliseconds.", elapsed ));
         }
     }
 }

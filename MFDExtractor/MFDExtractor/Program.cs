@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime;
 using System.Threading;
 using System.Windows.Forms;
 using MFDExtractor.Properties;
@@ -93,10 +94,11 @@ namespace MFDExtractor
             
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-us");
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.EnableVisualStyles();
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
             mainForm = new frmMain();
             Thread.CurrentThread.Name = "MainThread";
-            Application.EnableVisualStyles();
-
             if (Settings.Default.UpgradeNeeded)
             {
                 try

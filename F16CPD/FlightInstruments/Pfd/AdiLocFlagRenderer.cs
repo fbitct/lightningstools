@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -29,8 +30,8 @@ namespace F16CPD.FlightInstruments.Pfd
                     locFlagTextBrush = Brushes.White;
                 }
                 g.FillRectangle(locFlagBrush, adiLocFlagTextLayoutRectangle);
-                g.DrawRectangle(Pens.Black, adiLocFlagTextLayoutRectangle);
-                g.FillPath(locFlagTextBrush, path);
+                g.DrawRectangleFast(Pens.Black, adiLocFlagTextLayoutRectangle);
+                g.FillPathFast(locFlagTextBrush, path);
             }
         }
     }

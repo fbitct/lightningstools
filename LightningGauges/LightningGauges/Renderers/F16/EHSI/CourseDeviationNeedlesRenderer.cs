@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -78,7 +79,7 @@ namespace LightningGauges.Renderers.F16.EHSI
 
             //draw thin line on top of pointer arrow
             needlePen.Width = pointerNeedleThinWidth;
-            g.DrawLine(needlePen, courseNeedleTopLineTop, courseNeedleTopLineBottom);
+            g.DrawLineFast(needlePen, courseNeedleTopLineTop, courseNeedleTopLineBottom);
 
             //draw pointer arrow
             g.FillPolygon(needleBrush,
@@ -86,7 +87,7 @@ namespace LightningGauges.Renderers.F16.EHSI
 
             //draw thick line just below pointer arrow
             needlePen.Width = pointerNeedleThickWidth;
-            g.DrawLine(needlePen, pointerNeedleThickTopTop, pointerNeedleThickTopBottom);
+            g.DrawLineFast(needlePen, pointerNeedleThickTopTop, pointerNeedleThickTopBottom);
 
 
             if (instrumentState.DeviationInvalidFlag)
@@ -101,18 +102,18 @@ namespace LightningGauges.Renderers.F16.EHSI
                 needlePen.DashPattern = new[] {2, 1.75f};
             }
             g.TranslateTransform(deviationTranslateX, 0);
-            g.DrawLine(needlePen, cdiLineTop, cdiLineBottom);
+            g.DrawLineFast(needlePen, cdiLineTop, cdiLineBottom);
             g.TranslateTransform(-deviationTranslateX, 0);
 
             needlePen.DashStyle = DashStyle.Solid;
 
             //draw thick line just below CDI needle  
             needlePen.Width = pointerNeedleThickWidth;
-            g.DrawLine(needlePen, pointerNeedleThickBottomTop, pointerNeedleThickBottomBottom);
+            g.DrawLineFast(needlePen, pointerNeedleThickBottomTop, pointerNeedleThickBottomBottom);
 
             //draw thin line indicating reciprocal-of-course
             needlePen.Width = pointerNeedleThinWidth;
-            g.DrawLine(needlePen, courseNeedleBottomLineTop, courseNeedleBottomLineBottom);
+            g.DrawLineFast(needlePen, courseNeedleBottomLineTop, courseNeedleBottomLineBottom);
 
             if (instrumentState.ShowToFromFlag)
             {

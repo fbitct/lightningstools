@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -14,7 +15,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 raltRectangleWidth, topRectangle.Height - 10);
             var raltRectanglePen = Pens.White;
             raltRectangle.Offset(-5, 0);
-            gfx.DrawRectangle(raltRectanglePen, raltRectangle.X, raltRectangle.Y, raltRectangle.Width,
+            gfx.DrawRectangleFast(raltRectanglePen, raltRectangle.X, raltRectangle.Y, raltRectangle.Width,
                 raltRectangle.Height);
 
             var raltStringFormat = new StringFormat
@@ -57,7 +58,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 raltString += "ft";
             }
 
-            gfx.DrawString(raltString, new Font(fonts.Families[0], fontSize, FontStyle.Regular, GraphicsUnit.Point),
+            gfx.DrawStringFast(raltString, new Font(fonts.Families[0], fontSize, FontStyle.Regular, GraphicsUnit.Point),
                 raltBrush, raltRectangle, raltStringFormat);
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
         }

@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -29,7 +30,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                 );
             labelRect.Offset(0, -40);
 
-            g.DrawString(label, labelFont, Brushes.White, labelRect, labelStringFormat);
+            g.DrawStringFast(label, labelFont, Brushes.White, labelRect, labelStringFormat);
         }
     }
 }

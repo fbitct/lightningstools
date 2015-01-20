@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -14,7 +15,7 @@ namespace LightningGauges.Renderers.F16.HSI
                 -(instrumentState.MagneticHeadingDegrees - instrumentState.BearingToBeaconDegrees));
             destinationGraphics.TranslateTransform(-centerX, -centerY);
             destinationGraphics.TranslateTransform(1, 0);
-            destinationGraphics.DrawImage(hsiBearingToBeaconNeedleMaskedImage, new Point(0, 0));
+            destinationGraphics.DrawImageFast(hsiBearingToBeaconNeedleMaskedImage, new Point(0, 0));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
         }

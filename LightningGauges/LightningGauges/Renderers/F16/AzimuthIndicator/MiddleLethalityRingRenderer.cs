@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -16,23 +17,23 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             gfx.TranslateTransform(-atdMiddleRingDiameter/2.0f, -atdMiddleRingDiameter/2.0f);
 
             //draw north line
-            gfx.DrawLine(grayPen, atdMiddleRingDiameter/2.0f, -(lineLength*2), atdMiddleRingDiameter/2.0f, 0);
+            gfx.DrawLineFast(grayPen, atdMiddleRingDiameter/2.0f, -(lineLength*2), atdMiddleRingDiameter/2.0f, 0);
 
             //draw west line
-            gfx.DrawLine(grayPen, 0, (atdMiddleRingDiameter/2.0f), lineLength, (atdMiddleRingDiameter/2.0f));
+            gfx.DrawLineFast(grayPen, 0, (atdMiddleRingDiameter/2.0f), lineLength, (atdMiddleRingDiameter/2.0f));
 
             //draw east line
-            gfx.DrawLine(grayPen, atdMiddleRingDiameter, (atdMiddleRingDiameter/2.0f),
+            gfx.DrawLineFast(grayPen, atdMiddleRingDiameter, (atdMiddleRingDiameter/2.0f),
                 atdMiddleRingDiameter - lineLength, (atdMiddleRingDiameter/2.0f));
 
             //draw south line
-            gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter - lineLength,
+            gfx.DrawLineFast(grayPen, (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter - lineLength,
                 (atdMiddleRingDiameter/2.0f), atdMiddleRingDiameter + lineLength);
 
             //draw north flag
-            gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*2),
+            gfx.DrawLineFast(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*2),
                 (atdMiddleRingDiameter/2.0f) + 7, -(lineLength*0.75f));
-            gfx.DrawLine(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*0.75f),
+            gfx.DrawLineFast(grayPen, (atdMiddleRingDiameter/2.0f), -(lineLength*0.75f),
                 (atdMiddleRingDiameter/2.0f) + 7, -(lineLength*0.75f));
 
             gfx.Transform = toRestore;

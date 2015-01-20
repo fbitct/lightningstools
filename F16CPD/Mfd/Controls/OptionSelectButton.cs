@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using Common.Imaging;
 using Common.UI.Layout;
 
 namespace F16CPD.Mfd.Controls
@@ -177,7 +178,7 @@ namespace F16CPD.Mfd.Controls
                 }
                 else
                 {
-                    g.DrawString(text, font, forecolorBrush, textBoundingRectangle, textFormat);
+                    g.DrawStringFast(text, font, forecolorBrush, textBoundingRectangle, textFormat);
                 }
                 g.Transform = origTransform;
             }

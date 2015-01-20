@@ -189,7 +189,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                 var dimmingMatrix =
                     Util.GetDimmingColorMatrix(InstrumentState.Brightness/(float) InstrumentState.MaxBrightness);
                 ia.SetColorMatrix(dimmingMatrix);
-                destinationGraphics.DrawImage(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
+                destinationGraphics.DrawImageFast(fullBright, destinationRectangle, 0, 0, fullBright.Width, fullBright.Height, GraphicsUnit.Pixel, ia);
                 Common.Util.DisposeObject(gfx);
                 Common.Util.DisposeObject(fullBright);
             }
@@ -207,7 +207,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                 g.FillRectangle(Brushes.Black, outerBounds);
                 if (_noData.MaskedImage != null)
                 {
-                    g.DrawImage(_noData.MaskedImage, outerBounds,
+                    g.DrawImageFast(_noData.MaskedImage, outerBounds,
                                 new RectangleF(new Point(0, 0), _noData.MaskedImage.Size), GraphicsUnit.Pixel);
                 }
                 else

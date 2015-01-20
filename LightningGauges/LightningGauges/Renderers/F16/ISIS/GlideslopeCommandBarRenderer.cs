@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -41,8 +42,8 @@ namespace LightningGauges.Renderers.F16.ISIS
                     glideslopeBarPen.DashStyle = DashStyle.Dash;
                     glideslopeBarPen.DashOffset = 3;
                 }
-                g.DrawLine(glideslopeBarPen, ilsBarLeft, ilsBarRight);
-                g.DrawImage(ILSBarsRenderer.MarkerDiamond, topGlideSlopeMarkerCenterPoint.X - (ILSBarsRenderer.MarkerDiamond.Width/2),
+                g.DrawLineFast(glideslopeBarPen, ilsBarLeft, ilsBarRight);
+                g.DrawImageFast(ILSBarsRenderer.MarkerDiamond, topGlideSlopeMarkerCenterPoint.X - (ILSBarsRenderer.MarkerDiamond.Width/2),
                     currentIlsBarY - (ILSBarsRenderer.MarkerDiamond.Width/2));
             }
         }

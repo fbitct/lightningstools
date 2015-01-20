@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -41,7 +42,7 @@ namespace F16CPD.FlightInstruments.Pfd
             {
                 markerBeaconTextBrush = Brushes.White;
             }
-            g.FillPath(markerBeaconTextBrush, path);
+            g.FillPathFast(markerBeaconTextBrush, path);
         }
     }
 }

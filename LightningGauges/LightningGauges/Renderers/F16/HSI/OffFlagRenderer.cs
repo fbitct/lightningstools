@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -12,7 +13,7 @@ namespace LightningGauges.Renderers.F16.HSI
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
             destinationGraphics.RotateTransform(-25);
             destinationGraphics.TranslateTransform(20, 50);
-            destinationGraphics.DrawImage(hsiOffFlagMaskedImage, new Point(0, 0));
+            destinationGraphics.DrawImageFast(hsiOffFlagMaskedImage, new Point(0, 0));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }
     }

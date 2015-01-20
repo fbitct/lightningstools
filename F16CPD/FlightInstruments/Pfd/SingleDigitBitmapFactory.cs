@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -66,7 +67,7 @@ namespace F16CPD.FlightInstruments.Pfd
                     destRectangle = new Rectangle(new Point(0, digitVerticalMargin),
                         new Size(verticalNumberStrip.Width, bottomY - topY));
                 }
-                g.DrawImage(verticalNumberStrip, destRectangle, sourceRectangle, GraphicsUnit.Pixel);
+                g.DrawImageFast(verticalNumberStrip, destRectangle, sourceRectangle, GraphicsUnit.Pixel);
             }
 
             if (showExtraDigitsTopAndBottom)

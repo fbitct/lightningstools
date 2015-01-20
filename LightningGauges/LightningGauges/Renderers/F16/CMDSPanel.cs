@@ -176,7 +176,7 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background, new Rectangle(0, 0, _background.Width, _background.Height),
+                destinationGraphics.DrawImageFast(_background, new Rectangle(0, 0, _background.Width, _background.Height),
                             new Rectangle(0, 0, _background.Width, _background.Height), GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
@@ -195,7 +195,7 @@ namespace LightningGauges.Renderers.F16
                         countString = "AUTO"; //Falcas 04/09/2012 to match what you see in BMS
                     }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 //draw the Other2 count
@@ -209,7 +209,7 @@ namespace LightningGauges.Renderers.F16
                         countString = "DEGR";//Falcas 04/09/2012 to match what you see in BMS
                     }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 //draw the Chaff count
@@ -222,7 +222,7 @@ namespace LightningGauges.Renderers.F16
                     //    countString = "GO";
                     //}
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 //draw the Flare count
@@ -235,28 +235,28 @@ namespace LightningGauges.Renderers.F16
                     //    countString = "BYP";
                     //}
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
-                    destinationGraphics.DrawString(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
+                    destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
 
                 RectangleF dispenseReadyRectangle = new Rectangle(283, 36, 115, 21);
                 destinationGraphics.FillRectangle(Brushes.Black, dispenseReadyRectangle);
                 if (InstrumentState.DispenseReady)
                 {
-                    destinationGraphics.DrawString("DISPENSE RDY", _legendFont, _digitBrush, dispenseReadyRectangle, _digitStringFormat);
+                    destinationGraphics.DrawStringFast("DISPENSE RDY", _legendFont, _digitBrush, dispenseReadyRectangle, _digitStringFormat);
                 }
 
                 RectangleF goRectangle = new Rectangle(220, 37, 25, 18);
                 destinationGraphics.FillRectangle(Brushes.Black, goRectangle);
                 if (InstrumentState.Go)
                 {
-                    destinationGraphics.DrawString("GO", _legendFont, _digitBrush, goRectangle, _digitStringFormat);
+                    destinationGraphics.DrawStringFast("GO", _legendFont, _digitBrush, goRectangle, _digitStringFormat);
                 }
 
                 RectangleF noGoRectangle = new Rectangle(166, 36, 45, 21);
                 destinationGraphics.FillRectangle(Brushes.Black, noGoRectangle);
                 if (InstrumentState.NoGo)
                 {
-                    destinationGraphics.DrawString("NO GO", _legendFont, _digitBrush, noGoRectangle, _digitStringFormat);
+                    destinationGraphics.DrawStringFast("NO GO", _legendFont, _digitBrush, noGoRectangle, _digitStringFormat);
                 }
 
 

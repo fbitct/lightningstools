@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -61,7 +62,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             {
                 var plsLabelRect = new RectangleF(outerBounds.Width*0.25f, outerBounds.Height - letterHeight - margin,
                     labelWidth, letterHeight);
-                g.DrawString("PLS", labelFont, Brushes.White, plsLabelRect, labelStringFormat);
+                g.DrawStringFast("PLS", labelFont, Brushes.White, plsLabelRect, labelStringFormat);
             }
 
             if (
@@ -72,7 +73,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             {
                 var navLabelRect = new RectangleF(outerBounds.Width*0.7f, outerBounds.Height - letterHeight - margin,
                     labelWidth, letterHeight);
-                g.DrawString("NAV", labelFont, Brushes.White, navLabelRect, labelStringFormat);
+                g.DrawStringFast("NAV", labelFont, Brushes.White, navLabelRect, labelStringFormat);
             }
 
             if (
@@ -83,7 +84,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             {
                 var tacanLabelRect = new RectangleF(outerBounds.Width*0.7f, outerBounds.Height - letterHeight - margin,
                     labelWidth, letterHeight);
-                g.DrawString("TCN", labelFont, Brushes.White, tacanLabelRect, labelStringFormat);
+                g.DrawStringFast("TCN", labelFont, Brushes.White, tacanLabelRect, labelStringFormat);
             }
         }
     }

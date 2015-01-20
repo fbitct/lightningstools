@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -32,13 +33,13 @@ namespace LightningGauges.Renderers.F16.EHSI
             const float bearingLineTopHeight = 23;
             var bearingLineTopTop = new PointF(bearingTriangleTop.X, bearingTriangleLeft.Y);
             var bearingLineTopBottom = new PointF(bearingLineTopTop.X, bearingLineTopTop.Y + bearingLineTopHeight);
-            g.DrawLine(needlePen, bearingLineTopTop, bearingLineTopBottom);
+            g.DrawLineFast(needlePen, bearingLineTopTop, bearingLineTopBottom);
 
             const float bearingLineBottomHeight = 37;
             var bearingLineBottomTop = new PointF(bearingTriangleTop.X, 455);
             var bearingLineBottomBottom = new PointF(bearingTriangleTop.X,
                 bearingLineBottomTop.Y + bearingLineBottomHeight);
-            g.DrawLine(needlePen, bearingLineBottomTop, bearingLineBottomBottom);
+            g.DrawLineFast(needlePen, bearingLineBottomTop, bearingLineBottomBottom);
 
 
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);

@@ -292,21 +292,21 @@ namespace LightningGauges.Renderers.F16
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             destinationGraphics.TranslateTransform(translateX, translateY);
                             destinationGraphics.TranslateTransform(0, digitHeights*tenThousands);
-                            destinationGraphics.DrawImage(_tenThousandsDigitsElectroMechanical, new Point(0, 0));
+                            destinationGraphics.DrawImageFast(_tenThousandsDigitsElectroMechanical, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                             //draw thousands digit
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             destinationGraphics.TranslateTransform(translateX, translateY);
                             destinationGraphics.TranslateTransform(0, digitHeights*thousands);
-                            destinationGraphics.DrawImage(_thousandsDigitsElectroMechanical, new Point(0, 0));
+                            destinationGraphics.DrawImageFast(_thousandsDigitsElectroMechanical, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                             //draw hundreds digit
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                             destinationGraphics.TranslateTransform(translateX, translateY);
                             destinationGraphics.TranslateTransform(0, digitHeights * hundreds);
-                            destinationGraphics.DrawImage(_hundredsDigitsElectroMechanical, new Point(0, 0));
+                            destinationGraphics.DrawImageFast(_hundredsDigitsElectroMechanical, new Point(0, 0));
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                             //draw the barometric pressure area
@@ -358,9 +358,9 @@ namespace LightningGauges.Renderers.F16
                                                                              136, unitAreaWidth,
                                                                              topRectangle.Height - 40);
                             }
-                            destinationGraphics.DrawString(baroString, new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point),
+                            destinationGraphics.DrawStringFast(baroString, new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point),
                                            barometricPressureBrush, barometricPressureRectangle, barometricPressureStringFormat);
-                            destinationGraphics.DrawString(unitsString, new Font(_fonts.Families[0], 4, FontStyle.Bold, GraphicsUnit.Point),
+                            destinationGraphics.DrawStringFast(unitsString, new Font(_fonts.Families[0], 4, FontStyle.Bold, GraphicsUnit.Point),
                                            barometricPressureBrush, unitsRectangle, barometricPressureStringFormat);
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);    
                         }
@@ -402,7 +402,7 @@ namespace LightningGauges.Renderers.F16
                             var thousandsString = string.Format("{0:#0}", thousandscombined);
                             //if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
                             if (InstrumentState.IndicatedAltitudeFeetMSL < 0) thousandsString = "-" + thousandsString; //Falcas 16-08-12
-                            destinationGraphics.DrawString(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
                             var allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
                             var hundredsString = allHundredsString.Substring(0, 1);
 
@@ -410,9 +410,9 @@ namespace LightningGauges.Renderers.F16
                                                            (int)Math.Floor(((Math.Abs(absIndicatedAltitude) / 10.0f) % 10.0f)));
                             const string onesString = "0";
 
-                            destinationGraphics.DrawString(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
-                            destinationGraphics.DrawString(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
-                            destinationGraphics.DrawString(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
 
                             //draw the barometric pressure area
                             //draw top rectangle
@@ -464,9 +464,9 @@ namespace LightningGauges.Renderers.F16
                                                                              136, unitAreaWidth,
                                                                              topRectangle.Height - 35);
                             }
-                            destinationGraphics.DrawString(baroString, new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point),
+                            destinationGraphics.DrawStringFast(baroString, new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point),
                                            digitsBrush, barometricPressureRectangle, barometricPressureStringFormat);
-                            destinationGraphics.DrawString(unitsString, new Font(_fonts.Families[1], 6, FontStyle.Bold, GraphicsUnit.Point),
+                            destinationGraphics.DrawStringFast(unitsString, new Font(_fonts.Families[1], 6, FontStyle.Bold, GraphicsUnit.Point),
                                            digitsBrush, unitsRectangle, barometricPressureStringFormat);
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
@@ -479,14 +479,14 @@ namespace LightningGauges.Renderers.F16
                 {
                     case AltimeterOptions.F16AltimeterStyle.Electromechanical:
                         destinationGraphics.TranslateTransform(0, -11);
-                        destinationGraphics.DrawImage(
+                        destinationGraphics.DrawImageFast(
                             InstrumentState.PneumaticModeFlag
                                 ? _backgroundElectroMechanical.MaskedImage
                                 : _backgroundElectroMechanicalNoFlag.MaskedImage, new Point(0, 0));
                         break;
                     case AltimeterOptions.F16AltimeterStyle.Electronic:
                         destinationGraphics.TranslateTransform(0, -11);
-                        destinationGraphics.DrawImage(
+                        destinationGraphics.DrawImageFast(
                             InstrumentState.StandbyModeFlag
                                 ? _backgroundElectronic.MaskedImage
                                 : _backgroundElectronicNoFlag.MaskedImage, new Point(0, 0));
@@ -502,7 +502,7 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(centerX, centerY);
                 destinationGraphics.RotateTransform(degrees);
                 destinationGraphics.TranslateTransform(-centerX, -centerY);
-                destinationGraphics.DrawImage(_needle.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_needle.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //restore the canvas's transform and clip settings to what they were when we entered this method

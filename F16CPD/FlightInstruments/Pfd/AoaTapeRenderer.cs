@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -23,7 +24,7 @@ namespace F16CPD.FlightInstruments.Pfd
 
             var aoaBitmap = AOATapeBitmapFactory.GetAoATapeBitmap(aoa, aoaStripBoundingBox.Width, aoaStripBoundingBox.Height);
 
-            g.DrawImage(
+            g.DrawImageFast(
                 aoaBitmap,
                 aoaStripBoundingBox.Left,
                 aoaStripBoundingBox.Top,
@@ -35,16 +36,16 @@ namespace F16CPD.FlightInstruments.Pfd
 
 
             //trace the outline of the AOA tape with black
-            g.DrawRectangle(blackPen, aoaStripBoundingBox);
+            g.DrawRectangleFast(blackPen, aoaStripBoundingBox);
 
             //draw white line at top of AOA tape
             whitePen.Width = 2;
-            g.DrawLine(whitePen, aoaStripBoundingBox.Left, aoaStripBoundingBox.Top, aoaStripBoundingBox.Right,
+            g.DrawLineFast(whitePen, aoaStripBoundingBox.Left, aoaStripBoundingBox.Top, aoaStripBoundingBox.Right,
                 aoaStripBoundingBox.Top);
 
             //draw white line at bottom of AOA tape
             whitePen.Width = 2;
-            g.DrawLine(whitePen, aoaStripBoundingBox.Left, aoaStripBoundingBox.Bottom, aoaStripBoundingBox.Right,
+            g.DrawLineFast(whitePen, aoaStripBoundingBox.Left, aoaStripBoundingBox.Bottom, aoaStripBoundingBox.Right,
                 aoaStripBoundingBox.Bottom);
 
             //draw left AOA indicator triangle
@@ -72,7 +73,7 @@ namespace F16CPD.FlightInstruments.Pfd
             g.DrawPolygon(whitePen, aoaTriangleRightPoints);
 
             //draw line between indicator triangle points
-            g.DrawLine(whitePen, aoaTriangleLeftPoints[0], aoaTriangleRightPoints[0]);
+            g.DrawLineFast(whitePen, aoaTriangleLeftPoints[0], aoaTriangleRightPoints[0]);
 
             var location = new Point(aoaStripBoundingBox.Left - 17,
                 aoaStripBoundingBox.Top + (aoaStripBoundingBox.Height/2) - 12);

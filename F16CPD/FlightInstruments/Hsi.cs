@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 using F16CPD.Properties;
 
 namespace F16CPD.FlightInstruments
@@ -27,7 +28,7 @@ namespace F16CPD.FlightInstruments
                              };
                 var layoutRectangle = new Rectangle(new Point(0, 0), renderSize);
                 path.AddString(toDisplay, FontFamily.GenericMonospace, (int) FontStyle.Bold, 20, layoutRectangle, sf);
-                g.FillPath(greenBrush, path);
+                g.FillPathFast(greenBrush, path);
             }
             else
             {
@@ -131,10 +132,10 @@ namespace F16CPD.FlightInstruments
                     var courseDeviationDiamond = (Bitmap) _courseDeviationDiamond.Clone();
 
                     //draw course deviation diamonds
-                    crg.DrawImage(courseDeviationDiamond, new Point(101, 166));
-                    crg.DrawImage(courseDeviationDiamond, new Point(134, 166));
-                    crg.DrawImage(courseDeviationDiamond, new Point(200, 166));
-                    crg.DrawImage(courseDeviationDiamond, new Point(233, 166));
+                    crg.DrawImageFast(courseDeviationDiamond, new Point(101, 166));
+                    crg.DrawImageFast(courseDeviationDiamond, new Point(134, 166));
+                    crg.DrawImageFast(courseDeviationDiamond, new Point(200, 166));
+                    crg.DrawImageFast(courseDeviationDiamond, new Point(233, 166));
 
                     //draw HSI TO/FROM flags
                     //Brush toFromFlagSolidColorBrush = Brushes.Red;
@@ -188,9 +189,9 @@ namespace F16CPD.FlightInstruments
 
                     whitePen.Width = 2;
                     //draw course indicator needle
-                    crg.DrawLine(whitePen, new Point((compassRose.Width/2), 44), new Point((compassRose.Width/2), 126));
+                    crg.DrawLineFast(whitePen, new Point((compassRose.Width/2), 44), new Point((compassRose.Width/2), 126));
                     //draw reciprocal-of-course indicator needle
-                    crg.DrawLine(whitePen, new Point((compassRose.Width/2), 207), new Point((compassRose.Width/2), 297));
+                    crg.DrawLineFast(whitePen, new Point((compassRose.Width/2), 207), new Point((compassRose.Width/2), 297));
                     //draw course pointer triangle
                     pointA = new Point((compassRose.Width/2), 74);
                     pointB = new Point((compassRose.Width/2) - 16, 94);
@@ -224,7 +225,7 @@ namespace F16CPD.FlightInstruments
                              (distanceBetweenDiamondCenters*2));
                     }
 
-                    crg.DrawLine(cdiNeedlePen, new Point(needleX, 132), new Point(needleX, 200));
+                    crg.DrawLineFast(cdiNeedlePen, new Point(needleX, 132), new Point(needleX, 200));
 
 
                     //draw heading bug
@@ -259,11 +260,11 @@ namespace F16CPD.FlightInstruments
 
                     //draw bearing to beacon tail on pointer head
                     aquaPen.Width = 5;
-                    crg.DrawLine(aquaPen, new Point((compassRose.Width/2), 30), new Point((compassRose.Width/2), 50));
+                    crg.DrawLineFast(aquaPen, new Point((compassRose.Width/2), 30), new Point((compassRose.Width/2), 50));
 
                     //draw reciprocal-of-bearing tail
                     aquaPen.Width = 5;
-                    crg.DrawLine(aquaPen, new Point((compassRose.Width/2), compassRose.Height - 30),
+                    crg.DrawLineFast(aquaPen, new Point((compassRose.Width/2), compassRose.Height - 30),
                                  new Point((compassRose.Width/2), compassRose.Height - 15));
                     crg.ResetTransform();
                 }
@@ -272,13 +273,13 @@ namespace F16CPD.FlightInstruments
 
                 whitePen.Width = 3;
                 //draw angle ticks
-                g.DrawLine(whitePen, new Point(162, 70), new Point(177, 85));
-                g.DrawLine(whitePen, new Point(108, 199), new Point(130, 199));
-                g.DrawLine(whitePen, new Point(405, 86), new Point(421, 71));
-                g.DrawLine(whitePen, new Point(453, 199), new Point(476, 199));
-                g.DrawLine(whitePen, new Point(406, 313), new Point(421, 328));
-                g.DrawLine(whitePen, new Point(291, 360), new Point(291, 382));
-                g.DrawLine(whitePen, new Point(162, 328), new Point(177, 313));
+                g.DrawLineFast(whitePen, new Point(162, 70), new Point(177, 85));
+                g.DrawLineFast(whitePen, new Point(108, 199), new Point(130, 199));
+                g.DrawLineFast(whitePen, new Point(405, 86), new Point(421, 71));
+                g.DrawLineFast(whitePen, new Point(453, 199), new Point(476, 199));
+                g.DrawLineFast(whitePen, new Point(406, 313), new Point(421, 328));
+                g.DrawLineFast(whitePen, new Point(291, 360), new Point(291, 382));
+                g.DrawLineFast(whitePen, new Point(162, 328), new Point(177, 313));
 
                 whitePen.Width = 2;
                 //draw course box
@@ -309,7 +310,7 @@ namespace F16CPD.FlightInstruments
                 }
 
                 var headingBoxText = string.Format("{0:000}", headingBoxNumToDisplay);
-                g.DrawString(headingBoxText, headingBoxFont, whiteBrush, headingBoxTextRectangle);
+                g.DrawStringFast(headingBoxText, headingBoxFont, whiteBrush, headingBoxTextRectangle);
 
                 //draw text labels
                 var selectedCourseTextRectangle = new Rectangle(new Point(449, 1), new Size(145, 18));
@@ -335,7 +336,7 @@ namespace F16CPD.FlightInstruments
                 }
 
                 var selectedCourseText = string.Format("{0:000}", selectedCourse);
-                g.DrawString("SEL CRS " + selectedCourseText, textFont, whiteBrush, selectedCourseTextRectangle,
+                g.DrawStringFast("SEL CRS " + selectedCourseText, textFont, whiteBrush, selectedCourseTextRectangle,
                              textFormat);
 
                 var selectedHeading = (Manager.FlightData.HsiDesiredHeadingInDegrees);
@@ -349,7 +350,7 @@ namespace F16CPD.FlightInstruments
                     if (selectedHeading == 360) selectedHeading = 0;
                 }
                 var selectedHeadingText = string.Format("{0:000}", selectedHeading);
-                g.DrawString("SEL HDG " + selectedHeadingText, textFont, whiteBrush, selectedHeadingTextRectangle,
+                g.DrawStringFast("SEL HDG " + selectedHeadingText, textFont, whiteBrush, selectedHeadingTextRectangle,
                              textFormat);
 
                 if (Manager.FlightData.HsiDisplayToFromFlag)
@@ -368,22 +369,22 @@ namespace F16CPD.FlightInstruments
                     tacanChannelFormat.Alignment = StringAlignment.Center;
                     tacanChannelFormat.LineAlignment = StringAlignment.Center;
                     Rectangle tacanFrequencyRectangle = new Rectangle(toLineBottomPoint.X - 60, toLineBottomPoint.Y + 3, 120, 20);
-                    g.DrawString(tacanChannel, textFont, toFromFrequencyBrush, tacanFrequencyRectangle, tacanChannelFormat);
+                    g.DrawStringFast(tacanChannel, textFont, toFromFrequencyBrush, tacanFrequencyRectangle, tacanChannelFormat);
                     */
                     /*
                     //draw TO/FROM arrow near TACAN frequency
 
                     if (toFlag)
                     {
-                        g.DrawLine(toFromArrowPen, toLineTopPoint, toLineBottomPoint);
-                        g.DrawLine(toFromArrowPen, toLineTopPoint.X, toLineTopPoint.Y, toFromArrowLeftX, toLineTopPoint.Y + 10);
-                        g.DrawLine(toFromArrowPen, toLineTopPoint.X, toLineTopPoint.Y,toFromArrowRightX, toLineTopPoint.Y + 10);
+                        g.DrawLineFast(toFromArrowPen, toLineTopPoint, toLineBottomPoint);
+                        g.DrawLineFast(toFromArrowPen, toLineTopPoint.X, toLineTopPoint.Y, toFromArrowLeftX, toLineTopPoint.Y + 10);
+                        g.DrawLineFast(toFromArrowPen, toLineTopPoint.X, toLineTopPoint.Y,toFromArrowRightX, toLineTopPoint.Y + 10);
                     }
                     else if (fromFlag)
                     {
-                        g.DrawLine(toFromArrowPen, fromLineTopPoint, fromLineBottomPoint);
-                        g.DrawLine(toFromArrowPen, fromLineBottomPoint.X , fromLineBottomPoint.Y, toFromArrowLeftX, fromLineBottomPoint.Y - 10);
-                        g.DrawLine(toFromArrowPen, fromLineBottomPoint.X, fromLineBottomPoint.Y, toFromArrowRightX, fromLineBottomPoint.Y - 10);
+                        g.DrawLineFast(toFromArrowPen, fromLineTopPoint, fromLineBottomPoint);
+                        g.DrawLineFast(toFromArrowPen, fromLineBottomPoint.X , fromLineBottomPoint.Y, toFromArrowLeftX, fromLineBottomPoint.Y - 10);
+                        g.DrawLineFast(toFromArrowPen, fromLineBottomPoint.X, fromLineBottomPoint.Y, toFromArrowRightX, fromLineBottomPoint.Y - 10);
                     }
                     */
                 }
@@ -398,7 +399,7 @@ namespace F16CPD.FlightInstruments
                  */
                 textFormat.LineAlignment = StringAlignment.Near;
                 textFormat.Alignment = StringAlignment.Near;
-                g.DrawString(dmeText + " MILES", textFont, whiteBrush, dmeTextRectangle, textFormat);
+                g.DrawStringFast(dmeText + " MILES", textFont, whiteBrush, dmeTextRectangle, textFormat);
 
                 //draw HSI DME invalid flag if required
                 if (Manager.FlightData.HsiDistanceInvalidFlag)
@@ -417,7 +418,7 @@ namespace F16CPD.FlightInstruments
                             thisColor = Color.White;
                         }
                         var thisPen = new Pen(thisColor) {Width = strokeWidth};
-                        g.DrawLine(thisPen, new Point(i, dmeTextRectangle.Bottom),
+                        g.DrawLineFast(thisPen, new Point(i, dmeTextRectangle.Bottom),
                                    new Point(i + (strokeWidth*2), dmeTextRectangle.Top));
                         alternate = !alternate;
                     }

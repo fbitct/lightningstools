@@ -159,19 +159,19 @@ namespace LightningGauges.Renderers.F16
                     translateY -= _numberTape.Height/2.0f;
                     destinationGraphics.TranslateTransform(translateX, translateY);
                     destinationGraphics.ScaleTransform(0.75f, 0.75f);
-                    destinationGraphics.DrawImage(_numberTape, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_numberTape, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //draw the indicator line
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 destinationGraphics.TranslateTransform(0, 0);
-                destinationGraphics.DrawImage(_indicatorLine.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_indicatorLine.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
@@ -180,7 +180,7 @@ namespace LightningGauges.Renderers.F16
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(0, 0);
-                    destinationGraphics.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_offFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 

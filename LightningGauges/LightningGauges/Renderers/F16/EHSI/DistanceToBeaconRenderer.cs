@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -50,12 +51,12 @@ namespace LightningGauges.Renderers.F16.EHSI
                 digitHeight);
             var tenthsRect = new RectangleF(onesRect.X + digitWidth + 4, onesRect.Y, digitWidth, digitHeight);
 
-            g.DrawString(hundredsDigit, digitsFont, Brushes.White, hundredsRect, distanceDigitStringFormat);
-            g.DrawString(tensDigit, digitsFont, Brushes.White, tensRect, distanceDigitStringFormat);
-            g.DrawString(onesDigit, digitsFont, Brushes.White, onesRect, distanceDigitStringFormat);
+            g.DrawStringFast(hundredsDigit, digitsFont, Brushes.White, hundredsRect, distanceDigitStringFormat);
+            g.DrawStringFast(tensDigit, digitsFont, Brushes.White, tensRect, distanceDigitStringFormat);
+            g.DrawStringFast(onesDigit, digitsFont, Brushes.White, onesRect, distanceDigitStringFormat);
 
             g.FillRectangle(Brushes.White, tenthsRect);
-            g.DrawString(tenthsDigit, digitsFont, Brushes.Black, tenthsRect, distanceDigitStringFormat);
+            g.DrawStringFast(tenthsDigit, digitsFont, Brushes.Black, tenthsRect, distanceDigitStringFormat);
 
             if (instrumentState.DmeInvalidFlag)
             {
@@ -68,7 +69,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             }
 
             var nmRect = new RectangleF(hundredsRect.X, 45, 30, 20);
-            g.DrawString("NM", nmFont, Brushes.White, nmRect, nmStringFormat);
+            g.DrawStringFast("NM", nmFont, Brushes.White, nmRect, nmStringFormat);
 
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);
         }

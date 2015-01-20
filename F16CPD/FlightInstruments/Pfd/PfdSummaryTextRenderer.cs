@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -84,7 +85,7 @@ namespace F16CPD.FlightInstruments.Pfd
                 alowFormat);
             path.AddString(alow, alowFont.FontFamily, (int) alowFont.Style, alowFont.SizeInPoints, alowRectangle,
                 alowFormat);
-            g.DrawRectangle(whitePen, aglOutlineRectangle);
+            g.DrawRectangleFast(whitePen, aglOutlineRectangle);
 
             path.AddString(mach, machFont.FontFamily, (int) machFont.Style, machFont.SizeInPoints, machRectangle,
                 machFormat);
@@ -92,8 +93,8 @@ namespace F16CPD.FlightInstruments.Pfd
                 groundSpeedFont.SizeInPoints, groundSpeedRectangle, groundSpeedFormat);
             blackPen.Width = 1;
             whitePen.Width = 1;
-            g.DrawPath(blackPen, path);
-            g.FillPath(Brushes.White, path);
+            g.DrawPathFast(blackPen, path);
+            g.FillPathFast(Brushes.White, path);
         }
     }
 }

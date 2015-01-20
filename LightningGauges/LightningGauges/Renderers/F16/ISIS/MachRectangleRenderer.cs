@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -11,7 +12,7 @@ namespace LightningGauges.Renderers.F16.ISIS
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
             var machRectangle = new RectangleF(0, 12, 57, topRectangle.Height - 12);
             var machRectanglePen = new Pen(Color.White) {Width = 1};
-            gfx.DrawRectangle(machRectanglePen, (int) machRectangle.X, (int) machRectangle.Y,
+            gfx.DrawRectangleFast(machRectanglePen, (int)machRectangle.X, (int)machRectangle.Y,
                 (int) machRectangle.Width, (int) machRectangle.Height);
 
             var machNumberStringFormat = new StringFormat
@@ -29,7 +30,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 machRectangle.Height);
             machNumberRectangle.Offset(0, -7.5f);
             gfx.ScaleTransform(1, 1.50f);
-            gfx.DrawString(machNumberString, new Font(fonts.Families[0], 15, FontStyle.Regular, GraphicsUnit.Point),
+            gfx.DrawStringFast(machNumberString, new Font(fonts.Families[0], 15, FontStyle.Regular, GraphicsUnit.Point),
                 Brushes.White, machNumberRectangle, machNumberStringFormat);
             gfx.Transform = normalTransform;
 
@@ -42,7 +43,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 Trimming = StringTrimming.None
             };
             machRectangle.Offset(3, -1);
-            gfx.DrawString("M", new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point),
+            gfx.DrawStringFast("M", new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point),
                 Brushes.White, machRectangle, machLetterStringFormat);
 
 

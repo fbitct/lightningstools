@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using Common.Imaging;
 using Common.UI.Layout;
 
 namespace F16CPD.FlightInstruments.Pfd
@@ -66,7 +67,7 @@ namespace F16CPD.FlightInstruments.Pfd
                 g.FillRectangle(positiveBrush, positiveRegionBoundingRectangle);
 
                 //draw black line between negative and positive portion of tape
-                g.DrawLine(blackPen, negativeRegionBoundingRectangle.Left, negativeRegionBoundingRectangle.Top,
+                g.DrawLineFast(blackPen, negativeRegionBoundingRectangle.Left, negativeRegionBoundingRectangle.Top,
                     negativeRegionBoundingRectangle.Right, negativeRegionBoundingRectangle.Top);
                 if (scaleMaxVal >= 0)
                 {
@@ -81,7 +82,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             if (ticsAlignment == HAlignment.Right)
                             {
                                 //draw tick on the right hand side
-                                g.DrawLine(positiveForegroundPen,
+                                g.DrawLineFast(positiveForegroundPen,
                                     positiveRegionBoundingRectangle.Right - minorUnitLineLengthInPixels,
                                     positiveRegionBoundingRectangle.Bottom -
                                     (((i - positiveScaleMin)/minorUnitInterval)*
@@ -94,7 +95,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Left)
                             {
                                 //draw tic on the left hand side
-                                g.DrawLine(positiveForegroundPen,
+                                g.DrawLineFast(positiveForegroundPen,
                                     positiveRegionBoundingRectangle.Left,
                                     positiveRegionBoundingRectangle.Bottom -
                                     (((i - positiveScaleMin)/minorUnitInterval)*
@@ -107,7 +108,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Center)
                             {
                                 //draw tic in the center 
-                                g.DrawLine(positiveForegroundPen,
+                                g.DrawLineFast(positiveForegroundPen,
                                     positiveRegionBoundingRectangle.Left +
                                     ((positiveRegionBoundingRectangle.Width - minorUnitLineLengthInPixels)/2),
                                     positiveRegionBoundingRectangle.Bottom -
@@ -127,7 +128,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             if (ticsAlignment == HAlignment.Right)
                             {
                                 //draw tic on the right hand side
-                                g.DrawLine(positiveForegroundPen,
+                                g.DrawLineFast(positiveForegroundPen,
                                     positiveRegionBoundingRectangle.Right - majorUnitLineLengthInPixels,
                                     positiveRegionBoundingRectangle.Bottom -
                                     (((i - positiveScaleMin)/minorUnitInterval)*
@@ -140,7 +141,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Left)
                             {
                                 //draw tic on the left hand side
-                                g.DrawLine(positiveForegroundPen,
+                                g.DrawLineFast(positiveForegroundPen,
                                     positiveRegionBoundingRectangle.Left,
                                     positiveRegionBoundingRectangle.Bottom -
                                     (((i - positiveScaleMin)/minorUnitInterval)*
@@ -153,7 +154,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Center)
                             {
                                 //draw tic in the center
-                                g.DrawLine(positiveForegroundPen,
+                                g.DrawLineFast(positiveForegroundPen,
                                     positiveRegionBoundingRectangle.Left +
                                     ((positiveRegionBoundingRectangle.Width - majorUnitLineLengthInPixels)/2),
                                     positiveRegionBoundingRectangle.Bottom -
@@ -262,7 +263,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             }
                             majorUnitStringFormat.LineAlignment = StringAlignment.Center;
                             g.TranslateTransform(0, 2);
-                            g.DrawString(majorUnitString, majorUnitFont, positiveForegroundBrush,
+                            g.DrawStringFast(majorUnitString, majorUnitFont, positiveForegroundBrush,
                                 majorUnitTextBoundingRectangle, majorUnitStringFormat);
                             g.Transform = origTransform;
                         } //end else
@@ -278,7 +279,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             if (ticsAlignment == HAlignment.Right)
                             {
                                 //draw minor unit tic mark on right hand side
-                                g.DrawLine(negativeForegroundPen,
+                                g.DrawLineFast(negativeForegroundPen,
                                     negativeRegionBoundingRectangle.Right - minorUnitLineLengthInPixels,
                                     negativeRegionBoundingRectangle.Top +
                                     ((Math.Abs(i)/minorUnitInterval)*verticalSeparationBetweenTicksInPixels),
@@ -290,7 +291,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Left)
                             {
                                 //draw minor unit tic mark on left hand side
-                                g.DrawLine(negativeForegroundPen,
+                                g.DrawLineFast(negativeForegroundPen,
                                     negativeRegionBoundingRectangle.Left,
                                     negativeRegionBoundingRectangle.Top +
                                     ((Math.Abs(i)/minorUnitInterval)*verticalSeparationBetweenTicksInPixels),
@@ -302,7 +303,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Center)
                             {
                                 //draw minor unit tic mark in center
-                                g.DrawLine(negativeForegroundPen,
+                                g.DrawLineFast(negativeForegroundPen,
                                     negativeRegionBoundingRectangle.Left +
                                     ((negativeRegionBoundingRectangle.Width - minorUnitLineLengthInPixels)/2),
                                     negativeRegionBoundingRectangle.Top +
@@ -320,7 +321,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             if (ticsAlignment == HAlignment.Right)
                             {
                                 //draw major unit tick mark on right hand side
-                                g.DrawLine(negativeForegroundPen,
+                                g.DrawLineFast(negativeForegroundPen,
                                     negativeRegionBoundingRectangle.Right - majorUnitLineLengthInPixels,
                                     negativeRegionBoundingRectangle.Top +
                                     ((Math.Abs(i)/minorUnitInterval)*verticalSeparationBetweenTicksInPixels),
@@ -331,7 +332,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Left)
                             {
                                 //draw major unit tick mark on left hand side
-                                g.DrawLine(negativeForegroundPen,
+                                g.DrawLineFast(negativeForegroundPen,
                                     negativeRegionBoundingRectangle.Left,
                                     negativeRegionBoundingRectangle.Top +
                                     ((Math.Abs(i)/minorUnitInterval)*verticalSeparationBetweenTicksInPixels),
@@ -342,7 +343,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             else if (ticsAlignment == HAlignment.Center)
                             {
                                 //draw major unit tick mark in center
-                                g.DrawLine(negativeForegroundPen,
+                                g.DrawLineFast(negativeForegroundPen,
                                     negativeRegionBoundingRectangle.Left +
                                     ((negativeRegionBoundingRectangle.Width - majorUnitLineLengthInPixels)/2),
                                     negativeRegionBoundingRectangle.Top +
@@ -457,7 +458,7 @@ namespace F16CPD.FlightInstruments.Pfd
                                 majorUnitStringFormat.LineAlignment = StringAlignment.Center;
 
                                 g.TranslateTransform(0, 2);
-                                g.DrawString(majorUnitString, majorUnitFont, negativeForegroundBrush,
+                                g.DrawStringFast(majorUnitString, majorUnitFont, negativeForegroundBrush,
                                     majorUnitTextBoundingRectangle, majorUnitStringFormat);
                                 g.ResetTransform();
                                 //*****

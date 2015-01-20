@@ -226,7 +226,7 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero;
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_digits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -236,7 +236,7 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero;
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_digits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -246,7 +246,7 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_digits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -256,7 +256,7 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_digits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -266,13 +266,13 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_digits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_digits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage,
+                destinationGraphics.DrawImageFast(_background.MaskedImage,
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             GraphicsUnit.Pixel);
@@ -287,11 +287,11 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(-_background.MaskedImage.Width/2.0f, -_background.MaskedImage.Height/2.0f);
                 if (Options.NeedleType == FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel)
                 {
-                    destinationGraphics.DrawImage(_aftLeftArrowCModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_aftLeftArrowCModel.MaskedImage, new Point(0, 0));
                 }
                 else if (Options.NeedleType == FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel)
                 {
-                    destinationGraphics.DrawImage(_aftLeftArrowDModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_aftLeftArrowDModel.MaskedImage, new Point(0, 0));
                 }
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
@@ -303,11 +303,11 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(-_background.MaskedImage.Width/2.0f, -_background.MaskedImage.Height/2.0f);
                 if (Options.NeedleType == FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.CModel)
                 {
-                    destinationGraphics.DrawImage(_foreRightArrowCModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_foreRightArrowCModel.MaskedImage, new Point(0, 0));
                 }
                 else if (Options.NeedleType == FuelQuantityIndicatorOptions.F16FuelQuantityNeedleType.DModel)
                 {
-                    destinationGraphics.DrawImage(_foreRightArrowDModel.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_foreRightArrowDModel.MaskedImage, new Point(0, 0));
                 }
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 

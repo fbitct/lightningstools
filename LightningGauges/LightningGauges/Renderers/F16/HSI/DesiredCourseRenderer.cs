@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -19,11 +20,11 @@ namespace LightningGauges.Renderers.F16.HSI
             var currentX = 182;
             var y = 45;
             const int spacingPixels = -5;
-            destinationGraphics.DrawImage(desiredCourseHundredsImage, new Point(currentX, y));
+            destinationGraphics.DrawImageFast(desiredCourseHundredsImage, new Point(currentX, y));
             currentX += desiredCourseHundredsImage.Width + spacingPixels;
-            destinationGraphics.DrawImage(desiredCourseTensImage, new Point(currentX, y));
+            destinationGraphics.DrawImageFast(desiredCourseTensImage, new Point(currentX, y));
             currentX += desiredCourseTensImage.Width + spacingPixels;
-            destinationGraphics.DrawImage(desiredCourseOnesImage, new Point(currentX, y));
+            destinationGraphics.DrawImageFast(desiredCourseOnesImage, new Point(currentX, y));
 
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }

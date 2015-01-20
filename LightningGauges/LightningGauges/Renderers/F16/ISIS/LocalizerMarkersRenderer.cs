@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -21,40 +22,40 @@ namespace LightningGauges.Renderers.F16.ISIS
                     farLeftLocalizerMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new RectangleF(farLeftLocalizerMarkerCenterPoint.X - 5,
                     farLeftLocalizerMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddEllipse(new RectangleF(leftMiddleLocalizerMarkerCenterPoint.X - 3,
                     farLeftLocalizerMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new RectangleF(leftMiddleLocalizerMarkerCenterPoint.X - 5,
                     farLeftLocalizerMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddRectangle(
                     new RectangleF(
                         new PointF(middleLocalizerMarkerCenterPoint.X - 1, middleLocalizerMarkerCenterPoint.Y - 6),
                         new SizeF(2, 12)));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddEllipse(new RectangleF(rightMiddleLocalizerMarkerCenterPoint.X - 3,
                     farLeftLocalizerMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new RectangleF(rightMiddleLocalizerMarkerCenterPoint.X - 5,
                     farLeftLocalizerMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddEllipse(new RectangleF(farRightLocalizerMarkerCenterPoint.X - 3,
                     farLeftLocalizerMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new RectangleF(farRightLocalizerMarkerCenterPoint.X - 5,
                     farLeftLocalizerMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
             }
         }
     }

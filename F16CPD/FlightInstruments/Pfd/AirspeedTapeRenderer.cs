@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -35,7 +36,7 @@ namespace F16CPD.FlightInstruments.Pfd
 
             var airspeedBitmap = AirspeedTapeBitmapFactory.GetAirspeedTapeBitmap(airspeedKnots, airspeedStripBoundingBox.Width,
                 airspeedStripBoundingBox.Height, airspeedIndexKnots);
-            g.DrawImage(
+            g.DrawImageFast(
                 airspeedBitmap,
                 airspeedStripBoundingBox.Left,
                 airspeedStripBoundingBox.Top,
@@ -45,7 +46,7 @@ namespace F16CPD.FlightInstruments.Pfd
                     ), GraphicsUnit.Pixel
                 );
             //trace the outline of the airspeed tape with black
-            g.DrawRectangle(new Pen(Color.Black), airspeedStripBoundingBox);
+            g.DrawRectangleFast(new Pen(Color.Black), airspeedStripBoundingBox);
 
             //draw airspeed index box
             var airspeedIndexFormat = new StringFormat(StringFormatFlags.NoWrap)
@@ -56,17 +57,17 @@ namespace F16CPD.FlightInstruments.Pfd
             g.FillRectangle(Brushes.Black, airspeedIndexBox);
 
             //add airspeed index text to index box
-            g.DrawString(string.Format("{0:000}", airspeedIndexKnots), airspeedIndexFont, purpleBrush,
+            g.DrawStringFast(string.Format("{0:000}", airspeedIndexKnots), airspeedIndexFont, purpleBrush,
                 airspeedIndexTextBox, airspeedIndexFormat);
 
             //draw white line under airspeed index box
             var whitePen = new Pen(Color.White) {Width = 2};
-            g.DrawLine(whitePen, airspeedIndexBox.Left, airspeedIndexBox.Bottom, airspeedIndexBox.Right,
+            g.DrawLineFast(whitePen, airspeedIndexBox.Left, airspeedIndexBox.Bottom, airspeedIndexBox.Right,
                 airspeedIndexBox.Bottom);
 
             //draw white line at bottom of airspeed strip
             whitePen.Width = 2;
-            g.DrawLine(whitePen, airspeedStripBoundingBox.Left, airspeedStripBoundingBox.Bottom,
+            g.DrawLineFast(whitePen, airspeedStripBoundingBox.Left, airspeedStripBoundingBox.Bottom,
                 airspeedStripBoundingBox.Right, airspeedStripBoundingBox.Bottom);
 
             //draw airspeed counter box
@@ -110,9 +111,9 @@ namespace F16CPD.FlightInstruments.Pfd
             var onesDigitsRectangle = new Rectangle(new Point(32, 217), new Size(onesDigits.Width, onesDigits.Height));
 
             //draw airspeed counter digits
-            g.DrawImage(hundredsDigit, hundredsDigitRectangle);
-            g.DrawImage(tensDigit, tensDigitRectangle);
-            g.DrawImage(onesDigits, onesDigitsRectangle);
+            g.DrawImageFast(hundredsDigit, hundredsDigitRectangle);
+            g.DrawImageFast(tensDigit, tensDigitRectangle);
+            g.DrawImageFast(onesDigits, onesDigitsRectangle);
 
             var airspeedKtsRectangle = new Rectangle(new Point(15, 200), new Size(40, 15));
             var airspeedKtsFormat = new StringFormat(StringFormatFlags.NoWrap)
@@ -124,8 +125,8 @@ namespace F16CPD.FlightInstruments.Pfd
             var path = new GraphicsPath();
             path.AddString("KTS", airspeedKtsFont.FontFamily, (int) airspeedKtsFont.Style, airspeedKtsFont.SizeInPoints,
                 airspeedKtsRectangle, airspeedKtsFormat);
-            g.DrawPath(new Pen(Color.Black), path);
-            g.FillPath(Brushes.White, path);
+            g.DrawPathFast(new Pen(Color.Black), path);
+            g.FillPathFast(Brushes.White, path);
         }
     }
 }

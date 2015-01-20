@@ -1,6 +1,7 @@
 ﻿using System;
 using Common.SimSupport;
 using System.Drawing;
+using Common.Imaging;
 
 namespace MFDExtractor.Renderer
 {
@@ -25,7 +26,7 @@ namespace MFDExtractor.Renderer
 				{
 				    try
 				    {
-				        destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle,
+				        destinationGraphics.DrawImageFast(Options.BlankImage, destinationRectangle,
 				            new Rectangle(new Point(0, 0), Options.BlankImage.Size), GraphicsUnit.Pixel);
 				    }
                     catch { }
@@ -37,7 +38,7 @@ namespace MFDExtractor.Renderer
 				{
                     try
 				    {
-				        destinationGraphics.DrawImage(Options.TestAlignmentImage, destinationRectangle,
+				        destinationGraphics.DrawImageFast(Options.TestAlignmentImage, destinationRectangle,
 				            new Rectangle(new Point(0, 0), Options.TestAlignmentImage.Size), GraphicsUnit.Pixel);
 				    }
                     catch {}
@@ -49,7 +50,7 @@ namespace MFDExtractor.Renderer
 			    {
 			        try
 			        {
-			            destinationGraphics.DrawImage(Options.BlankImage, destinationRectangle,
+			            destinationGraphics.DrawImageFast(Options.BlankImage, destinationRectangle,
 			                new Rectangle(new Point(0, 0), Options.BlankImage.Size), GraphicsUnit.Pixel);
 			        }
                     catch { }
@@ -71,7 +72,7 @@ namespace MFDExtractor.Renderer
 	            var mfdImage = InstrumentState.SourceImage;
                 if (mfdImage !=null  && mfdImage.PixelFormat != System.Drawing.Imaging.PixelFormat.Undefined)
                 {
-	                destinationGraphics.DrawImage(mfdImage, destinationRectangle, InstrumentState.SourceRectangle,
+	                destinationGraphics.DrawImageFast(mfdImage, destinationRectangle, InstrumentState.SourceRectangle,
 	                    GraphicsUnit.Pixel);
 	            }
 	        }

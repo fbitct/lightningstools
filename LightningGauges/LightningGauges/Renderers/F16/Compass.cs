@@ -131,18 +131,18 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(translateX, translateY);
                 destinationGraphics.TranslateTransform(offset, 0);
                 destinationGraphics.ScaleTransform(0.80f, 0.80f);
-                destinationGraphics.DrawImage(_tape, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_tape, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the needle 
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_needle.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_needle.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage,
+                destinationGraphics.DrawImageFast(_background.MaskedImage,
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             GraphicsUnit.Pixel);

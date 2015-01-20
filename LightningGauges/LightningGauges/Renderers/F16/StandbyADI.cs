@@ -195,12 +195,12 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(translateX, translateY);
                 destinationGraphics.RotateTransform(-roll);
                 destinationGraphics.TranslateTransform(-translateX, -translateY);
-                destinationGraphics.DrawImage(_ball, destRect, sourceRect, GraphicsUnit.Pixel);
+                destinationGraphics.DrawImageFast(_ball, destRect, sourceRect, GraphicsUnit.Pixel);
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the arrows
@@ -209,20 +209,20 @@ namespace LightningGauges.Renderers.F16
                 destinationGraphics.TranslateTransform(translateX, translateY);
                 destinationGraphics.RotateTransform(-roll);
                 destinationGraphics.TranslateTransform(-translateX, -translateY);
-                destinationGraphics.DrawImage(_arrows.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_arrows.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the airplane symbol
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 destinationGraphics.TranslateTransform(0, 3);
-                destinationGraphics.DrawImage(_airplaneSymbol.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_airplaneSymbol.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw the off flag
                 if (InstrumentState.OffFlag)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_offFlag.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_offFlag.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 

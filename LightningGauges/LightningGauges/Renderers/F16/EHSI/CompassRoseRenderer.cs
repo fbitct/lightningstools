@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -52,12 +53,12 @@ namespace LightningGauges.Renderers.F16.EHSI
                 //draw 45-degree outer ticks
                 if (i%90 == 0)
                 {
-                    g.DrawLine(linePen, new PointF(innerBounds.Width/2.0f, -separationPixels),
+                    g.DrawLineFast(linePen, new PointF(innerBounds.Width/2.0f, -separationPixels),
                         new PointF(innerBounds.Width/2.0f, -((minorHeadingLineLength*1.5f) + separationPixels)));
                 }
                 else
                 {
-                    g.DrawLine(linePen, new PointF(innerBounds.Width/2.0f, -separationPixels),
+                    g.DrawLineFast(linePen, new PointF(innerBounds.Width/2.0f, -separationPixels),
                         new PointF(innerBounds.Width/2.0f, -((majorHeadingLineLength) + separationPixels)));
                 }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -78,12 +79,12 @@ namespace LightningGauges.Renderers.F16.EHSI
                 g.TranslateTransform(-innerBounds.Width/2.0f, -innerBounds.Height/2.0f);
                 if (i%10 == 0)
                 {
-                    g.DrawLine(linePen, new PointF(innerBounds.Width/2.0f, 0),
+                    g.DrawLineFast(linePen, new PointF(innerBounds.Width/2.0f, 0),
                         new PointF(innerBounds.Width/2.0f, majorHeadingLineLength));
                 }
                 else if (i%5 == 0)
                 {
-                    g.DrawLine(linePen, new PointF(innerBounds.Width/2.0f, 0),
+                    g.DrawLineFast(linePen, new PointF(innerBounds.Width/2.0f, 0),
                         new PointF(innerBounds.Width/2.0f, minorHeadingLineLength));
                 }
                 if (i%30 == 0)
@@ -111,7 +112,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                             (majorHeadingLegendLayoutRectangleHeight/2.0f),
                             majorHeadingLegendLayoutRectangleWidth, majorHeadingLegendLayoutRectangleHeight);
                     majorHeadingLegendLayoutRectangle.Offset(0, 18);
-                    g.DrawString(majorHeadingLegendText, majorHeadingDigitFont, majorHeadingBrush,
+                    g.DrawStringFast(majorHeadingLegendText, majorHeadingDigitFont, majorHeadingBrush,
                         majorHeadingLegendLayoutRectangle, majorHeadingDigitStringFormat);
                 }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);

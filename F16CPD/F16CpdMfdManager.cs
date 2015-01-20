@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
+using Common.Imaging;
 using Common.PDF;
 using F16CPD.FlightInstruments;
 using F16CPD.FlightInstruments.Pfd;
@@ -971,7 +972,7 @@ namespace F16CPD
                 var topY = (((Constants.I_NATIVE_RES_HEIGHT - ((int) textSize.Height))/2));
                 var target = new Rectangle(leftX, topY, (int) textSize.Width, (int) textSize.Height);
                 path.AddString(toDisplay, f.FontFamily, (int) f.Style, f.SizeInPoints, target, sf);
-                g.FillPath(greenBrush, path);
+                g.FillPathFast(greenBrush, path);
                 return;
             }
 
@@ -1019,7 +1020,7 @@ namespace F16CPD
                         {
                             if (_lastMapFromServer != null)
                             {
-                                g.DrawImage(_lastMapFromServer, new Point(0, 0));
+                                g.DrawImageFast(_lastMapFromServer, new Point(0, 0));
                             }
                         }
                         //invoke an async operation that will retrieve any pending map image available at the server
@@ -1118,13 +1119,13 @@ namespace F16CPD
                         using (var copy = (Bitmap) Common.Imaging.Util.CopyBitmap(_lastRenderedChecklistPdfPage))
                         using (var reverseVideo = (Bitmap) Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
-                            target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
+                            target.DrawImageFast(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
                                 GraphicsUnit.Pixel);
                         }
                     }
                     else
                     {
-                        target.DrawImage(_lastRenderedChecklistPdfPage, targetRect, 0, 0,
+                        target.DrawImageFast(_lastRenderedChecklistPdfPage, targetRect, 0, 0,
                             _lastRenderedChecklistPdfPage.Width, _lastRenderedChecklistPdfPage.Height,
                             GraphicsUnit.Pixel);
                     }
@@ -1163,13 +1164,13 @@ namespace F16CPD
                         using (var copy = (Bitmap) Common.Imaging.Util.CopyBitmap(_lastRenderedChartPdfPage))
                         using (var reverseVideo = (Bitmap) Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
-                            target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
+                            target.DrawImageFast(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
                                 GraphicsUnit.Pixel);
                         }
                     }
                     else
                     {
-                        target.DrawImage(_lastRenderedChartPdfPage, targetRect, 0, 0, _lastRenderedChartPdfPage.Width,
+                        target.DrawImageFast(_lastRenderedChartPdfPage, targetRect, 0, 0, _lastRenderedChartPdfPage.Width,
                             _lastRenderedChartPdfPage.Height, GraphicsUnit.Pixel);
                     }
                 }
@@ -1269,7 +1270,7 @@ namespace F16CPD
             var latLongString = latString + "  " + longString;
             var latLongFont = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
 
-            g.DrawString(latLongString, latLongFont, greenBrush, latLongRect);
+            g.DrawStringFast(latLongString, latLongFont, greenBrush, latLongRect);
         }
 
         private static void InformClientOfCpdInputControlChangedEvent(CpdInputControls control)

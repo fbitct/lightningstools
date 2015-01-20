@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -16,7 +17,7 @@ namespace F16CPD.FlightInstruments.Pfd
             //draw pitch ladder
             if (!adiOffFlag)
             {
-                g.DrawImage(adiPitchLadder, adiBarsXpos, adiBarsYpos);
+                g.DrawImageFast(adiPitchLadder, adiBarsXpos, adiBarsYpos);
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -17,17 +18,17 @@ namespace LightningGauges.Renderers.F16.EHSI
             //draw wings
             var wingLeft = new PointF(middle.X - (airplaneWingWidth/2.0f), middle.Y - (gap/2.0f));
             var wingRight = new PointF(middle.X + (airplaneWingWidth/2.0f), middle.Y - (gap/2.0f));
-            g.DrawLine(symbolPen, wingLeft, wingRight);
+            g.DrawLineFast(symbolPen, wingLeft, wingRight);
 
             //draw tail
             var tailLeft = new PointF(middle.X - (airplaneTailWidth/2.0f), middle.Y + (gap/2.0f));
             var tailRight = new PointF(middle.X + (airplaneTailWidth/2.0f), middle.Y + (gap/2.0f));
-            g.DrawLine(symbolPen, tailLeft, tailRight);
+            g.DrawLineFast(symbolPen, tailLeft, tailRight);
 
             //draw fuselage
             var fuselageTop = new PointF(middle.X, middle.Y - (airplaneFuselageLength/2.0f));
             var fuselageBottom = new PointF(middle.X, middle.Y + (airplaneFuselageLength/2.0f));
-            g.DrawLine(symbolPen, fuselageTop, fuselageBottom);
+            g.DrawLineFast(symbolPen, fuselageTop, fuselageBottom);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using Common.Imaging;
 
 namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
@@ -35,18 +36,18 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                                                   (int) (Math.Floor(outerMapRingBoundingRect.Width/(float) 2));
             var outerMapRingBoundingRectMiddleY = outerMapRingBoundingRect.Y +
                                                   (int) (Math.Floor(outerMapRingBoundingRect.Height/(float) 2));
-            g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top),
+            g.DrawLineFast(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top),
                 new Point(outerMapRingBoundingRectMiddleX,
                     outerMapRingBoundingRect.Top + mapRingLineWidths));
-            g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY),
+            g.DrawLineFast(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY),
                 new Point(outerMapRingBoundingRect.X + mapRingLineWidths, outerMapRingBoundingRectMiddleY));
-            g.DrawLine(mapRingPen,
+            g.DrawLineFast(mapRingPen,
                 new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width,
                     outerMapRingBoundingRectMiddleY),
                 new Point(
                     outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineWidths,
                     outerMapRingBoundingRectMiddleY));
-            g.DrawLine(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom),
+            g.DrawLineFast(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom),
                 new Point(outerMapRingBoundingRectMiddleX,
                     outerMapRingBoundingRect.Bottom - mapRingLineWidths));
 

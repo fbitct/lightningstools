@@ -91,7 +91,7 @@ namespace Common.Imaging
                 converted = new Bitmap(img.Width, img.Height, format);
                 using (graphics = Graphics.FromImage(converted))
                 {
-                    graphics.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height), 0, 0, converted.Width,
+                    graphics.DrawImageFast(img, new Rectangle(0, 0, img.Width, img.Height), 0, 0, converted.Width,
                                        converted.Height, GraphicsUnit.Pixel, new ImageAttributes());
                 }
                 Interlocked.Exchange(ref img, converted);
@@ -207,7 +207,7 @@ namespace Common.Imaging
             //move Bitmap back
             g.TranslateTransform(-(float) image.Width/2, -(float) image.Height/2);
             //draw passed in Bitmap onto graphics object
-            g.DrawImage(image, new Point(0, 0));
+            g.DrawImageFast(image, new Point(0, 0));
             return returnBitmap;
         }
 
@@ -234,7 +234,7 @@ namespace Common.Imaging
             var bitmap = new Bitmap(destWidth, destHeight, imgToResize.PixelFormat);
             var g = Graphics.FromImage(bitmap);
 
-            g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
+            g.DrawImageFast(imgToResize, 0, 0, destWidth, destHeight);
             g.Dispose();
 
             return bitmap;
@@ -280,7 +280,7 @@ namespace Common.Imaging
 
             using (var g = Graphics.FromImage(toReturn))
             {
-                g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
+                g.DrawImageFast(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
                             toProcess.Height, GraphicsUnit.Pixel, ia);
             }
             return toReturn;
@@ -302,7 +302,7 @@ namespace Common.Imaging
             ia.SetColorMatrix(cm);
             using (var g = Graphics.FromImage(toReturn))
             {
-                g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
+                g.DrawImageFast(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
                             toProcess.Height, GraphicsUnit.Pixel, ia);
             }
             return toReturn;
@@ -318,7 +318,7 @@ namespace Common.Imaging
             ia.SetColorMatrix(cm);
             using (var g = Graphics.FromImage(toReturn))
             {
-                g.DrawImage(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
+                g.DrawImageFast(toProcess, new Rectangle(0, 0, toProcess.Width, toProcess.Height), 0, 0, toProcess.Width,
                             toProcess.Height, GraphicsUnit.Pixel, ia);
             }
             return toReturn;
@@ -421,7 +421,7 @@ namespace Common.Imaging
             var toReturn = new Bitmap(cropRectangle.Width, cropRectangle.Height, bitmap.PixelFormat);
             using (var g = Graphics.FromImage(toReturn))
             {
-                g.DrawImage(bitmap, new Rectangle(0, 0, cropRectangle.Width, cropRectangle.Height), cropRectangle,
+                g.DrawImageFast(bitmap, new Rectangle(0, 0, cropRectangle.Width, cropRectangle.Height), cropRectangle,
                             GraphicsUnit.Pixel);
             }
             return toReturn;

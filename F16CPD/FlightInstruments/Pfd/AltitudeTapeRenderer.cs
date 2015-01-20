@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -54,7 +55,7 @@ namespace F16CPD.FlightInstruments.Pfd
             var altitudeTapeBitmap = AltitudeTapeBitmapFactory.GetAltitudeTapeBitmap(indicatedAltitude, altitudeStripBoundingBox.Width - 1,
                 altitudeStripBoundingBox.Height, altitudeIndexInFeet);
 
-            g.DrawImage(
+            g.DrawImageFast(
                 altitudeTapeBitmap,
                 altitudeStripBoundingBox.Left + 1,
                 altitudeStripBoundingBox.Top + 1,
@@ -64,7 +65,7 @@ namespace F16CPD.FlightInstruments.Pfd
                     ), GraphicsUnit.Pixel
                 );
             //trace the outline of the altitude tape with black
-            g.DrawRectangle(blackPen, altitudeStripBoundingBox);
+            g.DrawRectangleFast(blackPen, altitudeStripBoundingBox);
 
             //draw altitude index box
             var altitudeIndexFormat = new StringFormat(StringFormatFlags.NoWrap)
@@ -77,16 +78,16 @@ namespace F16CPD.FlightInstruments.Pfd
             //add altitude index text to altitude index box
             var altitudeIndex = string.Format("{0:00000}", altitudeIndexInFeet);
             if (altitudeIndex[0] == '-') altitudeIndex = altitudeIndex.Substring(1, altitudeIndex.Length - 1);
-            g.DrawString(altitudeIndex, altitudeIndexFont, purpleBrush, altitudeIndexTextBox, altitudeIndexFormat);
+            g.DrawStringFast(altitudeIndex, altitudeIndexFont, purpleBrush, altitudeIndexTextBox, altitudeIndexFormat);
 
             //draw white line under altitude index box
             whitePen.Width = 2;
-            g.DrawLine(whitePen, altitudeIndexBox.Left, altitudeIndexBox.Bottom, altitudeIndexBox.Right,
+            g.DrawLineFast(whitePen, altitudeIndexBox.Left, altitudeIndexBox.Bottom, altitudeIndexBox.Right,
                 altitudeIndexBox.Bottom);
 
             //draw white line at bottom of altitude strip
             whitePen.Width = 2;
-            g.DrawLine(whitePen, altitudeStripBoundingBox.Left, altitudeStripBoundingBox.Bottom,
+            g.DrawLineFast(whitePen, altitudeStripBoundingBox.Left, altitudeStripBoundingBox.Bottom,
                 altitudeStripBoundingBox.Right, altitudeStripBoundingBox.Bottom);
 
             //draw barometric pressure box
@@ -99,7 +100,7 @@ namespace F16CPD.FlightInstruments.Pfd
 
             var barometricPressure = barometricPressureInDecimalInchesOfMercury;
             //add barometric pressure text to barometric pressure box
-            g.DrawString(string.Format("{0:00.00IN}", barometricPressure), barometricPressureFont, greenBrush,
+            g.DrawStringFast(string.Format("{0:00.00IN}", barometricPressure), barometricPressureFont, greenBrush,
                 barometricPressureBox, baroPressureFormat);
 
             //draw altitude counter
@@ -144,11 +145,11 @@ namespace F16CPD.FlightInstruments.Pfd
             var onesDigitRectangle = new Rectangle(new Point(592, 230),
                 new Size(onesDigitBitmap.Width, onesDigitBitmap.Height));
 
-            g.DrawImage(tenThousandsDigitBitmap, tenThousandsDigitRectangle);
-            g.DrawImage(thousandsDigitBitmap, thousandsDigitRectangle);
-            g.DrawImage(hundredsDigitBitmap, hundredsDigitRectangle);
-            g.DrawImage(tensDigitsBitmap, tensDigitsRectangle);
-            g.DrawImage(onesDigitBitmap, onesDigitRectangle);
+            g.DrawImageFast(tenThousandsDigitBitmap, tenThousandsDigitRectangle);
+            g.DrawImageFast(thousandsDigitBitmap, thousandsDigitRectangle);
+            g.DrawImageFast(hundredsDigitBitmap, hundredsDigitRectangle);
+            g.DrawImageFast(tensDigitsBitmap, tensDigitsRectangle);
+            g.DrawImageFast(onesDigitBitmap, onesDigitRectangle);
 
             var altitudeFeetTextRectangle = new Rectangle(new Point(540, 210), new Size(45, 10));
             var altitudeFeetTextFormat = new StringFormat(StringFormatFlags.NoWrap)
@@ -160,8 +161,8 @@ namespace F16CPD.FlightInstruments.Pfd
             var path = new GraphicsPath();
             path.AddString("FEET", altitudeFeetTextFont.FontFamily, (int) altitudeFeetTextFont.Style,
                 altitudeFeetTextFont.SizeInPoints, altitudeFeetTextRectangle, altitudeFeetTextFormat);
-            g.DrawPath(blackPen, path);
-            g.FillPath(Brushes.White, path);
+            g.DrawPathFast(blackPen, path);
+            g.FillPathFast(Brushes.White, path);
         }
     }
 }

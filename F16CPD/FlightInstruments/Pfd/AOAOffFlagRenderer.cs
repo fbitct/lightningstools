@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -29,8 +30,8 @@ namespace F16CPD.FlightInstruments.Pfd
                     aoaOffFlagTextBrush = Brushes.White;
                 }
                 g.FillRectangle(aoaOffFlagBrush, aoaOffFlagTextLayoutRectangle);
-                g.DrawRectangle(Pens.Black, aoaOffFlagTextLayoutRectangle);
-                g.FillPath(aoaOffFlagTextBrush, path);
+                g.DrawRectangleFast(Pens.Black, aoaOffFlagTextLayoutRectangle);
+                g.FillPathFast(aoaOffFlagTextBrush, path);
             }
         }
     }

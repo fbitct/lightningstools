@@ -126,25 +126,25 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 if (InstrumentState.AoaAbove)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_aoaHigh.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_aoaHigh.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 if (InstrumentState.AoaBelow)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_aoaLow.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_aoaLow.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
                 if (InstrumentState.AoaOn)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_aoaOn.MaskedImage, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_aoaOn.MaskedImage, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 

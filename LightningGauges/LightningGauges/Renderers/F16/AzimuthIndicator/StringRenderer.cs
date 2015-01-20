@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -12,7 +13,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
         {
             FontPath.Reset();
             FontPath.AddString(s, font.FontFamily, (int) font.Style, font.SizeInPoints, layoutRectangle, format);
-            g.FillPath(brush, FontPath);
+            g.FillPathFast(brush, FontPath);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -13,7 +14,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             var endPoint = new PointF(center.X, outerRingTop);
             if ((blip.MissileActivity > 0 || blip.MissileLaunch > 0))
             {
-                gfx.DrawLine(launchLinePen, center.X, innerRingTop, endPoint.X, endPoint.Y);
+                gfx.DrawLineFast(launchLinePen, center.X, innerRingTop, endPoint.X, endPoint.Y);
             }
 
             if ((blip.MissileActivity <= 0 && blip.MissileLaunch <= 0)) return;
@@ -32,7 +33,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             gfx.RotateTransform(-angle);
             gfx.TranslateTransform(-missileWarningTextLocation.X, -missileWarningTextLocation.Y);
 
-            gfx.DrawString
+            gfx.DrawStringFast
                 (
                     angleString, missileWarningFont,
                     missileWarningBrush,

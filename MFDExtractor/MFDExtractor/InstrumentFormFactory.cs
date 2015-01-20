@@ -1,9 +1,10 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using Common.SimSupport;
-using Common.UI.Screen;
+using Common.Imaging;
 using MFDExtractor.Configuration;
 using MFDExtractor.UI;
+using Util = Common.UI.Screen.Util;
 
 namespace MFDExtractor
 {
@@ -62,7 +63,7 @@ namespace MFDExtractor
             if (initialImage == null) return instrumentForm;
             using (var graphics = instrumentForm.CreateGraphics())
             {
-                graphics.DrawImage(initialImage, instrumentForm.ClientRectangle);
+                graphics.DrawImageFast(initialImage, instrumentForm.ClientRectangle);
             }
             return instrumentForm;
         }

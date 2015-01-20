@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using Common.Imaging;
 using F16CPD.Properties;
 
 namespace F16CPD.FlightInstruments.Pfd
@@ -98,8 +99,8 @@ namespace F16CPD.FlightInstruments.Pfd
                 !flightData.AdiOffFlag)
             {
                 //draw localizer command bar
-                g.DrawLine(localizerBarPen, ilsBarTop, ilsBarBottom);
-                g.DrawImage(_markerDiamond, currentIlsBarX - (_markerDiamond.Width/2),
+                g.DrawLineFast(localizerBarPen, ilsBarTop, ilsBarBottom);
+                g.DrawImageFast(_markerDiamond, currentIlsBarX - (_markerDiamond.Width / 2),
                     farLeftLocalizerMarkerCenterPoint.Y - (_markerDiamond.Width/2));
             }
 
@@ -130,8 +131,8 @@ namespace F16CPD.FlightInstruments.Pfd
             if (flightData.AdiEnableCommandBars && !flightData.AdiGlideslopeInvalidFlag &&
                 !flightData.AdiOffFlag)
             {
-                g.DrawLine(glideslopeBarPen, ilsBarLeft, ilsBarRight);
-                g.DrawImage(_markerDiamond, topGlideSlopeMarkerCenterPoint.X - (_markerDiamond.Width/2),
+                g.DrawLineFast(glideslopeBarPen, ilsBarLeft, ilsBarRight);
+                g.DrawImageFast(_markerDiamond, topGlideSlopeMarkerCenterPoint.X - (_markerDiamond.Width / 2),
                     currentIlsBarY - (_markerDiamond.Width/2));
             }
 

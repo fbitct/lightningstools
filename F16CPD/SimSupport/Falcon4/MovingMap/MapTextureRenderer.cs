@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 using F4Utils.Terrain;
 
 namespace F16CPD.SimSupport.Falcon4.MovingMap
@@ -45,7 +46,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                     detailTextureWidthPixels + 2,
                     detailTextureWidthPixels + 2));
 
-            h.DrawImage(detailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
+            h.DrawImageFast(detailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
         }
     }
 }

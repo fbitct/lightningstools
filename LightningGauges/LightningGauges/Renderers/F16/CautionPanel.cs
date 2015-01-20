@@ -448,14 +448,14 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage, new Point(0, 0));
+                destinationGraphics.DrawImageFast(_background.MaskedImage, new Point(0, 0));
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 
                 //draw FLCS FAULT light
                 if (InstrumentState.FLCSFault)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_flcsFault, new Rectangle(127, 154, 57, 19), new Rectangle(35, 54, 57, 17),
+                    destinationGraphics.DrawImageFast(_flcsFault, new Rectangle(127, 154, 57, 19), new Rectangle(35, 54, 57, 17),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -464,7 +464,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.EngineFault)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_engineFault, new Rectangle(193, 154, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_engineFault, new Rectangle(193, 154, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -473,7 +473,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.AvionicsFault)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_avionicsFault, new Rectangle(262, 154, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_avionicsFault, new Rectangle(262, 154, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -482,7 +482,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.SeatNotArmed)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_seatNotArmed, new Rectangle(331, 154, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_seatNotArmed, new Rectangle(331, 154, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -491,7 +491,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.ElecSys)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_elecSys, new Rectangle(124, 180, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_elecSys, new Rectangle(124, 180, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -500,7 +500,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.SEC)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_sec, new Rectangle(193, 180, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    destinationGraphics.DrawImageFast(_sec, new Rectangle(193, 180, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -508,7 +508,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.EquipHot)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_equipHot, new Rectangle(262, 180, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_equipHot, new Rectangle(262, 180, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -517,7 +517,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.NWSFail)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_nwsFail, new Rectangle(331, 180, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_nwsFail, new Rectangle(331, 180, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -526,7 +526,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.ProbeHeat)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_probeHeat, new Rectangle(124, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_probeHeat, new Rectangle(124, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -535,7 +535,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.FuelOilHot)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_fuelOilHot, new Rectangle(193, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_fuelOilHot, new Rectangle(193, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -544,7 +544,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.RadarAlt)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_radarAlt, new Rectangle(262, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_radarAlt, new Rectangle(262, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -553,7 +553,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.AntiSkid)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_antiSkid, new Rectangle(331, 206, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_antiSkid, new Rectangle(331, 206, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -562,7 +562,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.CADC)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_CADC, new Rectangle(124, 232, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_CADC, new Rectangle(124, 232, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -571,7 +571,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.InletIcing)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_inletIcing, new Rectangle(193, 232, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_inletIcing, new Rectangle(193, 232, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -580,7 +580,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.IFF)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_iff, new Rectangle(262, 232, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    destinationGraphics.DrawImageFast(_iff, new Rectangle(262, 232, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -588,7 +588,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Hook)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_hook, new Rectangle(331, 232, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_hook, new Rectangle(331, 232, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -597,7 +597,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.StoresConfig)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_storesConfig, new Rectangle(124, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_storesConfig, new Rectangle(124, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -606,7 +606,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Overheat)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_overheat, new Rectangle(193, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_overheat, new Rectangle(193, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -615,7 +615,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Nuclear)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_nuclear, new Rectangle(262, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_nuclear, new Rectangle(262, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -624,7 +624,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.OxyLow)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_oxyLow, new Rectangle(331, 258, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_oxyLow, new Rectangle(331, 258, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -633,7 +633,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.ATFNotEngaged)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_atfNotEngaged, new Rectangle(124, 284, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_atfNotEngaged, new Rectangle(124, 284, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -642,7 +642,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.EEC)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_EEC, new Rectangle(193, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    destinationGraphics.DrawImageFast(_EEC, new Rectangle(193, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -650,7 +650,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.ECM)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_ECM, new Rectangle(262, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    destinationGraphics.DrawImageFast(_ECM, new Rectangle(262, 284, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -658,7 +658,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.CabinPress)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_cabinPress, new Rectangle(331, 284, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_cabinPress, new Rectangle(331, 284, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -667,7 +667,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.FwdFuelLow)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_fwdFuelLow, new Rectangle(124, 310, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_fwdFuelLow, new Rectangle(124, 310, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -676,7 +676,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.BUC)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_BUC, new Rectangle(193, 310, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
+                    destinationGraphics.DrawImageFast(_BUC, new Rectangle(193, 310, 61, 19), new Rectangle(33, 54, 61, 19), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -684,7 +684,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Slot27)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_slot27, new Rectangle(262, 310, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_slot27, new Rectangle(262, 310, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -693,7 +693,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Slot28)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_slot28, new Rectangle(331, 310, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_slot28, new Rectangle(331, 310, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -702,7 +702,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.AftFuelLow)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_aftFuelLow, new Rectangle(124, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_aftFuelLow, new Rectangle(124, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -711,7 +711,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Slot30)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_slot30, new Rectangle(193, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_slot30, new Rectangle(193, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -720,7 +720,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Slot31)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_slot31, new Rectangle(262, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_slot31, new Rectangle(262, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
@@ -729,7 +729,7 @@ namespace LightningGauges.Renderers.F16
                 if (InstrumentState.Slot32)
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_slot32, new Rectangle(331, 336, 61, 19), new Rectangle(33, 54, 61, 19),
+                    destinationGraphics.DrawImageFast(_slot32, new Rectangle(331, 336, 61, 19), new Rectangle(33, 54, 61, 19),
                                 GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }

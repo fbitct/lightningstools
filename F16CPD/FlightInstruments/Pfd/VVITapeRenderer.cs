@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
+using Common.Imaging;
 using F16CPD.Properties;
 
 namespace F16CPD.FlightInstruments.Pfd
@@ -40,7 +41,7 @@ namespace F16CPD.FlightInstruments.Pfd
             var verticalVelocityTapeBitmap = VerticalVelocityTapeBitmapFactory.GetVerticalVelocityTapeBitmap(vviBoundingBox.Width,
                 vviBoundingBox.Height);
 
-            g.DrawImage(
+            g.DrawImageFast(
                 verticalVelocityTapeBitmap,
                 vviBoundingBox.Left,
                 vviUpperBoundingBox.Top,
@@ -63,7 +64,7 @@ namespace F16CPD.FlightInstruments.Pfd
             path.Reset();
             path.AddPolygon(pointList.ToArray());
             whitePen.Width = 2;
-            g.DrawPath(whitePen, path);
+            g.DrawPathFast(whitePen, path);
             whitePen.Width = 1;
 
             if (!vviOffFlag)
@@ -80,9 +81,9 @@ namespace F16CPD.FlightInstruments.Pfd
                 path.Reset();
                 path.AddPolygon(pointList.ToArray());
                 g.TranslateTransform(3, 0 - (verticalVelocityKFpmNormalized*20) + 2);
-                g.FillPath(Brushes.Gray, path);
+                g.FillPathFast(Brushes.Gray, path);
                 blackPen.Width = 1;
-                g.DrawPath(blackPen, path);
+                g.DrawPathFast(blackPen, path);
 
                 //draw VVI quantity text
                 var vviQuantity = Settings.Default.DisplayVerticalVelocityInDecimalThousands
@@ -105,8 +106,8 @@ namespace F16CPD.FlightInstruments.Pfd
                     vviQuantityFormat);
                 var hint = g.TextRenderingHint;
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
                 g.TextRenderingHint = hint;
             }
 

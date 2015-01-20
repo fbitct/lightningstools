@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using Common.Imaging;
 using F4Utils.Terrain;
 using log4net;
 
@@ -105,7 +106,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 if (_lastRenderedMapImage != null)
                 {
                     //in the meantime go render the last drawn map
-                    g.DrawImage(_lastRenderedMapImage, renderRectangle,
+                    g.DrawImageFast(_lastRenderedMapImage, renderRectangle,
                         new Rectangle(new Point(0, 0), _lastRenderedMapImage.Size), GraphicsUnit.Pixel);
                 }
                 else
@@ -264,7 +265,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                             (cropWidth/2) - (int) ((originalRenderSizeInPixels.Height*scaleFactor)/2),
                             (int) (originalRenderSizeInPixels.Width*scaleFactor),
                             (int) (originalRenderSizeInPixels.Height*scaleFactor));
-                    g.DrawImage(
+                    g.DrawImageFast(
                         renderTarget,
                         renderRectangle,
                         clipRectangle,

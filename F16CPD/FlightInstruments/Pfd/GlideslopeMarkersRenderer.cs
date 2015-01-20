@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -21,16 +22,16 @@ namespace F16CPD.FlightInstruments.Pfd
                     6, 6));
                 path.AddEllipse(new Rectangle(topGlideSlopeMarkerCenterPoint.X - 5, topGlideSlopeMarkerCenterPoint.Y - 5,
                     10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddEllipse(new Rectangle(upperMiddleGlideSlopeMarkerCenterPoint.X - 3,
                     upperMiddleGlideSlopeMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new Rectangle(upperMiddleGlideSlopeMarkerCenterPoint.X - 5,
                     upperMiddleGlideSlopeMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddRectangle(
@@ -38,8 +39,8 @@ namespace F16CPD.FlightInstruments.Pfd
                         new Point(
                             middleGlideSlopeMarkerCenterPoint.X - 6,
                             middleGlideSlopeMarkerCenterPoint.Y - 1), new Size(12, 2)));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
 
                 path.Reset();
@@ -47,16 +48,16 @@ namespace F16CPD.FlightInstruments.Pfd
                     lowerMiddleGlideSlopeMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new Rectangle(lowerMiddleGlideSlopeMarkerCenterPoint.X - 5,
                     lowerMiddleGlideSlopeMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
 
                 path.Reset();
                 path.AddEllipse(new Rectangle(bottomGlideSlopeMarkerCenterPoint.X - 3,
                     bottomGlideSlopeMarkerCenterPoint.Y - 3, 6, 6));
                 path.AddEllipse(new Rectangle(bottomGlideSlopeMarkerCenterPoint.X - 5,
                     bottomGlideSlopeMarkerCenterPoint.Y - 5, 10, 10));
-                g.DrawPath(blackPen, path);
-                g.FillPath(Brushes.White, path);
+                g.DrawPathFast(blackPen, path);
+                g.FillPathFast(Brushes.White, path);
             }
         }
     }

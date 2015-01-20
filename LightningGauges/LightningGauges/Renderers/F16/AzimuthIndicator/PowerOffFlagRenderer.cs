@@ -1,4 +1,5 @@
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -16,9 +17,9 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             var legendColor = severeColor;
             var legendPen = new Pen(legendColor);
             new SolidBrush(legendColor);
-            gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top),
+            gfx.DrawLineFast(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Top),
                 new PointF(rwrRectangle.Right, rwrRectangle.Bottom));
-            gfx.DrawLine(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom),
+            gfx.DrawLineFast(legendPen, new PointF(rwrRectangle.Left, rwrRectangle.Bottom),
                 new PointF(rwrRectangle.Right, rwrRectangle.Top));
         }
     }

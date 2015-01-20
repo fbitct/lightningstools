@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -14,7 +15,7 @@ namespace LightningGauges.Renderers.F16.HSI
             destinationGraphics.RotateTransform(instrumentState.DesiredCourseDegrees);
             destinationGraphics.TranslateTransform(-centerX, -centerY);
             destinationGraphics.TranslateTransform(0.5f, -2.0f);
-            destinationGraphics.DrawImage(innerWheelMaskedImage, new Point(0, 0));
+            destinationGraphics.DrawImageFast(innerWheelMaskedImage, new Point(0, 0));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }
     }

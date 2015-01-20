@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -10,7 +11,7 @@ namespace LightningGauges.Renderers.F16.HSI
             //draw airplane symbol
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
             destinationGraphics.TranslateTransform(0, 5);
-            destinationGraphics.DrawImage(airplaneSymbolMaskedImage, new Point(0, 0));
+            destinationGraphics.DrawImageFast(airplaneSymbolMaskedImage, new Point(0, 0));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }
     }

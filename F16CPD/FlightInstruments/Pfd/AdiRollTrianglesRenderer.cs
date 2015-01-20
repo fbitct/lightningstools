@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -36,12 +37,12 @@ namespace F16CPD.FlightInstruments.Pfd
             var path = new GraphicsPath();
             path.AddPolygon(leftTriangleInside);
             path.AddPolygon(leftTriangleOutside);
-            g.FillPath(Brushes.White, path);
+            g.FillPathFast(Brushes.White, path);
             if (rollDegrees >= 44 && rollDegrees <= 46 && !off)
             {
                 g.FillPolygon(Brushes.White, leftTriangleInside);
             }
-            g.DrawPath(blackPen, path);
+            g.DrawPathFast(blackPen, path);
 
             var rightTriangleOutside = new[]
             {
@@ -58,13 +59,13 @@ namespace F16CPD.FlightInstruments.Pfd
             path.Reset();
             path.AddPolygon(rightTriangleInside);
             path.AddPolygon(rightTriangleOutside);
-            g.FillPath(Brushes.White, path);
+            g.FillPathFast(Brushes.White, path);
 
             if (rollDegrees <= -44 && rollDegrees >= -46 && !off)
             {
                 g.FillPolygon(Brushes.White, rightTriangleInside);
             }
-            g.DrawPath(blackPen, path);
+            g.DrawPathFast(blackPen, path);
 
             return zeroDegreeTriangle;
         }

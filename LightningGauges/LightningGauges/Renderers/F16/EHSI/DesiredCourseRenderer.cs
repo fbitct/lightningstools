@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -52,12 +53,12 @@ namespace LightningGauges.Renderers.F16.EHSI
             var onesRect = new RectangleF(tensRect.X + digitWidth + digitSeparationPixels, tensRect.Y, digitWidth,
                 digitHeight);
 
-            g.DrawString(hundredsDigit, digitsFont, Brushes.White, hundredsRect, desiredCourseDigitStringFormat);
-            g.DrawString(tensDigit, digitsFont, Brushes.White, tensRect, desiredCourseDigitStringFormat);
-            g.DrawString(onesDigit, digitsFont, Brushes.White, onesRect, desiredCourseDigitStringFormat);
+            g.DrawStringFast(hundredsDigit, digitsFont, Brushes.White, hundredsRect, desiredCourseDigitStringFormat);
+            g.DrawStringFast(tensDigit, digitsFont, Brushes.White, tensRect, desiredCourseDigitStringFormat);
+            g.DrawStringFast(onesDigit, digitsFont, Brushes.White, onesRect, desiredCourseDigitStringFormat);
 
             var crsRect = new RectangleF(hundredsRect.X, 45, (digitWidth + digitSeparationPixels)*3, 20);
-            g.DrawString("CRS", crsFont, Brushes.White, crsRect, crsStringFormat);
+            g.DrawStringFast("CRS", crsFont, Brushes.White, crsRect, crsStringFormat);
 
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);
         }

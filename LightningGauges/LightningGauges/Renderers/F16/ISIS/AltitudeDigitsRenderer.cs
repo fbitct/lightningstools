@@ -1,25 +1,36 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class AltitudeDigitsRenderer
     {
+        private static readonly Dictionary<StringAlignment,StringFormat> DigitStringFormats = new Dictionary<StringAlignment,StringFormat>();
+        private static readonly Brush DigitBrush = Brushes.White;
+        private static Font _digitFont;
+
         internal static void DrawAltitudeDigits(Graphics g, float digit, RectangleF layoutRectangle, RectangleF clipRectangle,
             float pointSize, bool goByTwenty, bool cyclical, StringAlignment alignment, PrivateFontCollection fonts)
         {
-            var digitFont = new Font(fonts.Families[0], pointSize, FontStyle.Regular, GraphicsUnit.Point);
-            var digitSF = new StringFormat
+            if (_digitFont == null)
             {
-                Alignment = alignment,
-                FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox,
-                LineAlignment = StringAlignment.Center,
-                Trimming = StringTrimming.None
-            };
+                _digitFont = new Font(fonts.Families[0], pointSize, FontStyle.Regular, GraphicsUnit.Point);
+            }
+            if (!DigitStringFormats.ContainsKey(alignment))
+            {
+                DigitStringFormats.Add(alignment, new StringFormat
+                {
+                    Alignment = alignment,
+                    FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip | StringFormatFlags.FitBlackBox,
+                    LineAlignment = StringAlignment.Center,
+                    Trimming = StringTrimming.None
+                });
+            }
+            var digitSF = DigitStringFormats[alignment];
 
-
-            var digitBrush = Brushes.White;
             var initialClip = g.Clip;
             var initialState = g.Save();
 
@@ -48,14 +59,14 @@ namespace LightningGauges.Renderers.F16.ISIS
                         toDraw = string.Format("{0:00}", (thisDigit * 20) % 100);
                         if (toDraw == "100") toDraw = "00";
                     }
-                    var digitSize = g.MeasureString(toDraw, digitFont);
+                    var digitSize = g.MeasureString(toDraw, _digitFont);
                     var layoutRectangle2 = new RectangleF(
                         layoutRectangle.X,
                         layoutRectangle.Y - (i * (digitSize.Height + digitSpacing)),
                         layoutRectangle.Width, digitSize.Height
                         );
                     layoutRectangle2.Offset(0, ((digitSize.Height + digitSpacing) * digit));
-                    g.DrawString(toDraw, digitFont, digitBrush, layoutRectangle2, digitSF);
+                    g.DrawStringFast(toDraw, _digitFont, DigitBrush, layoutRectangle2, digitSF);
                 }
             }
             else
@@ -67,14 +78,14 @@ namespace LightningGauges.Renderers.F16.ISIS
                 {
                     toDraw = string.Format("{0:00}", thisDigit * 20);
                 }
-                var digitSize = g.MeasureString(toDraw, digitFont);
+                var digitSize = g.MeasureString(toDraw, _digitFont);
                 var layoutRectangle2 = new RectangleF(
                     layoutRectangle.X,
                     layoutRectangle.Y - (digit * (digitSize.Height + digitSpacing)),
                     layoutRectangle.Width, digitSize.Height
                     );
                 layoutRectangle2.Offset(0, ((digitSize.Height + digitSpacing) * digit));
-                g.DrawString(toDraw, digitFont, digitBrush, layoutRectangle2, digitSF);
+                g.DrawStringFast(toDraw, _digitFont, DigitBrush, layoutRectangle2, digitSF);
             }
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);
             g.Clip = initialClip;

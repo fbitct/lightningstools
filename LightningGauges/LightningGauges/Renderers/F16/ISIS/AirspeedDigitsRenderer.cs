@@ -1,24 +1,30 @@
 using System;
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class AirspeedDigitsRenderer
     {
+        private static readonly StringFormat DigitSf = new StringFormat
+        {
+            Alignment = StringAlignment.Center,
+            FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip,
+            LineAlignment = StringAlignment.Center,
+            Trimming = StringTrimming.None
+        };
+
+        private static readonly Brush DigitBrush = Brushes.White;
+        private static Font _digitFont;
+
         internal static void DrawAirspeedDigits(Graphics g, float digit, RectangleF layoutRectangle, RectangleF clipRectangle,
             float pointSize, bool cyclical, PrivateFontCollection fonts)
         {
-            var digitFont = new Font(fonts.Families[0], pointSize, FontStyle.Regular, GraphicsUnit.Point);
-            var digitSF = new StringFormat
+            if (_digitFont == null)
             {
-                Alignment = StringAlignment.Center,
-                FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip,
-                LineAlignment = StringAlignment.Center,
-                Trimming = StringTrimming.None
-            };
-
-            var digitBrush = Brushes.White;
+                 _digitFont = new Font(fonts.Families[0], pointSize, FontStyle.Regular, GraphicsUnit.Point);
+            }
             var initialClip = g.Clip;
             var initialState = g.Save();
 
@@ -48,7 +54,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 }
 
                 var toDraw = string.Format("{0:0}", thisDigit);
-                var digitSize = g.MeasureString(toDraw, digitFont);
+                var digitSize = g.MeasureString(toDraw, _digitFont);
                 g.TranslateTransform(0,
                     ((digitSize.Height + digitSpacing)*digit) + (layoutRectangle.Height/4.0f) +
                     (digitSpacing/2.0f));
@@ -57,7 +63,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                     layoutRectangle.Y - (i*(digitSize.Height + digitSpacing)),
                     layoutRectangle.Width, digitSize.Height
                     );
-                g.DrawString(toDraw, digitFont, digitBrush, layoutRectangle2, digitSF);
+                g.DrawStringFast(toDraw, _digitFont, DigitBrush, layoutRectangle2, DigitSf);
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);
             }
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);

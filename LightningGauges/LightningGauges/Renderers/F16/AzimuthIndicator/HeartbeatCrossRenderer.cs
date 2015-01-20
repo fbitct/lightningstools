@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -10,19 +11,19 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
 
             //draw heartbeat cross
-            gfx.DrawLine(scopeGreenPen,
+            gfx.DrawLineFast(scopeGreenPen,
                 new PointF((backgroundWidth/2.0f) - 20, (backgroundHeight/2.0f)),
                 new PointF((backgroundWidth/2.0f) - 10, (backgroundHeight/2.0f))
                 );
-            gfx.DrawLine(scopeGreenPen,
+            gfx.DrawLineFast(scopeGreenPen,
                 new PointF((backgroundWidth/2.0f) + 20, (backgroundHeight/2.0f)),
                 new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f))
                 );
-            gfx.DrawLine(scopeGreenPen,
+            gfx.DrawLineFast(scopeGreenPen,
                 new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) - 20),
                 new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) - 10)
                 );
-            gfx.DrawLine(scopeGreenPen,
+            gfx.DrawLineFast(scopeGreenPen,
                 new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 20),
                 new PointF((backgroundWidth/2.0f), (backgroundHeight/2.0f) + 10)
                 );

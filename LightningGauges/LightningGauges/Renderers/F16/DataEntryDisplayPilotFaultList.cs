@@ -116,7 +116,7 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage,
+                destinationGraphics.DrawImageFast(_background.MaskedImage,
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             GraphicsUnit.Pixel);
@@ -141,7 +141,7 @@ namespace LightningGauges.Renderers.F16
 
                         GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                         destinationGraphics.TranslateTransform(15, 91);
-                        destinationGraphics.DrawImage(textImage, new Rectangle(0, 0, width - 16, height - 14),
+                        destinationGraphics.DrawImageFast(textImage, new Rectangle(0, 0, width - 16, height - 14),
                                     new Rectangle(0, 0, textImage.Width, textImage.Height), GraphicsUnit.Pixel);
                         GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     }
@@ -178,7 +178,6 @@ namespace LightningGauges.Renderers.F16
 
                         float xPos = location.X + (i*thisCharImage.Width);
                         float yPos = location.Y;
-                        //destinationGraphics.DrawImage(thisCharImage, new Point((int)xPos, (int)yPos));
                         g.DrawImageUnscaled(thisCharImage, new Point((int) xPos, (int) yPos));
                     }
                 }

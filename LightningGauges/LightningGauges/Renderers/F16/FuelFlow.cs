@@ -156,7 +156,7 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*hundredsDigit);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_hundredsDigits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_hundredsDigits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -165,7 +165,7 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*thousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_thousandsDigits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_thousandsDigits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
@@ -174,13 +174,13 @@ namespace LightningGauges.Renderers.F16
                     var yOffsetToActual = yOffsetToZero + (pixelsPerDigit*tenThousandsDigit);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                     destinationGraphics.TranslateTransform(xOffset, yOffsetToActual);
-                    destinationGraphics.DrawImage(_tenThousandsDigits, new Point(0, 0));
+                    destinationGraphics.DrawImageFast(_tenThousandsDigits, new Point(0, 0));
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
                 }
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage,
+                destinationGraphics.DrawImageFast(_background.MaskedImage,
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             GraphicsUnit.Pixel);

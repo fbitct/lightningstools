@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-
+using Common.Imaging;
 namespace F16CPD.FlightInstruments.Pfd
 {
     internal class AdiPitchLadderFactory
@@ -47,7 +47,7 @@ namespace F16CPD.FlightInstruments.Pfd
                 g.TranslateTransform((int)(adi.Width / (float)2), (int)(adi.Height / (float)2));
                 g.RotateTransform(-degreesRoll);
                 g.TranslateTransform((int)(-adi.Width / (float)2), (int)(-adi.Height / (float)2));
-                g.DrawImage(start, new Rectangle(heightOffset, heightOffset, cropRectangle.Width, cropRectangle.Height),
+                g.DrawImageFast(start, new Rectangle(heightOffset, heightOffset, cropRectangle.Width, cropRectangle.Height),
                     cropRectangle, GraphicsUnit.Pixel);
 
                 //draw sky pointer triangle

@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -21,8 +22,8 @@ namespace F16CPD.FlightInstruments.Pfd
                 path.AddString("AUX", adiAuxFont.FontFamily, (int)adiAuxFont.Style, adiAuxFont.SizeInPoints,
                     adiAuxTextLayoutRectangle, adiAuxStringFormat);
                 g.FillRectangle(Brushes.Yellow, adiAuxTextLayoutRectangle);
-                g.DrawRectangle(Pens.Black, adiAuxTextLayoutRectangle);
-                g.FillPath(Brushes.Black, path);
+                g.DrawRectangleFast(Pens.Black, adiAuxTextLayoutRectangle);
+                g.FillPathFast(Brushes.Black, path);
             }
         }
     }

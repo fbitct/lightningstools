@@ -1,20 +1,23 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class RollAngleIndexMarksRenderer
     {
+        private static readonly Pen RollIndexPen = new Pen(Color.White) { Width = 2 };
+
         internal static float DrawRollAngleIndexMarks(Graphics g, int width, int height, float pixelsPerDegreePitch,
             ref GraphicsState basicState, out Pen rollIndexPen)
         {
+            rollIndexPen = RollIndexPen;
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
             const float majorIndexLineLength = 15;
             const float minorIndexLineLength = majorIndexLineLength/2.0f;
             var radiusFromCenterToBottomOfIndexLine = pixelsPerDegreePitch*20.0f;
             var startingTransform = g.Transform;
-            rollIndexPen = new Pen(Color.White) {Width = 2};
             for (var i = -60; i <= 60; i += 5)
             {
                 var drawLine = false;
@@ -35,7 +38,7 @@ namespace LightningGauges.Renderers.F16.ISIS
 
                 if (drawLine)
                 {
-                    g.DrawLine(rollIndexPen,
+                    g.DrawLineFast(RollIndexPen,
                         new PointF((width/2.0f), (height/2.0f) - radiusFromCenterToBottomOfIndexLine),
                         new PointF((width/2.0f), (height/2.0f) - radiusFromCenterToBottomOfIndexLine - lineLength)
                         );

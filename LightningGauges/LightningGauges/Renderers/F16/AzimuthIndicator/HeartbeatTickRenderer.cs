@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.AzimuthIndicator
 {
@@ -9,14 +10,14 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
         {
             if (DateTime.Now.Millisecond < 500)
             {
-                gfx.DrawLine(scopeGreenPen,
+                gfx.DrawLineFast(scopeGreenPen,
                     new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
                     new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) + 5)
                     );
             }
             else
             {
-                gfx.DrawLine(scopeGreenPen,
+                gfx.DrawLineFast(scopeGreenPen,
                     new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f)),
                     new PointF((backgroundWidth/2.0f) + 10, (backgroundHeight/2.0f) - 5)
                     );

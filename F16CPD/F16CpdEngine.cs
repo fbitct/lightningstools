@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
-using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Contexts;
-using System.Threading;
 using System.Windows.Forms;
 using Common.Collections;
-using Common.InputSupport;
+using Common.Imaging;
 using Common.InputSupport.DirectInput;
-using Common.Win32;
 using F16CPD.Mfd.Controls;
 using F16CPD.Properties;
 using F16CPD.SimSupport;
 using F16CPD.SimSupport.Falcon4;
 using F16CPD.UI.Forms;
 using log4net;
-using Microsoft.DirectX.DirectInput;
 
 namespace F16CPD
 {
@@ -258,7 +253,7 @@ namespace F16CPD
                     {
                         var greenPen = new Pen(Color.Green) {Width = 7};
                         var renderTargetBounds = new Rectangle(0, 0, _renderTarget.Width, _renderTarget.Height);
-                        h.DrawRectangle(greenPen, renderTargetBounds);
+                        h.DrawRectangleFast(greenPen, renderTargetBounds);
                     }
 
 
@@ -310,7 +305,7 @@ namespace F16CPD
                         var rotation = Settings.Default.Rotation;
                         if (rotation == RotateFlipType.RotateNoneFlipNone)
                         {
-                            formGraphics.DrawImage(_renderTarget, DisplayRectangle, 0, 0, _renderTarget.Width,
+                            formGraphics.DrawImageFast(_renderTarget, DisplayRectangle, 0, 0, _renderTarget.Width,
                                                    _renderTarget.Height, GraphicsUnit.Pixel, attrs);
                         }
                         else
@@ -318,7 +313,7 @@ namespace F16CPD
                             using (var rotated = (Bitmap) _renderTarget.Clone())
                             {
                                 rotated.RotateFlip(rotation);
-                                formGraphics.DrawImage(rotated, DisplayRectangle, 0, 0, rotated.Width, rotated.Height,
+                                formGraphics.DrawImageFast(rotated, DisplayRectangle, 0, 0, rotated.Width, rotated.Height,
                                                        GraphicsUnit.Pixel, attrs);
                             }
                         }

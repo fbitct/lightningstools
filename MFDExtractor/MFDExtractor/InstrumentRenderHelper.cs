@@ -112,10 +112,6 @@ namespace MFDExtractor
             {
                 //GDI+ error message we don't care about
             }
-            finally
-            {
-                //Common.Util.DisposeObject(renderSurface);
-            }
         }
 
         private static void RenderWithStandardEffect(Graphics graphics, Bitmap image)
@@ -128,12 +124,12 @@ namespace MFDExtractor
             var monochromeImageAttribs = new ImageAttributes();
             var greyscaleColorMatrix = Util.GreyscaleColorMatrix;
             monochromeImageAttribs.SetColorMatrix(greyscaleColorMatrix, ColorMatrixFlag.Default);
-            graphics.DrawImage(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, monochromeImageAttribs);
+            graphics.DrawImageFast(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, monochromeImageAttribs);
         }
 
         private static void RenderWithNightVisionEffect(Control targetForm, Graphics graphics, Bitmap image)
         {
-            graphics.DrawImage(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel,NvisImageAttribs);
+            graphics.DrawImageFast(image, targetForm.ClientRectangle, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel,NvisImageAttribs);
         }
 
         private static ImageAttributes _nvisImageAttributes;
@@ -151,12 +147,35 @@ namespace MFDExtractor
 
         private Bitmap ObtainRenderSurface(InstrumentForm targetForm)
         {
-            if (!_renderSurfaces.ContainsKey(targetForm) || _renderSurfaces[targetForm].Width != targetForm.ClientRectangle.Width || _renderSurfaces[targetForm].Height != targetForm.ClientRectangle.Height)
+            if (!_renderSurfaces.ContainsKey(targetForm) || 
+                (
+                    (
+                        targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")
+                    )
+                        && 
+                        (_renderSurfaces[targetForm].Width != targetForm.ClientRectangle.Height
+                            ||
+                        _renderSurfaces[targetForm].Height != targetForm.ClientRectangle.Width 
+                        )
+                )
+                    ||
+                (
+                    (
+                        !targetForm.Rotation.ToString().Contains("90") && !targetForm.Rotation.ToString().Contains("270")
+                    )
+                        && 
+                        (_renderSurfaces[targetForm].Width != targetForm.ClientRectangle.Width
+                            ||
+                        _renderSurfaces[targetForm].Height != targetForm.ClientRectangle.Height 
+                        )
+                )
+            )
+
             {
                 _renderSurfaces[targetForm] =
-                       (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")
-                       ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width, PixelFormat.Format32bppPArgb)
-                       : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height, PixelFormat.Format32bppPArgb));
+                    (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")
+                        ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width, PixelFormat.Format32bppPArgb)
+                        : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height, PixelFormat.Format32bppPArgb));
             }
             return _renderSurfaces[targetForm];
         }
@@ -165,7 +184,7 @@ namespace MFDExtractor
         {
             var scopeGreenColor = Color.FromArgb(255, 63, 250, 63);
             var scopeGreenPen = new Pen(scopeGreenColor) {Width = 5};
-            graphics.DrawRectangle(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
+            graphics.DrawRectangleFast(scopeGreenPen, new Rectangle(new Point(0, 0), image.Size));
             targetForm.RenderImmediately = true;
         }
     }

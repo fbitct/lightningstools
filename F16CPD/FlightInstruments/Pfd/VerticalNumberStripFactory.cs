@@ -2,6 +2,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -50,10 +51,10 @@ namespace F16CPD.FlightInstruments.Pfd
 
                 for (var i = 11; i >= 0; i--)
                 {
-                    g.DrawString((i%10).ToString(), font, whiteBrush, digitRectangle);
+                    g.DrawStringFast((i%10).ToString(), font, whiteBrush, digitRectangle);
                     digitRectangle.Offset(0, digitRectangle.Height);
                 }
-                g.DrawString("9", font, whiteBrush, digitRectangle);
+                g.DrawStringFast("9", font, whiteBrush, digitRectangle);
                 digitRectangle.Offset(0, digitRectangle.Height);
             }
             _verticalNumberStrip = toReturn;

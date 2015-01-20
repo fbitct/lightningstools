@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.HSI
 {
@@ -21,11 +22,11 @@ namespace LightningGauges.Renderers.F16.HSI
             var currentX = 29;
             var y = 45;
             const int spacingPixels = -5;
-            destinationGraphics.DrawImage(distanceToBeaconHundredsImage, new Point(currentX, y));
+            destinationGraphics.DrawImageFast(distanceToBeaconHundredsImage, new Point(currentX, y));
             currentX += distanceToBeaconHundredsImage.Width + spacingPixels;
-            destinationGraphics.DrawImage(distanceToBeaconTensImage, new Point(currentX, y));
+            destinationGraphics.DrawImageFast(distanceToBeaconTensImage, new Point(currentX, y));
             currentX += distanceToBeaconTensImage.Width + spacingPixels;
-            destinationGraphics.DrawImage(distanceToBeaconOnesImage, new Point(currentX, y));
+            destinationGraphics.DrawImageFast(distanceToBeaconOnesImage, new Point(currentX, y));
             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
         }
     }

@@ -1,5 +1,6 @@
 using F16CPD.Properties;
 using System.Drawing;
+using Common.Imaging;
 
 namespace F16CPD.FlightInstruments.Pfd
 {
@@ -57,7 +58,7 @@ namespace F16CPD.FlightInstruments.Pfd
             }
             if (!adiOffFlag)
             {
-                g.DrawImage(climbDiveMarkerOutOfBounds ? _cagedClimbDiveMarkerSymbol : _climbDiveMarkerSymbol,
+                g.DrawImageFast(climbDiveMarkerOutOfBounds ? _cagedClimbDiveMarkerSymbol : _climbDiveMarkerSymbol,
                     climbDiveMarkerCenterX, climbDiveMarkerCenterY);
             }
         }

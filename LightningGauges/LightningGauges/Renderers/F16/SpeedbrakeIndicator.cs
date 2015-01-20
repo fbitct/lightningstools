@@ -144,7 +144,7 @@ namespace LightningGauges.Renderers.F16
                     if (percentOpen < 2.0f)
                     {
                         GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                        destinationGraphics.DrawImage(_closed,
+                        destinationGraphics.DrawImageFast(_closed,
                                     new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                                     new Rectangle(0, 0, _closed.Width, _closed.Height), GraphicsUnit.Pixel);
                         GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
@@ -152,7 +152,7 @@ namespace LightningGauges.Renderers.F16
                     else
                     {
                         GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                        destinationGraphics.DrawImage(_open,
+                        destinationGraphics.DrawImageFast(_open,
                                     new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                                     new Rectangle(0, 0, _open.Width, _open.Height), GraphicsUnit.Pixel);
                         GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
@@ -161,7 +161,7 @@ namespace LightningGauges.Renderers.F16
                 else
                 {
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                    destinationGraphics.DrawImage(_powerLoss,
+                    destinationGraphics.DrawImageFast(_powerLoss,
                                 new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                                 new Rectangle(0, 0, _powerLoss.Width, _powerLoss.Height), GraphicsUnit.Pixel);
                     GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
@@ -169,7 +169,7 @@ namespace LightningGauges.Renderers.F16
 
                 //draw the background image
                 GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
-                destinationGraphics.DrawImage(_background.MaskedImage,
+                destinationGraphics.DrawImageFast(_background.MaskedImage,
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             new Rectangle(0, 0, _background.MaskedImage.Width, _background.MaskedImage.Height),
                             GraphicsUnit.Pixel);

@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
@@ -30,7 +31,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             var topY = (((renderRectangle.Height - ((int) textSize.Height))/2));
             var target = new Rectangle(leftX, topY, (int) textSize.Width, (int) textSize.Height);
             path.AddString(toDisplay, f.FontFamily, (int) f.Style, f.Size, target.Location, sf);
-            g.FillPath(greenBrush, path);
+            g.FillPathFast(greenBrush, path);
             g.Transform = gTransform;
         }
     }

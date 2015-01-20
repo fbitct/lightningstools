@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.ISIS
 {
@@ -74,7 +75,7 @@ namespace LightningGauges.Renderers.F16.ISIS
                 centerY - (airplaneSymbolBarThickness/2.0f),
                 airplaneSymbolBarThickness, airplaneSymbolBarThickness);
             g.FillRectangle(airplaneSymbolInsideBrush, airplaneSymbolCenterRectangle);
-            g.DrawRectangle(airplaneSymbolOutlinePen,
+            g.DrawRectangleFast(airplaneSymbolOutlinePen,
                 new Rectangle((int) airplaneSymbolCenterRectangle.X, (int) airplaneSymbolCenterRectangle.Y,
                     (int) airplaneSymbolCenterRectangle.Width,
                     (int) airplaneSymbolCenterRectangle.Height));

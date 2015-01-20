@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.Drawing.Text;
+using Common.Imaging;
 
 namespace LightningGauges.Renderers.F16.EHSI
 {
@@ -24,7 +25,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             var flagRect = new RectangleF(flagLocation, flagSize);
             g.FillRectangle(flagBrush, flagRect);
             Brush textBrush = new SolidBrush(textColor);
-            g.DrawString(flagText, inuFlagFont, textBrush, flagRect, inuFlagStringFormat);
+            g.DrawStringFast(flagText, inuFlagFont, textBrush, flagRect, inuFlagStringFormat);
         }
     }
 }
