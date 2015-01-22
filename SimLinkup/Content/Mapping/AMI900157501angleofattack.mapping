@@ -3,7 +3,7 @@
   <SignalMappings>
 
     <!-- *********************************************************************-->
-    <!-- NOTE WE'RE REUSING THE SIMTEK 10058101 MODULE FOR THE AMI 900157501 DEVICE-->
+    <!-- NOTE WE'RE REUSING THE SIMTEK 10058201 MODULE FOR THE AMI 900157501 DEVICE-->
     <!-- *********************************************************************-->
 
 
@@ -19,7 +19,7 @@
       </Source>
       <!-- SIMTEK AOA (DECIMAL DEGREES) INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>10058101_AOA_From_Sim</Id>
+        <Id>10058201_AOA_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -33,7 +33,7 @@
     </Source>
     <!-- SIMTEK AOA OFF FLAG INPUT-->
     <Destination xsi:type="DigitalSignal">
-      <Id>10058101_AOA_Power_Off_Flag_From_Sim </Id>
+      <Id>10058201_AOA_Power_Off_Flag_From_Sim </Id>
     </Destination>
     <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -46,7 +46,7 @@
     <SignalMapping>
       <!-- SIMTEK AOA HARDWARE SUPPORT MODULE AOA OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>10058101_AOA_To_Instrument</Id>
+        <Id>10058201_AOA_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 32 -->
       <Destination xsi:type="AnalogSignal">

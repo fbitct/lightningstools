@@ -8,12 +8,12 @@ using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
-    //Simtek 10-0581-01 F-16 AOA Indicator
-    public class Simtek10058101HardwareSupportModule : HardwareSupportModuleBase, IDisposable
+    //Simtek 10-0582-01 F-16 AOA Indicator
+    public class Simtek10058201HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek10058101HardwareSupportModule));
+        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek10058201HardwareSupportModule));
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         #region Constructors
 
-        private Simtek10058101HardwareSupportModule()
+        private Simtek10058201HardwareSupportModule()
         {
             CreateInputSignals();
             CreateOutputSignals();
@@ -41,19 +41,19 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override string FriendlyName
         {
-            get { return "Simtek P/N 10-0581-01 - Indicator - Simulated Angle Of Attack Indicator"; }
+            get { return "Simtek P/N 10-0582-01 - Indicator - Simulated Angle Of Attack Indicator"; }
         }
 
         public static IHardwareSupportModule[] GetInstances()
         {
             var toReturn = new List<IHardwareSupportModule>();
-            toReturn.Add(new Simtek10058101HardwareSupportModule());
+            toReturn.Add(new Simtek10058201HardwareSupportModule());
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                    "Simtek10058101HardwareSupportModule.config");
+                    "Simtek10058201HardwareSupportModule.config");
                 var hsmConfig =
-                    Simtek10058101HardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                    Simtek10058201HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
             {
@@ -161,7 +161,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "AOA";
-            thisSignal.Id = "10058101_AOA_To_Instrument";
+            thisSignal.Id = "10058201_AOA_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -175,7 +175,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "AOA";
-            thisSignal.Id = "10058101_AOA_From_Sim";
+            thisSignal.Id = "10058201_AOA_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -189,7 +189,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new DigitalSignal();
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "AOA Power Off Flag";
-            thisSignal.Id = "10058101_AOA_Power_Off_Flag_From_Sim";
+            thisSignal.Id = "10058201_AOA_Power_Off_Flag_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -275,7 +275,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         ///     is not manually disposed.  Ordinarily called only
         ///     by the garbage collector.
         /// </summary>
-        ~Simtek10058101HardwareSupportModule()
+        ~Simtek10058201HardwareSupportModule()
         {
             Dispose();
         }

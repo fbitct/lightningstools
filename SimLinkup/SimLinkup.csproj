@@ -76,12 +76,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.JScript" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -105,8 +101,8 @@
     <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModuleConfig.cs" />
-    <Compile Include="HardwareSupport\Simtek\Simtek10058101HardwareSupportModuleConfig.cs" />
-    <Compile Include="HardwareSupport\Simtek\Simtek10058101HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek10058201HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek10058201HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101091HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101082HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101082HardwareSupportModule.cs" />
@@ -205,18 +201,6 @@
     <Content Include="Content\Mapping\Simtek100285altimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Mapping\Simtek10033501standbyADI1.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek10058101angleofattack1.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Simtek10058102verticalvelocity1.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\Mapping\Astronautics128710primaryADI2.mapping">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\Mapping\AMI900157501angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -230,6 +214,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="phcc.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Astronautics128710primaryADI.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Simtek10033501standbyADI.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Simtek10058102verticalvelocity.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Mapping\Simtek10058201angleofattack.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\app.manifest" />
@@ -311,10 +307,6 @@
       <Project>{b8fcc824-2b39-4637-a447-64d60cf60811}</Project>
       <Name>Common.HardwareSupport</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common\InputSupport\BetaInnovations\Common.InputSupport.BetaInnovations.csproj">
-      <Project>{12474929-ec83-42d9-bd0c-167c40d51182}</Project>
-      <Name>Common.InputSupport.BetaInnovations</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\InputSupport\Common.InputSupport.csproj">
       <Project>{90b49895-9bf5-48c9-87fe-972e47cddae5}</Project>
       <Name>Common.InputSupport</Name>
@@ -322,10 +314,6 @@
     <ProjectReference Include="..\Common\InputSupport\DirectInput\Common.InputSupport.DirectInput.csproj">
       <Project>{07a76e17-57ae-4952-a309-2a670ce3d7dd}</Project>
       <Name>Common.InputSupport.DirectInput</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\InputSupport\Phcc\Common.InputSupport.Phcc.csproj">
-      <Project>{738063da-f792-4081-a70a-4a3190dbc6d2}</Project>
-      <Name>Common.InputSupport.Phcc</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\MacroProgramming\Common.MacroProgramming.csproj">
       <Project>{320431c6-2454-4d95-8d3c-d27c8e2288e9}</Project>
@@ -338,14 +326,6 @@
     <ProjectReference Include="..\Common\UI\Common.UI.csproj">
       <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
       <Name>Common.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\F4Utils\SimSupport\F4Utils.SimSupport.csproj">
-      <Project>{6967bfc5-944d-405c-960b-5a4900ebfd92}</Project>
-      <Name>F4Utils.SimSupport</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LightningGauges\LightningGauges\LightningGauges.csproj">
-      <Project>{E3E09957-DD05-4DEC-961A-915A082C0BC4}</Project>
-      <Name>LightningGauges</Name>
     </ProjectReference>
     <ProjectReference Include="..\PhccDeviceManager\PhccDeviceManager.csproj">
       <Project>{52AB07AF-C7BB-4586-BC5E-34759831CB08}</Project>
