@@ -8,36 +8,46 @@ using System.Windows.Forms;
 
 namespace MFDExtractor
 {
-    internal interface IInstrument
+    internal interface IInstrument:IDisposable
     {
-        InstrumentForm Form { get;}
+        InstrumentType Type { get; }
         IInstrumentRenderer Renderer { get; }
         void Start(ExtractorState extractorState );
         void Stop();
     }
 
-    class Instrument : IInstrument
+    internal class Instrument : IInstrument
     {
+        private bool _disposed;
         private readonly IInstrumentRenderHelper _instrumentRenderHelper;
         private readonly IInstrumentStateSnapshotCache _instrumentStateSnapshotCache;
+        private readonly IInstrumentFormFactory _instrumentFormFactory;
         private Thread _renderThread;
         private readonly ILog _log = LogManager.GetLogger(typeof (Instrument));
         private ExtractorState _extractorState;
         private int _renderCycle;
         internal Instrument(
             IInstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
-            IInstrumentRenderHelper instrumentRenderHelper = null
+            IInstrumentRenderHelper instrumentRenderHelper = null,
+            IInstrumentFormFactory instrumentFormFactory = null
             )
         {
             _instrumentStateSnapshotCache = instrumentStateSnapshotCache ?? new InstrumentStateSnapshotCache();
             _instrumentRenderHelper = instrumentRenderHelper ?? new InstrumentRenderHelper();
+            _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
+
         }
         public InstrumentType Type { get; internal set; }
-        public InstrumentForm Form { get; internal set; }
+        private InstrumentForm Form { get; set; }
         public IInstrumentRenderer Renderer { get; internal set; }
         public void Start(ExtractorState extractorState )
         {
             _extractorState = extractorState;
+            Form = _instrumentFormFactory.Create(
+                Type,
+                Renderer
+            );
+
             if (Form != null && !Form.Visible)
             {
                 Form.Show();
@@ -60,6 +70,12 @@ namespace MFDExtractor
             {
                 Application.DoEvents();
                 Thread.Sleep(1);
+            }
+            if (Form != null)
+            {
+                Form.Hide();
+                Form.Close();
+                Common.Util.DisposeObject(Form);
             }
             Common.Util.DisposeObject(_renderThread);
         }
@@ -127,5 +143,31 @@ namespace MFDExtractor
         {
             _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Stop();
+                    Form.Close();
+                    Common.Util.DisposeObject(Form);
+                }
+            }
+            _disposed = true;
+        }
+
+        ~Instrument()
+        {
+            Dispose(false);
+        }
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace MFDExtractor
+﻿namespace MFDExtractor
 {
     internal interface IInstrumentFactory
     {
@@ -10,29 +8,22 @@ namespace MFDExtractor
     class InstrumentFactory : IInstrumentFactory
     {
         private readonly IInstrumentStateSnapshotCache _instrumentStateSnapshotCache;
-        private readonly IInstrumentRendererSet _instrumentRendererSet;
-        private readonly IInstrumentFormFactory _instrumentFormFactory;
+        private readonly IRendererFactory _rendererFactory;
         public InstrumentFactory(
-            IInstrumentRendererSet instrumentRendererSet = null,
             InstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
-            IInstrumentFormFactory instrumentFormFactory=null)
+            IRendererFactory rendererFactory=null)
         {
-            _instrumentRendererSet = instrumentRendererSet ?? new InstrumentRendererSet();
             _instrumentStateSnapshotCache = instrumentStateSnapshotCache ?? new InstrumentStateSnapshotCache();
-            _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
+            _rendererFactory = rendererFactory ?? new RendererFactory();
         }
 
         public IInstrument Create(InstrumentType instrumentType)
         {
+            var renderer = _rendererFactory.CreateRenderer(instrumentType);
             var instrument = new Instrument(_instrumentStateSnapshotCache)
             {
                 Type = instrumentType,
-                Renderer = _instrumentRendererSet[instrumentType],
-                Form = _instrumentFormFactory.Create(
-                    instrumentType.ToString(),
-                    instrumentType.ToString(),
-                    _instrumentRendererSet[instrumentType]
-                    ),
+                Renderer =renderer,
             };
             return instrument;
         }

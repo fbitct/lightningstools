@@ -1,9 +1,6 @@
 ﻿using System;
 using F4KeyFile;
-using F4SharedMem;
 using F4Utils.Process;
-using LightningGauges.Renderers;
-using LightningGauges.Renderers.F16;
 using LightningGauges.Renderers.F16.EHSI;
 using MFDExtractor.Properties;
 

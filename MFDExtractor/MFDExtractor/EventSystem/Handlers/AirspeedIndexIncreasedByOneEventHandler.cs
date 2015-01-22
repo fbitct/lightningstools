@@ -1,5 +1,4 @@
-﻿using LightningGauges.Renderers;
-using LightningGauges.Renderers.F16;
+﻿using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.EventSystem.Handlers
 {

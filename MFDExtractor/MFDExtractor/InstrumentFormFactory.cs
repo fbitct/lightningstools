@@ -12,8 +12,7 @@ namespace MFDExtractor
     {
         InstrumentForm Create
             (
-            string instrumentName,
-            string formCaption,
+            InstrumentType instrumentType,
             IInstrumentRenderer renderer,
             Image initialImage = null
             );
@@ -29,18 +28,17 @@ namespace MFDExtractor
         }
         public InstrumentForm Create
         (
-            string instrumentName,
-            string formCaption,
+            InstrumentType instrumentType,
             IInstrumentRenderer renderer,
             Image initialImage = null
         )
         {
-            var currentSettings = _instrumentFormSettingsReader.Read(instrumentName);
+            var currentSettings = _instrumentFormSettingsReader.Read(instrumentType.ToString());
             if (!currentSettings.Enabled) return null;
             Point location;
             Size size;
             var screen = Util.FindScreen(currentSettings.OutputDisplay);
-            var instrumentForm = new InstrumentForm { Text = formCaption, ShowInTaskbar = false, ShowIcon = false, Settings = currentSettings};
+            var instrumentForm = new InstrumentForm { Text = instrumentType.ToString(), ShowInTaskbar = false, ShowIcon = false, Settings = currentSettings};
             if (currentSettings.StretchToFit)
             {
                 location = new Point(0, 0);
@@ -58,7 +56,7 @@ namespace MFDExtractor
             instrumentForm.Rotation = currentSettings.RotateFlipType;
             instrumentForm.WindowState = FormWindowState.Normal;
             Util.OpenFormOnSpecificMonitor(instrumentForm, screen, location, size, true, true);
-            instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentName, instrumentForm).HandleDataChangedEvent;
+            instrumentForm.DataChanged += new InstrumentFormDataChangedHandler(instrumentType, instrumentForm).HandleDataChangedEvent;
 
             if (initialImage == null) return instrumentForm;
             using (var graphics = instrumentForm.CreateGraphics())

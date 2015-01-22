@@ -10,7 +10,6 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.UI;
-using LightningGauges.Renderers;
 using MFDExtractor.Configuration;
 using MFDExtractor.Properties;
 using Microsoft.VisualBasic.Devices;
@@ -92,6 +91,7 @@ namespace MFDExtractor.UI
             EnableRecoverButtons();
             _extractor.Start();
             _formLoading = false;
+
         }
 
         private void EnableRecoverButtons()
@@ -255,6 +255,20 @@ namespace MFDExtractor.UI
                     break;
             }
         }
+        private void SettingsChanged(object sender, EventArgs e)
+        {
+            //store the currently-selected user control on the Options form (required because
+            //when we reload the user settings in the next step, the currenty-selected
+            //control will go out of focus
+            var currentControl = ActiveControl;
+
+            //reload user settings from the in-memory user config
+            LoadSettings();
+
+            //refocus the control that was in focus before we reloaded the user settings
+            ActiveControl = currentControl;
+        }
+
 
 
         /// <summary>
@@ -262,6 +276,9 @@ namespace MFDExtractor.UI
         /// </summary>
         private void LoadSettings()
         {
+            //unregister for settings change notifications
+            Settings.Default.PropertyChanged -= SettingsChanged;
+
             //load all committed user settings from memory (these may not mirror the settings
             //which have been persisted to the user-config file on disk; that only happens 
             //when Properties.Settings.Default.Save() is called)
@@ -395,7 +412,6 @@ namespace MFDExtractor.UI
                     rdoAzimuthIndicatorStyleDigital.Checked = true;
                     rdoATDPlus.Checked = true;
                     break;
-                default:
                     break;
             }
 
@@ -415,22 +431,6 @@ namespace MFDExtractor.UI
                     break;
             }
 
-            string pressureUnitsString = Settings.Default.Altimeter_PressureUnits;
-            var pressureUnits =
-                (Altimeter.AltimeterOptions.PressureUnits)
-                Enum.Parse(typeof (Altimeter.AltimeterOptions.PressureUnits), pressureUnitsString);
-            switch (pressureUnits)
-            {
-                case Altimeter.AltimeterOptions.PressureUnits.InchesOfMercury:
-                    rdoInchesOfMercury.Checked = true;
-                    rdoMillibars.Checked = false;
-                    break;
-                case Altimeter.AltimeterOptions.PressureUnits.Millibars:
-                    rdoInchesOfMercury.Checked = false;
-                    rdoMillibars.Checked = true;
-                    break;
-            }
-
             string vviStyleString = Settings.Default.VVI_Style;
             var vviStyle = (VVIStyles) Enum.Parse(typeof (VVIStyles), vviStyleString);
             switch (vviStyle)
@@ -446,7 +446,6 @@ namespace MFDExtractor.UI
             }
             grpVVIOptions.Enabled = chkVVI.Checked;
             grpAltimeterStyle.Enabled = chkAltimeter.Checked;
-            //grpPressureAltitudeSettings.Enabled = chkAltimeter.Checked;
             grpAzimuthIndicatorStyle.Enabled = chkAzimuthIndicator.Checked;
 
             rdoFuelQuantityNeedleCModel.Checked = Settings.Default.FuelQuantityIndicator_NeedleCModel;
@@ -456,6 +455,7 @@ namespace MFDExtractor.UI
             LoadGDIPlusSettings();
             chkHighlightOutputWindowsWhenContainMouseCursor.Checked = Settings.Default.HighlightOutputWindows;
             chkOnlyUpdateImagesWhenDataChanges.Checked = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
+            Settings.Default.PropertyChanged += SettingsChanged;
         }
 
         /// <summary>
@@ -720,17 +720,6 @@ namespace MFDExtractor.UI
             settings.EnableRollTrimOutput = chkRollTrim.Checked;
             settings.EnablePitchTrimOutput = chkPitchTrim.Checked;
 
-
-            if (rdoMillibars.Checked)
-            {
-                settings.Altimeter_PressureUnits = Altimeter.AltimeterOptions.PressureUnits.Millibars.ToString();
-            }
-            else if (rdoInchesOfMercury.Checked)
-            {
-                settings.Altimeter_PressureUnits =
-                    Altimeter.AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
-            }
-
             if (rdoAltimeterStyleDigital.Checked)
             {
                 settings.Altimeter_Style = Altimeter.AltimeterOptions.F16AltimeterStyle.Electronic.ToString();
@@ -862,27 +851,6 @@ namespace MFDExtractor.UI
                     }
                 }
             }
-        }
-
-        /// <summary>
-        ///     Tests a string to see if it contains (only) a valid integer (positive or negative)
-        /// </summary>
-        /// <param name="coordinateString">
-        ///     <see cref="String" /> to test
-        /// </param>
-        /// <returns>
-        ///     <see langword="true" /> if the supplied string contains
-        ///     a valid integer, or <see langword="false" /> if the supplied string does
-        ///     not contain a valid integer.
-        /// </returns>
-        private static bool xyCoordinateIsValid(string coordinateString)
-        {
-            int coordinateValue = -1;
-            if (Int32.TryParse(coordinateString, out coordinateValue))
-            {
-                return true;
-            }
-            return false;
         }
 
         /// <summary>
@@ -1509,26 +1477,6 @@ namespace MFDExtractor.UI
             }
         }
 
-        private void rdoInchesOfMercury_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoInchesOfMercury.Checked)
-            {
-                Settings.Default.Altimeter_PressureUnits =
-                    Altimeter.AltimeterOptions.PressureUnits.InchesOfMercury.ToString();
-                //StopAndRestartExtractor();
-            }
-        }
-
-        private void rdoMillibars_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdoMillibars.Checked)
-            {
-                Settings.Default.Altimeter_PressureUnits =
-                    Altimeter.AltimeterOptions.PressureUnits.Millibars.ToString();
-                //StopAndRestartExtractor();
-            }
-        }
-
         private void rdoVVIStyleTape_CheckedChanged(object sender, EventArgs e)
         {
             if (rdoVVIStyleTape.Checked)
@@ -1951,6 +1899,31 @@ namespace MFDExtractor.UI
         private void chkOnlyUpdateImagesWhenDataChanges_CheckedChanged(object sender, EventArgs e)
         {
             Settings.Default.RenderInstrumentsOnlyOnStatechanges = chkOnlyUpdateImagesWhenDataChanges.Checked;
+        }
+
+        private void cmdRecoverLeftMfd_Click(object sender, EventArgs e)
+        {
+            RecoverInstrument("LMFD");
+        }
+
+        private void cmdRecoverRightMfd_Click(object sender, EventArgs e)
+        {
+            RecoverInstrument("RMFD");
+        }
+
+        private void cmdRecoverMfd3_Click(object sender, EventArgs e)
+        {
+            RecoverInstrument("MFD3");
+        }
+
+        private void cmdRecoverMfd4_Click(object sender, EventArgs e)
+        {
+            RecoverInstrument("MFD4");
+        }
+
+        private void cmdRecoverHud_Click(object sender, EventArgs e)
+        {
+            RecoverInstrument("HUD");
         }
 
 

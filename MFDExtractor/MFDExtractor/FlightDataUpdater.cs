@@ -1,22 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using Common.Math;
 using Common.Networking;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using LightningGauges.Renderers;
 using MFDExtractor.BMSSupport;
 using MFDExtractor.FlightDataAdapters;
 using F4Utils.Terrain;
 using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.AzimuthIndicator;
 using LightningGauges.Renderers.F16.EHSI;
+using LightningGauges.Renderers.F16.HSI;
+using LightningGauges.Renderers.F16.ISIS;
 using MFDExtractor.Networking;
+using MFDExtractor.Renderer;
 
 namespace MFDExtractor
 {
     internal interface IFlightDataUpdater
     {
         void UpdateRendererStatesFromFlightData(
-            IInstrumentRendererSet renderers,
+            IDictionary<InstrumentType, IInstrument> instruments,
             FlightData flightData,
             TerrainDB terrainDB,
             Action updateEHSIBrightnessLabelVisibility,
@@ -29,7 +33,7 @@ namespace MFDExtractor
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _textureSharedMemoryImageCoordinates;
         private readonly IExtractorClient _extractorClient;
-        public FlightDataUpdater(F4TexSharedMem.IReader texSharedmemReader, 
+        public FlightDataUpdater( 
             SharedMemorySpriteCoordinates textureSharedMemoryImageCoordinates, 
             ExtractorState extractorState, 
             IFlightDataAdapterSet flightDataAdapterSet = null,
@@ -41,7 +45,7 @@ namespace MFDExtractor
             _extractorClient = extractorClient;
         }
         public void UpdateRendererStatesFromFlightData(
-            IInstrumentRendererSet renderers,
+            IDictionary<InstrumentType,IInstrument> instruments,
             FlightData flightData,
             TerrainDB terrainDB,
             Action updateEHSIBrightnessLabelVisibility,
@@ -51,33 +55,38 @@ namespace MFDExtractor
             {
                 flightData = new FlightData {hsiBits = Int32.MaxValue};
             }
+            var hsi = instruments[InstrumentType.HSI].Renderer as IHorizontalSituationIndicator;
+            var ehsi = instruments[InstrumentType.EHSI].Renderer as IEHSI;
+            var adi = instruments[InstrumentType.ADI].Renderer as IADI;
+            var isis = instruments[InstrumentType.ISIS].Renderer as IISIS;
+
 
 			if (_extractorState.SimRunning || _extractorState.NetworkMode == NetworkMode.Client)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
 
-                _flightDataAdapterSet.ISIS.Adapt(renderers.ISIS,flightData, terrainDB);
-                _flightDataAdapterSet.VVI.Adapt(renderers.VVI, flightData);
-                _flightDataAdapterSet.Altimeter.Adapt(renderers.Altimeter, flightData);
-                _flightDataAdapterSet.AirspeedIndicator.Adapt(renderers.ASI, flightData);
-                _flightDataAdapterSet.Compass.Adapt(renderers.Compass, flightData);
-                _flightDataAdapterSet.AOAIndicator.Adapt(renderers.AOAIndicator, flightData);
-                _flightDataAdapterSet.AOAIndexer.Adapt(renderers.AOAIndexer, flightData);
-                UpdateADI(renderers, hsibits);
-                _flightDataAdapterSet.StandbyADI.Adapt(renderers.BackupADI, flightData);
-                UpdateHSI(renderers, hsibits, flightData);
+                _flightDataAdapterSet.ISIS.Adapt(instruments[InstrumentType.ISIS].Renderer as IISIS, flightData, terrainDB);
+                _flightDataAdapterSet.VVI.Adapt(instruments[InstrumentType.VVI].Renderer as IVerticalVelocityIndicator, flightData);
+                _flightDataAdapterSet.Altimeter.Adapt(instruments[InstrumentType.Altimeter].Renderer as IAltimeter, flightData);
+                _flightDataAdapterSet.AirspeedIndicator.Adapt(instruments[InstrumentType.ASI].Renderer as IAirspeedIndicator, flightData);
+                _flightDataAdapterSet.Compass.Adapt(instruments[InstrumentType.Compass].Renderer as ICompass, flightData);
+                _flightDataAdapterSet.AOAIndicator.Adapt(instruments[InstrumentType.AOAIndicator].Renderer as IAngleOfAttackIndicator, flightData);
+                _flightDataAdapterSet.AOAIndexer.Adapt(instruments[InstrumentType.AOAIndexer].Renderer as IAngleOfAttackIndexer, flightData);
+                UpdateADI(instruments[InstrumentType.ADI].Renderer as IADI, hsibits);
+                _flightDataAdapterSet.StandbyADI.Adapt(instruments[InstrumentType.BackupADI] as IStandbyADI, flightData);
+                UpdateHSI(instruments[InstrumentType.HSI].Renderer as IHorizontalSituationIndicator, instruments[InstrumentType.EHSI] as IEHSI, hsibits, flightData);
 
 
                 //***** UPDATE SOME COMPLEX HSI/ADI VARIABLES
                 if (ADIIsTurnedOff(hsibits))
                 {
-                    SetADIToOffState(renderers);
-                    SetISISToOffState(renderers);
+                    SetADIToOffState(instruments[InstrumentType.ADI].Renderer as IADI);
+                    SetISISToOffState(instruments[InstrumentType.ISIS].Renderer as IISIS);
                 }
                 else
                 {
-                    SetADIPitchAndRoll(renderers, flightData);
-                    SetISISPitchAndRoll(renderers, flightData);
+                    SetADIPitchAndRoll(instruments[InstrumentType.ADI].Renderer as IADI, flightData);
+                    SetISISPitchAndRoll(instruments[InstrumentType.ISIS].Renderer as IISIS, flightData);
 
                     //The following floating data is also crossed up in the flightData.h File:
                     //float AdiIlsHorPos;       // Position of horizontal ILS bar ----Vertical
@@ -89,14 +98,14 @@ namespace MFDExtractor
                     {
                         commandBarsOn = false;
                     }
-                    renderers.HSI.InstrumentState.ShowToFromFlag = true;
-                    renderers.EHSI.InstrumentState.ShowToFromFlag = true;
+                    hsi.InstrumentState.ShowToFromFlag = true;
+                    ehsi.InstrumentState.ShowToFromFlag = true;
 
                     //if the TOTALFLAGS flag is off, then we're most likely in NAV mode
                     if ((hsibits & HsiBits.TotalFlags) != HsiBits.TotalFlags)
                     {
-                        renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = false;
+                        hsi.InstrumentState.ShowToFromFlag = false;
+                        ehsi.InstrumentState.ShowToFromFlag = false;
                     }
                         //if the TO/FROM flag is showing in shared memory, then we are most likely in TACAN mode 
                     else if ((((hsibits & HsiBits.ToTrue) == HsiBits.ToTrue)
@@ -105,8 +114,8 @@ namespace MFDExtractor
                     {
                         if (!commandBarsOn) //better make sure we're not in any ILS mode too though
                         {
-                            renderers.HSI.InstrumentState.ShowToFromFlag = true;
-                            renderers.EHSI.InstrumentState.ShowToFromFlag = true;
+                            hsi.InstrumentState.ShowToFromFlag = true;
+                            ehsi.InstrumentState.ShowToFromFlag = true;
                         }
                     }
 
@@ -116,101 +125,100 @@ namespace MFDExtractor
                         ||
                         ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC))
                     {
-                        renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = false;
+                        hsi.InstrumentState.ShowToFromFlag = false;
+                        ehsi.InstrumentState.ShowToFromFlag = false;
                     }
                     if (commandBarsOn)
                     {
-                        renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                        renderers.EHSI.InstrumentState.ShowToFromFlag = false;
+                        hsi.InstrumentState.ShowToFromFlag = false;
+                        ehsi.InstrumentState.ShowToFromFlag = false;
                     }
+                    adi.InstrumentState.ShowCommandBars = commandBarsOn;
+                    adi.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE;
+                    adi.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE;
 
-                    renderers.ADI.InstrumentState.ShowCommandBars = commandBarsOn;
-                    renderers.ADI.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE;
-                    renderers.ADI.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE;
-
-                    renderers.ISIS.InstrumentState.ShowCommandBars = commandBarsOn;
-                    renderers.ISIS.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE;
-                    renderers.ISIS.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE;
+                    isis.InstrumentState.ShowCommandBars = commandBarsOn;
+                    isis.InstrumentState.GlideslopeDeviationDegrees = flightData.AdiIlsVerPos/Common.Math.Constants.RADIANS_PER_DEGREE;
+                    isis.InstrumentState.LocalizerDeviationDegrees = flightData.AdiIlsHorPos/Common.Math.Constants.RADIANS_PER_DEGREE;
                 }
-
-                UpdateNavigationMode(renderers, flightData);
+                
+                UpdateNavigationMode(hsi, ehsi, adi, isis, flightData);
                 if (((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF))
                 {
-                    TurnOffHSI(renderers);
-                    TurnOffEHSI(renderers);
+                    TurnOffHSI(hsi);
+                    TurnOffEHSI(ehsi);
                 }
                 else
                 {
-                    UpdateHSIFlightData(renderers, flightData, hsibits);
-                    UpdateEHSIFlightData(renderers, flightData, hsibits);
+                    UpdateHSIFlightData(hsi, flightData, hsibits);
+                    UpdateEHSIFlightData(ehsi, flightData, hsibits);
                 }
 
-                UpdateHSIAndEHSICourseDeviationAndToFromFlags(renderers);
+                UpdateHSIAndEHSICourseDeviationAndToFromFlags(hsi, ehsi);
                 UpdateEHSI(updateEHSIBrightnessLabelVisibility);
-                _flightDataAdapterSet.HYDA.Adapt(renderers.HYDA, flightData);
-                _flightDataAdapterSet.HYDB.Adapt(renderers.HYDB, flightData);
-                _flightDataAdapterSet.CabinPress.Adapt(renderers.CabinPress, flightData);
-                _flightDataAdapterSet.RollTrim.Adapt(renderers.RollTrim, flightData);
-                _flightDataAdapterSet.PitchTrim.Adapt(renderers.PitchTrim, flightData);
-                _flightDataAdapterSet.AzimuthIndicator.Adapt(renderers.RWR, flightData);
-                _flightDataAdapterSet.CautionPanel.Adapt(renderers.CautionPanel, flightData);
-                _flightDataAdapterSet.CMDS.Adapt(renderers.CMDS, flightData);
-                _flightDataAdapterSet.DED.Adapt(renderers.DED, flightData);
-                _flightDataAdapterSet.PFL.Adapt(renderers.PFL, flightData);
-                _flightDataAdapterSet.EPUFuel.Adapt(renderers.EPUFuel, flightData);
-                _flightDataAdapterSet.FuelFlow.Adapt(renderers.FuelFlow, flightData);
-                _flightDataAdapterSet.FuelQuantity.Adapt(renderers.FuelQuantity, flightData);
-                _flightDataAdapterSet.LandingGearLights.Adapt(renderers.GearLights, flightData);
-                _flightDataAdapterSet.NWS.Adapt(renderers.NWSIndexer, flightData);
-                _flightDataAdapterSet.Speedbrake.Adapt(renderers.Speedbrake, flightData);
-                _flightDataAdapterSet.RPM1.Adapt(renderers.RPM1, flightData);
-                _flightDataAdapterSet.RPM2.Adapt(renderers.RPM2, flightData);
-                _flightDataAdapterSet.FTIT1.Adapt(renderers.FTIT1, flightData);
-                _flightDataAdapterSet.FTIT2.Adapt(renderers.FTIT2, flightData);
-                _flightDataAdapterSet.NOZ1.Adapt(renderers.NOZ1, flightData);
-                _flightDataAdapterSet.NOZ2.Adapt(renderers.NOZ2, flightData);
-                _flightDataAdapterSet.OIL1.Adapt(renderers.OIL1, flightData);
-                _flightDataAdapterSet.OIL2.Adapt(renderers.OIL2, flightData);
-                _flightDataAdapterSet.Accelerometer.Adapt(renderers.Accelerometer, flightData);
+                _flightDataAdapterSet.HYDA.Adapt(instruments[InstrumentType.HYDA].Renderer as IHydraulicPressureGauge, flightData);
+                _flightDataAdapterSet.HYDB.Adapt(instruments[InstrumentType.HYDB].Renderer as IHydraulicPressureGauge, flightData);
+                _flightDataAdapterSet.CabinPress.Adapt(instruments[InstrumentType.CabinPress].Renderer as ICabinPressureAltitudeIndicator, flightData);
+                _flightDataAdapterSet.RollTrim.Adapt(instruments[InstrumentType.RollTrim].Renderer as IRollTrimIndicator, flightData);
+                _flightDataAdapterSet.PitchTrim.Adapt(instruments[InstrumentType.PitchTrim].Renderer as IPitchTrimIndicator, flightData);
+                _flightDataAdapterSet.AzimuthIndicator.Adapt(instruments[InstrumentType.RWR].Renderer as IAzimuthIndicator, flightData);
+                _flightDataAdapterSet.CautionPanel.Adapt(instruments[InstrumentType.CautionPanel].Renderer as ICautionPanel, flightData);
+                _flightDataAdapterSet.CMDS.Adapt(instruments[InstrumentType.CMDS].Renderer as ICMDSPanel, flightData);
+                _flightDataAdapterSet.DED.Adapt(instruments[InstrumentType.DED].Renderer as IDataEntryDisplayPilotFaultList, flightData);
+                _flightDataAdapterSet.PFL.Adapt(instruments[InstrumentType.PFL].Renderer as IDataEntryDisplayPilotFaultList, flightData);
+                _flightDataAdapterSet.EPUFuel.Adapt(instruments[InstrumentType.EPUFuel].Renderer as IEPUFuelGauge, flightData);
+                _flightDataAdapterSet.FuelFlow.Adapt(instruments[InstrumentType.FuelFlow].Renderer as IFuelFlow, flightData);
+                _flightDataAdapterSet.FuelQuantity.Adapt(instruments[InstrumentType.FuelQuantity].Renderer as IFuelQuantityIndicator, flightData);
+                _flightDataAdapterSet.LandingGearLights.Adapt(instruments[InstrumentType.GearLights].Renderer as ILandingGearWheelsLights, flightData);
+                _flightDataAdapterSet.NWS.Adapt(instruments[InstrumentType.NWSIndexer].Renderer as INosewheelSteeringIndexer, flightData);
+                _flightDataAdapterSet.Speedbrake.Adapt(instruments[InstrumentType.Speedbrake].Renderer as ISpeedbrakeIndicator, flightData);
+                _flightDataAdapterSet.RPM1.Adapt(instruments[InstrumentType.RPM1].Renderer as ITachometer, flightData);
+                _flightDataAdapterSet.RPM2.Adapt(instruments[InstrumentType.RPM2].Renderer as ITachometer, flightData);
+                _flightDataAdapterSet.FTIT1.Adapt(instruments[InstrumentType.FTIT1].Renderer as IFanTurbineInletTemperature, flightData);
+                _flightDataAdapterSet.FTIT2.Adapt(instruments[InstrumentType.FTIT2].Renderer as IFanTurbineInletTemperature, flightData);
+                _flightDataAdapterSet.NOZ1.Adapt(instruments[InstrumentType.NOZ1].Renderer as INozzlePositionIndicator, flightData);
+                _flightDataAdapterSet.NOZ2.Adapt(instruments[InstrumentType.NOZ2].Renderer as INozzlePositionIndicator, flightData);
+                _flightDataAdapterSet.OIL1.Adapt(instruments[InstrumentType.OIL1].Renderer as IOilPressureGauge, flightData);
+                _flightDataAdapterSet.OIL2.Adapt(instruments[InstrumentType.OIL2].Renderer as IOilPressureGauge, flightData);
+                _flightDataAdapterSet.Accelerometer.Adapt(instruments[InstrumentType.Accelerometer].Renderer as IAccelerometer, flightData);
 			}
             else //Falcon's not running
             {
-                if (renderers.VVI is VerticalVelocityIndicatorEU)
+                if (instruments[InstrumentType.VVI].Renderer is IVerticalVelocityIndicatorEU)
                 {
-                    ((VerticalVelocityIndicatorEU) renderers.VVI).InstrumentState.OffFlag = true;
+                    ((IVerticalVelocityIndicatorEU) instruments[InstrumentType.VVI].Renderer).InstrumentState.OffFlag = true;
                 }
-                else if (renderers.VVI is VerticalVelocityIndicatorUSA)
+                else if (instruments[InstrumentType.VVI].Renderer is IVerticalVelocityIndicatorUSA)
                 {
-                    ((VerticalVelocityIndicatorUSA) renderers.VVI).InstrumentState.OffFlag = true;
+                    ((IVerticalVelocityIndicatorUSA) instruments[InstrumentType.VVI].Renderer).InstrumentState.OffFlag = true;
                 }
-                renderers.AOAIndicator.InstrumentState.OffFlag = true;
-                renderers.HSI.InstrumentState.OffFlag = true;
-                renderers.EHSI.InstrumentState.NoDataFlag = true;
-                renderers.ADI.InstrumentState.OffFlag = true;
-                renderers.BackupADI.InstrumentState.OffFlag = true;
-                renderers.RWR.InstrumentState.RWRPowerOn = false;
-                renderers.ISIS.InstrumentState.RadarAltitudeAGL = 0;
-                renderers.ISIS.InstrumentState.OffFlag = true;
+                ((IAngleOfAttackIndicator)(instruments[InstrumentType.AOAIndicator].Renderer)).InstrumentState.OffFlag = true;
+                hsi.InstrumentState.OffFlag = true;
+                ehsi.InstrumentState.NoDataFlag = true;
+                ((IADI)instruments[InstrumentType.ADI].Renderer).InstrumentState.OffFlag = true;
+                ((IStandbyADI)instruments[InstrumentType.BackupADI].Renderer).InstrumentState.OffFlag = true;
+                ((IAzimuthIndicator)instruments[InstrumentType.RWR].Renderer).InstrumentState.RWRPowerOn = false;
+                ((IISIS)instruments[InstrumentType.ISIS].Renderer).InstrumentState.RadarAltitudeAGL = 0;
+                ((IISIS)instruments[InstrumentType.ISIS].Renderer).InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-            _flightDataAdapterSet.LMFD.Adapt(renderers.LMFD, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
-            _flightDataAdapterSet.RMFD.Adapt(renderers.RMFD, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
-            _flightDataAdapterSet.MFD3.Adapt(renderers.MFD3, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
-            _flightDataAdapterSet.MFD4.Adapt(renderers.MFD4, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
-            _flightDataAdapterSet.HUD.Adapt(renderers.HUD, _extractorState, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
+            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
+            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
+            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
+            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
+            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD].Renderer as IMfdRenderer, _extractorState, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
 		}
 
-        private static void SetISISPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)
+        private static void SetISISPitchAndRoll(IISIS isis, FlightData flightData)
         {
-            renderers.ISIS.InstrumentState.PitchDegrees = ((flightData.pitch/Common.Math.Constants.RADIANS_PER_DEGREE));
-            renderers.ISIS.InstrumentState.RollDegrees = ((flightData.roll /Common.Math.Constants.RADIANS_PER_DEGREE));
+            isis.InstrumentState.PitchDegrees = ((flightData.pitch/Common.Math.Constants.RADIANS_PER_DEGREE));
+            isis.InstrumentState.RollDegrees = ((flightData.roll /Common.Math.Constants.RADIANS_PER_DEGREE));
         }
 
-        private static void SetADIPitchAndRoll(IInstrumentRendererSet renderers, FlightData flightData)
+        private static void SetADIPitchAndRoll(IADI adi, FlightData flightData)
         {
-            renderers.ADI.InstrumentState.PitchDegrees = ((flightData.pitch / Common.Math.Constants.RADIANS_PER_DEGREE));
-            renderers.ADI.InstrumentState.RollDegrees = ((flightData.roll / Common.Math.Constants.RADIANS_PER_DEGREE));
+            adi.InstrumentState.PitchDegrees = ((flightData.pitch / Common.Math.Constants.RADIANS_PER_DEGREE));
+            adi.InstrumentState.RollDegrees = ((flightData.roll / Common.Math.Constants.RADIANS_PER_DEGREE));
         }
 
         private static bool ADIIsTurnedOff(HsiBits hsibits)
@@ -218,25 +226,25 @@ namespace MFDExtractor
             return ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
         }
 
-        private static void SetISISToOffState(IInstrumentRendererSet renderers)
+        private static void SetISISToOffState(IISIS isis)
         {
-            renderers.ISIS.InstrumentState.PitchDegrees = 0;
-            renderers.ISIS.InstrumentState.RollDegrees = 0;
-            renderers.ISIS.InstrumentState.GlideslopeDeviationDegrees = 0;
-            renderers.ISIS.InstrumentState.LocalizerDeviationDegrees = 0;
-            renderers.ISIS.InstrumentState.ShowCommandBars = false;
+            isis.InstrumentState.PitchDegrees = 0;
+            isis.InstrumentState.RollDegrees = 0;
+            isis.InstrumentState.GlideslopeDeviationDegrees = 0;
+            isis.InstrumentState.LocalizerDeviationDegrees = 0;
+            isis.InstrumentState.ShowCommandBars = false;
         }
 
-        private static void SetADIToOffState(IInstrumentRendererSet renderers)
+        private static void SetADIToOffState(IADI adi)
         {
-            renderers.ADI.InstrumentState.PitchDegrees = 0;
-            renderers.ADI.InstrumentState.RollDegrees = 0;
-            renderers.ADI.InstrumentState.GlideslopeDeviationDegrees = 0;
-            renderers.ADI.InstrumentState.LocalizerDeviationDegrees = 0;
-            renderers.ADI.InstrumentState.ShowCommandBars = false;
+            adi.InstrumentState.PitchDegrees = 0;
+            adi.InstrumentState.RollDegrees = 0;
+            adi.InstrumentState.GlideslopeDeviationDegrees = 0;
+            adi.InstrumentState.LocalizerDeviationDegrees = 0;
+            adi.InstrumentState.ShowCommandBars = false;
         }
 
-        private static void UpdateNavigationMode(IInstrumentRendererSet renderers, FlightData flightData)
+        private static void UpdateNavigationMode(IHorizontalSituationIndicator hsi, IEHSI ehsi, IADI adi, IISIS isis, FlightData flightData)
         {
             /*
                 This value is called navMode and is unsigned char type with 4 possible values: ILS_TACAN = 0, and TACAN = 1,
@@ -247,36 +255,36 @@ namespace MFDExtractor
             switch (bmsNavMode)
             {
                 case 0: //NavModes.PlsTcn:
-                    renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.PlsTacan;
+                    hsi.InstrumentState.ShowToFromFlag = false;
+                    ehsi.InstrumentState.ShowToFromFlag = false;
+                    ehsi.InstrumentState.InstrumentMode = InstrumentModes.PlsTacan;
                     break;
                 case 1: //NavModes.Tcn:
-                    renderers.HSI.InstrumentState.ShowToFromFlag = true;
-                    renderers.EHSI.InstrumentState.ShowToFromFlag = true;
-                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.Tacan;
-                    renderers.ADI.InstrumentState.ShowCommandBars = false;
-                    renderers.ISIS.InstrumentState.ShowCommandBars = false;
+                    hsi.InstrumentState.ShowToFromFlag = true;
+                    ehsi.InstrumentState.ShowToFromFlag = true;
+                    ehsi.InstrumentState.InstrumentMode = InstrumentModes.Tacan;
+                    adi.InstrumentState.ShowCommandBars = false;
+                    isis.InstrumentState.ShowCommandBars = false;
                     break;
                 case 2: //NavModes.Nav:
-                    renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.Nav;
-                    renderers.ADI.InstrumentState.ShowCommandBars = false;
-                    renderers.ISIS.InstrumentState.ShowCommandBars = false;
+                    hsi.InstrumentState.ShowToFromFlag = false;
+                    ehsi.InstrumentState.ShowToFromFlag = false;
+                    ehsi.InstrumentState.InstrumentMode = InstrumentModes.Nav;
+                    adi.InstrumentState.ShowCommandBars = false;
+                    isis.InstrumentState.ShowCommandBars = false;
                     break;
                 case 3: //NavModes.PlsNav:
-                    renderers.HSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.ShowToFromFlag = false;
-                    renderers.EHSI.InstrumentState.InstrumentMode = InstrumentModes.PlsNav;
+                    hsi.InstrumentState.ShowToFromFlag = false;
+                    ehsi.InstrumentState.ShowToFromFlag = false;
+                    ehsi.InstrumentState.InstrumentMode = InstrumentModes.PlsNav;
                     break;
             }
         }
 
-        private static void UpdateHSIAndEHSICourseDeviationAndToFromFlags(IInstrumentRendererSet renderers)
+        private static void UpdateHSIAndEHSICourseDeviationAndToFromFlags(IHorizontalSituationIndicator hsi, IEHSI ehsi)
         {
-            var deviationLimitDecimalDegrees = renderers.HSI.InstrumentState.CourseDeviationLimitDegrees%180;
-            var courseDeviationDecimalDegrees = renderers.HSI.InstrumentState.CourseDeviationDegrees;
+            var deviationLimitDecimalDegrees = hsi.InstrumentState.CourseDeviationLimitDegrees%180;
+            var courseDeviationDecimalDegrees = hsi.InstrumentState.CourseDeviationDegrees;
             bool toFlag;
             bool fromFlag;
             if (Math.Abs(courseDeviationDecimalDegrees) <= 90)
@@ -307,57 +315,57 @@ namespace MFDExtractor
                 courseDeviationDecimalDegrees = Math.Sign(courseDeviationDecimalDegrees)*deviationLimitDecimalDegrees;
             }
 
-            renderers.HSI.InstrumentState.CourseDeviationDegrees = courseDeviationDecimalDegrees;
-            renderers.HSI.InstrumentState.ToFlag = toFlag;
-            renderers.HSI.InstrumentState.FromFlag = fromFlag;
-            renderers.EHSI.InstrumentState.CourseDeviationDegrees = courseDeviationDecimalDegrees;
-            renderers.EHSI.InstrumentState.ToFlag = toFlag;
-            renderers.EHSI.InstrumentState.FromFlag = fromFlag;
+            hsi.InstrumentState.CourseDeviationDegrees = courseDeviationDecimalDegrees;
+            hsi.InstrumentState.ToFlag = toFlag;
+            hsi.InstrumentState.FromFlag = fromFlag;
+            ehsi.InstrumentState.CourseDeviationDegrees = courseDeviationDecimalDegrees;
+            ehsi.InstrumentState.ToFlag = toFlag;
+            ehsi.InstrumentState.FromFlag = fromFlag;
         }
 
-        private static void UpdateEHSIFlightData(IInstrumentRendererSet renderers, FlightData flightData,
+        private static void UpdateEHSIFlightData(IEHSI ehsi, FlightData flightData,
             HsiBits hsibits)
         {
-            renderers.EHSI.InstrumentState.DmeInvalidFlag = ((hsibits & HsiBits.CourseWarning) == HsiBits.CourseWarning);
-            renderers.EHSI.InstrumentState.DeviationInvalidFlag = ((hsibits & HsiBits.IlsWarning) == HsiBits.IlsWarning);
-            renderers.EHSI.InstrumentState.CourseDeviationLimitDegrees = flightData.deviationLimit;
-            renderers.EHSI.InstrumentState.CourseDeviationDegrees = flightData.courseDeviation;
-            renderers.EHSI.InstrumentState.DesiredCourseDegrees = (int) flightData.desiredCourse;
-            renderers.EHSI.InstrumentState.DesiredHeadingDegrees = (int) flightData.desiredHeading;
-            renderers.EHSI.InstrumentState.BearingToBeaconDegrees = flightData.bearingToBeacon;
-            renderers.EHSI.InstrumentState.DistanceToBeaconNauticalMiles = flightData.distanceToBeacon;
+            ehsi.InstrumentState.DmeInvalidFlag = ((hsibits & HsiBits.CourseWarning) == HsiBits.CourseWarning);
+            ehsi.InstrumentState.DeviationInvalidFlag = ((hsibits & HsiBits.IlsWarning) == HsiBits.IlsWarning);
+            ehsi.InstrumentState.CourseDeviationLimitDegrees = flightData.deviationLimit;
+            ehsi.InstrumentState.CourseDeviationDegrees = flightData.courseDeviation;
+            ehsi.InstrumentState.DesiredCourseDegrees = (int) flightData.desiredCourse;
+            ehsi.InstrumentState.DesiredHeadingDegrees = (int) flightData.desiredHeading;
+            ehsi.InstrumentState.BearingToBeaconDegrees = flightData.bearingToBeacon;
+            ehsi.InstrumentState.DistanceToBeaconNauticalMiles = flightData.distanceToBeacon;
         }
 
-        private static void UpdateHSIFlightData(IInstrumentRendererSet renderers, FlightData flightData, HsiBits hsibits)
+        private static void UpdateHSIFlightData(IHorizontalSituationIndicator hsi, FlightData flightData, HsiBits hsibits)
         {
-            renderers.HSI.InstrumentState.DmeInvalidFlag = ((hsibits & HsiBits.CourseWarning) ==HsiBits.CourseWarning);
-            renderers.HSI.InstrumentState.DeviationInvalidFlag = ((hsibits &HsiBits.IlsWarning) == HsiBits.IlsWarning);
-            renderers.HSI.InstrumentState.CourseDeviationLimitDegrees =flightData.deviationLimit;
-            renderers.HSI.InstrumentState.CourseDeviationDegrees =flightData.courseDeviation;
-            renderers.HSI.InstrumentState.DesiredCourseDegrees =(int) flightData.desiredCourse;
-            renderers.HSI.InstrumentState.DesiredHeadingDegrees =(int) flightData.desiredHeading;
-            renderers.HSI.InstrumentState.BearingToBeaconDegrees =flightData.bearingToBeacon;
-            renderers.HSI.InstrumentState.DistanceToBeaconNauticalMiles =flightData.distanceToBeacon;
+            hsi.InstrumentState.DmeInvalidFlag = ((hsibits & HsiBits.CourseWarning) ==HsiBits.CourseWarning);
+            hsi.InstrumentState.DeviationInvalidFlag = ((hsibits &HsiBits.IlsWarning) == HsiBits.IlsWarning);
+            hsi.InstrumentState.CourseDeviationLimitDegrees =flightData.deviationLimit;
+            hsi.InstrumentState.CourseDeviationDegrees =flightData.courseDeviation;
+            hsi.InstrumentState.DesiredCourseDegrees =(int) flightData.desiredCourse;
+            hsi.InstrumentState.DesiredHeadingDegrees =(int) flightData.desiredHeading;
+            hsi.InstrumentState.BearingToBeaconDegrees =flightData.bearingToBeacon;
+            hsi.InstrumentState.DistanceToBeaconNauticalMiles =flightData.distanceToBeacon;
         }
 
-        private static void TurnOffEHSI(IInstrumentRendererSet renderers)
+        private static void TurnOffEHSI(IEHSI ehsi)
         {
-            renderers.EHSI.InstrumentState.DmeInvalidFlag = true;
-            renderers.EHSI.InstrumentState.DeviationInvalidFlag = false;
-            renderers.EHSI.InstrumentState.CourseDeviationLimitDegrees = 0;
-            renderers.EHSI.InstrumentState.CourseDeviationDegrees = 0;
-            renderers.EHSI.InstrumentState.BearingToBeaconDegrees = 0;
-            renderers.EHSI.InstrumentState.DistanceToBeaconNauticalMiles = 0;
+            ehsi.InstrumentState.DmeInvalidFlag = true;
+            ehsi.InstrumentState.DeviationInvalidFlag = false;
+            ehsi.InstrumentState.CourseDeviationLimitDegrees = 0;
+            ehsi.InstrumentState.CourseDeviationDegrees = 0;
+            ehsi.InstrumentState.BearingToBeaconDegrees = 0;
+            ehsi.InstrumentState.DistanceToBeaconNauticalMiles = 0;
         }
 
-        private static void TurnOffHSI(IInstrumentRendererSet renderers)
+        private static void TurnOffHSI(IHorizontalSituationIndicator hsi)
         {
-            renderers.HSI.InstrumentState.DmeInvalidFlag = true;
-            renderers.HSI.InstrumentState.DeviationInvalidFlag = false;
-            renderers.HSI.InstrumentState.CourseDeviationLimitDegrees = 0;
-            renderers.HSI.InstrumentState.CourseDeviationDegrees = 0;
-            renderers.HSI.InstrumentState.BearingToBeaconDegrees = 0;
-            renderers.HSI.InstrumentState.DistanceToBeaconNauticalMiles = 0;
+            hsi.InstrumentState.DmeInvalidFlag = true;
+            hsi.InstrumentState.DeviationInvalidFlag = false;
+            hsi.InstrumentState.CourseDeviationLimitDegrees = 0;
+            hsi.InstrumentState.CourseDeviationDegrees = 0;
+            hsi.InstrumentState.BearingToBeaconDegrees = 0;
+            hsi.InstrumentState.DistanceToBeaconNauticalMiles = 0;
         }
 
         private static void UpdateEHSI(Action updateEHSIBrightnessLabelVisibility)
@@ -365,21 +373,22 @@ namespace MFDExtractor
             updateEHSIBrightnessLabelVisibility();
         }
 
-        private static void UpdateHSI(IInstrumentRendererSet renderers, HsiBits hsibits, FlightData fromFalcon)
+        private static void UpdateHSI(IHorizontalSituationIndicator hsi, IEHSI ehsi, HsiBits hsibits, FlightData fromFalcon)
         {
-            renderers.HSI.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF);
-            renderers.HSI.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
-            renderers.EHSI.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
-            renderers.EHSI.InstrumentState.NoPowerFlag = (fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery;
-            renderers.EHSI.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
+            hsi.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF);
+            hsi.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
+            ehsi.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF);
+            ehsi.InstrumentState.NoPowerFlag = (fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery;
+            ehsi.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
         }
 
-        private static void UpdateADI(IInstrumentRendererSet renderers, HsiBits hsibits)
+        private static void UpdateADI(IADI adi, HsiBits hsibits)
         {
-            renderers.ADI.InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
-            renderers.ADI.InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
-            renderers.ADI.InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
-            renderers.ADI.InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
+            
+            adi.InstrumentState.OffFlag = ((hsibits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
+            adi.InstrumentState.AuxFlag = ((hsibits & HsiBits.ADI_AUX) == HsiBits.ADI_AUX);
+            adi.InstrumentState.GlideslopeFlag = ((hsibits & HsiBits.ADI_GS) == HsiBits.ADI_GS);
+            adi.InstrumentState.LocalizerFlag = ((hsibits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC);
         }
 
        

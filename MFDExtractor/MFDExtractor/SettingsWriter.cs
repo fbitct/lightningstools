@@ -23,7 +23,7 @@ namespace MFDExtractor
 		private static MethodInfo PropertySetterMethod(string settingName)
 		{
 			var settingsClass = Properties.Settings.Default.GetType();
-			var propertyMetadata = settingsClass.GetProperty(settingName);
+            var propertyMetadata = settingsClass.GetProperty(settingName, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.IgnoreCase);
 			return propertyMetadata != null ? propertyMetadata.GetSetMethod() : null;
 		}
 	}

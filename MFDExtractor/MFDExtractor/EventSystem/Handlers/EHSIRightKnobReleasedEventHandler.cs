@@ -14,9 +14,12 @@ namespace MFDExtractor.EventSystem.Handlers
 
 		public void Handle()
 		{
-			_ehsiStateTracker.RightKnobDepressedTime = null;
-			_ehsiStateTracker.RightKnobReleasedTime = DateTime.Now;
-			_ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
+		    if (_ehsiStateTracker.RightKnobIsPressed)
+		    {
+		        _ehsiStateTracker.RightKnobDepressedTime = null;
+		        _ehsiStateTracker.RightKnobReleasedTime = DateTime.Now;
+		        _ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
+		    }
 		}
 	}
 }

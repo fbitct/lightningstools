@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Common.Win32;
 using Microsoft.DirectX.DirectInput;
 using log4net;
+using MFDExtractor.EventSystem.Handlers;
 
 namespace MFDExtractor.EventSystem
 {
@@ -17,12 +18,10 @@ namespace MFDExtractor.EventSystem
 	{
 		public bool KeepRunning { get; set; }
 		private readonly ILog _log;
-		private readonly IKeyDownEventHandler _keyDownEventHandler;
-		private readonly IKeyUpEventHandler _keyUpEventHandler;
-		public KeyboardWatcher(IKeyDownEventHandler keyDownEventHandler, IKeyUpEventHandler keyUpEventHandler,ILog log = null)
+		private readonly IKeyEventHandler _keyEventHandler;
+		public KeyboardWatcher(IInputEvents inputEvents,ILog log = null)
 		{
-			_keyDownEventHandler = keyDownEventHandler;
-			_keyUpEventHandler = keyUpEventHandler;
+			_keyEventHandler = new KeyEventHandler(inputEvents);
 			_log = log ??  LogManager.GetLogger(GetType());
 		}
 
@@ -69,11 +68,11 @@ namespace MFDExtractor.EventSystem
 							var winFormsKey =(Keys)NativeMethods.MapVirtualKey((uint)thisKey, NativeMethods.MAPVK_VSC_TO_VK_EX);
 							if (isPressedNow && !wasPressedBefore)
 							{
-								_keyDownEventHandler.ProcessKeyDownEvent(new KeyEventArgs(winFormsKey));
+								_keyEventHandler.ProcessKeyDownEvent(new KeyEventArgs(winFormsKey));
 							}
 							else if (wasPressedBefore && !isPressedNow)
 							{
-								_keyUpEventHandler.ProcessKeyUpEvent(new KeyEventArgs(winFormsKey));
+								_keyEventHandler.ProcessKeyUpEvent(new KeyEventArgs(winFormsKey));
 							}
 							i++;
 						}

@@ -13,16 +13,16 @@ namespace MFDExtractor
 
     internal class InstrumentFormDataChangedHandler : IInstrumentFormDataChangedHandler
     {
-	    private readonly string _instrumentName;
+	    private readonly InstrumentType _instrumentType;
         private readonly  InstrumentForm _instrumentForm;
 	    private readonly IInstrumentFormSettingsWriter _instrumentFormSettingsWriter;
         public InstrumentFormDataChangedHandler(
-			string instrumentName,
+            InstrumentType instrumentTYpe,
             InstrumentForm instrumentForm, 
 			IInstrumentFormSettingsWriter instrumentFormSettingsWriter = null
             )
         {
-	        _instrumentName = instrumentName;
+	        _instrumentType = instrumentTYpe;
             _instrumentForm = instrumentForm;
 	        _instrumentFormSettingsWriter = instrumentFormSettingsWriter ?? new InstrumentFormSettingsWriter();
         }
@@ -41,7 +41,7 @@ namespace MFDExtractor
                 settings.LRY = (location.Y - screen.Bounds.Location.Y) + size.Height;
             }
 			settings.Enabled = _instrumentForm.Visible;
-			_instrumentFormSettingsWriter.Write(_instrumentName, settings);
+			_instrumentFormSettingsWriter.Write(_instrumentType.ToString(), settings);
         }
     }
 }

@@ -8,7 +8,6 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
-using Common.UI;
 using F4SharedMem;
 using F4Utils.Process;
 using MFDExtractor.BMSSupport;
@@ -17,10 +16,13 @@ using MFDExtractor.Networking;
 using MFDExtractor.Properties;
 using log4net;
 using Common.Networking;
-using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
 using F4Utils.Terrain;
 using System.Threading.Tasks;
+using LightningGauges.Renderers.F16;
+using LightningGauges.Renderers.F16.AzimuthIndicator;
+using LightningGauges.Renderers.F16.EHSI;
+using LightningGauges.Renderers.F16.ISIS;
 
 namespace MFDExtractor
 {
@@ -29,14 +31,9 @@ namespace MFDExtractor
         private static readonly ILog Log = LogManager.GetLogger(typeof (Extractor));
         private static Extractor _extractor;
         private bool _disposed;
-	    private KeySettings _keySettings;
-	    private readonly IKeySettingsReader _keySettingsReader = new KeySettingsReader();
-		private readonly IInstrumentRendererSet _renderers = new InstrumentRendererSet();
-        private readonly IRendererSetInitializer _rendererSetInitializer;
-        private GdiPlusOptions _gdiPlusOptions = new GdiPlusOptions();
-        private IFlightDataUpdater _flightDataUpdater;
+	    private IFlightDataUpdater _flightDataUpdater;
         private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
-        private ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
+        private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private TerrainDB _terrainDB;
 
         #region Network Configuration
@@ -68,16 +65,11 @@ namespace MFDExtractor
         private Thread _keyboardWatcherThread;
         private Thread _simStatusMonitorThread;
 
-        private readonly DIHotkeyDetection _diHotkeyDetection;
-	    private IDirectInputEventHotkeyFilter _directInputEventHotkeyFilter;
 	    private readonly IEHSIStateTracker _ehsiStateTracker;
 
-	    private readonly IKeyDownEventHandler _keyDownEventHandler;
-	    private readonly IKeyUpEventHandler _keyUpEventHandler;
 	    private readonly IKeyboardWatcher _keyboardWatcher;
 	    private  IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
-	    private readonly IGdiPlusOptionsReader _gdiPlusOptionsReader;
 	    private readonly IInputEvents _inputEvents;
 
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
@@ -90,14 +82,10 @@ namespace MFDExtractor
 
 
         private Extractor(
-            IKeyDownEventHandler keyDownEventHandler = null, 
-			IKeyUpEventHandler keyUpEventHandler=null,
 			IKeyboardWatcher keyboardWatcher = null,
-			IDirectInputEventHotkeyFilter directInputEventHotkeyFilter= null, 
 			IEHSIStateTracker ehsiStateTracker =null, 
 			IClientSideIncomingMessageDispatcher clientSideIncomingMessageDispatcher = null,
 			IServerSideIncomingMessageDispatcher serverSideIncomingMessageDispatcher = null, 
-			IGdiPlusOptionsReader gdiPlusOptionsReader=null,
 			IInputEvents inputEvents = null,
             IInstrumentFactory instrumentFactory = null,
 			IThreeDeeCaptureCoordinateUpdater threeDeeCaptureCoordinateUpdater=null,
@@ -105,37 +93,35 @@ namespace MFDExtractor
 			IFlightDataUpdater flightDataUpdater =null)
         {
             State = new ExtractorState();
-	        _gdiPlusOptionsReader = gdiPlusOptionsReader ?? new GdiPlusOptionsReader();
             LoadSettings();
-			_rendererSetInitializer = new RendererSetInitializer(_renderers);
-			_rendererSetInitializer.Initialize(_gdiPlusOptions);
-            _instrumentFactory = instrumentFactory ?? new InstrumentFactory(_renderers);
-			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_renderers.EHSI);
-			_directInputEventHotkeyFilter = directInputEventHotkeyFilter ?? new DirectInputEventHotkeyFilter();
-			_diHotkeyDetection = new DIHotkeyDetection(Mediator);
-            _inputEvents = inputEvents ?? new InputEvents(_renderers, _ehsiStateTracker, State);
-	        _mediatorEventHandler =  new MediatorStateChangeHandler(_keySettings, _directInputEventHotkeyFilter,_diHotkeyDetection, _ehsiStateTracker,_inputEvents );
+            _instrumentFactory = instrumentFactory ?? new InstrumentFactory();
+            SetupInstruments();
+			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_instruments[InstrumentType.EHSI].Renderer as IEHSI);
+            _inputEvents = inputEvents ?? new InputEvents(
+                _instruments[InstrumentType.ASI].Renderer as IAirspeedIndicator,
+                _instruments[InstrumentType.EHSI].Renderer as IEHSI,
+                _instruments[InstrumentType.ISIS].Renderer as IISIS,
+                _instruments[InstrumentType.RWR].Renderer as IAzimuthIndicator,
+                _instruments[InstrumentType.Accelerometer].Renderer as IAccelerometer,
+                _ehsiStateTracker, State);
+            _clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
+
             if (!Settings.Default.DisableDirectInputMediator)
             {
                 Mediator = new Mediator(null);
+                _mediatorEventHandler = new MediatorStateChangeHandler(new DIHotkeyDetection(Mediator), _inputEvents);
             }
-	        _keyDownEventHandler = keyDownEventHandler ?? new KeyDownEventHandler(_ehsiStateTracker, _inputEvents, _keySettings);
-			_keyUpEventHandler = keyUpEventHandler ??  new KeyUpEventHandler(_keySettings, _ehsiStateTracker, _inputEvents);
-			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_keyDownEventHandler, _keyUpEventHandler, Log);
+			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_inputEvents, Log);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever();
 			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
-	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater(_texSmReader, _sharedMemorySpriteCoordinates, State);
+	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater( _sharedMemorySpriteCoordinates, State);
         }
         private void SetupInstruments()
         {
             foreach (InstrumentType instrumentType in Enum.GetValues(typeof (InstrumentType)))
             {
-                //if (!_instruments.ContainsKey(instrumentType))
-                //{
-                    var instrument = _instrumentFactory.Create(instrumentType);
-                    _instruments[instrumentType] = instrument;
-                //}
+                _instruments[instrumentType] = _instrumentFactory.Create(instrumentType);
             }
         }
         
@@ -149,8 +135,7 @@ namespace MFDExtractor
             }
             OnStarting();
             KeyFileUtils.ResetCurrentKeyFile();
-	        _keySettings = _keySettingsReader.Read();
-            if (Mediator != null)
+            if (Mediator != null && _mediatorEventHandler !=null)
             {
                 Mediator.PhysicalControlStateChanged += _mediatorEventHandler.HandleStateChange;
             }
@@ -170,12 +155,11 @@ namespace MFDExtractor
         {
             OnStopping();
             State.KeepRunning = false;
-            if (Mediator != null)
+            if (Mediator != null && _mediatorEventHandler !=null)
             {
                 Mediator.PhysicalControlStateChanged -= _mediatorEventHandler.HandleStateChange;
             }
 	        StopAllInstruments();
-            HideOutputWindowForms();
             if (State.NetworkMode == NetworkMode.Server)
             {
                 TearDownImageServer();
@@ -185,14 +169,6 @@ namespace MFDExtractor
             OnStopped();
         }
 
-	    private void HideOutputWindowForms()
-	    {
-	        if (_instruments == null) return;
-	        foreach (var instrument in _instruments.Where(instrument => instrument.Value != null && instrument.Value.Form != null))
-	        {
-	            instrument.Value.Form.Hide();
-	        }
-	    }
 
 	    private void OnStopped()
 	    {
@@ -218,8 +194,6 @@ namespace MFDExtractor
 	    public void LoadSettings()
         {
             var settings = Settings.Default;
-	        _keySettings = _keySettingsReader.Read();
-            _gdiPlusOptions= _gdiPlusOptionsReader.Read();
             State.NetworkMode = (NetworkMode) settings.NetworkingMode;
             switch (State.NetworkMode)
             {
@@ -273,7 +247,7 @@ namespace MFDExtractor
                 _client = new ExtractorClient(_serverEndpoint, ServiceName);
                 _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
                 _flightDataRetriever = new FlightDataRetriever(_client);
-                _flightDataUpdater = new FlightDataUpdater(_texSmReader, _sharedMemorySpriteCoordinates, State, null, _client);
+                _flightDataUpdater = new FlightDataUpdater(_sharedMemorySpriteCoordinates, State, null, _client);
 
             }
             catch {}
@@ -379,13 +353,13 @@ namespace MFDExtractor
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
                        
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
                     }
                     else
                     {
                         var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
                         SetFlightData(flightDataToSet);
-                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_renderers, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
+                        _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
                     }
                     Application.DoEvents();
                     var thisLoopFinishTime = DateTime.Now;
@@ -527,7 +501,6 @@ namespace MFDExtractor
             SetupSimStatusMonitorThread();
             SetupCaptureOrchestrationThread();
             SetupKeyboardWatcherThread();
-            SetupInstruments();
         }
 
         private void SetupKeyboardWatcherThread()
@@ -590,6 +563,11 @@ namespace MFDExtractor
             }
             _disposed = true;
         }
+
+	    ~Extractor()
+	    {
+	        Dispose(false);
+	    }
 
         internal static void DisposeInstance()
         {

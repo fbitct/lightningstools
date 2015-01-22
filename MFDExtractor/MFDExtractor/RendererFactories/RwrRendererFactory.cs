@@ -1,7 +1,5 @@
 ﻿using System;
 using Common.UI;
-using LightningGauges.Renderers;
-using LightningGauges.Renderers.F16;
 using LightningGauges.Renderers.F16.AzimuthIndicator;
 using MFDExtractor.Properties;
 

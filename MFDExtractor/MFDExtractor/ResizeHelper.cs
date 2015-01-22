@@ -1,5 +1,4 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using Common.Win32;
 
@@ -26,132 +25,126 @@ namespace MFDExtractor
 
         #region IMessageFilter Members
 
-        //[System.Diagnostics.DebuggerHidden()]
-        bool IMessageFilter.PreFilterMessage(ref System.Windows.Forms.Message message)
+        bool IMessageFilter.PreFilterMessage(ref Message message)
         {
-            if (!_TheWindow.IsDisposed && _TheWindow.Visible && 0 == _TheWindow.OwnedForms.Length)
+            try
             {
-                Point cursorLocation = Control.MousePosition;
-                Point pt = _TheWindow.PointToClient(cursorLocation);
-                Rectangle formBounds = _TheWindow.ClientRectangle;
-                var p = new NativeMethods.POINT(cursorLocation.X, cursorLocation.Y);
-                IntPtr windowFromPoint = NativeMethods.WindowFromPoint(p);
-                IntPtr thisWindowHandle = _TheWindow.Handle;
-                Form formToCompare = null;
-                if (windowFromPoint != IntPtr.Zero)
-                {
-                    formToCompare = Control.FromHandle(windowFromPoint) as Form;
-                }
-                if (formBounds.Contains(pt) && formToCompare != null && formToCompare == _TheWindow)
-                {
-                    // Create a rectangular area which is 5 pix smaller than windows's size
-                    // This is the area beyond which we need to simulate non client area
-                    Rectangle bounds = _TheWindow.ClientRectangle;
-                    bounds.Inflate(-7, -7);
+                return PreFilterMessage(message);
+            }
+            catch { }
+            return false;
+        }
 
-                    int htValue = NativeMethods.HT.HTNOWHERE;
-                    Cursor cursor = _initialCursor;
+        private bool PreFilterMessage(Message message)
+        {
+            if (_TheWindow.IsDisposed || !_TheWindow.Visible || 0 != _TheWindow.OwnedForms.Length) return false;
+            var cursorLocation = Control.MousePosition;
+            var pt = _TheWindow.PointToClient(cursorLocation);
+            var formBounds = _TheWindow.ClientRectangle;
+            var p = new NativeMethods.POINT(cursorLocation.X, cursorLocation.Y);
+            var windowFromPoint = NativeMethods.WindowFromPoint(p);
+            Form formToCompare = null;
+            if (windowFromPoint != IntPtr.Zero)
+            {
+                formToCompare = Control.FromHandle(windowFromPoint) as Form;
+            }
+            if (formBounds.Contains(pt) && formToCompare != null && formToCompare == _TheWindow)
+            {
+                // Create a rectangular area which is 5 pix smaller than windows's size
+                // This is the area beyond which we need to simulate non client area
+                var bounds = _TheWindow.ClientRectangle;
+                bounds.Inflate(-7, -7);
 
-                    // If the cursor is outside this inner rectangle, we need to
-                    // check for resize
-                    if (!bounds.Contains(pt))
+                // If the cursor is outside this inner rectangle, we need to
+                // check for resize
+                if (!bounds.Contains(pt))
+                {
+                    // Mouse is moving, if it is around the border edge, then we need
+                    // to set the cursor
+                    Cursor cursor;
+                    int htValue;
+                    if (pt.X < bounds.Left) // Cursor left side
                     {
-                        // Mouse is moving, if it is around the border edge, then we need
-                        // to set the cursor
-                        if (pt.X < bounds.Left) // Cursor left side
+                        if (pt.Y < bounds.Top)
                         {
-                            if (pt.Y < bounds.Top)
-                            {
-                                // Cursor top left
-                                cursor = Cursors.SizeNWSE;
-                                htValue = NativeMethods.HT.HTTOPLEFT;
-                            }
-                            else if (pt.Y > bounds.Bottom)
-                            {
-                                // Cursor bottom left
-                                cursor = Cursors.SizeNESW;
-                                htValue = NativeMethods.HT.HTBOTTOMLEFT;
-                            }
-                            else
-                            {
-                                // cursor left
-                                cursor = Cursors.SizeWE;
-                                htValue = NativeMethods.HT.HTLEFT;
-                            }
+                            // Cursor top left
+                            cursor = Cursors.SizeNWSE;
+                            htValue = NativeMethods.HT.HTTOPLEFT;
                         }
-                        else if (pt.X > bounds.Right) // Cursor right side
+                        else if (pt.Y > bounds.Bottom)
                         {
-                            if (pt.Y < bounds.Top)
-                            {
-                                // Cursor top right
-                                cursor = Cursors.SizeNESW;
-                                htValue = NativeMethods.HT.HTTOPRIGHT;
-                            }
-                            else if (pt.Y > bounds.Bottom)
-                            {
-                                // Cursor bottom right
-                                cursor = Cursors.SizeNWSE;
-                                htValue = NativeMethods.HT.HTBOTTOMRIGHT;
-                            }
-                            else
-                            {
-                                // cursor right
-                                cursor = Cursors.SizeWE;
-                                htValue = NativeMethods.HT.HTRIGHT;
-                            }
-                        }
-                        else // cursor is in between the form
-                        {
-                            if (pt.Y < bounds.Top)
-                            {
-                                // cursor is top
-                                cursor = Cursors.SizeNS;
-                                htValue = NativeMethods.HT.HTTOP;
-                            }
-                            else if (pt.Y > bounds.Bottom)
-                            {
-                                // Cursor is bottom
-                                cursor = Cursors.SizeNS;
-                                htValue = NativeMethods.HT.HTBOTTOM;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-
-                        if (message.Msg == NativeMethods.WM.WM_MOUSEMOVE)
-                        {
-                            // the cursor is already set, we have nothing to do
-                            _TheWindow.Cursor = cursor;
-                            return true; // The message is handled
-                        }
-                        else if (message.Msg == NativeMethods.WM.WM_LBUTTONDOWN)
-                        {
-                            // Start resizing
-                            NativeMethods.ReleaseCapture();
-                            NativeMethods.SendMessage(_TheWindow.Handle, NativeMethods.WM.WM_NCLBUTTONDOWN,
-                                                      htValue, 0);
-                            return true; // The message is handled					
+                            // Cursor bottom left
+                            cursor = Cursors.SizeNESW;
+                            htValue = NativeMethods.HT.HTBOTTOMLEFT;
                         }
                         else
                         {
-                            //this._TheWindow.Cursor = Cursors.Default;
-                            return false; // The message is NOT handled					
+                            // cursor left
+                            cursor = Cursors.SizeWE;
+                            htValue = NativeMethods.HT.HTLEFT;
                         }
                     }
-                    else // Cursor inside the window
+                    else if (pt.X > bounds.Right) // Cursor right side
                     {
-                        _TheWindow.Cursor = Cursors.SizeAll;
-                        return false;
+                        if (pt.Y < bounds.Top)
+                        {
+                            // Cursor top right
+                            cursor = Cursors.SizeNESW;
+                            htValue = NativeMethods.HT.HTTOPRIGHT;
+                        }
+                        else if (pt.Y > bounds.Bottom)
+                        {
+                            // Cursor bottom right
+                            cursor = Cursors.SizeNWSE;
+                            htValue = NativeMethods.HT.HTBOTTOMRIGHT;
+                        }
+                        else
+                        {
+                            // cursor right
+                            cursor = Cursors.SizeWE;
+                            htValue = NativeMethods.HT.HTRIGHT;
+                        }
+                    }
+                    else // cursor is in between the form
+                    {
+                        if (pt.Y < bounds.Top)
+                        {
+                            // cursor is top
+                            cursor = Cursors.SizeNS;
+                            htValue = NativeMethods.HT.HTTOP;
+                        }
+                        else if (pt.Y > bounds.Bottom)
+                        {
+                            // Cursor is bottom
+                            cursor = Cursors.SizeNS;
+                            htValue = NativeMethods.HT.HTBOTTOM;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
+                    switch (message.Msg)
+                    {
+                        case NativeMethods.WM.WM_MOUSEMOVE:
+                            // the cursor is already set, we have nothing to do
+                            _TheWindow.Cursor = cursor;
+                            return true; // The message is handled
+                        case NativeMethods.WM.WM_LBUTTONDOWN:
+                            // Start resizing
+                            NativeMethods.ReleaseCapture();
+                            NativeMethods.SendMessage(_TheWindow.Handle, NativeMethods.WM.WM_NCLBUTTONDOWN,
+                                htValue, 0);
+                            return true; // The message is handled					
+                        default:
+                            return false; // The message is NOT handled					
                     }
                 }
-                else
-                {
-                    _TheWindow.Cursor = _initialCursor;
-                    return false;
-                }
+                _TheWindow.Cursor = Cursors.SizeAll;
+                return false;
             }
+            _TheWindow.Cursor = _initialCursor;
             return false;
         }
 
