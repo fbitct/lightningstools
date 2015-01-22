@@ -1,28 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using LightningGauges.Renderers.F16.EHSI;
 
 namespace MFDExtractor.EventSystem
 {
-	public interface IEHSIStateTracker
+	internal interface IEHSIStateTracker
 	{
 		DateTime? RightKnobDepressedTime { get; set; }
 		DateTime? RightKnobLastActivityTime { get; set; }
 		DateTime? RightKnobReleasedTime { get; set; }
 		bool RightKnobIsPressed { get; }
 		void UpdateEHSIBrightnessLabelVisibility();
+        IEHSI EHSI { get; }
 	}
 
-	public class EHSIStateTracker : IEHSIStateTracker
+	internal class EHSIStateTracker : IEHSIStateTracker
 	{
 		public DateTime? RightKnobDepressedTime { get; set; }
 		public DateTime? RightKnobLastActivityTime { get; set; }
 		public DateTime? RightKnobReleasedTime { get; set; }
 		public bool RightKnobIsPressed {  get { return RightKnobDepressedTime.HasValue; } }
-		private readonly IEHSI _ehsi;
+		private readonly IDictionary<InstrumentType, IInstrument> _instruments;
 
-		public EHSIStateTracker(IEHSI ehsi)
+		public EHSIStateTracker(IDictionary<InstrumentType, IInstrument> instruments)
 		{
-			_ehsi = ehsi;
+		    _instruments = instruments;
 		}
 
 		public void UpdateEHSIBrightnessLabelVisibility()
@@ -47,11 +49,12 @@ namespace MFDExtractor.EventSystem
 					var howLongAgoLastActivity = DateTime.Now.Subtract(RightKnobLastActivityTime.Value);
 					if (howLongAgoReleased.TotalMilliseconds < 2000 || howLongAgoLastActivity.TotalMilliseconds < 2000)
 					{
-						showBrightnessLabel = _ehsi.InstrumentState.ShowBrightnessLabel;
+						showBrightnessLabel = EHSI.InstrumentState.ShowBrightnessLabel;
 					}
 				}
 			}
-			_ehsi.InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
+			EHSI.InstrumentState.ShowBrightnessLabel = showBrightnessLabel;
 		}
+        public IEHSI EHSI { get { return (_instruments[InstrumentType.EHSI].Renderer as IEHSI); } }
 	}
 }

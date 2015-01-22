@@ -1,19 +1,20 @@
-﻿using LightningGauges.Renderers;
+﻿using System.Collections.Generic;
 using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	public interface IAccelerometerResetEventHandler:IInputEventHandlerEventHandler {}
-	public class AccelerometerResetEventHandler : IAccelerometerResetEventHandler
+	internal interface IAccelerometerResetEventHandler:IInputEventHandlerEventHandler {}
+	internal class AccelerometerResetEventHandler : IAccelerometerResetEventHandler
 	{
-		private readonly IAccelerometer _accelerometer;
-		public AccelerometerResetEventHandler(IAccelerometer accelerometer)
-		{
-			_accelerometer = accelerometer ?? new Accelerometer();
-		}
+        private readonly IDictionary<InstrumentType, IInstrument> _instruments;
+        public AccelerometerResetEventHandler(IDictionary<InstrumentType, IInstrument> instruments)
+        {
+            _instruments = instruments;
+        }
 		public void Handle()
 		{
-			_accelerometer.InstrumentState.ResetMinAndMaxGs();
+		    var accelerometer = _instruments[InstrumentType.Accelerometer].Renderer as IAccelerometer;
+			accelerometer.InstrumentState.ResetMinAndMaxGs();
 		}
 	}
 }

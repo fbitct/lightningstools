@@ -1,13 +1,8 @@
-﻿
-
-using LightningGauges.Renderers.F16;
-using LightningGauges.Renderers.F16.AzimuthIndicator;
-using LightningGauges.Renderers.F16.EHSI;
-using LightningGauges.Renderers.F16.ISIS;
+﻿using System.Collections.Generic;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	public interface IInputEvents
+	internal interface IInputEvents
 	{
 		INightVisionModeToggledEventHandler NightVisionModeToggled { get;  }
 		IAirspeedIndexDecreasedByOneEventHandler AirspeedIndexDecreasedByOne { get;  }
@@ -26,7 +21,7 @@ namespace MFDExtractor.EventSystem.Handlers
 		IAccelerometerResetEventHandler AccelerometerReset { get;  }
 
 	}
-	public class InputEvents : IInputEvents
+	internal class InputEvents : IInputEvents
 	{
 			public INightVisionModeToggledEventHandler NightVisionModeToggled { get; private set; }
 			public IAirspeedIndexDecreasedByOneEventHandler AirspeedIndexDecreasedByOne { get; private set; }
@@ -45,29 +40,25 @@ namespace MFDExtractor.EventSystem.Handlers
 			public IAccelerometerResetEventHandler AccelerometerReset { get; private set; }
 
 		public InputEvents(
-            IAirspeedIndicator asi, 
-            IEHSI ehsi, 
-            IISIS isis, 
-            IAzimuthIndicator rwr, 
-            IAccelerometer accelerometer, 
+            IDictionary<InstrumentType, IInstrument>  instruments,
             IEHSIStateTracker ehsiStateTracker,
             ExtractorState extractorState)
 		{
 			NightVisionModeToggled =  new NightVisionModeToggledEventHandler(extractorState);
-			AirspeedIndexIncreasedByOne = new AirspeedIndexIncreasedByOneEventHandler(asi);
-			AirspeedIndexDecreasedByOne = new AirspeedIndexDecreasedByOneEventHandler(asi);
+			AirspeedIndexIncreasedByOne = new AirspeedIndexIncreasedByOneEventHandler(instruments);
+            AirspeedIndexDecreasedByOne = new AirspeedIndexDecreasedByOneEventHandler(instruments);
 			EHSILeftKnobDecreasedByOne = new EHSILeftKnobDecreasedByOneEventHandler();
 			EHSILeftKnobIncreasedByOne = new EHSILeftKnobIncreasedByOneEventHandler();
-			EHSIRightKnobDecreasedByOne = new EHSIRightKnobDecreasedByOneEventHandler(ehsiStateTracker,ehsi);
-			EHSIRightKnobIncreasedByOne = new EHSIRightKnobIncreasedByOneEventHandler(ehsiStateTracker, ehsi);
+            EHSIRightKnobDecreasedByOne = new EHSIRightKnobDecreasedByOneEventHandler(ehsiStateTracker);
+            EHSIRightKnobIncreasedByOne = new EHSIRightKnobIncreasedByOneEventHandler(ehsiStateTracker);
 			EHSIRightKnobDepressed = new EHSIRightKnobDepressedEventHandler(ehsiStateTracker);
 			EHSIRightKnobReleased = new EHSIRightKnobReleasedEventHandler(ehsiStateTracker);
-			EHSIMenuButtonDepressed = new EHSIMenuButtonDepressedEventHandler(ehsi);
-			ISISBrightButtonDepressed = new ISISBrightButtonDepressedEventHandler(isis);
-			ISISStandardButtonDepressed = new ISISStandardButtonDepressedEventHandler(isis);
-			AzimuthIndicatorBrightnessIncreased = new AzimuthIndicatorBrightnessIncreasedEventHandler(rwr);
-			AzimuthIndicatorBrightnessDecreased = new AzimuthIndicatorBrightnessDecreasedEventHandler(rwr);
-			AccelerometerReset = new AccelerometerResetEventHandler(accelerometer);
+            EHSIMenuButtonDepressed = new EHSIMenuButtonDepressedEventHandler(ehsiStateTracker);
+            ISISBrightButtonDepressed = new ISISBrightButtonDepressedEventHandler(instruments);
+            ISISStandardButtonDepressed = new ISISStandardButtonDepressedEventHandler(instruments);
+            AzimuthIndicatorBrightnessIncreased = new AzimuthIndicatorBrightnessIncreasedEventHandler(instruments);
+            AzimuthIndicatorBrightnessDecreased = new AzimuthIndicatorBrightnessDecreasedEventHandler(instruments);
+            AccelerometerReset = new AccelerometerResetEventHandler(instruments);
 		}
 	}
 }

@@ -1,22 +1,23 @@
 ﻿using System;
-using LightningGauges.Renderers;
+using System.Collections.Generic;
 using LightningGauges.Renderers.F16.ISIS;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	public interface IISISStandardButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
-	public class ISISStandardButtonDepressedEventHandler : IISISStandardButtonDepressedEventHandler
+	internal interface IISISStandardButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
+	internal class ISISStandardButtonDepressedEventHandler : IISISStandardButtonDepressedEventHandler
 	{
-		private readonly IISIS _isis;
+		private readonly IDictionary<InstrumentType, IInstrument> _instruments;
 
-		public ISISStandardButtonDepressedEventHandler(IISIS isis)
+		public ISISStandardButtonDepressedEventHandler(IDictionary<InstrumentType, IInstrument> instruments)
 		{
-			_isis = isis;
+			_instruments = instruments;
 		}
 
 		public void Handle()
 		{
-			_isis.InstrumentState.Brightness = (int)Math.Floor((_isis.InstrumentState.MaxBrightness) * 0.5f);
+		    var isis = _instruments[InstrumentType.ISIS].Renderer as IISIS;
+			isis.InstrumentState.Brightness = (int)Math.Floor((isis.InstrumentState.MaxBrightness) * 0.5f);
 		}
 	}
 }

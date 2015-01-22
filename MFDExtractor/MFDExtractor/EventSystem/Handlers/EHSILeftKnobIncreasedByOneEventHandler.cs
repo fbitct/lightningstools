@@ -1,5 +1,4 @@
 ﻿using F4KeyFile;
-using F4SharedMem;
 using F4Utils.Process;
 
 namespace MFDExtractor.EventSystem.Handlers

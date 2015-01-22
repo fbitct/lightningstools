@@ -1,21 +1,21 @@
-﻿using LightningGauges.Renderers;
+﻿using System.Collections.Generic;
 using LightningGauges.Renderers.F16;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	public interface IAirspeedIndexDecreasedByOneEventHandler:IInputEventHandlerEventHandler {}
-	public class AirspeedIndexDecreasedByOneEventHandler : IAirspeedIndexDecreasedByOneEventHandler
+	internal interface IAirspeedIndexDecreasedByOneEventHandler:IInputEventHandlerEventHandler {}
+	internal class AirspeedIndexDecreasedByOneEventHandler : IAirspeedIndexDecreasedByOneEventHandler
 	{
-		private readonly IAirspeedIndicator _airspeedIndicator;
+		private readonly IDictionary<InstrumentType, IInstrument> _instruments;
 
-		public AirspeedIndexDecreasedByOneEventHandler(IAirspeedIndicator airspeedIndicator)
+		public AirspeedIndexDecreasedByOneEventHandler(IDictionary<InstrumentType, IInstrument> instruments)
 		{
-			_airspeedIndicator = airspeedIndicator;
+		    _instruments = instruments;
 		}
 
 		public void Handle()
 		{
-			_airspeedIndicator.InstrumentState.AirspeedIndexKnots -= 2.5F;
+			(_instruments[InstrumentType.ASI].Renderer as IAirspeedIndicator).InstrumentState.AirspeedIndexKnots -= 2.5F;
 		}
 	}
 }

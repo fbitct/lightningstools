@@ -2,8 +2,8 @@
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	public interface IEHSIRightKnobReleasedEventHandler:IInputEventHandlerEventHandler {}
-	public class EHSIRightKnobReleasedEventHandler : IEHSIRightKnobReleasedEventHandler
+	internal interface IEHSIRightKnobReleasedEventHandler:IInputEventHandlerEventHandler {}
+	internal class EHSIRightKnobReleasedEventHandler : IEHSIRightKnobReleasedEventHandler
 	{
 		private readonly IEHSIStateTracker _ehsiStateTracker;
 

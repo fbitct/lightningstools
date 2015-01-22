@@ -19,10 +19,6 @@ using Common.Networking;
 using MFDExtractor.EventSystem.Handlers;
 using F4Utils.Terrain;
 using System.Threading.Tasks;
-using LightningGauges.Renderers.F16;
-using LightningGauges.Renderers.F16.AzimuthIndicator;
-using LightningGauges.Renderers.F16.EHSI;
-using LightningGauges.Renderers.F16.ISIS;
 
 namespace MFDExtractor
 {
@@ -65,12 +61,12 @@ namespace MFDExtractor
         private Thread _keyboardWatcherThread;
         private Thread _simStatusMonitorThread;
 
-	    private readonly IEHSIStateTracker _ehsiStateTracker;
+	    private IEHSIStateTracker _ehsiStateTracker;
 
 	    private readonly IKeyboardWatcher _keyboardWatcher;
 	    private  IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
-	    private readonly IInputEvents _inputEvents;
+	    private IInputEvents _inputEvents;
 
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
 	    private readonly IInstrumentFactory _instrumentFactory;
@@ -83,10 +79,8 @@ namespace MFDExtractor
 
         private Extractor(
 			IKeyboardWatcher keyboardWatcher = null,
-			IEHSIStateTracker ehsiStateTracker =null, 
 			IClientSideIncomingMessageDispatcher clientSideIncomingMessageDispatcher = null,
 			IServerSideIncomingMessageDispatcher serverSideIncomingMessageDispatcher = null, 
-			IInputEvents inputEvents = null,
             IInstrumentFactory instrumentFactory = null,
 			IThreeDeeCaptureCoordinateUpdater threeDeeCaptureCoordinateUpdater=null,
             IFlightDataRetriever flightDataRetriever= null,
@@ -95,17 +89,9 @@ namespace MFDExtractor
             State = new ExtractorState();
             LoadSettings();
             _instrumentFactory = instrumentFactory ?? new InstrumentFactory();
-            SetupInstruments();
-			_ehsiStateTracker = ehsiStateTracker ?? new EHSIStateTracker(_instruments[InstrumentType.EHSI].Renderer as IEHSI);
-            _inputEvents = inputEvents ?? new InputEvents(
-                _instruments[InstrumentType.ASI].Renderer as IAirspeedIndicator,
-                _instruments[InstrumentType.EHSI].Renderer as IEHSI,
-                _instruments[InstrumentType.ISIS].Renderer as IISIS,
-                _instruments[InstrumentType.RWR].Renderer as IAzimuthIndicator,
-                _instruments[InstrumentType.Accelerometer].Renderer as IAccelerometer,
-                _ehsiStateTracker, State);
+            _ehsiStateTracker = new EHSIStateTracker(_instruments);
+            _inputEvents = new InputEvents(_instruments, _ehsiStateTracker, State);
             _clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
-
             if (!Settings.Default.DisableDirectInputMediator)
             {
                 Mediator = new Mediator(null);
@@ -134,6 +120,7 @@ namespace MFDExtractor
                 return;
             }
             OnStarting();
+            SetupInstruments();
             KeyFileUtils.ResetCurrentKeyFile();
             if (Mediator != null && _mediatorEventHandler !=null)
             {

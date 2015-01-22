@@ -1,23 +1,22 @@
 ﻿using F4Utils.Process;
-using LightningGauges.Renderers;
-using LightningGauges.Renderers.F16;
 using LightningGauges.Renderers.F16.EHSI;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
-	public interface IEHSIMenuButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
-	public class EHSIMenuButtonDepressedEventHandler : IEHSIMenuButtonDepressedEventHandler
+	internal interface IEHSIMenuButtonDepressedEventHandler:IInputEventHandlerEventHandler{}
+	internal class EHSIMenuButtonDepressedEventHandler : IEHSIMenuButtonDepressedEventHandler
 	{
-		private readonly IEHSI _ehsi;
+		private readonly IEHSIStateTracker _ehsiStateTracker;
 
-		public EHSIMenuButtonDepressedEventHandler(IEHSI ehsi)
+		public EHSIMenuButtonDepressedEventHandler(IEHSIStateTracker ehsiStateTracker)
 		{
-			_ehsi = ehsi;
+			_ehsiStateTracker = ehsiStateTracker;
 		}
 
 		public void Handle()
 		{
-			var currentMode =_ehsi.InstrumentState.InstrumentMode;
+		    var ehsi = _ehsiStateTracker.EHSI;
+			var currentMode =ehsi.InstrumentState.InstrumentMode;
 			InstrumentModes? newMode = null;
 			switch (currentMode)
 			{
@@ -38,7 +37,7 @@ namespace MFDExtractor.EventSystem.Handlers
 			}
 			if (newMode.HasValue)
 			{
-				_ehsi.InstrumentState.InstrumentMode = newMode.Value;
+				ehsi.InstrumentState.InstrumentMode = newMode.Value;
 			}
 			KeyFileUtils.SendCallbackToFalcon("SimStepHSIMode");
 		}
