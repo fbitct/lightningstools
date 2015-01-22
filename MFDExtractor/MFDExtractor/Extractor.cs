@@ -373,6 +373,7 @@ namespace MFDExtractor
                     Thread.Sleep((millisToSleep));
 
                 }
+                Settings.Default.Save();
                 Debug.WriteLine("CaptureThreadWork has exited.");
             }
             catch (ThreadAbortException)
@@ -381,7 +382,6 @@ namespace MFDExtractor
             catch (ThreadInterruptedException)
             {
             }
-            Settings.Default.Save();
         }
 
 	    private void ProcessNetworkMessages()
