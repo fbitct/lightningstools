@@ -155,31 +155,25 @@ namespace LightningGauges.Renderers.F16
         {
             lock (_imagesLock)
             {
-                if (line != null)
+                if (line == null) return;
+                if (line.Length < 25)
                 {
-                    if (line.Length < 25)
-                    {
-                        var lineReplacement = new byte[25];
-                        Array.Copy(line, 0, lineReplacement, 0, line.Length);
-                        line = lineReplacement;
-                    }
-                    for (var i = 0; i < line.Length; i++)
-                    {
-                        var thisByte = line[i];
-                        if (thisByte == 0x04) thisByte = 0x02;
-                        if (thisByte == 0x5E) thisByte = 0x0A; //18-08-12 Added by Falcas, sets the correct deg symbol
-                        var thisByteInvert = invertLine.Length > i ? invertLine[i] : (byte) 0;
-                        var inverted = false;
-                        if (thisByteInvert > 0 && thisByteInvert != 32)
-                        {
-                            inverted = true;
-                        }
-                        var thisCharImage = _font.GetCharImage(thisByte, inverted);
+                    var lineReplacement = new byte[25];
+                    Array.Copy(line, 0, lineReplacement, 0, line.Length);
+                    line = lineReplacement;
+                }
+                for (var i = 0; i < line.Length; i++)
+                {
+                    var thisByte = line[i];
+                    if (thisByte == 0x04) thisByte = 0x02;
+                    if (thisByte == 0x5E) thisByte = 0x0A; //18-08-12 Added by Falcas, sets the correct deg symbol
+                    var thisByteInvert = invertLine !=null && invertLine.Length > i ? invertLine[i] : (byte) 0;
+                    var inverted = thisByteInvert > 0 && thisByteInvert != 32;
+                    var thisCharImage = _font.GetCharImage(thisByte, inverted);
 
-                        float xPos = location.X + (i*thisCharImage.Width);
-                        float yPos = location.Y;
-                        g.DrawImageUnscaled(thisCharImage, new Point((int) xPos, (int) yPos));
-                    }
+                    float xPos = location.X + (i*thisCharImage.Width);
+                    float yPos = location.Y;
+                    g.DrawImageUnscaled(thisCharImage, new Point((int) xPos, (int) yPos));
                 }
             }
         }

@@ -673,6 +673,7 @@ namespace MFDExtractor.UI
         /// </param>
         private void SaveSettings(bool persist)
         {
+            Settings.Default.PropertyChanged -= SettingsChanged;
             Settings settings = Settings.Default;
             settings.UpgradeNeeded = false;
             settings.NetworkImageFormat = cboImageFormat.SelectedItem.ToString();
@@ -851,6 +852,7 @@ namespace MFDExtractor.UI
                     }
                 }
             }
+            Settings.Default.PropertyChanged += SettingsChanged;
         }
 
         /// <summary>

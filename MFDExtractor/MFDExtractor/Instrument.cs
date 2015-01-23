@@ -26,6 +26,7 @@ namespace MFDExtractor
         private readonly ILog _log = LogManager.GetLogger(typeof (Instrument));
         private ExtractorState _extractorState;
         private int _renderCycle;
+        private bool _renderOnlyOnStateChanges;
         internal Instrument(
             IInstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
             IInstrumentRenderHelper instrumentRenderHelper = null,
@@ -35,7 +36,7 @@ namespace MFDExtractor
             _instrumentStateSnapshotCache = instrumentStateSnapshotCache ?? new InstrumentStateSnapshotCache();
             _instrumentRenderHelper = instrumentRenderHelper ?? new InstrumentRenderHelper();
             _instrumentFormFactory = instrumentFormFactory ?? new InstrumentFormFactory();
-
+            _renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
         }
         public InstrumentType Type { get; internal set; }
         private InstrumentForm Form { get; set; }
@@ -92,21 +93,20 @@ namespace MFDExtractor
                 var startTime = DateTime.Now;
                 _renderCycle++;
                 if (_renderCycle > 999) _renderCycle = 0;
-                if (!ShouldRenderNow())
+                if (ShouldRenderNow())
                 {
-                    continue;
-                }
-                try
-                {
-                    Render(extractorState.NightMode);
-                    if (Form != null)
+                    try
                     {
-                        Form.RenderImmediately = false;
+                        Render(extractorState.NightMode);
+                        if (Form != null)
+                        {
+                            Form.RenderImmediately = false;
+                        }
                     }
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e.Message, e);
+                    catch (Exception e)
+                    {
+                        _log.Error(e.Message, e);
+                    }
                 }
                 var endTime = DateTime.Now;
                 var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
@@ -124,20 +124,23 @@ namespace MFDExtractor
             }
 
             var stateIsStale = _instrumentStateSnapshotCache.CaptureInstrumentStateSnapshotAndCheckIfStale(Renderer, Form);
-            var renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
+            
             return (Form != null)
-                        &&
-                   (
-                       (Form.RenderImmediately)
+                   &&
+                 (
+                       Form.RenderImmediately
                             ||
-                       ((renderOnlyOnStateChanges && stateIsStale) || !renderOnlyOnStateChanges)
-                            ||
+                    (
+                       ((_renderOnlyOnStateChanges && stateIsStale) || !_renderOnlyOnStateChanges)
+                            &&
                        (
-                           (Form.Settings != null && Form.Settings.Enabled)
+                            
+                            (Form.Settings != null && Form.Settings.Enabled)
                                 &&
-                           (_renderCycle % Math.Max(Form.Settings.RenderEveryN, 1) == Form.Settings.RenderOnN - 1)
+                            (_renderCycle%Math.Max(Form.Settings.RenderEveryN, 1) == Form.Settings.RenderOnN - 1)
                        )
-                  );
+                    )
+                 );
         }
         private void Render(bool nightMode)
         {
