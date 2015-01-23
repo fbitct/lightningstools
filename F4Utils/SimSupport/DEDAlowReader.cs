@@ -11,38 +11,44 @@ namespace F4Utils.SimSupport
     {
         public bool CheckDED_ALOW(FlightData fromFalcon, out int newAlow)
         {
-            var alowString = fromFalcon.DEDLines[1];
-            var alowInverseString = fromFalcon.Invert[1];
-            var anyCharsHighlighted = false;
-            if (alowString.Contains("CARA ALOW"))
+            if (fromFalcon.DEDLines != null && fromFalcon.Invert != null)
             {
-                var newAlowString = "";
-                for (var i = 0; i < alowString.Length; i++)
+                for (var i = 0; i < fromFalcon.DEDLines.Length; i++)
                 {
-                    var someChar = alowString[i];
-                    var inverseChar = alowInverseString[i];
-                    int tryParse;
-                    if (Int32.TryParse(new String(someChar, 1), out tryParse))
+                    var alowString = fromFalcon.DEDLines[i] ?? "";
+                    var alowInverseString = fromFalcon.Invert[i] ?? "";
+                    var anyCharsHighlighted = false;
+                    if (alowString.Contains("CARA ALOW"))
                     {
-                        if (inverseChar != ' ')
+                        var newAlowString = "";
+                        for (var j = 0; j < alowString.Length; j++)
                         {
-                            anyCharsHighlighted = true;
-                            break;
+                            var someChar = alowString[j];
+                            var inverseChar = alowInverseString[j];
+                            int tryParse;
+                            if (Int32.TryParse(new String(someChar, 1), out tryParse))
+                            {
+                                if (inverseChar != ' ')
+                                {
+                                    anyCharsHighlighted = true;
+                                    break;
+                                }
+                                newAlowString += someChar;
+                            }
                         }
-                        newAlowString += someChar;
+                        if (anyCharsHighlighted)
+                        {
+                            newAlow = -1;
+                            return false;
+                        }
+                        var success = Int32.TryParse(newAlowString, out newAlow);
+                        if (!success)
+                        {
+                            newAlow = -1;
+                        }
+                        return success;
                     }
                 }
-                if (anyCharsHighlighted)
-                {
-                    newAlow = -1;
-                    return false;
-                }
-                var success = Int32.TryParse(newAlowString, out newAlow);
-                if (!success)
-                {
-                    newAlow = -1;
-                }
-                return success;
             }
             newAlow = -1;
             return false;
