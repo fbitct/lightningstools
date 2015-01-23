@@ -4777,18 +4777,6 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int CabinPress_RenderEveryN {
-            get {
-                return ((int)(this["CabinPress_RenderEveryN"]));
-            }
-            set {
-                this["CabinPress_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int CabinPress_RenderOnN {
             get {
@@ -5593,25 +5581,13 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int AOAIndexer_RenderEveryN {
             get {
                 return ((int)(this["AOAIndexer_RenderEveryN"]));
             }
             set {
                 this["AOAIndexer_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int AOAIndicator_RenderEveryN {
-            get {
-                return ((int)(this["AOAIndicator_RenderEveryN"]));
-            }
-            set {
-                this["AOAIndicator_RenderEveryN"] = value;
             }
         }
         
@@ -5641,54 +5617,6 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int Compass_RenderEveryN {
-            get {
-                return ((int)(this["Compass_RenderEveryN"]));
-            }
-            set {
-                this["Compass_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int DED_RenderEveryN {
-            get {
-                return ((int)(this["DED_RenderEveryN"]));
-            }
-            set {
-                this["DED_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public int PFL_RenderEveryN {
-            get {
-                return ((int)(this["PFL_RenderEveryN"]));
-            }
-            set {
-                this["PFL_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public int EPUFuel_RenderEveryN {
-            get {
-                return ((int)(this["EPUFuel_RenderEveryN"]));
-            }
-            set {
-                this["EPUFuel_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int FTIT2_RenderEveryN {
             get {
@@ -5713,31 +5641,7 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int FuelQuantity_RenderEveryN {
-            get {
-                return ((int)(this["FuelQuantity_RenderEveryN"]));
-            }
-            set {
-                this["FuelQuantity_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public int GearLights_RenderEveryN {
-            get {
-                return ((int)(this["GearLights_RenderEveryN"]));
-            }
-            set {
-                this["GearLights_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int NWSIndexer_RenderEveryN {
             get {
                 return ((int)(this["NWSIndexer_RenderEveryN"]));
@@ -5797,66 +5701,6 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int Speedbrake_RenderEveryN {
-            get {
-                return ((int)(this["Speedbrake_RenderEveryN"]));
-            }
-            set {
-                this["Speedbrake_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int RPM1_RenderEveryN {
-            get {
-                return ((int)(this["RPM1_RenderEveryN"]));
-            }
-            set {
-                this["RPM1_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int RPM2_RenderEveryN {
-            get {
-                return ((int)(this["RPM2_RenderEveryN"]));
-            }
-            set {
-                this["RPM2_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int VVI_RenderEveryN {
-            get {
-                return ((int)(this["VVI_RenderEveryN"]));
-            }
-            set {
-                this["VVI_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4")]
-        public int HYDA_RenderEveryN {
-            get {
-                return ((int)(this["HYDA_RenderEveryN"]));
-            }
-            set {
-                this["HYDA_RenderEveryN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int ASI_RenderOnN {
             get {
@@ -5900,18 +5744,6 @@ namespace MFDExtractor.Properties {
             }
             set {
                 this["Compass_RenderOnN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("3")]
-        public int FTIT1_RenderEveryN {
-            get {
-                return ((int)(this["FTIT1_RenderEveryN"]));
-            }
-            set {
-                this["FTIT1_RenderEveryN"] = value;
             }
         }
         
@@ -6140,30 +5972,6 @@ namespace MFDExtractor.Properties {
             }
             set {
                 this["ISIS_Monochrome"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int ISIS_RenderOnN {
-            get {
-                return ((int)(this["ISIS_RenderOnN"]));
-            }
-            set {
-                this["ISIS_RenderOnN"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int ISIS_RenderEveryN {
-            get {
-                return ((int)(this["ISIS_RenderEveryN"]));
-            }
-            set {
-                this["ISIS_RenderEveryN"] = value;
             }
         }
         
@@ -6824,6 +6632,198 @@ namespace MFDExtractor.Properties {
             }
             set {
                 this["PollingDelay"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int CabinPress_RenderEveryN {
+            get {
+                return ((int)(this["CabinPress_RenderEveryN"]));
+            }
+            set {
+                this["CabinPress_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int AOAIndicator_RenderEveryN {
+            get {
+                return ((int)(this["AOAIndicator_RenderEveryN"]));
+            }
+            set {
+                this["AOAIndicator_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int Compass_RenderEveryN {
+            get {
+                return ((int)(this["Compass_RenderEveryN"]));
+            }
+            set {
+                this["Compass_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int DED_RenderEveryN {
+            get {
+                return ((int)(this["DED_RenderEveryN"]));
+            }
+            set {
+                this["DED_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int PFL_RenderEveryN {
+            get {
+                return ((int)(this["PFL_RenderEveryN"]));
+            }
+            set {
+                this["PFL_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6")]
+        public int EPUFuel_RenderEveryN {
+            get {
+                return ((int)(this["EPUFuel_RenderEveryN"]));
+            }
+            set {
+                this["EPUFuel_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int FuelQuantity_RenderEveryN {
+            get {
+                return ((int)(this["FuelQuantity_RenderEveryN"]));
+            }
+            set {
+                this["FuelQuantity_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int GearLights_RenderEveryN {
+            get {
+                return ((int)(this["GearLights_RenderEveryN"]));
+            }
+            set {
+                this["GearLights_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int Speedbrake_RenderEveryN {
+            get {
+                return ((int)(this["Speedbrake_RenderEveryN"]));
+            }
+            set {
+                this["Speedbrake_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int RPM1_RenderEveryN {
+            get {
+                return ((int)(this["RPM1_RenderEveryN"]));
+            }
+            set {
+                this["RPM1_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int RPM2_RenderEveryN {
+            get {
+                return ((int)(this["RPM2_RenderEveryN"]));
+            }
+            set {
+                this["RPM2_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int VVI_RenderEveryN {
+            get {
+                return ((int)(this["VVI_RenderEveryN"]));
+            }
+            set {
+                this["VVI_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int HYDA_RenderEveryN {
+            get {
+                return ((int)(this["HYDA_RenderEveryN"]));
+            }
+            set {
+                this["HYDA_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int FTIT1_RenderEveryN {
+            get {
+                return ((int)(this["FTIT1_RenderEveryN"]));
+            }
+            set {
+                this["FTIT1_RenderEveryN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ISIS_RenderOnN {
+            get {
+                return ((int)(this["ISIS_RenderOnN"]));
+            }
+            set {
+                this["ISIS_RenderOnN"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ISIS_RenderEveryN {
+            get {
+                return ((int)(this["ISIS_RenderEveryN"]));
+            }
+            set {
+                this["ISIS_RenderEveryN"] = value;
             }
         }
     }

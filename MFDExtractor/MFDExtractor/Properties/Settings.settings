@@ -1190,9 +1190,6 @@
     <Setting Name="HYDB_Monochrome" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="CabinPress_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
     <Setting Name="CabinPress_RenderOnN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
@@ -1395,27 +1392,12 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="AOAIndexer_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="AOAIndicator_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="CautionPanel_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="CMDS_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">4</Value>
-    </Setting>
-    <Setting Name="Compass_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="DED_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="PFL_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">4</Value>
-    </Setting>
-    <Setting Name="EPUFuel_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="FTIT2_RenderEveryN" Type="System.Int32" Scope="User">
@@ -1424,14 +1406,8 @@
     <Setting Name="FuelFlow_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
     </Setting>
-    <Setting Name="FuelQuantity_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="GearLights_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">4</Value>
-    </Setting>
     <Setting Name="NWSIndexer_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="NOZ1_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">4</Value>
@@ -1445,21 +1421,6 @@
     <Setting Name="OIL2_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">4</Value>
     </Setting>
-    <Setting Name="Speedbrake_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
-    </Setting>
-    <Setting Name="RPM1_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="RPM2_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="VVI_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="HYDA_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">4</Value>
-    </Setting>
     <Setting Name="ASI_RenderOnN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
@@ -1471,9 +1432,6 @@
     </Setting>
     <Setting Name="Compass_RenderOnN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="FTIT1_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">3</Value>
     </Setting>
     <Setting Name="HSI_RenderEveryN" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
@@ -1531,12 +1489,6 @@
     </Setting>
     <Setting Name="ISIS_Monochrome" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="ISIS_RenderOnN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
-    </Setting>
-    <Setting Name="ISIS_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
     </Setting>
     <Setting Name="ISIS_PressureUnits" Type="System.String" Scope="User">
       <Value Profile="(Default)">InchesOfMercury</Value>
@@ -1702,6 +1654,54 @@
     </Setting>
     <Setting Name="PollingDelay" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="CabinPress_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="AOAIndicator_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="Compass_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="DED_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="PFL_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="EPUFuel_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+    <Setting Name="FuelQuantity_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="GearLights_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="Speedbrake_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">4</Value>
+    </Setting>
+    <Setting Name="RPM1_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="RPM2_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="VVI_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="HYDA_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="FTIT1_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">4</Value>
+    </Setting>
+    <Setting Name="ISIS_RenderOnN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="ISIS_RenderEveryN" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">2</Value>
     </Setting>
   </Settings>
 </SettingsFile>
