@@ -1,36 +1,33 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class Squadron : AirUnit
     {
         #region Public Fields
-
-        public short aa_kills;
-        public short ag_kills;
-        public VU_ID airbase_id;
-        public short an_kills;
-        public short as_kills;
         public int fuel;
+        public byte specialty;
+        public byte[] stores;
+        public Pilot[] pilots;
+        public int[] schedule;
+        public VU_ID airbase_id;
         public VU_ID hot_spot;
         public VU_ID junk;
-        public short mission_score;
-        public short missions_flown;
-        public byte pilot_losses;
-        public Pilot[] pilots;
         public byte[] rating;
-        public int[] schedule;
-        public byte specialty;
-        public byte squadron_patch;
-        public byte[] stores;
+        public short aa_kills;
+        public short ag_kills;
+        public short as_kills;
+        public short an_kills;
+        public short missions_flown;
+        public short mission_score;
         public byte total_losses;
-
+        public byte pilot_losses;
+        public byte squadron_patch;
         #endregion
 
         protected Squadron()
+            : base()
         {
         }
-
         public Squadron(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -42,7 +39,7 @@ namespace F4Utils.Campaign
             if (version < 69)
             {
                 stores = new byte[200];
-                for (var i = 0; i < 200; i++)
+                for (int i = 0; i < 200; i++)
                 {
                     stores[i] = bytes[offset];
                     offset++;
@@ -53,7 +50,7 @@ namespace F4Utils.Campaign
                 if (version >= 72)
                 {
                     stores = new byte[600];
-                    for (var i = 0; i < 600; i++)
+                    for (int i = 0; i < 600; i++)
                     {
                         stores[i] = bytes[offset];
                         offset++;
@@ -62,7 +59,7 @@ namespace F4Utils.Campaign
                 else
                 {
                     stores = new byte[220];
-                    for (var i = 0; i < 220; i++)
+                    for (int i = 0; i < 220; i++)
                     {
                         stores[i] = bytes[offset];
                         offset++;
@@ -75,9 +72,9 @@ namespace F4Utils.Campaign
                 if (version >= 29)
                 {
                     pilots = new Pilot[48];
-                    for (var j = 0; j < pilots.Length; j++)
+                    for (int j = 0; j < pilots.Length; j++)
                     {
-                        var thisPilot = new Pilot();
+                        Pilot thisPilot = new Pilot();
                         thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
                         offset += 2;
                         thisPilot.pilot_skill_and_rating = bytes[offset];
@@ -102,9 +99,9 @@ namespace F4Utils.Campaign
                 else
                 {
                     pilots = new Pilot[36];
-                    for (var j = 0; j < pilots.Length; j++)
+                    for (int j = 0; j < pilots.Length; j++)
                     {
-                        var thisPilot = new Pilot();
+                        Pilot thisPilot = new Pilot();
                         thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
                         offset += 2;
                         thisPilot.pilot_skill_and_rating = bytes[offset];
@@ -130,9 +127,9 @@ namespace F4Utils.Campaign
             else
             {
                 pilots = new Pilot[48];
-                for (var j = 0; j < pilots.Length; j++)
+                for (int j = 0; j < pilots.Length; j++)
                 {
-                    var thisPilot = new Pilot();
+                    Pilot thisPilot = new Pilot();
                     thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
                     offset += 2;
                     thisPilot.pilot_skill_and_rating = bytes[offset];
@@ -153,7 +150,7 @@ namespace F4Utils.Campaign
                 }
             }
             schedule = new int[16];
-            for (var j = 0; j < schedule.Length; j++)
+            for (int j = 0; j < schedule.Length; j++)
             {
                 schedule[j] = BitConverter.ToInt32(bytes, offset);
                 offset += 4;
@@ -179,7 +176,7 @@ namespace F4Utils.Campaign
                 offset += 4;
             }
             rating = new byte[16];
-            for (var j = 0; j < rating.Length; j++)
+            for (int j = 0; j < rating.Length; j++)
             {
                 rating[j] = bytes[offset];
                 offset++;
@@ -214,6 +211,7 @@ namespace F4Utils.Campaign
                 squadron_patch = bytes[offset];
                 offset++;
             }
+
         }
     }
 }

@@ -1,31 +1,28 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class Objective : CampaignBase
     {
         #region Public Fields
-
-        public float[] detect_ratio; //radar_data, init size=8
-        public byte first_owner;
-        public byte[] fstatus;
-        public byte fuel;
         public uint lastRepair;
-        public CampObjectiveLinkDataType[] link_data;
-        public byte links;
-        public byte losses;
-        public short nameId;
         public uint obj_flags;
-        public VU_ID parent;
-        public byte priority;
         public byte supply;
-
+        public byte fuel;
+        public byte losses;
+        public byte[] fstatus;
+        public byte priority;
+        public short nameId;
+        public VU_ID parent;
+        public byte first_owner;
+        public byte links;
+        public CampObjectiveLinkDataType[] link_data;
+        public float[] detect_ratio; //radar_data, init size=8
         #endregion
 
         protected Objective()
+            : base()
         {
         }
-
         public Objective(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -52,11 +49,11 @@ namespace F4Utils.Campaign
             losses = bytes[offset];
             offset++;
 
-            var numStatuses = bytes[offset];
+            byte numStatuses = bytes[offset];
             offset++;
 
             fstatus = new byte[numStatuses];
-            for (var i = 0; i < numStatuses; i++)
+            for (int i = 0; i < numStatuses; i++)
             {
                 fstatus[i] = bytes[offset];
                 offset++;
@@ -87,16 +84,16 @@ namespace F4Utils.Campaign
             {
                 link_data = null;
             }
-            for (var i = 0; i < links; i++)
+            for (int i = 0; i < links; i++)
             {
-                var thisLink = new CampObjectiveLinkDataType();
-                thisLink.costs = new byte[(int) MoveType.MOVEMENT_TYPES];
-                for (var j = 0; j < (int) MoveType.MOVEMENT_TYPES; j++)
+                CampObjectiveLinkDataType thisLink = new CampObjectiveLinkDataType();
+                thisLink.costs = new byte[(int)MoveType.MOVEMENT_TYPES];
+                for (int j = 0; j < (int)MoveType.MOVEMENT_TYPES; j++)
                 {
                     thisLink.costs[j] = bytes[offset];
                     offset++;
                 }
-                var newId = new VU_ID();
+                VU_ID newId = new VU_ID();
                 newId.num_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
                 newId.creator_ = BitConverter.ToUInt32(bytes, offset);
@@ -107,13 +104,13 @@ namespace F4Utils.Campaign
 
             if (version >= 20)
             {
-                var hasRadarData = bytes[offset];
+                byte hasRadarData = bytes[offset];
                 offset++;
 
                 if (hasRadarData > 0)
                 {
                     detect_ratio = new float[8];
-                    for (var i = 0; i < 8; i++)
+                    for (int i = 0; i < 8; i++)
                     {
                         detect_ratio[i] = BitConverter.ToSingle(bytes, offset);
                         offset += 4;
@@ -128,6 +125,7 @@ namespace F4Utils.Campaign
             {
                 detect_ratio = null;
             }
+
         }
     }
 }

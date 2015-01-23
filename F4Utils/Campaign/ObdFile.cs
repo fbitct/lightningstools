@@ -1,8 +1,7 @@
 ﻿using System;
-using Lzss;
-
 namespace F4Utils.Campaign
 {
+
     public class ObdFile
     {
         #region Public Fields
@@ -11,31 +10,30 @@ namespace F4Utils.Campaign
 
         #endregion
 
-        protected int _version;
+        protected int _version = 0;
 
         protected ObdFile()
+            : base()
         {
         }
-
         public ObdFile(byte[] compressed, int version)
             : this()
         {
             _version = version;
             short numObjectiveDeltas = 0;
-            var expanded = Expand(compressed, out numObjectiveDeltas);
+            byte[] expanded = Expand(compressed, out numObjectiveDeltas);
             if (expanded != null) Decode(expanded, version, numObjectiveDeltas);
         }
-
         protected void Decode(byte[] bytes, int version, short numObjectiveDeltas)
         {
-            var curByte = 0;
+            int curByte = 0;
             deltas = new ObjectiveDelta[numObjectiveDeltas];
 
-            for (var i = 0; i < numObjectiveDeltas; i++)
+            for (int i = 0; i < numObjectiveDeltas; i++)
             {
-                var thisObjectiveDelta = new ObjectiveDelta();
+                ObjectiveDelta thisObjectiveDelta = new ObjectiveDelta();
 
-                var id = new VU_ID();
+                VU_ID id = new VU_ID();
                 id.num_ = BitConverter.ToUInt32(bytes, curByte);
                 curByte += 4;
                 id.creator_ = BitConverter.ToUInt32(bytes, curByte);
@@ -52,7 +50,7 @@ namespace F4Utils.Campaign
                 curByte++;
                 thisObjectiveDelta.losses = bytes[curByte];
                 curByte++;
-                var numFstatus = bytes[curByte];
+                byte numFstatus = bytes[curByte];
                 curByte++;
                 thisObjectiveDelta.fStatus = new byte[numFstatus];
                 if (version < 64)
@@ -62,7 +60,7 @@ namespace F4Utils.Campaign
                 }
                 else
                 {
-                    for (var j = 0; j < numFstatus; j++)
+                    for (int j = 0; j < numFstatus; j++)
                     {
                         thisObjectiveDelta.fStatus[j] = bytes[curByte];
                         curByte++;
@@ -71,21 +69,20 @@ namespace F4Utils.Campaign
                 deltas[i] = thisObjectiveDelta;
             }
         }
-
         protected static byte[] Expand(byte[] compressed, out short numObjectiveDeltas)
         {
-            var curByte = 0;
-            var cSize = BitConverter.ToInt32(compressed, curByte);
+            int curByte = 0;
+            int cSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             numObjectiveDeltas = BitConverter.ToInt16(compressed, curByte);
             curByte += 2;
-            var uncompressedSize = BitConverter.ToInt32(compressed, curByte);
+            int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
             curByte += 4;
             if (uncompressedSize == 0) return null;
-            var actualCompressed = new byte[compressed.Length - 10];
+            byte[] actualCompressed = new byte[compressed.Length - 10];
             Array.Copy(compressed, 10, actualCompressed, 0, actualCompressed.Length);
             byte[] uncompressed = null;
-            uncompressed = Codec.Decompress(actualCompressed, uncompressedSize);
+            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
             return uncompressed;
         }
     }

@@ -1,41 +1,38 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class PltFile
     {
         #region Public Fields
 
-        public byte[] CallsignData;
-        public short NumCallsigns;
         public short NumPilots;
         public PilotInfoClass[] PilotInfo;
-
+        public short NumCallsigns;
+        public byte[] CallsignData;
         #endregion
 
         protected PltFile()
+            : base()
         {
         }
-
         public PltFile(byte[] bytes, int version)
             : this()
         {
             Decode(bytes, version);
         }
-
         protected void Decode(byte[] bytes, int version)
         {
             if (version < 60)
             {
                 return;
             }
-            var offset = 0;
+            int offset = 0;
             NumPilots = BitConverter.ToInt16(bytes, offset);
             offset += 2;
             PilotInfo = new PilotInfoClass[NumPilots];
-            for (var j = 0; j < PilotInfo.Length; j++)
+            for (int j = 0; j < PilotInfo.Length; j++)
             {
-                var thisPilot = new PilotInfoClass();
+                PilotInfoClass thisPilot = new PilotInfoClass();
                 thisPilot.usage = BitConverter.ToInt16(bytes, offset);
                 offset += 2;
                 thisPilot.voice_id = bytes[offset];
@@ -47,7 +44,7 @@ namespace F4Utils.Campaign
             NumCallsigns = BitConverter.ToInt16(bytes, offset);
             offset += 2;
             CallsignData = new byte[NumCallsigns];
-            for (var j = 0; j < NumCallsigns; j++)
+            for (int j = 0; j < NumCallsigns; j++)
             {
                 CallsignData[j] = bytes[offset];
                 offset++;

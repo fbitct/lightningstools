@@ -1,29 +1,25 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class PstFile
     {
         #region Public Fields
-
         public int numPersistantObjects;
         public PersistantObject[] persistantObjects;
-
         #endregion
 
         protected PstFile()
+            : base()
         {
         }
-
         public PstFile(byte[] bytes, int version)
             : this()
         {
             Decode(bytes, version);
         }
-
         protected void Decode(byte[] bytes, int version)
         {
-            var offset = 0;
+            int offset = 0;
             numPersistantObjects = 0;
 
             if (version < 69)
@@ -33,9 +29,9 @@ namespace F4Utils.Campaign
             numPersistantObjects = BitConverter.ToInt32(bytes, offset);
             offset += 4;
             persistantObjects = new PersistantObject[numPersistantObjects];
-            for (var i = 0; i < numPersistantObjects; i++)
+            for (int i = 0; i < numPersistantObjects; i++)
             {
-                var thisObject = new PersistantObject();
+                PersistantObject thisObject = new PersistantObject();
                 thisObject.x = BitConverter.ToSingle(bytes, offset);
                 offset += 4;
                 thisObject.y = BitConverter.ToSingle(bytes, offset);

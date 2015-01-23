@@ -1,54 +1,52 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class WthFile
     {
         #region Public Fields
-
-        public uint LastCheck;
-        public float Temp;
-        public byte TodaysBase;
-        public byte TodaysConHigh;
-        public byte TodaysConLow;
-        public byte TodaysTemp;
-        public byte TodaysWind;
         public float WindHeading;
         public float WindSpeed;
-        public CellState[] cellState;
-        public float fogAltitude;
-        public float fogTodaysAlt;
-        public float fogTodaysMax;
-        public float fogTodaysMin;
-        public uint nh;
-        public uint nw;
-        public float spare1;
-        public float spare2;
-        public float spare3;
-        public float visMax;
-        public float visMin;
-        public float visibilityPct;
+        public uint LastCheck;
+        public float Temp;
+        public byte TodaysTemp;
+        public byte TodaysWind;
+        public byte TodaysBase;
+        public byte TodaysConLow;
+        public byte TodaysConHigh;
         public float xOffset;
         public float yOffset;
-        // -------------------
-
+            // -------------------
+            // new fields in AF
+            // -------------------
+            public float visMin;
+            public float visMax;
+            public float fogAltitude;
+            public float visibilityPct;
+            public float fogTodaysMax;
+            public float fogTodaysMin;
+            public float fogTodaysAlt;
+            public float spare1;
+            public float spare2;
+            public float spare3;
+             // -------------------
+        public uint nw;
+        public uint nh;
+        public CellState[] cellState;
+        
         #endregion
-
         private const int AF_MIN_VERSION_NUM = 80;
-
         protected WthFile()
+            : base()
         {
         }
-
         public WthFile(byte[] bytes, int version)
             : this()
         {
             Decode(bytes, version);
         }
-
         protected void Decode(byte[] bytes, int version)
         {
-            var offset = 0;
+            int offset = 0;
             WindHeading = BitConverter.ToSingle(bytes, offset);
             offset += 4;
             WindSpeed = BitConverter.ToSingle(bytes, offset);
@@ -112,10 +110,10 @@ namespace F4Utils.Campaign
             nh = BitConverter.ToUInt32(bytes, offset);
             offset += 4;
 
-            cellState = new CellState[nh*nw];
-            for (var j = 0; j < nh*nw; j++)
+            cellState = new CellState[nh * nw];
+            for (int j = 0; j < nh * nw; j++)
             {
-                var thisCellState = new CellState();
+                CellState thisCellState = new CellState();
                 thisCellState.BaseAltitude = bytes[offset];
                 offset++;
                 thisCellState.Type = bytes[offset];

@@ -1,28 +1,26 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class CampaignBase
     {
         #region Public Fields
 
-        public short baseFlags;
-        public short campId;
-        public ushort entityType;
         public VU_ID id;
-        public byte owner;
-        public uint spotTime;
-        public short spotted;
+        public ushort entityType;
         public short x;
         public short y;
         public float z;
+        public uint spotTime;
+        public short spotted;
+        public short baseFlags;
+        public byte owner;
+        public short campId;
 
         #endregion
-
         protected CampaignBase()
+            : base()
         {
         }
-
         public CampaignBase(byte[] bytes, ref int offset, int version)
             : this()
         {
@@ -60,6 +58,8 @@ namespace F4Utils.Campaign
             offset++;
             campId = BitConverter.ToInt16(bytes, offset);
             offset += 2;
+
         }
+
     }
 }

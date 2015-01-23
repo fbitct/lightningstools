@@ -1,27 +1,24 @@
 ﻿using System;
-
 namespace F4Utils.Campaign
 {
     public class AirTaskingManager : CampaignManager
     {
         #region Public Fields
-
-        public ATMAirbase[] airbases;
-        public short averageCAMissions;
-        public short averageCAStrength;
-        public byte cycle;
         public short flags;
-        public MissionRequest[] missionRequests;
-        public byte numAirbases;
-        public short numMissionRequests;
+        public short averageCAStrength;
+        public short averageCAMissions;
         public byte sampleCycles;
-
+        public byte numAirbases;
+        public ATMAirbase[] airbases;
+        public byte cycle;
+        public short numMissionRequests;
+        public MissionRequest[] missionRequests;
         #endregion
 
         protected AirTaskingManager()
+            : base()
         {
         }
-
         public AirTaskingManager(byte[] bytes, ref int offset, int version)
             : base(bytes, ref offset, version)
         {
@@ -45,12 +42,13 @@ namespace F4Utils.Campaign
                 averageCAMissions = 500;
                 averageCAStrength = 500;
                 sampleCycles = 10;
+
             }
             numAirbases = bytes[offset];
             offset++;
 
             airbases = new ATMAirbase[numAirbases];
-            for (var j = 0; j < numAirbases; j++)
+            for (int j = 0; j < numAirbases; j++)
             {
                 airbases[j] = new ATMAirbase(bytes, ref offset, version);
             }
@@ -64,16 +62,16 @@ namespace F4Utils.Campaign
             missionRequests = new MissionRequest[numMissionRequests];
             if (version < 35)
             {
-                for (var j = 0; j < numMissionRequests; j++)
+                for (int j = 0; j < numMissionRequests; j++)
                 {
                     offset += 64;
                 }
             }
             else
             {
-                for (var j = 0; j < numMissionRequests; j++)
+                for (int j = 0; j < numMissionRequests; j++)
                 {
-                    var mis_request = new MissionRequest();
+                    MissionRequest mis_request = new MissionRequest();
 
                     mis_request.requesterID = new VU_ID();
                     mis_request.requesterID.num_ = BitConverter.ToUInt32(bytes, offset);
@@ -163,7 +161,7 @@ namespace F4Utils.Campaign
                     offset++;
 
                     mis_request.slots = new byte[4];
-                    for (var k = 0; k < 4; k++)
+                    for (int k = 0; k < 4; k++)
                     {
                         mis_request.slots[k] = bytes[offset];
                         offset++;
@@ -175,8 +173,9 @@ namespace F4Utils.Campaign
                     mis_request.max_to = bytes[offset];
                     offset++;
 
-                    offset += 3; // align on int32 boundary
+                    offset += 3;// align on int32 boundary
                     missionRequests[j] = mis_request;
+
                 }
             }
         }

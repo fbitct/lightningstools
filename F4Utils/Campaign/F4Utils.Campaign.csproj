@@ -73,15 +73,15 @@
     <Compile Include="WthFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="LzssNative.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Lzss\LzssManaged\LzssManaged.csproj">
       <Project>{04f20e15-844a-4d30-9ec4-e8fd61a043a9}</Project>
       <Name>LzssManaged</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="LzssNative.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
