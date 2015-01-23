@@ -61,12 +61,12 @@ namespace MFDExtractor
         private Thread _keyboardWatcherThread;
         private Thread _simStatusMonitorThread;
 
-	    private IEHSIStateTracker _ehsiStateTracker;
+	    private readonly IEHSIStateTracker _ehsiStateTracker;
 
 	    private readonly IKeyboardWatcher _keyboardWatcher;
 	    private  IClientSideIncomingMessageDispatcher _clientSideIncomingMessageDispatcher;
 		private readonly IServerSideIncomingMessageDispatcher _serverSideIncomingMessageDispatcher;
-	    private IInputEvents _inputEvents;
+	    private readonly IInputEvents _inputEvents;
 
 	    private readonly IDictionary<InstrumentType, IInstrument> _instruments = new ConcurrentDictionary<InstrumentType, IInstrument>();
 	    private readonly IInstrumentFactory _instrumentFactory;

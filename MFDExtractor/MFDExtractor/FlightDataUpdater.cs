@@ -73,8 +73,8 @@ namespace MFDExtractor
                 _flightDataAdapterSet.AOAIndicator.Adapt(instruments[InstrumentType.AOAIndicator].Renderer as IAngleOfAttackIndicator, flightData);
                 _flightDataAdapterSet.AOAIndexer.Adapt(instruments[InstrumentType.AOAIndexer].Renderer as IAngleOfAttackIndexer, flightData);
                 UpdateADI(instruments[InstrumentType.ADI].Renderer as IADI, hsibits);
-                _flightDataAdapterSet.StandbyADI.Adapt(instruments[InstrumentType.BackupADI] as IStandbyADI, flightData);
-                UpdateHSI(instruments[InstrumentType.HSI].Renderer as IHorizontalSituationIndicator, instruments[InstrumentType.EHSI] as IEHSI, hsibits, flightData);
+                _flightDataAdapterSet.StandbyADI.Adapt(instruments[InstrumentType.BackupADI].Renderer as IStandbyADI, flightData);
+                UpdateHSI(instruments[InstrumentType.HSI].Renderer as IHorizontalSituationIndicator, instruments[InstrumentType.EHSI].Renderer as IEHSI, hsibits, flightData);
 
 
                 //***** UPDATE SOME COMPLEX HSI/ADI VARIABLES
