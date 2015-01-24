@@ -6,10 +6,14 @@ namespace LightningGauges.Renderers.F16.EHSI
 {
     internal static class CenterLabelRenderer
     {
+        private static Font _labelFont;
         internal static void DrawCenterLabel(Graphics g, RectangleF outerBounds, string label, PrivateFontCollection fonts)
         {
-            var fontFamily = fonts.Families[0];
-            var labelFont = new Font(fontFamily, 25, FontStyle.Bold, GraphicsUnit.Point);
+            if (_labelFont == null)
+            {
+                var fontFamily = fonts.Families[0];
+                _labelFont = new Font(fontFamily, 25, FontStyle.Bold, GraphicsUnit.Point);
+            }
 
             var labelStringFormat = new StringFormat();
             labelStringFormat.Alignment = StringAlignment.Center;
@@ -17,7 +21,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                                             StringFormatFlags.NoWrap;
             labelStringFormat.LineAlignment = StringAlignment.Center;
             labelStringFormat.Trimming = StringTrimming.None;
-            var charSize = g.MeasureString("A", labelFont);
+            var charSize = g.MeasureString("A", _labelFont);
             var labelRect = new RectangleF(
                 new PointF(
                     0,
@@ -30,7 +34,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                 );
             labelRect.Offset(0, -40);
 
-            g.DrawStringFast(label, labelFont, Brushes.White, labelRect, labelStringFormat);
+            g.DrawStringFast(label, _labelFont, Brushes.White, labelRect, labelStringFormat);
         }
     }
 }

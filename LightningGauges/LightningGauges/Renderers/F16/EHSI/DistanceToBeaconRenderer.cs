@@ -6,12 +6,19 @@ namespace LightningGauges.Renderers.F16.EHSI
 {
     internal static class DistanceToBeaconRenderer
     {
+        private static Font _digitsFont;
+        private static Font _nmFont;
         internal static void DrawDistanceToBeacon(Graphics g, PrivateFontCollection fonts, InstrumentState instrumentState, Options options)
         {
             var fontFamily = fonts.Families[0];
-            var digitsFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
-            var nmFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
-
+            if (_digitsFont == null)
+            {
+                _digitsFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
+            }
+            if (_nmFont == null)
+            {
+                _nmFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
+            }
             var distanceDigitStringFormat = new StringFormat();
             distanceDigitStringFormat.Alignment = StringAlignment.Center;
             distanceDigitStringFormat.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.NoClip |
@@ -51,12 +58,12 @@ namespace LightningGauges.Renderers.F16.EHSI
                 digitHeight);
             var tenthsRect = new RectangleF(onesRect.X + digitWidth + 4, onesRect.Y, digitWidth, digitHeight);
 
-            g.DrawStringFast(hundredsDigit, digitsFont, Brushes.White, hundredsRect, distanceDigitStringFormat);
-            g.DrawStringFast(tensDigit, digitsFont, Brushes.White, tensRect, distanceDigitStringFormat);
-            g.DrawStringFast(onesDigit, digitsFont, Brushes.White, onesRect, distanceDigitStringFormat);
+            g.DrawStringFast(hundredsDigit, _digitsFont, Brushes.White, hundredsRect, distanceDigitStringFormat);
+            g.DrawStringFast(tensDigit, _digitsFont, Brushes.White, tensRect, distanceDigitStringFormat);
+            g.DrawStringFast(onesDigit, _digitsFont, Brushes.White, onesRect, distanceDigitStringFormat);
 
             g.FillRectangle(Brushes.White, tenthsRect);
-            g.DrawStringFast(tenthsDigit, digitsFont, Brushes.Black, tenthsRect, distanceDigitStringFormat);
+            g.DrawStringFast(tenthsDigit, _digitsFont, Brushes.Black, tenthsRect, distanceDigitStringFormat);
 
             if (instrumentState.DmeInvalidFlag)
             {
@@ -69,7 +76,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             }
 
             var nmRect = new RectangleF(hundredsRect.X, 45, 30, 20);
-            g.DrawStringFast("NM", nmFont, Brushes.White, nmRect, nmStringFormat);
+            g.DrawStringFast("NM", _nmFont, Brushes.White, nmRect, nmStringFormat);
 
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);
         }

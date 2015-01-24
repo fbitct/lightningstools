@@ -7,7 +7,7 @@ namespace F16CPD.FlightInstruments.Pfd
     internal  sealed class AltitudeTapeBitmapFactory
     {
         private static readonly Bitmap[] AltitudeTapes = new Bitmap[200];
-
+        private static Font _majorUnitFont = new Font("Lucida Console", 12, FontStyle.Bold);
         internal static Bitmap GetAltitudeTapeBitmap(float altitudeInFeet, int widthPixels, int heightPixels, float altitudeIndexInFeet)
         {
             const int verticalSeparationBetweenTicks = 10;
@@ -32,7 +32,7 @@ namespace F16CPD.FlightInstruments.Pfd
                     widthPixels, //tapeWidthInPixels
                     HAlignment.Left, //ticksAlignment
                     0, //textPaddingPixels
-                    new Font("Lucida Console", 12, FontStyle.Bold), //majorUnitFont 
+                    _majorUnitFont, //majorUnitFont 
                     HAlignment.Left, //textAlignment
                     true, //negativeUnitsHaveSign
                     null

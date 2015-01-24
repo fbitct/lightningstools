@@ -6,6 +6,7 @@ namespace LightningGauges.Renderers.F16.EHSI
 {
     internal static class CompassRoseRenderer
     {
+        private static Font _majorHeadingDigitFont;
         internal static void DrawCompassRose(Graphics g, RectangleF outerBounds, PrivateFontCollection fonts, InstrumentState instrumentState, Options options)
         {
             var initialState = g.Save();
@@ -24,10 +25,11 @@ namespace LightningGauges.Renderers.F16.EHSI
                 Trimming = StringTrimming.None
             };
 
-            var fontFamily = fonts.Families[1];
-
-            var majorHeadingDigitFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
-
+            if (_majorHeadingDigitFont == null)
+            {
+                var fontFamily = fonts.Families[1];
+                _majorHeadingDigitFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
+            }
             var linePen = new Pen(Color.White);
             linePen.Width = 3;
             GraphicsUtil.RestoreGraphicsState(g, ref basicState);
@@ -112,7 +114,7 @@ namespace LightningGauges.Renderers.F16.EHSI
                             (majorHeadingLegendLayoutRectangleHeight/2.0f),
                             majorHeadingLegendLayoutRectangleWidth, majorHeadingLegendLayoutRectangleHeight);
                     majorHeadingLegendLayoutRectangle.Offset(0, 18);
-                    g.DrawStringFast(majorHeadingLegendText, majorHeadingDigitFont, majorHeadingBrush,
+                    g.DrawStringFast(majorHeadingLegendText, _majorHeadingDigitFont, majorHeadingBrush,
                         majorHeadingLegendLayoutRectangle, majorHeadingDigitStringFormat);
                 }
                 GraphicsUtil.RestoreGraphicsState(g, ref basicState);

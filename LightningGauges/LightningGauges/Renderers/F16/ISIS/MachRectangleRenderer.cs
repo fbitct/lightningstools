@@ -7,6 +7,8 @@ namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class MachRectangleRenderer
     {
+        private static Font _machNumberFont;
+        private static Font _machRectangleFont;
         internal static void DrawMachRectangle(Graphics gfx, ref GraphicsState basicState, RectangleF topRectangle, InstrumentState instrumentState, PrivateFontCollection fonts)
         {
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
@@ -30,7 +32,11 @@ namespace LightningGauges.Renderers.F16.ISIS
                 machRectangle.Height);
             machNumberRectangle.Offset(0, -7.5f);
             gfx.ScaleTransform(1, 1.50f);
-            gfx.DrawStringFast(machNumberString, new Font(fonts.Families[0], 15, FontStyle.Regular, GraphicsUnit.Point),
+            if (_machNumberFont ==null)
+            {
+                _machNumberFont = new Font(fonts.Families[0], 15, FontStyle.Regular, GraphicsUnit.Point);
+            }
+            gfx.DrawStringFast(machNumberString, _machNumberFont,
                 Brushes.White, machNumberRectangle, machNumberStringFormat);
             gfx.Transform = normalTransform;
 
@@ -43,7 +49,11 @@ namespace LightningGauges.Renderers.F16.ISIS
                 Trimming = StringTrimming.None
             };
             machRectangle.Offset(3, -1);
-            gfx.DrawStringFast("M", new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point),
+            if (_machRectangleFont == null)
+            {
+                _machRectangleFont = new Font(fonts.Families[0], 22, FontStyle.Regular, GraphicsUnit.Point);
+            }
+            gfx.DrawStringFast("M", _machRectangleFont,
                 Brushes.White, machRectangle, machLetterStringFormat);
 
 

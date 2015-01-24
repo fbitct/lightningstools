@@ -7,11 +7,14 @@ namespace LightningGauges.Renderers.F16.EHSI
 {
     internal static class InstrumentModeRenderer
     {
+        private static Font _labelFont;
         internal static void DrawInstrumentMode(Graphics g, RectangleF outerBounds, PrivateFontCollection fonts, InstrumentState instrumentState)
         {
-            var fontFamily = fonts.Families[0];
-            var labelFont = new Font(fontFamily, 25, FontStyle.Bold, GraphicsUnit.Point);
-
+            if (_labelFont == null)
+            {
+                var fontFamily = fonts.Families[0];
+                _labelFont = new Font(fontFamily, 25, FontStyle.Bold, GraphicsUnit.Point);
+            }
             var labelStringFormat = new StringFormat
             {
                 Alignment = StringAlignment.Center,
@@ -62,7 +65,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             {
                 var plsLabelRect = new RectangleF(outerBounds.Width*0.25f, outerBounds.Height - letterHeight - margin,
                     labelWidth, letterHeight);
-                g.DrawStringFast("PLS", labelFont, Brushes.White, plsLabelRect, labelStringFormat);
+                g.DrawStringFast("PLS", _labelFont, Brushes.White, plsLabelRect, labelStringFormat);
             }
 
             if (
@@ -73,7 +76,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             {
                 var navLabelRect = new RectangleF(outerBounds.Width*0.7f, outerBounds.Height - letterHeight - margin,
                     labelWidth, letterHeight);
-                g.DrawStringFast("NAV", labelFont, Brushes.White, navLabelRect, labelStringFormat);
+                g.DrawStringFast("NAV", _labelFont, Brushes.White, navLabelRect, labelStringFormat);
             }
 
             if (
@@ -84,7 +87,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             {
                 var tacanLabelRect = new RectangleF(outerBounds.Width*0.7f, outerBounds.Height - letterHeight - margin,
                     labelWidth, letterHeight);
-                g.DrawStringFast("TCN", labelFont, Brushes.White, tacanLabelRect, labelStringFormat);
+                g.DrawStringFast("TCN", _labelFont, Brushes.White, tacanLabelRect, labelStringFormat);
             }
         }
     }

@@ -9,6 +9,8 @@ namespace F16CPD.FlightInstruments
 {
     public sealed class Hsi : IDisposable
     {
+        private static Font _headingBoxFont = new Font("Lucida Console", 22, FontStyle.Bold);
+        private static Font _textFont = new Font("Lucida Console", 12, FontStyle.Bold);
         private Bitmap _compassRose;
         private Bitmap _courseDeviationDiamond;
         private bool _isDisposed;
@@ -297,7 +299,7 @@ namespace F16CPD.FlightInstruments
 
 
                 //draw heading numeric value in heading box
-                var headingBoxFont = new Font("Lucida Console", 22, FontStyle.Bold);
+                
                 var headingBoxTextRectangle = new Rectangle(new Point(258, 6), new Size(68, 30));
                 var headingBoxNumToDisplay = (int) (Math.Round(currentHeadingInDecimalDegrees, 0)%360);
                 if (Settings.Default.DisplayNorthAsThreeSixZero)
@@ -310,14 +312,13 @@ namespace F16CPD.FlightInstruments
                 }
 
                 var headingBoxText = string.Format("{0:000}", headingBoxNumToDisplay);
-                g.DrawStringFast(headingBoxText, headingBoxFont, whiteBrush, headingBoxTextRectangle);
+                g.DrawStringFast(headingBoxText, _headingBoxFont, whiteBrush, headingBoxTextRectangle);
 
                 //draw text labels
                 var selectedCourseTextRectangle = new Rectangle(new Point(449, 1), new Size(145, 18));
                 var selectedHeadingTextRectangle = new Rectangle(new Point(421, 25), new Size(173, 20));
                 var dmeTextRectangle = new Rectangle(new Point(1, 1), new Size(125, 18));
 
-                var textFont = new Font("Lucida Console", 12, FontStyle.Bold);
                 var textFormat = new StringFormat
                                      {
                                          Alignment = StringAlignment.Far,
@@ -336,7 +337,7 @@ namespace F16CPD.FlightInstruments
                 }
 
                 var selectedCourseText = string.Format("{0:000}", selectedCourse);
-                g.DrawStringFast("SEL CRS " + selectedCourseText, textFont, whiteBrush, selectedCourseTextRectangle,
+                g.DrawStringFast("SEL CRS " + selectedCourseText, _textFont, whiteBrush, selectedCourseTextRectangle,
                              textFormat);
 
                 var selectedHeading = (Manager.FlightData.HsiDesiredHeadingInDegrees);
@@ -350,7 +351,7 @@ namespace F16CPD.FlightInstruments
                     if (selectedHeading == 360) selectedHeading = 0;
                 }
                 var selectedHeadingText = string.Format("{0:000}", selectedHeading);
-                g.DrawStringFast("SEL HDG " + selectedHeadingText, textFont, whiteBrush, selectedHeadingTextRectangle,
+                g.DrawStringFast("SEL HDG " + selectedHeadingText, _textFont, whiteBrush, selectedHeadingTextRectangle,
                              textFormat);
 
                 if (Manager.FlightData.HsiDisplayToFromFlag)
@@ -399,7 +400,7 @@ namespace F16CPD.FlightInstruments
                  */
                 textFormat.LineAlignment = StringAlignment.Near;
                 textFormat.Alignment = StringAlignment.Near;
-                g.DrawStringFast(dmeText + " MILES", textFont, whiteBrush, dmeTextRectangle, textFormat);
+                g.DrawStringFast(dmeText + " MILES", _textFont, whiteBrush, dmeTextRectangle, textFormat);
 
                 //draw HSI DME invalid flag if required
                 if (Manager.FlightData.HsiDistanceInvalidFlag)

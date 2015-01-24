@@ -9,6 +9,8 @@ namespace F16CPD.FlightInstruments.Pfd
 {
     internal class AdiPitchBarBitmapGenerator
     {
+        private static Font _labelFont = new Font("Lucida Console", 10, FontStyle.Bold);
+
         internal static Bitmap GenerateAdiPitchBarBitmap()
         {
             const int positivePitchLineExtenderHeightPixels = 14;
@@ -24,8 +26,6 @@ namespace F16CPD.FlightInstruments.Pfd
             const int degreesBetweenTicks = 5;
             const int pixelsSeparationPerDegreeOfPitch = verticalDistanceBetweenPitchLines / degreesBetweenTicks;
             const int horizontalOffsetPixelsFromCenterLine = 28;
-
-            var labelFont = new Font("Lucida Console", 10, FontStyle.Bold);
 
             var boundingRectangle = new Rectangle(0, 0, 250, (pixelsSeparationPerDegreeOfPitch * 360) + 2);
             //Rectangle boundingRectangle = new Rectangle(0, 0, (pixelsSeparationPerDegreeOfPitch * 360) + 2,(pixelsSeparationPerDegreeOfPitch * 360) + 2);
@@ -64,7 +64,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             Alignment = StringAlignment.Near,
                             LineAlignment = StringAlignment.Center
                         };
-                        g.DrawStringFast(string.Format("{0:0}", i), labelFont, whiteBrush,
+                        g.DrawStringFast(string.Format("{0:0}", i), _labelFont, whiteBrush,
                             new Point(0, pitchLineCenterY + 7), labelFormat);
                     }
                     var lhsPitchLineMinX = centerPointX - pitchLineWidthPixels - horizontalOffsetPixelsFromCenterLine;
@@ -142,7 +142,7 @@ namespace F16CPD.FlightInstruments.Pfd
                             Alignment = StringAlignment.Near,
                             LineAlignment = StringAlignment.Center
                         };
-                        g.DrawStringFast(string.Format("{0:0}", Math.Abs(i)), labelFont, whiteBrush,
+                        g.DrawStringFast(string.Format("{0:0}", Math.Abs(i)), _labelFont, whiteBrush,
                             new Point(0, pitchLineCenterY), labelFormat);
                     }
                     //draw the LHS pitch extender line

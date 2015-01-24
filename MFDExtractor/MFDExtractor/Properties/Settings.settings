@@ -68,7 +68,7 @@
     <Setting Name="EnableHudOutput" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="HudAlwaysOnTop" Type="System.Boolean" Scope="User">
+    <Setting Name="HUD_AlwaysOnTop" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="HUD_OutZOrder" Type="System.Int32" Scope="User">

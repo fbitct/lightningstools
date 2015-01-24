@@ -10,9 +10,9 @@ namespace F16CPD.UI.Forms
         public MfdForm()
         {
             InitializeComponent();
-            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, false);
             SetStyle(ControlStyles.ContainerControl, true);
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, false);
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.UserPaint, true);
 

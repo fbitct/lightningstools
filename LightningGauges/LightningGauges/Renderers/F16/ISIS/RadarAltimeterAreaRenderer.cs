@@ -7,6 +7,7 @@ namespace LightningGauges.Renderers.F16.ISIS
 {
     internal static class RadarAltimeterAreaRenderer
     {
+        private static Font _raltFont;
         internal static void DrawRadarAltimeterArea(Graphics gfx, ref GraphicsState basicState, RectangleF topRectangle, InstrumentState instrumentState, Options options, PrivateFontCollection fonts)
         {
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
@@ -58,7 +59,11 @@ namespace LightningGauges.Renderers.F16.ISIS
                 raltString += "ft";
             }
 
-            gfx.DrawStringFast(raltString, new Font(fonts.Families[0], fontSize, FontStyle.Regular, GraphicsUnit.Point),
+            if (_raltFont ==null)
+            {
+                _raltFont = new Font(fonts.Families[0], fontSize, FontStyle.Regular, GraphicsUnit.Point);
+            }
+            gfx.DrawStringFast(raltString, _raltFont,
                 raltBrush, raltRectangle, raltStringFormat);
             GraphicsUtil.RestoreGraphicsState(gfx, ref basicState);
         }

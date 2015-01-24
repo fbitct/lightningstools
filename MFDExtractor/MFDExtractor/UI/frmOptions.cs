@@ -607,7 +607,7 @@ namespace MFDExtractor.UI
         /// <param name="args">event arguments for the OK button's Click event</param>
         private void cmdOk_Click(object sender, EventArgs args)
         {
-            bool valid = ValidateAndApplySettings();
+            bool valid = ValidateAndApplySettings(Hide);
             if (valid)
             {
                 CloseThisDialog();
@@ -618,14 +618,14 @@ namespace MFDExtractor.UI
         {
             try
             {
-                Close(); //TODO: handle this kind of stuff centrally
+                Close(); 
             }
             catch 
             {
             }
         }
 
-        private bool ValidateAndApplySettings()
+        private bool ValidateAndApplySettings(Action methodToRunIfValidBeforeRestartingExtractor=null)
         {
             bool valid = false; //assume all user input is *invalid*
             try
@@ -634,6 +634,10 @@ namespace MFDExtractor.UI
                 if (valid)
                     //if validation succeeds, we can close the form (if not, then the form's ErrorProvider will display errors to the user)
                 {
+                    if (methodToRunIfValidBeforeRestartingExtractor != null)
+                    {
+                        methodToRunIfValidBeforeRestartingExtractor();
+                    }
                     if (_extractorRunningStateOnFormOpen)
                     {
                         StopAndRestartExtractor();

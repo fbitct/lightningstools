@@ -6,13 +6,16 @@ namespace LightningGauges.Renderers.F16.EHSI
 {
     internal static class TextWarningFlagRenderer
     {
+        private static Font _inuFlagFont;
         internal static void DrawTextWarningFlag(Graphics g, string flagText, Color flagColor,
             Color textColor, PrivateFontCollection fonts)
         {
             Brush flagBrush = new SolidBrush(flagColor);
-            var fontFamily = fonts.Families[0];
-            var inuFlagFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
-
+            if (_inuFlagFont ==null)
+            {
+                var fontFamily = fonts.Families[0];
+                _inuFlagFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
+            }
             var inuFlagStringFormat = new StringFormat();
             inuFlagStringFormat.Alignment = StringAlignment.Center;
             inuFlagStringFormat.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.NoClip |
@@ -25,7 +28,7 @@ namespace LightningGauges.Renderers.F16.EHSI
             var flagRect = new RectangleF(flagLocation, flagSize);
             g.FillRectangle(flagBrush, flagRect);
             Brush textBrush = new SolidBrush(textColor);
-            g.DrawStringFast(flagText, inuFlagFont, textBrush, flagRect, inuFlagStringFormat);
+            g.DrawStringFast(flagText, _inuFlagFont, textBrush, flagRect, inuFlagStringFormat);
         }
     }
 }

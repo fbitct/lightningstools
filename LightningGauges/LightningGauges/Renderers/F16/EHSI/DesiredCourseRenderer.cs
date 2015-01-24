@@ -6,12 +6,19 @@ namespace LightningGauges.Renderers.F16.EHSI
 {
     internal static class DesiredCourseRenderer
     {
+        private static Font _digitsFont;
+        private static Font _crsFont;
         internal static void DrawDesiredCourse(Graphics g, RectangleF outerBounds, PrivateFontCollection fonts, InstrumentState instrumentState, Options options)
         {
             var fontFamily = fonts.Families[0];
-            var digitsFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
-            var crsFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
-
+            if (_digitsFont == null)
+            {
+                _digitsFont = new Font(fontFamily, 27.5f, FontStyle.Bold, GraphicsUnit.Point);
+            }
+            if (_crsFont == null)
+            {
+                _crsFont = new Font(fontFamily, 20, FontStyle.Bold, GraphicsUnit.Point);
+            }
             var desiredCourseDigitStringFormat = new StringFormat();
             desiredCourseDigitStringFormat.Alignment = StringAlignment.Center;
             desiredCourseDigitStringFormat.FormatFlags = StringFormatFlags.FitBlackBox | StringFormatFlags.NoClip |
@@ -53,12 +60,12 @@ namespace LightningGauges.Renderers.F16.EHSI
             var onesRect = new RectangleF(tensRect.X + digitWidth + digitSeparationPixels, tensRect.Y, digitWidth,
                 digitHeight);
 
-            g.DrawStringFast(hundredsDigit, digitsFont, Brushes.White, hundredsRect, desiredCourseDigitStringFormat);
-            g.DrawStringFast(tensDigit, digitsFont, Brushes.White, tensRect, desiredCourseDigitStringFormat);
-            g.DrawStringFast(onesDigit, digitsFont, Brushes.White, onesRect, desiredCourseDigitStringFormat);
+            g.DrawStringFast(hundredsDigit, _digitsFont, Brushes.White, hundredsRect, desiredCourseDigitStringFormat);
+            g.DrawStringFast(tensDigit, _digitsFont, Brushes.White, tensRect, desiredCourseDigitStringFormat);
+            g.DrawStringFast(onesDigit, _digitsFont, Brushes.White, onesRect, desiredCourseDigitStringFormat);
 
             var crsRect = new RectangleF(hundredsRect.X, 45, (digitWidth + digitSeparationPixels)*3, 20);
-            g.DrawStringFast("CRS", crsFont, Brushes.White, crsRect, crsStringFormat);
+            g.DrawStringFast("CRS", _crsFont, Brushes.White, crsRect, crsStringFormat);
 
             GraphicsUtil.RestoreGraphicsState(g, ref initialState);
         }

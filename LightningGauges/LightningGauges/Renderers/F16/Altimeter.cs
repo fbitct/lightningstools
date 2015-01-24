@@ -48,7 +48,13 @@ namespace LightningGauges.Renderers.F16
         private static Bitmap _tenThousandsDigitsElectroMechanical;
         private static Bitmap _thousandsDigitsElectroMechanical;
         private static Bitmap _hundredsDigitsElectroMechanical;
+        private static Font _baroPressureFont;
+        private static Font _unitsFont;
+        private static Font _baroPressureFont2;
+        private static Font _unitsFont2;
         private readonly PrivateFontCollection _fonts = new PrivateFontCollection();
+        private static Font _bigDigitsFont;
+        private static Font _littleDigitsFont;
         private bool _imagesLoaded;
 
         #endregion
@@ -358,9 +364,18 @@ namespace LightningGauges.Renderers.F16
                                                                              136, unitAreaWidth,
                                                                              topRectangle.Height - 40);
                             }
-                            destinationGraphics.DrawStringFast(baroString, new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point),
+                            if (_baroPressureFont ==null) 
+                            {
+                                _baroPressureFont = new Font(_fonts.Families[0], 14, FontStyle.Bold, GraphicsUnit.Point);
+                            }
+                            destinationGraphics.DrawStringFast(baroString, _baroPressureFont,
                                            barometricPressureBrush, barometricPressureRectangle, barometricPressureStringFormat);
-                            destinationGraphics.DrawStringFast(unitsString, new Font(_fonts.Families[0], 4, FontStyle.Bold, GraphicsUnit.Point),
+                            
+                            if (_unitsFont ==null) 
+                            {
+                                _unitsFont = new Font(_fonts.Families[0], 4, FontStyle.Bold, GraphicsUnit.Point);
+                            }
+                            destinationGraphics.DrawStringFast(unitsString, _unitsFont,
                                            barometricPressureBrush, unitsRectangle, barometricPressureStringFormat);
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);    
                         }
@@ -387,8 +402,14 @@ namespace LightningGauges.Renderers.F16
                                 new RectangleF(
                                     littleDigitsRect.X + littleDigitsRect.Width - ((littleDigitsRect.Width / 3.0f) * 3.0f),
                                     littleDigitsRect.Y, (littleDigitsRect.Width / 3.0f), littleDigitsRect.Height);
-                            var bigDigitsFont = new Font(_fonts.Families[1], 20, FontStyle.Regular, GraphicsUnit.Point);
-                            var littleDigitsFont = new Font(_fonts.Families[1], 18, FontStyle.Regular, GraphicsUnit.Point);
+                            if (_bigDigitsFont ==null) 
+                            {
+                                _bigDigitsFont = new Font(_fonts.Families[1], 20, FontStyle.Regular, GraphicsUnit.Point);
+                            }
+                            if (_littleDigitsFont == null)
+                            {
+                                _littleDigitsFont = new Font(_fonts.Families[1], 18, FontStyle.Regular, GraphicsUnit.Point);
+                            }
                             var digitsFormat = new StringFormat
                                                    {
                                                        Alignment = StringAlignment.Far,
@@ -400,9 +421,8 @@ namespace LightningGauges.Renderers.F16
                             Brush digitsBrush = new SolidBrush(digitColor);
                             float thousandscombined = (int)Math.Floor((Math.Abs(absIndicatedAltitude) / 1000.0f));
                             var thousandsString = string.Format("{0:#0}", thousandscombined);
-                            //if (absIndicatedAltitude < 0) thousandsString = "-" + thousandsString;
                             if (InstrumentState.IndicatedAltitudeFeetMSL < 0) thousandsString = "-" + thousandsString; //Falcas 16-08-12
-                            destinationGraphics.DrawStringFast(thousandsString, bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(thousandsString, _bigDigitsFont, digitsBrush, bigDigitsRect, digitsFormat);
                             var allHundredsString = string.Format("{0:00000}", Math.Abs(absIndicatedAltitude)).Substring(2, 3);
                             var hundredsString = allHundredsString.Substring(0, 1);
 
@@ -410,9 +430,9 @@ namespace LightningGauges.Renderers.F16
                                                            (int)Math.Floor(((Math.Abs(absIndicatedAltitude) / 10.0f) % 10.0f)));
                             const string onesString = "0";
 
-                            destinationGraphics.DrawStringFast(hundredsString, littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
-                            destinationGraphics.DrawStringFast(tensString, littleDigitsFont, digitsBrush, tensRect, digitsFormat);
-                            destinationGraphics.DrawStringFast(onesString, littleDigitsFont, digitsBrush, onesRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(hundredsString, _littleDigitsFont, digitsBrush, hundredsRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(tensString, _littleDigitsFont, digitsBrush, tensRect, digitsFormat);
+                            destinationGraphics.DrawStringFast(onesString, _littleDigitsFont, digitsBrush, onesRect, digitsFormat);
 
                             //draw the barometric pressure area
                             //draw top rectangle
@@ -464,9 +484,17 @@ namespace LightningGauges.Renderers.F16
                                                                              136, unitAreaWidth,
                                                                              topRectangle.Height - 35);
                             }
-                            destinationGraphics.DrawStringFast(baroString, new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point),
+                            if (_baroPressureFont2 == null)
+                            {
+                                _baroPressureFont2 = new Font(_fonts.Families[1], 12, FontStyle.Regular, GraphicsUnit.Point);
+                            }
+                            destinationGraphics.DrawStringFast(baroString, _baroPressureFont2,
                                            digitsBrush, barometricPressureRectangle, barometricPressureStringFormat);
-                            destinationGraphics.DrawStringFast(unitsString, new Font(_fonts.Families[1], 6, FontStyle.Bold, GraphicsUnit.Point),
+                            if (_unitsFont2 == null) 
+                            {
+                                _unitsFont2 = new Font(_fonts.Families[1], 6, FontStyle.Bold, GraphicsUnit.Point);
+                            }
+                            destinationGraphics.DrawStringFast(unitsString, _unitsFont2,
                                            digitsBrush, unitsRectangle, barometricPressureStringFormat);
                             GraphicsUtil.RestoreGraphicsState(destinationGraphics, ref basicState);
 

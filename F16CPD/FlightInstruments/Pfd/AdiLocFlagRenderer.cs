@@ -6,12 +6,13 @@ namespace F16CPD.FlightInstruments.Pfd
 {
     internal class AdiLocFlagRenderer
     {
+        private static Font _adiLocFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
+
         internal static void DrawAdiLocFlag(Graphics g, Point location, bool adiLocalizerInvalidFlag, bool nightMode)
         {
             //draw ADI LOC flag
             if (adiLocalizerInvalidFlag)
             {
-                var adiLocFlagFont = new Font("Lucida Console", 25, FontStyle.Bold);
 
                 var path = new GraphicsPath();
                 var adiLocFlagStringFormat = new StringFormat(StringFormatFlags.NoWrap)
@@ -20,7 +21,7 @@ namespace F16CPD.FlightInstruments.Pfd
                     LineAlignment = StringAlignment.Near
                 };
                 var adiLocFlagTextLayoutRectangle = new Rectangle(location, new Size(60, 25));
-                path.AddString("LOC", adiLocFlagFont.FontFamily, (int)adiLocFlagFont.Style, adiLocFlagFont.SizeInPoints,
+                path.AddString("LOC", _adiLocFlagFont.FontFamily, (int)_adiLocFlagFont.Style, _adiLocFlagFont.SizeInPoints,
                     adiLocFlagTextLayoutRectangle, adiLocFlagStringFormat);
                 var locFlagBrush = Brushes.Red;
                 var locFlagTextBrush = Brushes.Black;
