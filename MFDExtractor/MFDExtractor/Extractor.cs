@@ -242,12 +242,20 @@ namespace MFDExtractor
 
         private void SetupNetworkingServer()
         {
-            ExtractorServer.CreateService(ServiceName, _serverEndpoint.Port, _compressionType, _imageFormat);
+            try
+            {
+                ExtractorServer.CreateService(ServiceName, _serverEndpoint.Port, _compressionType, _imageFormat);
+            }
+            catch { }
         }
 
         private void TearDownImageServer()
         {
-            ExtractorServer.TearDownService(_serverEndpoint.Port);
+            try
+            {
+                ExtractorServer.TearDownService(_serverEndpoint.Port);
+            }
+            catch { }
         }
 
         #endregion

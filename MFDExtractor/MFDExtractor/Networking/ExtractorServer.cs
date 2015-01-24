@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -15,18 +16,19 @@ using F4SharedMem;
 
 namespace MFDExtractor.Networking
 {
+    [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
     public class ExtractorServer : MarshalByRefObject, IExtractorServer
     {
-        private static readonly object _flightDataLock = new object();
+        private static readonly object FlightDataLock = new object();
         private static FlightData _flightData;
-        private static ConcurrentDictionary<InstrumentType, Image> _latestTexSharedmemImages = new ConcurrentDictionary<InstrumentType, Image>(); 
+        private static readonly ConcurrentDictionary<InstrumentType, Image> LatestTexSharedmemImages = new ConcurrentDictionary<InstrumentType, Image>(); 
         private static long _flightDataSequenceNum;
         private static long _lastRetrievedFlightDataSequenceNum = 0;
         private static FlightData _lastRetrievedFlightData;
         private static string _compressionType = "LZW";
         private static string _imageFormat = "TIFF";
-        private static readonly List<Message> _messagesToServerFromClient = new List<Message>();
-        private static readonly List<Message> _messagesToClientFromServer = new List<Message>();
+        private static readonly List<Message> MessagesToServerFromClient = new List<Message>();
+        private static readonly List<Message> MessagesToClientFromServer = new List<Message>();
         private static bool _serviceEstablished;
 
         private ExtractorServer()
@@ -35,7 +37,7 @@ namespace MFDExtractor.Networking
 
         public FlightData GetFlightData()
         {
-            FlightData toReturn = null;
+            FlightData toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
@@ -48,7 +50,7 @@ namespace MFDExtractor.Networking
             {
                 return null;
             }
-            lock (_flightDataLock)
+            lock (FlightDataLock)
             {
                 toReturn = _flightData;
                 Interlocked.Exchange(ref _lastRetrievedFlightData, toReturn);
@@ -60,57 +62,50 @@ namespace MFDExtractor.Networking
 
         public byte[] GetInstrumentImageBytes(InstrumentType instrumentType)
         {
-            byte[] toReturn;
             if (!Extractor.State.SimRunning)
             {
                 return null;
             }
-            Image image = null;
-            _latestTexSharedmemImages.TryGetValue(instrumentType, out image);
-            //TODO: check image format when BMS is set to 16-bit color, see if it's 565 or 555
+            Image image;
+            LatestTexSharedmemImages.TryGetValue(instrumentType, out image);
             Util.ConvertPixelFormat(ref image, PixelFormat.Format16bppRgb565);
-            _latestTexSharedmemImages.AddOrUpdate(instrumentType, (x) => image, (x, y) => image);
-            toReturn = Util.BytesFromBitmap(image, _compressionType, _imageFormat);
+            LatestTexSharedmemImages.AddOrUpdate(instrumentType, x => image, (x, y) => image);
+            var toReturn = Util.BytesFromBitmap(image, _compressionType, _imageFormat);
             return toReturn;
         }
 
         public void SubmitMessageToServerFromClient(Message message)
         {
-            if (_messagesToServerFromClient != null)
+            if (MessagesToServerFromClient == null) return;
+            if (MessagesToServerFromClient.Count >= 1000)
             {
-                if (_messagesToServerFromClient.Count >= 1000)
-                {
-                    _messagesToServerFromClient.RemoveRange(999, _messagesToServerFromClient.Count - 1000);
-                }
-                if (message.MessageType == "RequestNewMapImage")
-                {
-                    //only allow one of these in the queue at a time
-                    ClearPendingMessagesToServerFromClientOfType(message.MessageType);
-                }
-                if (message != null)
-                {
-                    _messagesToServerFromClient.Add(message);
-                }
+                MessagesToServerFromClient.RemoveRange(999, MessagesToServerFromClient.Count - 1000);
             }
+            if (message.MessageType == "RequestNewMapImage")
+            {
+                //only allow one of these in the queue at a time
+                ClearPendingMessagesToServerFromClientOfType(message.MessageType);
+            }
+            MessagesToServerFromClient.Add(message);
         }
 
         public void ClearPendingMessagesToClientFromServer()
         {
-            if (_messagesToClientFromServer != null)
+            if (MessagesToClientFromServer != null)
             {
-                _messagesToClientFromServer.Clear();
+                MessagesToClientFromServer.Clear();
             }
         }
 
         public Message GetNextPendingMessageToClientFromServer()
         {
             Message toReturn = null;
-            if (_messagesToClientFromServer != null)
+            if (MessagesToClientFromServer != null)
             {
-                if (_messagesToClientFromServer.Count > 0)
+                if (MessagesToClientFromServer.Count > 0)
                 {
-                    toReturn = _messagesToClientFromServer[0];
-                    _messagesToClientFromServer.RemoveAt(0);
+                    toReturn = MessagesToClientFromServer[0];
+                    MessagesToClientFromServer.RemoveAt(0);
                 }
             }
             return toReturn;
@@ -133,17 +128,13 @@ namespace MFDExtractor.Networking
             {
                 RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
             }
-            catch (Exception)
-            {
-            }
+            catch {}
             TcpServerChannel channel = null;
             try
             {
                 channel = new TcpServerChannel(prop, null, null);
             }
-            catch (Exception)
-            {
-            }
+            catch {}
             try
             {
                 if (channel != null)
@@ -151,9 +142,7 @@ namespace MFDExtractor.Networking
                     ChannelServices.RegisterChannel(channel, false);
                 }
             }
-            catch (Exception)
-            {
-            }
+            catch {}
             try
             {
                 // Register as an available service with the name HelloWorld     
@@ -161,12 +150,10 @@ namespace MFDExtractor.Networking
                     typeof (ExtractorServer), serviceName,
                     WellKnownObjectMode.Singleton);
             }
-            catch (Exception)
+            catch {}
+            if (MessagesToServerFromClient != null)
             {
-            }
-            if (_messagesToServerFromClient != null)
-            {
-                _messagesToServerFromClient.Clear();
+                MessagesToServerFromClient.Clear();
             }
             _serviceEstablished = true;
         }
@@ -181,22 +168,18 @@ namespace MFDExtractor.Networking
             {
                 channel = new TcpServerChannel(prop, null, null);
             }
-            catch (Exception)
-            {
-            }
+            catch {}
 
             try
             {
                 ChannelServices.UnregisterChannel(channel);
             }
-            catch (Exception)
-            {
-            }
+            catch {}
         }
 
         internal static void SetFlightData(FlightData flightData)
         {
-            lock (_flightDataLock)
+            lock (FlightDataLock)
             {
                 Interlocked.Exchange(ref _flightData, flightData);
             }
@@ -208,50 +191,44 @@ namespace MFDExtractor.Networking
         internal static void SetInstrumentImage(Image bitmap, InstrumentType instrumentType)
         {
             var cloned = Util.CloneBitmap(bitmap);
-            _latestTexSharedmemImages.AddOrUpdate(instrumentType, (x) => cloned, (x, y) => cloned);
+            LatestTexSharedmemImages.AddOrUpdate(instrumentType, x => cloned, (x, y) => cloned);
         }
 
         public static void ClearPendingMessagesToServerFromClientOfType(string messageType)
         {
-            var messagesToRemove = _messagesToServerFromClient.Where(message => message.MessageType == messageType).ToList();
+            var messagesToRemove = MessagesToServerFromClient.Where(message => message.MessageType == messageType).ToList();
 	        foreach (var message in messagesToRemove)
             {
-                _messagesToServerFromClient.Remove(message);
+                MessagesToServerFromClient.Remove(message);
             }
         }
 
         public static void ClearPendingMessagesToServerFromClient()
         {
-            if (_messagesToServerFromClient != null)
+            if (MessagesToServerFromClient != null)
             {
-                _messagesToServerFromClient.Clear();
+                MessagesToServerFromClient.Clear();
             }
         }
 
         public static void SubmitMessageToClientFromServer(Message message)
         {
-            if (_messagesToClientFromServer != null)
+            if (MessagesToClientFromServer != null)
             {
-                if (_messagesToClientFromServer.Count >= 1000)
+                if (MessagesToClientFromServer.Count >= 1000)
                 {
-                    _messagesToClientFromServer.RemoveRange(999, _messagesToClientFromServer.Count - 1000);
+                    MessagesToClientFromServer.RemoveRange(999, MessagesToClientFromServer.Count - 1000);
                         //limit the message queue size to 1000 messages
                 }
-                _messagesToClientFromServer.Add(message);
+                MessagesToClientFromServer.Add(message);
             }
         }
 
         public static Message GetNextPendingMessageToServerFromClient()
         {
-            Message toReturn = null;
-            if (_messagesToServerFromClient != null)
-            {
-                if (_messagesToServerFromClient.Count > 0)
-                {
-                    toReturn = _messagesToServerFromClient[0];
-                    _messagesToServerFromClient.RemoveAt(0);
-                }
-            }
+            if (MessagesToServerFromClient == null || MessagesToServerFromClient.Count <= 0) return null;
+            var toReturn = MessagesToServerFromClient[0];
+            MessagesToServerFromClient.RemoveAt(0);
             return toReturn;
         }
     }
