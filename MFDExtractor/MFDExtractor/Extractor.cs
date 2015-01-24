@@ -338,7 +338,7 @@ namespace MFDExtractor
                     Application.DoEvents();
 
                     ProcessNetworkMessages();
-                    if (_terrainDB == null)
+                    if (_terrainDB == null && State.NetworkMode != NetworkMode.Client)
                     {
                         _terrainDB = _terrainDBFactory.Create(false);
                     }
@@ -347,12 +347,12 @@ namespace MFDExtractor
                     {
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
-                       
+
                         _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
                     }
                     else
                     {
-                        var flightDataToSet = new FlightData {hsiBits = Int32.MaxValue};
+                        var flightDataToSet = new FlightData { hsiBits = Int32.MaxValue };
                         SetFlightData(flightDataToSet);
                         _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
                     }
@@ -368,15 +368,13 @@ namespace MFDExtractor
                     Thread.Sleep((millisToSleep));
 
                 }
-                Settings.Default.Save();
-                Debug.WriteLine("CaptureThreadWork has exited.");
+                try
+                {
+                    Settings.Default.Save();
+                }
+                catch { }
             }
-            catch (ThreadAbortException)
-            {
-            }
-            catch (ThreadInterruptedException)
-            {
-            }
+            catch { }
         }
 
 	    private void ProcessNetworkMessages()

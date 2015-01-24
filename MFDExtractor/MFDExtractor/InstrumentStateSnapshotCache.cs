@@ -13,21 +13,24 @@ namespace MFDExtractor
 	class InstrumentStateSnapshotCache : IInstrumentStateSnapshotCache
 	{
 		private readonly ConcurrentDictionary<IInstrumentRenderer, InstrumentStateSnapshot> _instrumentStates = new ConcurrentDictionary<IInstrumentRenderer, InstrumentStateSnapshot>();
-
+        private const int StaleDataTimeoutMilliseconds = 500;
 		public bool CaptureInstrumentStateSnapshotAndCheckIfStale(IInstrumentRenderer renderer, InstrumentForm instrumentForm)
 		{
 		    if (renderer == null) return false;
-			const int staleDataTimeout = 500;
-			var oldStateSnapshot = _instrumentStates.ContainsKey(renderer) ? _instrumentStates[renderer] : InstrumentStateSnapshot.Default;
-			var newStateSnapshot = CaptureStateSnapshot(renderer);
-			var hashesAreDifferent = (oldStateSnapshot.HashCode != newStateSnapshot.HashCode);
-			var timeSinceHashChanged = (int)Math.Floor(DateTime.Now.Subtract(oldStateSnapshot.DateTime).TotalMilliseconds);
-			var isStale= (hashesAreDifferent ||timeSinceHashChanged >= staleDataTimeout);
-            if (isStale)
+			var storedState = _instrumentStates.ContainsKey(renderer) ? _instrumentStates[renderer] : InstrumentStateSnapshot.Default;
+			var latestState = CaptureStateSnapshot(renderer);
+			var newStateIsDifferent = (storedState.HashCode != latestState.HashCode);
+            if (newStateIsDifferent)
             {
-                 _instrumentStates.AddOrUpdate(renderer, newStateSnapshot, (x, y) => newStateSnapshot);
+                _instrumentStates.AddOrUpdate(renderer, latestState, (x, y) => latestState);
             }
-		    return isStale;
+            else
+            {
+                latestState = storedState;
+            }
+            var timeSinceLastRendered = DateTime.Now.Subtract(instrumentForm.LastRenderedOn).TotalMilliseconds;
+            var isStale = newStateIsDifferent || instrumentForm.LastRenderedOn < latestState.DateTime || timeSinceLastRendered > StaleDataTimeoutMilliseconds; 
+            return isStale;
 		}
 
 		private InstrumentStateSnapshot CaptureStateSnapshot(IInstrumentRenderer renderer)

@@ -124,8 +124,8 @@ namespace MFDExtractor
             }
 
             var stateIsStale = _instrumentStateSnapshotCache.CaptureInstrumentStateSnapshotAndCheckIfStale(Renderer, Form);
-            
-            return (Form != null)
+            var renderScheduledThisCycle = (_renderCycle % Math.Max(Form.Settings.RenderEveryN, 1) == Form.Settings.RenderOnN - 1);
+            var shouldRenderNow= (Form != null)
                    &&
                  (
                        Form.RenderImmediately
@@ -137,10 +137,11 @@ namespace MFDExtractor
                             
                             (Form.Settings != null && Form.Settings.Enabled)
                                 &&
-                            (_renderCycle%Math.Max(Form.Settings.RenderEveryN, 1) == Form.Settings.RenderOnN - 1)
+                            renderScheduledThisCycle
                        )
                     )
                  );
+            return shouldRenderNow;
         }
         private void Render(bool nightMode)
         {
