@@ -37,8 +37,6 @@ namespace LightningGauges.Renderers.F16.ISIS
 
         private static void DrawAirspeedTape(Graphics g, SizeF size, float airspeedKnots, PrivateFontCollection fonts)
         {
-
-
             //draw the background
             g.FillRectangle(BackgroundBrush, new Rectangle(0, 0, (int) size.Width, (int) size.Height));
             g.DrawLineFast(AirspeedDigitPen, new PointF(size.Width, 0), new PointF(size.Width, size.Height));
@@ -46,26 +44,8 @@ namespace LightningGauges.Renderers.F16.ISIS
             var originalTransform = g.Transform;
             var pixelsPerKnot = (size.Height/2.0f)/70.0f;
             g.TranslateTransform(0, pixelsPerKnot*airspeedKnots);
-            for (var i = 0; i < 2000; i += 10)
-            {
-                if (i < (airspeedKnots - 100) || i > (airspeedKnots + 50)) continue;
-                if (i%20 == 0)
-                {
-                    var toDisplay = string.Format("{0:####0}", i);
-                    var toDisplaySize = g.MeasureString(toDisplay, _airspeedDigitFont);
-                    const float x = 3;
-                    var y = (-i*pixelsPerKnot) - (toDisplaySize.Height/2.0f) + (size.Height/2.0f);
-                    var layoutRect = new RectangleF(x, y, size.Width, toDisplaySize.Height);
-                    g.DrawStringFast(toDisplay, _airspeedDigitFont, AirspeedDigitBrush, layoutRect, AirspeedDigitFormat);
-                }
-                else if (i%10 == 0)
-                {
-                    const int lineWidth = 15;
-                    var x = size.Width - lineWidth;
-                    var y = (-i*pixelsPerKnot) + (size.Height/2.0f);
-                    g.DrawLineFast(AirspeedDigitPen, new PointF(x, y), new PointF(size.Width, y));
-                }
-            }
+
+            DrawAirspeedTapeDigits(g, size, airspeedKnots, pixelsPerKnot);
             g.Transform = originalTransform;
             //calculate digits
             float hundreds = (int) Math.Floor((airspeedKnots/100.0f)%10);
@@ -119,6 +99,30 @@ namespace LightningGauges.Renderers.F16.ISIS
             if (airspeedKnots >= 100)
             {
                 AirspeedDigitsRenderer.DrawAirspeedDigits(g, hundreds, hundredsRectangle, outerRectangle, airspeedDigitFontSize, true, fonts);
+            }
+        }
+
+        private static void DrawAirspeedTapeDigits(Graphics g, SizeF size, float airspeedKnots, float pixelsPerKnot)
+        {
+            for (var i = 0; i < 2000; i += 10)
+            {
+                if (i < (airspeedKnots - 100) || i > (airspeedKnots + 50)) continue;
+                if (i % 20 == 0)
+                {
+                    var toDisplay = string.Format("{0:####0}", i);
+                    var toDisplaySize = g.MeasureString(toDisplay, _airspeedDigitFont);
+                    const float x = 3;
+                    var y = (-i * pixelsPerKnot) - (toDisplaySize.Height / 2.0f) + (size.Height / 2.0f);
+                    var layoutRect = new RectangleF(x, y, size.Width, toDisplaySize.Height);
+                    g.DrawStringFast(toDisplay, _airspeedDigitFont, AirspeedDigitBrush, layoutRect, AirspeedDigitFormat);
+                }
+                else if (i % 10 == 0)
+                {
+                    const int lineWidth = 15;
+                    var x = size.Width - lineWidth;
+                    var y = (-i * pixelsPerKnot) + (size.Height / 2.0f);
+                    g.DrawLineFast(AirspeedDigitPen, new PointF(x, y), new PointF(size.Width, y));
+                }
             }
         }
     }

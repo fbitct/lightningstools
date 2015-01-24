@@ -6805,7 +6805,7 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int ISIS_RenderOnN {
             get {
                 return ((int)(this["ISIS_RenderOnN"]));
@@ -6817,7 +6817,7 @@ namespace MFDExtractor.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int ISIS_RenderEveryN {
             get {
                 return ((int)(this["ISIS_RenderEveryN"]));

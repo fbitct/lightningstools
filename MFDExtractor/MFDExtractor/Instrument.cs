@@ -27,6 +27,7 @@ namespace MFDExtractor
         private ExtractorState _extractorState;
         private int _renderCycle;
         private bool _renderOnlyOnStateChanges;
+        private static SemaphoreSlim _semaphore = new SemaphoreSlim(1);
         internal Instrument(
             IInstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
             IInstrumentRenderHelper instrumentRenderHelper = null,
@@ -145,7 +146,16 @@ namespace MFDExtractor
         }
         private void Render(bool nightMode)
         {
-            _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
+            try
+            {
+                _semaphore.Wait();
+                _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
+            }
+            catch (Exception e) { _log.Error(e.Message, e); }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public void Dispose()

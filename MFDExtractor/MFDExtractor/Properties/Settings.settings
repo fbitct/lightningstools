@@ -1698,10 +1698,10 @@
       <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="ISIS_RenderOnN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="ISIS_RenderEveryN" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>
