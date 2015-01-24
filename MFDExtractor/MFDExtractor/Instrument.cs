@@ -26,8 +26,8 @@ namespace MFDExtractor
         private readonly ILog _log = LogManager.GetLogger(typeof (Instrument));
         private ExtractorState _extractorState;
         private int _renderCycle;
-        private bool _renderOnlyOnStateChanges;
-        private static SemaphoreSlim _semaphore = new SemaphoreSlim(1);
+        private readonly bool _renderOnlyOnStateChanges;
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
         internal Instrument(
             IInstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
             IInstrumentRenderHelper instrumentRenderHelper = null,
@@ -148,13 +148,13 @@ namespace MFDExtractor
         {
             try
             {
-                _semaphore.Wait();
+                Semaphore.Wait();
                 _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
             }
             catch (Exception e) { _log.Error(e.Message, e); }
             finally
             {
-                _semaphore.Release();
+                Semaphore.Release();
             }
         }
 
