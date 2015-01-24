@@ -33,16 +33,19 @@ namespace MFDExtractor
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _textureSharedMemoryImageCoordinates;
         private readonly IExtractorClient _extractorClient;
+        private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
         public FlightDataUpdater( 
             SharedMemorySpriteCoordinates textureSharedMemoryImageCoordinates, 
             ExtractorState extractorState, 
             IFlightDataAdapterSet flightDataAdapterSet = null,
-            IExtractorClient extractorClient=null)
+            IExtractorClient extractorClient=null,
+            IRadarAltitudeCalculator radarAltitudeCalculator =null)
         {
 	        _textureSharedMemoryImageCoordinates = textureSharedMemoryImageCoordinates;
 	        _extractorState = extractorState;
             _flightDataAdapterSet = flightDataAdapterSet ?? new FlightDataAdapterSet();
             _extractorClient = extractorClient;
+            _radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
         }
         public void UpdateRendererStatesFromFlightData(
             IDictionary<InstrumentType,IInstrument> instruments,
@@ -64,8 +67,16 @@ namespace MFDExtractor
 			if (_extractorState.SimRunning || _extractorState.NetworkMode == NetworkMode.Client)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
-
-                _flightDataAdapterSet.ISIS.Adapt(instruments[InstrumentType.ISIS].Renderer as IISIS, flightData, terrainDB);
+                if (_extractorState.NetworkMode !=  NetworkMode.Client) 
+                {
+                    var altitudeAgl = _radarAltitudeCalculator.ComputeRadarAltitude(flightData, terrainDB);
+                    if (flightData.ExtensionData == null)
+                    {
+                        flightData.ExtensionData = new FlightDataExtensionData();
+                    }
+                    (flightData.ExtensionData as FlightDataExtensionData).AltitudeAGL = altitudeAgl;
+                }
+                _flightDataAdapterSet.ISIS.Adapt(instruments[InstrumentType.ISIS].Renderer as IISIS, flightData);
                 _flightDataAdapterSet.VVI.Adapt(instruments[InstrumentType.VVI].Renderer as IVerticalVelocityIndicator, flightData);
                 _flightDataAdapterSet.Altimeter.Adapt(instruments[InstrumentType.Altimeter].Renderer as IAltimeter, flightData);
                 _flightDataAdapterSet.AirspeedIndicator.Adapt(instruments[InstrumentType.ASI].Renderer as IAirspeedIndicator, flightData);

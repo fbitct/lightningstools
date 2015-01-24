@@ -8,16 +8,11 @@ namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IISISFlightDataAdapter
     {
-        void Adapt(IISIS isis, FlightData flightData, TerrainDB terrainDB);
+        void Adapt(IISIS isis, FlightData flightData);
     }
     class ISISFlightDataAdapter:IISISFlightDataAdapter
     {
-	    private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
-		public ISISFlightDataAdapter(IRadarAltitudeCalculator radarAltitudeCalculator=null)
-		{
-			_radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
-		}
-        public void Adapt(IISIS isis, FlightData flightData, TerrainDB terrainDB)
+        public void Adapt(IISIS isis, FlightData flightData)
         {
             var altbits = (AltBits) flightData.altBits;
             var hsibits = (HsiBits) flightData.hsiBits;
@@ -28,7 +23,7 @@ namespace MFDExtractor.FlightDataAdapters
 				: PressureUnits.Millibars;
 
 	        isis.InstrumentState.BarometricPressure = flightData.AltCalReading;
-			isis.InstrumentState.RadarAltitudeAGL = _radarAltitudeCalculator.ComputeRadarAltitude(flightData, terrainDB);
+            isis.InstrumentState.RadarAltitudeAGL = ((flightData.ExtensionData as FlightDataExtensionData ?? new FlightDataExtensionData { AltitudeAGL = float.NaN }).AltitudeAGL);
 			isis.InstrumentState.MachNumber = flightData.mach;
             isis.InstrumentState.MagneticHeadingDegrees = (360 +(flightData.yaw/Common.Math.Constants.RADIANS_PER_DEGREE))%360;
             isis.InstrumentState.NeverExceedSpeedKnots = 850;

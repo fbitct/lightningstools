@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="BMSSupport\BMSConfigFileReader.cs" />
     <Compile Include="BMSSupport\BMSRunningExecutableLocator.cs" />
+    <Compile Include="BMSSupport\FlightDataExtensionData.cs" />
     <Compile Include="BMSSupport\RadarAltitudeCalculator.cs" />
     <Compile Include="BMSSupport\SharedMemorySpriteCoordinates.cs" />
     <Compile Include="BMSSupport\ThreeDeeCockpitFileFinder.cs" />
