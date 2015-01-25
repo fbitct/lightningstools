@@ -39,7 +39,7 @@ namespace LightningGauges.Renderers.F16.ISIS
             Bitmap fullBright = null;
             if (InstrumentState.Brightness != InstrumentState.MaxBrightness)
             {
-                fullBright = new Bitmap(destinationRectangle.Size.Width, destinationRectangle.Size.Height, PixelFormat.Format32bppPArgb);
+                fullBright = new Bitmap(destinationRectangle.Size.Width, destinationRectangle.Size.Height, PixelFormat.Format16bppRgb565);
                 gfx = Graphics.FromImage(fullBright);
             }
             //store the canvas's transform and clip settings so we can restore them later

@@ -180,6 +180,8 @@
     <Compile Include="Networking\Message.cs" />
     <Compile Include="Networking\ClientSideIncomingMessageDispatcher.cs" />
     <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />
+    <Compile Include="PerformanceCounterInstaller.cs" />
+    <Compile Include="PerformanceCounterInstanceFactory.cs" />
     <Compile Include="Properties\Settings.cs" />
     <Compile Include="InstrumentType.cs" />
     <Compile Include="RendererFactories\AltimeterRendererFactory.cs" />

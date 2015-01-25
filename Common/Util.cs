@@ -69,8 +69,6 @@ namespace Common
             catch
             {
             }
-
-            obj = null;
         }
     }
 }

@@ -84,7 +84,7 @@ namespace MFDExtractor.UI
             this.rdoAltimeterStyleElectromechanical = new System.Windows.Forms.RadioButton();
             this.tabEW = new System.Windows.Forms.TabPage();
             this.chkAzimuthIndicator = new System.Windows.Forms.CheckBox();
-            this.pbRecoverAzimuthIndicator = new System.Windows.Forms.PictureBox();
+            this.pbRecoverRWR = new System.Windows.Forms.PictureBox();
             this.chkCMDSPanel = new System.Windows.Forms.CheckBox();
             this.pbRecoverCMDS = new System.Windows.Forms.PictureBox();
             this.grpAzimuthIndicatorStyle = new System.Windows.Forms.GroupBox();
@@ -104,7 +104,7 @@ namespace MFDExtractor.UI
             this.chkFTIT1 = new System.Windows.Forms.CheckBox();
             this.pbRecoverRPM1 = new System.Windows.Forms.PictureBox();
             this.pbRecoverOil1 = new System.Windows.Forms.PictureBox();
-            this.pbRecoverNozPos1 = new System.Windows.Forms.PictureBox();
+            this.pbRecoverNOZ1 = new System.Windows.Forms.PictureBox();
             this.pbRecoverFTIT1 = new System.Windows.Forms.PictureBox();
             this.chkRPM1 = new System.Windows.Forms.CheckBox();
             this.chkOIL1 = new System.Windows.Forms.CheckBox();
@@ -115,7 +115,7 @@ namespace MFDExtractor.UI
             this.pbRecoverRPM2 = new System.Windows.Forms.PictureBox();
             this.pbRecoverOil2 = new System.Windows.Forms.PictureBox();
             this.chkOIL2 = new System.Windows.Forms.CheckBox();
-            this.pbRecoverNozPos2 = new System.Windows.Forms.PictureBox();
+            this.pbRecoverNOZ2 = new System.Windows.Forms.PictureBox();
             this.pbRecoverFTIT2 = new System.Windows.Forms.PictureBox();
             this.chkRPM2 = new System.Windows.Forms.CheckBox();
             this.gbFuelQuantityOptions = new System.Windows.Forms.GroupBox();
@@ -135,7 +135,7 @@ namespace MFDExtractor.UI
             this.pbRecoverPFL = new System.Windows.Forms.PictureBox();
             this.tabIndexers = new System.Windows.Forms.TabPage();
             this.chkNWSIndexer = new System.Windows.Forms.CheckBox();
-            this.pbRecoverNWS = new System.Windows.Forms.PictureBox();
+            this.pbRecoverNWSIndexer = new System.Windows.Forms.PictureBox();
             this.chkAOAIndexer = new System.Windows.Forms.CheckBox();
             this.pbRecoverAOAIndexer = new System.Windows.Forms.PictureBox();
             this.tabTrim = new System.Windows.Forms.TabPage();
@@ -145,7 +145,7 @@ namespace MFDExtractor.UI
             this.chkRollTrim = new System.Windows.Forms.CheckBox();
             this.tabEPU = new System.Windows.Forms.TabPage();
             this.chkEPU = new System.Windows.Forms.CheckBox();
-            this.pbRecoverEPU = new System.Windows.Forms.PictureBox();
+            this.pbRecoverEPUFuel = new System.Windows.Forms.PictureBox();
             this.tabGearAndBrakes = new System.Windows.Forms.TabPage();
             this.chkSpeedbrake = new System.Windows.Forms.CheckBox();
             this.pbRecoverSpeedbrake = new System.Windows.Forms.PictureBox();
@@ -290,7 +290,7 @@ namespace MFDExtractor.UI
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverAltimeter)).BeginInit();
             this.grpAltimeterStyle.SuspendLayout();
             this.tabEW.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverAzimuthIndicator)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRWR)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverCMDS)).BeginInit();
             this.grpAzimuthIndicatorStyle.SuspendLayout();
             this.grpAzimuthIndicatorBezelTypes.SuspendLayout();
@@ -300,12 +300,12 @@ namespace MFDExtractor.UI
             this.gbEngine1Instros.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRPM1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverOil1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNozPos1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNOZ1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverFTIT1)).BeginInit();
             this.gbEngine2Instros.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRPM2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverOil2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNozPos2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNOZ2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverFTIT2)).BeginInit();
             this.gbFuelQuantityOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverFuelQuantity)).BeginInit();
@@ -316,13 +316,13 @@ namespace MFDExtractor.UI
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverCautionPanel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverPFL)).BeginInit();
             this.tabIndexers.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNWS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNWSIndexer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverAOAIndexer)).BeginInit();
             this.tabTrim.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverPitchTrim)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRollTrim)).BeginInit();
             this.tabEPU.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverEPU)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverEPUFuel)).BeginInit();
             this.tabGearAndBrakes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverSpeedbrake)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverGearLights)).BeginInit();
@@ -1082,7 +1082,7 @@ namespace MFDExtractor.UI
             // tabEW
             // 
             this.tabEW.Controls.Add(this.chkAzimuthIndicator);
-            this.tabEW.Controls.Add(this.pbRecoverAzimuthIndicator);
+            this.tabEW.Controls.Add(this.pbRecoverRWR);
             this.tabEW.Controls.Add(this.chkCMDSPanel);
             this.tabEW.Controls.Add(this.pbRecoverCMDS);
             this.tabEW.Controls.Add(this.grpAzimuthIndicatorStyle);
@@ -1107,22 +1107,22 @@ namespace MFDExtractor.UI
             this.chkAzimuthIndicator.UseVisualStyleBackColor = true;
             this.chkAzimuthIndicator.CheckedChanged += new System.EventHandler(this.chkAzimuthIndicator_CheckedChanged);
             // 
-            // pbRecoverAzimuthIndicator
+            // pbRecoverRWR
             // 
-            this.pbRecoverAzimuthIndicator.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAzimuthIndicator.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAzimuthIndicator.Image = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAzimuthIndicator.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverAzimuthIndicator.Location = new System.Drawing.Point(396, 11);
-            this.pbRecoverAzimuthIndicator.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbRecoverAzimuthIndicator.MaximumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverAzimuthIndicator.MinimumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverAzimuthIndicator.Name = "pbRecoverAzimuthIndicator";
-            this.pbRecoverAzimuthIndicator.Size = new System.Drawing.Size(24, 25);
-            this.pbRecoverAzimuthIndicator.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbRecoverAzimuthIndicator.TabIndex = 78;
-            this.pbRecoverAzimuthIndicator.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbRecoverAzimuthIndicator, "Recover");
+            this.pbRecoverRWR.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverRWR.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverRWR.Image = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverRWR.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverRWR.Location = new System.Drawing.Point(396, 11);
+            this.pbRecoverRWR.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbRecoverRWR.MaximumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverRWR.MinimumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverRWR.Name = "pbRecoverRWR";
+            this.pbRecoverRWR.Size = new System.Drawing.Size(24, 25);
+            this.pbRecoverRWR.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbRecoverRWR.TabIndex = 78;
+            this.pbRecoverRWR.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbRecoverRWR, "Recover");
             // 
             // chkCMDSPanel
             // 
@@ -1338,7 +1338,7 @@ namespace MFDExtractor.UI
             this.gbEngine1Instros.Controls.Add(this.chkFTIT1);
             this.gbEngine1Instros.Controls.Add(this.pbRecoverRPM1);
             this.gbEngine1Instros.Controls.Add(this.pbRecoverOil1);
-            this.gbEngine1Instros.Controls.Add(this.pbRecoverNozPos1);
+            this.gbEngine1Instros.Controls.Add(this.pbRecoverNOZ1);
             this.gbEngine1Instros.Controls.Add(this.pbRecoverFTIT1);
             this.gbEngine1Instros.Controls.Add(this.chkRPM1);
             this.gbEngine1Instros.Controls.Add(this.chkOIL1);
@@ -1398,22 +1398,22 @@ namespace MFDExtractor.UI
             this.pbRecoverOil1.TabStop = false;
             this.toolTip1.SetToolTip(this.pbRecoverOil1, "Recover");
             // 
-            // pbRecoverNozPos1
+            // pbRecoverNOZ1
             // 
-            this.pbRecoverNozPos1.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos1.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos1.Image = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos1.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos1.Location = new System.Drawing.Point(400, 69);
-            this.pbRecoverNozPos1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbRecoverNozPos1.MaximumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverNozPos1.MinimumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverNozPos1.Name = "pbRecoverNozPos1";
-            this.pbRecoverNozPos1.Size = new System.Drawing.Size(24, 25);
-            this.pbRecoverNozPos1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbRecoverNozPos1.TabIndex = 38;
-            this.pbRecoverNozPos1.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbRecoverNozPos1, "Recover");
+            this.pbRecoverNOZ1.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ1.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ1.Image = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ1.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ1.Location = new System.Drawing.Point(400, 69);
+            this.pbRecoverNOZ1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbRecoverNOZ1.MaximumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverNOZ1.MinimumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverNOZ1.Name = "pbRecoverNOZ1";
+            this.pbRecoverNOZ1.Size = new System.Drawing.Size(24, 25);
+            this.pbRecoverNOZ1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbRecoverNOZ1.TabIndex = 38;
+            this.pbRecoverNOZ1.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbRecoverNOZ1, "Recover");
             // 
             // pbRecoverFTIT1
             // 
@@ -1475,7 +1475,7 @@ namespace MFDExtractor.UI
             this.gbEngine2Instros.Controls.Add(this.pbRecoverRPM2);
             this.gbEngine2Instros.Controls.Add(this.pbRecoverOil2);
             this.gbEngine2Instros.Controls.Add(this.chkOIL2);
-            this.gbEngine2Instros.Controls.Add(this.pbRecoverNozPos2);
+            this.gbEngine2Instros.Controls.Add(this.pbRecoverNOZ2);
             this.gbEngine2Instros.Controls.Add(this.pbRecoverFTIT2);
             this.gbEngine2Instros.Controls.Add(this.chkRPM2);
             this.gbEngine2Instros.Location = new System.Drawing.Point(9, 205);
@@ -1557,22 +1557,22 @@ namespace MFDExtractor.UI
             this.chkOIL2.UseVisualStyleBackColor = true;
             this.chkOIL2.CheckedChanged += new System.EventHandler(this.chkOIL2_CheckedChanged);
             // 
-            // pbRecoverNozPos2
+            // pbRecoverNOZ2
             // 
-            this.pbRecoverNozPos2.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos2.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos2.Image = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos2.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNozPos2.Location = new System.Drawing.Point(400, 68);
-            this.pbRecoverNozPos2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbRecoverNozPos2.MaximumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverNozPos2.MinimumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverNozPos2.Name = "pbRecoverNozPos2";
-            this.pbRecoverNozPos2.Size = new System.Drawing.Size(24, 25);
-            this.pbRecoverNozPos2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbRecoverNozPos2.TabIndex = 42;
-            this.pbRecoverNozPos2.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbRecoverNozPos2, "Recover");
+            this.pbRecoverNOZ2.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ2.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ2.Image = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ2.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNOZ2.Location = new System.Drawing.Point(400, 68);
+            this.pbRecoverNOZ2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbRecoverNOZ2.MaximumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverNOZ2.MinimumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverNOZ2.Name = "pbRecoverNOZ2";
+            this.pbRecoverNOZ2.Size = new System.Drawing.Size(24, 25);
+            this.pbRecoverNOZ2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbRecoverNOZ2.TabIndex = 42;
+            this.pbRecoverNOZ2.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbRecoverNOZ2, "Recover");
             // 
             // pbRecoverFTIT2
             // 
@@ -1820,7 +1820,7 @@ namespace MFDExtractor.UI
             // tabIndexers
             // 
             this.tabIndexers.Controls.Add(this.chkNWSIndexer);
-            this.tabIndexers.Controls.Add(this.pbRecoverNWS);
+            this.tabIndexers.Controls.Add(this.pbRecoverNWSIndexer);
             this.tabIndexers.Controls.Add(this.chkAOAIndexer);
             this.tabIndexers.Controls.Add(this.pbRecoverAOAIndexer);
             this.tabIndexers.Location = new System.Drawing.Point(4, 54);
@@ -1844,22 +1844,22 @@ namespace MFDExtractor.UI
             this.chkNWSIndexer.UseVisualStyleBackColor = true;
             this.chkNWSIndexer.CheckedChanged += new System.EventHandler(this.chkNWSIndexer_CheckedChanged);
             // 
-            // pbRecoverNWS
+            // pbRecoverNWSIndexer
             // 
-            this.pbRecoverNWS.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNWS.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNWS.Image = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNWS.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverNWS.Location = new System.Drawing.Point(400, 45);
-            this.pbRecoverNWS.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbRecoverNWS.MaximumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverNWS.MinimumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverNWS.Name = "pbRecoverNWS";
-            this.pbRecoverNWS.Size = new System.Drawing.Size(24, 25);
-            this.pbRecoverNWS.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbRecoverNWS.TabIndex = 96;
-            this.pbRecoverNWS.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbRecoverNWS, "Recover");
+            this.pbRecoverNWSIndexer.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNWSIndexer.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNWSIndexer.Image = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNWSIndexer.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverNWSIndexer.Location = new System.Drawing.Point(400, 45);
+            this.pbRecoverNWSIndexer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbRecoverNWSIndexer.MaximumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverNWSIndexer.MinimumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverNWSIndexer.Name = "pbRecoverNWSIndexer";
+            this.pbRecoverNWSIndexer.Size = new System.Drawing.Size(24, 25);
+            this.pbRecoverNWSIndexer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbRecoverNWSIndexer.TabIndex = 96;
+            this.pbRecoverNWSIndexer.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbRecoverNWSIndexer, "Recover");
             // 
             // chkAOAIndexer
             // 
@@ -1966,7 +1966,7 @@ namespace MFDExtractor.UI
             // tabEPU
             // 
             this.tabEPU.Controls.Add(this.chkEPU);
-            this.tabEPU.Controls.Add(this.pbRecoverEPU);
+            this.tabEPU.Controls.Add(this.pbRecoverEPUFuel);
             this.tabEPU.Location = new System.Drawing.Point(4, 54);
             this.tabEPU.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabEPU.Name = "tabEPU";
@@ -1988,22 +1988,22 @@ namespace MFDExtractor.UI
             this.chkEPU.UseVisualStyleBackColor = true;
             this.chkEPU.CheckedChanged += new System.EventHandler(this.chkEPU_CheckedChanged);
             // 
-            // pbRecoverEPU
+            // pbRecoverEPUFuel
             // 
-            this.pbRecoverEPU.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverEPU.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverEPU.Image = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverEPU.InitialImage = global::MFDExtractor.Properties.Resources.restore;
-            this.pbRecoverEPU.Location = new System.Drawing.Point(400, 9);
-            this.pbRecoverEPU.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pbRecoverEPU.MaximumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverEPU.MinimumSize = new System.Drawing.Size(24, 25);
-            this.pbRecoverEPU.Name = "pbRecoverEPU";
-            this.pbRecoverEPU.Size = new System.Drawing.Size(24, 25);
-            this.pbRecoverEPU.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pbRecoverEPU.TabIndex = 65;
-            this.pbRecoverEPU.TabStop = false;
-            this.toolTip1.SetToolTip(this.pbRecoverEPU, "Recover");
+            this.pbRecoverEPUFuel.BackgroundImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverEPUFuel.ErrorImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverEPUFuel.Image = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverEPUFuel.InitialImage = global::MFDExtractor.Properties.Resources.restore;
+            this.pbRecoverEPUFuel.Location = new System.Drawing.Point(400, 9);
+            this.pbRecoverEPUFuel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbRecoverEPUFuel.MaximumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverEPUFuel.MinimumSize = new System.Drawing.Size(24, 25);
+            this.pbRecoverEPUFuel.Name = "pbRecoverEPUFuel";
+            this.pbRecoverEPUFuel.Size = new System.Drawing.Size(24, 25);
+            this.pbRecoverEPUFuel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pbRecoverEPUFuel.TabIndex = 65;
+            this.pbRecoverEPUFuel.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbRecoverEPUFuel, "Recover");
             // 
             // tabGearAndBrakes
             // 
@@ -2124,7 +2124,7 @@ namespace MFDExtractor.UI
             this.tabGeneralKeys.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabGeneralKeys.Name = "tabGeneralKeys";
             this.tabGeneralKeys.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabGeneralKeys.Size = new System.Drawing.Size(768, 736);
+            this.tabGeneralKeys.Size = new System.Drawing.Size(768, 683);
             this.tabGeneralKeys.TabIndex = 0;
             this.tabGeneralKeys.Text = "General";
             this.tabGeneralKeys.UseVisualStyleBackColor = true;
@@ -2157,7 +2157,7 @@ namespace MFDExtractor.UI
             this.tabAccelerometerKeys.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabAccelerometerKeys.Name = "tabAccelerometerKeys";
             this.tabAccelerometerKeys.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabAccelerometerKeys.Size = new System.Drawing.Size(768, 736);
+            this.tabAccelerometerKeys.Size = new System.Drawing.Size(768, 683);
             this.tabAccelerometerKeys.TabIndex = 4;
             this.tabAccelerometerKeys.Text = "Accelerometer";
             this.tabAccelerometerKeys.UseVisualStyleBackColor = true;
@@ -2215,7 +2215,7 @@ namespace MFDExtractor.UI
             this.tabASI.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabASI.Name = "tabASI";
             this.tabASI.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabASI.Size = new System.Drawing.Size(768, 736);
+            this.tabASI.Size = new System.Drawing.Size(768, 683);
             this.tabASI.TabIndex = 2;
             this.tabASI.Text = "Airspeed Indicator";
             this.tabASI.UseVisualStyleBackColor = true;
@@ -2296,7 +2296,7 @@ namespace MFDExtractor.UI
             this.tabAzimuthIndicatorKeys.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabAzimuthIndicatorKeys.Name = "tabAzimuthIndicatorKeys";
             this.tabAzimuthIndicatorKeys.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabAzimuthIndicatorKeys.Size = new System.Drawing.Size(768, 736);
+            this.tabAzimuthIndicatorKeys.Size = new System.Drawing.Size(768, 683);
             this.tabAzimuthIndicatorKeys.TabIndex = 3;
             this.tabAzimuthIndicatorKeys.Text = "Azimuth Indicator";
             this.tabAzimuthIndicatorKeys.UseVisualStyleBackColor = true;
@@ -2377,7 +2377,7 @@ namespace MFDExtractor.UI
             this.tabEHSIKeys.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tabEHSIKeys.Name = "tabEHSIKeys";
             this.tabEHSIKeys.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabEHSIKeys.Size = new System.Drawing.Size(768, 736);
+            this.tabEHSIKeys.Size = new System.Drawing.Size(768, 683);
             this.tabEHSIKeys.TabIndex = 1;
             this.tabEHSIKeys.Text = "EHSI";
             this.tabEHSIKeys.UseVisualStyleBackColor = true;
@@ -3398,7 +3398,7 @@ namespace MFDExtractor.UI
             this.grpAltimeterStyle.PerformLayout();
             this.tabEW.ResumeLayout(false);
             this.tabEW.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverAzimuthIndicator)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRWR)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverCMDS)).EndInit();
             this.grpAzimuthIndicatorStyle.ResumeLayout(false);
             this.grpAzimuthIndicatorStyle.PerformLayout();
@@ -3413,13 +3413,13 @@ namespace MFDExtractor.UI
             this.gbEngine1Instros.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRPM1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverOil1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNozPos1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNOZ1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverFTIT1)).EndInit();
             this.gbEngine2Instros.ResumeLayout(false);
             this.gbEngine2Instros.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRPM2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverOil2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNozPos2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNOZ2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverFTIT2)).EndInit();
             this.gbFuelQuantityOptions.ResumeLayout(false);
             this.gbFuelQuantityOptions.PerformLayout();
@@ -3434,7 +3434,7 @@ namespace MFDExtractor.UI
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverPFL)).EndInit();
             this.tabIndexers.ResumeLayout(false);
             this.tabIndexers.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNWS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverNWSIndexer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverAOAIndexer)).EndInit();
             this.tabTrim.ResumeLayout(false);
             this.tabTrim.PerformLayout();
@@ -3442,7 +3442,7 @@ namespace MFDExtractor.UI
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverRollTrim)).EndInit();
             this.tabEPU.ResumeLayout(false);
             this.tabEPU.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverEPU)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRecoverEPUFuel)).EndInit();
             this.tabGearAndBrakes.ResumeLayout(false);
             this.tabGearAndBrakes.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRecoverSpeedbrake)).EndInit();
@@ -3549,11 +3549,11 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.PictureBox pbRecoverAltimeter;
         private System.Windows.Forms.PictureBox pbRecoverAOAIndicator;
         private System.Windows.Forms.PictureBox pbRecoverFTIT1;
-        private System.Windows.Forms.PictureBox pbRecoverNozPos1;
+        private System.Windows.Forms.PictureBox pbRecoverNOZ1;
         private System.Windows.Forms.PictureBox pbRecoverOil1;
         private System.Windows.Forms.PictureBox pbRecoverRPM1;
         private System.Windows.Forms.PictureBox pbRecoverFTIT2;
-        private System.Windows.Forms.PictureBox pbRecoverNozPos2;
+        private System.Windows.Forms.PictureBox pbRecoverNOZ2;
         private System.Windows.Forms.PictureBox pbRecoverOil2;
         private System.Windows.Forms.PictureBox pbRecoverRPM2;
         private System.Windows.Forms.PictureBox pbRecoverFuelFlow;
@@ -3599,7 +3599,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.CheckBox chkStandbyADI;
         private System.Windows.Forms.PictureBox pbRecoverBackupADI;
         private System.Windows.Forms.CheckBox chkEPU;
-        private System.Windows.Forms.PictureBox pbRecoverEPU;
+        private System.Windows.Forms.PictureBox pbRecoverEPUFuel;
         private System.Windows.Forms.CheckBox chkCabinPress;
         private System.Windows.Forms.PictureBox pbRecoverCabinPress;
         private System.Windows.Forms.GroupBox gbFuelQuantityOptions;
@@ -3607,7 +3607,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.RadioButton rdoFuelQuantityNeedleCModel;
         private System.Windows.Forms.CheckBox chkFuelQty;
         private System.Windows.Forms.PictureBox pbRecoverFuelQuantity;
-        private System.Windows.Forms.PictureBox pbRecoverNWS;
+        private System.Windows.Forms.PictureBox pbRecoverNWSIndexer;
         private System.Windows.Forms.CheckBox chkNWSIndexer;
         private System.Windows.Forms.CheckBox chkAOAIndexer;
         private System.Windows.Forms.PictureBox pbRecoverAOAIndexer;
@@ -3710,7 +3710,7 @@ namespace MFDExtractor.UI
         private System.Windows.Forms.GroupBox grpAzimuthIndicatorDigitalTypes;
         private System.Windows.Forms.RadioButton rdoTTD;
         private System.Windows.Forms.RadioButton rdoATDPlus;
-        private System.Windows.Forms.PictureBox pbRecoverAzimuthIndicator;
+        private System.Windows.Forms.PictureBox pbRecoverRWR;
         private System.Windows.Forms.CheckBox chkCMDSPanel;
         private System.Windows.Forms.PictureBox pbRecoverCMDS;
         private System.Windows.Forms.TabPage tabNetworking;

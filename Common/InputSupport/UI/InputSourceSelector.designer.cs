@@ -58,10 +58,10 @@ namespace Common.InputSupport.UI
             // lblPromptText
             // 
             this.lblPromptText.AutoSize = true;
-            this.lblPromptText.Location = new System.Drawing.Point(12, 15);
+            this.lblPromptText.Location = new System.Drawing.Point(14, 19);
             this.lblPromptText.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPromptText.Name = "lblPromptText";
-            this.lblPromptText.Size = new System.Drawing.Size(98, 17);
+            this.lblPromptText.Size = new System.Drawing.Size(110, 20);
             this.lblPromptText.TabIndex = 0;
             this.lblPromptText.Text = "Control Name:";
             // 
@@ -77,11 +77,11 @@ namespace Common.InputSupport.UI
             this.gbSelectInputSource.Controls.Add(this.cbJoysticks);
             this.gbSelectInputSource.Controls.Add(this.rdoJoystick);
             this.gbSelectInputSource.Controls.Add(this.rdoKeystroke);
-            this.gbSelectInputSource.Location = new System.Drawing.Point(16, 34);
-            this.gbSelectInputSource.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbSelectInputSource.Location = new System.Drawing.Point(18, 42);
+            this.gbSelectInputSource.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbSelectInputSource.Name = "gbSelectInputSource";
-            this.gbSelectInputSource.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.gbSelectInputSource.Size = new System.Drawing.Size(383, 484);
+            this.gbSelectInputSource.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbSelectInputSource.Size = new System.Drawing.Size(431, 605);
             this.gbSelectInputSource.TabIndex = 1;
             this.gbSelectInputSource.TabStop = false;
             this.gbSelectInputSource.Text = "Select Input Source";
@@ -90,22 +90,22 @@ namespace Common.InputSupport.UI
             // 
             this.txtHelpText.BackColor = System.Drawing.SystemColors.Info;
             this.txtHelpText.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.txtHelpText.Location = new System.Drawing.Point(9, 23);
-            this.txtHelpText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtHelpText.Location = new System.Drawing.Point(10, 29);
+            this.txtHelpText.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtHelpText.Multiline = true;
             this.txtHelpText.Name = "txtHelpText";
             this.txtHelpText.ReadOnly = true;
-            this.txtHelpText.Size = new System.Drawing.Size(364, 72);
+            this.txtHelpText.Size = new System.Drawing.Size(409, 89);
             this.txtHelpText.TabIndex = 4;
             this.txtHelpText.TabStop = false;
             // 
             // rdoNotAssigned
             // 
             this.rdoNotAssigned.AutoSize = true;
-            this.rdoNotAssigned.Location = new System.Drawing.Point(9, 103);
-            this.rdoNotAssigned.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoNotAssigned.Location = new System.Drawing.Point(10, 129);
+            this.rdoNotAssigned.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoNotAssigned.Name = "rdoNotAssigned";
-            this.rdoNotAssigned.Size = new System.Drawing.Size(139, 26);
+            this.rdoNotAssigned.Size = new System.Drawing.Size(119, 24);
             this.rdoNotAssigned.TabIndex = 9;
             this.rdoNotAssigned.TabStop = true;
             this.rdoNotAssigned.Text = "Unassigned";
@@ -113,11 +113,11 @@ namespace Common.InputSupport.UI
             // 
             // txtKeystroke
             // 
-            this.txtKeystroke.Location = new System.Drawing.Point(39, 160);
-            this.txtKeystroke.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtKeystroke.Location = new System.Drawing.Point(44, 200);
+            this.txtKeystroke.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.txtKeystroke.Name = "txtKeystroke";
             this.txtKeystroke.ReadOnly = true;
-            this.txtKeystroke.Size = new System.Drawing.Size(307, 22);
+            this.txtKeystroke.Size = new System.Drawing.Size(345, 26);
             this.txtKeystroke.TabIndex = 8;
             // 
             // gbPovDirections
@@ -130,11 +130,11 @@ namespace Common.InputSupport.UI
             this.gbPovDirections.Controls.Add(this.rdoPovRight);
             this.gbPovDirections.Controls.Add(this.rdoPovUpRight);
             this.gbPovDirections.Controls.Add(this.rdoPovUp);
-            this.gbPovDirections.Location = new System.Drawing.Point(39, 281);
-            this.gbPovDirections.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbPovDirections.Location = new System.Drawing.Point(44, 351);
+            this.gbPovDirections.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbPovDirections.Name = "gbPovDirections";
-            this.gbPovDirections.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.gbPovDirections.Size = new System.Drawing.Size(308, 185);
+            this.gbPovDirections.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbPovDirections.Size = new System.Drawing.Size(346, 231);
             this.gbPovDirections.TabIndex = 7;
             this.gbPovDirections.TabStop = false;
             this.gbPovDirections.Text = "POV Hat Direction";
@@ -143,10 +143,10 @@ namespace Common.InputSupport.UI
             // 
             this.rdoPovUpLeft.AutoSize = true;
             this.rdoPovUpLeft.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.rdoPovUpLeft.Location = new System.Drawing.Point(43, 57);
-            this.rdoPovUpLeft.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovUpLeft.Location = new System.Drawing.Point(48, 71);
+            this.rdoPovUpLeft.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovUpLeft.Name = "rdoPovUpLeft";
-            this.rdoPovUpLeft.Size = new System.Drawing.Size(95, 26);
+            this.rdoPovUpLeft.Size = new System.Drawing.Size(83, 24);
             this.rdoPovUpLeft.TabIndex = 7;
             this.rdoPovUpLeft.TabStop = true;
             this.rdoPovUpLeft.Text = "UpLeft";
@@ -156,10 +156,10 @@ namespace Common.InputSupport.UI
             // 
             this.rdoPovLeft.AutoSize = true;
             this.rdoPovLeft.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.rdoPovLeft.Location = new System.Drawing.Point(43, 85);
-            this.rdoPovLeft.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovLeft.Location = new System.Drawing.Point(48, 106);
+            this.rdoPovLeft.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovLeft.Name = "rdoPovLeft";
-            this.rdoPovLeft.Size = new System.Drawing.Size(71, 26);
+            this.rdoPovLeft.Size = new System.Drawing.Size(62, 24);
             this.rdoPovLeft.TabIndex = 6;
             this.rdoPovLeft.TabStop = true;
             this.rdoPovLeft.Text = "Left";
@@ -169,10 +169,10 @@ namespace Common.InputSupport.UI
             // 
             this.rdoPovDownLeft.AutoSize = true;
             this.rdoPovDownLeft.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.rdoPovDownLeft.Location = new System.Drawing.Point(24, 113);
-            this.rdoPovDownLeft.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovDownLeft.Location = new System.Drawing.Point(27, 141);
+            this.rdoPovDownLeft.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovDownLeft.Name = "rdoPovDownLeft";
-            this.rdoPovDownLeft.Size = new System.Drawing.Size(117, 26);
+            this.rdoPovDownLeft.Size = new System.Drawing.Size(103, 24);
             this.rdoPovDownLeft.TabIndex = 5;
             this.rdoPovDownLeft.TabStop = true;
             this.rdoPovDownLeft.Text = "DownLeft";
@@ -182,10 +182,10 @@ namespace Common.InputSupport.UI
             // 
             this.rdoPovDown.AutoSize = true;
             this.rdoPovDown.CheckAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.rdoPovDown.Location = new System.Drawing.Point(116, 142);
-            this.rdoPovDown.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovDown.Location = new System.Drawing.Point(130, 178);
+            this.rdoPovDown.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovDown.Name = "rdoPovDown";
-            this.rdoPovDown.Size = new System.Drawing.Size(63, 46);
+            this.rdoPovDown.Size = new System.Drawing.Size(54, 44);
             this.rdoPovDown.TabIndex = 4;
             this.rdoPovDown.TabStop = true;
             this.rdoPovDown.Text = "Down";
@@ -194,10 +194,10 @@ namespace Common.InputSupport.UI
             // rdoPovDownRight
             // 
             this.rdoPovDownRight.AutoSize = true;
-            this.rdoPovDownRight.Location = new System.Drawing.Point(161, 113);
-            this.rdoPovDownRight.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovDownRight.Location = new System.Drawing.Point(181, 141);
+            this.rdoPovDownRight.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovDownRight.Name = "rdoPovDownRight";
-            this.rdoPovDownRight.Size = new System.Drawing.Size(129, 26);
+            this.rdoPovDownRight.Size = new System.Drawing.Size(113, 24);
             this.rdoPovDownRight.TabIndex = 3;
             this.rdoPovDownRight.TabStop = true;
             this.rdoPovDownRight.Text = "DownRight";
@@ -206,10 +206,10 @@ namespace Common.InputSupport.UI
             // rdoPovRight
             // 
             this.rdoPovRight.AutoSize = true;
-            this.rdoPovRight.Location = new System.Drawing.Point(180, 85);
-            this.rdoPovRight.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovRight.Location = new System.Drawing.Point(202, 106);
+            this.rdoPovRight.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovRight.Name = "rdoPovRight";
-            this.rdoPovRight.Size = new System.Drawing.Size(83, 26);
+            this.rdoPovRight.Size = new System.Drawing.Size(72, 24);
             this.rdoPovRight.TabIndex = 2;
             this.rdoPovRight.TabStop = true;
             this.rdoPovRight.Text = "Right";
@@ -218,10 +218,10 @@ namespace Common.InputSupport.UI
             // rdoPovUpRight
             // 
             this.rdoPovUpRight.AutoSize = true;
-            this.rdoPovUpRight.Location = new System.Drawing.Point(161, 57);
-            this.rdoPovUpRight.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovUpRight.Location = new System.Drawing.Point(181, 71);
+            this.rdoPovUpRight.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovUpRight.Name = "rdoPovUpRight";
-            this.rdoPovUpRight.Size = new System.Drawing.Size(107, 26);
+            this.rdoPovUpRight.Size = new System.Drawing.Size(93, 24);
             this.rdoPovUpRight.TabIndex = 1;
             this.rdoPovUpRight.TabStop = true;
             this.rdoPovUpRight.Text = "UpRight";
@@ -231,10 +231,10 @@ namespace Common.InputSupport.UI
             // 
             this.rdoPovUp.AutoSize = true;
             this.rdoPovUp.CheckAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.rdoPovUp.Location = new System.Drawing.Point(125, 12);
-            this.rdoPovUp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPovUp.Location = new System.Drawing.Point(141, 15);
+            this.rdoPovUp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoPovUp.Name = "rdoPovUp";
-            this.rdoPovUp.Size = new System.Drawing.Size(40, 46);
+            this.rdoPovUp.Size = new System.Drawing.Size(34, 44);
             this.rdoPovUp.TabIndex = 0;
             this.rdoPovUp.TabStop = true;
             this.rdoPovUp.Text = "Up";
@@ -244,30 +244,30 @@ namespace Common.InputSupport.UI
             // 
             this.cboJoystickControl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboJoystickControl.FormattingEnabled = true;
-            this.cboJoystickControl.Location = new System.Drawing.Point(101, 247);
-            this.cboJoystickControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cboJoystickControl.Location = new System.Drawing.Point(114, 309);
+            this.cboJoystickControl.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cboJoystickControl.Name = "cboJoystickControl";
-            this.cboJoystickControl.Size = new System.Drawing.Size(244, 24);
+            this.cboJoystickControl.Size = new System.Drawing.Size(274, 28);
             this.cboJoystickControl.TabIndex = 5;
             this.cboJoystickControl.SelectedIndexChanged += new System.EventHandler(this.cboJoystickControl_SelectedIndexChanged);
             // 
             // lblJoystickControl
             // 
             this.lblJoystickControl.AutoSize = true;
-            this.lblJoystickControl.Location = new System.Drawing.Point(36, 251);
+            this.lblJoystickControl.Location = new System.Drawing.Point(40, 314);
             this.lblJoystickControl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblJoystickControl.Name = "lblJoystickControl";
-            this.lblJoystickControl.Size = new System.Drawing.Size(57, 17);
+            this.lblJoystickControl.Size = new System.Drawing.Size(64, 20);
             this.lblJoystickControl.TabIndex = 4;
             this.lblJoystickControl.Text = "Control:";
             // 
             // lblDeviceName
             // 
             this.lblDeviceName.AutoSize = true;
-            this.lblDeviceName.Location = new System.Drawing.Point(35, 222);
+            this.lblDeviceName.Location = new System.Drawing.Point(39, 278);
             this.lblDeviceName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblDeviceName.Name = "lblDeviceName";
-            this.lblDeviceName.Size = new System.Drawing.Size(55, 17);
+            this.lblDeviceName.Size = new System.Drawing.Size(61, 20);
             this.lblDeviceName.TabIndex = 3;
             this.lblDeviceName.Text = "Device:";
             // 
@@ -275,20 +275,20 @@ namespace Common.InputSupport.UI
             // 
             this.cbJoysticks.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbJoysticks.FormattingEnabled = true;
-            this.cbJoysticks.Location = new System.Drawing.Point(101, 218);
-            this.cbJoysticks.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbJoysticks.Location = new System.Drawing.Point(114, 272);
+            this.cbJoysticks.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cbJoysticks.Name = "cbJoysticks";
-            this.cbJoysticks.Size = new System.Drawing.Size(244, 24);
+            this.cbJoysticks.Size = new System.Drawing.Size(274, 28);
             this.cbJoysticks.TabIndex = 2;
             this.cbJoysticks.SelectedIndexChanged += new System.EventHandler(this.cbJoysticks_SelectedIndexChanged);
             // 
             // rdoJoystick
             // 
             this.rdoJoystick.AutoSize = true;
-            this.rdoJoystick.Location = new System.Drawing.Point(9, 192);
-            this.rdoJoystick.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoJoystick.Location = new System.Drawing.Point(10, 240);
+            this.rdoJoystick.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoJoystick.Name = "rdoJoystick";
-            this.rdoJoystick.Size = new System.Drawing.Size(333, 26);
+            this.rdoJoystick.Size = new System.Drawing.Size(284, 24);
             this.rdoJoystick.TabIndex = 1;
             this.rdoJoystick.TabStop = true;
             this.rdoJoystick.Text = "Joystick or DirectInput Device Input";
@@ -298,10 +298,10 @@ namespace Common.InputSupport.UI
             // rdoKeystroke
             // 
             this.rdoKeystroke.AutoSize = true;
-            this.rdoKeystroke.Location = new System.Drawing.Point(9, 132);
-            this.rdoKeystroke.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoKeystroke.Location = new System.Drawing.Point(10, 165);
+            this.rdoKeystroke.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rdoKeystroke.Name = "rdoKeystroke";
-            this.rdoKeystroke.Size = new System.Drawing.Size(243, 26);
+            this.rdoKeystroke.Size = new System.Drawing.Size(205, 24);
             this.rdoKeystroke.TabIndex = 0;
             this.rdoKeystroke.TabStop = true;
             this.rdoKeystroke.Text = "Keystroke / Combination";
@@ -310,10 +310,10 @@ namespace Common.InputSupport.UI
             // 
             // cmdOk
             // 
-            this.cmdOk.Location = new System.Drawing.Point(16, 526);
-            this.cmdOk.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmdOk.Location = new System.Drawing.Point(18, 665);
+            this.cmdOk.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cmdOk.Name = "cmdOk";
-            this.cmdOk.Size = new System.Drawing.Size(100, 28);
+            this.cmdOk.Size = new System.Drawing.Size(112, 35);
             this.cmdOk.TabIndex = 2;
             this.cmdOk.Text = "OK";
             this.cmdOk.UseVisualStyleBackColor = true;
@@ -322,10 +322,10 @@ namespace Common.InputSupport.UI
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(123, 526);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancel.Location = new System.Drawing.Point(138, 665);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(100, 28);
+            this.btnCancel.Size = new System.Drawing.Size(112, 35);
             this.btnCancel.TabIndex = 3;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -333,10 +333,10 @@ namespace Common.InputSupport.UI
             // 
             // InputSourceSelector
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
-            this.ClientSize = new System.Drawing.Size(428, 570);
+            this.ClientSize = new System.Drawing.Size(482, 737);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.cmdOk);
@@ -344,7 +344,7 @@ namespace Common.InputSupport.UI
             this.Controls.Add(this.lblPromptText);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "InputSourceSelector";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

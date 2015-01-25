@@ -13,7 +13,7 @@ namespace MFDExtractor
 	class InstrumentStateSnapshotCache : IInstrumentStateSnapshotCache
 	{
 		private readonly ConcurrentDictionary<IInstrumentRenderer, InstrumentStateSnapshot> _instrumentStates = new ConcurrentDictionary<IInstrumentRenderer, InstrumentStateSnapshot>();
-        private const int StaleDataTimeoutMilliseconds = 500;
+        private const int StaleDataTimeoutMilliseconds = 1000;
 		public bool CaptureInstrumentStateSnapshotAndCheckIfStale(IInstrumentRenderer renderer, InstrumentForm instrumentForm)
 		{
 		    if (renderer == null) return false;

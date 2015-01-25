@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using Common.SimSupport;
 using MFDExtractor.Properties;
 using MFDExtractor.UI;
 using System.Threading;
 using log4net;
 using System.Windows.Forms;
+using ThreadState = System.Threading.ThreadState;
 
 namespace MFDExtractor
 {
@@ -14,6 +16,10 @@ namespace MFDExtractor
         IInstrumentRenderer Renderer { get; }
         void Start(ExtractorState extractorState );
         void Stop();
+        PerformanceCounter RenderedFramesCounter { get; }
+        PerformanceCounter SkippedFramesCounter { get; }
+        PerformanceCounter TimeoutFramesCounter { get; }
+        PerformanceCounter TotalFramesCounter { get; }
     }
 
     internal class Instrument : IInstrument
@@ -27,7 +33,7 @@ namespace MFDExtractor
         private ExtractorState _extractorState;
         private int _renderCycle;
         private readonly bool _renderOnlyOnStateChanges;
-        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1);
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(2);
         internal Instrument(
             IInstrumentStateSnapshotCache instrumentStateSnapshotCache = null, 
             IInstrumentRenderHelper instrumentRenderHelper = null,
@@ -78,8 +84,10 @@ namespace MFDExtractor
                 Form.Hide();
                 Form.Close();
                 Common.Util.DisposeObject(Form);
+                Form = null;
             }
             Common.Util.DisposeObject(_renderThread);
+            _renderThread = null;
         }
 
         private static bool HighlightingBorderShouldBeDisplayedOnTargetForm(InstrumentForm targetForm)
@@ -89,6 +97,7 @@ namespace MFDExtractor
 
         private void ThreadWork(ExtractorState extractorState)
         {
+            var pollingPeriod = Settings.Default.PollingDelay;
             while (_extractorState.Running && _extractorState.KeepRunning)
             {
                 var startTime = DateTime.Now;
@@ -98,7 +107,7 @@ namespace MFDExtractor
                 {
                     try
                     {
-                        Render(extractorState.NightMode);
+                        Render(extractorState.NightMode, pollingPeriod);
                         if (Form != null)
                         {
                             Form.RenderImmediately = false;
@@ -109,11 +118,18 @@ namespace MFDExtractor
                         _log.Error(e.Message, e);
                     }
                 }
+                else
+                {
+                    IncrementPerformanceCounter(SkippedFramesCounter);
+                    IncrementPerformanceCounter(_extractorState.SkippedFramesCounter);
+                }
                 var endTime = DateTime.Now;
                 var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
-                var toWait = Settings.Default.PollingDelay - elapsed;
+                var toWait = pollingPeriod - elapsed;
                 if (toWait < 1) toWait = 1;
                 Thread.Sleep((int)toWait);
+                IncrementPerformanceCounter(TotalFramesCounter);
+                IncrementPerformanceCounter(_extractorState.TotalFramesCounter);
             }
         }
 
@@ -144,19 +160,48 @@ namespace MFDExtractor
                  );
             return shouldRenderNow;
         }
-        private void Render(bool nightMode)
+        private void Render(bool nightMode, int timeout)
         {
+            var success = Semaphore.Wait(timeout);
+            if (!success)
+            {
+                IncrementPerformanceCounter(TimeoutFramesCounter);
+                IncrementPerformanceCounter(_extractorState.TimeoutFramesCounter);
+                return;
+            };
             try
             {
-                Semaphore.Wait();
-                _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome, HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
+                _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome,
+                    HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
+                IncrementPerformanceCounter(RenderedFramesCounter);
+                IncrementPerformanceCounter(_extractorState.RenderedFramesCounter);
             }
-            catch (Exception e) { _log.Error(e.Message, e); }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
+            }
             finally
             {
                 Semaphore.Release();
             }
         }
+
+        private void IncrementPerformanceCounter(PerformanceCounter performanceCounter)
+        {
+            if (performanceCounter == null) return;
+            try
+            {
+                performanceCounter.Increment();
+            }
+            catch
+            {
+            }
+        }
+
+        public PerformanceCounter RenderedFramesCounter { get; set; }
+        public PerformanceCounter SkippedFramesCounter { get; set; }
+        public PerformanceCounter TotalFramesCounter { get; set; }
+        public PerformanceCounter TimeoutFramesCounter { get; set; }
 
         public void Dispose()
         {
@@ -173,6 +218,17 @@ namespace MFDExtractor
                     Stop();
                     Form.Close();
                     Common.Util.DisposeObject(Form);
+
+                    Common.Util.DisposeObject(_renderThread);
+                    _renderThread = null;
+
+                    Common.Util.DisposeObject(Renderer);
+                    Renderer = null;
+
+                    Common.Util.DisposeObject(RenderedFramesCounter);
+                    Common.Util.DisposeObject(SkippedFramesCounter);
+                    Common.Util.DisposeObject(TotalFramesCounter);
+
                 }
             }
             _disposed = true;

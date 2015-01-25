@@ -31,7 +31,7 @@ namespace MFDExtractor
         private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private TerrainDB _terrainDB;
-
+	    private readonly IPerformanceCounterInstanceFactory _performanceCounterInstanceFactory;
         #region Network Configuration
 
         private const string ServiceName = "MFDExtractorService";
@@ -73,6 +73,7 @@ namespace MFDExtractor
 		private readonly IThreeDeeCaptureCoordinateUpdater _threeDeeCaptureCoordinateUpdater;
 	    private  IFlightDataRetriever _flightDataRetriever;
 		private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
+	    private readonly PerformanceCounterInstaller _performanceCounterInstaller;
 
 	    #endregion
 
@@ -84,10 +85,12 @@ namespace MFDExtractor
             IInstrumentFactory instrumentFactory = null,
 			IThreeDeeCaptureCoordinateUpdater threeDeeCaptureCoordinateUpdater=null,
             IFlightDataRetriever flightDataRetriever= null,
-			IFlightDataUpdater flightDataUpdater =null)
+			IFlightDataUpdater flightDataUpdater =null, 
+            IPerformanceCounterInstanceFactory performanceCounterInstanceFactory = null)
         {
             State = new ExtractorState();
             LoadSettings();
+            _performanceCounterInstanceFactory = performanceCounterInstanceFactory ?? new PerformanceCounterInstanceInstanceFactory();
             _instrumentFactory = instrumentFactory ?? new InstrumentFactory();
             _ehsiStateTracker = new EHSIStateTracker(_instruments);
             _inputEvents = new InputEvents(_instruments, _ehsiStateTracker, State);
@@ -102,17 +105,19 @@ namespace MFDExtractor
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever();
 			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
 	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater( _sharedMemorySpriteCoordinates, State);
+            _performanceCounterInstaller = new PerformanceCounterInstaller();
         }
         private void SetupInstruments()
         {
-            foreach (InstrumentType instrumentType in Enum.GetValues(typeof (InstrumentType)))
+            _performanceCounterInstaller.CreatePerformanceCounters(State);
+            foreach (InstrumentType instrumentType in Enum.GetValues(typeof(InstrumentType)))
             {
                 _instruments[instrumentType] = _instrumentFactory.Create(instrumentType);
             }
         }
-        
-        
-        public void Start()
+
+
+	    public void Start()
         {
             LoadSettings();
             if (State.Running)
@@ -206,7 +211,7 @@ namespace MFDExtractor
             get { return _serverEndpoint; }
             set { _serverEndpoint = value; }
         }
-		public static ExtractorState State { get; set; }
+		internal static ExtractorState State { get; set; }
         public Mediator Mediator { get; set; }
 
         #endregion
@@ -329,12 +334,12 @@ namespace MFDExtractor
         {
             try
             {
+
                 Settings.Default.Save();
                 var pollingDelay = Settings.Default.PollingDelay;
                 while (State.KeepRunning)
                 {
                     var thisLoopStartTime = DateTime.Now;
-
                     Application.DoEvents();
 
                     ProcessNetworkMessages();
@@ -356,7 +361,9 @@ namespace MFDExtractor
                         SetFlightData(flightDataToSet);
                         _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, flightDataToSet, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);
                     }
+                    
                     Application.DoEvents();
+
                     var thisLoopFinishTime = DateTime.Now;
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
                     var millisToSleep = pollingDelay - ((int)timeElapsed.TotalMilliseconds);
