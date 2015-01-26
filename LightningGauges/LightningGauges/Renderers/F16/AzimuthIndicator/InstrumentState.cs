@@ -45,7 +45,7 @@ namespace LightningGauges.Renderers.F16.AzimuthIndicator
             MagneticHeadingDegrees = 0;
             RollDegrees = 0;
             Inverted = false;
-            EWMSMode = F16.AzimuthIndicator.EWMSMode.Manual;
+            EWMSMode = EWMSMode.Manual;
         }
 
         internal bool Inverted { get; set; }

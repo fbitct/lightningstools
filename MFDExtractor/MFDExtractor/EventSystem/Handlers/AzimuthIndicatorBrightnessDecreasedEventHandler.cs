@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using LightningGauges.Renderers.F16.AzimuthIndicator;
 using MFDExtractor.Properties;
 
@@ -18,8 +17,12 @@ namespace MFDExtractor.EventSystem.Handlers
 		public void Handle()
 		{
 		    var azimuthIndicator = _instruments[InstrumentType.RWR].Renderer as IAzimuthIndicator;
-			var newBrightness = (int)Math.Floor((azimuthIndicator.InstrumentState.Brightness -azimuthIndicator.InstrumentState.MaxBrightness) * (1.0f / 32.0f));
-			azimuthIndicator.InstrumentState.Brightness = newBrightness;
+			var newBrightness = azimuthIndicator.InstrumentState.Brightness - ((int)(azimuthIndicator.InstrumentState.MaxBrightness * (1.0f / 32.0f)));
+		    if (newBrightness <0)
+		    {
+		        newBrightness = 0;
+		    }
+		    azimuthIndicator.InstrumentState.Brightness = newBrightness;
 			Settings.Default.AzimuthIndicatorBrightness = newBrightness;
 		}
 	}
