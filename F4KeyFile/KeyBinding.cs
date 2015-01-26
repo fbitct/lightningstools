@@ -53,7 +53,7 @@ namespace F4KeyFile
             }
             else
             {
-                sb.Append("0X0 0");
+                sb.Append("0 0");
             }
             sb.Append(" ");
             if (ComboKey != null && ComboKey.ScanCode != 0)
@@ -62,10 +62,17 @@ namespace F4KeyFile
             }
             else
             {
-                sb.Append("0X0 0");
+                sb.Append("0 0");
             }
             sb.Append(" ");
-            sb.Append((int) UIVisibility);
+            if (UIVisibility != UIVisibility.Locked)
+            {
+                sb.Append((int) UIVisibility);
+            }
+            else
+            {
+                sb.Append("-" + (int) UIVisibility);
+            }
             sb.Append(" ");
             if (Description != null)
             {
@@ -150,13 +157,16 @@ namespace F4KeyFile
             var description ="\"\"";
             if (tokenList.Count > 8)
             {
-                var sb = new StringBuilder();
-                for (var i = 8; i < tokenList.Count; i++)
+                var firstQuote = input.IndexOf("\"", StringComparison.OrdinalIgnoreCase);
+                if (firstQuote > 0)
                 {
-                    sb.Append(tokenList[i]);
-                    sb.Append(" ");
+                    description = input.Substring(firstQuote);
                 }
-                description = sb.ToString().TrimEnd();
+                else
+                {
+                    return false;
+                }
+                
             }
             keyBinding = new KeyBinding(callback, soundId, keyWithModifiers, comboKeyWithModifiers, (UIVisibility)uiVisibility,description);
             return true;

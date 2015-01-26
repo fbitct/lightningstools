@@ -58,12 +58,22 @@ namespace F4KeyFile
             sb.Append(" ");
             if (BindingType == DirectInputBindingType.Button)
             {
-                sb.Append("0X" + TriggeringEvent.ToString("x"));
+                if (TriggeringEvent != 0)
+                {
+                    sb.Append("0x");
+                    sb.Append(TriggeringEvent.ToString("x").TrimStart('0'));
+                }
+                else
+                {
+                    sb.Append("0");
+                }
             }
             else
             {
                 sb.Append((int) PovDirection);
             }
+            sb.Append(" ");
+            sb.Append("0x0");
             sb.Append(" ");
             sb.Append(SoundId);
             if (Description == null) return sb.ToString();
@@ -102,12 +112,15 @@ namespace F4KeyFile
             string description = null;
             if (tokenList.Count >= 8)
             {
-                var sb = new StringBuilder();
-                for (var i=7;i<tokenList.Count;i++)
+                var firstQuote = input.IndexOf("\"", StringComparison.OrdinalIgnoreCase);
+                if (firstQuote > 0)
                 {
-                    sb.Append(tokenList[i] + " ");
+                    description = input.Substring(firstQuote);
                 }
-                description = sb.ToString().TrimEnd();
+                else
+                {
+                    return false;
+                }
             }
 
             switch ((DirectInputBindingType) bindingType)

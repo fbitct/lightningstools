@@ -69,7 +69,8 @@ namespace F4KeyFileEditor
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             grid.Rows.Clear();
             if (_editorState.KeyFile.Lines == null) return;
-            progressBar1.Maximum = _editorState.KeyFile.Lines.Count();
+            progressBar1.Maximum = _editorState.KeyFile.Lines.Count()+1;
+            progressBar1.Value = 0;
             foreach (var line in _editorState.KeyFile.Lines)
             {
                 if (line is DirectInputBinding)

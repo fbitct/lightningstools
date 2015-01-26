@@ -23,17 +23,21 @@ namespace F4KeyFile
         public override string ToString()
         {
             var sb = new StringBuilder();
-            if (ScanCode != 0)
+            if (ScanCode  == (int)ScanCodes.NotAssigned)
             {
-                sb.Append("0X");
-                sb.Append(ScanCode.ToString("X").TrimStart('0'));
-                sb.Append(" ");
-                sb.Append((int) Modifiers);
+                sb.Append("0XFFFFFFFF");
+            }
+            else if (ScanCode == 0)
+            {
+                sb.Append("0");
             }
             else
             {
-                sb.Append("0X0 0");
+                sb.Append("0x");
+                sb.Append(ScanCode.ToString("X").TrimStart('0'));
             }
+            sb.Append(" ");
+            sb.Append((int)Modifiers);
             return sb.ToString();
         }
     }

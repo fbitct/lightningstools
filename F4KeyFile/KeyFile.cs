@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using log4net;
 namespace F4KeyFile
 {
@@ -62,7 +63,11 @@ namespace F4KeyFile
             }
             _lines.Clear();
             _callbackBindings.Clear();
-            using (var sr = file.OpenText())
+            using (var sr = new StreamReader(file.FullName, 
+                
+                //Encoding.GetEncoding("iso-8859-1")
+                Encoding.Default
+                ))
             {
                 var lineNum = 0;
                 while (!sr.EndOfStream)
@@ -88,9 +93,9 @@ namespace F4KeyFile
 
                     try
                     {
-                        int token3;
-                        Int32.TryParse(tokenList[2],out token3);
-                        if (token3 ==-1 || token3 == -2 || token3 ==-4 || token3 == 8)
+                        int token4;
+                        Int32.TryParse(tokenList[3],out token4);
+                        if (token4 ==-1 || token4 == -2 || token4 ==-4 || token4 == 8)
                         {
                             DirectInputBinding directInputBinding;
                             var parsed = DirectInputBinding.TryParse(currentLine, out directInputBinding);
@@ -140,7 +145,7 @@ namespace F4KeyFile
             }
             file.Delete();
             using (var fs = file.OpenWrite())
-            using (var sw = new StreamWriter(fs))
+            using (var sw = new StreamWriter(fs, Encoding.Default))
             {
                 foreach (var binding in _lines)
                 {
