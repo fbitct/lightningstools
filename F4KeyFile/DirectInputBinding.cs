@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -10,221 +9,123 @@ namespace F4KeyFile
     [Serializable]
     public sealed class DirectInputBinding : IBinding
     {
-        private DirectInputBindingType _bindingType = DirectInputBindingType.None;
-        private int _buttonIndex;
-        private string _callback;
-        private int _cockpitItemId = -1;
-        private KeyWithModifiers _comboKey;
-        private Guid _deviceGuid = Guid.Empty;
-        private PovDirections _povDirection = PovDirections.Up;
+        public DirectInputBinding() { }
 
-        public DirectInputBinding()
-        {
-        }
-
-        public DirectInputBinding(string callback, int buttonIndex, int cockpitItemId,
-                                  DirectInputBindingType bindingType, PovDirections povDirection,
-                                  KeyWithModifiers comboKey)
-            : this(callback, buttonIndex, cockpitItemId, bindingType, povDirection, comboKey, Guid.Empty)
-        {
-        }
-
-        public DirectInputBinding(string callback, int buttonIndex, int cockpitItemId,
-                                  DirectInputBindingType bindingType, PovDirections povDirection,
-                                  KeyWithModifiers comboKey, Guid deviceGuid)
+        public DirectInputBinding(string callback, int buttonIndex, CallbackInvocationBehavior callbackInvocationBehavior,TriggeringEvent triggeringEvent, int soundId, string description =null)
         {
             Callback = callback != null ? callback.Trim() : null;
             ButtonIndex = buttonIndex;
-            CockpitItemId = cockpitItemId;
-            BindingType = bindingType;
+            CallbackInvocationBehavior = callbackInvocationBehavior;
+            BindingType = DirectInputBindingType.Button;
+            PovDirection = PovDirections.None;
+            TriggeringEvent = triggeringEvent;
+            SoundId = soundId;
+            Description = description;
+        }
+        public DirectInputBinding(string callback, int povHatNumber, CallbackInvocationBehavior callbackInvocationBehavior,
+                PovDirections povDirection, int soundId, string description = null)
+        {
+            Callback = callback != null ? callback.Trim() : null;
+            POVHatNumber = povHatNumber;
+            BindingType = DirectInputBindingType.POVDirection;
+            CallbackInvocationBehavior = callbackInvocationBehavior;
             PovDirection = povDirection;
-            ComboKey = comboKey;
-            DeviceGuid = deviceGuid;
+            SoundId = soundId;
+            Description = description;
         }
-
-        public int ButtonIndex
-        {
-            get { return _buttonIndex; }
-            set
-            {
-                if (value < 0 || value > 1024)
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-                _buttonIndex = value;
-            }
-        }
-
-        public int CockpitItemId
-        {
-            get { return _cockpitItemId; }
-            set
-            {
-                if (value > 0 && value < 1000)
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-                _cockpitItemId = value;
-            }
-        }
-
-        public DirectInputBindingType BindingType
-        {
-            get { return _bindingType; }
-            set { _bindingType = value; }
-        }
-
-        public PovDirections PovDirection
-        {
-            get { return _povDirection; }
-            set { _povDirection = value; }
-        }
-
-        public KeyWithModifiers ComboKey
-        {
-            get { return _comboKey; }
-            set { _comboKey = value; }
-        }
-
-        public Guid DeviceGuid
-        {
-            get { return _deviceGuid; }
-            set { _deviceGuid = value; }
-        }
-
-        #region IBinding Members
 
         public int LineNum { get; set; }
-
-        public string Callback
-        {
-            get { return _callback; }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                _callback = value;
-            }
-        }
-
-        #endregion
+        public string Callback { get; set; }
+        public int ButtonIndex { get; set; }
+        public int POVHatNumber { get; set; }
+        public CallbackInvocationBehavior CallbackInvocationBehavior { get; set; }
+        public DirectInputBindingType BindingType { get; set; }
+        public PovDirections PovDirection { get; set; }
+        public TriggeringEvent TriggeringEvent { get; set; }
+        public int SoundId { get; set; }
+        public string Description { get; set; }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append(Callback);
+            sb.Append(Callback ?? "SimDoNothing");
             sb.Append(" ");
-            if (BindingType == DirectInputBindingType.Button)
-            {
-                sb.Append(ButtonIndex);
-            }
-            else
-            {
-                sb.Append("0");
-            }
+            sb.Append(BindingType == DirectInputBindingType.POVDirection ? POVHatNumber : ButtonIndex);
             sb.Append(" ");
-            sb.Append(CockpitItemId);
+            sb.Append((int)CallbackInvocationBehavior);
             sb.Append(" ");
             sb.Append((int) BindingType);
             sb.Append(" ");
             if (BindingType == DirectInputBindingType.Button)
             {
-                sb.Append("0");
+                sb.Append("0X" + TriggeringEvent.ToString("x"));
             }
             else
             {
                 sb.Append((int) PovDirection);
             }
             sb.Append(" ");
-            if (ComboKey != null && ComboKey.ScanCode != 0)
-            {
-                sb.Append("0X");
-                sb.Append(ComboKey.ScanCode.ToString("X").TrimStart(new[] {'0'}));
-                sb.Append(" ");
-                sb.Append((int) ComboKey.Modifiers);
-            }
-            else
-            {
-                sb.Append("0X0 0");
-            }
+            sb.Append(SoundId);
+            if (Description == null) return sb.ToString();
             sb.Append(" ");
-            if (DeviceGuid != Guid.Empty)
-            {
-                sb.Append(DeviceGuid);
-            }
+            sb.Append(Description);
             return sb.ToString();
         }
 
-        public override int GetHashCode()
+        public static bool TryParse(string input, out DirectInputBinding directInputBinding)
         {
-            return ToString().GetHashCode();
-        }
+            directInputBinding = null;
+            if (input ==null) return false;
 
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-                return false;
-            if (!obj.GetType().Equals(GetType()))
-            {
-                return false;
-            }
-            if (obj.ToString() != ToString())
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public DirectInputBinding Parse(string input)
-        {
             var tokenList = Util.Tokenize(input);
+            if (tokenList.Count < 7) return false;
+
             var callback = tokenList[0];
-            var buttonIndex = Int32.Parse(tokenList[1]);
-            var itemId = Int32.Parse(tokenList[2]);
-            var bindingType = (DirectInputBindingType) Int32.Parse(tokenList[3]);
-            var povDirection = (PovDirections) Int32.Parse(tokenList[4]);
-            int keycode;
-            if (tokenList[5].StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrWhiteSpace(callback)) return false;
+
+            int buttonIndexOrPovHatNumber;
+            var parsed = Int32.TryParse(tokenList[1], out buttonIndexOrPovHatNumber);
+            if (!parsed) return false;
+
+            int callbackInvocationBehavior;
+            parsed = Int32.TryParse(tokenList[2], out callbackInvocationBehavior);
+            if (!parsed) return false;
+
+            int bindingType;
+            parsed = Int32.TryParse(tokenList[3], out bindingType);
+            if (!parsed) return false;
+
+            int soundId;
+            parsed = Int32.TryParse(tokenList[6], out soundId);
+            if (!parsed) return false;
+
+            string description = null;
+            if (tokenList.Count >= 8)
             {
-                keycode = Int32.Parse(tokenList[5].ToLowerInvariant().Replace("0x", string.Empty),
-                                      NumberStyles.HexNumber);
+                var sb = new StringBuilder();
+                for (var i=7;i<tokenList.Count;i++)
+                {
+                    sb.Append(tokenList[i] + " ");
+                }
+                description = sb.ToString().TrimEnd();
             }
-            else
+
+            switch ((DirectInputBindingType) bindingType)
             {
-                keycode = Int32.Parse(tokenList[5]);
+                case DirectInputBindingType.Button:
+                    uint triggeringEvent;
+                    parsed = UInt32.TryParse(tokenList[4], out triggeringEvent);
+                    if (!parsed) return false;
+                    directInputBinding = new DirectInputBinding(callback, buttonIndexOrPovHatNumber, (CallbackInvocationBehavior)callbackInvocationBehavior, (TriggeringEvent)triggeringEvent, soundId, description);
+                    return true;
+                case DirectInputBindingType.POVDirection:
+                    uint povDirection;
+                    parsed = UInt32.TryParse(tokenList[4], out povDirection);
+                    if (!parsed) return false;
+                    directInputBinding = new DirectInputBinding(callback, buttonIndexOrPovHatNumber, (CallbackInvocationBehavior)callbackInvocationBehavior, (PovDirections)povDirection, soundId, description);
+                    return true;
             }
-            var modifiers = (KeyModifiers) Int32.Parse(tokenList[6]);
-            var comboKey = new KeyWithModifiers(keycode, modifiers);
-            DirectInputBinding binding;
-            if (tokenList.Count == 8)
-            {
-                var isGuid = false;
-                var guid = Guid.Empty;
-                try
-                {
-                    guid = new Guid(tokenList[7]);
-                    isGuid = true;
-                }
-                catch
-                {
-                }
-                if (isGuid)
-                {
-                    binding = new DirectInputBinding(callback, buttonIndex, itemId, bindingType, povDirection, comboKey,
-                                                     guid);
-                }
-                else
-                {
-                    binding = new DirectInputBinding(callback, buttonIndex, itemId, bindingType, povDirection, comboKey);
-                }
-            }
-            else
-            {
-                binding = new DirectInputBinding(callback, buttonIndex, itemId, bindingType, povDirection, comboKey);
-            }
-            return binding;
+            return false;
         }
     }
 }

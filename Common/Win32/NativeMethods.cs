@@ -612,6 +612,7 @@ namespace Common.Win32
         /// </summary>
         public class WM
         {
+            public const int WM_SETREDRAW = 0x000B;
             public const int WM_RESIZE = 0x0802;
             public const int WM_MOUSEMOVE = 0x0200;
             public const int WM_NCMOUSEMOVE = 0x00A0;

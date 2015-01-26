@@ -82,6 +82,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Exceptions\OperationFailedException.cs" />
+    <Compile Include="Generic\EnumAttributeReader.cs" />
     <Compile Include="Generic\PropertyInvoker.cs" />
     <Compile Include="Math\Constants.cs" />
     <Compile Include="Math\Util.cs" />

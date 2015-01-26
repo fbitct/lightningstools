@@ -10,135 +10,46 @@ namespace F4KeyFile
     [Serializable]
     public sealed class KeyBinding : IBinding
     {
-        private UIAcccessibility _accessibility = UIAcccessibility.Invisible;
-        private string _callback;
-        private int _cockpitItemId = -1;
-        private KeyWithModifiers _comboKey;
-        private string _description;
-        private KeyWithModifiers _key;
-        private bool _mouseClickableOnly;
 
-        public KeyBinding()
-        {
-        }
+        public KeyBinding() { }
 
         public KeyBinding(
             string callback,
-            int cockpitItemId,
-            bool mouseClickableOnly,
+            int soundId,
             KeyWithModifiers key,
             KeyWithModifiers comboKey,
-            UIAcccessibility accessibility,
+            UIVisibility uiVisibility,
             string description
             )
         {
             Callback = callback;
-            CockpitItemId = cockpitItemId;
-            MouseClickableOnly = mouseClickableOnly;
+            SoundId = soundId;
             Key = key;
             ComboKey = comboKey;
-            Accessibility = accessibility;
+            UIVisibility = uiVisibility;
             Description = description;
         }
 
-        public int CockpitItemId
-        {
-            get { return _cockpitItemId; }
-            set
-            {
-                if (value > 0 && value < 1000)
-                {
-                    throw new ArgumentOutOfRangeException("value");
-                }
-
-                _cockpitItemId = value;
-            }
-        }
-
-        public bool MouseClickableOnly
-        {
-            get { return _mouseClickableOnly; }
-            set { _mouseClickableOnly = value; }
-        }
-
-        public KeyWithModifiers Key
-        {
-            get { return _key; }
-            set { _key = value; }
-        }
-
-        public KeyWithModifiers ComboKey
-        {
-            get { return _comboKey; }
-            set { _comboKey = value; }
-        }
-
-        public UIAcccessibility Accessibility
-        {
-            get { return _accessibility; }
-            set { _accessibility = value; }
-        }
-
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
-
-        #region IBinding Members
-
+        public int SoundId { get; set; }
+        public KeyWithModifiers Key { get; set; }
+        public KeyWithModifiers ComboKey { get; set; }
+        public UIVisibility UIVisibility { get; set; }
+        public string Description { get; set; }
         public int LineNum { get; set; }
-
-        public string Callback
-        {
-            get { return _callback; }
-            set
-            {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-                _callback = value;
-            }
-        }
-
-        #endregion
-
-        public override int GetHashCode()
-        {
-            return ToString().GetHashCode();
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj == null)
-                return false;
-            if (obj.ToString() != ToString())
-            {
-                return false;
-            }
-            return true;
-        }
+        public string Callback { get; set; }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
             sb.Append(Callback);
             sb.Append(" ");
-            sb.Append(CockpitItemId);
+            sb.Append(SoundId);
             sb.Append(" ");
-            if (MouseClickableOnly)
-            {
-                sb.Append("1");
-            }
-            else
-            {
-                sb.Append("0");
-            }
+            sb.Append("0");
             sb.Append(" ");
             if (Key != null && Key.ScanCode != 0)
             {
-                sb.Append(Key.ToString());
+                sb.Append(Key);
             }
             else
             {
@@ -147,14 +58,14 @@ namespace F4KeyFile
             sb.Append(" ");
             if (ComboKey != null && ComboKey.ScanCode != 0)
             {
-                sb.Append(ComboKey.ToString());
+                sb.Append(ComboKey);
             }
             else
             {
                 sb.Append("0X0 0");
             }
             sb.Append(" ");
-            sb.Append((int) Accessibility);
+            sb.Append((int) UIVisibility);
             sb.Append(" ");
             if (Description != null)
             {
@@ -181,67 +92,74 @@ namespace F4KeyFile
             return sb.ToString();
         }
 
-        public KeyBinding Parse(string input)
+        public static bool TryParse(string input, out KeyBinding keyBinding)
         {
+            keyBinding = null;
+            if (input == null) return false;
+
             var tokenList = Util.Tokenize(input);
+            if (tokenList.Count < 8) return false;
+
             var callback = tokenList[0];
-            var itemId = Int32.Parse(tokenList[1]);
-            var mouseClickableOnly = false;
-            if (tokenList[2] == "1")
-            {
-                mouseClickableOnly = true;
-            }
 
-            int keycode;
-            if (tokenList[3].StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+            int soundId;
+            var parsed = Int32.TryParse(tokenList[1],out soundId);
+            if (!parsed) return false;
+            
+
+            int keyScancode;
+            if (tokenList[3] !=null && tokenList[3].StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
-                keycode = Int32.Parse(tokenList[3].ToLowerInvariant().Replace("0x", string.Empty),
-                                      NumberStyles.HexNumber);
+                parsed = Int32.TryParse(tokenList[3].ToLower().Replace("0x", string.Empty),
+                                      NumberStyles.HexNumber, CultureInfo.InvariantCulture, out keyScancode);
             }
             else
             {
-                keycode = Int32.Parse(tokenList[3]);
+                parsed = Int32.TryParse(tokenList[3], out keyScancode);
             }
-            var modifiers = (KeyModifiers) Int32.Parse(tokenList[4]);
-            var key = new KeyWithModifiers(keycode, modifiers);
+            if (!parsed) return false;
 
-            int keycode2;
-            if (tokenList[5].StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
+            int keyModifiers;
+            parsed = Int32.TryParse(tokenList[4], out keyModifiers);
+            if (!parsed) return false;
+
+            var keyWithModifiers = new KeyWithModifiers(keyScancode, (KeyModifiers)keyModifiers);
+
+            int comboKeyScancode;
+            if (tokenList[5].StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
-                keycode2 = Int32.Parse(tokenList[5].ToLowerInvariant().Replace("0x", string.Empty),
-                                       NumberStyles.HexNumber);
+                parsed =Int32.TryParse(tokenList[5].ToLowerInvariant().Replace("0x", string.Empty),
+                                       NumberStyles.HexNumber, CultureInfo.InvariantCulture, out comboKeyScancode);
             }
             else
             {
-                keycode2 = Int32.Parse(tokenList[5]);
+                parsed =Int32.TryParse(tokenList[5], out comboKeyScancode);
             }
-            var modifiers2 = (KeyModifiers) Int32.Parse(tokenList[6]);
-            var comboKey = new KeyWithModifiers(keycode2, modifiers2);
-            if (tokenList[7].Contains("\""))
+            if (!parsed) return false;
+
+            int comboKeyModifiers;
+            parsed=  Int32.TryParse(tokenList[6], out comboKeyModifiers);
+            if (!parsed) return false;
+
+            var comboKeyWithModifiers = new KeyWithModifiers(comboKeyScancode, (KeyModifiers)comboKeyModifiers);
+
+            int uiVisibility;
+            parsed = Int32.TryParse(tokenList[7], out uiVisibility);
+            if (!parsed) return false;
+
+            var description ="\"\"";
+            if (tokenList.Count > 8)
             {
-                var quoteLocation = tokenList[7].IndexOf('"');
-                tokenList.Insert(8, tokenList[7].Substring(quoteLocation, tokenList[7].Length - quoteLocation));
-                tokenList[7] = tokenList[7].Substring(0, quoteLocation);
-            }
-            var accessibility = (UIAcccessibility) Int32.Parse(tokenList[7]);
-            var description = new StringBuilder();
-            if (tokenList.Count >= 9)
-            {
+                var sb = new StringBuilder();
                 for (var i = 8; i < tokenList.Count; i++)
                 {
-                    description.Append(tokenList[i]);
-                    if (i + 1 != tokenList.Count)
-                    {
-                        description.Append(" ");
-                    }
+                    sb.Append(tokenList[i]);
+                    sb.Append(" ");
                 }
+                description = sb.ToString().TrimEnd();
             }
-            else
-            {
-                description.Append("\"\"");
-            }
-            return new KeyBinding(callback, itemId, mouseClickableOnly, key, comboKey, accessibility,
-                                  description.ToString());
+            keyBinding = new KeyBinding(callback, soundId, keyWithModifiers, comboKeyWithModifiers, (UIVisibility)uiVisibility,description);
+            return true;
         }
     }
 }

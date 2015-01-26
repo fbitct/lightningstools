@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace F4KeyFile
@@ -6,10 +6,10 @@ namespace F4KeyFile
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Serializable]
-    public sealed class CommentLine : ILineInFile
+    public sealed class UnparsableLine : ILineInFile
     {
-        public CommentLine() { }
-        public CommentLine(string text)
+        public UnparsableLine() { }
+        public UnparsableLine(string text)
         {
             Text = text;
         }

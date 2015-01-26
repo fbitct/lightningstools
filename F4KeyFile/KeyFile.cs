@@ -11,14 +11,12 @@ namespace F4KeyFile
     [Serializable]
     public sealed class KeyFile
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof(KeyFile));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(KeyFile));
         private readonly FileInfo _file;
 
         private IList<ILineInFile> _lines = new List<ILineInFile>();
         private readonly IDictionary<string, IBinding> _callbackBindings = new Dictionary<string, IBinding>();
-        public KeyFile()
-        {
-        }
+        public KeyFile() { }
 
         public KeyFile(FileInfo file)
         {
@@ -84,43 +82,45 @@ namespace F4KeyFile
                     var tokenList = Util.Tokenize(currentLine);
                     if (tokenList == null || tokenList.Count == 0)
                     {
+                        _lines.Add(new BlankLine() { LineNum = lineNum });
                         continue;
                     }
-                    if (tokenList.Count < 7)
-                    {
-                        _lines.Add(new CommentLine(currentLine) { LineNum = lineNum });
-                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName));
-                        continue;
-                    }
-                    KeyBinding keyBinding = null;
-                    DirectInputBinding directInputBinding = null;
+
                     try
                     {
-                        var token2 = Int32.Parse(tokenList[1]);
-                        if (token2 >= 0 && token2 < 1000)
+                        int token3;
+                        Int32.TryParse(tokenList[2],out token3);
+                        if (token3 ==-1 || token3 == -2 || token3 ==-4 || token3 == 8)
                         {
-                            directInputBinding = new DirectInputBinding().Parse(currentLine);
+                            DirectInputBinding directInputBinding;
+                            var parsed = DirectInputBinding.TryParse(currentLine, out directInputBinding);
+                            if (!parsed)
+                            {
+                                _lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
+                                Log.WarnFormat("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName);
+                                continue;
+                            }
                             directInputBinding.LineNum = lineNum;
+                            _lines.Add(directInputBinding);
                         }
                         else
                         {
-                            keyBinding = new KeyBinding().Parse(currentLine);
+                            KeyBinding keyBinding;
+                            var parsed = KeyBinding.TryParse(currentLine, out keyBinding);
+                            if (!parsed)
+                            {
+                                _lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
+                                Log.WarnFormat("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName);
+                                continue;
+                            }
                             keyBinding.LineNum = lineNum;
+                            _lines.Add(keyBinding);
                         }
                     }
                     catch (Exception e)
                     {
-                        _lines.Add(new CommentLine(currentLine) { LineNum = lineNum });
-                        _log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName),e);
-                        continue;
-                    }
-                    if (directInputBinding != null)
-                    {
-                        _lines.Add(directInputBinding);
-                    }
-                    else
-                    {
-                        _lines.Add(keyBinding);
+                        _lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
+                        Log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
                     }
                 }
             }

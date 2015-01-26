@@ -5,10 +5,11 @@ namespace F4KeyFile
 {
     [ComVisible(true)]
     [Serializable]
-    public enum UIAcccessibility
+    public enum UIVisibility
     {
+        Locked=-0,
         VisibleWithChangesAllowed = 1,
-        VisibleNoChangesAllowed = -1,
-        Invisible = -2
+        Headline = -1,
+        Hidden = -2
     }
 }

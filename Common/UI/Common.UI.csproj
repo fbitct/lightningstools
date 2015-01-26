@@ -43,6 +43,7 @@
     <Compile Include="UserControls\DotControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserControls\DrawingControl.cs" />
     <Compile Include="UserControls\FieldControl.cs">
       <SubType>Component</SubType>
     </Compile>
