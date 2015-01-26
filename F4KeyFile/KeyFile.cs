@@ -91,9 +91,9 @@ namespace F4KeyFile
 
                     try
                     {
-                        int token4;
-                        Int32.TryParse(tokenList[3],out token4);
-                        if (token4 ==-1 || token4 == -2 || token4 ==-4 || token4 == 8)
+                        int token3;
+                        Int32.TryParse(tokenList[2],out token3);
+                        if (token3 ==-1 || token3 == -2 || token3 ==-4 || token3 == 8)
                         {
                             DirectInputBinding directInputBinding;
                             var parsed = DirectInputBinding.TryParse(currentLine, out directInputBinding);
