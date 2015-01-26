@@ -18,7 +18,12 @@ namespace F4KeyFile
         public int LineNum { get; set; }
         public override string ToString()
         {
-            return Text;
+            var textToReturn = Text ?? string.Empty;
+            if (!textToReturn.StartsWith("#") && !textToReturn.StartsWith("/"))
+            {
+                textToReturn = "#" + textToReturn;
+            }
+            return textToReturn;
         }
     }
 }

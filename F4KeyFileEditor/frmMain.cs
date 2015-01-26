@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Common.Serialization;
 using F4KeyFile;
@@ -229,18 +228,17 @@ namespace F4KeyFileEditor
             }
         }
 
-        private void LoadKeyFile(string keyfilePath)
+        private void LoadKeyFile(string keyFileName)
         {
-            if (string.IsNullOrEmpty(keyfilePath)) throw new ArgumentNullException("keyfilePath");
-            var keyfileFI = new FileInfo(keyfilePath);
-            if (!keyfileFI.Exists) throw new FileNotFoundException(keyfilePath);
+            if (string.IsNullOrEmpty(keyFileName)) throw new ArgumentNullException("keyFileName");
+            var file = new FileInfo(keyFileName);
+            if (!file.Exists) throw new FileNotFoundException(keyFileName);
 
             var oldEditorState = (EditorState) _editorState.Clone();
             try
             {
-                _editorState.KeyFilePath = keyfilePath;
-                _editorState.KeyFile = new KeyFile(keyfileFI);
-                _editorState.KeyFile.Load();
+                _editorState.Filename = keyFileName;
+                _editorState.KeyFile = KeyFile.Load(keyFileName);
                 ParseKeyFile();
                 _editorState.ChangesMade = false;
             }
@@ -253,13 +251,13 @@ namespace F4KeyFileEditor
             }
         }
 
-        private void SaveKeyFileAs(string keyfilePath)
+        private void SaveKeyFileAs(string fileName)
         {
             var oldEditorState = (EditorState) _editorState.Clone();
             try
             {
-                _editorState.KeyFile.Save(new FileInfo(keyfilePath));
-                _editorState.KeyFilePath = keyfilePath;
+                _editorState.KeyFile.Save(fileName);
+                _editorState.Filename = fileName;
                 _editorState.ChangesMade = false;
             }
             catch (Exception e)
@@ -326,7 +324,7 @@ namespace F4KeyFileEditor
                     case DialogResult.Cancel:
                         return true;
                     case DialogResult.Yes:
-                        SaveKeyFile(false, _editorState.KeyFilePath);
+                        SaveKeyFile(false, _editorState.Filename);
                         break;
                 }
             }
@@ -338,7 +336,7 @@ namespace F4KeyFileEditor
             if (CheckForUnsavedChangesAndSaveIfUserWantsTo())
             {
                 _editorState.KeyFile = new KeyFile();
-                _editorState.KeyFilePath = null;
+                _editorState.Filename = null;
                 _editorState.ChangesMade = false;
             }
         }
@@ -370,12 +368,12 @@ namespace F4KeyFileEditor
 
         private void btnSaveFile_Click(object sender, EventArgs e)
         {
-            SaveKeyFile(false, _editorState.KeyFilePath);
+            SaveKeyFile(false, _editorState.Filename);
         }
 
         private void mnuFileSave_Click(object sender, EventArgs e)
         {
-            SaveKeyFile(false, _editorState.KeyFilePath);
+            SaveKeyFile(false, _editorState.Filename);
         }
 
         private void mnuFileSaveAs_Click(object sender, EventArgs e)
@@ -396,7 +394,7 @@ namespace F4KeyFileEditor
             public bool ChangesMade;
 
             public KeyFile KeyFile;
-            public string KeyFilePath;
+            public string Filename;
 
             #region ICloneable Members
 

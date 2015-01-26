@@ -10,16 +10,16 @@ namespace F4Utils.Process
 {
     public static class KeyFileUtils
     {
-        private const string KEYSTROKE_FILE_NAME__DEFAULT = "BMS.key";
+        private const string KEYSTROKE_FILE_NAME__DEFAULT = "BMS - Full.key";
         private const string PLAYER_OPTS_FILENAME__DEFAULT = "viper.pop";
         private const string PLAYER_OPTS_FILE_EXTENSION = ".pop";
         private const string KEYFILE_EXENSION_DEFAULT = ".key";
         private const string CONFIG_DIRECTORY_NAME = "config";
         private const string USEROPTS_DIRECTORY_NAME = "User";
-
-        private static readonly ILog _log = LogManager.GetLogger(typeof (KeyFileUtils));
+        private const int KEY_DELAY_MILLISECONDS = 30;
+        private static readonly ILog Log = LogManager.GetLogger(typeof (KeyFileUtils));
         private static KeyFile _keyFile;
-        private static readonly object _keySenderLock = new object();
+        private static readonly object KeySenderLock = new object();
 
         public static void ResetCurrentKeyFile()
         {
@@ -38,78 +38,77 @@ namespace F4Utils.Process
             Util.ActivateFalconWindow();
             Thread.Sleep(100);
             var binding = FindKeyBinding(callback);
-            if (binding != null)
+            if (binding == null) return;
+            lock (KeySenderLock)
             {
-                lock (_keySenderLock)
-                {
-                    var primaryKeyWithModifiers = binding.Key;
-                    var comboKeyWithModifiers = binding.ComboKey;
+                var primaryKeyWithModifiers = binding.Key;
+                var comboKeyWithModifiers = binding.ComboKey;
 
-                    SendClearingKeystrokes();
-                    Thread.Sleep(30);
+                SendClearingKeystrokes();
+                WaitToSendNextKeystrokes();
 
-                    SendUpKeystrokes(primaryKeyWithModifiers);
-                    Thread.Sleep(30);
-                    SendDownKeystrokes(primaryKeyWithModifiers);
-                    Thread.Sleep(30);
-                    SendUpKeystrokes(primaryKeyWithModifiers);
-                    Thread.Sleep(30);
+                SendUpKeystrokes(primaryKeyWithModifiers);
+                WaitToSendNextKeystrokes();
+                SendDownKeystrokes(primaryKeyWithModifiers);
+                WaitToSendNextKeystrokes();
+                SendUpKeystrokes(primaryKeyWithModifiers);
+                WaitToSendNextKeystrokes();
 
-                    SendUpKeystrokes(comboKeyWithModifiers);
-                    Thread.Sleep(30);
-                    SendDownKeystrokes(comboKeyWithModifiers);
-                    Thread.Sleep(30);
-                    SendUpKeystrokes(comboKeyWithModifiers);
-                    Thread.Sleep(30);
+                SendUpKeystrokes(comboKeyWithModifiers);
+                WaitToSendNextKeystrokes();
+                SendDownKeystrokes(comboKeyWithModifiers);
+                WaitToSendNextKeystrokes();
+                SendUpKeystrokes(comboKeyWithModifiers);
+                WaitToSendNextKeystrokes();
 
-                    SendClearingKeystrokes();
-                }
+                SendClearingKeystrokes();
+                WaitToSendNextKeystrokes();
             }
+        }
+
+        private static void WaitToSendNextKeystrokes()
+        {
+            Thread.Sleep(KEY_DELAY_MILLISECONDS);
         }
 
         public static KeyFile GetCurrentKeyFile()
         {
             KeyFile toReturn = null;
             var exeFilePath = Util.GetFalconExePath();
-            
-            if (exeFilePath != null)
+
+            if (exeFilePath == null) return null;
+            var callsign = CallsignUtils.DetectCurrentCallsign();
+
+
+            var configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar
+                               + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + 
+                               USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
+
+            var pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
+                                   PLAYER_OPTS_FILE_EXTENSION;
+            if (!new FileInfo(pilotOptionsPath).Exists)
             {
-                var callsign = CallsignUtils.DetectCurrentCallsign();
-
-
-                var configFolder = Path.GetDirectoryName(exeFilePath) + Path.DirectorySeparatorChar
-                                      + ".." + Path.DirectorySeparatorChar + ".." + Path.DirectorySeparatorChar + 
-                                      USEROPTS_DIRECTORY_NAME + Path.DirectorySeparatorChar + CONFIG_DIRECTORY_NAME;
-
-                var pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + callsign +
-                                          PLAYER_OPTS_FILE_EXTENSION;
-                if (!new FileInfo(pilotOptionsPath).Exists)
-                {
-                    pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + PLAYER_OPTS_FILENAME__DEFAULT;
-                }
+                pilotOptionsPath = configFolder + Path.DirectorySeparatorChar + PLAYER_OPTS_FILENAME__DEFAULT;
+            }
                 
 
-                string keyFileName = null;
-                if (new FileInfo(pilotOptionsPath).Exists)
-                {
-                    keyFileName = GetKeyFileNameFromPlayerOpts(pilotOptionsPath);
-                }
-                if (keyFileName == null) keyFileName = KEYSTROKE_FILE_NAME__DEFAULT;
+            string keyFileName = null;
+            if (new FileInfo(pilotOptionsPath).Exists)
+            {
+                keyFileName = GetKeyFileNameFromPlayerOpts(pilotOptionsPath);
+            }
+            if (keyFileName == null) keyFileName = KEYSTROKE_FILE_NAME__DEFAULT;
 
-                var falconKeyFilePath = configFolder + Path.DirectorySeparatorChar + keyFileName;
-                var keyFileInfo = new FileInfo(falconKeyFilePath);
-                if (keyFileInfo.Exists)
-                {
-                    toReturn = new KeyFile(keyFileInfo);
-                    try
-                    {
-                        toReturn.Load();
-                    }
-                    catch (IOException e)
-                    {
-                        _log.Error(e.Message, e);
-                    }
-                }
+            var falconKeyFilePath = configFolder + Path.DirectorySeparatorChar + keyFileName;
+            var keyFileInfo = new FileInfo(falconKeyFilePath);
+            if (!keyFileInfo.Exists) return null;
+            try
+            {
+                toReturn = KeyFile.Load(falconKeyFilePath);
+            }
+            catch (IOException e)
+            {
+                Log.Error(e.Message, e);
             }
             return toReturn;
         }
@@ -125,20 +124,16 @@ namespace F4Utils.Process
             }
             catch (Exception e)
             {
-                _log.Error(e.Message, e);
+                Log.Error(e.Message, e);
             }
-            if (playerOptionsFile != null && playerOptionsFile.keyfile !=null && playerOptionsFile.keyfile.Length > 0)
-            {
-                var keyFileName = Encoding.ASCII.GetString(playerOptionsFile.keyfile, 0, playerOptionsFile.keyfile.Length);
-                var firstNull = keyFileName.IndexOf('\0');
-                if (firstNull > 0)
-                {
-                    keyFileName = keyFileName.Substring(0, firstNull);
-                    keyFileName += KEYFILE_EXENSION_DEFAULT;
-                    return keyFileName;
-                }
-            }
-            return null;
+            if (playerOptionsFile == null || playerOptionsFile.keyfile == null || playerOptionsFile.keyfile.Length <= 0)
+                return null;
+            var keyFileName = Encoding.ASCII.GetString(playerOptionsFile.keyfile, 0, playerOptionsFile.keyfile.Length);
+            var firstNull = keyFileName.IndexOf('\0');
+            if (firstNull <= 0) return null;
+            keyFileName = keyFileName.Substring(0, firstNull);
+            keyFileName += KEYFILE_EXENSION_DEFAULT;
+            return keyFileName;
         }
        
 

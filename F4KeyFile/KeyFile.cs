@@ -13,17 +13,13 @@ namespace F4KeyFile
     public sealed class KeyFile
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(KeyFile));
-        private readonly FileInfo _file;
-
+        
         private IList<ILineInFile> _lines = new List<ILineInFile>();
         private readonly IDictionary<string, IBinding> _callbackBindings = new Dictionary<string, IBinding>();
+        private Encoding _encoding = Encoding.Default;
         public KeyFile() { }
 
-        public KeyFile(FileInfo file)
-        {
-            _file = file;
-        }
-
+        public string FileName { get; internal set; }
         public ILineInFile[] Lines
         {
             get { return _lines.ToArray(); }
@@ -32,6 +28,12 @@ namespace F4KeyFile
                 _lines = value;
                 UpdateIndexOfCallbacks();
             }
+        }
+
+        public Encoding Encoding
+        {
+            get { return _encoding;}
+            set { _encoding = value ?? Encoding.Default; }
         }
 
         private void UpdateIndexOfCallbacks()
@@ -50,24 +52,20 @@ namespace F4KeyFile
             return _callbackBindings.ContainsKey(callback) ? _callbackBindings[callback] : null;
         }
 
-        public void Load()
+        public static KeyFile Load(string fileName)
         {
-            Load(_file);
+            var encoding = Util.GetEncoding(fileName) ?? Encoding.Default;
+            return Load(fileName, encoding);
         }
-
-        public void Load(FileInfo file)
+        public static KeyFile Load(string fileName, Encoding encoding)
         {
-            if (file == null)
+            if (string.IsNullOrWhiteSpace(fileName))
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException("fileName");
             }
-            _lines.Clear();
-            _callbackBindings.Clear();
-            using (var sr = new StreamReader(file.FullName, 
-                
-                //Encoding.GetEncoding("iso-8859-1")
-                Encoding.Default
-                ))
+            var file = new FileInfo(fileName);
+            var keyFile = new KeyFile {FileName = file.FullName, _encoding = encoding};
+            using (var sr = new StreamReader(file.FullName, encoding))
             {
                 var lineNum = 0;
                 while (!sr.EndOfStream)
@@ -77,9 +75,9 @@ namespace F4KeyFile
                     if (currentLine != null)
                     {
                         var currentLineTrim = currentLine.Trim();
-                        if (currentLineTrim.StartsWith("/") || currentLineTrim.StartsWith("#"))
+                        if (currentLineTrim.TrimStart().StartsWith("/") || currentLineTrim.TrimStart().StartsWith("#"))
                         {
-                            _lines.Add(new CommentLine(currentLine) {LineNum = lineNum});
+                            keyFile._lines.Add(new CommentLine(currentLine) { LineNum = lineNum });
                             continue;
                         }
                     }
@@ -87,7 +85,7 @@ namespace F4KeyFile
                     var tokenList = Util.Tokenize(currentLine);
                     if (tokenList == null || tokenList.Count == 0)
                     {
-                        _lines.Add(new BlankLine() { LineNum = lineNum });
+                        keyFile._lines.Add(new BlankLine() { LineNum = lineNum });
                         continue;
                     }
 
@@ -101,12 +99,12 @@ namespace F4KeyFile
                             var parsed = DirectInputBinding.TryParse(currentLine, out directInputBinding);
                             if (!parsed)
                             {
-                                _lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
+                                keyFile._lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
                                 Log.WarnFormat("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName);
                                 continue;
                             }
                             directInputBinding.LineNum = lineNum;
-                            _lines.Add(directInputBinding);
+                            keyFile._lines.Add(directInputBinding);
                         }
                         else
                         {
@@ -114,38 +112,42 @@ namespace F4KeyFile
                             var parsed = KeyBinding.TryParse(currentLine, out keyBinding);
                             if (!parsed)
                             {
-                                _lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
+                                keyFile._lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
                                 Log.WarnFormat("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName);
                                 continue;
                             }
                             keyBinding.LineNum = lineNum;
-                            _lines.Add(keyBinding);
+                            keyFile._lines.Add(keyBinding);
                         }
                     }
                     catch (Exception e)
                     {
-                        _lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
+                        keyFile._lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
                         Log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
                     }
                 }
             }
-            UpdateIndexOfCallbacks();
+            keyFile.UpdateIndexOfCallbacks();
+            return keyFile;
         }
 
-        public void Save()
+        public void Save(string fileName)
         {
-            Save(_file);
+            Save(fileName, _encoding ?? Encoding.Default);
         }
-
-        public void Save(FileInfo file)
+        public void Save(string fileName, Encoding encoding)
         {
-            if (file == null)
+            if (string.IsNullOrEmpty(fileName))
             {
-                throw new ArgumentNullException("file");
+                throw new ArgumentNullException("fileName");
             }
-            file.Delete();
+            var file = new FileInfo(fileName);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
             using (var fs = file.OpenWrite())
-            using (var sw = new StreamWriter(fs, Encoding.Default))
+            using (var sw = new StreamWriter(fs, encoding ?? Encoding.Default))
             {
                 foreach (var binding in _lines)
                 {
@@ -154,6 +156,7 @@ namespace F4KeyFile
                 sw.Close();
                 fs.Close();
             }
+            FileName = fileName;
         }
     }
 }
