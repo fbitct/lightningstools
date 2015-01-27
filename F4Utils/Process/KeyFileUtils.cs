@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -16,7 +17,7 @@ namespace F4Utils.Process
         private const string KEYFILE_EXENSION_DEFAULT = ".key";
         private const string CONFIG_DIRECTORY_NAME = "config";
         private const string USEROPTS_DIRECTORY_NAME = "User";
-        private const int KEY_DELAY_MILLISECONDS = 40;
+        private const int KEY_DELAY_MILLISECONDS = 1;
         private static readonly ILog Log = LogManager.GetLogger(typeof (KeyFileUtils));
         private static KeyFile _keyFile;
         private static readonly object KeySenderLock = new object();
@@ -35,8 +36,8 @@ namespace F4Utils.Process
 
         public static void SendCallbackToFalcon(string callback)
         {
+            Debug.WriteLine(string.Format("Sending {0} callback to falcon", callback));
             Util.ActivateFalconWindow();
-            Thread.Sleep(100);
             var binding = FindKeyBinding(callback);
             if (binding == null) return;
             lock (KeySenderLock)

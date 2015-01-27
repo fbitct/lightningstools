@@ -17,7 +17,6 @@ namespace F4Utils.Process
             if (windowHandle != IntPtr.Zero)
             {
                 NativeMethods.SetForegroundWindow(windowHandle);
-                Thread.SpinWait(20);
             }
         }
 

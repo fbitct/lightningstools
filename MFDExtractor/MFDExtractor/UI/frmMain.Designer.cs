@@ -15,7 +15,6 @@ namespace MFDExtractor.UI
         {
             if (disposing) {
                 Common.Util.DisposeObject(components);
-                Common.Util.DisposeObject(_keyb);
             }
             base.Dispose(disposing);
         }

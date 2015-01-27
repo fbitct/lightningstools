@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System.Windows.Forms;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
 
@@ -33,9 +34,8 @@ namespace MFDExtractor.EventSystem
 
 		public void ProcessKeyDownEvent(KeyEventArgs e)
 		{
-		    var keySettings = _keySettingsReader.Read();
+            var keySettings = _keySettingsReader.Read();
 			var keys = _keyEventArgsAugmenter.UpdateKeyEventArgsWithExtendedKeyInfo(e.KeyData);
-
             if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.NVISKey, keys))
 			{
 				_inputEvents.NightVisionModeToggled.Handle();
@@ -96,9 +96,7 @@ namespace MFDExtractor.EventSystem
         public void ProcessKeyUpEvent(KeyEventArgs e)
         {
             var keySettings = _keySettingsReader.Read();
-
             var keys = _keyEventArgsAugmenter.UpdateKeyEventArgsWithExtendedKeyInfo(e.KeyData);
-
             if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSICourseDepressedKey, keys))
             {
                 _inputEvents.EHSIRightKnobReleased.Handle();

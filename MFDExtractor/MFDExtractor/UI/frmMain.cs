@@ -1,9 +1,6 @@
 using System;
-using System.Threading;
 using System.Windows.Forms;
-using Common.Networking;
 using MFDExtractor.Properties;
-using Microsoft.DirectX.DirectInput;
 using log4net;
 
 namespace MFDExtractor.UI
@@ -13,30 +10,11 @@ namespace MFDExtractor.UI
     /// </summary>
     public partial class frmMain : Form
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (frmMain));
-
-        /// <summary>
-        ///     Event that gets fired from DirectInput when there are keyboard inputs waiting to be processed
-        /// </summary>
-        private readonly WaitHandle _directInputEvent = new AutoResetEvent(false);
-
         /// <summary>
         ///     Flag to indicate that the form is closing; allows cleanup methods to detect this fact when called
         ///     in multiple contexts
         /// </summary>
         private bool _isClosing;
-
-        /// <summary>
-        ///     DirectInput keyboard object for reading keyboard state during polling loop
-        /// </summary>
-        private Device _keyb;
-
-        /// <summary>
-        ///     Thread on which keyboard polling occurs
-        /// </summary>
-        private Thread _keyboardWatcherThread;
-
-        //TODO: convert this to use a global keyboard hook instead of DirectInput?
 
         /// <summary>
         ///     Reference to an instance of the Options form
@@ -51,58 +29,7 @@ namespace MFDExtractor.UI
             InitializeComponent();
         }
 
-        /// <summary>
-        ///     Acquires the DirectInput keyboard device
-        /// </summary>
-        private void InitializeKeyboard()
-        {
-            try
-            {
-                _keyb = new Device(SystemGuid.Keyboard);
-                _keyb.SetCooperativeLevel(null, CooperativeLevelFlags.Background | CooperativeLevelFlags.NonExclusive);
-                _keyb.SetEventNotification(_directInputEvent);
-                _keyb.Acquire();
-            }
-            catch (Exception e)
-            {
-                Log.Error(e.Message, e);
-            }
-        }
 
-        /// <summary>
-        ///     Reads the current keyboard state
-        /// </summary>
-        private void ReadKeyboard()
-        {
-	        try
-            {
-                _keyb.GetCurrentKeyboardState();
-            }
-            catch
-            {
-	            InitializeKeyboard();
-            }
-        }
-
-        /// <summary>
-        ///     Work method for the keyboard polling thread
-        /// </summary>
-        private void KeyboardWatcherThreadWork()
-        {
-            while (!_isClosing)
-            {
-                _directInputEvent.WaitOne(5000, false);
-                try
-                {
-                    ReadKeyboard();
-                    //read the current keyboard state and check if any mode-switching hotkeys have been pressed
-                }
-                catch
-                {
-	                //prevent this thread from aborting on an unhandled exception
-                }
-            }
-        }
 
         /// <summary>
         ///     Event handler for the Form's Load event
@@ -143,17 +70,6 @@ namespace MFDExtractor.UI
             extractor.Started += extractor_Started;
             extractor.Stopping += extractor_Stopping;
 
-            //setup the keyboard polling thread if running in server or standalone mode
-            if ((NetworkMode) settings.NetworkingMode != NetworkMode.Client)
-            {
-                InitializeKeyboard();
-                _keyboardWatcherThread = new Thread(KeyboardWatcherThreadWork);
-                _keyboardWatcherThread.SetApartmentState(ApartmentState.STA);
-                _keyboardWatcherThread.Priority = ThreadPriority.BelowNormal;
-                _keyboardWatcherThread.IsBackground = true;
-                _keyboardWatcherThread.Name = "KeyboardWatcherThread";
-                _keyboardWatcherThread.Start();
-            }
             //if we're supposed to automatically start the Extractor (per the user-config settings), start it
             //now
             if (settings.StartOnLaunch)

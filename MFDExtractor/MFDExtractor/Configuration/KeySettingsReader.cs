@@ -10,14 +10,14 @@ namespace MFDExtractor.Configuration
 	public class KeySettingsReader : IKeySettingsReader
 	{
 		private readonly IInputControlSelectionSettingReader _inputControlSelectionSettingReader;
-
+	    private KeySettings _keySettings;
 		public KeySettingsReader(IInputControlSelectionSettingReader inputControlSelectionSettingReader = null)
 		{
 			_inputControlSelectionSettingReader = inputControlSelectionSettingReader ?? new InputControlSelectionSettingReader();
 		}
 		public KeySettings Read()
 		{
-			return new KeySettings
+			return _keySettings ?? (_keySettings = new KeySettings
 			{
 				NVISKey = _inputControlSelectionSettingReader.Read(Settings.Default.NVISKey),
 				AirspeedIndexIncreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.AirspeedIndexIncreaseKey),
@@ -33,7 +33,7 @@ namespace MFDExtractor.Configuration
 				AzimuthIndicatorBrightnessIncreaseKey = _inputControlSelectionSettingReader.Read(Settings.Default.AzimuthIndicatorBrightnessIncreaseKey),
 				AzimuthIndicatorBrightnessDecreaseKey =_inputControlSelectionSettingReader.Read(Settings.Default.AzimuthIndicatorBrightnessDecreaseKey),
 				AccelerometerResetKey = _inputControlSelectionSettingReader.Read(Settings.Default.AccelerometerResetKey)
-			};
+			});
 		}
 	}
 }
