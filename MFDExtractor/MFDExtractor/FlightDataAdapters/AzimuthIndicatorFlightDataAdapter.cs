@@ -8,12 +8,12 @@ namespace MFDExtractor.FlightDataAdapters
 {
     internal interface IAzimuthIndicatorFlightDataAdapter
     {
-        void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData, ExtractorState extractorState);
+        void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData);
     }
 
     class AzimuthIndicatorFlightDataAdapter : IAzimuthIndicatorFlightDataAdapter
     {
-        public void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData, ExtractorState extractorState)
+        public void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData)
         {
             azimuthIndicator.InstrumentState.MagneticHeadingDegrees = (360 + (flightData.yaw / Constants.RADIANS_PER_DEGREE)) % 360;
             azimuthIndicator.InstrumentState.RollDegrees = ((flightData.roll / Constants.RADIANS_PER_DEGREE));
@@ -92,9 +92,9 @@ namespace MFDExtractor.FlightDataAdapters
             azimuthIndicator.InstrumentState.Other2Count = 0;
             azimuthIndicator.InstrumentState.Other2Low = true;
             azimuthIndicator.InstrumentState.cmdsMode = flightData.cmdsMode;
-            if (((flightData.powerBits & (int)PowerBits.BusPowerNonEssential) == (int)PowerBits.BusPowerNonEssential) || extractorState.OptionsFormIsShowing)
+            if (((flightData.powerBits & (int)PowerBits.BusPowerNonEssential) == (int)PowerBits.BusPowerNonEssential) || Extractor.State.OptionsFormIsShowing)
             {
-                azimuthIndicator.InstrumentState.RWRPowerOn = ((flightData.lightBits2 & (int)LightBits2.AuxPwr) == (int)LightBits2.AuxPwr) || extractorState.OptionsFormIsShowing;
+                azimuthIndicator.InstrumentState.RWRPowerOn = ((flightData.lightBits2 & (int)LightBits2.AuxPwr) == (int)LightBits2.AuxPwr) || Extractor.State.OptionsFormIsShowing;
                 azimuthIndicator.InstrumentState.RWRTest1 = ((flightData.lightBits3 & (int)Bms4LightBits3.SysTest) == (int)Bms4LightBits3.SysTest);
                 if ((flightData.lightBits3 & (int)Bms4LightBits3.SysTest) == (int)Bms4LightBits3.SysTest) //Added Falcas 07-11-2012
                 {

@@ -11,12 +11,12 @@ namespace MFDExtractor.FlightDataAdapters
 	{
 		internal interface IMFDFlightDataAdapter
 		{
-			void Adapt(IMfdRenderer mfd, ExtractorState extractorState, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, IExtractorClient client, InstrumentType instrumentType);
+			void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, IExtractorClient client, InstrumentType instrumentType);
 		}
 
 		class MFDFlightDataAdapter : IMFDFlightDataAdapter
 		{
-			public void Adapt(IMfdRenderer mfd, ExtractorState extractorState, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, IExtractorClient client, InstrumentType instrumentType)
+			public void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, IExtractorClient client, InstrumentType instrumentType)
 			{
 
 			    if (mfd == null || texSharedMemReader == null) return;
@@ -33,9 +33,9 @@ namespace MFDExtractor.FlightDataAdapters
                             : texSharedMemReader.GetImage(sourceRectangle);
                     }
                     mfd.InstrumentState.SourceRectangle = mfd.InstrumentState.SourceImage != null ? new Rectangle(0, 0, mfd.InstrumentState.SourceImage.Width, mfd.InstrumentState.SourceImage.Height) : Rectangle.Empty;
-                    mfd.InstrumentState.TestMode = extractorState.OptionsFormIsShowing && !extractorState.SimRunning;
-                    mfd.InstrumentState.Blank = !extractorState.SimRunning;
-                    if (!extractorState.Running || !extractorState.KeepRunning)
+                    mfd.InstrumentState.TestMode = Extractor.State.OptionsFormIsShowing && !Extractor.State.SimRunning;
+                    mfd.InstrumentState.Blank = !Extractor.State.SimRunning;
+                    if (!Extractor.State.Running || !Extractor.State.KeepRunning)
                     {
                         mfd.InstrumentState.SourceImage = null;
                     }

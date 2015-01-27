@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Net;
@@ -31,7 +30,6 @@ namespace MFDExtractor
         private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private TerrainDB _terrainDB;
-	    private readonly IPerformanceCounterInstanceFactory _performanceCounterInstanceFactory;
         #region Network Configuration
 
         private const string ServiceName = "MFDExtractorService";
@@ -85,15 +83,13 @@ namespace MFDExtractor
             IInstrumentFactory instrumentFactory = null,
 			IThreeDeeCaptureCoordinateUpdater threeDeeCaptureCoordinateUpdater=null,
             IFlightDataRetriever flightDataRetriever= null,
-			IFlightDataUpdater flightDataUpdater =null, 
-            IPerformanceCounterInstanceFactory performanceCounterInstanceFactory = null)
+			IFlightDataUpdater flightDataUpdater =null)
         {
             State = new ExtractorState();
             LoadSettings();
-            _performanceCounterInstanceFactory = performanceCounterInstanceFactory ?? new PerformanceCounterInstanceInstanceFactory();
             _instrumentFactory = instrumentFactory ?? new InstrumentFactory();
             _ehsiStateTracker = new EHSIStateTracker(_instruments);
-            _inputEvents = new InputEvents(_instruments, _ehsiStateTracker, State);
+            _inputEvents = new InputEvents(_instruments, _ehsiStateTracker);
             _clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
             if (!Settings.Default.DisableDirectInputMediator)
             {
@@ -104,12 +100,12 @@ namespace MFDExtractor
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever();
 			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
-	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater( _sharedMemorySpriteCoordinates, State);
+	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater( _sharedMemorySpriteCoordinates);
             _performanceCounterInstaller = new PerformanceCounterInstaller();
         }
         private void SetupInstruments()
         {
-            _performanceCounterInstaller.CreatePerformanceCounters(State);
+            _performanceCounterInstaller.CreatePerformanceCounters();
             foreach (InstrumentType instrumentType in Enum.GetValues(typeof(InstrumentType)))
             {
                 _instruments[instrumentType] = _instrumentFactory.Create(instrumentType);
@@ -239,7 +235,7 @@ namespace MFDExtractor
                 _client = new ExtractorClient(_serverEndpoint, ServiceName);
                 _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
                 _flightDataRetriever = new FlightDataRetriever(_client);
-                _flightDataUpdater = new FlightDataUpdater(_sharedMemorySpriteCoordinates, State, null, _client);
+                _flightDataUpdater = new FlightDataUpdater(_sharedMemorySpriteCoordinates, null, _client);
 
             }
             catch {}
@@ -316,7 +312,7 @@ namespace MFDExtractor
 
 	    private void StartAllInstruments()
 	    {
-	        _instruments.Select(i => i.Value).ToList().ForEach(i => i.Start(State));
+	        _instruments.Select(i => i.Value).ToList().ForEach(i => i.Start());
 	    }
         private void StopAllInstruments()
         {
@@ -350,7 +346,7 @@ namespace MFDExtractor
 
                     if (State.SimRunning || State.OptionsFormIsShowing || State.NetworkMode == NetworkMode.Client)
                     {
-                        var currentFlightData = _flightDataRetriever.GetFlightData(State);
+                        var currentFlightData = _flightDataRetriever.GetFlightData();
                         SetFlightData(currentFlightData);
 
                         _flightDataUpdater.UpdateRendererStatesFromFlightData(_instruments, currentFlightData, _terrainDB, _ehsiStateTracker.UpdateEHSIBrightnessLabelVisibility, _texSmReader);

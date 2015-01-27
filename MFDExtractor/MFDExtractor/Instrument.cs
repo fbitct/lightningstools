@@ -14,7 +14,7 @@ namespace MFDExtractor
     {
         InstrumentType Type { get; }
         IInstrumentRenderer Renderer { get; }
-        void Start(ExtractorState extractorState );
+        void Start();
         void Stop();
         PerformanceCounter RenderedFramesCounter { get; }
         PerformanceCounter SkippedFramesCounter { get; }
@@ -30,7 +30,6 @@ namespace MFDExtractor
         private readonly IInstrumentFormFactory _instrumentFormFactory;
         private Thread _renderThread;
         private readonly ILog _log = LogManager.GetLogger(typeof (Instrument));
-        private ExtractorState _extractorState;
         private int _renderCycle;
         private readonly bool _renderOnlyOnStateChanges;
         private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(2);
@@ -48,9 +47,8 @@ namespace MFDExtractor
         public InstrumentType Type { get; internal set; }
         private InstrumentForm Form { get; set; }
         public IInstrumentRenderer Renderer { get; internal set; }
-        public void Start(ExtractorState extractorState )
+        public void Start()
         {
-            _extractorState = extractorState;
             Form = _instrumentFormFactory.Create(
                 Type,
                 Renderer
@@ -63,7 +61,7 @@ namespace MFDExtractor
             if (Form != null && (_renderThread == null || (_renderThread.ThreadState & ThreadState.Stopped) == ThreadState.Stopped))
             {
                 Common.Util.DisposeObject(_renderThread);
-                _renderThread = new Thread(()=>ThreadWork(extractorState)) { IsBackground = true, Name = Renderer.GetType().FullName, Priority= Settings.Default.ThreadPriority };
+                _renderThread = new Thread(() => ThreadWork()) { IsBackground = true, Name = Renderer.GetType().FullName, Priority = Settings.Default.ThreadPriority };
             }
 
             if (_renderThread != null && (_renderThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
@@ -95,10 +93,10 @@ namespace MFDExtractor
             return targetForm != null && targetForm.SizingOrMovingCursorsAreDisplayed && Settings.Default.HighlightOutputWindows;
         }
 
-        private void ThreadWork(ExtractorState extractorState)
+        private void ThreadWork()
         {
             var pollingPeriod = Settings.Default.PollingDelay;
-            while (_extractorState.Running && _extractorState.KeepRunning)
+            while (Extractor.State.Running && Extractor.State.KeepRunning)
             {
                 var startTime = DateTime.Now;
                 _renderCycle++;
@@ -107,7 +105,7 @@ namespace MFDExtractor
                 {
                     try
                     {
-                        Render(extractorState.NightMode, pollingPeriod);
+                        Render(Extractor.State.NightMode, pollingPeriod);
                         if (Form != null)
                         {
                             Form.RenderImmediately = false;
@@ -121,7 +119,7 @@ namespace MFDExtractor
                 else
                 {
                     IncrementPerformanceCounter(SkippedFramesCounter);
-                    IncrementPerformanceCounter(_extractorState.SkippedFramesCounter);
+                    IncrementPerformanceCounter(Extractor.State.SkippedFramesCounter);
                 }
                 var endTime = DateTime.Now;
                 var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
@@ -129,13 +127,13 @@ namespace MFDExtractor
                 if (toWait < 1) toWait = 1;
                 Thread.Sleep((int)toWait);
                 IncrementPerformanceCounter(TotalFramesCounter);
-                IncrementPerformanceCounter(_extractorState.TotalFramesCounter);
+                IncrementPerformanceCounter(Extractor.State.TotalFramesCounter);
             }
         }
 
         private bool ShouldRenderNow()
         {
-            if (!(_extractorState.Running && _extractorState.KeepRunning))
+            if (!(Extractor.State.Running && Extractor.State.KeepRunning))
             {
                 return false;
             }
@@ -166,7 +164,7 @@ namespace MFDExtractor
             if (!success)
             {
                 IncrementPerformanceCounter(TimeoutFramesCounter);
-                IncrementPerformanceCounter(_extractorState.TimeoutFramesCounter);
+                IncrementPerformanceCounter(Extractor.State.TimeoutFramesCounter);
                 return;
             };
             try
@@ -174,7 +172,7 @@ namespace MFDExtractor
                 _instrumentRenderHelper.Render(Renderer, Form, Form.Rotation, Form.Monochrome,
                     HighlightingBorderShouldBeDisplayedOnTargetForm(Form), nightMode);
                 IncrementPerformanceCounter(RenderedFramesCounter);
-                IncrementPerformanceCounter(_extractorState.RenderedFramesCounter);
+                IncrementPerformanceCounter(Extractor.State.RenderedFramesCounter);
             }
             catch (Exception e)
             {

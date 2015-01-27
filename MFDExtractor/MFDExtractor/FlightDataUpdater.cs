@@ -29,20 +29,17 @@ namespace MFDExtractor
 
     internal class FlightDataUpdater : IFlightDataUpdater
     {
-		private readonly ExtractorState _extractorState;
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _textureSharedMemoryImageCoordinates;
         private readonly IExtractorClient _extractorClient;
         private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
         public FlightDataUpdater( 
             SharedMemorySpriteCoordinates textureSharedMemoryImageCoordinates, 
-            ExtractorState extractorState, 
             IFlightDataAdapterSet flightDataAdapterSet = null,
             IExtractorClient extractorClient=null,
             IRadarAltitudeCalculator radarAltitudeCalculator =null)
         {
 	        _textureSharedMemoryImageCoordinates = textureSharedMemoryImageCoordinates;
-	        _extractorState = extractorState;
             _flightDataAdapterSet = flightDataAdapterSet ?? new FlightDataAdapterSet();
             _extractorClient = extractorClient;
             _radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
@@ -54,7 +51,7 @@ namespace MFDExtractor
             Action updateEHSIBrightnessLabelVisibility,
             F4TexSharedMem.IReader texSharedmemReader)
         {
-			if (flightData == null || (_extractorState.NetworkMode != NetworkMode.Client && !_extractorState.SimRunning))
+            if (flightData == null || (Extractor.State.NetworkMode != NetworkMode.Client && !Extractor.State.SimRunning))
             {
                 flightData = new FlightData {hsiBits = Int32.MaxValue};
             }
@@ -64,10 +61,10 @@ namespace MFDExtractor
             var isis = instruments[InstrumentType.ISIS].Renderer as IISIS;
 
 
-			if (_extractorState.SimRunning || _extractorState.NetworkMode == NetworkMode.Client || _extractorState.OptionsFormIsShowing)
+            if (Extractor.State.SimRunning || Extractor.State.NetworkMode == NetworkMode.Client || Extractor.State.OptionsFormIsShowing)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
-                if (_extractorState.NetworkMode !=  NetworkMode.Client) 
+                if (Extractor.State.NetworkMode != NetworkMode.Client) 
                 {
                     var altitudeAgl = _radarAltitudeCalculator.ComputeRadarAltitude(flightData, terrainDB);
                     if (flightData.ExtensionData == null)
@@ -85,7 +82,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.AOAIndexer.Adapt(instruments[InstrumentType.AOAIndexer].Renderer as IAngleOfAttackIndexer, flightData);
                 UpdateADI(instruments[InstrumentType.ADI].Renderer as IADI, hsibits);
                 _flightDataAdapterSet.StandbyADI.Adapt(instruments[InstrumentType.BackupADI].Renderer as IStandbyADI, flightData);
-                UpdateHSI(instruments[InstrumentType.HSI].Renderer as IHorizontalSituationIndicator, instruments[InstrumentType.EHSI].Renderer as IEHSI, hsibits, flightData, _extractorState);
+                UpdateHSI(instruments[InstrumentType.HSI].Renderer as IHorizontalSituationIndicator, instruments[InstrumentType.EHSI].Renderer as IEHSI, hsibits, flightData);
 
 
                 //***** UPDATE SOME COMPLEX HSI/ADI VARIABLES
@@ -172,7 +169,7 @@ namespace MFDExtractor
                 _flightDataAdapterSet.CabinPress.Adapt(instruments[InstrumentType.CabinPress].Renderer as ICabinPressureAltitudeIndicator, flightData);
                 _flightDataAdapterSet.RollTrim.Adapt(instruments[InstrumentType.RollTrim].Renderer as IRollTrimIndicator, flightData);
                 _flightDataAdapterSet.PitchTrim.Adapt(instruments[InstrumentType.PitchTrim].Renderer as IPitchTrimIndicator, flightData);
-                _flightDataAdapterSet.AzimuthIndicator.Adapt(instruments[InstrumentType.RWR].Renderer as IAzimuthIndicator, flightData, _extractorState);
+                _flightDataAdapterSet.AzimuthIndicator.Adapt(instruments[InstrumentType.RWR].Renderer as IAzimuthIndicator, flightData);
                 _flightDataAdapterSet.CautionPanel.Adapt(instruments[InstrumentType.CautionPanel].Renderer as ICautionPanel, flightData);
                 _flightDataAdapterSet.CMDS.Adapt(instruments[InstrumentType.CMDS].Renderer as ICMDSPanel, flightData);
                 _flightDataAdapterSet.DED.Adapt(instruments[InstrumentType.DED].Renderer as IDataEntryDisplayPilotFaultList, flightData);
@@ -213,11 +210,11 @@ namespace MFDExtractor
                 ((IISIS)instruments[InstrumentType.ISIS].Renderer).InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
-            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
-            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
-            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4].Renderer as IMfdRenderer, _extractorState, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
-            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD].Renderer as IMfdRenderer, _extractorState, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
+            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
+            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
+            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
+            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
+            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD].Renderer as IMfdRenderer, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
 		}
 
         private static void SetISISPitchAndRoll(IISIS isis, FlightData flightData)
@@ -384,12 +381,12 @@ namespace MFDExtractor
             updateEHSIBrightnessLabelVisibility();
         }
 
-        private static void UpdateHSI(IHorizontalSituationIndicator hsi, IEHSI ehsi, HsiBits hsibits, FlightData fromFalcon, ExtractorState extractorState)
+        private static void UpdateHSI(IHorizontalSituationIndicator hsi, IEHSI ehsi, HsiBits hsibits, FlightData fromFalcon)
         {
-            hsi.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF) && !extractorState.OptionsFormIsShowing;
+            hsi.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF) && !Extractor.State.OptionsFormIsShowing;
             hsi.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
-            ehsi.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF) && !extractorState.OptionsFormIsShowing; ;
-            ehsi.InstrumentState.NoPowerFlag = ((fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery) && !extractorState.OptionsFormIsShowing; 
+            ehsi.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF) && !Extractor.State.OptionsFormIsShowing; ;
+            ehsi.InstrumentState.NoPowerFlag = ((fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery) && !Extractor.State.OptionsFormIsShowing; 
             ehsi.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
         }
 

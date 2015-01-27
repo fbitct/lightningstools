@@ -6,7 +6,7 @@ namespace MFDExtractor
 {
     internal interface IPerformanceCounterInstaller
     {
-        void CreatePerformanceCounters(ExtractorState extractorState);
+        void CreatePerformanceCounters();
     }
 
     internal sealed class PerformanceCounterInstaller : IPerformanceCounterInstaller
@@ -17,7 +17,7 @@ namespace MFDExtractor
             _performanceCounterInstanceFactory = performanceCounterInstanceFactory ??
                                                  new PerformanceCounterInstanceInstanceFactory();
         }
-        public void CreatePerformanceCounters(ExtractorState extractorState)
+        public void CreatePerformanceCounters()
         {
             try
             {

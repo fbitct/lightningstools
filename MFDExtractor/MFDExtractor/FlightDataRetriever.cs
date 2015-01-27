@@ -7,7 +7,7 @@ namespace MFDExtractor
 {
     internal interface IFlightDataRetriever
     {
-        FlightData GetFlightData(ExtractorState extractorState);
+        FlightData GetFlightData();
     }
 
     class FlightDataRetriever : IFlightDataRetriever
@@ -24,14 +24,14 @@ namespace MFDExtractor
             _sharedmemReaderFactory = sharedmemReaderFactory ?? new SharedmemReaderFactory();
         }
 
-        public FlightData GetFlightData(ExtractorState extractorState)
+        public FlightData GetFlightData()
         {
             FlightData toReturn = null;
-	        if ((extractorState.OptionsFormIsShowing && !extractorState.SimRunning) || (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client))
+            if ((Extractor.State.OptionsFormIsShowing && !Extractor.State.SimRunning) || (!Extractor.State.SimRunning && Extractor.State.NetworkMode != NetworkMode.Client))
 	        {
 		        return EmptyFlightData;
 	        }
-	        switch (extractorState.NetworkMode)
+            switch (Extractor.State.NetworkMode)
 	        {
 		        case NetworkMode.Standalone:
 		        case NetworkMode.Server:

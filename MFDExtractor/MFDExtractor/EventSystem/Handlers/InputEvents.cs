@@ -41,10 +41,9 @@ namespace MFDExtractor.EventSystem.Handlers
 
 		public InputEvents(
             IDictionary<InstrumentType, IInstrument>  instruments,
-            IEHSIStateTracker ehsiStateTracker,
-            ExtractorState extractorState)
+            IEHSIStateTracker ehsiStateTracker)
 		{
-			NightVisionModeToggled =  new NightVisionModeToggledEventHandler(extractorState);
+			NightVisionModeToggled =  new NightVisionModeToggledEventHandler();
 			AirspeedIndexIncreasedByOne = new AirspeedIndexIncreasedByOneEventHandler(instruments);
             AirspeedIndexDecreasedByOne = new AirspeedIndexDecreasedByOneEventHandler(instruments);
 			EHSILeftKnobDecreasedByOne = new EHSILeftKnobDecreasedByOneEventHandler();
