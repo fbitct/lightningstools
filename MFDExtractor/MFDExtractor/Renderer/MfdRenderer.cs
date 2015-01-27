@@ -115,7 +115,7 @@ namespace MFDExtractor.Renderer
             }
             public override string ToString()
             {
-                return string.Format("Blank:{0}, TestMode:{1}, SourceRectangle:{2}, SourceImageHashCode:{3}", Blank, TestMode, SourceRectangle, SourceImageHashCode);
+                return string.Format("Blank:{0}, OptionsFormIsShowing:{1}, SourceRectangle:{2}, SourceImageHashCode:{3}", Blank, TestMode, SourceRectangle, SourceImageHashCode);
             }
             public override bool Equals(object obj)
             {

@@ -68,7 +68,7 @@ namespace MFDExtractor.UI
             }
 
             //put the Extractor into Test mode (displays the Test/Blank images)
-			Extractor.State.TestMode = true;
+			Extractor.State.OptionsFormIsShowing = true;
             //set the titlebar for the Options form
             Text = Application.ProductName + " v" + Application.ProductVersion + " Options";
 
@@ -889,7 +889,7 @@ namespace MFDExtractor.UI
         /// <param name="e">Event arguments for the Click event</param>
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
-			Extractor.State.TestMode = false;
+			Extractor.State.OptionsFormIsShowing = false;
             if (_extractorRunningStateOnFormOpen)
             {
 				if (!Extractor.State.Running)
@@ -1091,7 +1091,7 @@ namespace MFDExtractor.UI
                 {
                     _extractor.Stop();
                     _extractor.LoadSettings();
-					Extractor.State.TestMode = true;
+					Extractor.State.OptionsFormIsShowing = true;
                 }
                 if (extractorRunning)
                 {

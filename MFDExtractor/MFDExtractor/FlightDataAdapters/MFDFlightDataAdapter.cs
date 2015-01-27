@@ -33,7 +33,7 @@ namespace MFDExtractor.FlightDataAdapters
                             : texSharedMemReader.GetImage(sourceRectangle);
                     }
                     mfd.InstrumentState.SourceRectangle = mfd.InstrumentState.SourceImage != null ? new Rectangle(0, 0, mfd.InstrumentState.SourceImage.Width, mfd.InstrumentState.SourceImage.Height) : Rectangle.Empty;
-                    mfd.InstrumentState.TestMode = extractorState.TestMode && !extractorState.SimRunning;
+                    mfd.InstrumentState.TestMode = extractorState.OptionsFormIsShowing && !extractorState.SimRunning;
                     mfd.InstrumentState.Blank = !extractorState.SimRunning;
                     if (!extractorState.Running || !extractorState.KeepRunning)
                     {

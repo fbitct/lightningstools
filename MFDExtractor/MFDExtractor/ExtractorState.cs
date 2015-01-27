@@ -9,7 +9,7 @@ namespace MFDExtractor
 		public Form ApplicationForm { get; set; }
 		public bool Running { get; set; }
         public bool KeepRunning { get; set; }
-		public bool TestMode { get; set; }
+		public bool OptionsFormIsShowing { get; set; }
 		public bool NightMode { get; set; }
         public NetworkMode NetworkMode { get; set; }
         public bool SimRunning { get { return NetworkMode == NetworkMode.Client || F4Utils.Process.Util.IsFalconRunning(); } }

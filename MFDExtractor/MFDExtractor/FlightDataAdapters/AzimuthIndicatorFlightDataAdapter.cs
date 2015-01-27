@@ -92,9 +92,9 @@ namespace MFDExtractor.FlightDataAdapters
             azimuthIndicator.InstrumentState.Other2Count = 0;
             azimuthIndicator.InstrumentState.Other2Low = true;
             azimuthIndicator.InstrumentState.cmdsMode = flightData.cmdsMode;
-            if (((flightData.powerBits & (int)PowerBits.BusPowerNonEssential) == (int)PowerBits.BusPowerNonEssential) || extractorState.TestMode)
+            if (((flightData.powerBits & (int)PowerBits.BusPowerNonEssential) == (int)PowerBits.BusPowerNonEssential) || extractorState.OptionsFormIsShowing)
             {
-                azimuthIndicator.InstrumentState.RWRPowerOn = ((flightData.lightBits2 & (int)LightBits2.AuxPwr) == (int)LightBits2.AuxPwr) || extractorState.TestMode;
+                azimuthIndicator.InstrumentState.RWRPowerOn = ((flightData.lightBits2 & (int)LightBits2.AuxPwr) == (int)LightBits2.AuxPwr) || extractorState.OptionsFormIsShowing;
                 azimuthIndicator.InstrumentState.RWRTest1 = ((flightData.lightBits3 & (int)Bms4LightBits3.SysTest) == (int)Bms4LightBits3.SysTest);
                 if ((flightData.lightBits3 & (int)Bms4LightBits3.SysTest) == (int)Bms4LightBits3.SysTest) //Added Falcas 07-11-2012
                 {

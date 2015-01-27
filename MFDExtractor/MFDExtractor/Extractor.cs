@@ -348,7 +348,7 @@ namespace MFDExtractor
                         _terrainDB = _terrainDBFactory.Create(false);
                     }
 
-                    if (State.SimRunning || State.TestMode || State.NetworkMode == NetworkMode.Client)
+                    if (State.SimRunning || State.OptionsFormIsShowing || State.NetworkMode == NetworkMode.Client)
                     {
                         var currentFlightData = _flightDataRetriever.GetFlightData(State);
                         SetFlightData(currentFlightData);
@@ -368,7 +368,7 @@ namespace MFDExtractor
                     var timeElapsed = thisLoopFinishTime.Subtract(thisLoopStartTime);
                     var millisToSleep = pollingDelay - ((int)timeElapsed.TotalMilliseconds);
                     if (millisToSleep < 5) millisToSleep = 5;
-                    if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.TestMode)
+                    if ((!State.SimRunning && State.NetworkMode != NetworkMode.Client) && !State.OptionsFormIsShowing)
                     {
                         millisToSleep += 50;
                     }

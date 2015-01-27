@@ -16,7 +16,7 @@ namespace F4Utils.Process
         private const string KEYFILE_EXENSION_DEFAULT = ".key";
         private const string CONFIG_DIRECTORY_NAME = "config";
         private const string USEROPTS_DIRECTORY_NAME = "User";
-        private const int KEY_DELAY_MILLISECONDS = 30;
+        private const int KEY_DELAY_MILLISECONDS = 40;
         private static readonly ILog Log = LogManager.GetLogger(typeof (KeyFileUtils));
         private static KeyFile _keyFile;
         private static readonly object KeySenderLock = new object();

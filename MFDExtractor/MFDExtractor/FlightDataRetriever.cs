@@ -27,7 +27,7 @@ namespace MFDExtractor
         public FlightData GetFlightData(ExtractorState extractorState)
         {
             FlightData toReturn = null;
-	        if ((extractorState.TestMode && !extractorState.SimRunning) || (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client))
+	        if ((extractorState.OptionsFormIsShowing && !extractorState.SimRunning) || (!extractorState.SimRunning && extractorState.NetworkMode != NetworkMode.Client))
 	        {
 		        return EmptyFlightData;
 	        }

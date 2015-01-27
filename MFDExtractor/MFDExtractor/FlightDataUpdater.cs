@@ -64,7 +64,7 @@ namespace MFDExtractor
             var isis = instruments[InstrumentType.ISIS].Renderer as IISIS;
 
 
-			if (_extractorState.SimRunning || _extractorState.NetworkMode == NetworkMode.Client || _extractorState.TestMode)
+			if (_extractorState.SimRunning || _extractorState.NetworkMode == NetworkMode.Client || _extractorState.OptionsFormIsShowing)
             {
                 var hsibits = ((HsiBits) flightData.hsiBits);
                 if (_extractorState.NetworkMode !=  NetworkMode.Client) 
@@ -386,10 +386,10 @@ namespace MFDExtractor
 
         private static void UpdateHSI(IHorizontalSituationIndicator hsi, IEHSI ehsi, HsiBits hsibits, FlightData fromFalcon, ExtractorState extractorState)
         {
-            hsi.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF) && !extractorState.TestMode;
+            hsi.InstrumentState.OffFlag = ((hsibits & HsiBits.HSI_OFF) ==HsiBits.HSI_OFF) && !extractorState.OptionsFormIsShowing;
             hsi.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
-            ehsi.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF) && !extractorState.TestMode; ;
-            ehsi.InstrumentState.NoPowerFlag = ((fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery) && !extractorState.TestMode; 
+            ehsi.InstrumentState.NoDataFlag = ((hsibits & HsiBits.HSI_OFF) == HsiBits.HSI_OFF) && !extractorState.OptionsFormIsShowing; ;
+            ehsi.InstrumentState.NoPowerFlag = ((fromFalcon.powerBits & (int)PowerBits.BusPowerBattery) != (int)PowerBits.BusPowerBattery) && !extractorState.OptionsFormIsShowing; 
             ehsi.InstrumentState.MagneticHeadingDegrees = (360 + (fromFalcon.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
         }
 
