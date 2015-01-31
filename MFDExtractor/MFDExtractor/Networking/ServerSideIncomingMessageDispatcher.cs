@@ -57,6 +57,19 @@ namespace MFDExtractor.Networking
 					case MessageType.AccelerometerIsReset:
                         _inputEvents.AccelerometerReset.Handle(false);
 						break;
+                    case MessageType.ISISBrightButtonDepressed:
+                        _inputEvents.ISISBrightButtonDepressed.Handle(false);
+                        break;
+                    case MessageType.ISISStandardButtonDepressed:
+                        _inputEvents.ISISStandardButtonDepressed.Handle(false);
+                        break;
+                    case MessageType.AzimuthIndicatorBrightnessDecrease:
+                        _inputEvents.AzimuthIndicatorBrightnessDecreased.Handle(false);
+                        break;
+                    case MessageType.AzimuthIndicatorBrightnessIncrease:
+                        _inputEvents.AzimuthIndicatorBrightnessIncreased.Handle(false);
+                        break;
+
 				}
 				pendingMessage = ExtractorServer.GetNextPendingMessageToServerFromClient();
 			}
