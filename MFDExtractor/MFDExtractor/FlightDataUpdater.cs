@@ -207,11 +207,11 @@ namespace MFDExtractor
                 ((IISIS)instruments[InstrumentType.ISIS].Renderer).InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, InstrumentType.LMFD);
-            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, InstrumentType.RMFD);
-            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, InstrumentType.MFD3);
-            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, InstrumentType.MFD4);
-            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD].Renderer as IMfdRenderer, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, InstrumentType.HUD);
+            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD], texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, InstrumentType.LMFD);
+            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD], texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, InstrumentType.RMFD);
+            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3], texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, InstrumentType.MFD3);
+            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4], texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, InstrumentType.MFD4);
+            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD], texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, InstrumentType.HUD);
 		}
 
         private static void SetISISPitchAndRoll(IISIS isis, FlightData flightData)

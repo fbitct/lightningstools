@@ -14,6 +14,7 @@ namespace MFDExtractor
     {
         InstrumentType Type { get; }
         IInstrumentRenderer Renderer { get; }
+        InstrumentForm Form { get; }
         void Start();
         void Stop();
         PerformanceCounter RenderedFramesCounter { get; }
@@ -45,7 +46,7 @@ namespace MFDExtractor
             _renderOnlyOnStateChanges = Settings.Default.RenderInstrumentsOnlyOnStatechanges;
         }
         public InstrumentType Type { get; internal set; }
-        private InstrumentForm Form { get; set; }
+        public InstrumentForm Form { get; set; }
         public IInstrumentRenderer Renderer { get; internal set; }
         public void Start()
         {

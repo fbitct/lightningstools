@@ -11,18 +11,19 @@ namespace MFDExtractor.FlightDataAdapters
 	{
 		internal interface IMFDFlightDataAdapter
 		{
-			void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, InstrumentType instrumentType);
+			void Adapt(IInstrument instrument, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, InstrumentType instrumentType);
 		}
 
 		class MFDFlightDataAdapter : IMFDFlightDataAdapter
 		{
-			public void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, InstrumentType instrumentType)
+			public void Adapt(IInstrument instrument, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, InstrumentType instrumentType)
 			{
-
-			    if (mfd == null || texSharedMemReader == null) return;
+                if (instrument == null || instrument.Renderer as IMfdRenderer == null) return;
+                
+                var mfd = instrument.Renderer as IMfdRenderer;
                 try
                 {
-                    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Client)
+                    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Client && instrument.Form !=null && instrument.Form.Visible)
                     {
                         mfd.InstrumentState.SourceImage = ExtractorClient.GetInstrumentImage(instrumentType);
                     }
@@ -30,7 +31,7 @@ namespace MFDExtractor.FlightDataAdapters
                     {
                         mfd.InstrumentState.SourceImage = sourceRectangle.IsEmpty
                             ? null
-                            : texSharedMemReader.GetImage(sourceRectangle);
+                            : texSharedMemReader != null ? texSharedMemReader.GetImage(sourceRectangle) : null;
                     }
                     mfd.InstrumentState.SourceRectangle = mfd.InstrumentState.SourceImage != null ? new Rectangle(0, 0, mfd.InstrumentState.SourceImage.Width, mfd.InstrumentState.SourceImage.Height) : Rectangle.Empty;
                     mfd.InstrumentState.TestMode = Extractor.State.OptionsFormIsShowing && !Extractor.State.SimRunning;
