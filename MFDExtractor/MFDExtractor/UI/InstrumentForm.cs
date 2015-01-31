@@ -91,8 +91,10 @@ namespace MFDExtractor.UI
             get { return Settings.RotateFlipType; }
             set
             {
-                Settings.RotateFlipType = value;
-                ApplyRotationCheck();
+                var oldRotation = Settings.RotateFlipType;
+                var newRotation = value;
+                ApplyRotationCheck(oldRotation, newRotation);
+                Settings.RotateFlipType = newRotation;
                 OnDataChanged(new EventArgs());
             }
         }
@@ -127,10 +129,10 @@ namespace MFDExtractor.UI
 	    }
         public event EventHandler DataChanged;
 
-        protected void ApplyRotationCheck()
+        protected void ApplyRotationCheck(RotateFlipType oldRotation, RotateFlipType newRotation)
         {
             ClearRotationChecks();
-            switch (Rotation)
+            switch (newRotation)
             {
                 case RotateFlipType.RotateNoneFlipNone:
                     ctxRotationNoRotationNoFlip.Checked = true;
@@ -156,6 +158,35 @@ namespace MFDExtractor.UI
                 case RotateFlipType.Rotate90FlipY:
                     ctxRotatePlus90DegreesFlipVertically.Checked = true;
                     break;
+            }
+            if (
+                (
+                    (newRotation.ToString().Contains("90") || newRotation.ToString().Contains("270"))
+                        &&
+                    (!oldRotation.ToString().Contains("90") && !oldRotation.ToString().Contains("270"))
+                )
+                    ||
+                (
+                    (!newRotation.ToString().Contains("90") && !newRotation.ToString().Contains("270"))
+                        &&
+                    (oldRotation.ToString().Contains("90") || oldRotation.ToString().Contains("270"))
+                )
+            )
+            {
+                var isStretched = StretchToFill;
+                if (isStretched)
+                {
+                    StretchToFill = false;
+                }
+                var oldWidth = Width;
+                var oldHeight = Height;
+                Height = oldWidth;
+                Width = oldHeight;
+                if (isStretched)
+                {
+                    StretchToFill = true;
+                }
+
             }
         }
 

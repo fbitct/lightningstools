@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -26,7 +27,8 @@ namespace MFDExtractor
     class InstrumentRenderHelper : IInstrumentRenderHelper
     {
         private readonly ILog _log;
-        private readonly Dictionary<Form, Bitmap> _renderSurfaces = new Dictionary<Form, Bitmap>();
+        private readonly IDictionary<Form, Bitmap> _renderSurfaces = new ConcurrentDictionary<Form, Bitmap>();
+        private readonly IDictionary<Form, RotateFlipType> _formRotations = new ConcurrentDictionary<Form, RotateFlipType>();
         public InstrumentRenderHelper(ILog log = null)
         {
             _log = log ?? LogManager.GetLogger(GetType());
@@ -169,6 +171,10 @@ namespace MFDExtractor
                         _renderSurfaces[targetForm].Height != targetForm.ClientRectangle.Height 
                         )
                 )
+                    ||
+                (
+                    !_formRotations.ContainsKey(targetForm) || targetForm.Rotation != _formRotations[targetForm]
+                )
             )
 
             {
@@ -176,6 +182,7 @@ namespace MFDExtractor
                     (targetForm.Rotation.ToString().Contains("90") || targetForm.Rotation.ToString().Contains("270")
                         ? new Bitmap(targetForm.ClientRectangle.Height, targetForm.ClientRectangle.Width, PixelFormat.Format16bppRgb565)
                         : new Bitmap(targetForm.ClientRectangle.Width, targetForm.ClientRectangle.Height, PixelFormat.Format16bppRgb565));
+                _formRotations[targetForm] = targetForm.Rotation;
             }
             return _renderSurfaces[targetForm];
         }
