@@ -52,7 +52,7 @@ namespace MFDExtractor.EventSystem.Handlers
             EHSIRightKnobIncreasedByOne = new EHSIRightKnobIncreasedByOneEventHandler(ehsiStateTracker);
             EHSIRightKnobDepressed = new EHSIRightKnobDepressedEventHandler(ehsiStateTracker);
             EHSIRightKnobReleased = new EHSIRightKnobReleasedEventHandler(ehsiStateTracker);
-            EHSIMenuButtonDepressed = new EHSIMenuButtonDepressedEventHandler(ehsiStateTracker);
+            EHSIMenuButtonDepressed = new EHSIMenuButtonDepressedEventHandler();
             ISISBrightButtonDepressed = new ISISBrightButtonDepressedEventHandler(instruments);
             ISISStandardButtonDepressed = new ISISStandardButtonDepressedEventHandler(instruments);
             AzimuthIndicatorBrightnessIncreased = new AzimuthIndicatorBrightnessIncreasedEventHandler(instruments);

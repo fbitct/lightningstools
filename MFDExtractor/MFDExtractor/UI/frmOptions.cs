@@ -412,7 +412,6 @@ namespace MFDExtractor.UI
                     rdoAzimuthIndicatorStyleDigital.Checked = true;
                     rdoATDPlus.Checked = true;
                     break;
-                    break;
             }
 
             string altimeterStyleString = Settings.Default.Altimeter_Style;
