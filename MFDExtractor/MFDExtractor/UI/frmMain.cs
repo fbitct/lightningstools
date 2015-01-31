@@ -187,7 +187,7 @@ namespace MFDExtractor.UI
             {
                 Extractor extractor = Extractor.GetInstance(); //get a reference to the main Extractor engine
                 mnuCtxExit.Enabled = false; //disable the Exit action on the system tray icon's menu
-                Stop();
+                //Stop();
 
                 //display the application's Options form to the user
                 _optionsForm = new frmOptions();

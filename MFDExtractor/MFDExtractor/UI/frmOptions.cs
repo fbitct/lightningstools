@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -647,7 +646,7 @@ namespace MFDExtractor.UI
                         {
                             _extractor.Stop(); //stop the Extractor if it's currently running
                         }
-                    _extractor.LoadSettings(); //tell the Extractor to reload its settings (will use the in-
+                    _extractor.LoadSettings(); //tell the Extractor to reload its settings 
                 }
                 }
                 else
@@ -874,18 +873,10 @@ namespace MFDExtractor.UI
                 }
                 _extractor.LoadSettings(); //tell the Extractor engine to reload its settings
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.ToString());
-            }
+            catch {}
             Close(); //user has cancelled out of the Options form, so close the form now
         }
 
-        /// <summary>
-        ///     Event handler for the "Test Changes" button's Click event
-        /// </summary>
-        /// <param name="sender">the object raising this event</param>
-        /// <param name="e">Event arguments for the Click event</param>
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
 			Extractor.State.OptionsFormIsShowing = false;
