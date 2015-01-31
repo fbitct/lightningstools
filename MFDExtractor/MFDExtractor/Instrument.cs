@@ -104,36 +104,45 @@ namespace MFDExtractor
             var pollingPeriod = Settings.Default.PollingDelay;
             while (Extractor.State.Running && Extractor.State.KeepRunning)
             {
-                var startTime = DateTime.Now;
-                _renderCycle++;
-                if (_renderCycle > 999) _renderCycle = 0;
-                if (ShouldRenderNow())
+                try
                 {
-                    try
+                    var startTime = DateTime.Now;
+                    _renderCycle++;
+                    if (_renderCycle > 999) _renderCycle = 0;
+                    if (ShouldRenderNow())
                     {
-                        Render(Extractor.State.NightMode, pollingPeriod);
-                        if (Form != null)
+                        try
                         {
-                            Form.RenderImmediately = false;
+                            Render(Extractor.State.NightMode, pollingPeriod);
+                            if (Form != null)
+                            {
+                                Form.RenderImmediately = false;
+                            }
+                        }
+                        catch (ThreadAbortException) { }
+                        catch (Exception e)
+                        {
+                            _log.Error(e.Message, e);
                         }
                     }
-                    catch (Exception e)
+                    else
                     {
-                        _log.Error(e.Message, e);
+                        IncrementPerformanceCounter(SkippedFramesCounter);
+                        IncrementPerformanceCounter(Extractor.State.SkippedFramesCounter);
                     }
+                    var endTime = DateTime.Now;
+                    var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
+                    var toWait = pollingPeriod - elapsed;
+                    if (toWait < 1) toWait = 1;
+                    Thread.Sleep((int)toWait);
+                    IncrementPerformanceCounter(TotalFramesCounter);
+                    IncrementPerformanceCounter(Extractor.State.TotalFramesCounter);
                 }
-                else
+                catch (ThreadAbortException) {}
+                catch (Exception e)
                 {
-                    IncrementPerformanceCounter(SkippedFramesCounter);
-                    IncrementPerformanceCounter(Extractor.State.SkippedFramesCounter);
+                    _log.Error(e.Message, e);
                 }
-                var endTime = DateTime.Now;
-                var elapsed = endTime.Subtract(startTime).TotalMilliseconds;
-                var toWait = pollingPeriod - elapsed;
-                if (toWait < 1) toWait = 1;
-                Thread.Sleep((int)toWait);
-                IncrementPerformanceCounter(TotalFramesCounter);
-                IncrementPerformanceCounter(Extractor.State.TotalFramesCounter);
             }
         }
 
@@ -180,6 +189,7 @@ namespace MFDExtractor
                 IncrementPerformanceCounter(RenderedFramesCounter);
                 IncrementPerformanceCounter(Extractor.State.RenderedFramesCounter);
             }
+            catch (ThreadAbortException) { }
             catch (Exception e)
             {
                 _log.Error(e.Message, e);
