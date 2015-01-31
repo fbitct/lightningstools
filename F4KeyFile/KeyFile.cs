@@ -100,7 +100,6 @@ namespace F4KeyFile
                             if (!parsed)
                             {
                                 keyFile._lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
-                                Log.WarnFormat("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName);
                                 continue;
                             }
                             directInputBinding.LineNum = lineNum;
@@ -113,7 +112,6 @@ namespace F4KeyFile
                             if (!parsed)
                             {
                                 keyFile._lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
-                                Log.WarnFormat("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName);
                                 continue;
                             }
                             keyBinding.LineNum = lineNum;
@@ -123,7 +121,7 @@ namespace F4KeyFile
                     catch (Exception e)
                     {
                         keyFile._lines.Add(new UnparsableLine(currentLine) { LineNum = lineNum });
-                        Log.Warn(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
+                        Log.Error(string.Format("Line {0} in key file {1} could not be parsed.", lineNum, file.FullName), e);
                     }
                 }
             }
