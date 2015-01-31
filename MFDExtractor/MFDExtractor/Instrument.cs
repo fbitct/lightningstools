@@ -7,6 +7,7 @@ using System.Threading;
 using log4net;
 using System.Windows.Forms;
 using ThreadState = System.Threading.ThreadState;
+using MFDExtractor.Renderer;
 
 namespace MFDExtractor
 {
@@ -62,7 +63,10 @@ namespace MFDExtractor
             if (Form != null && (_renderThread == null || (_renderThread.ThreadState & ThreadState.Stopped) == ThreadState.Stopped))
             {
                 Common.Util.DisposeObject(_renderThread);
-                _renderThread = new Thread(() => ThreadWork()) { IsBackground = true, Name = Renderer.GetType().FullName, Priority = Settings.Default.ThreadPriority };
+                if (Form.Visible || (Renderer is IMfdRenderer && Extractor.State.NetworkMode != Common.Networking.NetworkMode.Client))
+                {
+                    _renderThread = new Thread(() => ThreadWork()) { IsBackground = true, Name = Renderer.GetType().FullName, Priority = Settings.Default.ThreadPriority };
+                }
             }
 
             if (_renderThread != null && (_renderThread.ThreadState & ThreadState.Unstarted) == ThreadState.Unstarted)
@@ -75,6 +79,7 @@ namespace MFDExtractor
         {
             while (_renderThread !=null && _renderThread.IsAlive)
             {
+                Common.Threading.Util.AbortThread(ref _renderThread);
                 Application.DoEvents();
                 Thread.Sleep(1);
             }
