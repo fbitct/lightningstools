@@ -57,14 +57,28 @@ namespace MFDExtractor.Networking
 
         public static Image GetInstrumentImage(InstrumentType instrumentType)
         {
-            if (_server == null) return null;
-            var raw = _server.GetInstrumentImageBytes(instrumentType);
-            return Util.BitmapFromBytes(raw);
+            EnsureConnected();
+            if (_server == null || !IsConnected ) return null;
+            try
+            {
+                var raw = _server.GetInstrumentImageBytes(instrumentType);
+                return Util.BitmapFromBytes(raw);
+            }
+            catch { }
+            return null;
         }
 
         public static FlightData GetFlightData()
         {
-            return _server != null ? _server.GetFlightData() : null;
+            EnsureConnected();
+            if (_server == null || !IsConnected) return null;
+            try
+            {
+                return _server.GetFlightData();
+            }
+            catch {}
+            return null;
+
         }
 
         public static void SendMessageToServer(Message message)
