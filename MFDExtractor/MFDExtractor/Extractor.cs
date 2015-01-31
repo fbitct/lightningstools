@@ -145,10 +145,7 @@ namespace MFDExtractor
                 Mediator.PhysicalControlStateChanged -= _mediatorEventHandler.HandleStateChange;
             }
 	        StopAllInstruments();
-            if (State.NetworkMode == NetworkMode.Server)
-            {
-                TearDownImageServer();
-            }
+            TearDownImageServer();
             State.Running = false;
             Settings.Default.Save();
             OnStopped();
@@ -249,7 +246,10 @@ namespace MFDExtractor
         {
             try
             {
-                ExtractorServer.TearDownService(ServerEndpoint.Port);
+                if (ServerEndpoint != null)
+                {
+                    ExtractorServer.TearDownService(ServerEndpoint.Port);
+                }
             }
             catch { }
         }

@@ -12,6 +12,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using System.Threading;
 using Common.Imaging;
+using Common.Networking;
 using F4SharedMem;
 
 namespace MFDExtractor.Networking
@@ -36,8 +37,7 @@ namespace MFDExtractor.Networking
 
         public FlightData GetFlightData()
         {
-            FlightData toReturn;
-            if (!Extractor.State.SimRunning)
+            if (!Extractor.State.SimRunning || Extractor.State.NetworkMode != NetworkMode.Server)
             {
                 return null;
             }
@@ -45,6 +45,7 @@ namespace MFDExtractor.Networking
             {
                 return null;
             }
+            FlightData toReturn;
             lock (FlightDataLock)
             {
                 toReturn = _flightData;
@@ -57,7 +58,7 @@ namespace MFDExtractor.Networking
 
         public byte[] GetInstrumentImageBytes(InstrumentType instrumentType)
         {
-            if (!Extractor.State.SimRunning)
+            if (!Extractor.State.SimRunning || Extractor.State.NetworkMode != NetworkMode.Server)
             {
                 return null;
             }
@@ -97,6 +98,7 @@ namespace MFDExtractor.Networking
 
         public bool TestConnection()
         {
+            if (Extractor.State.NetworkMode != NetworkMode.Server) return false;
             return _serviceEstablished;
         }
 
@@ -174,6 +176,7 @@ namespace MFDExtractor.Networking
 
         internal static void SetInstrumentImage(Image bitmap, InstrumentType instrumentType)
         {
+            if (Extractor.State.NetworkMode != NetworkMode.Server) return;
             var cloned = Util.CloneBitmap(bitmap);
             LatestTexSharedmemImages.AddOrUpdate(instrumentType, x => cloned, (x, y) => cloned);
         }
@@ -197,6 +200,7 @@ namespace MFDExtractor.Networking
 
         public static void SubmitMessageToClientFromServer(Message message)
         {
+            if (Extractor.State.NetworkMode != NetworkMode.Server) return;
             if (MessagesToClientFromServer == null) return;
             if (MessagesToClientFromServer.Count >= 1000)
             {
@@ -208,6 +212,7 @@ namespace MFDExtractor.Networking
 
         public static Message GetNextPendingMessageToServerFromClient()
         {
+            if (Extractor.State.NetworkMode != NetworkMode.Server) return null;
             if (MessagesToServerFromClient == null || MessagesToServerFromClient.Count <= 0) return null;
             var toReturn = MessagesToServerFromClient[0];
             MessagesToServerFromClient.RemoveAt(0);
