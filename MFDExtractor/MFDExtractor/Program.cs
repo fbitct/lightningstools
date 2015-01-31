@@ -22,8 +22,8 @@ namespace MFDExtractor
         #region Class variable declarations
 
         // private members
-        private static Form mainForm;
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Program));
+        private static Form _mainForm;
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Program));
 
         #endregion
 
@@ -31,14 +31,13 @@ namespace MFDExtractor
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e !=null && !(e.ExceptionObject is ThreadAbortException || e.ExceptionObject is ThreadInterruptedException))
+            if (e == null ||
+                (e.ExceptionObject is ThreadAbortException || e.ExceptionObject is ThreadInterruptedException)) return;
+            try
             {
-                try
-                {
-                    _log.Error(((Exception) e.ExceptionObject).Message, (Exception) e.ExceptionObject);
-                }
-                catch { }
+                Log.Error(((Exception) e.ExceptionObject).Message, (Exception) e.ExceptionObject);
             }
+            catch { }
         }
 
         private static void UIThreadException(object sender, ThreadExceptionEventArgs t)
@@ -47,7 +46,7 @@ namespace MFDExtractor
             {
                 try
                 {
-                    _log.Error(t.Exception.Message, t.Exception);
+                    Log.Error(t.Exception.Message, t.Exception);
                 }
                 catch { }
             }
@@ -97,7 +96,7 @@ namespace MFDExtractor
             Application.SetCompatibleTextRenderingDefault(false);
             Application.EnableVisualStyles();
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
-            mainForm = new frmMain();
+            _mainForm = new frmMain();
             Thread.CurrentThread.Name = "MainThread";
             if (Settings.Default.UpgradeNeeded)
             {
@@ -117,10 +116,10 @@ namespace MFDExtractor
                         ".\nThis can happen if the configuration file was incorrectly edited by hand.\nDefault settings will be used instead.",
                         Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
                         MessageBoxDefaultButton.Button1);
-                    _log.Error(e.Message, e);
+                    Log.Error(e.Message, e);
                 }
             }
-            Application.Run(mainForm);
+            Application.Run(_mainForm);
         }
 
         #endregion

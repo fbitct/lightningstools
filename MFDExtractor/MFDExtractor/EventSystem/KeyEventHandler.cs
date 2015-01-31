@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using MFDExtractor.Configuration;
 using MFDExtractor.EventSystem.Handlers;
 
@@ -38,59 +37,59 @@ namespace MFDExtractor.EventSystem
 			var keys = _keyEventArgsAugmenter.UpdateKeyEventArgsWithExtendedKeyInfo(e.KeyData);
             if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.NVISKey, keys))
 			{
-				_inputEvents.NightVisionModeToggled.Handle();
+				_inputEvents.NightVisionModeToggled.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.AirspeedIndexIncreaseKey, keys))
 			{
-				_inputEvents.AirspeedIndexIncreasedByOne.Handle();
+                _inputEvents.AirspeedIndexIncreasedByOne.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.AirspeedIndexDecreaseKey, keys))
 			{
-				_inputEvents.AirspeedIndexDecreasedByOne.Handle();
+                _inputEvents.AirspeedIndexDecreasedByOne.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSIHeadingDecreaseKey, keys))
 			{
-				_inputEvents.EHSILeftKnobDecreasedByOne.Handle();
+                _inputEvents.EHSILeftKnobDecreasedByOne.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSIHeadingIncreaseKey, keys))
 			{
-				_inputEvents.EHSILeftKnobIncreasedByOne.Handle();
+                _inputEvents.EHSILeftKnobIncreasedByOne.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSICourseDecreaseKey, keys))
 			{
-				_inputEvents.EHSIRightKnobDecreasedByOne.Handle();
+                _inputEvents.EHSIRightKnobDecreasedByOne.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSICourseIncreaseKey, keys))
 			{
-				_inputEvents.EHSIRightKnobIncreasedByOne.Handle();
+                _inputEvents.EHSIRightKnobIncreasedByOne.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSICourseDepressedKey, keys))
 			{
-				_inputEvents.EHSIRightKnobDepressed.Handle();
+                _inputEvents.EHSIRightKnobDepressed.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSIMenuButtonDepressedKey, keys))
 			{
-				_inputEvents.EHSIMenuButtonDepressed.Handle();
+                _inputEvents.EHSIMenuButtonDepressed.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.ISISBrightButtonKey, keys))
 			{
-				_inputEvents.ISISBrightButtonDepressed.Handle();
+                _inputEvents.ISISBrightButtonDepressed.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.ISISStandardButtonKey, keys))
 			{
-				_inputEvents.ISISStandardButtonDepressed.Handle();
+                _inputEvents.ISISStandardButtonDepressed.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.AzimuthIndicatorBrightnessIncreaseKey, keys))
 			{
-				_inputEvents.AzimuthIndicatorBrightnessIncreased.Handle();
+                _inputEvents.AzimuthIndicatorBrightnessIncreased.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.AzimuthIndicatorBrightnessDecreaseKey, keys))
 			{
-				_inputEvents.AzimuthIndicatorBrightnessDecreased.Handle();
+                _inputEvents.AzimuthIndicatorBrightnessDecreased.Handle(true);
 			}
             else if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.AccelerometerResetKey, keys))
 			{
-				_inputEvents.AccelerometerReset.Handle();
+                _inputEvents.AccelerometerReset.Handle(true);
 			}
 		}
         public void ProcessKeyUpEvent(KeyEventArgs e)
@@ -99,7 +98,7 @@ namespace MFDExtractor.EventSystem
             var keys = _keyEventArgsAugmenter.UpdateKeyEventArgsWithExtendedKeyInfo(e.KeyData);
             if (_keyInputEventHotkeyFilter.CheckIfMatches(keySettings.EHSICourseDepressedKey, keys))
             {
-                _inputEvents.EHSIRightKnobReleased.Handle();
+                _inputEvents.EHSIRightKnobReleased.Handle(true);
             }
         }
 	}

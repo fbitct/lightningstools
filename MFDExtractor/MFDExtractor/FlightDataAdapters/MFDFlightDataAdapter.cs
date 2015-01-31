@@ -11,20 +11,20 @@ namespace MFDExtractor.FlightDataAdapters
 	{
 		internal interface IMFDFlightDataAdapter
 		{
-			void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, IExtractorClient client, InstrumentType instrumentType);
+			void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, InstrumentType instrumentType);
 		}
 
 		class MFDFlightDataAdapter : IMFDFlightDataAdapter
 		{
-			public void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, IExtractorClient client, InstrumentType instrumentType)
+			public void Adapt(IMfdRenderer mfd, F4TexSharedMem.IReader texSharedMemReader, Rectangle sourceRectangle, InstrumentType instrumentType)
 			{
 
 			    if (mfd == null || texSharedMemReader == null) return;
                 try
                 {
-                    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Client && client !=null)
+                    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Client)
                     {
-                        mfd.InstrumentState.SourceImage = client.GetInstrumentImage(instrumentType);
+                        mfd.InstrumentState.SourceImage = ExtractorClient.GetInstrumentImage(instrumentType);
                     }
                     else
                     {

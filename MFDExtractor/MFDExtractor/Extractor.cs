@@ -32,11 +32,8 @@ namespace MFDExtractor
         private TerrainDB _terrainDB;
         #region Network Configuration
 
-        private const string ServiceName = "MFDExtractorService";
-        private ExtractorClient _client;
         private string _compressionType = "None";
         private string _imageFormat = "PNG";
-        private IPEndPoint _serverEndpoint;
 
         #endregion
 
@@ -90,7 +87,7 @@ namespace MFDExtractor
             _instrumentFactory = instrumentFactory ?? new InstrumentFactory();
             _ehsiStateTracker = new EHSIStateTracker(_instruments);
             _inputEvents = new InputEvents(_instruments, _ehsiStateTracker);
-            _clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
+            _clientSideIncomingMessageDispatcher = clientSideIncomingMessageDispatcher ?? new ClientSideIncomingMessageDispatcher(_inputEvents);
             if (!Settings.Default.DisableDirectInputMediator)
             {
                 Mediator = new Mediator(null);
@@ -186,10 +183,10 @@ namespace MFDExtractor
             switch (State.NetworkMode)
             {
                 case NetworkMode.Server:
-                    _serverEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
+                    ServerEndpoint = new IPEndPoint(IPAddress.Any, settings.ServerUsePortNumber);
                     break;
                 case NetworkMode.Client:
-                    _serverEndpoint = new IPEndPoint(IPAddress.Parse(settings.ClientUseServerIpAddress),
+                    ServerEndpoint = new IPEndPoint(IPAddress.Parse(settings.ClientUseServerIpAddress),
                         settings.ClientUseServerPortNum);
                     break;
             }
@@ -201,12 +198,9 @@ namespace MFDExtractor
 
         #region Public Properties
 
-        
-        public IPEndPoint ServerEndpoint
-        {
-            get { return _serverEndpoint; }
-            set { _serverEndpoint = value; }
-        }
+
+        public IPEndPoint ServerEndpoint { get; set; }
+       
 		internal static ExtractorState State { get; set; }
         public Mediator Mediator { get; set; }
 
@@ -232,10 +226,11 @@ namespace MFDExtractor
         {
             try
             {
-                _client = new ExtractorClient(_serverEndpoint, ServiceName);
-                _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents, _client);
-                _flightDataRetriever = new FlightDataRetriever(_client);
-                _flightDataUpdater = new FlightDataUpdater(_sharedMemorySpriteCoordinates, null, _client);
+                ExtractorClient.ServerEndpoint = ServerEndpoint;
+                ExtractorClient.ServiceName = "MFDExtractorService";
+                _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents);
+                _flightDataRetriever = new FlightDataRetriever();
+                _flightDataUpdater = new FlightDataUpdater(_sharedMemorySpriteCoordinates, null);
 
             }
             catch {}
@@ -245,7 +240,7 @@ namespace MFDExtractor
         {
             try
             {
-                ExtractorServer.CreateService(ServiceName, _serverEndpoint.Port, _compressionType, _imageFormat);
+                ExtractorServer.CreateService("MFDExtractorService", ServerEndpoint.Port, _compressionType, _imageFormat);
             }
             catch { }
         }
@@ -254,7 +249,7 @@ namespace MFDExtractor
         {
             try
             {
-                ExtractorServer.TearDownService(_serverEndpoint.Port);
+                ExtractorServer.TearDownService(ServerEndpoint.Port);
             }
             catch { }
         }

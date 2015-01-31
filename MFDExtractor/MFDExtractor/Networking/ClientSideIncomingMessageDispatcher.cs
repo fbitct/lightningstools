@@ -9,60 +9,57 @@ namespace MFDExtractor.Networking
 
 	class ClientSideIncomingMessageDispatcher : IClientSideIncomingMessageDispatcher
 	{
-		private readonly IExtractorClient _extractorClient;
 		private readonly IInputEvents _inputEvents;
 
 		public ClientSideIncomingMessageDispatcher(
-			IInputEvents inputEvents,
-			IExtractorClient extractorClient)
+			IInputEvents inputEvents)
 		{
 			_inputEvents = inputEvents;
-			_extractorClient = extractorClient;
 		}
 
 		public void ProcessPendingMessages()
 		{
-			var pendingMessage = _extractorClient.GetNextMessageToClientFromServer();
+			var pendingMessage = ExtractorClient.GetNextMessageToClientFromServer();
 			while (pendingMessage != null)
 			{
 				var messageType = pendingMessage.MessageType;
 				switch (messageType)
 				{
 					case MessageType.ToggleNightMode:
-						_inputEvents.NightVisionModeToggled.Handle();
+						_inputEvents.NightVisionModeToggled.Handle(false);
 						break;
 					case MessageType.AirspeedIndexIncrease:
-						_inputEvents.AirspeedIndexIncreasedByOne.Handle();
+                        _inputEvents.AirspeedIndexIncreasedByOne.Handle(false);
 						break;
 					case MessageType.AirspeedIndexDecrease:
-						_inputEvents.AirspeedIndexDecreasedByOne.Handle();
+                        _inputEvents.AirspeedIndexDecreasedByOne.Handle(false);
 						break;
 					case MessageType.EHSILeftKnobIncrease:
-						_inputEvents.EHSILeftKnobIncreasedByOne.Handle();
+                        _inputEvents.EHSILeftKnobIncreasedByOne.Handle(false);
 						break;
 					case MessageType.EHSILeftKnobDecrease:
-						_inputEvents.EHSILeftKnobDecreasedByOne.Handle();
+                        _inputEvents.EHSILeftKnobDecreasedByOne.Handle(false);
 						break;
 					case MessageType.EHSIRightKnobIncrease:
-						_inputEvents.EHSIRightKnobIncreasedByOne.Handle();
+                        _inputEvents.EHSIRightKnobIncreasedByOne.Handle(false);
 						break;
 					case MessageType.EHSIRightKnobDecrease:
-						_inputEvents.EHSIRightKnobDecreasedByOne.Handle();
+                        _inputEvents.EHSIRightKnobDecreasedByOne.Handle(false);
 						break;
 					case MessageType.EHSIRightKnobDepressed:
-						_inputEvents.EHSIRightKnobDepressed.Handle();
+                        _inputEvents.EHSIRightKnobDepressed.Handle(false);
 						break;
 					case MessageType.EHSIRightKnobReleased:
-						_inputEvents.EHSIRightKnobReleased.Handle();
+                        _inputEvents.EHSIRightKnobReleased.Handle(false);
 						break;
 					case MessageType.EHSIMenuButtonDepressed:
-						_inputEvents.EHSIMenuButtonDepressed.Handle();
+                        _inputEvents.EHSIMenuButtonDepressed.Handle(false);
 						break;
 					case MessageType.AccelerometerIsReset:
-						_inputEvents.AccelerometerReset.Handle();
+                        _inputEvents.AccelerometerReset.Handle(false);
 						break;
 				}
-				pendingMessage = _extractorClient.GetNextMessageToClientFromServer();
+				pendingMessage = ExtractorClient.GetNextMessageToClientFromServer();
 			}
 		}
 	}

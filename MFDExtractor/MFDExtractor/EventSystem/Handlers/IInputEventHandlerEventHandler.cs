@@ -2,6 +2,6 @@
 {
 	public interface IInputEventHandlerEventHandler
 	{
-		void Handle();
+		void Handle(bool forwardEvent);
 	}
 }

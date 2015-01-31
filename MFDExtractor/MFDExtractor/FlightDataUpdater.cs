@@ -31,17 +31,14 @@ namespace MFDExtractor
     {
         private readonly IFlightDataAdapterSet _flightDataAdapterSet;
 	    private readonly SharedMemorySpriteCoordinates _textureSharedMemoryImageCoordinates;
-        private readonly IExtractorClient _extractorClient;
         private readonly IRadarAltitudeCalculator _radarAltitudeCalculator;
         public FlightDataUpdater( 
             SharedMemorySpriteCoordinates textureSharedMemoryImageCoordinates, 
             IFlightDataAdapterSet flightDataAdapterSet = null,
-            IExtractorClient extractorClient=null,
             IRadarAltitudeCalculator radarAltitudeCalculator =null)
         {
 	        _textureSharedMemoryImageCoordinates = textureSharedMemoryImageCoordinates;
             _flightDataAdapterSet = flightDataAdapterSet ?? new FlightDataAdapterSet();
-            _extractorClient = extractorClient;
             _radarAltitudeCalculator = radarAltitudeCalculator ?? new RadarAltitudeCalculator();
         }
         public void UpdateRendererStatesFromFlightData(
@@ -210,11 +207,11 @@ namespace MFDExtractor
                 ((IISIS)instruments[InstrumentType.ISIS].Renderer).InstrumentState.OffFlag = true;
                 updateEHSIBrightnessLabelVisibility();
             }
-            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, _extractorClient, InstrumentType.LMFD);
-            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, _extractorClient, InstrumentType.RMFD);
-            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, _extractorClient, InstrumentType.MFD3);
-            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, _extractorClient, InstrumentType.MFD4);
-            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD].Renderer as IMfdRenderer, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, _extractorClient, InstrumentType.HUD);
+            _flightDataAdapterSet.LMFD.Adapt(instruments[InstrumentType.LMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.LMFD, InstrumentType.LMFD);
+            _flightDataAdapterSet.RMFD.Adapt(instruments[InstrumentType.RMFD].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.RMFD, InstrumentType.RMFD);
+            _flightDataAdapterSet.MFD3.Adapt(instruments[InstrumentType.MFD3].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD3, InstrumentType.MFD3);
+            _flightDataAdapterSet.MFD4.Adapt(instruments[InstrumentType.MFD4].Renderer as IMfdRenderer, texSharedmemReader,_textureSharedMemoryImageCoordinates.MFD4, InstrumentType.MFD4);
+            _flightDataAdapterSet.HUD.Adapt(instruments[InstrumentType.HUD].Renderer as IMfdRenderer, texSharedmemReader, _textureSharedMemoryImageCoordinates.HUD, InstrumentType.HUD);
 		}
 
         private static void SetISISPitchAndRoll(IISIS isis, FlightData flightData)

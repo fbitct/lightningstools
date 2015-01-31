@@ -32,64 +32,64 @@ namespace MFDExtractor.EventSystem
 		    var keySettings = _keySettingsReader.Read();
 			if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.NVISKey))
 			{
-				_inputEvents.NightVisionModeToggled.Handle();
+				_inputEvents.NightVisionModeToggled.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.AirspeedIndexIncreaseKey))
 			{
-				_inputEvents.AirspeedIndexIncreasedByOne.Handle();
+                _inputEvents.AirspeedIndexIncreasedByOne.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.AirspeedIndexDecreaseKey))
 			{
-				_inputEvents.AirspeedIndexDecreasedByOne.Handle();
+                _inputEvents.AirspeedIndexDecreasedByOne.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSIHeadingDecreaseKey))
 			{
-				_inputEvents.EHSILeftKnobDecreasedByOne.Handle();
+                _inputEvents.EHSILeftKnobDecreasedByOne.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSIHeadingIncreaseKey))
 			{
-				_inputEvents.EHSILeftKnobIncreasedByOne.Handle();
+                _inputEvents.EHSILeftKnobIncreasedByOne.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSICourseDecreaseKey))
 			{
-				_inputEvents.EHSIRightKnobDecreasedByOne.Handle();
+                _inputEvents.EHSIRightKnobDecreasedByOne.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSICourseIncreaseKey))
 			{
-				_inputEvents.EHSIRightKnobIncreasedByOne.Handle();
+                _inputEvents.EHSIRightKnobIncreasedByOne.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSICourseDepressedKey))
 			{
-				_inputEvents.EHSIRightKnobDepressed.Handle();
+                _inputEvents.EHSIRightKnobDepressed.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSIMenuButtonDepressedKey))
 			{
-				_inputEvents.EHSIMenuButtonDepressed.Handle();
+                _inputEvents.EHSIMenuButtonDepressed.Handle(true);
 			}
 			else if (
 				!_diHotkeyDetection.DirectInputHotkeyIsTriggering(keySettings.EHSICourseDepressedKey))
 			{
-				_inputEvents.EHSIRightKnobReleased.Handle();
+                _inputEvents.EHSIRightKnobReleased.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.ISISBrightButtonKey))
 			{
-				_inputEvents.ISISBrightButtonDepressed.Handle();
+                _inputEvents.ISISBrightButtonDepressed.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.ISISStandardButtonKey))
 			{
-				_inputEvents.ISISStandardButtonDepressed.Handle();
+                _inputEvents.ISISStandardButtonDepressed.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.AzimuthIndicatorBrightnessIncreaseKey))
 			{
-				_inputEvents.AzimuthIndicatorBrightnessIncreased.Handle();
+                _inputEvents.AzimuthIndicatorBrightnessIncreased.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.AzimuthIndicatorBrightnessDecreaseKey))
 			{
-				_inputEvents.AzimuthIndicatorBrightnessDecreased.Handle();
+                _inputEvents.AzimuthIndicatorBrightnessDecreased.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.AccelerometerResetKey))
 			{
-				_inputEvents.AccelerometerReset.Handle();
+                _inputEvents.AccelerometerReset.Handle(true);
 			}
 		}
 	}

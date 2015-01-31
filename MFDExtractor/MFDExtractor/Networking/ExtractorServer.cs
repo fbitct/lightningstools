@@ -17,7 +17,7 @@ using F4SharedMem;
 namespace MFDExtractor.Networking
 {
     [SuppressMessage("ReSharper", "EmptyGeneralCatchClause")]
-    public class ExtractorServer : MarshalByRefObject, IExtractorServer
+    public class ExtractorServer : MarshalByRefObject
     {
         private static readonly object FlightDataLock = new object();
         private static FlightData _flightData;
@@ -89,15 +89,9 @@ namespace MFDExtractor.Networking
 
         public Message GetNextPendingMessageToClientFromServer()
         {
-            Message toReturn = null;
-            if (MessagesToClientFromServer != null)
-            {
-                if (MessagesToClientFromServer.Count > 0)
-                {
-                    toReturn = MessagesToClientFromServer[0];
-                    MessagesToClientFromServer.RemoveAt(0);
-                }
-            }
+            if (MessagesToClientFromServer == null || MessagesToClientFromServer.Count <= 0) return null;
+            var toReturn = MessagesToClientFromServer[0];
+            MessagesToClientFromServer.RemoveAt(0);
             return toReturn;
         }
 
@@ -203,15 +197,13 @@ namespace MFDExtractor.Networking
 
         public static void SubmitMessageToClientFromServer(Message message)
         {
-            if (MessagesToClientFromServer != null)
+            if (MessagesToClientFromServer == null) return;
+            if (MessagesToClientFromServer.Count >= 1000)
             {
-                if (MessagesToClientFromServer.Count >= 1000)
-                {
-                    MessagesToClientFromServer.RemoveRange(999, MessagesToClientFromServer.Count - 1000);
-                        //limit the message queue size to 1000 messages
-                }
-                MessagesToClientFromServer.Add(message);
+                MessagesToClientFromServer.RemoveRange(999, MessagesToClientFromServer.Count - 1000);
+                //limit the message queue size to 1000 messages
             }
+            MessagesToClientFromServer.Add(message);
         }
 
         public static Message GetNextPendingMessageToServerFromClient()

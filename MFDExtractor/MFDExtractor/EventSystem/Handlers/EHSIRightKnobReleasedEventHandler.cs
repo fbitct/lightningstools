@@ -1,4 +1,6 @@
 ﻿using System;
+using Common.Networking;
+using MFDExtractor.Networking;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
@@ -6,19 +8,26 @@ namespace MFDExtractor.EventSystem.Handlers
 	internal class EHSIRightKnobReleasedEventHandler : IEHSIRightKnobReleasedEventHandler
 	{
 		private readonly IEHSIStateTracker _ehsiStateTracker;
-
 		public EHSIRightKnobReleasedEventHandler(IEHSIStateTracker ehsiStateTracker)
 		{
 			_ehsiStateTracker = ehsiStateTracker;
 		}
 
-		public void Handle()
+		public void Handle(bool forwardEvent)
 		{
-		    if (_ehsiStateTracker.RightKnobIsPressed)
+            if (!_ehsiStateTracker.RightKnobIsPressed) return;
+            _ehsiStateTracker.RightKnobDepressedTime = null;
+            _ehsiStateTracker.RightKnobReleasedTime = DateTime.Now;
+            _ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
+		    if (!forwardEvent) return;
+		    switch (Extractor.State.NetworkMode)
 		    {
-		        _ehsiStateTracker.RightKnobDepressedTime = null;
-		        _ehsiStateTracker.RightKnobReleasedTime = DateTime.Now;
-		        _ehsiStateTracker.RightKnobLastActivityTime = DateTime.Now;
+		        case NetworkMode.Client:
+		            ExtractorClient.SendMessageToServer(new Message(MessageType.EHSIRightKnobReleased));
+		            break;
+		        case NetworkMode.Server:
+		            ExtractorServer.SubmitMessageToClientFromServer(new Message(MessageType.EHSIRightKnobReleased));
+		            break;
 		    }
 		}
 	}

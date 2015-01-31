@@ -14,24 +14,17 @@ using F4SharedMem;
 
 namespace MFDExtractor.Networking
 {
-    public class ExtractorClient : IExtractorClient
+    public static class ExtractorClient
     {
-        private readonly IPEndPoint _serverEndpoint;
-        private readonly string _serviceName;
-        private BackgroundWorker _connectionTestingBackgroundWorker;
-        private DateTime _lastConnectionCheckTime = DateTime.Now.Subtract(new TimeSpan(0, 5, 0));
-        private IExtractorServer _server;
-        private bool _wasConnected;
-
-        public ExtractorClient(IPEndPoint serverEndpoint, string serviceName)
-        {
-            _serverEndpoint = serverEndpoint;
-            _serviceName = serviceName;
-            EnsureConnected();
-        }
+        private static BackgroundWorker _connectionTestingBackgroundWorker;
+        private static DateTime _lastConnectionCheckTime = DateTime.Now.Subtract(new TimeSpan(0, 5, 0));
+        private static ExtractorServer _server;
+        private static bool _wasConnected;
 
         [DebuggerHidden]
-        public bool IsConnected
+        public static IPEndPoint ServerEndpoint { get; internal set; }
+        public static string ServiceName { get; internal set; }
+        public static bool IsConnected
         {
             get
             {
@@ -41,65 +34,54 @@ namespace MFDExtractor.Networking
                 {
                     return _wasConnected;
                 }
-                if (_server != null)
+                if (_server == null) return toReturn;
+                try
                 {
-                    try
+                    _lastConnectionCheckTime = DateTime.Now;
+                    Application.DoEvents();
+                    if (_connectionTestingBackgroundWorker == null)
                     {
-                        _lastConnectionCheckTime = DateTime.Now;
-                        Application.DoEvents();
-                        if (_connectionTestingBackgroundWorker == null)
-                        {
-                            _connectionTestingBackgroundWorker = new BackgroundWorker();
-                            _connectionTestingBackgroundWorker.DoWork += _connectionTestingBackgroundWorker_DoWork;
-                        }
-                        if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
-                        {
-                            _connectionTestingBackgroundWorker.RunWorkerAsync();
-                        }
-                        toReturn = _wasConnected;
+                        _connectionTestingBackgroundWorker = new BackgroundWorker();
+                        _connectionTestingBackgroundWorker.DoWork += ConnectionTestingBackgroundWorker_DoWork;
                     }
-                    catch (Exception)
+                    if (_connectionTestingBackgroundWorker != null && !_connectionTestingBackgroundWorker.IsBusy)
                     {
+                        _connectionTestingBackgroundWorker.RunWorkerAsync();
                     }
+                    toReturn = _wasConnected;
                 }
+                catch { }
                 return toReturn;
             }
         }
 
-        public Image GetInstrumentImage(InstrumentType instrumentType)
+        public static Image GetInstrumentImage(InstrumentType instrumentType)
         {
-            if (_server != null)
-            {
-                var raw = _server.GetInstrumentImageBytes(instrumentType);
-                return Util.BitmapFromBytes(raw);
-            }
-            return null;
+            if (_server == null) return null;
+            var raw = _server.GetInstrumentImageBytes(instrumentType);
+            return Util.BitmapFromBytes(raw);
         }
 
-        public FlightData GetFlightData()
+        public static FlightData GetFlightData()
         {
             return _server != null ? _server.GetFlightData() : null;
         }
 
-        public void SendMessageToServer(Message message)
+        public static void SendMessageToServer(Message message)
         {
             EnsureConnected();
-            if (IsConnected)
+            if (!IsConnected) return;
+            try
             {
-                try
+                if (_server != null)
                 {
-                    if (_server != null)
-                    {
-                        _server.SubmitMessageToServerFromClient(message);
-                    }
-                }
-                catch (Exception)
-                {
+                    _server.SubmitMessageToServerFromClient(message);
                 }
             }
+            catch { }
         }
 
-        public void ClearPendingMessagesToClientFromServer()
+        public static void ClearPendingMessagesToClientFromServer()
         {
             EnsureConnected();
             if (!IsConnected) return;
@@ -110,100 +92,80 @@ namespace MFDExtractor.Networking
                     _server.ClearPendingMessagesToClientFromServer();
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
 
-        public Message GetNextMessageToClientFromServer()
+        public static Message GetNextMessageToClientFromServer()
         {
             EnsureConnected();
             Message toReturn = null;
-            if (IsConnected)
+            if (!IsConnected) return toReturn;
+            try
             {
-                try
+                if (_server != null)
                 {
-                    if (_server != null)
-                    {
-                        toReturn = _server.GetNextPendingMessageToClientFromServer();
-                    }
-                }
-                catch
-                {
+                    toReturn = _server.GetNextPendingMessageToClientFromServer();
                 }
             }
+            catch { }
             return toReturn;
         }
 
         [DebuggerHidden]
-        private void EnsureConnected()
+        private static void EnsureConnected()
         {
-            if (_serverEndpoint == null || _serviceName == null) return;
-            if (!IsConnected)
+            if (ServerEndpoint == null || ServiceName == null) return;
+            if (IsConnected) return;
+            IDictionary prop = new Hashtable();
+            prop["port"] = ServerEndpoint.Port;
+            prop["machineName"] = ServerEndpoint.Address.ToString();
+            prop["priority"] = 100;
+            prop["timeout"] = (uint) 1;
+            prop["retryCount"] = 0;
+            prop["useIpAddress"] = 1;
+            TcpClientChannel chan = null;
+            try
             {
-                IDictionary prop = new Hashtable();
-                prop["port"] = _serverEndpoint.Port;
-                prop["machineName"] = _serverEndpoint.Address.ToString();
-                prop["priority"] = 100;
-                prop["timeout"] = (uint) 1;
-                prop["retryCount"] = 0;
-                prop["useIpAddress"] = 1;
-                TcpClientChannel chan = null;
-                try
+                chan = new TcpClientChannel();
+            }
+            catch { }
+            try
+            {
+                if (chan != null)
                 {
-                    chan = new TcpClientChannel();
-                }
-                catch
-                {
-                }
-                try
-                {
-                    if (chan != null)
-                    {
-                        ChannelServices.RegisterChannel(chan, false);
-                    }
-                }
-                catch (Exception)
-                {
-                }
-                try
-                {
-                    RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
-                }
-                catch
-                {
-                }
-                try
-                {
-                    // Create an instance of the remote object
-                    _server = (ExtractorServer) Activator.GetObject(
-                        typeof (ExtractorServer),
-                        "tcp://"
-                        + _serverEndpoint.Address
-                        + ":"
-                        + _serverEndpoint.Port.ToString(CultureInfo.InvariantCulture)
-                        + "/"
-                        + _serviceName);
-                }
-                catch
-                {
+                    ChannelServices.RegisterChannel(chan, false);
                 }
             }
+            catch { }
+            try
+            {
+                RemotingConfiguration.CustomErrorsMode = CustomErrorsModes.Off;
+            }
+            catch { }
+            try
+            {
+                // Create an instance of the remote object
+                _server = (ExtractorServer) Activator.GetObject(
+                    typeof (ExtractorServer),
+                    "tcp://"
+                    + ServerEndpoint.Address
+                    + ":"
+                    + ServerEndpoint.Port.ToString(CultureInfo.InvariantCulture)
+                    + "/"
+                    + ServiceName);
+            }
+            catch { }
         }
 
         [DebuggerHidden]
-        private void _connectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        private static void ConnectionTestingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (_server != null)
+            if (_server == null) return;
+            try
             {
-                try
-                {
-                    _wasConnected = _server.TestConnection();
-                }
-                catch
-                {
-                }
+                _wasConnected = _server.TestConnection();
             }
+            catch { }
         }
     }
 }

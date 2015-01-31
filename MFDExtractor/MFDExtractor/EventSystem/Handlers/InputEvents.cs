@@ -44,14 +44,14 @@ namespace MFDExtractor.EventSystem.Handlers
             IEHSIStateTracker ehsiStateTracker)
 		{
 			NightVisionModeToggled =  new NightVisionModeToggledEventHandler();
-			AirspeedIndexIncreasedByOne = new AirspeedIndexIncreasedByOneEventHandler(instruments);
+            AirspeedIndexIncreasedByOne = new AirspeedIndexIncreasedByOneEventHandler(instruments);
             AirspeedIndexDecreasedByOne = new AirspeedIndexDecreasedByOneEventHandler(instruments);
-			EHSILeftKnobDecreasedByOne = new EHSILeftKnobDecreasedByOneEventHandler();
-			EHSILeftKnobIncreasedByOne = new EHSILeftKnobIncreasedByOneEventHandler();
+            EHSILeftKnobDecreasedByOne = new EHSILeftKnobDecreasedByOneEventHandler();
+            EHSILeftKnobIncreasedByOne = new EHSILeftKnobIncreasedByOneEventHandler();
             EHSIRightKnobDecreasedByOne = new EHSIRightKnobDecreasedByOneEventHandler(ehsiStateTracker);
             EHSIRightKnobIncreasedByOne = new EHSIRightKnobIncreasedByOneEventHandler(ehsiStateTracker);
-			EHSIRightKnobDepressed = new EHSIRightKnobDepressedEventHandler(ehsiStateTracker);
-			EHSIRightKnobReleased = new EHSIRightKnobReleasedEventHandler(ehsiStateTracker);
+            EHSIRightKnobDepressed = new EHSIRightKnobDepressedEventHandler(ehsiStateTracker);
+            EHSIRightKnobReleased = new EHSIRightKnobReleasedEventHandler(ehsiStateTracker);
             EHSIMenuButtonDepressed = new EHSIMenuButtonDepressedEventHandler(ehsiStateTracker);
             ISISBrightButtonDepressed = new ISISBrightButtonDepressedEventHandler(instruments);
             ISISStandardButtonDepressed = new ISISStandardButtonDepressedEventHandler(instruments);

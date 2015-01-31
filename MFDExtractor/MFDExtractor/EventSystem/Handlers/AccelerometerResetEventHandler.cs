@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Common.Networking;
 using LightningGauges.Renderers.F16;
+using MFDExtractor.Networking;
 
 namespace MFDExtractor.EventSystem.Handlers
 {
@@ -11,10 +13,22 @@ namespace MFDExtractor.EventSystem.Handlers
         {
             _instruments = instruments;
         }
-		public void Handle()
+		public void Handle(bool forwardEvent)
 		{
 		    var accelerometer = _instruments[InstrumentType.Accelerometer].Renderer as IAccelerometer;
-			accelerometer.InstrumentState.ResetMinAndMaxGs();
+		    if (accelerometer != null) accelerometer.InstrumentState.ResetMinAndMaxGs();
+		    if (!forwardEvent) return;
+            
+            switch (Extractor.State.NetworkMode)
+            {
+                case NetworkMode.Client:
+                    ExtractorClient.SendMessageToServer(new Message(MessageType.AccelerometerIsReset));
+                    break;
+                case NetworkMode.Server:
+                    ExtractorServer.SubmitMessageToClientFromServer(new Message(MessageType.AccelerometerIsReset));
+                    break;
+            }
+
 		}
 	}
 }
