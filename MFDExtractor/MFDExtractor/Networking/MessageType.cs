@@ -1,6 +1,9 @@
+using System;
+
 namespace MFDExtractor.Networking
 {
-    public enum MessageTypes
+    [Serializable]
+    public enum MessageType
     {
         AirspeedIndexIncrease,
         AirspeedIndexDecrease,
@@ -17,7 +20,5 @@ namespace MFDExtractor.Networking
         AzimuthIndicatorBrightnessIncrease,
         AzimuthIndicatorBrightnessDecrease,
         AccelerometerIsReset,
-        EnableBMSAdvancedSharedmemValues,
-        DisableBMSAdvancedSharedmemValues
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Windows.Forms;
 using Common.Networking;
 
 namespace MFDExtractor
 {
 	public class ExtractorState
 	{
-		public Form ApplicationForm { get; set; }
 		public bool Running { get; set; }
         public bool KeepRunning { get; set; }
 		public bool OptionsFormIsShowing { get; set; }

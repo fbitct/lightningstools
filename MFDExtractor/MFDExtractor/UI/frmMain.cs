@@ -60,9 +60,6 @@ namespace MFDExtractor.UI
 
             //configure an instance of the main Extractor engine 
             Extractor extractor = Extractor.GetInstance();
-			Extractor.State.ApplicationForm = this; //register the main form with the Extractor engine so that
-            //the Extractor can inform the main form of any updates to
-            //the position of visible forms
 
             //register for Extractor events
             extractor.Stopped += extractor_Stopped;

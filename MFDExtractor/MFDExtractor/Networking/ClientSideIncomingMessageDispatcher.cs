@@ -1,5 +1,4 @@
-﻿using System;
-using MFDExtractor.EventSystem.Handlers;
+﻿using MFDExtractor.EventSystem.Handlers;
 
 namespace MFDExtractor.Networking
 {
@@ -26,40 +25,40 @@ namespace MFDExtractor.Networking
 			var pendingMessage = _extractorClient.GetNextMessageToClientFromServer();
 			while (pendingMessage != null)
 			{
-				var messageType = (MessageTypes)Enum.Parse(typeof(MessageTypes), pendingMessage.MessageType);
+				var messageType = pendingMessage.MessageType;
 				switch (messageType)
 				{
-					case MessageTypes.ToggleNightMode:
+					case MessageType.ToggleNightMode:
 						_inputEvents.NightVisionModeToggled.Handle();
 						break;
-					case MessageTypes.AirspeedIndexIncrease:
+					case MessageType.AirspeedIndexIncrease:
 						_inputEvents.AirspeedIndexIncreasedByOne.Handle();
 						break;
-					case MessageTypes.AirspeedIndexDecrease:
+					case MessageType.AirspeedIndexDecrease:
 						_inputEvents.AirspeedIndexDecreasedByOne.Handle();
 						break;
-					case MessageTypes.EHSILeftKnobIncrease:
+					case MessageType.EHSILeftKnobIncrease:
 						_inputEvents.EHSILeftKnobIncreasedByOne.Handle();
 						break;
-					case MessageTypes.EHSILeftKnobDecrease:
+					case MessageType.EHSILeftKnobDecrease:
 						_inputEvents.EHSILeftKnobDecreasedByOne.Handle();
 						break;
-					case MessageTypes.EHSIRightKnobIncrease:
+					case MessageType.EHSIRightKnobIncrease:
 						_inputEvents.EHSIRightKnobIncreasedByOne.Handle();
 						break;
-					case MessageTypes.EHSIRightKnobDecrease:
+					case MessageType.EHSIRightKnobDecrease:
 						_inputEvents.EHSIRightKnobDecreasedByOne.Handle();
 						break;
-					case MessageTypes.EHSIRightKnobDepressed:
+					case MessageType.EHSIRightKnobDepressed:
 						_inputEvents.EHSIRightKnobDepressed.Handle();
 						break;
-					case MessageTypes.EHSIRightKnobReleased:
+					case MessageType.EHSIRightKnobReleased:
 						_inputEvents.EHSIRightKnobReleased.Handle();
 						break;
-					case MessageTypes.EHSIMenuButtonDepressed:
+					case MessageType.EHSIMenuButtonDepressed:
 						_inputEvents.EHSIMenuButtonDepressed.Handle();
 						break;
-					case MessageTypes.AccelerometerIsReset:
+					case MessageType.AccelerometerIsReset:
 						_inputEvents.AccelerometerReset.Handle();
 						break;
 				}

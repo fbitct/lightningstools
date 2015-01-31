@@ -23,7 +23,6 @@ namespace MFDExtractor.Networking
         private static FlightData _flightData;
         private static readonly ConcurrentDictionary<InstrumentType, Image> LatestTexSharedmemImages = new ConcurrentDictionary<InstrumentType, Image>(); 
         private static long _flightDataSequenceNum;
-        private static long _lastRetrievedFlightDataSequenceNum = 0;
         private static FlightData _lastRetrievedFlightData;
         private static string _compressionType = "LZW";
         private static string _imageFormat = "TIFF";
@@ -41,10 +40,6 @@ namespace MFDExtractor.Networking
             if (!Extractor.State.SimRunning)
             {
                 return null;
-            }
-            if (_lastRetrievedFlightDataSequenceNum == _flightDataSequenceNum)
-            {
-                return _lastRetrievedFlightData;
             }
             if (_flightData == null)
             {
@@ -80,11 +75,6 @@ namespace MFDExtractor.Networking
             if (MessagesToServerFromClient.Count >= 1000)
             {
                 MessagesToServerFromClient.RemoveRange(999, MessagesToServerFromClient.Count - 1000);
-            }
-            if (message.MessageType == "RequestNewMapImage")
-            {
-                //only allow one of these in the queue at a time
-                ClearPendingMessagesToServerFromClientOfType(message.MessageType);
             }
             MessagesToServerFromClient.Add(message);
         }
@@ -194,7 +184,7 @@ namespace MFDExtractor.Networking
             LatestTexSharedmemImages.AddOrUpdate(instrumentType, x => cloned, (x, y) => cloned);
         }
 
-        public static void ClearPendingMessagesToServerFromClientOfType(string messageType)
+        public static void ClearPendingMessagesToServerFromClientOfType(MessageType messageType)
         {
             var messagesToRemove = MessagesToServerFromClient.Where(message => message.MessageType == messageType).ToList();
 	        foreach (var message in messagesToRemove)

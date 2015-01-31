@@ -176,7 +176,7 @@
     <Compile Include="Networking\ExtractorServer.cs" />
     <Compile Include="Networking\IExtractorClient.cs" />
     <Compile Include="Networking\IExtractorServer.cs" />
-    <Compile Include="Networking\MessageTypes.cs" />
+    <Compile Include="Networking\MessageType.cs" />
     <Compile Include="Networking\Message.cs" />
     <Compile Include="Networking\ClientSideIncomingMessageDispatcher.cs" />
     <Compile Include="Networking\ServerSideIncomingMessageDispatcher.cs" />
