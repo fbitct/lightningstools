@@ -14,7 +14,12 @@ namespace MFDExtractor.Configuration
 		public KeySettingsReader(IInputControlSelectionSettingReader inputControlSelectionSettingReader = null)
 		{
 			_inputControlSelectionSettingReader = inputControlSelectionSettingReader ?? new InputControlSelectionSettingReader();
+		    Settings.Default.SettingChanging += (s, e) => _keySettings = null;
+            Settings.Default.SettingsSaving += (s, e) => _keySettings = null;
+            Settings.Default.SettingsLoaded += (s, e) => _keySettings = null;
 		}
+
+        
 		public KeySettings Read()
 		{
 			return _keySettings ?? (_keySettings = new KeySettings
@@ -35,5 +40,6 @@ namespace MFDExtractor.Configuration
 				AccelerometerResetKey = _inputControlSelectionSettingReader.Read(Settings.Default.AccelerometerResetKey)
 			});
 		}
+
 	}
 }
