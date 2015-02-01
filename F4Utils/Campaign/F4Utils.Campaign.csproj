@@ -58,6 +58,7 @@
     <Compile Include="PdxFile.cs" />
     <Compile Include="PhdFile.cs" />
     <Compile Include="RcdFile.cs" />
+    <Compile Include="RktFile.cs" />
     <Compile Include="RwdFile.cs" />
     <Compile Include="SsdFile.cs" />
     <Compile Include="SwdFile.cs" />

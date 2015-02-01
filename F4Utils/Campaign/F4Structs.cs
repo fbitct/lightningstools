@@ -4955,4 +4955,11 @@ namespace F4Utils.Campaign
         public byte infiniteGun;				// Our main gun weapon, which we will always have available
 	};
 
+    public struct RocketClassDataType
+    {
+        public short weaponId;					// Weapon ID
+        public short nweaponId;				// new Weapon ID (if type of munition changes)
+        public short weaponCount;				// number of rockets to fire
+    };
+
 }
