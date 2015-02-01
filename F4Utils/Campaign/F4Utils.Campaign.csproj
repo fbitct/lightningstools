@@ -21,6 +21,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -35,6 +36,7 @@
     <Reference Include="log4net">
       <HintPath>..\..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AirTaskingManager.cs" />
@@ -47,6 +49,11 @@
     <Compile Include="CampaignManager.cs" />
     <Compile Include="ClassTable.cs" />
     <Compile Include="CmpFile.cs" />
+    <Compile Include="FcdFile.cs" />
+    <Compile Include="FedFile.cs" />
+    <Compile Include="OcdFile.cs" />
+    <Compile Include="PhdFile.cs" />
+    <Compile Include="UcdFile.cs" />
     <Compile Include="EvtFile.cs" />
     <Compile Include="F4CampaignFileBundleReader.cs" />
     <Compile Include="F4Structs.cs" />
@@ -69,7 +76,10 @@
     <Compile Include="Team.cs" />
     <Compile Include="UniFile.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="VcdFile.cs" />
     <Compile Include="Waypoint.cs" />
+    <Compile Include="WcdFile.cs" />
+    <Compile Include="WldFile.cs" />
     <Compile Include="WthFile.cs" />
   </ItemGroup>
   <ItemGroup>

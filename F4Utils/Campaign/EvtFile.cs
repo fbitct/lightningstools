@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 namespace F4Utils.Campaign
 {
     public class EvtFile
@@ -9,12 +8,7 @@ namespace F4Utils.Campaign
         public CampEvent[] campEvents;
         #endregion
 
-        protected EvtFile()
-            : base()
-        {
-        }
         public EvtFile(byte[] bytes, int version)
-            : this()
         {
             int offset = 0;
             numEvents = BitConverter.ToInt16(bytes, offset);
