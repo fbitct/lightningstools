@@ -55,6 +55,7 @@
     <Compile Include="PdFile.cs" />
     <Compile Include="PdxFile.cs" />
     <Compile Include="PhdFile.cs" />
+    <Compile Include="RcdFile.cs" />
     <Compile Include="UcdFile.cs" />
     <Compile Include="EvtFile.cs" />
     <Compile Include="F4CampaignFileBundleReader.cs" />
