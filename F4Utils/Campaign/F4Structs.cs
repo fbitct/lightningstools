@@ -1,5 +1,4 @@
 ﻿using System;
-using F4Utils.Campaign;
 
 namespace F4Utils.Campaign
 {
@@ -4849,6 +4848,25 @@ namespace F4Utils.Campaign
         public sbyte runwayNum;					// -1 if not a runway, indicates which runway this list applies to
         public sbyte ltrt;						// put base pt to rt or left
         public short nextHeader;				// Index of next header, if any
-		};
+	};
+    public struct PtDataType
+    {
+        public float xOffset;					// X and Y offsets of this point (from center of objective tile)
+        public float yOffset;
+        public float zOffset;					// Offset in height
+        public float height;					// Max height allowend on this PT
+        public float width;						// Max width allowend on this PT
+        public float length;					//Max length allowend on this PT
+        public byte type;						// The type of point this is
+        public byte flags;
+        public byte rootIdx;					// Make it a double linked list for taxiway branches
+        public byte branchIdx;					// Make it a double linked list for taxiway branches
+    };
+
+    public class PtConstants
+    {
+        public const int IS_WEAPON_LIST = 255;
+        public const float PT_DEFAULT_SIZE = 10000.0f;
+    }
 
 }

@@ -52,6 +52,8 @@
     <Compile Include="FcdFile.cs" />
     <Compile Include="FedFile.cs" />
     <Compile Include="OcdFile.cs" />
+    <Compile Include="PdFile.cs" />
+    <Compile Include="PdxFile.cs" />
     <Compile Include="PhdFile.cs" />
     <Compile Include="UcdFile.cs" />
     <Compile Include="EvtFile.cs" />
