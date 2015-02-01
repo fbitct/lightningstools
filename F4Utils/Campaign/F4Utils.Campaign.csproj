@@ -50,6 +50,7 @@
     <Compile Include="CampaignManager.cs" />
     <Compile Include="ClassTable.cs" />
     <Compile Include="CmpFile.cs" />
+    <Compile Include="DdpFile.cs" />
     <Compile Include="FcdFile.cs" />
     <Compile Include="FedFile.cs" />
     <Compile Include="IcdFile.cs" />
