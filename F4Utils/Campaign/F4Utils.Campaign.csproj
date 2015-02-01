@@ -59,6 +59,7 @@
     <Compile Include="PhdFile.cs" />
     <Compile Include="RcdFile.cs" />
     <Compile Include="RwdFile.cs" />
+    <Compile Include="SsdFile.cs" />
     <Compile Include="SwdFile.cs" />
     <Compile Include="UcdFile.cs" />
     <Compile Include="EvtFile.cs" />
