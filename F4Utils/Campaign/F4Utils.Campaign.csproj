@@ -39,6 +39,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcdFile.cs" />
     <Compile Include="AirTaskingManager.cs" />
     <Compile Include="AirUnit.cs" />
     <Compile Include="ATMAirbase.cs" />
