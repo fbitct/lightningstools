@@ -58,6 +58,7 @@
     <Compile Include="PhdFile.cs" />
     <Compile Include="RcdFile.cs" />
     <Compile Include="RwdFile.cs" />
+    <Compile Include="SwdFile.cs" />
     <Compile Include="UcdFile.cs" />
     <Compile Include="EvtFile.cs" />
     <Compile Include="F4CampaignFileBundleReader.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="UniFile.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="VcdFile.cs" />
+    <Compile Include="VsdFile.cs" />
     <Compile Include="Waypoint.cs" />
     <Compile Include="WcdFile.cs" />
     <Compile Include="WldFile.cs" />

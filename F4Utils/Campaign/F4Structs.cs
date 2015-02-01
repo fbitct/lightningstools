@@ -4913,4 +4913,29 @@ namespace F4Utils.Campaign
 											  0x04 = can detect exact radar type
 											  0x08 = can only detect group of radar types */
     }
+
+    public struct VisualDataType
+    {
+        public float nominalRange;              // Nominal detection range
+        public float top;                       // Scan volume top (Degrees in text file)
+        public float bottom;                    // Scan volume bottom (Degrees in text file)
+        public float left;                      // Scan volume left (Degrees in text file)
+        public float right;                     // Scan volume right (Degrees in text file)
+    }
+
+    public class SimWeaponDataType
+    {
+       public int  flags;                            // Flags for the SMS
+       public float cd;                              // Drag coefficient
+       public float weight;                          // Weight
+       public float area;                            // sirface area for drag calc
+       public float xEjection;                       // Body X axis ejection velocity
+       public float yEjection;                       // Body Y axis ejection velocity
+       public float zEjection;                       // Body Z axis ejection velocity
+       public sbyte[] mnemonic=new sbyte[8];         // SMS Mnemonic
+       public int weaponClass;                       // SMS Weapon Class
+       public int domain;                            // SMS Weapon Domain
+       public int weaponType;                        // SMS Weapon Type
+       public int dataIdx;                           // Aditional characteristics data file
+    } 
 }
