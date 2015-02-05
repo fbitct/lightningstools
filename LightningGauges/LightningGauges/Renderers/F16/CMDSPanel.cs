@@ -191,8 +191,7 @@ namespace LightningGauges.Renderers.F16
                     if (InstrumentState.Other1Low) countString = "Lo" + countString;
                     if (InstrumentState.Degraded)
                     {
-                        //countString = "PGR";
-                        countString = "AUTO"; //Falcas 04/09/2012 to match what you see in BMS
+                        countString = "PGR";
                     }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
                     destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
@@ -205,8 +204,7 @@ namespace LightningGauges.Renderers.F16
                     if (InstrumentState.Other2Low) countString = "Lo" + countString;
                     if (InstrumentState.Degraded)
                     {
-                        //countString = "FAIL";
-                        countString = "DEGR";//Falcas 04/09/2012 to match what you see in BMS
+                        countString = "FAIL";
                     }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
                     destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
@@ -217,10 +215,10 @@ namespace LightningGauges.Renderers.F16
                     translateX += digitBoxWidth;
                     var countString = string.Format("{0:00}", InstrumentState.ChaffCount);
                     if (InstrumentState.ChaffLow) countString = "Lo" + countString;
-                    //if (InstrumentState.Degraded) //Falcas 04/09/2012 to match what you see in BMS
-                    //{
-                    //    countString = "GO";
-                    //}
+                    if (InstrumentState.Degraded) 
+                    {
+                        countString = "GO";
+                    }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
                     destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
@@ -228,12 +226,12 @@ namespace LightningGauges.Renderers.F16
                 //draw the Flare count
                 {
                     translateX += digitBoxWidth;
-                    var countString = string.Format("{0:00}", InstrumentState.FlareCount); //Falcas 04/09/2012 changed .Other2Count to .FlareCount
+                    var countString = string.Format("{0:00}", InstrumentState.FlareCount); 
                     if (InstrumentState.FlareLow) countString = "Lo" + countString;
-                    //if (InstrumentState.Degraded) //Falcas 04/09/2012 to match what you see in BMS
-                    //{
-                    //    countString = "BYP";
-                    //}
+                    if (InstrumentState.Degraded) 
+                    {
+                        countString = "BYP";
+                    }
                     var countLocation = new RectangleF(translateX, translateY, digitBoxWidth, digitBoxHeight);
                     destinationGraphics.DrawStringFast(countString, _digitFont, _digitBrush, countLocation, _digitStringFormat);
                 }
