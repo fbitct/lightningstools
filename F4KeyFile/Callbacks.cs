@@ -866,7 +866,6 @@ namespace F4KeyFile
         SimTransmitCom2,
         SimTriggerFirstDetent,
         SimTriggerSecondDetent,
-        SimTrimAPDISC,
         SimTrimAPDisc,
         SimTrimAPNORM,
         SimTrimNoseDown,
