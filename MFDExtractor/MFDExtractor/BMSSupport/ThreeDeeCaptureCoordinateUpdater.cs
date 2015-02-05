@@ -24,7 +24,7 @@ namespace MFDExtractor.BMSSupport
 			ILog log=null)
 		{
 		    _coordinates = coordinates;
-			_threeDeeCockpitFileFinder = threeDeeCockpitFileFinder ?? new ThreeDeeCockpitFileFinder2();
+			_threeDeeCockpitFileFinder = threeDeeCockpitFileFinder ?? new ThreeDeeCockpitFileFinder();
 			_doubleResolutionRTTChecker = doubleResolutionRTTChecker ?? new DoubleResolutionRTTChecker();
 
 			_log = log ?? LogManager.GetLogger(GetType());
