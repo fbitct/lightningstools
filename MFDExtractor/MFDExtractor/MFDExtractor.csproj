@@ -89,10 +89,11 @@
     <Compile Include="BMSSupport\BMSRunningExecutableLocator.cs" />
     <Compile Include="BMSSupport\FlightDataExtensionData.cs" />
     <Compile Include="BMSSupport\RadarAltitudeCalculator.cs" />
-    <Compile Include="BMSSupport\SharedMemorySpriteCoordinates.cs" />
+    <Compile Include="BMSSupport\TexturesSharedMemoryImageCoordinates.cs" />
     <Compile Include="BMSSupport\ThreeDeeCockpitFileFinder.cs" />
     <Compile Include="BMSSupport\DoubleResolutionRTTChecker.cs" />
     <Compile Include="BMSSupport\ThreeDeeCaptureCoordinateUpdater.cs" />
+    <Compile Include="BMSSupport\ThreeDeeCockpitFileFInder2.cs" />
     <Compile Include="Configuration\GdiPlusOptionsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsWriter.cs" />
@@ -362,6 +363,10 @@
     <ProjectReference Include="..\..\F4TexSharedMem\F4TexSharedMem.csproj">
       <Project>{E930BA7B-7474-49D7-B7CF-25106C450190}</Project>
       <Name>F4TexSharedMem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\F4Utils\Campaign\F4Utils.Campaign.csproj">
+      <Project>{d386ec91-6d89-421f-87bc-4849e0232722}</Project>
+      <Name>F4Utils.Campaign</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\F4Utils\Process\F4Utils.Process.csproj">
       <Project>{66242024-b7e5-4f66-ac1a-f0e2f1d70899}</Project>

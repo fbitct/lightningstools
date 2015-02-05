@@ -83,9 +83,7 @@ namespace F4Utils.Campaign
                 curByte += 2;
                 thisClass.dataType = bytes[curByte];
                 curByte++;
-
-
-                //skip dataPtr
+                thisClass.dataPtr = BitConverter.ToInt32(bytes, curByte);
                 curByte += 4;
                 classTable[i] = thisClass;
             }

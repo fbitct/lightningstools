@@ -7,32 +7,32 @@ namespace MFDExtractor.BMSSupport
 {
 	internal interface IThreeDeeCaptureCoordinateUpdater
 	{
-		void Update3DCoordinatesFromCurrentBmsDatFile();
+		void Update3DCoordinatesFromCurrentBmsDatFile(int vehicleACD);
 	}
 
 	class ThreeDeeCaptureCoordinateUpdater : IThreeDeeCaptureCoordinateUpdater
 	{
 		private readonly ILog _log;
-	    private readonly SharedMemorySpriteCoordinates _coordinates;
-		private readonly IThreeDeeCockpitFileFinder _threeDeeCockpitFileFinder;
+	    private readonly TexturesSharedMemoryImageCoordinates _coordinates;
+		private readonly IThreeDeeCockpitFileFinder2 _threeDeeCockpitFileFinder;
 		private readonly IDoubleResolutionRTTChecker _doubleResolutionRTTChecker;
 
 		public ThreeDeeCaptureCoordinateUpdater(
-            SharedMemorySpriteCoordinates coordinates,
-            IThreeDeeCockpitFileFinder threeDeeCockpitFileFinder=null,
+            TexturesSharedMemoryImageCoordinates coordinates,
+            IThreeDeeCockpitFileFinder2 threeDeeCockpitFileFinder=null,
 			IDoubleResolutionRTTChecker doubleResolutionRTTChecker = null,
 			ILog log=null)
 		{
 		    _coordinates = coordinates;
-			_threeDeeCockpitFileFinder = threeDeeCockpitFileFinder ?? new ThreeDeeCockpitFileFinder();
+			_threeDeeCockpitFileFinder = threeDeeCockpitFileFinder ?? new ThreeDeeCockpitFileFinder2();
 			_doubleResolutionRTTChecker = doubleResolutionRTTChecker ?? new DoubleResolutionRTTChecker();
 
 			_log = log ?? LogManager.GetLogger(GetType());
 		}
-        public void Update3DCoordinatesFromCurrentBmsDatFile()
+        public void Update3DCoordinatesFromCurrentBmsDatFile(int vehicleACD)
 		{
 
-			var threeDeeCockpitFile = _threeDeeCockpitFileFinder.FindThreeDeeCockpitFile();
+			var threeDeeCockpitFile = _threeDeeCockpitFileFinder.FindThreeDeeCockpitFile(vehicleACD);
 			if (threeDeeCockpitFile == null)
 			{
 				return;

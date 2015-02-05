@@ -30,6 +30,7 @@ namespace MFDExtractor
         private F4TexSharedMem.IReader _texSmReader = new F4TexSharedMem.Reader();
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
         private TerrainDB _terrainDB;
+	    private static FlightData _flightData;
         #region Network Configuration
 
         private string _compressionType = "None";
@@ -67,7 +68,7 @@ namespace MFDExtractor
 	    private readonly IInstrumentFactory _instrumentFactory;
 		private readonly IThreeDeeCaptureCoordinateUpdater _threeDeeCaptureCoordinateUpdater;
 	    private  IFlightDataRetriever _flightDataRetriever;
-		private readonly SharedMemorySpriteCoordinates _sharedMemorySpriteCoordinates = new SharedMemorySpriteCoordinates();
+		private readonly TexturesSharedMemoryImageCoordinates _texturesSharedMemoryImageCoordinates = new TexturesSharedMemoryImageCoordinates();
 	    private readonly PerformanceCounterInstaller _performanceCounterInstaller;
 
 	    #endregion
@@ -96,8 +97,8 @@ namespace MFDExtractor
 			_keyboardWatcher = keyboardWatcher ?? new KeyboardWatcher(_inputEvents, Log);
 			_serverSideIncomingMessageDispatcher = serverSideIncomingMessageDispatcher ?? new ServerSideIncomingMessageDispatcher(_inputEvents);
             _flightDataRetriever = flightDataRetriever ?? new FlightDataRetriever();
-			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_sharedMemorySpriteCoordinates);
-	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater( _sharedMemorySpriteCoordinates);
+			_threeDeeCaptureCoordinateUpdater = threeDeeCaptureCoordinateUpdater ?? new ThreeDeeCaptureCoordinateUpdater(_texturesSharedMemoryImageCoordinates);
+	        _flightDataUpdater = flightDataUpdater ?? new FlightDataUpdater( _texturesSharedMemoryImageCoordinates);
             _performanceCounterInstaller = new PerformanceCounterInstaller();
         }
         private void SetupInstruments()
@@ -227,7 +228,7 @@ namespace MFDExtractor
                 ExtractorClient.ServiceName = "MFDExtractorService";
                 _clientSideIncomingMessageDispatcher = new ClientSideIncomingMessageDispatcher(_inputEvents);
                 _flightDataRetriever = new FlightDataRetriever();
-                _flightDataUpdater = new FlightDataUpdater(_sharedMemorySpriteCoordinates, null);
+                _flightDataUpdater = new FlightDataUpdater(_texturesSharedMemoryImageCoordinates, null);
 
             }
             catch {}
@@ -265,6 +266,7 @@ namespace MFDExtractor
 
         private static void SetFlightData(FlightData flightData)
         {
+            _flightData = flightData;
             if (flightData == null) return;
             if (State.NetworkMode == NetworkMode.Server)
             {
@@ -410,7 +412,7 @@ namespace MFDExtractor
                                     if (_texSmReader == null) _texSmReader = new F4TexSharedMem.Reader();
                                     if (NeedToCaptureMFDsAndOrHud)
                                     {
-                                        EnsureThreeDeeCaptureCoordinatesAreLoaded();
+                                        EnsureThreeDeeCaptureCoordinatesAreLoaded(_flightData !=null ? _flightData.vehicleACD:-1);
                                     }
                                 }
                                 catch (InvalidOperationException)
@@ -445,25 +447,25 @@ namespace MFDExtractor
             }
         }
 
-	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded()
+	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded(int vehicleACD)
 	    {
-			if ((_sharedMemorySpriteCoordinates.HUD == Rectangle.Empty) &&
-				(_sharedMemorySpriteCoordinates.LMFD == Rectangle.Empty) &&
-				(_sharedMemorySpriteCoordinates.RMFD == Rectangle.Empty) &&
-				(_sharedMemorySpriteCoordinates.MFD3 == Rectangle.Empty) &&
-				(_sharedMemorySpriteCoordinates.MFD4 == Rectangle.Empty))
+			if ((_texturesSharedMemoryImageCoordinates.HUD == Rectangle.Empty) &&
+				(_texturesSharedMemoryImageCoordinates.LMFD == Rectangle.Empty) &&
+				(_texturesSharedMemoryImageCoordinates.RMFD == Rectangle.Empty) &&
+				(_texturesSharedMemoryImageCoordinates.MFD3 == Rectangle.Empty) &&
+				(_texturesSharedMemoryImageCoordinates.MFD4 == Rectangle.Empty))
 	        {
-	            _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile();
+	            _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile(vehicleACD);
 	        }
 	    }
 
 	    private void ResetThreeDeeCaptureCoordinates()
 	    {
-	        _sharedMemorySpriteCoordinates.HUD = Rectangle.Empty;
-            _sharedMemorySpriteCoordinates.LMFD = Rectangle.Empty;
-            _sharedMemorySpriteCoordinates.RMFD = Rectangle.Empty;
-            _sharedMemorySpriteCoordinates.MFD3 = Rectangle.Empty;
-            _sharedMemorySpriteCoordinates.MFD4 = Rectangle.Empty;
+	        _texturesSharedMemoryImageCoordinates.HUD = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.LMFD = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.RMFD = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.MFD3 = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.MFD4 = Rectangle.Empty;
         }
 
 	    private static bool NeedToCaptureMFDsAndOrHud

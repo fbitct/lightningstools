@@ -3,11 +3,11 @@ using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {
-    internal interface ICurrentTheaterDotTdfLoader
+    public interface ICurrentTheaterDotTdfLoader
     {
         TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath);
     }
-    class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
+    public class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
     {
         private readonly ICurrentTheaterNameDetector _currentTheaterNameDetector;
         private readonly ITheaterDotTdfFileReader _theaterDotTdfFileReader;

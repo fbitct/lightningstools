@@ -2,9 +2,9 @@
 
 namespace MFDExtractor.BMSSupport
 {
-	class SharedMemorySpriteCoordinates
+	class TexturesSharedMemoryImageCoordinates
 	{
-		public SharedMemorySpriteCoordinates()
+		public TexturesSharedMemoryImageCoordinates()
 		{
 			HUD = Rectangle.Empty;
 			LMFD = Rectangle.Empty;
