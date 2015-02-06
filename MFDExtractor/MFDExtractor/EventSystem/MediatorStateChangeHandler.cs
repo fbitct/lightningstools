@@ -60,16 +60,18 @@ namespace MFDExtractor.EventSystem
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSICourseDepressedKey))
 			{
-                _inputEvents.EHSIRightKnobDepressed.Handle(true);
+			    if (e.Control.ControlType == ControlType.Button && e.CurrentState == 0 && e.PreviousState == 1)
+			    {
+			        _inputEvents.EHSIRightKnobReleased.Handle(true);
+			    }
+			    else
+			    {
+			        _inputEvents.EHSIRightKnobDepressed.Handle(true);
+			    }
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.EHSIMenuButtonDepressedKey))
 			{
                 _inputEvents.EHSIMenuButtonDepressed.Handle(true);
-			}
-			else if (
-				!_diHotkeyDetection.DirectInputHotkeyIsTriggering(keySettings.EHSICourseDepressedKey))
-			{
-                _inputEvents.EHSIRightKnobReleased.Handle(true);
 			}
 			else if (_directInputEventHotkeyFilter.CheckIfMatches(e, keySettings.ISISBrightButtonKey))
 			{

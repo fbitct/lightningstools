@@ -23,7 +23,7 @@ namespace MFDExtractor.EventSystem.Handlers
 		    if (ehsi.InstrumentState.ShowBrightnessLabel)
 		    {
 		        var newBrightness =
-		            (int) Math.Floor((ehsi.InstrumentState.Brightness - ehsi.InstrumentState.MaxBrightness)*(1.0f/32.0f));
+		            (int) Math.Floor((ehsi.InstrumentState.Brightness - (ehsi.InstrumentState.MaxBrightness*(1.0f/32.0f))));
 		        ehsi.InstrumentState.Brightness = newBrightness;
 		        Settings.Default.EHSIBrightness = newBrightness;
 		    }
