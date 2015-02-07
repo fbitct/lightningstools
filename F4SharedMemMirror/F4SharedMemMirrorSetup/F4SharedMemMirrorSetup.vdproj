@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_064A55C142C7E5D134A0E07A48FC32F2"
+        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_25E31EB765944F9A9472ED9B1FAB936F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -27,12 +33,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4950AB678A24C1A74CE4FF98DEAA07C6"
-        "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_25E879C23B4D45DFABDCF669E7F6E043"
         "MsmSig" = "8:_UNDEFINED"
@@ -40,7 +40,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4950AB678A24C1A74CE4FF98DEAA07C6"
+        "OwnerKey" = "8:_064A55C142C7E5D134A0E07A48FC32F2"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -138,34 +138,14 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_25E31EB765944F9A9472ED9B1FAB936F"
-            {
-            "SourcePath" = "8:..\\F4SharedMemMirror\\SharedMemMirror.ico"
-            "TargetName" = "8:SharedMemMirror.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4950AB678A24C1A74CE4FF98DEAA07C6"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_064A55C142C7E5D134A0E07A48FC32F2"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:F4SharedMem, Version=3.0.0.0, Culture=neutral, PublicKeyToken=98c24c6603c8861c, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_4950AB678A24C1A74CE4FF98DEAA07C6"
+                    "_064A55C142C7E5D134A0E07A48FC32F2"
                     {
                     "Name" = "8:F4SharedMem.dll"
                     "Attributes" = "3:512"
@@ -187,6 +167,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_25E31EB765944F9A9472ED9B1FAB936F"
+            {
+            "SourcePath" = "8:..\\F4SharedMemMirror\\SharedMemMirror.ico"
+            "TargetName" = "8:SharedMemMirror.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_2314EB949F544DC997AEF87FFBDABEAA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -257,14 +257,14 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Falcon 4 Shared Memory Mirror"
         "ProductCode" = "8:{D5EEC1EC-D895-49CD-AB32-03AF2AC2558D}"
-        "PackageCode" = "8:{CE7C6A10-8D81-4565-8C3F-7679EA936CC4}"
+        "PackageCode" = "8:{5BE25A88-42FE-4492-8801-221A273EB02C}"
         "UpgradeCode" = "8:{88DCE1F7-00D3-40D0-AA6F-3A1288486DFC}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.4.4"
+        "ProductVersion" = "8:0.4.5"
         "Manufacturer" = "8:NA"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
