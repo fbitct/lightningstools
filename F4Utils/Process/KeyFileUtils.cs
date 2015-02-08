@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -36,7 +35,6 @@ namespace F4Utils.Process
 
         public static void SendCallbackToFalcon(string callback)
         {
-            Debug.WriteLine(string.Format("Sending {0} callback to falcon", callback));
             Util.ActivateFalconWindow();
             var binding = FindKeyBinding(callback);
             if (binding == null) return;

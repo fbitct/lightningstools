@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Management;
 using System.Text;
-using System.Threading;
 using Common.Win32;
 
 namespace F4Utils.Process
@@ -35,30 +34,24 @@ namespace F4Utils.Process
         }
 
         private static DateTime _lastFalconRunningCheck = DateTime.MinValue;
-        private static bool _falconWasRunningOnLastCheck = false;
+        private static bool _falconWasRunningOnLastCheck;
         public static bool IsFalconRunning()
         {
-            if (DateTime.Now.Subtract(_lastFalconRunningCheck).TotalMilliseconds > 500)
-            {
-
-                var windowHandle = GetFalconWindowHandle();
-                _falconWasRunningOnLastCheck = (windowHandle != IntPtr.Zero);
-                _lastFalconRunningCheck = DateTime.Now;
-            }
+            if (!(DateTime.Now.Subtract(_lastFalconRunningCheck).TotalMilliseconds > 500))
+                return _falconWasRunningOnLastCheck;
+            var windowHandle = GetFalconWindowHandle();
+            _falconWasRunningOnLastCheck = (windowHandle != IntPtr.Zero);
+            _lastFalconRunningCheck = DateTime.Now;
             return _falconWasRunningOnLastCheck;
         }
 
         public static string GetFalconExePath()
         {
             var windowHandle = GetFalconWindowHandle();
-            string toReturn = null;
-            if (windowHandle != IntPtr.Zero)
-            {
-                int procId;
-                NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
-                toReturn = ExePath(procId);
-            }
-            return toReturn;
+            if (windowHandle == IntPtr.Zero) return null;
+            int procId;
+            NativeMethods.GetWindowThreadProcessId(windowHandle, out procId);
+            return ExePath(procId);
         }
         private static int? _lastFalconExeProcessId;
         private static string _lastFalconExePath;
