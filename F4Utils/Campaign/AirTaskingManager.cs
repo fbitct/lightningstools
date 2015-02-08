@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public class AirTaskingManager : CampaignManager
@@ -167,10 +169,10 @@ namespace F4Utils.Campaign
                         offset++;
                     }
 
-                    mis_request.min_to = bytes[offset];
+                    mis_request.min_to = (sbyte)bytes[offset];
                     offset++;
 
-                    mis_request.max_to = bytes[offset];
+                    mis_request.max_to = (sbyte)bytes[offset];
                     offset++;
 
                     offset += 3;// align on int32 boundary

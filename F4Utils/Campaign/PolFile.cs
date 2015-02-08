@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public class PolFile
@@ -41,6 +43,8 @@ namespace F4Utils.Campaign
                     {
                         thisObjective.priority[j] = BitConverter.ToInt16(bytes, offset);
                         offset += 2;
+                        thisObjective.flags = bytes[offset];
+                        offset += 1;
                     }
                 }
             }

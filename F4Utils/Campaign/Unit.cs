@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public class Unit : CampaignBase

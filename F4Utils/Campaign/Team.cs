@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using F4Utils.Campaign.F4Structs;
 
 namespace F4Utils.Campaign
 {

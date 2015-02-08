@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public class Waypoint
@@ -12,6 +14,8 @@ namespace F4Utils.Campaign
         public byte Action;
         public byte RouteAction;
         public byte Formation;
+        public short FormationSpacing;
+
         public uint Flags;
         public VU_ID TargetID;
         public byte TargetBuilding;
@@ -21,7 +25,6 @@ namespace F4Utils.Campaign
         public const byte WP_HAVE_DEPTIME = 0x01;
         public const byte WP_HAVE_TARGET = 0x02;
 
-        private const int FLAGS_WIDENED_AT_VERSION=73;
         protected Waypoint()
             : base()
         {
@@ -43,10 +46,12 @@ namespace F4Utils.Campaign
             offset++;
             RouteAction = bytes[offset];
             offset++;
-            Formation = bytes[offset];
+            var tmp = bytes[offset];
             offset++;
+            Formation = (byte)(tmp & 0x0f);
+            FormationSpacing = (short)( ((tmp >> 4) & 0x0F) - 8);
 
-            if (version < FLAGS_WIDENED_AT_VERSION)
+            if (version < 72)
             {
                 Flags = BitConverter.ToUInt16(bytes, offset);
                 offset += 2;
@@ -54,7 +59,6 @@ namespace F4Utils.Campaign
             else
             {
                 Flags = BitConverter.ToUInt32(bytes, offset);
-                //TODO: SOME NEW FIELD, 2 BYTES LONG, COMES HERE, OR ELSE FLAGS IS EXPANDED IN AT LATEST V73 (PROBABLY EARLIER?) TO BE 4 BYTES LONG INSTEAD OF 2 BYTES LONG
                 offset += 4; 
 
             }

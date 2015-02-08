@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public static class ClassTable

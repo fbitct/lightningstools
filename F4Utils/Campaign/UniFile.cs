@@ -1,4 +1,5 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
 using log4net;
 
 namespace F4Utils.Campaign

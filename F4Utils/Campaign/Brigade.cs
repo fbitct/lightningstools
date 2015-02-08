@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
 
@@ -19,7 +21,6 @@ namespace F4Utils.Campaign
             elements = bytes[offset];
             offset++;
             element = new VU_ID[elements];
-            if (elements < 5) element = new VU_ID[5];
             for (int i = 0; i < elements; i++)
             {
                 VU_ID thisElement = new VU_ID();

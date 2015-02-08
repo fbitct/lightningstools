@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public class Flight : AirUnit
@@ -11,7 +13,7 @@ namespace F4Utils.Campaign
         public uint time_on_target;
         public uint mission_over_time;
         public short mission_target;
-        public byte use_loadout;
+        public sbyte use_loadout;
         public byte[] weapons;
         public byte loadouts;
         public LoadoutStruct[] loadout;
@@ -34,9 +36,9 @@ namespace F4Utils.Campaign
         public byte last_player_slot;
         public byte callsign_id;
         public byte callsign_num;
+        public uint refuelQuantity;
         #endregion
         private const int WEAPON_IDS_WIDENED_VERSION = 73;
-        private const int NEW_ENDING_FIELD_ADDED_VERSION = 73;
         protected Flight()
             : base()
         {
@@ -79,7 +81,7 @@ namespace F4Utils.Campaign
                 loadout = new LoadoutStruct[loadouts];
                 if (version >= 8)
                 {
-                    use_loadout = bytes[offset];
+                    use_loadout = (sbyte) bytes[offset];
                     offset++;
 
                     if (use_loadout != 0)
@@ -283,9 +285,14 @@ namespace F4Utils.Campaign
             callsign_num = bytes[offset];
             offset++;
 
-            if (version >= NEW_ENDING_FIELD_ADDED_VERSION)
+            if (version >= 72)
             {
-                offset+=4;
+                refuelQuantity = BitConverter.ToUInt32(bytes, offset);
+                offset += 4;
+            }
+            else
+            {
+                refuelQuantity = 0;
             }
         }
     }

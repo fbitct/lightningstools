@@ -1,4 +1,5 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
 
 namespace F4Utils.Campaign
 {
@@ -46,7 +47,6 @@ namespace F4Utils.Campaign
             elements = bytes[offset];
             offset++;
             element = new VU_ID[elements];
-            if (elements < 5) element = new VU_ID[5];
             for (int i = 0; i < elements; i++)
             {
                 VU_ID thisElement = new VU_ID();
@@ -220,7 +220,6 @@ namespace F4Utils.Campaign
                     egress_waypoints[j] = new Waypoint(bytes, ref offset, version);
                 }
 
-
                 mis_request.requesterID = new VU_ID();
                 mis_request.requesterID.num_ = BitConverter.ToUInt32(bytes, offset);
                 offset += 4;
@@ -318,10 +317,10 @@ namespace F4Utils.Campaign
                         offset++;
                     }
 
-                    mis_request.min_to = bytes[offset];
+                    mis_request.min_to = (sbyte)bytes[offset];
                     offset++;
 
-                    mis_request.max_to = bytes[offset];
+                    mis_request.max_to = (sbyte)bytes[offset];
                     offset++;
 
                     offset += 3;// align on int32 boundary

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
 
@@ -292,7 +294,7 @@ namespace F4Utils.Campaign
                     curByte += 4;
                     //skip UiEventNode pointer
                     curByte += 4;
-                    ushort eventTextSize = BitConverter.ToUInt16(bytes, curByte);
+                    short eventTextSize = BitConverter.ToInt16(bytes, curByte);
                     curByte += 2;
                     string eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
                     curByte += eventTextSize;
@@ -332,7 +334,7 @@ namespace F4Utils.Campaign
                     //skip UiEventNode pointer
                     curByte += 4;
 
-                    ushort eventTextSize = BitConverter.ToUInt16(bytes, curByte);
+                    short eventTextSize = BitConverter.ToInt16(bytes, curByte);
                     curByte += 2;
                     string eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
                     curByte += eventTextSize;
@@ -357,55 +359,95 @@ namespace F4Utils.Campaign
             curByte += 2;
             if (NumAvailableSquadrons > 0)
             {
-                SquadInfo = new SquadInfo[NumAvailableSquadrons];
-                for (int i = 0; i < NumAvailableSquadrons; i++)
+                if (_version < 42)
                 {
-                    SquadInfo thisSquadInfo = new SquadInfo();
-                    thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
-                    curByte += 4;
-                    thisSquadInfo.y = BitConverter.ToSingle(bytes, curByte);
-                    curByte += 4;
-
-                    VU_ID thisSquadId = new VU_ID();
-                    thisSquadId.num_ = BitConverter.ToUInt32(bytes, curByte);
-                    curByte += 4;
-                    thisSquadId.creator_ = BitConverter.ToUInt32(bytes, curByte);
-                    curByte += 4;
-                    thisSquadInfo.id = thisSquadId;
-
-                    thisSquadInfo.descriptionIndex = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-
-                    thisSquadInfo.nameId = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-
-                    thisSquadInfo.airbaseIcon = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-
-                    thisSquadInfo.squadronPath = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-
-                    thisSquadInfo.specialty = bytes[curByte];
-                    curByte++;
-
-                    thisSquadInfo.currentStrength = bytes[curByte];
-                    curByte++;
-
-                    thisSquadInfo.country = bytes[curByte];
-                    curByte++;
-
-                    thisSquadInfo.airbaseName = Encoding.ASCII.GetString(bytes, curByte, 40);
-                    nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
-                    if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
-                    curByte += 40;
-
-                    if (_version < 42)
+                    SquadInfo = new SquadInfo[NumAvailableSquadrons];
+                    for (int i = 0; i < NumAvailableSquadrons; i++)
                     {
-                        curByte += 40; //skip additional string length for squad name in older versions that had 80 bytes
-                    }
+                        SquadInfo thisSquadInfo = new SquadInfo();
+                        thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
+                        curByte += 4;
+                        thisSquadInfo.y = BitConverter.ToSingle(bytes, curByte);
+                        curByte += 4;
 
-                    curByte++; //align on int32 boundary
-                    SquadInfo[i] = thisSquadInfo;
+                        VU_ID thisSquadId = new VU_ID();
+                        thisSquadId.num_ = BitConverter.ToUInt32(bytes, curByte);
+                        curByte += 4;
+                        thisSquadId.creator_ = BitConverter.ToUInt32(bytes, curByte);
+                        curByte += 4;
+                        thisSquadInfo.id = thisSquadId;
+
+                        thisSquadInfo.descriptionIndex = BitConverter.ToInt16(bytes, curByte);
+                        curByte += 2;
+
+                        thisSquadInfo.nameId = BitConverter.ToInt16(bytes, curByte);
+                        curByte += 2;
+
+                        thisSquadInfo.specialty = bytes[curByte];
+                        curByte++;
+
+                        thisSquadInfo.currentStrength = bytes[curByte];
+                        curByte++;
+
+                        thisSquadInfo.country = bytes[curByte];
+                        curByte++;
+
+                        thisSquadInfo.airbaseName = Encoding.ASCII.GetString(bytes, curByte, 80);
+                        nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
+                        if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
+                        curByte += 80;
+
+                        curByte++; //align on int32 boundary
+                        SquadInfo[i] = thisSquadInfo;
+                    }
+                }
+                else
+                {
+                    SquadInfo = new SquadInfo[NumAvailableSquadrons];
+                    for (int i = 0; i < NumAvailableSquadrons; i++)
+                    {
+                        SquadInfo thisSquadInfo = new SquadInfo();
+                        thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
+                        curByte += 4;
+                        thisSquadInfo.y = BitConverter.ToSingle(bytes, curByte);
+                        curByte += 4;
+
+                        VU_ID thisSquadId = new VU_ID();
+                        thisSquadId.num_ = BitConverter.ToUInt32(bytes, curByte);
+                        curByte += 4;
+                        thisSquadId.creator_ = BitConverter.ToUInt32(bytes, curByte);
+                        curByte += 4;
+                        thisSquadInfo.id = thisSquadId;
+
+                        thisSquadInfo.descriptionIndex = BitConverter.ToInt16(bytes, curByte);
+                        curByte += 2;
+
+                        thisSquadInfo.nameId = BitConverter.ToInt16(bytes, curByte);
+                        curByte += 2;
+
+                        thisSquadInfo.airbaseIcon = BitConverter.ToInt16(bytes, curByte);
+                        curByte += 2;
+
+                        thisSquadInfo.squadronPath = BitConverter.ToInt16(bytes, curByte);
+                        curByte += 2;
+
+                        thisSquadInfo.specialty = bytes[curByte];
+                        curByte++;
+
+                        thisSquadInfo.currentStrength = bytes[curByte];
+                        curByte++;
+
+                        thisSquadInfo.country = bytes[curByte];
+                        curByte++;
+
+                        thisSquadInfo.airbaseName = Encoding.ASCII.GetString(bytes, curByte, 40);
+                        nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
+                        if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
+                        curByte += 40;
+
+                        curByte++; //align on int32 boundary
+                        SquadInfo[i] = thisSquadInfo;
+                    }
                 }
             }
             if (_version >= 31)

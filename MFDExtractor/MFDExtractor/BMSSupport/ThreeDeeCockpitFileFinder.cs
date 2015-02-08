@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using F4Utils.Campaign;
+using F4Utils.Campaign.F4Structs;
 using F4Utils.Terrain;
 
 namespace MFDExtractor.BMSSupport

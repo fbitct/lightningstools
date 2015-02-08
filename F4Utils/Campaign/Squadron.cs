@@ -1,4 +1,6 @@
 ﻿using System;
+using F4Utils.Campaign.F4Structs;
+
 namespace F4Utils.Campaign
 {
     public class Squadron : AirUnit
@@ -45,27 +47,25 @@ namespace F4Utils.Campaign
                     offset++;
                 }
             }
-            else
+            else if (version < 72)
             {
-                if (version >= 72)
-                {
-                    stores = new byte[600];
-                    for (int i = 0; i < 600; i++)
-                    {
-                        stores[i] = bytes[offset];
-                        offset++;
-                    }
-                }
-                else
-                {
-                    stores = new byte[220];
+                stores = new byte[220];
                     for (int i = 0; i < 220; i++)
                     {
                         stores[i] = bytes[offset];
                         offset++;
                     }
-                }
             }
+            else
+            {
+                stores = new byte[600];
+                    for (int i = 0; i < 600; i++)
+                    {
+                        stores[i] = bytes[offset];
+                        offset++;
+                    }
+            }
+           
 
             if (version < 47)
             {
@@ -206,7 +206,7 @@ namespace F4Utils.Campaign
                 pilot_losses = 0;
             }
 
-            if (!(version < 45))
+            if (version >=45)
             {
                 squadron_patch = bytes[offset];
                 offset++;
