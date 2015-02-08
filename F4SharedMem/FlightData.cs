@@ -1,12 +1,17 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using F4SharedMem.Headers;
+
 namespace F4SharedMem
 {
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     [Serializable]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class FlightData
     {
         [ComVisible(true)]
@@ -20,125 +25,38 @@ namespace F4SharedMem
         public FlightData()
         {
         }
-        internal FlightData(Headers.BMS4FlightData data)
+        internal FlightData(BMS4FlightData data)
         {
             PopulateFromStruct(data);
         }
 
         internal void PopulateFromStruct(object data)
         {
-            Type thisType = this.GetType();
-            Type dataType = data.GetType();
-            FieldInfo[] fields = dataType.GetFields(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            for (int i = 0; i < fields.Length; i++)
+            var thisType = GetType();
+            var dataType = data.GetType();
+            var fields = dataType.GetFields(BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var currentField in fields)
             {
-                FieldInfo currentField = fields[i];
-                FieldInfo thisField = thisType.GetField(currentField.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var thisField = thisType.GetField(currentField.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if (thisField == null) continue;
-                Type currentFieldType = currentField.FieldType;
+                var currentFieldType = currentField.FieldType;
                 if (currentFieldType.IsArray)
                 {
-                    if (currentFieldType == typeof(Headers.DED_PFL_LineOfText[]))
+                    if (currentFieldType == typeof(DED_PFL_LineOfText[]))
                     {
-                        Headers.DED_PFL_LineOfText[] currentValue = (Headers.DED_PFL_LineOfText[])currentField.GetValue(data);
-                        string[] valuesToAssign = new string[currentValue.Length];
-                        for (int j = 0; j < currentValue.Length; j++)
-                        {
-                            Headers.DED_PFL_LineOfText currentItem = currentValue[j];
-                            StringBuilder sb = new StringBuilder(currentItem.chars.Length);
-                            bool invert = false;
-                            if (currentField.Name.ToLowerInvariant().Contains("invert"))
-                            {
-                                invert = true;//this is an inversion line
-                            }
-                            for (int k = 0; k < currentItem.chars.Length; k++)
-                            {
-                                sbyte chr = currentItem.chars[k];
-                                if (invert)
-                                {
-                                    if (chr == 0x02)
-                                    {
-                                        sb.Append((char)chr);
-                                    }
-                                    else
-                                    {
-                                        sb.Append(' ');
-                                    }
-                                }
-                                else
-                                {
-                                    if (chr != 0)
-                                    {
-                                        sb.Append((char)chr);
-                                    }
-                                }
-                            }
-                            valuesToAssign[j] = sb.ToString();
-                        }
-                        thisField.SetValue(this, valuesToAssign);
+                        PopulateDedPflLineOfText(data, currentField, thisField);
                     }
-                    else if (currentFieldType == typeof(Headers.OSBLabel[]))
+                    else if (currentFieldType == typeof(OSBLabel[]))
                     {
-                        Headers.OSBLabel[] currentValue = (Headers.OSBLabel[])currentField.GetValue(data);
-                        OptionSelectButtonLabel[] valuesToAssign = new OptionSelectButtonLabel[currentValue.Length];
-                        for (int j = 0; j < currentValue.Length; j++)
-                        {
-                            Headers.OSBLabel currentItem = currentValue[j];
-                            OptionSelectButtonLabel label = new OptionSelectButtonLabel();
-                            StringBuilder lineBuilder = new StringBuilder(currentItem.Line1.Length);
-
-                            foreach (sbyte chr in currentItem.Line1)
-                            {
-                                if (chr == 0)
-                                {
-                                    lineBuilder.Append(" ");
-                                }
-                                else
-                                {
-                                    lineBuilder.Append((char)chr);
-                                }
-                            }
-                            label.Line1 = lineBuilder.ToString();
-                            lineBuilder = new StringBuilder(currentItem.Line2.Length);
-                            foreach (sbyte chr in currentItem.Line2)
-                            {
-                                if (chr == 0)
-                                {
-                                    lineBuilder.Append(" ");
-                                }
-                                else
-                                {
-                                    lineBuilder.Append((char)chr);
-                                }
-                            }
-                            label.Inverted = currentItem.Inverted;
-                            valuesToAssign[j] = label;
-                        }
-                        thisField.SetValue(this, valuesToAssign);
+                        PopulateOSBLabel(data, currentField, thisField);
                     }
-                    else if (currentFieldType == typeof(Headers.Callsign_LineOfText[]))
+                    else if (currentFieldType == typeof(Callsign_LineOfText[]))
                     {
-                        Headers.Callsign_LineOfText[] currentValue = (Headers.Callsign_LineOfText[])currentField.GetValue(data);
-                        string[] valuesToAssign = new string[currentValue.Length];
-                        for (int j = 0; j < currentValue.Length; j++)
-                        {
-                            Headers.Callsign_LineOfText currentItem = currentValue[j];
-                            StringBuilder sb = new StringBuilder(currentItem.chars.Length);
-                           for (int k = 0; k < currentItem.chars.Length; k++)
-                            {
-                                sbyte chr = currentItem.chars[k];
-                                if (chr != 0)
-                                {
-                                   sb.Append((char)chr);
-                                }
-                            }
-                            valuesToAssign[j] = sb.ToString();
-                        }
-                        thisField.SetValue(this, valuesToAssign);
+                        PopulateCallsignLineOfText(data, currentField, thisField);
                     }
                     else
                     {
-                        System.Array currentValue = (System.Array)currentField.GetValue(data);
+                        var currentValue = (Array)currentField.GetValue(data);
                         thisField.SetValue(this, currentValue);
                     }
                 }
@@ -153,6 +71,99 @@ namespace F4SharedMem
                 }
             }
         }
+
+        private void PopulateDedPflLineOfText(object data, FieldInfo currentField, FieldInfo thisField)
+        {
+            var currentValue = (DED_PFL_LineOfText[]) currentField.GetValue(data);
+            var valuesToAssign = new string[currentValue.Length];
+            for (var j = 0; j < currentValue.Length; j++)
+            {
+                var currentItem = currentValue[j];
+                var sb = new StringBuilder(currentItem.chars.Length);
+                var invert = currentField.Name.ToLowerInvariant().Contains("invert");
+                foreach (var chr in currentItem.chars)
+                {
+                    if (invert)
+                    {
+                        if (chr == 0x02)
+                        {
+                            sb.Append((char) chr);
+                        }
+                        else
+                        {
+                            sb.Append(' ');
+                        }
+                    }
+                    else
+                    {
+                        if (chr != 0)
+                        {
+                            sb.Append((char) chr);
+                        }
+                    }
+                }
+                valuesToAssign[j] = sb.ToString();
+            }
+            thisField.SetValue(this, valuesToAssign);
+        }
+
+        private void PopulateCallsignLineOfText(object data, FieldInfo currentField, FieldInfo thisField)
+        {
+            var currentValue = (Callsign_LineOfText[]) currentField.GetValue(data);
+            var valuesToAssign = new string[currentValue.Length];
+            for (var j = 0; j < currentValue.Length; j++)
+            {
+                var currentItem = currentValue[j];
+                var sb = new StringBuilder(currentItem.chars.Length);
+                foreach (var chr in currentItem.chars.Where(chr => chr != 0))
+                {
+                    sb.Append((char) chr);
+                }
+                valuesToAssign[j] = sb.ToString();
+            }
+            thisField.SetValue(this, valuesToAssign);
+        }
+
+        private void PopulateOSBLabel(object data, FieldInfo currentField, FieldInfo thisField)
+        {
+            var currentValue = (OSBLabel[]) currentField.GetValue(data);
+            var valuesToAssign = new OptionSelectButtonLabel[currentValue.Length];
+            for (var j = 0; j < currentValue.Length; j++)
+            {
+                var currentItem = currentValue[j];
+                var label = new OptionSelectButtonLabel();
+                var lineBuilder = new StringBuilder(currentItem.Line1.Length);
+
+                foreach (var chr in currentItem.Line1)
+                {
+                    if (chr == 0)
+                    {
+                        lineBuilder.Append(" ");
+                    }
+                    else
+                    {
+                        lineBuilder.Append((char) chr);
+                    }
+                }
+                label.Line1 = lineBuilder.ToString();
+                lineBuilder = new StringBuilder(currentItem.Line2.Length);
+                foreach (var chr in currentItem.Line2)
+                {
+                    if (chr == 0)
+                    {
+                        lineBuilder.Append(" ");
+                    }
+                    else
+                    {
+                        lineBuilder.Append((char) chr);
+                    }
+                }
+                label.Inverted = currentItem.Inverted;
+                valuesToAssign[j] = label;
+            }
+            thisField.SetValue(this, valuesToAssign);
+        }
+
         public float x;            // Ownship North (Ft)
         public float y;            // Ownship East (Ft)
         public float z;            // Ownship Down (Ft)
@@ -307,10 +318,10 @@ namespace F4SharedMem
         public OptionSelectButtonLabel[] rightMFD;
         public object ExtensionData;
 
-        public bool UfcTacanIsAA { get { return (tacanInfo !=null && ((tacanInfo[(int)Headers.TacanSources.UFC] & (byte)Headers.TacanBits.mode) != 0) ? true : false); } }
-        public bool AuxTacanIsAA { get { return (tacanInfo != null && ((tacanInfo[(int)Headers.TacanSources.AUX] & (byte)Headers.TacanBits.mode) != 0) ? true : false); } }
-        public bool UfcTacanIsX { get { return (tacanInfo != null && ((tacanInfo[(int)Headers.TacanSources.UFC] & (byte)Headers.TacanBits.band) != 0) ? true : false); } }
-        public bool AuxTacanIsX { get { return (tacanInfo != null && ((tacanInfo[(int)Headers.TacanSources.AUX] & (byte)Headers.TacanBits.band) != 0) ? true : false); } }
+        public bool UfcTacanIsAA { get { return (tacanInfo !=null && ((tacanInfo[(int)TacanSources.UFC] & (byte)TacanBits.mode) != 0)); } }
+        public bool AuxTacanIsAA { get { return (tacanInfo != null && ((tacanInfo[(int)TacanSources.AUX] & (byte)TacanBits.mode) != 0)); } }
+        public bool UfcTacanIsX { get { return (tacanInfo != null && ((tacanInfo[(int)TacanSources.UFC] & (byte)TacanBits.band) != 0)); } }
+        public bool AuxTacanIsX { get { return (tacanInfo != null && ((tacanInfo[(int)TacanSources.AUX] & (byte)TacanBits.band) != 0)); } }
 
     }
 }
