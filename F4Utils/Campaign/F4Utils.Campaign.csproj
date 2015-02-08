@@ -55,7 +55,6 @@
     <Compile Include="F4Structs\CampEvent.cs" />
     <Compile Include="F4Structs\CampLibConstants.cs" />
     <Compile Include="F4Structs\CampObjectiveLinkDataType.cs" />
-    <Compile Include="F4Structs\CellState.cs" />
     <Compile Include="F4Structs\Classtable_Classes.cs" />
     <Compile Include="F4Structs\Classtable_Domains.cs" />
     <Compile Include="F4Structs\Classtable_Types.cs" />
@@ -89,7 +88,6 @@
     <Compile Include="F4Structs\ObjClassDataType.cs" />
     <Compile Include="F4Structs\ObjectiveDelta.cs" />
     <Compile Include="F4Structs\OldVeh_types.cs" />
-    <Compile Include="F4Structs\OrientationData.cs" />
     <Compile Include="F4Structs\PackedVUID.cs" />
     <Compile Include="F4Structs\PersistantObject.cs" />
     <Compile Include="F4Structs\PilotInfoClass.cs" />
@@ -125,8 +123,6 @@
     <Compile Include="F4Structs\VuFlagBits.cs" />
     <Compile Include="F4Structs\VuVisTypes.cs" />
     <Compile Include="F4Structs\VU_ID.cs" />
-    <Compile Include="F4Structs\VU_QUAT.cs" />
-    <Compile Include="F4Structs\VU_VECT.cs" />
     <Compile Include="F4Structs\WeaponClassDataType.cs" />
     <Compile Include="F4Structs\WeaponFlags.cs" />
     <Compile Include="F4Structs\WeaponGuidanceTypes.cs" />

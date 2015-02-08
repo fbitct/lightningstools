@@ -2,6 +2,39 @@ namespace F4Utils.Campaign.F4Structs
 {
     public enum Vis_Types
     {
+        VIS_KC10 = 907,
+        VIS_KC135 = 906,
+        VIS_TNKR_BOOM1 = 2200,
+        VIS_TNKR_BOOM2 = 2201,
+        VIS_TNKR_BOOM3 = 2202,
+        VIS_TNKR_BOOM4 = 2203,
+        VIS_TNKR_BOOM5 = 2204,
+        VIS_IL78 = 1218,
+        VIS_KC130 = 887,
+        VIS_TNKR_DROGUE1 = 2205,
+        VIS_TNKR_DROGUE2 = 2206,
+        VIS_TNKR_DROGUE3 = 2207,
+        VIS_TNKR_DROGUE4 = 2208,
+        VIS_TNKR_DROGUE5 = 2209,
+        VIS_KC135BOOM = 1221,
+        VIS_KC10BOOM = 1215,
+        VIS_KCBOOM1 = 2210,
+        VIS_KCBOOM2 = 2211,
+        VIS_KCBOOM3 = 2212,
+        VIS_KCBOOM4 = 2213,
+        VIS_KCBOOM5 = 2214,
+        VIS_RDROGUE = 1223,	// IL-78 and KC-130
+        VIS_RDROGUE1 = 2215,
+        VIS_RDROGUE2 = 2216,
+        VIS_RDROGUE3 = 2217,
+        VIS_RDROGUE4 = 2218,
+        VIS_RDROGUE5 = 2219,
+        VIS_KCDROGUE1 = 2220, // Drogues for KC's with both boom and drogue
+        VIS_KCDROGUE2 = 2221,	// vvvv
+        VIS_KCDROGUE3 = 2222,	// vvvv
+        VIS_KCDROGUE4 = 2223,	// vvvv
+        VIS_KCDROGUE5 = 2224,	// Drogues for KC's with both boom and drogue
+        // =================================================================
         VIS_BRIDGE1 = 159,
         VIS_A10 = 891,
         VIS_F16C = 1052,
@@ -38,7 +71,6 @@ namespace F4Utils.Campaign.F4Structs
         VIS_SCUDL = 132,
         VIS_BMP = 211,
         VIS_BRDM2 = 212,
-        VIS_C130 = 894,
         VIS_CHAPARRAL = 991,
         VIS_DCLUBBLK = 792,
         VIS_DCNC02 = 793,
@@ -63,8 +95,6 @@ namespace F4Utils.Campaign.F4Structs
         VIS_FB111 = 888,
         VIS_HAWK = 240,
         VIS_IL76 = 903,
-        VIS_KC10 = 907,
-        VIS_KC135 = 906,
         VIS_LAV25 = 222,
         VIS_M113 = 226,
         VIS_M163 = 990,
@@ -304,10 +334,8 @@ namespace F4Utils.Campaign.F4Structs
         VIS_LB03 = 1212,
         VIS_LB04 = 1213,
         VIS_POPMENU = 1214,
-        VIS_KC10BOOM = 1215,
         VIS_BMP2 = 1216,
         VIS_BMP3 = 1217,
-        VIS_IL78 = 1218,
         VIS_DBMB = 1036,
         VIS_DBMBLW = 1037,
         VIS_DBMBRW = 1038,
@@ -317,9 +345,7 @@ namespace F4Utils.Campaign.F4Structs
         VIS_TAXIS03L = 68,
         VIS_ZU23 = 1219,
         VIS_ZSU57_2 = 1220,
-        VIS_KC135BOOM = 1221,
         VIS_BM21 = 1222,
-        VIS_RDROGUE = 1223,
         VIS_HTS = 1224,
         VIS_LANTIRN = 1225,
         VIS_NIKEL = 1226,

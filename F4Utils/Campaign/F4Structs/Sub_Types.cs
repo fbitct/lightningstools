@@ -77,7 +77,7 @@ namespace F4Utils.Campaign.F4Structs
         STYPE_APARTMENT2 = 2,
         STYPE_ART_SITE1 = 1,
         STYPE_BARRACKS1 = 1,
-        STYPE_IR_POD = 2,
+        //STYPE_IR_POD                = 2,
         STYPE_CHAFF = 1,
         STYPE_APARTMENT4 = 3,
         STYPE_APARTMENT5 = 4,
@@ -106,6 +106,10 @@ namespace F4Utils.Campaign.F4Structs
         STYPE_AIR_RECON = 9,
         STYPE_AIR_TANKER = 10,
         STYPE_AIR_TRANSPORT = 11,
+
+        STYPE_AIR_ELINT = 12,
+        STYPE_AIR_ABCCC = 13,
+
         STYPE_AIRSTRIPV = 1,
         STYPE_ARMYBASE1 = 1,
         STYPE_AMPHIBIOUS = 1,
@@ -129,6 +133,23 @@ namespace F4Utils.Campaign.F4Structs
         STYPE_BOMB = 1,
         STYPE_BOMB_GUIDED = 2,
         STYPE_BOMB_IRON = 3,
+        STYPE_BOMB_GPS = 4,	
+        STYPE_BOMB_WCMD = 5,	
+
+        STYPE_POD_ECM = 1,	// Electronic countermeasure pod
+        STYPE_POD_CM_BOTH = 2,	// Countermeasure pod -> chaff / flare
+        STYPE_POD_CM_FLARE = 3,	// Countermeasure pod -> flare
+        STYPE_POD_CM_CHAFF = 4,	// Countermeasure pod -> chaff
+        STYPE_POD_TGT = 5,	// TGT POD -> IR/TV camera and laser
+        STYPE_POD_LD = 6,	// Laser Designator pod -> no IR only TV camera
+        STYPE_POD_FLIR = 7,	// Only IR/TV camera -> no laser
+        STYPE_POD_NAV = 8,	// Navigation pod -> TFR also
+        STYPE_POD_ACMI = 9,	// Air Combat Maneuvering Instrumentation pod
+        STYPE_POD_DATALINK = 10,	// Data link pod
+        STYPE_POD_ELS = 11,	// Emitter Locator System pod -> HTS on F-16
+        STYPE_POD_ELINT = 12,	// ???
+        STPYE_POD_SMOKE = 13,	// Smoke generating pod -> e.g. Smokewinder
+
         STYPE_UNIT_AIRBORNE = 2,
         STYPE_BATTLESHIP = 1,
         STYPE_CARRIER = 2,
@@ -146,7 +167,7 @@ namespace F4Utils.Campaign.F4Structs
         STYPE_DEPTHCHARGE = 1,
         STYPE_GEARING = 1,
         STYPE_SPRUANCE = 2,
-        STYPE_ECM = 1,
+        //STYPE_ECM                   = 1,
         STYPE_F803_1 = 1,
         STYPE_F80F_1 = 2,
         STYPE_UNIT_AIR_TRANSPORT = 1,
@@ -163,6 +184,10 @@ namespace F4Utils.Campaign.F4Structs
         STYPE_UNIT_RECON_HELO = 12,
         STYPE_UNIT_TANKER = 13,
         STYPE_UNIT_TRANSPORT_HELO = 14,
+
+        STYPE_UNIT_ELINT = 15,
+        STYPE_UNIT_ABCCC = 16,
+
         STYPE_FOOT_SQUAD = 1,
         STYPE_FORTIFICATION1 = 1,
         STYPE_FUEL_TANK = 1,
