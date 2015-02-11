@@ -187,7 +187,7 @@ namespace SimLinkup.Runtime
                 ScriptingContext.AllSignals.FirstOrDefault(
                     signal =>
                         signal.Id != null && signalToResolve.Id != null &&
-                        signal.Id.Trim().Equals(signalToResolve.Id.Trim(), StringComparison.InvariantCultureIgnoreCase));
+                        signal.Id.Trim().Equals(signalToResolve.Id.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
         private void InitializeMappings()
@@ -205,8 +205,10 @@ namespace SimLinkup.Runtime
                     var profile = MappingProfile.Load(profileToLoad);
                     foreach (var mapping in profile.SignalMappings)
                     {
-                        mapping.Source = ResolveSignal(mapping.Source);
-                        mapping.Destination = ResolveSignal(mapping.Destination);
+                        var origSource = mapping.Source;
+                        var origDestination = mapping.Destination;
+                        mapping.Source = ResolveSignal(origSource);
+                        mapping.Destination = ResolveSignal(origDestination);
                         if (mapping.Source == null || mapping.Destination == null)
                         {
                             _log.Warn(

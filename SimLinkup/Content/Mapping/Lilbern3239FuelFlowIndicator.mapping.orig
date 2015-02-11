@@ -3,29 +3,29 @@
   <SignalMappings>
 
     <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM F4 SIM VALUES TO SIMTEK HARDWARE SUPPORT MODULE INPUTS -->
+    <!-- MAPPINGS FROM F4 SIM VALUES TO Lilbern HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
-    <!-- FUEL FLOW (LBS/HR) -->
-     <SignalMapping>
-      <!-- F4 FUEL FLOW OUTPUT -->
+    <!-- FUEL FLOW POUNDS PER HOUR -->
+    <SignalMapping>
+      <!-- F4 FUEL FLOW POUNDS PER HOUR OUTPUT-->
       <Source xsi:type="AnalogSignal">
         <Id>F4_FUEL_FLOW__FUEL_FLOW_POUNDS_PER_HOUR</Id>
       </Source>
-      <!-- SIMTEK FUEL FLOW INPUT-->
+      <!-- Lilbern FUEL FLOW INDICATOR HARDWARE SUPPORT MODULE FUEL FLOW POUNDS PER HOUR INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>100295_Fuel_Flow_From_Sim</Id>
+        <Id>3239_Fuel_Flow_Pounds_Per_Hour_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
     <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
+    <!-- MAPPINGS FROM Lilbern HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
     <!-- *********************************************************************-->
-    <!-- TOTAL FUEL COUNTER  -->
+    <!-- FUEL FLOW POUNDS PER HOUR -->
     <SignalMapping>
-      <!-- SIMTEK FUEL FLOW INDICATOR HARDWARE SUPPORT MODULE FUEL FLOW OUTPUT -->
+      <!-- Lilbern FUEL FLOW INDICATOR HARDWARE SUPPORT MODULE FUEL FLOW POUNDS PER HOUR OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>100295_Fuel_Flow_To_Instrument</Id>
+        <Id>3239_Fuel_Flow_Pounds_Per_Hour_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 35 -->
       <Destination xsi:type="AnalogSignal">
@@ -33,5 +33,8 @@
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
+
+
   </SignalMappings>
+
 </MappingProfile>

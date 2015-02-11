@@ -243,6 +243,9 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION:
                         ((AnalogSignal)output).State = 0.0f;
                         break;
+                    case F4SimOutputs.ADI__INCLINOMETER_POSITION:
+                        ((AnalogSignal)output).State = 0.0f;
+                        break;
 
                     case F4SimOutputs.ADI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_OFF) ==
@@ -1053,6 +1056,8 @@ namespace F4Utils.SimSupport
                                                 (int)F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Rate of Turn Indicator Position",
                                                 (int)F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("ADI", "Inclinometer Position",
+                                                (int)F4SimOutputs.ADI__INCLINOMETER_POSITION, typeof(float)));
             
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "OFF flag", (int) F4SimOutputs.ADI__OFF_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "AUX flag", (int) F4SimOutputs.ADI__AUX_FLAG, typeof (bool)));

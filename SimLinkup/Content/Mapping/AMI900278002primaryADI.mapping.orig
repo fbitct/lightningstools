@@ -92,9 +92,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>900278002_Roll_SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 1 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 7 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][1]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][7]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -105,9 +105,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>900278002_Roll_COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 2 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 8 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][2]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][8]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -119,9 +119,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>900278002_Pitch_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 5 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 9 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][5]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][9]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -132,9 +132,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>900278002_Horizontal_Command_Bar_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 6 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 13 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][6]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][13]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -145,9 +145,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>900278002_Vertical_Command_Bar_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 7 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 12 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][7]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][12]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -158,9 +158,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>900278002_Rate_Of_Turn_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 8 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 14 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][8]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][14]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>

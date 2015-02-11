@@ -84,6 +84,18 @@
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
+    <!-- INCLINOMETER  -->
+    <SignalMapping>
+      <!-- F4 INCLINOMETER OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_ADI__INCLINOMETER_POSITION</Id>
+      </Source>
+      <!-- ASTRONAUTICS ADI INCLINOMETER INPUT -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>12871_Inclinometer_From_Sim</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
 
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM ASTRONAUTICS HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
@@ -94,9 +106,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>12871_Roll_SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 1 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 7 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][1]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][7]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -107,9 +119,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>12871_Roll_COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 2 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 8 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][2]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][8]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -121,9 +133,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>12871_Pitch_SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 3 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 9 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][3]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][9]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -134,22 +146,23 @@
       <Source xsi:type="AnalogSignal">
         <Id>12871_Pitch_COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 4 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 10 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][4]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][10]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- HORIZONTAL COMMAND BAR -->
+
+    <!-- INCLINOMETER -->
     <SignalMapping>
-      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE HORIZONTAL COMMAND BAR OUTPUT -->
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE INCLINOMETER OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>12871_Horizontal_Command_Bar_To_Instrument</Id>
+        <Id>12871_Inclinometer_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 6 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 11 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][6]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][11]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -160,26 +173,38 @@
       <Source xsi:type="AnalogSignal">
         <Id>12871_Vertical_Command_Bar_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 7 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 12 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][7]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][12]</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+    
+    <!-- HORIZONTAL COMMAND BAR -->
+    <SignalMapping>
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE HORIZONTAL COMMAND BAR OUTPUT -->
+      <Source xsi:type="AnalogSignal">
+        <Id>12871_Horizontal_Command_Bar_To_Instrument</Id>
+      </Source>
+      <!-- ANALOG DEVICES DAC OUTPUT 13 -->
+      <Destination xsi:type="AnalogSignal">
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][13]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- RATE OF TURN INDICATOR -->
+    <!-- RATE OF TURN -->
     <SignalMapping>
-      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE RATE OF TURN INDICATOR OUTPUT -->
+      <!-- AMI 9002870-02 PRIMARY ADI HARDWARE SUPPORT MODULE RATE OF TURN OUTPUT -->
       <Source xsi:type="AnalogSignal">
         <Id>12871_Rate_Of_Turn_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 8 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 11 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][8]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][14]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
-
 
   </SignalMappings>
 </MappingProfile>

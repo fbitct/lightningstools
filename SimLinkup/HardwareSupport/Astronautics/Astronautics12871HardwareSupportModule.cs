@@ -31,6 +31,8 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal.AnalogSignalChangedEventHandler _verticalCommandBarInputSignalChangedEventHandler;
         private AnalogSignal _rateOfTurnInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _rateOfTurnInputSignalChangedEventHandler;
+        private AnalogSignal _inclinometerInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _inclinometerInputSignalChangedEventHandler;
         private DigitalSignal _showCommandBarsInputSignal;
 
         private AnalogSignal _pitchSinOutputSignal;
@@ -40,6 +42,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal _horizontalCommandBarOutputSignal;
         private AnalogSignal _verticalCommandBarOutputSignal;
         private AnalogSignal _rateOfTurnOutputSignal;
+        private AnalogSignal _inclinometerOutputSignal;
 
         #endregion
 
@@ -87,7 +90,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 return new[]
                 {
                     _pitchInputSignal, _rollInputSignal, _horizontalCommandBarInputSignal, _verticalCommandBarInputSignal,
-                    _rateOfTurnInputSignal
+                    _rateOfTurnInputSignal, _inclinometerInputSignal
                 };
             }
         }
@@ -104,7 +107,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 return new[]
                 {
                     _pitchSinOutputSignal, _pitchCosOutputSignal, _rollSinOutputSignal, _rollCosOutputSignal,
-                    _horizontalCommandBarOutputSignal, _verticalCommandBarOutputSignal, _rateOfTurnOutputSignal
+                    _horizontalCommandBarOutputSignal, _verticalCommandBarOutputSignal, _rateOfTurnOutputSignal, _inclinometerOutputSignal
                 };
             }
         }
@@ -132,6 +135,8 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 verticalCommandBar_InputSignalChanged;
             _rateOfTurnInputSignalChangedEventHandler =
                 rateOfTurn_InputSignalChanged;
+            _inclinometerInputSignalChangedEventHandler =
+                inclinometer_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -141,6 +146,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _horizontalCommandBarInputSignalChangedEventHandler = null;
             _verticalCommandBarInputSignalChangedEventHandler = null;
             _rateOfTurnInputSignalChangedEventHandler = null;
+            _inclinometerInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
@@ -164,6 +170,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
             if (_rateOfTurnInputSignal != null)
             {
                 _rateOfTurnInputSignal.SignalChanged += _rateOfTurnInputSignalChangedEventHandler;
+            }
+            if (_inclinometerInputSignal != null)
+            {
+                _inclinometerInputSignal.SignalChanged += _inclinometerInputSignalChangedEventHandler;
             }
         }
 
@@ -220,6 +230,16 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 {
                 }
             }
+            if (_inclinometerInputSignalChangedEventHandler != null && _inclinometerInputSignal != null)
+            {
+                try
+                {
+                    _inclinometerInputSignal.SignalChanged -= _inclinometerInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
         }
 
         #endregion
@@ -234,6 +254,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _verticalCommandBarInputSignal = CreateVerticalCommandBarInputSignal();
             _rateOfTurnInputSignal = CreateRateOfTurnInputSignal();
             _showCommandBarsInputSignal = CreateShowCommandBarsInputSignal();
+            _inclinometerInputSignal = CreateInclinometerInputSignal();
         }
 
         private AnalogSignal CreatePitchInputSignal()
@@ -298,6 +319,20 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Rate of Turn Indicator (Degrees)";
             thisSignal.Id = "12871_Rate_Of_Turn_Indicator_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = 0;
+            return thisSignal;
+        }
+
+        private AnalogSignal CreateInclinometerInputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Inputs";
+            thisSignal.FriendlyName = "Inclinometer";
+            thisSignal.Id = "12871_Inclinometer_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -385,6 +420,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _horizontalCommandBarOutputSignal = CreateHorizontalCommandBarOutputSignal();
             _verticalCommandBarOutputSignal = CreateVerticalCommandBarOutputSignal();
             _rateOfTurnOutputSignal = CreateRateOfTurnOutputSignal();
+            _inclinometerOutputSignal = CreateInclinometerOutputSignal();
         }
 
         private AnalogSignal CreatePitchSinOutputSignal()
@@ -485,6 +521,19 @@ namespace SimLinkup.HardwareSupport.Astronautics
             return thisSignal;
         }
 
+        private AnalogSignal CreateInclinometerOutputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Outputs";
+            thisSignal.FriendlyName = "Inclinometer Indicator";
+            thisSignal.Id = "12871_Inclinometer_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = (10.00 + 10.00) / 20.00;
+            return thisSignal;
+        }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdatePitchOutputValues(args.CurrentState);
@@ -508,6 +557,11 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private void rateOfTurn_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateRateOfTurnOutputValues();
+        }
+
+        private void inclinometer_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        {
+            UpdateInclinometerOutputValues();
         }
 
         private void UpdatePitchOutputValues(double pitchDegrees)
@@ -682,6 +736,33 @@ namespace SimLinkup.HardwareSupport.Astronautics
                     }
 
                     _rateOfTurnOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                }
+            }
+        }
+
+
+        private void UpdateInclinometerOutputValues()
+        {
+            if (_inclinometerInputSignal != null)
+            {
+                var percentDeflection = _inclinometerInputSignal.State;
+
+                double outputValue = 0;
+
+                outputValue = 10.0000 * percentDeflection;
+
+                if (_inclinometerOutputSignal != null)
+                {
+                    if (outputValue < -10)
+                    {
+                        outputValue = -10;
+                    }
+                    else if (outputValue > 10)
+                    {
+                        outputValue = 0;
+                    }
+
+                    _inclinometerOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
                 }
             }
         }

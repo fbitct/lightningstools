@@ -27,9 +27,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>246102_Cabin_Pressure_Altitude_SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 28 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 11 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][28]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][11]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -40,9 +40,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>246102_Cabin_Pressure_Altitude_COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 29 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 12 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][29]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][12]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>

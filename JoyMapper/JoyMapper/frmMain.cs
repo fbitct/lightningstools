@@ -2755,22 +2755,22 @@ namespace JoyMapper
             //TODO: comment this
             if (node != null)
             {
-                if (node.Text.StartsWith("Axes", StringComparison.InvariantCultureIgnoreCase))
+                if (node.Text.StartsWith("Axes", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_AXIS;
                     node.SelectedImageIndex = IMAGE_INDEX_AXIS;
                 }
-                else if (node.Text.StartsWith("Buttons", StringComparison.InvariantCultureIgnoreCase))
+                else if (node.Text.StartsWith("Buttons", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_BUTTON;
                     node.SelectedImageIndex = IMAGE_INDEX_BUTTON;
                 }
-                else if (node.Text.StartsWith("Povs", StringComparison.InvariantCultureIgnoreCase))
+                else if (node.Text.StartsWith("Povs", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_Pov;
                     node.SelectedImageIndex = IMAGE_INDEX_Pov;
                 }
-                else if (node.Text.StartsWith("Local Devices", StringComparison.InvariantCultureIgnoreCase))
+                else if (node.Text.StartsWith("Local Devices", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_LOCAL_DEVICES;
                     node.SelectedImageIndex = IMAGE_INDEX_LOCAL_DEVICES;
@@ -2788,22 +2788,22 @@ namespace JoyMapper
             //TODO: comment this
             if (node != null)
             {
-                if (node.Text.StartsWith("Axes", StringComparison.InvariantCultureIgnoreCase))
+                if (node.Text.StartsWith("Axes", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_AXIS_GREYED;
                     node.SelectedImageIndex = IMAGE_INDEX_AXIS_GREYED;
                 }
-                else if (node.Text.StartsWith("Buttons", StringComparison.InvariantCultureIgnoreCase))
+                else if (node.Text.StartsWith("Buttons", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_BUTTON_GREYED;
                     node.SelectedImageIndex = IMAGE_INDEX_BUTTON_GREYED;
                 }
-                else if (node.Text.StartsWith("Povs", StringComparison.InvariantCultureIgnoreCase))
+                else if (node.Text.StartsWith("Povs", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_POV_GREYED;
                     node.SelectedImageIndex = IMAGE_INDEX_POV_GREYED;
                 }
-                else if (node.Text.StartsWith("Local Devices", StringComparison.InvariantCultureIgnoreCase))
+                else if (node.Text.StartsWith("Local Devices", StringComparison.OrdinalIgnoreCase))
                 {
                     node.ImageIndex = IMAGE_INDEX_LOCAL_DEVICES_GREYED;
                     node.SelectedImageIndex = IMAGE_INDEX_LOCAL_DEVICES_GREYED;

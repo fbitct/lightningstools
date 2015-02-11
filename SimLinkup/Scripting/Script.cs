@@ -59,9 +59,9 @@ namespace SimLinkup.Scripting
             if (!string.IsNullOrEmpty(language))
             {
                 if (
-                    string.Compare(language, "C#", StringComparison.InvariantCultureIgnoreCase) != 0
+                    string.Compare(language, "C#", StringComparison.OrdinalIgnoreCase) != 0
                     &&
-                    string.Compare(language, "CSS", StringComparison.InvariantCultureIgnoreCase) != 0
+                    string.Compare(language, "CSS", StringComparison.OrdinalIgnoreCase) != 0
                     )
                 {
                     useAlternateCompiler = true;

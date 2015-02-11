@@ -23,7 +23,8 @@ namespace SimLinkup.HardwareSupport.Simtek
         private bool _isDisposed;
         private AnalogSignal _oilPressureInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _oilPressureInputSignalChangedEventHandler;
-        private AnalogSignal _oilPressureOutputSignal;
+        private AnalogSignal _oilPressureSINOutputSignal;
+        private AnalogSignal _oilPressureCOSOutputSignal;
 
         #endregion
 
@@ -76,7 +77,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] {_oilPressureOutputSignal}; }
+            get { return new[] {_oilPressureSINOutputSignal, _oilPressureCOSOutputSignal}; }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -134,23 +135,37 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void CreateOutputSignals()
         {
-            _oilPressureOutputSignal = CreateOilOutputSignal();
+            _oilPressureSINOutputSignal = CreateOilSINOutputSignal();
+            _oilPressureCOSOutputSignal = CreateOilCOSOutputSignal();
         }
 
-        private AnalogSignal CreateOilOutputSignal()
+        private AnalogSignal CreateOilSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Oil  Pressure";
-            thisSignal.Id = "101091_Oil_Pressure_To_Instrument";
+            thisSignal.FriendlyName = "Oil  Pressure (SIN";
+            thisSignal.Id = "101091_Oil_Pressure_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = 1.00f;
             return thisSignal;
         }
 
+        private AnalogSignal CreateOilCOSOutputSignal()
+        {
+            var thisSignal = new AnalogSignal();
+            thisSignal.CollectionName = "Analog Outputs";
+            thisSignal.FriendlyName = "Oil  Pressure (COS)";
+            thisSignal.Id = "101091_Oil_Pressure_COS_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = 0.5f;
+            return thisSignal;
+        }
         private AnalogSignal CreateOilInputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -176,35 +191,66 @@ namespace SimLinkup.HardwareSupport.Simtek
             if (_oilPressureInputSignal != null)
             {
                 var oilPressureInput = _oilPressureInputSignal.State;
-                double oilPressureOutputValue = 0;
-                if (_oilPressureOutputSignal != null)
+                double oilPressureSINOutputValue = 0;
+                if (_oilPressureSINOutputSignal != null)
                 {
                     if (oilPressureInput < 0)
                     {
-                        oilPressureOutputValue = 0;
+                        oilPressureSINOutputValue = 0;
                     }
                     else if (oilPressureInput > 100)
                     {
-                        oilPressureOutputValue = 10.0000*Math.Sin(320.0000*Constants.RADIANS_PER_DEGREE);
+                        oilPressureSINOutputValue = 10.0000*Math.Sin(320.0000*Constants.RADIANS_PER_DEGREE);
                     }
                     else
                     {
-                        oilPressureOutputValue = 10.0000*
+                        oilPressureSINOutputValue = 10.0000*
                                                  Math.Sin(((oilPressureInput/100.0000)*320.0000)*
                                                           Constants.RADIANS_PER_DEGREE);
                     }
 
-                    if (oilPressureOutputValue < -10)
+                    if (oilPressureSINOutputValue < -10)
                     {
-                        oilPressureOutputValue = -10;
+                        oilPressureSINOutputValue = -10;
                     }
-                    else if (oilPressureOutputValue > 10)
+                    else if (oilPressureSINOutputValue > 10)
                     {
-                        oilPressureOutputValue = 10;
+                        oilPressureSINOutputValue = 10;
                     }
 
-                    _oilPressureOutputSignal.State = ((oilPressureOutputValue + 10.0000)/20.0000);
+                    _oilPressureSINOutputSignal.State = ((oilPressureSINOutputValue + 10.0000)/20.0000);
                 }
+
+                if (_oilPressureCOSOutputSignal != null)
+                {
+                    double oilPressureCOSOutputValue = 0;
+                    if (oilPressureInput < 0)
+                    {
+                        oilPressureCOSOutputValue = 0;
+                    }
+                    else if (oilPressureInput > 100)
+                    {
+                        oilPressureCOSOutputValue = 10.0000 * Math.Cos(320.0000 * Constants.RADIANS_PER_DEGREE);
+                    }
+                    else
+                    {
+                        oilPressureCOSOutputValue = 10.0000 *
+                                                 Math.Cos(((oilPressureInput / 100.0000) * 320.0000) *
+                                                          Constants.RADIANS_PER_DEGREE);
+                    }
+
+                    if (oilPressureCOSOutputValue < -10)
+                    {
+                        oilPressureCOSOutputValue = -10;
+                    }
+                    else if (oilPressureCOSOutputValue > 10)
+                    {
+                        oilPressureCOSOutputValue = 10;
+                    }
+
+                    _oilPressureCOSOutputSignal.State = ((oilPressureCOSOutputValue + 10.0000) / 20.0000);
+                }
+
             }
         }
 
