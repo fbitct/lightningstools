@@ -86,8 +86,10 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 }
                 else
                 {
-                    IHardwareSupportModule fakeHsm = new AnalogDevicesHardwareSupportModule(null, index);
-                    toReturn.Add(fakeHsm);
+                    IHardwareSupportModule fakeHsm0 = new AnalogDevicesHardwareSupportModule(null, 0);
+                    IHardwareSupportModule fakeHsm1 = new AnalogDevicesHardwareSupportModule(null, 1);
+                    toReturn.Add(fakeHsm0);
+                    toReturn.Add(fakeHsm1);
                 }
             }
             catch (Exception e)
