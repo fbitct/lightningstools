@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Threading;
 using LibUsbDotNet;
 using LibUsbDotNet.Main;
+using System.Linq;
 
 namespace AnalogDevices
 {
@@ -657,7 +658,7 @@ namespace AnalogDevices
                     }
                 }
             }
-            return toReturn.ToArray();
+            return toReturn.OrderBy(x=>x.UsbDevice.UsbRegistryInfo.SymbolicName).ToArray();
         }
 
         #endregion
