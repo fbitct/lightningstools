@@ -42,6 +42,10 @@ namespace AnalogDevicesTestTool
             {
                 cboDevices.Items.Clear();
                 var availableDevices = AnalogDevices.DenseDacEvalBoard.Enumerate();
+                foreach (var device in availableDevices)
+                {
+                    device.IsTemperatureShutdownEnabled = true; //enable over temp protection automatically during device enumeration
+                }
                 cboDevices.Items.AddRange(availableDevices);
                 cboDevices.DisplayMember = "SymbolicName";
                 if (availableDevices.Count() > 0)
@@ -167,7 +171,7 @@ namespace AnalogDevicesTestTool
         {
             _selectedDevice = (AnalogDevices.DenseDacEvalBoard)cboDevices.SelectedItem;
             UpdateOverTemperatureValuesInUIFromDevice();
-            UpdateGroupOffsetDataInUIWithDataFromDevice();
+            UpdateGroupOffsetDataInDeviceToDefaultSpan();
             SelectDACChannel0();
             UpdateCalculatedOutputVoltage();
         }
@@ -206,12 +210,15 @@ namespace AnalogDevicesTestTool
                 DAC0RadioButton.Checked = true;
             }
         }
-        private void UpdateGroupOffsetDataInUIWithDataFromDevice()
+        private void UpdateGroupOffsetDataInDeviceToDefaultSpan()
         {
             if (_selectedDevice != null)
             {
-                txtOffsetDAC0.Text = _selectedDevice.OffsetDAC0.ToString("x");
-                txtOffsetDAC1.Text = _selectedDevice.OffsetDAC1.ToString("x");
+                _selectedDevice.OffsetDAC0 = 0x2000;
+                _selectedDevice.OffsetDAC1 = 0x2000;
+
+                txtOffsetDAC0.Text ="2000";
+                txtOffsetDAC1.Text = "2000";
             }
         }
 
@@ -420,7 +427,7 @@ namespace AnalogDevicesTestTool
         {
             var dacChannel = DetermineSelectedDACChannelAddress();
             var calculatedOutputVoltage = Vout(dacChannel);
-            var asText = calculatedOutputVoltage.ToString("F4");
+            var asText = calculatedOutputVoltage.ToString("F3");
             if (calculatedOutputVoltage >=0) asText = "+" + asText;
             txtVoutCalculated.Text = asText;
         }
