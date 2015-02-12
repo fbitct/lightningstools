@@ -167,7 +167,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             {
                 if (_device != null)
                 {
-                    _device.SetDacChannelDataValueA((a.ChannelAddress) outputSignal.Index.Value + 8,
+                    _device.SetDacChannelDataSource((a.ChannelAddress)outputSignal.Index.Value + 8,
+                        a.DacChannelDataSource.DataValueA);
+                    _device.SetDacChannelDataValueA((a.ChannelAddress)outputSignal.Index.Value + 8,
                         (ushort) (outputSignal.State*0xFFFF));
                 }
             }
