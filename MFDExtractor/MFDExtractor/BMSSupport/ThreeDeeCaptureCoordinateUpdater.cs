@@ -59,11 +59,11 @@ namespace MFDExtractor.BMSSupport
 					}
                     else if (currentLine.ToLowerInvariant().StartsWith("mfdleft\t"))
 					{
-						_coordinates.RMFD= ReadCaptureCoordinates(currentLine);
+						_coordinates.LMFD= ReadCaptureCoordinates(currentLine);
 					}
                     else if (currentLine.ToLowerInvariant().StartsWith("mfdright\t"))
 					{
-						_coordinates.LMFD= ReadCaptureCoordinates(currentLine);
+						_coordinates.RMFD= ReadCaptureCoordinates(currentLine);
 					}
 				}
 			}
