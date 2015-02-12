@@ -260,18 +260,15 @@ namespace AnalogDevicesTestTool
             UpdateCalculatedOutputVoltage();
             if (_selectedDevice != null)
             {
-                UpdateOffsetDAC0();
-                UpdateOffsetDAC1();
                 SetDACChannelOffset();
                 SetDACChannelGain();
-                UpdateDataValueA();
-                UpdateDataValueB();
-                SetDACChannelDataSource();
-
+                UpdateOffsetDAC0();
+                UpdateOffsetDAC1();
+                SetDACChannelDataSourceAndUpdateDataValue();
                 _selectedDevice.UpdateAllDacOutputs();
             }
         }
-        private void SetDACChannelDataSource()
+        private void SetDACChannelDataSourceAndUpdateDataValue()
         {
             if (_selectedDevice != null)
             {
@@ -279,10 +276,12 @@ namespace AnalogDevicesTestTool
                 if (rdoDataValueA.Checked)
                 {
                     _selectedDevice.SetDacChannelDataSource(selectedDacChannel, AnalogDevices.DacChannelDataSource.DataValueA);
+                    UpdateDataValueA();
                 }
                 else
                 {
                     _selectedDevice.SetDacChannelDataSource(selectedDacChannel, AnalogDevices.DacChannelDataSource.DataValueB);
+                    UpdateDataValueB();
                 }
             }
 
