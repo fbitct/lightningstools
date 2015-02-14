@@ -74,8 +74,9 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                         {
                             device.SetDacChannelOffset((a.ChannelAddress) j + 8, 0x8000);
                             device.SetDacChannelGain((a.ChannelAddress) j + 8, 0xFFFF);
-                            //device.SetDacChannelDataSource((ChannelAddress) j + 8, DacChannelDataSource.DataValueA);
-                            device.SetDacChannelDataValueA((a.ChannelAddress) j + 8, 0x7FFF);
+                            //TODO: does this next line causethe  "chatter" on the ADI?
+                            device.SetDacChannelDataSource((a.ChannelAddress) j + 8, a.DacChannelDataSource.DataValueA);
+                            device.SetDacChannelDataValueA((a.ChannelAddress) j + 8, 0x0000);
                         }
                         device.UpdateAllDacOutputs();
 

@@ -34,6 +34,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal _inclinometerInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _inclinometerInputSignalChangedEventHandler;
         private DigitalSignal _showCommandBarsInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _showCommandBarsInputSignalChangedEventHandler;
 
         private AnalogSignal _pitchSinOutputSignal;
         private AnalogSignal _pitchCosOutputSignal;
@@ -137,6 +138,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 rateOfTurn_InputSignalChanged;
             _inclinometerInputSignalChangedEventHandler =
                 inclinometer_InputSignalChanged;
+            _showCommandBarsInputSignalChangedEventHandler = showCommandBars_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -147,6 +149,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _verticalCommandBarInputSignalChangedEventHandler = null;
             _rateOfTurnInputSignalChangedEventHandler = null;
             _inclinometerInputSignalChangedEventHandler = null;
+            _showCommandBarsInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
@@ -174,6 +177,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
             if (_inclinometerInputSignal != null)
             {
                 _inclinometerInputSignal.SignalChanged += _inclinometerInputSignalChangedEventHandler;
+            }
+            if (_showCommandBarsInputSignal != null)
+            {
+                _showCommandBarsInputSignal.SignalChanged += _showCommandBarsInputSignalChangedEventHandler;
             }
         }
 
@@ -235,6 +242,16 @@ namespace SimLinkup.HardwareSupport.Astronautics
                 try
                 {
                     _inclinometerInputSignal.SignalChanged -= _inclinometerInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_showCommandBarsInputSignalChangedEventHandler != null && _showCommandBarsInputSignal != null)
+            {
+                try
+                {
+                    _showCommandBarsInputSignal.SignalChanged -= _showCommandBarsInputSignalChangedEventHandler;
                 }
                 catch (RemotingException)
                 {
@@ -489,7 +506,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = (6.00 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -503,7 +520,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = (6.00 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -517,7 +534,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = (0.00 + 10.00) / 20.00;
             return thisSignal;
         }
 
@@ -531,7 +548,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00) / 20.00;
+            thisSignal.State = (0.00 + 10.00) / 20.00;
             return thisSignal;
         }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
@@ -543,7 +560,11 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             UpdateRollOutputValues(args.CurrentState);
         }
-
+        private void showCommandBars_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateHorizontalCommandBarOutputValues();
+            UpdateVerticalCommandBarOutputValues();
+        }
         private void horizontalCommandBar_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateHorizontalCommandBarOutputValues();
@@ -658,11 +679,11 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = 1*percentDeflection;
+                    outputValue = percentDeflection * 4.0f;
                 }
                 else
                 {
-                    outputValue = 6;
+                    outputValue = 10;
                 }
 
                 if (_horizontalCommandBarOutputSignal != null)
@@ -691,11 +712,11 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = 1*percentDeflection;
+                    outputValue = percentDeflection * 4.0f;
                 }
                 else
                 {
-                    outputValue = 6;
+                    outputValue = 10;
                 }
 
                 if (_verticalCommandBarOutputSignal != null)

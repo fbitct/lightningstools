@@ -438,7 +438,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = (6 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -452,7 +452,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = (6 + 10.00)/20.00;
             return thisSignal;
         }
 
@@ -466,7 +466,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = (0 + 10.00)/20.00;
             return thisSignal;
         }
 
