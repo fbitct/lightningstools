@@ -121,6 +121,9 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL:
                         ((AnalogSignal) output).State = -_lastFlightData.aauz;
                         break;
+                    case F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG:
+                        ((AnalogSignal)output).State = _lastFlightData.AltCalReading /100.0f;
+                        break;
                     case F4SimOutputs.TRUE_ALTITUDE__MSL:
                         ((AnalogSignal) output).State = -_lastFlightData.z;
                         break;
@@ -232,10 +235,10 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.roll*DEGREES_PER_RADIAN;
                         break;
                     case F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION:
-                        ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+                        ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / (_lastFlightData.deviationLimit/5.0f);
                         break;
                     case F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN / LOCALIZER_DEVIATION_LIMIT_DEGREES;
+                        ((AnalogSignal)output).State = _lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN / _lastFlightData.deviationLimit;
                         break;
                     case F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS:
                         ((DigitalSignal) output).State = showCommandBars;
@@ -967,6 +970,8 @@ namespace F4Utils.SimSupport
 
             AddF4SimOutput(CreateNewF4SimOutput("Altimeter", "Indicated Altitude (feet MSL)",
                                                 (int) F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL, typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("Altimeter", "Barometric Pressure (inches Hg)",
+                                               (int)F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG, typeof(float)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Vertical Velocity Indicator (VVI)", "Vertical Velocity (feet/min)",
                                                 (int) F4SimOutputs.VVI__VERTICAL_VELOCITY_FPM, typeof (float)));
@@ -1708,9 +1713,9 @@ namespace F4Utils.SimSupport
         {
             showToFromFlag = true;
             showCommandBars =
-                           ((Math.Abs((flightData.AdiIlsVerPos / Constants.RADIANS_PER_DEGREE)) <= GLIDESLOPE_DEVIATION_LIMIT_DEGREES)
+                           ((Math.Abs((flightData.AdiIlsVerPos / Constants.RADIANS_PER_DEGREE)) <= (flightData.deviationLimit / 5.0f))
                                &&
-                           (Math.Abs((flightData.AdiIlsHorPos / Constants.RADIANS_PER_DEGREE)) <= LOCALIZER_DEVIATION_LIMIT_DEGREES))
+                           (Math.Abs((flightData.AdiIlsHorPos / Constants.RADIANS_PER_DEGREE)) <= flightData.deviationLimit))
                                &&
                            !(((HsiBits)flightData.hsiBits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
                            &&
