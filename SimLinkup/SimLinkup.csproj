@@ -315,10 +315,6 @@
       <Project>{ABA9CC75-B778-4E46-A6F6-AFEC27F2EB59}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Common\Compression\Common.Compression.csproj">
-      <Project>{1e857490-c70d-4ef8-9edd-a1fdbcf98ab6}</Project>
-      <Name>Common.Compression</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Common\HardwareSupport\Common.HardwareSupport.csproj">
       <Project>{b8fcc824-2b39-4637-a447-64d60cf60811}</Project>
       <Name>Common.HardwareSupport</Name>
