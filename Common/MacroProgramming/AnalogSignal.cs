@@ -54,11 +54,15 @@ namespace Common.MacroProgramming
             get { return _state; }
             set
             {
+                
                 var newVal = 
                     _precision != -1 
                         ? System.Math.Round(value, _precision) 
                         : value;
-            
+                if (double.IsInfinity(newVal) || double.IsNaN(newVal))
+                {
+                    newVal = 0;
+                }
                 if (newVal != _state)
                 {
                     _previousState = _state;
