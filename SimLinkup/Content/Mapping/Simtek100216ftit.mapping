@@ -9,7 +9,7 @@
      <SignalMapping>
       <!-- F4 FTIT OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_FTIT1__FTIT_PERCENT</Id>
+        <Id>F4_FTIT1__FTIT_TEMP_DEG_CELCIUS</Id>
       </Source>
       <!-- SIMTEK FTIT INPUT-->
       <Destination xsi:type="AnalogSignal">
