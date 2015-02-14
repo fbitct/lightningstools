@@ -234,14 +234,14 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.ADI__ROLL_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.roll*DEGREES_PER_RADIAN;
                         break;
+                    case F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS:
+                        ((DigitalSignal)output).State = showCommandBars;
+                        break;
                     case F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION:
-                        ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / (_lastFlightData.deviationLimit/5.0f);
+                        ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
                         break;
                     case F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION:
-                        ((AnalogSignal)output).State = _lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN / _lastFlightData.deviationLimit;
-                        break;
-                    case F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS:
-                        ((DigitalSignal) output).State = showCommandBars;
+                        ((AnalogSignal)output).State = _lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN / LOCALIZER_DEVIATION_LIMIT_DEGREES;
                         break;
                     case F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION:
                         ((AnalogSignal)output).State = 0.0f;
@@ -1053,12 +1053,12 @@ namespace F4Utils.SimSupport
                                                 typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Roll (degrees)", (int) F4SimOutputs.ADI__ROLL_DEGREES,
                                                 typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("ADI", "Glideslope and localizer ILS command bars enabled flag",
+                                                (int)F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Position of glideslope ILS bar",
                                                 (int) F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Position of localizer ILS bar",
                                                 (int) F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof (float)));
-            AddF4SimOutput(CreateNewF4SimOutput("ADI", "Glideslope and localizer ILS command bars enabled flag",
-                                                (int)F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Rate of Turn Indicator Position",
                                                 (int)F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float)));
             AddF4SimOutput(CreateNewF4SimOutput("ADI", "Inclinometer Position",
