@@ -248,16 +248,21 @@ namespace Common.InputSupport.DirectInput
             {
                 Log.Debug(e.Message, e);
                 Prepared = false;
-                throw;
             }
-            catch (NullReferenceException e2)
+            catch (OutOfMemoryException e)
             {
-                Log.Debug(e2.Message, e2);
+                Log.Debug(e.Message, e);
                 Prepared = false;
             }
-            catch (AccessViolationException e3)
+            catch (NullReferenceException e)
             {
-                Log.Debug(e3.Message, e3);
+                Log.Debug(e.Message, e);
+                Prepared = false;
+            }
+            catch (AccessViolationException e)
+            {
+                Log.Debug(e.Message, e);
+                Prepared = false;
             }
             return _state;
         }
@@ -269,19 +274,11 @@ namespace Common.InputSupport.DirectInput
         /// <summary>
         ///   Initializes this object's state and sets up a DirectInput Device object
         ///   to monitor the device instance specified in this object's _guid variable.
-        ///   During preparation, the _preparing flag is raised.  Subsequent concurrent calls to
-        ///   Prepare() will simply wait until the _preparing flag is lowered.
+        ///   During preparation, the _preparing flag is raised.  
         /// </summary>
         protected override void Prepare()
         {
-            var elapsed = 0;
-            const int timeout = 1000;
-            while (Preparing && elapsed <= timeout)
-            {
-                Thread.Sleep(20);
-                System.Windows.Forms.Application.DoEvents();
-                elapsed += 20;
-            }
+
             if (!Preparing)
             {
                 try
@@ -297,6 +294,13 @@ namespace Common.InputSupport.DirectInput
                             return;
                         }
                     }
+                    catch (OutOfMemoryException e)
+                    {
+                        Log.Debug(e.Message, e);
+                        Preparing = false;
+                        Prepared = false;
+                        return;
+                    }
                     catch (DirectXException e)
                     {
                         Log.Debug(e.Message, e);
@@ -304,9 +308,9 @@ namespace Common.InputSupport.DirectInput
                         Prepared = false;
                         return;
                     }
-                    catch (AccessViolationException e2)
+                    catch (AccessViolationException e)
                     {
-                        Log.Debug(e2.Message, e2);
+                        Log.Debug(e.Message, e);
                         Preparing = false;
                         Prepared = false;
                         return;
@@ -347,17 +351,20 @@ namespace Common.InputSupport.DirectInput
 
                     Prepared = true;
                 }
+                catch (OutOfMemoryException e)
+                {
+                    Log.Debug(e.Message, e);
+                    Prepared = false;
+                }
                 catch (DirectXException e)
                 {
                     Log.Debug(e.Message, e);
                     Prepared = false;
-                    throw;
                 }
                 catch (AccessViolationException e2)
                 {
                     Log.Debug(e2.Message, e2);
                     Prepared = false;
-                    throw;
                 }
                 finally
                 {
@@ -406,18 +413,25 @@ namespace Common.InputSupport.DirectInput
                         }
                     }
                 }
+                catch (OutOfMemoryException e)
+                {
+                    Log.Debug(e.Message, e);
+                    Prepared = false;
+                }
                 catch (DirectXException e)
                 {
-                    Prepare(); //TODO: check here whether to prepare here or just mark object as not-prepared
                     Log.Debug(e.Message, e);
+                    Prepared = false;
                 }
                 catch (NullReferenceException e2)
                 {
                     Log.Debug(e2.Message, e2);
+                    Prepared = false;
                 }
                 catch (AccessViolationException e3)
                 {
                     Log.Debug(e3.Message, e3);
+                    Prepared = false;
                 }
             }
         }
@@ -519,6 +533,10 @@ namespace Common.InputSupport.DirectInput
                         {
                             _underlyingDxDevice.Unacquire();
                         }
+                        catch (OutOfMemoryException e)
+                        {
+                            Log.Debug(e.Message, e);
+                        }
                         catch (DirectXException e)
                         {
                             Log.Debug(e.Message, e);
@@ -536,17 +554,21 @@ namespace Common.InputSupport.DirectInput
                         {
                             _underlyingDxDevice.Dispose();
                         }
+                        catch (OutOfMemoryException e)
+                        {
+                            Log.Debug(e.Message, e);
+                        }
                         catch (DirectXException e)
                         {
                             Log.Debug(e.Message, e);
                         }
-                        catch (NullReferenceException e2)
+                        catch (NullReferenceException ed)
                         {
-                            Log.Debug(e2.Message, e2);
+                            Log.Debug(ed.Message, ed);
                         }
-                        catch (AccessViolationException e3)
+                        catch (AccessViolationException e)
                         {
-                            Log.Debug(e3.Message, e3);
+                            Log.Debug(e.Message, e);
                         }
                     }
                 }

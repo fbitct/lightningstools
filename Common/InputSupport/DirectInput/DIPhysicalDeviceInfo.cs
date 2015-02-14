@@ -69,6 +69,15 @@ namespace Common.InputSupport.DirectInput
                     return;
                 }
             }
+            catch (OutOfMemoryException e)
+            {
+                _log.Debug(e.Message, e);
+                return;
+            }
+            catch (NullReferenceException e)
+            {
+                _log.Debug(e.Message, e);
+            }
             catch (DirectXException e)
             {
                 _log.Debug(e.Message, e);

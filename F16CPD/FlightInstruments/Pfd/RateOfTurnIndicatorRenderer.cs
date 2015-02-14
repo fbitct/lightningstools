@@ -25,10 +25,8 @@ namespace F16CPD.FlightInstruments.Pfd
             }
             const int rateOfTurnXRange = (int)((dashWidth * 4.0f));
             var rateOfTurnCenterXPos = leftDashX + (rateOfTurnXRange / 2) + (dashWidth / 2);
-            var instantaneousRateOfTurn = rateOfTurnInDecimalDegreesPerSecond;
-            var indicatedRateOfTurn = LimitRateOfTurn(instantaneousRateOfTurn);
             rateOfTurnCenterXPos =
-                (int)((indicatedRateOfTurn / Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND) * (rateOfTurnXRange / 2)) +
+                (int)((rateOfTurnInDecimalDegreesPerSecond / Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND) * (rateOfTurnXRange / 2)) +
                 rateOfTurnCenterXPos;
 
             whitePen.Width = 5;
@@ -36,24 +34,6 @@ namespace F16CPD.FlightInstruments.Pfd
                 rateOfTurnCenterXPos + (dashWidth / 2), leftDashY + 7);
             g.DrawLineFast(whitePen, rateOfTurnCenterXPos, leftDashY + 7, rateOfTurnCenterXPos, leftDashY + 14);
         }
-        private static float LimitRateOfTurn(float instantaneousRateOfTurnDegreesPerSecond)
-        {
-            var indicatedRateOfTurnDegreesPerSecond = instantaneousRateOfTurnDegreesPerSecond;
-
-            /*  LIMIT INDICATED RATE OF TURN TO BE WITHIN CERTAIN OUTER BOUNDARIES */
-            const float maxIndicatedRateOfTurnDegreesPerSecond =
-                Pfd.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.75f;
-            const float minIndicatedRateOfTurnDegreesPerSecond = -maxIndicatedRateOfTurnDegreesPerSecond;
-
-            if (instantaneousRateOfTurnDegreesPerSecond < minIndicatedRateOfTurnDegreesPerSecond)
-            {
-                indicatedRateOfTurnDegreesPerSecond = minIndicatedRateOfTurnDegreesPerSecond;
-            }
-            else if (instantaneousRateOfTurnDegreesPerSecond > maxIndicatedRateOfTurnDegreesPerSecond)
-            {
-                indicatedRateOfTurnDegreesPerSecond = maxIndicatedRateOfTurnDegreesPerSecond;
-            }
-            return indicatedRateOfTurnDegreesPerSecond;
-        }
+        
     }
 }

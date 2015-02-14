@@ -98,9 +98,13 @@ namespace JoyMapper
                 {
                     _log.Debug(e.Message, e);
                 }
-                catch (AccessViolationException e2)
+                catch (AccessViolationException e)
                 {
-                    _log.Debug(e2.Message, e2);
+                    _log.Debug(e.Message, e);
+                }
+                catch (OutOfMemoryException e)
+                {
+                    _log.Debug(e.Message, e);
                 }
             }
             return maxDevices;

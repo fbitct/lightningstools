@@ -190,7 +190,6 @@
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetHsiModePlsNavEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetHsiModePlsTcnEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetHsiModeTcnEventHandler.cs" />
-    <Compile Include="SimSupport\Falcon4\IndicatedRateOfTurnCalculator.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransNormEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\SetExtFuelSwitchTransWingFirstEventHandler.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap\CenterAirplaneRenderer.cs" />

@@ -31,7 +31,7 @@ namespace F16CPD.SimSupport.Falcon4
         private readonly IClientSideInboundMessageProcessor _clientSideInboundMessageProcessor;
         private readonly IDEDAlowReader _dedAlowReader;
 
-        private readonly IIndicatedRateOfTurnCalculator _indicatedRateOfTurnCalculator =
+        private readonly F4Utils.SimSupport.IIndicatedRateOfTurnCalculator _indicatedRateOfTurnCalculator =
             new IndicatedRateOfTurnCalculator();
 
         private readonly IInputControlEventHandler _inputControlEventHandler;
@@ -312,7 +312,7 @@ namespace F16CPD.SimSupport.Falcon4
 
                 UpdateHSIData(flightData, fromFalcon, hsibits);
 
-                _indicatedRateOfTurnCalculator.DetermineIndicatedRateOfTurn(flightData);
+                flightData.RateOfTurnInDecimalDegreesPerSecond= _indicatedRateOfTurnCalculator.DetermineIndicatedRateOfTurn(flightData.MagneticHeadingInDecimalDegrees);
 
                 UpdateTACANChannel(flightData, fromFalcon);
                 UpdateMapPosition(flightData, fromFalcon);

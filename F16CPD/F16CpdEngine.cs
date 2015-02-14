@@ -64,7 +64,7 @@ namespace F16CPD
                 Common.Util.DisposeObject(_mediator);
             }
             _mediator = new Mediator(this) {RaiseEvents = true};
-            _controlBindingsLoader.LoadControlBindings(_mediator);
+            _controlBindings = _controlBindingsLoader.LoadControlBindings(_mediator);
             UpdateMfdManagerSize();
             LoadSimSupportModule();
             _mediatorHandler =
