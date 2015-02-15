@@ -25,7 +25,7 @@
     <SignalMapping>
       <!-- SIMTEK FTIT INDICATOR HARDWARE SUPPORT MODULE FTIT OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>100207_FTIT_To_Instrument</Id>
+        <Id>100216_FTIT_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 0 -->
       <Destination xsi:type="AnalogSignal">

@@ -6,6 +6,7 @@ using Common.SimSupport;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using Util = F4Utils.Process.Util;
+using log4net;
 
 namespace F4Utils.SimSupport
 {
@@ -15,11 +16,12 @@ namespace F4Utils.SimSupport
         public const float FEET_PER_SECOND_PER_KNOT = 1.68780986f;
         private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
-        private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 10;
+        private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private FlightData _lastFlightData;
         private Reader _smReader;
         private IIndicatedRateOfTurnCalculator _rateOfTurnCalculator = new IndicatedRateOfTurnCalculator();
+        private static readonly ILog _log = LogManager.GetLogger (typeof(Falcon4SimSupportModule)); 
         public Falcon4SimSupportModule()
         {
             EnsureSharedmemReaderIsCreated();
@@ -241,10 +243,14 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
                         break;
                     case F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION:
-                        ((AnalogSignal)output).State = _lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN / LOCALIZER_DEVIATION_LIMIT_DEGREES;
+                        ((AnalogSignal)output).State =(_lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN) / LOCALIZER_DEVIATION_LIMIT_DEGREES;
                         break;
                     case F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION:
-                        ((AnalogSignal)output).State = _rateOfTurnCalculator.DetermineIndicatedRateOfTurn(_lastFlightData.yaw);
+                        var rateOfTurn = _rateOfTurnCalculator.DetermineIndicatedRateOfTurn(_lastFlightData.yaw * DEGREES_PER_RADIAN);
+                        var percentDeflection = rateOfTurn / IndicatedRateOfTurnCalculator.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 1.5f;
+                        if (percentDeflection > 1.0f) percentDeflection = 1.0f;
+                        if (percentDeflection < -1.0f) percentDeflection = -1.0f;
+                        ((AnalogSignal)output).State = percentDeflection;
                         break;
                     case F4SimOutputs.ADI__INCLINOMETER_POSITION:
                         ((AnalogSignal)output).State = _lastFlightData.beta / SIDESLIP_ANGLE_LIMIT_DEGREES;

@@ -228,7 +228,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Content\Mapping\Simtek10033501standbyADI.mapping.orig">
+    <None Include="Content\Mapping\Simtek10033501standbyADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek10058102verticalvelocity.mapping">

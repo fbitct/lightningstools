@@ -15,7 +15,7 @@ namespace F4Utils.SimSupport
     }
     public class IndicatedRateOfTurnCalculator : IIndicatedRateOfTurnCalculator
     {
-        private const float MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND = 3.0f;
+        public const float MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND = 3.0f;
         private TimestampedFloatValue _lastHeadingSample;
         private List<TimestampedFloatValue> _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
         private readonly IMedianOfSamplesCalculator _medianOfSamplesCalculator = new MedianOfSamplesCalculator();
@@ -37,9 +37,9 @@ namespace F4Utils.SimSupport
             if (Math.Abs(currentInstantaneousRateOfTurn) > 30 || float.IsInfinity(currentInstantaneousRateOfTurn) ||
                 float.IsNaN(currentInstantaneousRateOfTurn)) currentInstantaneousRateOfTurn = 0; //noise
             if (Math.Abs(currentInstantaneousRateOfTurn) >
-                (MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f))
+                (MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.75f))
             {
-                currentInstantaneousRateOfTurn = (MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.5f) *
+                currentInstantaneousRateOfTurn = (MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 0.75f) *
                                                  Math.Sign(currentInstantaneousRateOfTurn);
             }
 

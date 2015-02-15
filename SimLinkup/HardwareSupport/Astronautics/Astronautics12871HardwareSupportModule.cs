@@ -679,7 +679,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = percentDeflection * 4.0f;
+                    outputValue = percentDeflection * 2.25f;
                 }
                 else
                 {
@@ -712,7 +712,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
                 if (_showCommandBarsInputSignal.State)
                 {
-                    outputValue = percentDeflection * 4.0f;
+                    outputValue = percentDeflection * 2.25f;
                 }
                 else
                 {
