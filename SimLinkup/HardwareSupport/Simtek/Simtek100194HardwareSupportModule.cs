@@ -218,12 +218,14 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void mach_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
+            UpdateAirspeedOutputValues();
             UpdateMachOutputValues();
         }
 
         private void airspeed_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateAirspeedOutputValues();
+            UpdateMachOutputValues();
         }
 
         private void UpdateMachOutputValues()
@@ -234,8 +236,8 @@ namespace SimLinkup.HardwareSupport.Simtek
                 double machReferenceVoltage = 0;
                 if (_machOutputSignal != null)
                 {
-                    var airspeedVoltage = _airspeedOutputSignal !=null ?( (_airspeedOutputSignal.State * 20)-10):0;
-                    var airspeedNeedleAngle = airspeedVoltage / (20/340);
+                    var airspeedVoltage = _airspeedOutputSignal !=null ?( (_airspeedOutputSignal.State * 20.00)-10.0000):0.0000;
+                    var airspeedNeedleAngle = (airspeedVoltage+10.0) / (20.0000/340.0000);
                     if (machInput < 0)
                     {
                         machReferenceVoltage = -10;
@@ -390,9 +392,9 @@ namespace SimLinkup.HardwareSupport.Simtek
                     }
 
 
-                    var machReferenceAngle = machReferenceVoltage / (20/262);
+                    var machReferenceAngle = (machReferenceVoltage +10) / (20.0000/262.0000);
                     var machOutputAngle = machReferenceAngle - (airspeedNeedleAngle - machReferenceAngle);
-                    var machOutputVoltage = machReferenceAngle * (20/262);
+                    var machOutputVoltage = machReferenceAngle * (20.0000/262.0000);
                     
                     if (machOutputVoltage < -10)
                     {
