@@ -234,8 +234,8 @@ namespace SimLinkup.HardwareSupport.Simtek
                 double machReferenceVoltage = 0;
                 if (_machOutputSignal != null)
                 {
-                    airspeedVoltage = _airspeedOutputSignal !=null ??( (_airspeedOutputSignal.State * 20)-10):0;
-                    airspeedNeedleAngle = airspeedVoltage / (20/340);
+                    var airspeedVoltage = _airspeedOutputSignal !=null ?( (_airspeedOutputSignal.State * 20)-10):0;
+                    var airspeedNeedleAngle = airspeedVoltage / (20/340);
                     if (machInput < 0)
                     {
                         machReferenceVoltage = -10;
