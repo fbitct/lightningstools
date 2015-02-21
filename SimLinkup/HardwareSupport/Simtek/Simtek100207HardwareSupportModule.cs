@@ -246,7 +246,6 @@ namespace SimLinkup.HardwareSupport.Simtek
                     {
                         rpmOutputValue = 10;
                     }
-
                     _rpmOutputSignal.State = ((rpmOutputValue + 10.0000)/20.0000);
                 }
             }

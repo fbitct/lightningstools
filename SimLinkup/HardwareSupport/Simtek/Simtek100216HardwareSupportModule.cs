@@ -208,7 +208,6 @@ namespace SimLinkup.HardwareSupport.Simtek
                     {
                         ftitOutputValue = 10;
                     }
-
                     _ftitOutputSignal.State = ((ftitOutputValue + 10.0000)/20.0000);
                 }
             }

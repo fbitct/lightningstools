@@ -237,18 +237,15 @@ namespace SimLinkup.HardwareSupport.Simtek
                 if (_machOutputSignal != null)
                 {
                     var airspeedVoltage = _airspeedOutputSignal !=null ?( (_airspeedOutputSignal.State * 20.00)-10.0000):0.0000;
-                    var airspeedNeedleAngle = (airspeedVoltage+10.0) / (20.0000/340.0000);
-                    if (machInput < 0)
+                    var absoluteAirspeedNeedleAngle = (airspeedVoltage+10.0) / (20.0000/340.0000);
+
+                    if (machInput < 0.5)
                     {
                         machReferenceVoltage = -10;
                     }
-                    else if (machInput >= 0 && machInput < 0.50)
-                    {
-                        machReferenceVoltage = -10.0 + ((machInput/0.50)*2.44);
-                    }
                     else if (machInput >= 0.50 && machInput < 0.55)
                     {
-                        machReferenceVoltage = -7.56 + (((machInput - 0.55)/0.05)*1.00);
+                        machReferenceVoltage = -7.56 + (((machInput - 0.50)/0.05)*1.00);
                     }
                     else if (machInput >= 0.55 && machInput < 0.60)
                     {
@@ -390,12 +387,14 @@ namespace SimLinkup.HardwareSupport.Simtek
                     {
                         machReferenceVoltage = 10;
                     }
+                    var machOneReferenceAngle = 131;
+                    var machReferenceAngle = (machReferenceVoltage / (20.0000 / 262.0000)) + machOneReferenceAngle;
+                    var machAngleOffsetFromMach1RefAngle = machReferenceAngle-machOneReferenceAngle;
 
+                    var airspeedNeedleAngleDifferenceFrom260 = absoluteAirspeedNeedleAngle - 170.0000f;
+                    var howFarToMoveMachWheel = (airspeedNeedleAngleDifferenceFrom260 - machAngleOffsetFromMach1RefAngle);
+                    var machOutputVoltage = -howFarToMoveMachWheel * (20.0000 / 262.0000);
 
-                    var machReferenceAngle = (machReferenceVoltage +10) / (20.0000/262.0000);
-                    var machOutputAngle = machReferenceAngle - (airspeedNeedleAngle - machReferenceAngle);
-                    var machOutputVoltage = machReferenceAngle * (20.0000/262.0000);
-                    
                     if (machOutputVoltage < -10)
                     {
                         machOutputVoltage = -10;

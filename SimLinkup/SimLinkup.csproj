@@ -178,7 +178,7 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\AMI900278002primaryADI.mapping.orig">
+    <None Include="Content\Mapping\AMI900278002primaryADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
@@ -199,6 +199,7 @@
     </None>
     <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Content\Mapping\Simtek100181altimeter.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -224,7 +225,7 @@
     <Content Include="phcc.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Mapping\Astronautics128710primaryADI.mapping">
+    <None Include="Content\Mapping\Astronautics128710primaryADI.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
