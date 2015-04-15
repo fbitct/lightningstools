@@ -5,15 +5,15 @@
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM F4 SIM VALUES TO SIMTEK HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
-    <!-- OIL PRESSURE-->
+    <!-- NOZZLE POSITION INDICATOR-->
      <SignalMapping>
-      <!-- F4 OIL PRESSURE OUTPUT -->
+      <!-- F4 NOZ POS OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_OIL_PRESS1__OIL_PRESS_PERCENT</Id>
+        <Id>F4_NOZ_POS1__NOZZLE_PERCENT_OPEN</Id>
       </Source>
-      <!-- SIMTEK OIL PRESSURE INPUT-->
+      <!-- SIMTEK NOZ POS INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>101091_Oil_Pressure_From_Sim</Id>
+        <Id>101088_Nozzle_Position_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -21,27 +21,27 @@
     <!-- *********************************************************************-->
     <!-- MAPPINGS FROM SIMTEK HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
     <!-- *********************************************************************-->
-    <!-- OIL PRESSURE INDICATOR  -->
+    <!--NOZZLE POSITION INDICATOR  -->
     <SignalMapping>
-      <!-- SIMTEK OIL PRESSURE INDICATOR HARDWARE SUPPORT MODULE SIN OUTPUT -->
+      <!-- SIMTEK NOZZLE POSITION INDICATOR HARDWARE SUPPORT MODULE SIN OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>101091_Oil_Pressure_SIN_To_Instrument</Id>
+        <Id>101088_Nozzle_Position_SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 1 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 3 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][1]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][3]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
     <SignalMapping>
-      <!-- SIMTEK OIL PRESSURE INDICATOR HARDWARE SUPPORT MODULE COSINE OUTPUT -->
+      <!-- SIMTEK NOZZLE POSITION INDICATOR HARDWARE SUPPORT MODULE COSINE OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>101091_Oil_Pressure_COS_To_Instrument</Id>
+        <Id>101088_Nozzle_Position_COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 2 -->
+      <!-- ANALOG DEVICES DAC OUTPUT 4 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][2]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][4]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>

@@ -9,28 +9,28 @@ using log4net;
 
 namespace SimLinkup.HardwareSupport.Simtek
 {
-    //Simtek 10-1091 F-16 ENGINE OIL PRESSURE IND
-    public class Simtek101091HardwareSupportModule : HardwareSupportModuleBase, IDisposable
+    //Simtek 10-1088 F-16 NOZZLE POSITION IND
+    public class Simtek101088HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Simtek101091HardwareSupportModule));
+        private static readonly ILog _log = LogManager.GetLogger(typeof(Simtek101088HardwareSupportModule));
 
         #endregion
 
         #region Instance variables
 
         private bool _isDisposed;
-        private AnalogSignal _oilPressureInputSignal;
-        private AnalogSignal.AnalogSignalChangedEventHandler _oilPressureInputSignalChangedEventHandler;
-        private AnalogSignal _oilPressureSINOutputSignal;
-        private AnalogSignal _oilPressureCOSOutputSignal;
+        private AnalogSignal _nozzlePositionInputSignal;
+        private AnalogSignal.AnalogSignalChangedEventHandler _nozzlePositionInputSignalChangedEventHandler;
+        private AnalogSignal _nozzlePositionSINOutputSignal;
+        private AnalogSignal _nozzlePositionCOSOutputSignal;
 
         #endregion
 
         #region Constructors
 
-        private Simtek101091HardwareSupportModule()
+        private Simtek101088HardwareSupportModule()
         {
             CreateInputSignals();
             CreateOutputSignals();
@@ -40,19 +40,19 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override string FriendlyName
         {
-            get { return "Simtek P/N 10-1091 - Engine Oil Pressure Ind"; }
+            get { return "Simtek P/N 10-1088 - Nozzle Position Ind"; }
         }
 
         public static IHardwareSupportModule[] GetInstances()
         {
             var toReturn = new List<IHardwareSupportModule>();
-            toReturn.Add(new Simtek101091HardwareSupportModule());
+            toReturn.Add(new Simtek101088HardwareSupportModule());
             try
             {
                 var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
-                    "Simtek101091HardwareSupportModule.config");
+                    "Simtek101088HardwareSupportModule.config");
                 var hsmConfig =
-                    Simtek101091HardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                    Simtek101088HardwareSupportModuleConfig.Load(hsmConfigFilePath);
             }
             catch (Exception e)
             {
@@ -67,7 +67,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogInputs
         {
-            get { return new[] {_oilPressureInputSignal}; }
+            get { return new[] { _nozzlePositionInputSignal }; }
         }
 
         public override DigitalSignal[] DigitalInputs
@@ -77,7 +77,7 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         public override AnalogSignal[] AnalogOutputs
         {
-            get { return new[] {_oilPressureSINOutputSignal, _oilPressureCOSOutputSignal}; }
+            get { return new[] { _nozzlePositionSINOutputSignal, _nozzlePositionCOSOutputSignal }; }
         }
 
         public override DigitalSignal[] DigitalOutputs
@@ -93,30 +93,30 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void CreateInputEventHandlers()
         {
-            _oilPressureInputSignalChangedEventHandler =
-                oil_InputSignalChanged;
+            _nozzlePositionInputSignalChangedEventHandler =
+                nozzlePosition_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
         {
-            _oilPressureInputSignalChangedEventHandler = null;
+            _nozzlePositionInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
         {
-            if (_oilPressureInputSignal != null)
+            if (_nozzlePositionInputSignal != null)
             {
-                _oilPressureInputSignal.SignalChanged += _oilPressureInputSignalChangedEventHandler;
+                _nozzlePositionInputSignal.SignalChanged += _nozzlePositionInputSignalChangedEventHandler;
             }
         }
 
         private void UnregisterForInputEvents()
         {
-            if (_oilPressureInputSignalChangedEventHandler != null && _oilPressureInputSignal != null)
+            if (_nozzlePositionInputSignalChangedEventHandler != null && _nozzlePositionInputSignal != null)
             {
                 try
                 {
-                    _oilPressureInputSignal.SignalChanged -= _oilPressureInputSignalChangedEventHandler;
+                    _nozzlePositionInputSignal.SignalChanged -= _nozzlePositionInputSignalChangedEventHandler;
                 }
                 catch (RemotingException)
                 {
@@ -130,21 +130,21 @@ namespace SimLinkup.HardwareSupport.Simtek
 
         private void CreateInputSignals()
         {
-            _oilPressureInputSignal = CreateOilInputSignal();
+            _nozzlePositionInputSignal = CreateNozzlePositionInputSignal();
         }
 
         private void CreateOutputSignals()
         {
-            _oilPressureSINOutputSignal = CreateOilSINOutputSignal();
-            _oilPressureCOSOutputSignal = CreateOilCOSOutputSignal();
+            _nozzlePositionSINOutputSignal = CreateNozzlePositionSINOutputSignal();
+            _nozzlePositionCOSOutputSignal = CreateNozzlePositionCOSOutputSignal();
         }
 
-        private AnalogSignal CreateOilSINOutputSignal()
+        private AnalogSignal CreateNozzlePositionSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Oil  Pressure (SIN)";
-            thisSignal.Id = "101091_Oil_Pressure_SIN_To_Instrument";
+            thisSignal.FriendlyName = "Nozzle Position (SIN)";
+            thisSignal.Id = "101088_Nozzle_Position_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -153,12 +153,12 @@ namespace SimLinkup.HardwareSupport.Simtek
             return thisSignal;
         }
 
-        private AnalogSignal CreateOilCOSOutputSignal()
+        private AnalogSignal CreateNozzlePositionCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Oil  Pressure (COS)";
-            thisSignal.Id = "101091_Oil_Pressure_COS_To_Instrument";
+            thisSignal.FriendlyName = "Nozzle Position (COS)";
+            thisSignal.Id = "101088_Nozzle_Position_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -166,12 +166,12 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.State = 0.5f;
             return thisSignal;
         }
-        private AnalogSignal CreateOilInputSignal()
+        private AnalogSignal CreateNozzlePositionInputSignal()
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Oil Pressure";
-            thisSignal.Id = "101091_Oil_Pressure_From_Sim";
+            thisSignal.FriendlyName = "Nozzle Position";
+            thisSignal.Id = "101088_Nozzle_Position_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
@@ -181,76 +181,76 @@ namespace SimLinkup.HardwareSupport.Simtek
             return thisSignal;
         }
 
-        private void oil_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
+        private void nozzlePosition_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateOutputValues();
         }
-
         private void UpdateOutputValues()
         {
-            if (_oilPressureInputSignal != null)
+            if (_nozzlePositionInputSignal != null)
             {
-                var oilPressureInput = _oilPressureInputSignal.State;
-                double oilPressureSINOutputValue = 0;
-                if (_oilPressureSINOutputSignal != null)
+                var nozzlePositionInput = _nozzlePositionInputSignal.State *100.000;
+
+                double nozzlePositionSINOutputValue = 0;
+                if (_nozzlePositionSINOutputSignal != null)
                 {
-                    if (oilPressureInput < 0)
+                    if (nozzlePositionInput < 0)
                     {
-                        oilPressureSINOutputValue = 0;
+                        nozzlePositionSINOutputValue = 0;
                     }
-                    else if (oilPressureInput > 100)
+                    else if (nozzlePositionInput > 100)
                     {
-                        oilPressureSINOutputValue = 10.0000*Math.Sin(320.0000*Constants.RADIANS_PER_DEGREE);
+                        nozzlePositionSINOutputValue = 10.0000 * Math.Sin(225.0000 * Constants.RADIANS_PER_DEGREE);
                     }
                     else
                     {
-                        oilPressureSINOutputValue = 10.0000*
-                                                 Math.Sin(((oilPressureInput/100.0000)*320.0000)*
+                        nozzlePositionSINOutputValue = 10.0000 *
+                                                 Math.Sin(((nozzlePositionInput / 100.0000) * 225.0000) *
                                                           Constants.RADIANS_PER_DEGREE);
                     }
 
-                    if (oilPressureSINOutputValue < -10)
+                    if (nozzlePositionSINOutputValue < -10)
                     {
-                        oilPressureSINOutputValue = -10;
+                        nozzlePositionSINOutputValue = -10;
                     }
-                    else if (oilPressureSINOutputValue > 10)
+                    else if (nozzlePositionSINOutputValue > 10)
                     {
-                        oilPressureSINOutputValue = 10;
+                        nozzlePositionSINOutputValue = 10;
                     }
 
-                    _oilPressureSINOutputSignal.State = ((oilPressureSINOutputValue + 10.0000)/20.0000);
+                    _nozzlePositionSINOutputSignal.State = ((nozzlePositionSINOutputValue + 10.0000) / 20.0000);
                 }
 
-                if (_oilPressureCOSOutputSignal != null)
+                if (_nozzlePositionCOSOutputSignal != null)
                 {
-                    double oilPressureCOSOutputValue = 0;
-                    if (oilPressureInput < 0)
+                    double nozzlePositionCOSOutputValue = 0;
+                    if (nozzlePositionInput < 0)
                     {
-                        oilPressureCOSOutputValue = 0;
+                        nozzlePositionCOSOutputValue = 0;
                     }
-                    else if (oilPressureInput > 100)
+                    else if (nozzlePositionInput > 100)
                     {
-                        oilPressureCOSOutputValue = 10.0000 * Math.Cos(320.0000 * Constants.RADIANS_PER_DEGREE);
+                        nozzlePositionCOSOutputValue = 10.0000 * Math.Cos(225.0000 * Constants.RADIANS_PER_DEGREE);
                     }
                     else
                     {
-                        oilPressureCOSOutputValue = 10.0000 *
-                                                 Math.Cos(((oilPressureInput / 100.0000) * 320.0000) *
+                        nozzlePositionCOSOutputValue = 10.0000 *
+                                                 Math.Cos(((nozzlePositionInput / 100.0000) * 225.0000) *
                                                           Constants.RADIANS_PER_DEGREE);
                     }
 
-                    if (oilPressureCOSOutputValue < -10)
+                    if (nozzlePositionCOSOutputValue < -10)
                     {
-                        oilPressureCOSOutputValue = -10;
+                        nozzlePositionCOSOutputValue = -10;
                     }
-                    else if (oilPressureCOSOutputValue > 10)
+                    else if (nozzlePositionCOSOutputValue > 10)
                     {
-                        oilPressureCOSOutputValue = 10;
+                        nozzlePositionCOSOutputValue = 10;
                     }
 
-                    _oilPressureCOSOutputSignal.State = ((oilPressureCOSOutputValue + 10.0000) / 20.0000);
+                    _nozzlePositionCOSOutputSignal.State = ((nozzlePositionCOSOutputValue + 10.0000) / 20.0000);
                 }
-
+ 
             }
         }
 
@@ -276,7 +276,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         ///     is not manually disposed.  Ordinarily called only
         ///     by the garbage collector.
         /// </summary>
-        ~Simtek101091HardwareSupportModule()
+        ~Simtek101088HardwareSupportModule()
         {
             Dispose();
         }

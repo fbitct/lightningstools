@@ -103,6 +103,8 @@
     <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10058201HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10058201HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101088HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Simtek\Simtek101088HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10108902HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek10108902HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek101091HardwareSupportModuleConfig.cs" />
@@ -182,6 +184,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
+    <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Mapping\Simtek100207rpm.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -196,10 +201,6 @@
     </None>
     <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping.orig">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
     </None>
     <None Include="Content\Mapping\Simtek100181altimeter.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -236,6 +237,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek10058201angleofattack.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Content\Mapping\Simtek101088nozzlePositionIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek10108902fuelquantityindicator.mapping">

@@ -5,6 +5,7 @@
     <!--<Module>SimLinkup.HardwareSupport.Phcc.PhccHardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>-->
     <!--<Module>SimLinkup.HardwareSupport.DirectInput.DirectInputHardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>-->
     <Module>SimLinkup.HardwareSupport.Astronautics.Astronautics12871HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
+    <Module>SimLinkup.HardwareSupport.Simtek.Simtek101088HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100194HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek100285HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
     <Module>SimLinkup.HardwareSupport.Simtek.Simtek10058201HardwareSupportModule, SimLinkup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</Module>
