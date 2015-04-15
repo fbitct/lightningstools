@@ -93,6 +93,8 @@
     <Compile Include="HardwareSupport\DirectInput\DirectInputHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Lilbern\Lilbern3239HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Lilbern\Lilbern3239HardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Malwin\Malwin19581HardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Malwin\Malwin19581HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
@@ -184,6 +186,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
+    <None Include="Content\Mapping\Malwin19581hydraulicPressureB.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -212,6 +217,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\AMI900157501angleofattack.mapping.orig">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\Malwin19581hydraulicPressureA.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="HardwareSupportModule.registry">

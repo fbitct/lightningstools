@@ -159,6 +159,13 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN:
                         ((AnalogSignal) output).State = _lastFlightData.nozzlePos2;
                         break;
+                    case F4SimOutputs.HYD_PRESSURE_A__PSI:
+                        ((AnalogSignal)output).State = _lastFlightData.hydPressureA;
+                        break;
+                    case F4SimOutputs.HYD_PRESSURE_B__PSI:
+                        ((AnalogSignal)output).State = _lastFlightData.hydPressureB;
+                        break;
+
                     case F4SimOutputs.FUEL_QTY__INTERNAL_FUEL_POUNDS:
                         ((AnalogSignal) output).State = _lastFlightData.internalFuel;
                         break;
@@ -1012,6 +1019,13 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("NOZ POS 2", "Engine 2 Nozzle Percent Open",
                                                 (int) F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof (float)));
+
+            AddF4SimOutput(CreateNewF4SimOutput("HYD A", "Hydraulic Pressure A (Pounds per Square Inch)",
+                                    (int)F4SimOutputs.HYD_PRESSURE_A__PSI, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("HYD B", "Hydraulic Pressure B (Pounds per Square Inch)",
+                                                (int)F4SimOutputs.HYD_PRESSURE_B__PSI, typeof(float)));
+
+
             AddF4SimOutput(CreateNewF4SimOutput("FUEL FLOW", "Fuel flow (pounds/hour)",
                                                 (int) F4SimOutputs.FUEL_FLOW__FUEL_FLOW_POUNDS_PER_HOUR, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("RPM 1", "Engine 1 RPM (Percent 0-103)",
