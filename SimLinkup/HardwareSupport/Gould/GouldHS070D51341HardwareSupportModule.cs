@@ -171,7 +171,7 @@ namespace SimLinkup.HardwareSupport.Gould
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Magnetic Heading (Degrees)";
-            thisSignal.Id = "HS070D51341_Compass__Altitude_From_Sim";
+            thisSignal.Id = "HS070D51341_Compass__Magnetic_Heading_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;

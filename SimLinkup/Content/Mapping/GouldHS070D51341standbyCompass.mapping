@@ -13,7 +13,7 @@
       </Source>
       <!-- GOULD HS070D5134-1 STANDBY COMPASS MAGNETIC HEADING (DEGREES) INPUT-->
       <Destination xsi:type="AnalogSignal">
-        <Id>HS070D51341_Compass__Altitude_From_Sim</Id>
+        <Id>HS070D51341_Compass__Magnetic_Heading_From_Sim</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -25,7 +25,7 @@
     <SignalMapping>
       <!-- GOULD HS070D5134-1 STANDBY COMPASS HARDWARE SUPPORT MODULE MAGNETIC HEADING (SIN) OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>HS070D51341_COMPASS__SIN_To_Instrument</Id>
+        <Id>HS070D51341_Compass__SIN_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 6 -->
       <Destination xsi:type="AnalogSignal">
@@ -38,7 +38,7 @@
     <SignalMapping>
       <!-- GOULD HS070D5134-1 STANDBY COMPASS HARDWARE SUPPORT MODULE MAGNETIC HEADING (COS) OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>HS070D51341_COMPASS__COS_To_Instrument</Id>
+        <Id>HS070D51341_Compass__COS_To_Instrument</Id>
       </Source>
       <!-- ANALOG DEVICES DAC OUTPUT 7 -->
       <Destination xsi:type="AnalogSignal">

@@ -229,6 +229,7 @@
     </None>
     <Content Include="HardwareSupportModule.registry">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="SimLinkup.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
