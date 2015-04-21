@@ -2,13 +2,14 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using SimLinkup.Properties;
+using log4net;
 
 namespace SimLinkup.UI
 {
     public partial class frmMain : Form
     {
         public static Runtime.Runtime SharedRuntime;
-
+        private static ILog _log = LogManager.GetLogger(typeof(frmMain));
         public frmMain()
         {
             InitializeComponent();
@@ -174,7 +175,7 @@ namespace SimLinkup.UI
             }
             else
             {
-                RestoreFromTray();
+                //RestoreFromTray();
             }
         }
 

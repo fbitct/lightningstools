@@ -157,7 +157,7 @@ namespace SimLinkup.HardwareSupport.Gould
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Compass (SIN)";
+            thisSignal.FriendlyName = "Compass (COS)";
             thisSignal.Id = "HS070D51341_Compass__COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
