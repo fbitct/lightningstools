@@ -27,9 +27,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>HS070D51341_COMPASS__SIN_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT n -->
+      <!-- ANALOG DEVICES DAC OUTPUT 6 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[-1][-1]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][6]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
@@ -40,9 +40,9 @@
       <Source xsi:type="AnalogSignal">
         <Id>HS070D51341_COMPASS__COS_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT n -->
+      <!-- ANALOG DEVICES DAC OUTPUT 7 -->
       <Destination xsi:type="AnalogSignal">
-        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[-1][-1]</Id>
+        <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[1][7]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
