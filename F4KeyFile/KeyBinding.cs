@@ -37,7 +37,10 @@ namespace F4KeyFile
         public string Description { get; set; }
         public int LineNum { get; set; }
         public string Callback { get; set; }
-
+        public void SendCallback()
+        {
+            CallbackSender.SendKeystrokesForKeyBinding(this);
+        }
         public override string ToString()
         {
             var sb = new StringBuilder();

@@ -156,5 +156,13 @@ namespace F4KeyFile
             }
             FileName = fileName;
         }
+        public void SendCallbackByName(string callbackName)
+        {
+            CallbackSender.SendKeystrokesForCallbackName(callbackName, this);
+        }
+        public void SendCallback(Callbacks callback)
+        {
+            SendCallbackByName(callback.ToString());
+        }
     }
 }
