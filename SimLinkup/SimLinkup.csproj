@@ -104,6 +104,8 @@
     <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModuleConfig.cs" />
+    <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModule.cs" />
+    <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModule.cs" />
@@ -195,6 +197,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Malwin246102CabinPressureAltimeter.mapping">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Mapping\PowellIP1310ALRazimuthindicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek100207rpm.mapping">
