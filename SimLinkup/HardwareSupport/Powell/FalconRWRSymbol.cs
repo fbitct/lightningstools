@@ -9,7 +9,7 @@ namespace SimLinkup.HardwareSupport.Powell
     internal struct FalconRWRSymbol
     {
         public int SymbolID { get; set; }
-        public double Bearing { get; set; }
+        public double BearingDegrees { get; set; }
         public double Lethality { get; set; }
         public bool MissileActivity { get; set; }
         public bool MissileLaunch { get; set; }

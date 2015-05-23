@@ -6,6 +6,21 @@
     <!-- MAPPINGS FROM F4 SIM VALUES TO POWELL IP-1310/ALR HARDWARE SUPPORT MODULE INPUTS -->
     <!-- *********************************************************************-->
     
+    IP1310ALR__Magnetic_Heading_Degrees
+
+    <!-- MAGNETIC HEADING (DEGREES) INPUT-->
+    <SignalMapping>
+      <!-- F4 RWR MAGNETIC HEADING OUTPUT-->
+      <Source xsi:type="AnalogSignal">
+        <Id>F4_COMPASS__MAGNETIC_HEADING_DEGREES</Id>
+      </Source>
+      <!-- POWELL IP-1310/ALR RWR MAGNETIC HEADING INPUT-->
+      <Destination xsi:type="AnalogSignal">
+        <Id>IP1310ALR__Magnetic_Heading_Degrees</Id>
+      </Destination>
+      <MappingType>StraightThrough</MappingType>
+    </SignalMapping>
+
     <!-- RWR OBJECT COUNT INPUT-->
     <SignalMapping>
       <!-- F4 RWR OBJECT COUNT OUTPUT-->

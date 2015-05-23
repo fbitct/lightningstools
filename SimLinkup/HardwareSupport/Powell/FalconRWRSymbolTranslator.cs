@@ -6,15 +6,16 @@ namespace SimLinkup.HardwareSupport.Powell
 {
     internal interface IFalconRWRSymbolTranslator
     {
-        IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol, bool primarySymbol=true, bool inverted=false);
+        IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol,double magneticHeadingDegrees, bool usePrimarySymbol=true, bool inverted=false);
         
     }
     internal class FalconRWRSymbolTranslator : IFalconRWRSymbolTranslator
     {
-        public IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol,bool primarySymbol=true, bool inverted=false)
+        public IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol,double magneticHeadingDegrees, bool primarySymbol=true, bool inverted=false)
         {
             var lethality = falconRWRSymbol.Lethality;
             var radius = 0.00d;
+
             if (lethality > 1)
             {
                 radius = -((2.0f - lethality) * 100.0f) * 0.95f;
@@ -24,16 +25,20 @@ namespace SimLinkup.HardwareSupport.Powell
                 radius = -((1.0f - lethality) * 100.0f) * 0.95f;
             }
 
+            var angleDegrees = //-magneticHeadingDegrees + 
+                falconRWRSymbol.BearingDegrees;
+            if (inverted)
+            {
+                angleDegrees = -angleDegrees;
+            }
+            var angleRadians = angleDegrees * Common.Math.Constants.RADIANS_PER_DEGREE;
 
-            var thetaDegrees = falconRWRSymbol.Bearing;
-            if (inverted) thetaDegrees = 0 - thetaDegrees;
-            var thetaRadians = thetaDegrees * Common.Math.Constants.RADIANS_PER_DEGREE;
             var blips = new List<Blip>();
-            var x = (byte)(radius * Math.Cos(thetaRadians) * 255);
-            var y = (byte)(radius * Math.Sin(thetaRadians) * 255);
-            var lineSpacingYOffset = (byte)128;
-            var charSpacingXOffset = (byte)128;
-            var charSpacingHalfXOffset = (byte)64;
+            var x = (byte)(radius * Math.Cos(angleRadians) * 255);
+            var y = (byte)(radius * Math.Sin(angleRadians) * 255);
+            var lineSpacingYOffset = (byte)15;
+            var charSpacingXOffset = (byte)15;
+            var charSpacingHalfXOffset = (byte)8;
             switch (falconRWRSymbol.SymbolID)
             {
                 case 0:
