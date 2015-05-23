@@ -28,7 +28,7 @@ namespace SimLinkup.HardwareSupport.Powell
         private const int RECEIVED_BYTES_THRESHOLD = 1;
         private const int SERIAL_READ_TIMEOUT = 500;
         private const int SERIAL_WRITE_TIMEOUT = 500;
-
+        private const int MAX_UNSUCCESSFUL_CONNECTION_ATTEMPTS = 5;
         #endregion
 
         #region Instance variables
@@ -38,6 +38,7 @@ namespace SimLinkup.HardwareSupport.Powell
         private string _deviceID;
         private Common.IO.Ports.ISerialPort _serialPort;
         private object _serialPortLock = new object();
+        private int _unsuccessfulConnectionAttempts = 0;
         private string _comPort;
         private bool _isDisposed;
         private AnalogSignal _rwrSymbolCountInputSignal;
@@ -162,7 +163,7 @@ namespace SimLinkup.HardwareSupport.Powell
                         return false;
                     }
                 }
-                if (_serialPort !=null && !_serialPort.IsOpen)
+                if (_serialPort !=null && !_serialPort.IsOpen && _unsuccessfulConnectionAttempts <MAX_UNSUCCESSFUL_CONNECTION_ATTEMPTS)
                 {
                     try
                     {
@@ -173,9 +174,11 @@ namespace SimLinkup.HardwareSupport.Powell
                         _serialPort.WriteTimeout = SERIAL_WRITE_TIMEOUT;
                         _serialPort.ErrorReceived += _serialPort_ErrorReceived;
                         _serialPort.Open();
+                        _unsuccessfulConnectionAttempts = 0;
                     }
                     catch (Exception e)
                     {
+                        _unsuccessfulConnectionAttempts++;
                         _log.Error(e.Message, e);
                         return false;
                     }
