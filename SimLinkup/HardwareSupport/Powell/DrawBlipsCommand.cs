@@ -15,11 +15,16 @@ namespace SimLinkup.HardwareSupport.Powell
         public IEnumerable<Blip> Blips { get; set; }
         public override byte[] ToBytes()
         {
-            var toReturn = new byte[(3 * Blips.Count())+1];
-            toReturn[0] = (byte) Blips.Count();
-            for (var i = 0; i < Blips.Count(); i++)
+            var blipsToWrite = Blips.Where(x => (int)x.Symbol < 31);
+            if (blipsToWrite.Count() == 0)
             {
-                var thisSymbol = Blips.ElementAt(i);
+                return null;
+            }
+            var toReturn = new byte[(3 * blipsToWrite.Count()) + 1];
+            toReturn[0] = (byte)blipsToWrite.Count();
+            for (var i = 0; i < blipsToWrite.Count(); i++)
+            {
+                var thisSymbol = blipsToWrite.ElementAt(i);
                 toReturn[(i * 3)+1] = thisSymbol.X;
                 toReturn[(i * 3) + 2] = thisSymbol.Y;
                 toReturn[(i * 3) + 3] = (byte)thisSymbol.Symbol;

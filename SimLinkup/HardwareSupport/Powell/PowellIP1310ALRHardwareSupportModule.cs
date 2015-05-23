@@ -24,11 +24,10 @@ namespace SimLinkup.HardwareSupport.Powell
         private const int DATA_BITS = 8;
         private const Parity PARITY = Parity.None;
         private const StopBits STOP_BITS = StopBits.One;
-        private const Handshake HANDSHAKE = Handshake.RequestToSend;
-        private const bool RTS_ENABLE = true;
+        private const Handshake HANDSHAKE = Handshake.None;
         private const int RECEIVED_BYTES_THRESHOLD = 1;
-        private const int SERIAL_READ_TIMEOUT = 500;
-        private const int SERIAL_WRITE_TIMEOUT = 500;
+        private const int SERIAL_READ_TIMEOUT = Common.IO.Ports.SerialPort.InfiniteTimeout;
+        private const int SERIAL_WRITE_TIMEOUT = Common.IO.Ports.SerialPort.InfiniteTimeout;
         private const int MAX_UNSUCCESSFUL_CONNECTION_ATTEMPTS = 5;
         #endregion
 
@@ -61,7 +60,6 @@ namespace SimLinkup.HardwareSupport.Powell
             _deviceID = deviceID;
             _comPort = comPort;
             CreateInputSignals(deviceID, out _analogInputSignals, out _digitalInputSignals);
-            RegisterForInputEvents();
         }
 
         public override string FriendlyName
@@ -113,33 +111,18 @@ namespace SimLinkup.HardwareSupport.Powell
         {
             get { return null; }
         }
+        public override void Synchronize()
+        {
+            base.Synchronize();
+            UpdateOutputs();
+        }
 
         #endregion
 
         #region Signals Handling
         #region Signals Event Handling
 
-        private void RegisterForInputEvents()
-        {
-            foreach (var analogSignal in _analogInputSignals)
-            {
-                analogSignal.SignalChanged += analogSignal_SignalChanged;
-            }
-            foreach (var digitalSignal in _digitalInputSignals)
-            {
-                digitalSignal.SignalChanged += digitalSignal_SignalChanged;
-            }
-        }
-
-        private void digitalSignal_SignalChanged(object sender, DigitalSignalChangedEventArgs args)
-        {
-            UpdateOutputs();
-        }
-
-        private void analogSignal_SignalChanged(object sender, AnalogSignalChangedEventArgs args)
-        {
-            UpdateOutputs();
-        }
+        
         private void UpdateOutputs()
         {
             bool connected = EnsureSerialPortConnected();
@@ -171,13 +154,14 @@ namespace SimLinkup.HardwareSupport.Powell
                     {
                         _serialPort.Handshake = HANDSHAKE;
                         _serialPort.ReceivedBytesThreshold = RECEIVED_BYTES_THRESHOLD;
-                        _serialPort.RtsEnable = RTS_ENABLE;
                         _serialPort.ReadTimeout = SERIAL_READ_TIMEOUT;
                         _serialPort.WriteTimeout = SERIAL_WRITE_TIMEOUT;
                         _serialPort.ErrorReceived += _serialPort_ErrorReceived;
-                        _log.DebugFormat("Opening serial port {0}: Handshake:{1}, ReceivedBytesThreshold:{2}, RtsEnable:{3}, ReadTimeout:{4}, WriteTimeout:{5}", _comPort, HANDSHAKE.ToString(), RTS_ENABLE.ToString(), SERIAL_READ_TIMEOUT, SERIAL_WRITE_TIMEOUT);
+                        _log.DebugFormat("Opening serial port {0}: Handshake:{1}, ReceivedBytesThreshold:{2}, ReadTimeout:{3}, WriteTimeout:{4}", _comPort, HANDSHAKE.ToString(), RECEIVED_BYTES_THRESHOLD, SERIAL_READ_TIMEOUT, SERIAL_WRITE_TIMEOUT);
 
                         _serialPort.Open();
+                        _serialPort.DtrEnable = true;
+
                         _unsuccessfulConnectionAttempts = 0;
                     }
                     catch (Exception e)
@@ -215,7 +199,6 @@ namespace SimLinkup.HardwareSupport.Powell
                     catch {}
                     _serialPort = null;
                 }
-                Thread.Sleep(500);
             }
         }
         private IEnumerable<RWRCommand> GenerateCommandList()
@@ -226,28 +209,32 @@ namespace SimLinkup.HardwareSupport.Powell
                 rwrCommands.Add(new ResetCommand());
             }
             var numInputSymbols = (int)Math.Truncate( _rwrSymbolCountInputSignal.State);
-            var blipList = new List<Blip>();
-            for (var i = 0; i < numInputSymbols; i++)
+            if (numInputSymbols > 0)
             {
-                var falconRWRSymbol = new FalconRWRSymbol
+                var blipList = new List<Blip>();
+                for (var i = 0; i < numInputSymbols; i++)
                 {
-                    SymbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
-                    Bearing = _rwrObjectBearingInputSignals[i].State,
-                    Lethality = _rwrObjectLethalityInputSignals[i].State,
-                    MissileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State,
-                    MissileLaunch = _rwrObjectMissileLaunchFlagInputSignals[i].State,
-                    Selected = _rwrObjectSelectedFlagInputSignals[i].State,
-                    NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
-                };
-                var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, primarySymbol:true);
-                blipList.AddRange(blips);
+                    var falconRWRSymbol = new FalconRWRSymbol
+                    {
+                        SymbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
+                        Bearing = _rwrObjectBearingInputSignals[i].State,
+                        Lethality = _rwrObjectLethalityInputSignals[i].State,
+                        MissileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State,
+                        MissileLaunch = _rwrObjectMissileLaunchFlagInputSignals[i].State,
+                        Selected = _rwrObjectSelectedFlagInputSignals[i].State,
+                        NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
+                    };
+                    var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, primarySymbol: true);
+                    blipList.AddRange(blips);
+                }
+                rwrCommands.Add(new DrawBlipsCommand { Blips = blipList });
             }
-            rwrCommands.Add(new DrawBlipsCommand { Blips = blipList });
             return rwrCommands;
         }
         
         private void SendCommandList(IEnumerable<RWRCommand> commandList)
         {
+            if (commandList.Count() == 0) return;
             lock (_serialPortLock)
             {
                 using (var ms = new MemoryStream())
@@ -272,8 +259,15 @@ namespace SimLinkup.HardwareSupport.Powell
                     var bytesToWrite = ms.GetBuffer();
                     try
                     {
-                        _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, Encoding.UTF8.GetString(bytesToWrite, 0, totalBytes));
-                        _serialPort.Write(bytesToWrite, 0, totalBytes);
+                        _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, BytesToString(bytesToWrite, 0, totalBytes));
+                        for (var i = 0; i < totalBytes; i++)
+                        {
+                            EnsureSerialPortConnected();
+                            _serialPort.Write(bytesToWrite, i, 1);
+                            Thread.Sleep(50);
+                            CloseSerialPortConnection();
+                            
+                        }
                         if (_resetNeeded && clearResetFlag)
                         {
                             _resetNeeded = false;
@@ -289,26 +283,18 @@ namespace SimLinkup.HardwareSupport.Powell
                 }
             }
         }
-        
-        private void UnregisterForInputEvents()
+        private string BytesToString(byte[] bytes, int offset, int count)
         {
-            foreach (var analogSignal in _analogInputSignals)
+            var sb = new StringBuilder();
+            sb.AppendFormat("{0} bytes:", count);
+            for (var i = offset; i < offset + count; i++)
             {
-                try
-                {
-                    analogSignal.SignalChanged -= analogSignal_SignalChanged;
-                }
-                catch (RemotingException) { }
+                sb.Append("0x");
+                sb.AppendFormat("{0:X} ", bytes[i]);
             }
-            foreach (var digitalSignal in _digitalInputSignals)
-            {
-                try
-                {
-                    digitalSignal.SignalChanged -= digitalSignal_SignalChanged;
-                }
-                catch (RemotingException) { }
-            }
+            return sb.ToString();
         }
+        
 
         #endregion
 
@@ -514,7 +500,7 @@ namespace SimLinkup.HardwareSupport.Powell
             {
                 if (disposing)
                 {
-                    UnregisterForInputEvents();
+                    //dispose of managed resources here
                 }
 
                 try
