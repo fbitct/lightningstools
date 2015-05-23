@@ -84,6 +84,10 @@
     <Compile Include="Exceptions\OperationFailedException.cs" />
     <Compile Include="Generic\EnumAttributeReader.cs" />
     <Compile Include="Generic\PropertyInvoker.cs" />
+    <Compile Include="IO\Ports\ISerialPort.cs" />
+    <Compile Include="IO\Ports\SerialPortProxy.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Math\Constants.cs" />
     <Compile Include="Math\Util.cs" />
     <Compile Include="Networking\NetworkMode.cs" />
