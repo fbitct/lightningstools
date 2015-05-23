@@ -270,6 +270,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             {
                 var altitudeInput = _altitudeInputSignal.State;
                 var baroInput = _barometricPressureInputSignal.State;
+                if (baroInput == 0.00f) baroInput = 29.92f;
                 var altCalDelta = baroInput - 29.92f;
                 var altToAdd = -(1000 / 1.08) * altCalDelta;
                 var altitudeOutput = altitudeInput + altToAdd;
