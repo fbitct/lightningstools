@@ -18,15 +18,12 @@ namespace SimLinkup.HardwareSupport.Powell
 
         private static readonly ILog _log = LogManager.GetLogger(typeof(PowellIP1310ALRHardwareSupportModule));
         private const int MAX_RWR_SYMBOLS_AS_INPUTS = 64;
-        private const int MAX_RWR_SYMBOLS_AS_OUTPUTS = 31;
         private const string DEFAULT_DEVICE_ID = "RWR00";
         private const int BAUD_RATE = 2400;
         private const int DATA_BITS = 8;
         private const Parity PARITY = Parity.None;
         private const StopBits STOP_BITS = StopBits.One;
         private const Handshake HANDSHAKE = Handshake.None;
-        private const int RECEIVED_BYTES_THRESHOLD = 1;
-        private const int SERIAL_READ_TIMEOUT = Common.IO.Ports.SerialPort.InfiniteTimeout;
         private const int SERIAL_WRITE_TIMEOUT = Common.IO.Ports.SerialPort.InfiniteTimeout;
         private const int MAX_UNSUCCESSFUL_CONNECTION_ATTEMPTS = 5;
         #endregion
@@ -40,7 +37,6 @@ namespace SimLinkup.HardwareSupport.Powell
         private object _serialPortLock = new object();
         private int _unsuccessfulConnectionAttempts = 0;
         private string _comPort;
-        private bool _resetNeeded = true;
         private bool _isDisposed;
         private AnalogSignal _rwrSymbolCountInputSignal;
         private AnalogSignal[] _rwrObjectSymbolIDInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
@@ -128,8 +124,8 @@ namespace SimLinkup.HardwareSupport.Powell
             bool connected = EnsureSerialPortConnected();
             if (connected)
             {
-                var commandList = GenerateCommandList();
-                SendCommandList(commandList);
+                var blipList = GenerateBlipList();
+                SendBlipList(blipList);
             }
         }
         private bool EnsureSerialPortConnected()
@@ -153,15 +149,10 @@ namespace SimLinkup.HardwareSupport.Powell
                     try
                     {
                         _serialPort.Handshake = HANDSHAKE;
-                        _serialPort.ReceivedBytesThreshold = RECEIVED_BYTES_THRESHOLD;
-                        _serialPort.ReadTimeout = SERIAL_READ_TIMEOUT;
                         _serialPort.WriteTimeout = SERIAL_WRITE_TIMEOUT;
                         _serialPort.ErrorReceived += _serialPort_ErrorReceived;
-                        _log.DebugFormat("Opening serial port {0}: Handshake:{1}, ReceivedBytesThreshold:{2}, ReadTimeout:{3}, WriteTimeout:{4}", _comPort, HANDSHAKE.ToString(), RECEIVED_BYTES_THRESHOLD, SERIAL_READ_TIMEOUT, SERIAL_WRITE_TIMEOUT);
-
+                        _log.DebugFormat("Opening serial port {0}: Handshake:{1}, WriteTimeout:{2}", _comPort, HANDSHAKE.ToString(), SERIAL_WRITE_TIMEOUT);
                         _serialPort.Open();
-                        _serialPort.DtrEnable = true;
-
                         _unsuccessfulConnectionAttempts = 0;
                     }
                     catch (Exception e)
@@ -193,6 +184,7 @@ namespace SimLinkup.HardwareSupport.Powell
                         {
                             _log.DebugFormat("Closing serial port {0}", _comPort);
                             _serialPort.Close();
+                            Thread.Sleep(500);
                         }
                         _serialPort.Dispose();
                     }
@@ -201,85 +193,64 @@ namespace SimLinkup.HardwareSupport.Powell
                 }
             }
         }
-        private IEnumerable<RWRCommand> GenerateCommandList()
+
+        private IEnumerable<Blip> GenerateBlipList()
         {
-            var rwrCommands = new List<RWRCommand>();
-            if (_resetNeeded)
+            var numInputSymbols = (int)Math.Truncate(_rwrSymbolCountInputSignal.State);
+            var blipList = new List<Blip>();
+            var usePrimarySymbol = DateTime.Now.Millisecond < 500;
+            for (var i = 0; i < numInputSymbols; i++)
             {
-                rwrCommands.Add(new ResetCommand());
-            }
-            var numInputSymbols = (int)Math.Truncate( _rwrSymbolCountInputSignal.State);
-            if (numInputSymbols > 0)
-            {
-                var blipList = new List<Blip>();
-                for (var i = 0; i < numInputSymbols; i++)
+                var falconRWRSymbol = new FalconRWRSymbol
                 {
-                    var falconRWRSymbol = new FalconRWRSymbol
-                    {
-                        SymbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
-                        Bearing = _rwrObjectBearingInputSignals[i].State,
-                        Lethality = _rwrObjectLethalityInputSignals[i].State,
-                        MissileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State,
-                        MissileLaunch = _rwrObjectMissileLaunchFlagInputSignals[i].State,
-                        Selected = _rwrObjectSelectedFlagInputSignals[i].State,
-                        NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
-                    };
-                    var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, primarySymbol: true);
-                    blipList.AddRange(blips);
-                }
-                rwrCommands.Add(new DrawBlipsCommand { Blips = blipList });
+                    SymbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
+                    Bearing = _rwrObjectBearingInputSignals[i].State,
+                    Lethality = _rwrObjectLethalityInputSignals[i].State,
+                    MissileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State,
+                    MissileLaunch = _rwrObjectMissileLaunchFlagInputSignals[i].State,
+                    Selected = _rwrObjectSelectedFlagInputSignals[i].State,
+                    NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
+                };
+                var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, usePrimarySymbol);
+                blipList.AddRange(blips);
             }
-            return rwrCommands;
+            return blipList;
         }
-        
-        private void SendCommandList(IEnumerable<RWRCommand> commandList)
+        private void SendBlipList(IEnumerable<Blip> blipList)
         {
-            if (commandList.Count() == 0) return;
             lock (_serialPortLock)
             {
                 using (var ms = new MemoryStream())
                 {
-                    bool clearResetFlag = false;
                     int totalBytes = 0;
-                    foreach (var command in commandList)
-                    {
-                        if (command is ResetCommand)
-                        {
-                            clearResetFlag = true; ;
-                        }
-                        var deviceIdBytes = Encoding.ASCII.GetBytes(_deviceID);
-                        ms.Write(deviceIdBytes, 0, deviceIdBytes.Length);
-                        totalBytes += deviceIdBytes.Length;
+                    
+                    var deviceIdBytes = Encoding.ASCII.GetBytes(_deviceID);
+                    ms.Write(deviceIdBytes, 0, deviceIdBytes.Length);
+                    totalBytes += deviceIdBytes.Length;
 
-                        var thisCommandBytes = command.ToBytes();
-                        ms.Write(thisCommandBytes, 0, thisCommandBytes.Length);
-                        totalBytes += thisCommandBytes.Length;
+                    var blipListBytes = new DrawBlipsCommand { Blips = blipList }.ToBytes();
+                    if (blipListBytes != null && blipListBytes.Length > 0)
+                    {
+                        ms.Write(blipListBytes, 0, blipListBytes.Length);
+                        totalBytes += blipListBytes.Length;
                     }
                     ms.Seek(0, SeekOrigin.Begin);
+
+                    
                     var bytesToWrite = ms.GetBuffer();
                     try
                     {
                         _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, BytesToString(bytesToWrite, 0, totalBytes));
+                        EnsureSerialPortConnected();
                         for (var i = 0; i < totalBytes; i++)
                         {
-                            EnsureSerialPortConnected();
                             _serialPort.Write(bytesToWrite, i, 1);
-                            Thread.Sleep(50);
-                            CloseSerialPortConnection();
-                            
                         }
-                        if (_resetNeeded && clearResetFlag)
-                        {
-                            _resetNeeded = false;
-                        }
-
                     }
                     catch (Exception e)
                     {
                         _log.Error(e.Message, e);
                     }
-
-
                 }
             }
         }

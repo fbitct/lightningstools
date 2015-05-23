@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace SimLinkup.HardwareSupport.Powell
 {
-    internal class DrawBlipsCommand : RWRCommand
+    internal class DrawBlipsCommand 
     {
+        private const int MAX_RWR_SYMBOLS = 31;
+
         public DrawBlipsCommand()
         {
             Blips = new List<Blip>();
@@ -15,17 +17,17 @@ namespace SimLinkup.HardwareSupport.Powell
         public IEnumerable<Blip> Blips { get; set; }
         public override byte[] ToBytes()
         {
-            var blipsToWrite = Blips.Where(x => (int)x.Symbol < 31);
+            var blipsToWrite = Blips.Where(x => x.Symbol < Symbols.BlinkBit).Take(MAX_RWR_SYMBOLS);
             if (blipsToWrite.Count() == 0)
             {
-                return null;
+                return new byte[] {0x00};
             }
             var toReturn = new byte[(3 * blipsToWrite.Count()) + 1];
             toReturn[0] = (byte)blipsToWrite.Count();
             for (var i = 0; i < blipsToWrite.Count(); i++)
             {
                 var thisSymbol = blipsToWrite.ElementAt(i);
-                toReturn[(i * 3)+1] = thisSymbol.X;
+                toReturn[(i * 3) + 1] = thisSymbol.X;
                 toReturn[(i * 3) + 2] = thisSymbol.Y;
                 toReturn[(i * 3) + 3] = (byte)thisSymbol.Symbol;
             }

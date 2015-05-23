@@ -109,8 +109,6 @@
     <Compile Include="HardwareSupport\Powell\FalconRWRSymbolTranslator.cs" />
     <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModuleConfig.cs" />
-    <Compile Include="HardwareSupport\Powell\ResetCommand.cs" />
-    <Compile Include="HardwareSupport\Powell\RWRCommand.cs" />
     <Compile Include="HardwareSupport\Powell\Blip.cs" />
     <Compile Include="HardwareSupport\Powell\Symbols.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModule.cs" />
