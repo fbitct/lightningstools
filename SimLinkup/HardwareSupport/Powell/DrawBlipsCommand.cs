@@ -15,7 +15,7 @@ namespace SimLinkup.HardwareSupport.Powell
             Blips = new List<Blip>();
         }
         public IEnumerable<Blip> Blips { get; set; }
-        public override byte[] ToBytes()
+        public byte[] ToBytes()
         {
             var blipsToWrite = Blips.Where(x => x.Symbol < Symbols.BlinkBit).Take(MAX_RWR_SYMBOLS);
             if (blipsToWrite.Count() == 0)
