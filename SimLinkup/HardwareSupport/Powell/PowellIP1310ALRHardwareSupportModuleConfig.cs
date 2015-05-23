@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Xml.Serialization;
 
-namespace SimLinkup.HardwareSupport.Malwin
+namespace SimLinkup.HardwareSupport.Powell
 {
     [Serializable]
     public class PowellIP1310ALRHardwareSupportModuleConfig
@@ -9,6 +10,8 @@ namespace SimLinkup.HardwareSupport.Malwin
         {
             return Common.Serialization.Util.DeserializeFromXmlFile<PowellIP1310ALRHardwareSupportModuleConfig>(filePath);
         }
+        public string DeviceID { get; set; }
+        public string COMPort { get; set; }
 
         public void Save(string filePath)
         {

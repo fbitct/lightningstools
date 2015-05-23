@@ -2918,7 +2918,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 0 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[0]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[0]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 0 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -2930,7 +2930,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 1 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[1]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[1]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 1 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -2942,7 +2942,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 2 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[2]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[2]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 2 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -2954,7 +2954,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 3 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[3]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[3]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 3 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -2966,7 +2966,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 4 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[4]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[4]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 4 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -2978,7 +2978,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 5 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[5]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[5]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 5 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -2990,7 +2990,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 6 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[6]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[6]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 6 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3002,7 +3002,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 7 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[7]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[7]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 7 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3014,7 +3014,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 8 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[8]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[8]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 8 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3026,7 +3026,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 9 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[9]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[9]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 9 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3038,7 +3038,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 10 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[10]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[10]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 10 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3050,7 +3050,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 11 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[11]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[11]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 11 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3062,7 +3062,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 12 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[12]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[12]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 12 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3074,7 +3074,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 13 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[13]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[13]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 13 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3086,7 +3086,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 14 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[14]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[14]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 14 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3098,7 +3098,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 15 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[15]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[15]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 15 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3110,7 +3110,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 16 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[16]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[16]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 16 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3122,7 +3122,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 17 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[17]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[17]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 17 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3134,7 +3134,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 18 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[18]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[18]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 18 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3146,7 +3146,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 19 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[19]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[19]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 19 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3158,7 +3158,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 20 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[20]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[20]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 20 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3170,7 +3170,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 21 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[21]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[21]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 21 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3182,7 +3182,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 22 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[22]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[22]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3194,7 +3194,7 @@
     <SignalMapping>
       <!-- F4 RWR NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[23]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[23]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 23 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3206,7 +3206,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 24 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[24]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[24]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 24 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3218,7 +3218,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 25 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[25]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[25]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 25 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3230,7 +3230,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 26 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[26]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[26]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 26 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3242,7 +3242,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 27 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[27]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[27]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 27 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3254,7 +3254,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 28 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[28]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[28]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 28 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3266,7 +3266,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 29 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[29]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[29]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 29 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3278,7 +3278,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 30 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[30]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[30]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 30 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3290,7 +3290,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 31 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[31]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[31]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 31 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3302,7 +3302,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 32 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[32]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[32]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 32 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3314,7 +3314,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 33 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[33]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[33]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 33 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3326,7 +3326,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 34 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[34]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[34]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 34 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3338,7 +3338,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 35 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[35]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[35]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 35 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3350,7 +3350,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 36 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[36]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[36]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 36 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3362,7 +3362,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 37 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[37]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[37]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 37 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3374,7 +3374,7 @@
     <SignalMapping>
       <!-- F4 RWR OBJECT 38 NEW DETECTION FLAG OUTPUT-->
       <Source xsi:type="DigitalSignal">
-        <Id>RWR__NEWDETECTION_FLAG[38]</Id>
+        <Id>F4_RWR__NEWDETECTION_FLAG[38]</Id>
       </Source>
       <!-- POWELL IP-1310/ALR RWR OBJECT 38 NEW DETECTION FLAG INPUT-->
       <Destination xsi:type="DigitalSignal">
@@ -3386,7 +3386,7 @@
     <SignalMapping>
          <!-- F4 RWR OBJECT 39 NEW DETECTION FLAG OUTPUT-->
          <Source xsi:type="DigitalSignal">
-           <Id>RWR__NEWDETECTION_FLAG[39]</Id>
+           <Id>F4_RWR__NEWDETECTION_FLAG[39]</Id>
          </Source>
          <!-- POWELL IP-1310/ALR RWR OBJECT 39 NEW DETECTION FLAG INPUT-->
          <Destination xsi:type="DigitalSignal">

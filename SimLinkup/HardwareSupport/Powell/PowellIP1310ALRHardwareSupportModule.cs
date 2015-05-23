@@ -18,6 +18,7 @@ namespace SimLinkup.HardwareSupport.Powell
         private static readonly ILog _log = LogManager.GetLogger(typeof(PowellIP1310ALRHardwareSupportModule));
         private const int MAX_RWR_SYMBOLS_AS_INPUTS = 64;
         private const int MAX_RWR_SYMBOLS_AS_OUTPUTS = 31;
+        private const string DEFAULT_DEVICE_ID = "RWR00";
         private const int BAUD_RATE = 2400;
         private const int DATA_BITS = 8;
         private const Parity PARITY = Parity.None;
@@ -35,10 +36,9 @@ namespace SimLinkup.HardwareSupport.Powell
         private readonly AnalogSignal[] _analogInputSignals;
         private readonly DigitalSignal[] _digitalInputSignals;
         private string _deviceID;
-        private SerialPort _serialPort;
+        private Common.IO.Ports.ISerialPort _serialPort;
         private object _serialPortLock = new object();
         private string _comPort;
-        private Stream _commandStream;
         private bool _isDisposed;
         private AnalogSignal _rwrSymbolCountInputSignal;
         private AnalogSignal[] _rwrObjectSymbolIDInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
@@ -53,10 +53,10 @@ namespace SimLinkup.HardwareSupport.Powell
 
         #region Constructors
 
-        private PowellIP1310ALRHardwareSupportModule(string deviceID)
+        private PowellIP1310ALRHardwareSupportModule(string comPort,string deviceID=DEFAULT_DEVICE_ID)
         {
             _deviceID = deviceID;
-            _commandStream = new MemoryStream();
+            _comPort = comPort;
             CreateInputSignals(deviceID, out _analogInputSignals, out _digitalInputSignals);
             RegisterForInputEvents();
         }
@@ -71,11 +71,15 @@ namespace SimLinkup.HardwareSupport.Powell
             var toReturn = new List<IHardwareSupportModule>();
             try
             {
-                foreach (var device in EnumerateDevices())
-                {
-                    IHardwareSupportModule thisHsm = new PowellIP1310ALRHardwareSupportModule(device);
-                    toReturn.Add(thisHsm);
-                }
+                var hsmConfigFilePath = Path.Combine(Util.ApplicationDirectory,
+                    "PowellIP1310ALRHardwareSupportModule.config");
+                var hsmConfig =
+                    PowellIP1310ALRHardwareSupportModuleConfig.Load(hsmConfigFilePath);
+                
+                IHardwareSupportModule thisHsm = new PowellIP1310ALRHardwareSupportModule(
+                    comPort: hsmConfig.COMPort, deviceID: hsmConfig.DeviceID ?? DEFAULT_DEVICE_ID);
+                
+                toReturn.Add(thisHsm);
             }
             catch (Exception e)
             {
@@ -83,11 +87,6 @@ namespace SimLinkup.HardwareSupport.Powell
             }
             return toReturn.ToArray();
         }
-        private static IEnumerable<string> EnumerateDevices()
-        {
-            return new[]{"RWR00"}; //TODO: is there a way to enumerate the devices?  or else drive this off configuration...
-        }
-
         #endregion
 
         #region Virtual Method Implementations
@@ -140,11 +139,14 @@ namespace SimLinkup.HardwareSupport.Powell
         }
         private void UpdateOutputs()
         {
-            GenerateCommandList();
-            EnsureSerialPortConnected();
-            SendCommandList();
+            bool connected = EnsureSerialPortConnected();
+            if (connected)
+            {
+                var commandList = GenerateCommandList();
+                SendCommandList(commandList);
+            }
         }
-        private void EnsureSerialPortConnected()
+        private bool EnsureSerialPortConnected()
         {
             lock (_serialPortLock)
             {
@@ -152,24 +154,33 @@ namespace SimLinkup.HardwareSupport.Powell
                 {
                     try
                     {
-                        _serialPort = new SerialPort(_comPort, BAUD_RATE, PARITY, DATA_BITS, STOP_BITS);
+                        _serialPort = new Common.IO.Ports.SerialPort(_comPort, BAUD_RATE, PARITY, DATA_BITS, STOP_BITS);
+                    }
+                    catch (Exception e)
+                    {
+                        _log.Error(e.Message, e);
+                        return false;
+                    }
+                }
+                if (_serialPort !=null && !_serialPort.IsOpen)
+                {
+                    try
+                    {
                         _serialPort.Handshake = HANDSHAKE;
                         _serialPort.ReceivedBytesThreshold = RECEIVED_BYTES_THRESHOLD;
                         _serialPort.RtsEnable = RTS_ENABLE;
                         _serialPort.ReadTimeout = SERIAL_READ_TIMEOUT;
                         _serialPort.WriteTimeout = SERIAL_WRITE_TIMEOUT;
                         _serialPort.ErrorReceived += _serialPort_ErrorReceived;
+                        _serialPort.Open();
                     }
                     catch (Exception e)
                     {
                         _log.Error(e.Message, e);
+                        return false;
                     }
                 }
-                if (_serialPort !=null && !_serialPort.IsOpen)
-                {
-                    _serialPort.Open();
-
-                }
+                return true;
             }
            
         }
@@ -193,15 +204,13 @@ namespace SimLinkup.HardwareSupport.Powell
                         }
                         _serialPort.Dispose();
                     }
-                    catch 
-                    {
-                    }
+                    catch {}
                     _serialPort = null;
                 }
                 Thread.Sleep(500);
             }
         }
-        private void GenerateCommandList()
+        private IEnumerable<RWRCommand> GenerateCommandList()
         {
             var rwrCommands = new List<RWRCommand>();
             rwrCommands.Add(new ResetCommand());
@@ -216,12 +225,24 @@ namespace SimLinkup.HardwareSupport.Powell
                 var selected = _rwrObjectSelectedFlagInputSignals[i].State;
                 var newDetection = _rwrObjectNewDetectionFlagInputSignals[i].State;
             }
-
-            
+            return rwrCommands;
         }
-        private void SendCommandList()
+        
+        private void SendCommandList(IEnumerable<RWRCommand> commandList)
         {
-            throw new NotImplementedException();
+            using (var ms = new MemoryStream()) 
+            {
+                int totalBytes=0;
+                foreach (var command in commandList)
+                {
+                    var thisCommandBytes=command.ToBytes();
+                    ms.Write(thisCommandBytes,0,thisCommandBytes.Length);
+                    totalBytes+=thisCommandBytes.Length;
+                }
+                ms.Seek(0,SeekOrigin.Begin);
+                var bytesToWrite=ms.GetBuffer();
+                _serialPort.Write(bytesToWrite, 0, totalBytes);
+            }
         }
         
         private void UnregisterForInputEvents()
@@ -449,7 +470,6 @@ namespace SimLinkup.HardwareSupport.Powell
                 if (disposing)
                 {
                     UnregisterForInputEvents();
-                    Common.Util.DisposeObject(_commandStream);
                 }
 
                 try
