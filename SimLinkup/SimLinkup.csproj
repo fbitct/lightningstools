@@ -105,6 +105,8 @@
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Powell\DrawSymbolsCommand.cs" />
+    <Compile Include="HardwareSupport\Powell\FalconRWRSymbol.cs" />
+    <Compile Include="HardwareSupport\Powell\FalconRWRSymbolTranslator.cs" />
     <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Powell\ResetCommand.cs" />

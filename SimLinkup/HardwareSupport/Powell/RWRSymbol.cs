@@ -11,5 +11,6 @@ namespace SimLinkup.HardwareSupport.Powell
         public byte XPosition { get; set; }
         public byte YPosition { get; set; }
         public byte SymbolNumber { get; set; }
+        public bool Blink { get; set; }
     }
 }
