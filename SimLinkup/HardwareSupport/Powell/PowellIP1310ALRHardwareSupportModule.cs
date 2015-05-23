@@ -49,7 +49,7 @@ namespace SimLinkup.HardwareSupport.Powell
         private DigitalSignal[] _rwrObjectMissileLaunchFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
         private DigitalSignal[] _rwrObjectSelectedFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
         private DigitalSignal[] _rwrObjectNewDetectionFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
-
+        private IFalconRWRSymbolTranslator _falconRWRSymbolTranslator = new FalconRWRSymbolTranslator();
         #endregion
 
         #region Constructors
@@ -218,16 +218,23 @@ namespace SimLinkup.HardwareSupport.Powell
             var rwrCommands = new List<RWRCommand>();
             rwrCommands.Add(new ResetCommand());
             var numInputSymbols = (int)Math.Truncate( _rwrSymbolCountInputSignal.State);
+            var blipList = new List<Blip>();
             for (var i = 0; i < numInputSymbols; i++)
             {
-                var symbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State);
-                var bearing = _rwrObjectBearingInputSignals[i].State;
-                var lethality = _rwrObjectLethalityInputSignals[i].State;
-                var missileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State;
-                var missileLaunch = _rwrObjectMissileLaunchFlagInputSignals[i].State;
-                var selected = _rwrObjectSelectedFlagInputSignals[i].State;
-                var newDetection = _rwrObjectNewDetectionFlagInputSignals[i].State;
+                var falconRWRSymbol = new FalconRWRSymbol
+                {
+                    SymbolID = (int)Math.Truncate(_rwrObjectSymbolIDInputSignals[i].State),
+                    Bearing = _rwrObjectBearingInputSignals[i].State,
+                    Lethality = _rwrObjectLethalityInputSignals[i].State,
+                    MissileActivity = _rwrObjectMissileActivityFlagInputSignals[i].State,
+                    MissileLaunch = _rwrObjectMissileLaunchFlagInputSignals[i].State,
+                    Selected = _rwrObjectSelectedFlagInputSignals[i].State,
+                    NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
+                };
+                var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, primarySymbol:true);
+                blipList.AddRange(blips);
             }
+            rwrCommands.Add(new DrawBlipsCommand { Blips = blipList });
             return rwrCommands;
         }
         
