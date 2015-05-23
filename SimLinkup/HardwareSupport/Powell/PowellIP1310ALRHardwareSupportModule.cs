@@ -9,6 +9,7 @@ using System.IO.Ports;
 using System.IO;
 using System.Threading;
 using System.Linq;
+using System.Text;
 namespace SimLinkup.HardwareSupport.Powell
 {
     public class PowellIP1310ALRHardwareSupportModule : HardwareSupportModuleBase, IDisposable
@@ -40,6 +41,7 @@ namespace SimLinkup.HardwareSupport.Powell
         private object _serialPortLock = new object();
         private int _unsuccessfulConnectionAttempts = 0;
         private string _comPort;
+        private bool _resetNeeded = true;
         private bool _isDisposed;
         private AnalogSignal _rwrSymbolCountInputSignal;
         private AnalogSignal[] _rwrObjectSymbolIDInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
@@ -216,7 +218,10 @@ namespace SimLinkup.HardwareSupport.Powell
         private IEnumerable<RWRCommand> GenerateCommandList()
         {
             var rwrCommands = new List<RWRCommand>();
-            rwrCommands.Add(new ResetCommand());
+            if (_resetNeeded)
+            {
+                rwrCommands.Add(new ResetCommand());
+            }
             var numInputSymbols = (int)Math.Truncate( _rwrSymbolCountInputSignal.State);
             var blipList = new List<Blip>();
             for (var i = 0; i < numInputSymbols; i++)
@@ -240,18 +245,44 @@ namespace SimLinkup.HardwareSupport.Powell
         
         private void SendCommandList(IEnumerable<RWRCommand> commandList)
         {
-            using (var ms = new MemoryStream()) 
+            lock (_serialPortLock)
             {
-                int totalBytes=0;
-                foreach (var command in commandList)
+                using (var ms = new MemoryStream())
                 {
-                    var thisCommandBytes=command.ToBytes();
-                    ms.Write(thisCommandBytes,0,thisCommandBytes.Length);
-                    totalBytes+=thisCommandBytes.Length;
+                    bool clearResetFlag = false;
+                    int totalBytes = 0;
+                    foreach (var command in commandList)
+                    {
+                        if (command is ResetCommand)
+                        {
+                            clearResetFlag = true; ;
+                        }
+                        var deviceIdBytes = Encoding.ASCII.GetBytes(_deviceID);
+                        ms.Write(deviceIdBytes, 0, deviceIdBytes.Length);
+                        totalBytes += deviceIdBytes.Length;
+
+                        var thisCommandBytes = command.ToBytes();
+                        ms.Write(thisCommandBytes, 0, thisCommandBytes.Length);
+                        totalBytes += thisCommandBytes.Length;
+                    }
+                    ms.Seek(0, SeekOrigin.Begin);
+                    var bytesToWrite = ms.GetBuffer();
+                    try
+                    {
+                        _serialPort.Write(bytesToWrite, 0, totalBytes);
+                        if (_resetNeeded && clearResetFlag)
+                        {
+                            _resetNeeded = false;
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        _log.Error(e.Message, e);
+                    }
+
+
                 }
-                ms.Seek(0,SeekOrigin.Begin);
-                var bytesToWrite=ms.GetBuffer();
-                _serialPort.Write(bytesToWrite, 0, totalBytes);
             }
         }
         
