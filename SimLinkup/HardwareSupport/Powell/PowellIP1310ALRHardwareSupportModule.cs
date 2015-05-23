@@ -24,17 +24,23 @@ namespace SimLinkup.HardwareSupport.Powell
         private const Handshake HANDSHAKE = Handshake.None;
         private const int WRITE_BUFFER_SIZE = 2048;
         private const int SERIAL_WRITE_TIMEOUT = 500;
-        private const int MAX_UNSUCCESSFUL_PORT_OPEN_ATTEMPTS = 5;
         private const bool FLUSH_WRITE_BUFFER = true;
         private const bool DISCARD_WRITE_BUFFER_AFTER_OPEN = true;
 
-        //allows slowing down the rate of sending data across the bus
-        private const int DELAY_AFTER_WRITES_MILLIS = 20;
-        private const int MAX_REFRESH_RATE_HZ = 25;
+        //limits exceptions when we don't have the RWR plugged into the serial port
+        private const int MAX_UNSUCCESSFUL_PORT_OPEN_ATTEMPTS = 5;
+        private const bool RESET_UNSUCCESSFUL_CONNECTION_ATTEMPT_COUNTER_AFTER_CLOSING_PORT = true;
 
-        //feature toggle for a hack approach to forcing data across the RS232 that seems to work with the combination of the FTDI 232BL chip and the PIC microcontroller the way they're wired up right now
-        private const bool CLOSE_AND_REOPEN_CONNECTION_AFTER_EACH_BYTE_SENT = false;     
-    
+        //allows slowing down the rate of sending data across the bus
+        private const int DELAY_AFTER_WRITES_MILLIS = 20; //delay, when set, occurs after *each* byte!
+        private const int MAX_REFRESH_RATE_HZ = 25; //prevents more than this many occurrences per second of Synchronize() event from generating traffic
+
+        //enable hack which forces pending data across the RS232 bus - despite all reason, this seems to work, where other approaches have failed.
+        //The combination of the FTDI 232BL chip and the PIC microcontroller the way they're wired up right now seems to have flow control issues
+        //which are mitigated by this approach
+        private const bool CLOSE_AND_REOPEN_CONNECTION_AFTER_EACH_BYTE_SENT = false;
+        private const int DELAY_AFTER_CLOSING_SERIAL_PORT = 20;
+
         #endregion
 
         #region Instance variables
@@ -212,13 +218,18 @@ namespace SimLinkup.HardwareSupport.Powell
                         {
                             _log.DebugFormat("Closing serial port {0}", _comPort);
                             _serialPort.Close();
-                            Thread.Sleep(500);
+
+                            Thread.Sleep(DELAY_AFTER_CLOSING_SERIAL_PORT);
                             _serialPort.DiscardOutBuffer();
                         }
                         _serialPort.Dispose();
                     }
                     catch {}
                     _serialPort = null;
+                }
+                if (RESET_UNSUCCESSFUL_CONNECTION_ATTEMPT_COUNTER_AFTER_CLOSING_PORT)
+                {
+                    _unsuccessfulConnectionAttempts = 0; //reset unsuccessful connection attempts counter
                 }
             }
         }
@@ -294,17 +305,23 @@ namespace SimLinkup.HardwareSupport.Powell
                         {
                             _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, BytesToString(bytesToWrite, 0, totalBytes));
                             
-                            EnsureSerialPortConnected(); 
-
                             //write out each byte, optionally flushing the buffer and optionally delaying between each byte to allow for slow remote end processing
                             for (int i = 0; i < totalBytes; i++)
                             {
+                                EnsureSerialPortConnected();
+
                                 _serialPort.Write(bytesToWrite, i, 1);
                                 if (FLUSH_WRITE_BUFFER)
                                 {
                                     _serialPort.BaseStream.Flush();
                                 }
+                                
                                 Thread.Sleep(DELAY_AFTER_WRITES_MILLIS);
+                                
+                                if (CLOSE_AND_REOPEN_CONNECTION_AFTER_EACH_BYTE_SENT)
+                                {
+                                    CloseSerialPortConnection();
+                                }
                             }
                         }
                         catch (Exception e)
