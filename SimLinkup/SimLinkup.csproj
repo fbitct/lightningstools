@@ -104,14 +104,15 @@
     <Compile Include="HardwareSupport\Malwin\Malwin246102HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Phcc\PhccHardwareSupportModuleConfig.cs" />
-    <Compile Include="HardwareSupport\Powell\DrawSymbolsCommand.cs" />
+    <Compile Include="HardwareSupport\Powell\DrawBlipsCommand.cs" />
     <Compile Include="HardwareSupport\Powell\FalconRWRSymbol.cs" />
     <Compile Include="HardwareSupport\Powell\FalconRWRSymbolTranslator.cs" />
     <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Powell\PowellIP1310ALRHardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Powell\ResetCommand.cs" />
     <Compile Include="HardwareSupport\Powell\RWRCommand.cs" />
-    <Compile Include="HardwareSupport\Powell\RWRSymbol.cs" />
+    <Compile Include="HardwareSupport\Powell\Blip.cs" />
+    <Compile Include="HardwareSupport\Powell\Symbols.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModule.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100294HardwareSupportModuleConfig.cs" />
     <Compile Include="HardwareSupport\Simtek\Simtek100295HardwareSupportModule.cs" />

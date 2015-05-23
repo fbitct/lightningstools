@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace SimLinkup.HardwareSupport.Powell
 {
-    internal struct RWRSymbol
+    internal struct Blip
     {
-        public byte XPosition { get; set; }
-        public byte YPosition { get; set; }
-        public byte SymbolNumber { get; set; }
+        public byte X { get; set; }
+        public byte Y { get; set; }
+        public Symbols Symbol { get; set; }
         public bool Blink { get; set; }
     }
 }
