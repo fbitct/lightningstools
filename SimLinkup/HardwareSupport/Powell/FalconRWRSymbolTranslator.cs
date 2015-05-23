@@ -6,19 +6,34 @@ namespace SimLinkup.HardwareSupport.Powell
 {
     internal interface IFalconRWRSymbolTranslator
     {
-        IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol, bool primarySymbol);
+        IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol, bool primarySymbol=true, bool inverted=false);
         
     }
     internal class FalconRWRSymbolTranslator : IFalconRWRSymbolTranslator
     {
-        public IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol,bool primarySymbol)
+        public IEnumerable<Blip> Translate(FalconRWRSymbol falconRWRSymbol,bool primarySymbol=true, bool inverted=false)
         {
+            var lethality = falconRWRSymbol.Lethality;
+            var radius = 0.00d;
+            if (lethality > 1)
+            {
+                radius = -((2.0f - lethality) * 100.0f) * 0.95f;
+            }
+            else
+            {
+                radius = -((1.0f - lethality) * 100.0f) * 0.95f;
+            }
+
+
+            var thetaDegrees = falconRWRSymbol.Bearing;
+            if (inverted) thetaDegrees = 0 - thetaDegrees;
+            var thetaRadians = thetaDegrees * Common.Math.Constants.RADIANS_PER_DEGREE;
             var blips = new List<Blip>();
-            var x = (byte)0x00;
-            var y = (byte)0x00;
-            var lineSpacingYOffset = (byte)0x00;
-            var charSpacingXOffset = (byte)0x00;
-            var charSpacingHalfXOffset = (byte)0x00;
+            var x = (byte)(radius * Math.Cos(thetaRadians) * 255);
+            var y = (byte)(radius * Math.Sin(thetaRadians) * 255);
+            var lineSpacingYOffset = (byte)128;
+            var charSpacingXOffset = (byte)128;
+            var charSpacingHalfXOffset = (byte)64;
             switch (falconRWRSymbol.SymbolID)
             {
                 case 0:
