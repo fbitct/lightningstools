@@ -175,6 +175,8 @@ namespace SimLinkup.HardwareSupport.Powell
                         _serialPort.ReadTimeout = SERIAL_READ_TIMEOUT;
                         _serialPort.WriteTimeout = SERIAL_WRITE_TIMEOUT;
                         _serialPort.ErrorReceived += _serialPort_ErrorReceived;
+                        _log.DebugFormat("Opening serial port {0}: Handshake:{1}, ReceivedBytesThreshold:{2}, RtsEnable:{3}, ReadTimeout:{4}, WriteTimeout:{5}", _comPort, HANDSHAKE.ToString(), RTS_ENABLE.ToString(), SERIAL_READ_TIMEOUT, SERIAL_WRITE_TIMEOUT);
+
                         _serialPort.Open();
                         _unsuccessfulConnectionAttempts = 0;
                     }
@@ -205,6 +207,7 @@ namespace SimLinkup.HardwareSupport.Powell
                     {
                         if (_serialPort.IsOpen)
                         {
+                            _log.DebugFormat("Closing serial port {0}", _comPort);
                             _serialPort.Close();
                         }
                         _serialPort.Dispose();
@@ -269,6 +272,7 @@ namespace SimLinkup.HardwareSupport.Powell
                     var bytesToWrite = ms.GetBuffer();
                     try
                     {
+                        _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, Encoding.UTF8.GetString(bytesToWrite));
                         _serialPort.Write(bytesToWrite, 0, totalBytes);
                         if (_resetNeeded && clearResetFlag)
                         {
