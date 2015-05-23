@@ -359,27 +359,27 @@ namespace AnalogDevices
             if (channelNum < 8)
             {
                 code = SpecialFunctionCode.WriteToABSelectRegister0;
-                currentSourceSelections = ReadbackABSelect0Register();
+                //currentSourceSelections = ReadbackABSelect0Register();
             }
             else if (channelNum >= 8 && channelNum < 16)
             {
                 code = SpecialFunctionCode.WriteToABSelectRegister1;
-                currentSourceSelections = ReadbackABSelect1Register();
+                //currentSourceSelections = ReadbackABSelect1Register();
             }
             else if (channelNum >= 16 && channelNum < 24)
             {
                 code = SpecialFunctionCode.WriteToABSelectRegister2;
-                currentSourceSelections = ReadbackABSelect2Register();
+                //currentSourceSelections = ReadbackABSelect2Register();
             }
             else if (channelNum >= 24 && channelNum < 32)
             {
                 code = SpecialFunctionCode.WriteToABSelectRegister3;
-                currentSourceSelections = ReadbackABSelect3Register();
+                //currentSourceSelections = ReadbackABSelect3Register();
             }
             else if (channelNum >= 32 && channelNum <= 39)
             {
                 code = SpecialFunctionCode.WriteToABSelectRegister4;
-                currentSourceSelections = ReadbackABSelect4Register();
+                //currentSourceSelections = ReadbackABSelect4Register();
             }
             var toSend = currentSourceSelections;
 
@@ -556,7 +556,7 @@ namespace AnalogDevices
 
         public void SetDacChannelDataValueA(ChannelAddress channels, ushort newVal)
         {
-            ushort controlRegisterVal = ReadbackControlRegister();
+            ushort controlRegisterVal = 0;//ReadbackControlRegister();
             controlRegisterVal &= 0xFFFB;
             WriteControlRegister(controlRegisterVal);
             if (DacPrecision == DacPrecision.SixteenBit)
@@ -658,7 +658,7 @@ namespace AnalogDevices
                     }
                 }
             }
-            return toReturn.OrderBy(x=>x.UsbDevice.UsbRegistryInfo.SymbolicName).ToArray();
+            return toReturn.OrderByDescending(x=>x.UsbDevice.UsbRegistryInfo.SymbolicName).ToArray();
         }
 
         #endregion
@@ -904,17 +904,17 @@ namespace AnalogDevices
             SendDeviceCommand(DeviceCommand.SetCLRPinLow, 0);
         }
 
-        private void PulseLDacPin()
+        public void PulseLDacPin()
         {
             SendDeviceCommand(DeviceCommand.PulseLDacPin, 0);
         }
 
-        private void SetLDacPinLow()
+        public void SetLDacPinLow()
         {
             SendDeviceCommand(DeviceCommand.SetLDacPinLow, 0);
         }
 
-        private void SetLDacPinHigh()
+        public void SetLDacPinHigh()
         {
             SendDeviceCommand(DeviceCommand.SetLDacPinHigh, 0);
         }
