@@ -60,6 +60,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Common.Win32">
+      <HintPath>bin\x86\Release\Common.Win32.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
@@ -105,12 +108,6 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Win32\Common.Win32.csproj">
-      <Project>{188090e9-8b00-457b-85eb-f48bcdd94b0b}</Project>
-      <Name>Common.Win32</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
