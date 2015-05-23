@@ -272,7 +272,7 @@ namespace SimLinkup.HardwareSupport.Powell
                     var bytesToWrite = ms.GetBuffer();
                     try
                     {
-                        _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, Encoding.UTF8.GetString(bytesToWrite));
+                        _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, Encoding.UTF8.GetString(bytesToWrite, 0, totalBytes));
                         _serialPort.Write(bytesToWrite, 0, totalBytes);
                         if (_resetNeeded && clearResetFlag)
                         {
