@@ -846,7 +846,7 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.RWR__BEARING_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.bearing.Length > ((Signal) output).Index
-                                                            ? _lastFlightData.bearing[((Signal) output).Index.Value]
+                                                            ? _lastFlightData.bearing[((Signal) output).Index.Value] * DEGREES_PER_RADIAN
                                                             : 0;
                         break;
                     case F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG:

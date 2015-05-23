@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.HardwareSupport;
-using Common.InputSupport.DirectInput;
 using Common.MacroProgramming;
 using log4net;
-using System.Runtime.Remoting;
 using System.IO.Ports;
 using System.IO;
 using System.Threading;
@@ -18,35 +16,31 @@ namespace SimLinkup.HardwareSupport.Powell
 
         private static readonly ILog _log = LogManager.GetLogger(typeof(PowellIP1310ALRHardwareSupportModule));
         private const int MAX_RWR_SYMBOLS_AS_INPUTS = 64;
-        private const int MAX_REFRESH_RATE_HZ = 25;
         private const string DEFAULT_DEVICE_ID = "RWR00";
         private const int BAUD_RATE = 2400;
         private const int DATA_BITS = 8;
         private const Parity PARITY = Parity.None;
         private const StopBits STOP_BITS = StopBits.One;
         private const Handshake HANDSHAKE = Handshake.None;
+        private const int WRITE_BUFFER_SIZE = 2048;
         private const int SERIAL_WRITE_TIMEOUT = 500;
         private const int MAX_UNSUCCESSFUL_PORT_OPEN_ATTEMPTS = 5;
-        private const int PACKET_HEADER_PADDING_LENGTH = 0;
-        private const int PACKET_FOOTER_PADDING_LENGTH = 0;
-        private const int WRITE_BUFFER_SIZE = 2048;
         private const bool FLUSH_WRITE_BUFFER = true;
         private const bool DISCARD_WRITE_BUFFER_AFTER_OPEN = true;
+
+        //allows slowing down the rate of sending data across the bus
         private const int DELAY_AFTER_WRITES_MILLIS = 20;
-        
+        private const int MAX_REFRESH_RATE_HZ = 25;
+
+        //feature toggle for a hack approach to forcing data across the RS232 that seems to work with the combination of the FTDI 232BL chip and the PIC microcontroller the way they're wired up right now
+        private const bool CLOSE_AND_REOPEN_CONNECTION_AFTER_EACH_BYTE_SENT = false;     
+    
         #endregion
 
         #region Instance variables
 
         private readonly AnalogSignal[] _analogInputSignals;
         private readonly DigitalSignal[] _digitalInputSignals;
-        private string _deviceID;
-        private Common.IO.Ports.ISerialPort _serialPort;
-        private object _serialPortLock = new object();
-        private int _unsuccessfulConnectionAttempts = 0;
-        private string _comPort;
-        private DateTime _lastSynchronizedAt = DateTime.MinValue;
-        private bool _isDisposed;
         private AnalogSignal _magneticHeadingDegreesInputSignal;
         private AnalogSignal _rwrSymbolCountInputSignal;
         private AnalogSignal[] _rwrObjectSymbolIDInputSignals = new AnalogSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
@@ -57,6 +51,20 @@ namespace SimLinkup.HardwareSupport.Powell
         private DigitalSignal[] _rwrObjectSelectedFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
         private DigitalSignal[] _rwrObjectNewDetectionFlagInputSignals = new DigitalSignal[MAX_RWR_SYMBOLS_AS_INPUTS];
         private IFalconRWRSymbolTranslator _falconRWRSymbolTranslator = new FalconRWRSymbolTranslator();
+
+        private string _deviceID;
+        
+        private Common.IO.Ports.ISerialPort _serialPort;
+        private object _serialPortLock = new object();
+        private string _comPort;
+        private int _unsuccessfulConnectionAttempts = 0;
+
+        private DateTime _lastSynchronizedAt = DateTime.MinValue;
+        private bool _resetNeeded = true;
+        
+        private bool _isDisposed;
+
+        
         #endregion
 
         #region Constructors
@@ -139,8 +147,8 @@ namespace SimLinkup.HardwareSupport.Powell
             bool connected = EnsureSerialPortConnected();
             if (connected)
             {
-                var blipList = GenerateBlipList();
-                SendBlipList(blipList);
+                var commandList = GenerateCommandList();
+                SendCommandList(commandList);
             }
         }
         private bool EnsureSerialPortConnected()
@@ -215,6 +223,25 @@ namespace SimLinkup.HardwareSupport.Powell
             }
         }
 
+        private IEnumerable<RWRCommand> GenerateCommandList()
+        {
+            var rwrCommands = new List<RWRCommand>();
+            if (_resetNeeded)
+            {
+                //**IF** this is necessary at all, it should only be necessary when we first open the COM port and send our initial command.  
+                //This will cause the device to reinitialize itself.  Once we run the command, we clear the _resetNeeded flag so we don't run
+                //it a second time.
+                rwrCommands.Add(new ResetCommand()); 
+            }
+
+            var blipList = GenerateBlipList();
+            if (blipList.Count() > 0)
+            {
+                rwrCommands.Add(new DrawBlipsCommand { Blips = blipList });
+            }
+            return rwrCommands;
+        }
+
         private IEnumerable<Blip> GenerateBlipList()
         {
             var numInputSymbols = (int)Math.Truncate(_rwrSymbolCountInputSignal.State);
@@ -232,64 +259,65 @@ namespace SimLinkup.HardwareSupport.Powell
                     Selected = _rwrObjectSelectedFlagInputSignals[i].State,
                     NewDetection = _rwrObjectNewDetectionFlagInputSignals[i].State
                 };
-                var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, magneticHeadingDegrees:_magneticHeadingDegreesInputSignal.State, usePrimarySymbol:usePrimarySymbol, inverted:false);
+                var blips = _falconRWRSymbolTranslator.Translate(falconRWRSymbol, magneticHeadingDegrees: _magneticHeadingDegreesInputSignal.State, usePrimarySymbol: usePrimarySymbol, inverted: false);
                 blipList.AddRange(blips);
             }
             return blipList;
         }
-        private void SendBlipList(IEnumerable<Blip> blipList)
+        private void SendCommandList(IEnumerable<RWRCommand> commandList)
         {
+            if (commandList.Count() == 0) return;
             lock (_serialPortLock)
             {
                 using (var ms = new MemoryStream())
                 {
                     var totalBytes = 0;
-
-                    for (var i = 0; i < PACKET_HEADER_PADDING_LENGTH; i++)
+                    foreach (var command in commandList)
                     {
-                        ms.WriteByte(0x00);
-                        totalBytes++;
-                    }
+                        //write out device identifier to memory stream
+                        var deviceIdBytes = Encoding.ASCII.GetBytes(_deviceID);
+                        ms.Write(deviceIdBytes, 0, deviceIdBytes.Length);
+                        totalBytes += deviceIdBytes.Length;
 
-                    var deviceIdBytes = Encoding.ASCII.GetBytes(_deviceID);
-                    ms.Write(deviceIdBytes, 0, deviceIdBytes.Length);
-                    totalBytes += deviceIdBytes.Length;
-
-                    var blipListBytes = new DrawBlipsCommand { Blips = blipList }.ToBytes();
-                    if (blipListBytes != null && blipListBytes.Length > 0)
-                    {
-                        ms.Write(blipListBytes, 0, blipListBytes.Length);
-                        totalBytes += blipListBytes.Length;
-                    }
-
-
-                    for (var i = 0; i < PACKET_FOOTER_PADDING_LENGTH; i++)
-                    {
-                        ms.WriteByte(0x00);
-                        totalBytes++;
-                    }
-
-                    ms.Seek(0, SeekOrigin.Begin);
-
-                    
-                    var bytesToWrite = ms.GetBuffer();
-                    try
-                    {
-                        _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, BytesToString(bytesToWrite, 0, totalBytes));
-                        EnsureSerialPortConnected();
-                        for (int i = 0; i < totalBytes; i++)
+                        //write out the bytes for this command to memory stream
+                        var thisCommandBytes = command.ToBytes();
+                        if (thisCommandBytes != null && thisCommandBytes.Length > 0)
                         {
-                            _serialPort.Write(bytesToWrite, i, 1);
-                            if (FLUSH_WRITE_BUFFER)
-                            {
-                                _serialPort.BaseStream.Flush();
-                            }
-                            Thread.Sleep(DELAY_AFTER_WRITES_MILLIS);
+                            ms.Write(thisCommandBytes, 0, thisCommandBytes.Length);
+                            totalBytes += thisCommandBytes.Length;
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        _log.Error(e.Message, e);
+
+                        //write contents of memory stream to COM port
+                        ms.Seek(0, SeekOrigin.Begin);
+                        var bytesToWrite = ms.GetBuffer();
+                        try
+                        {
+                            _log.DebugFormat("Sending bytes to serial port {0}:{1}", _comPort, BytesToString(bytesToWrite, 0, totalBytes));
+                            
+                            EnsureSerialPortConnected(); 
+
+                            //write out each byte, optionally flushing the buffer and optionally delaying between each byte to allow for slow remote end processing
+                            for (int i = 0; i < totalBytes; i++)
+                            {
+                                _serialPort.Write(bytesToWrite, i, 1);
+                                if (FLUSH_WRITE_BUFFER)
+                                {
+                                    _serialPort.BaseStream.Flush();
+                                }
+                                Thread.Sleep(DELAY_AFTER_WRITES_MILLIS);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            _log.Error(e.Message, e);
+                        }
+
+                        //if we've just run a RESET command, ensure we don't run it again unless flagged to do so elsewhere
+                        if (command is ResetCommand)
+                        {
+                            _resetNeeded = false;
+                        }
+
                     }
                 }
             }

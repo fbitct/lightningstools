@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimLinkup.HardwareSupport.Powell
 {
-    internal class DrawBlipsCommand 
+    internal class DrawBlipsCommand:RWRCommand
     {
         private const int MAX_RWR_SYMBOLS = 31;
 
@@ -15,7 +15,7 @@ namespace SimLinkup.HardwareSupport.Powell
             Blips = new List<Blip>();
         }
         public IEnumerable<Blip> Blips { get; set; }
-        public byte[] ToBytes()
+        public override byte[] ToBytes()
         {
             var blipsToWrite = Blips.Where(x => x.Symbol < Symbols.BlinkBit).Take(MAX_RWR_SYMBOLS);
             if (blipsToWrite.Count() == 0)
