@@ -10,11 +10,11 @@
       <!-- F4 ALTITUDE IN FEET OUTPUT-->
       <Source xsi:type="AnalogSignal">
         <!-- use this for BMS 4.33-->
-        <!--<Id>F4_ALTIMETER__INDICATED_ALTITUDE__MSL</Id>-->
+        <Id>F4_ALTIMETER__INDICATED_ALTITUDE__MSL</Id>
 
 
         <!-- use this for BMS 4.32-->
-        <Id>F4_TRUE_ALTITUDE__MSL</Id>
+        <!--<Id>F4_TRUE_ALTITUDE__MSL</Id>-->
       </Source>
       <!-- SIMTEK ALTITUDE IN FEET INPUT-->
       <Destination xsi:type="AnalogSignal">
