@@ -26,8 +26,8 @@ namespace MFDExtractor.FlightDataAdapters
             }
             else
             {
-                standbyADI.InstrumentState.PitchDegrees = ((flightData.pitch / Constants.RADIANS_PER_DEGREE));
-                standbyADI.InstrumentState.RollDegrees = ((flightData.roll / Constants.RADIANS_PER_DEGREE));
+                standbyADI.InstrumentState.PitchDegrees = ((flightData.pitch / Common.Math.Constants.RADIANS_PER_DEGREE));
+                standbyADI.InstrumentState.RollDegrees = ((flightData.roll / Common.Math.Constants.RADIANS_PER_DEGREE));
                 standbyADI.InstrumentState.OffFlag = false;
             }
         }

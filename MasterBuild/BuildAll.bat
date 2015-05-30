@@ -15,6 +15,8 @@ IF ERRORLEVEL 1 GOTO END
 IF ERRORLEVEL 1 GOTO END
 "C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4SharedMem\F4SharedMem.sln
 IF ERRORLEVEL 1 GOTO END
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4SharedMemViewer\F4SharedMemViewer.sln
+IF ERRORLEVEL 1 GOTO END
 "C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4SharedMemMirror\F4SharedMemMirror.sln
 IF ERRORLEVEL 1 GOTO END
 "C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4TexSharedMem\F4TexSharedMem.sln

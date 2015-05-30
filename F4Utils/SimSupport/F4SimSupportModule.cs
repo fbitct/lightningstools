@@ -203,7 +203,7 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal)output).State = _lastFlightData.cabinAlt;
                         break;
                     case F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES:
-                        ((AnalogSignal)output).State = (360 + (_lastFlightData.yaw / Constants.RADIANS_PER_DEGREE)) % 360;
+                        ((AnalogSignal)output).State = (360 + (_lastFlightData.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
                         break;
                     case F4SimOutputs.GEAR_PANEL__GEAR_POSITION:
                         ((AnalogSignal) output).State = _lastFlightData.gearPos;
@@ -1733,9 +1733,9 @@ namespace F4Utils.SimSupport
         {
             showToFromFlag = true;
             showCommandBars =
-                           ((Math.Abs((flightData.AdiIlsVerPos / Constants.RADIANS_PER_DEGREE)) <= (flightData.deviationLimit / 5.0f))
+                           ((Math.Abs((flightData.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= (flightData.deviationLimit / 5.0f))
                                &&
-                           (Math.Abs((flightData.AdiIlsHorPos / Constants.RADIANS_PER_DEGREE)) <= flightData.deviationLimit))
+                           (Math.Abs((flightData.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= flightData.deviationLimit))
                                &&
                            !(((HsiBits)flightData.hsiBits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
                            &&

@@ -15,8 +15,8 @@ namespace MFDExtractor.FlightDataAdapters
     {
         public void Adapt(IAzimuthIndicator azimuthIndicator, FlightData flightData)
         {
-            azimuthIndicator.InstrumentState.MagneticHeadingDegrees = (360 + (flightData.yaw / Constants.RADIANS_PER_DEGREE)) % 360;
-            azimuthIndicator.InstrumentState.RollDegrees = ((flightData.roll / Constants.RADIANS_PER_DEGREE));
+            azimuthIndicator.InstrumentState.MagneticHeadingDegrees = (360 + (flightData.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
+            azimuthIndicator.InstrumentState.RollDegrees = ((flightData.roll / Common.Math.Constants.RADIANS_PER_DEGREE));
             var rwrObjectCount = flightData.RwrObjectCount;
             if (flightData.RWRsymbol != null)
             {
@@ -30,7 +30,7 @@ namespace MFDExtractor.FlightDataAdapters
                         if (i < rwrObjectCount) thisBlip.Visible = true;
                         if (flightData.bearing != null)
                         {
-                            thisBlip.BearingDegrees = (flightData.bearing[i] / Constants.RADIANS_PER_DEGREE);
+                            thisBlip.BearingDegrees = (flightData.bearing[i] / Common.Math.Constants.RADIANS_PER_DEGREE);
                         }
                         if (flightData.lethality != null)
                         {
