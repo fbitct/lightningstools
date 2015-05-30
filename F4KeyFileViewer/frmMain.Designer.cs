@@ -179,8 +179,9 @@
             this.grid.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.grid.Name = "grid";
             this.grid.ReadOnly = true;
+            this.grid.RowHeadersVisible = false;
             this.grid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-
+            this.grid.RowTemplate.Height = 15;
             this.grid.Size = new System.Drawing.Size(1893, 603);
             this.grid.TabIndex = 3;
             // 
@@ -282,6 +283,7 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
             this.DoubleBuffered = true;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "frmMain";
