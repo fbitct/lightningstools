@@ -89,6 +89,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Math\Constants.cs" />
+    <Compile Include="Math\ExtensionMethods.cs" />
     <Compile Include="Math\Util.cs" />
     <Compile Include="Networking\NetworkMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
