@@ -158,6 +158,7 @@ namespace F4SharedMem
                         lineBuilder.Append((char) chr);
                     }
                 }
+                label.Line2 = lineBuilder.ToString();
                 label.Inverted = currentItem.Inverted;
                 valuesToAssign[j] = label;
             }
@@ -323,5 +324,10 @@ namespace F4SharedMem
         public bool UfcTacanIsX { get { return (tacanInfo != null && ((tacanInfo[(int)TacanSources.UFC] & (byte)TacanBits.band) != 0)); } }
         public bool AuxTacanIsX { get { return (tacanInfo != null && ((tacanInfo[(int)TacanSources.AUX] & (byte)TacanBits.band) != 0)); } }
 
+        public IntellivibeData IntellivibeData { get; set; }
+
+        public RadioClientControl RadioClientControlData { get; set; }
+        public RadioClientStatus RadioClientStatus { get; set; }
+        
     }
 }

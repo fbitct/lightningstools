@@ -70,6 +70,7 @@
     <Compile Include="Headers\FlightData2.cs" />
     <Compile Include="Headers\FlyStates.cs" />
     <Compile Include="Headers\HsiBits.cs" />
+    <Compile Include="Headers\IntellivibeData.cs" />
     <Compile Include="Headers\LightBits.cs" />
     <Compile Include="Headers\LightBits2.cs" />
     <Compile Include="Headers\LightBits3.cs" />
@@ -77,6 +78,9 @@
     <Compile Include="Headers\OSBData.cs" />
     <Compile Include="Headers\OSBLabel.cs" />
     <Compile Include="Headers\PowerBits.cs" />
+    <Compile Include="Headers\RadioClientControl.cs" />
+    <Compile Include="Headers\RadioClientStatus.cs" />
+    <Compile Include="Headers\SwitchStates.cs" />
     <Compile Include="Reader.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

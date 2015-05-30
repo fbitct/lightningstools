@@ -13,13 +13,23 @@ namespace F4SharedMem
         private const string PrimarySharedMemoryAreaFileName = "FalconSharedMemoryArea";
         private const string SecondarySharedMemoryFileName = "FalconSharedMemoryArea2";
         private const string OsbSharedMemoryAreaFileName = "FalconSharedOsbMemoryArea";
+        private const string IntelliVibeSharedMemoryAreaFileName = "FalconIntellivibeSharedMemoryArea";
+        private const string RadioClientControlSharedMemoryAreaFileName = "FalconRccSharedMemoryArea";
+        private const string RadioClientStatusSharedMemoryAreaFileName = "FalconRcsSharedMemoryArea";
         private bool _disposed;
         private IntPtr _hOsbSharedMemoryAreaFileMappingObject = IntPtr.Zero;
         private IntPtr _hPrimarySharedMemoryAreaFileMappingObject = IntPtr.Zero;
         private IntPtr _hSecondarySharedMemoryAreaFileMappingObject = IntPtr.Zero;
+        private IntPtr _hIntelliVibeSharedMemoryAreaFileMappingObject = IntPtr.Zero;
+        private IntPtr _hRadioClientControlSharedMemoryAreaFileMappingObject = IntPtr.Zero;
+        private IntPtr _hRadioClientStatusSharedMemoryAreaFileMappingObject = IntPtr.Zero;
         private IntPtr _lpOsbSharedMemoryAreaBaseAddress = IntPtr.Zero;
         private IntPtr _lpPrimarySharedMemoryAreaBaseAddress = IntPtr.Zero;
         private IntPtr _lpSecondarySharedMemoryAreaBaseAddress = IntPtr.Zero;
+        private IntPtr _lpIntelliVibeSharedMemoryAreaBaseAddress = IntPtr.Zero;
+        private IntPtr _lpRadioClientControlSharedMemoryAreaBaseAddress = IntPtr.Zero;
+        private IntPtr _lpRadioClientStatusSharedMemoryAreaBaseAddress = IntPtr.Zero;
+
 
         public bool IsFalconRunning
         {
@@ -64,6 +74,100 @@ namespace F4SharedMem
                     try
                     {
                         bytesRead.Add(Marshal.ReadByte(_lpOsbSharedMemoryAreaBaseAddress, i));
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+            }
+            var toReturn = bytesRead.ToArray();
+            return toReturn.Length == 0 ? null : toReturn;
+        }
+        [ComVisible(false)]
+        public byte[] GetRawIntelliVibeData()
+        {
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                ConnectToFalcon();
+            }
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                return null;
+            }
+            var bytesRead = new List<byte>();
+            if (!_hIntelliVibeSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                var fileSizeBytes = GetMaxMemFileSize(_lpIntelliVibeSharedMemoryAreaBaseAddress);
+                if (fileSizeBytes > Marshal.SizeOf(typeof(IntellivibeData))) fileSizeBytes = Marshal.SizeOf(typeof(IntellivibeData));
+                for (var i = 0; i < fileSizeBytes; i++)
+                {
+                    try
+                    {
+                        bytesRead.Add(Marshal.ReadByte(_lpIntelliVibeSharedMemoryAreaBaseAddress, i));
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+            }
+            var toReturn = bytesRead.ToArray();
+            return toReturn.Length == 0 ? null : toReturn;
+        }
+        [ComVisible(false)]
+        public byte[] GetRawRadioClientControlData()
+        {
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                ConnectToFalcon();
+            }
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                return null;
+            }
+            var bytesRead = new List<byte>();
+            if (!_hRadioClientControlSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                var fileSizeBytes = GetMaxMemFileSize(_lpRadioClientControlSharedMemoryAreaBaseAddress);
+                if (fileSizeBytes > Marshal.SizeOf(typeof(RadioClientControl))) fileSizeBytes = Marshal.SizeOf(typeof(RadioClientControl));
+                for (var i = 0; i < fileSizeBytes; i++)
+                {
+                    try
+                    {
+                        bytesRead.Add(Marshal.ReadByte(_lpRadioClientControlSharedMemoryAreaBaseAddress, i));
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+            }
+            var toReturn = bytesRead.ToArray();
+            return toReturn.Length == 0 ? null : toReturn;
+        }
+
+        [ComVisible(false)]
+        public byte[] GetRawRadioClientStatusData()
+        {
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                ConnectToFalcon();
+            }
+            if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                return null;
+            }
+            var bytesRead = new List<byte>();
+            if (!_hRadioClientStatusSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                var fileSizeBytes = GetMaxMemFileSize(_lpRadioClientStatusSharedMemoryAreaBaseAddress);
+                if (fileSizeBytes > Marshal.SizeOf(typeof(RadioClientStatus))) fileSizeBytes = Marshal.SizeOf(typeof(RadioClientStatus));
+                for (var i = 0; i < fileSizeBytes; i++)
+                {
+                    try
+                    {
+                        bytesRead.Add(Marshal.ReadByte(_lpRadioClientStatusSharedMemoryAreaBaseAddress, i));
                     }
                     catch
                     {
@@ -160,6 +264,7 @@ namespace F4SharedMem
             {
                 return null;
             }
+
             var data = Convert.ChangeType(Marshal.PtrToStructure(_lpPrimarySharedMemoryAreaBaseAddress, dataType),
                 dataType);
             Marshal.SizeOf(dataType);
@@ -170,10 +275,29 @@ namespace F4SharedMem
                 data = (Marshal.PtrToStructure(_lpSecondarySharedMemoryAreaBaseAddress, typeof (FlightData2)));
                 toReturn.PopulateFromStruct(data);
             }
+
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
                 data = (Marshal.PtrToStructure(_lpOsbSharedMemoryAreaBaseAddress, typeof (OSBData)));
                 toReturn.PopulateFromStruct(data);
+            }
+
+            if (!_hIntelliVibeSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                data = (Marshal.PtrToStructure(_lpIntelliVibeSharedMemoryAreaBaseAddress, typeof(IntellivibeData)));
+                toReturn.IntellivibeData = (IntellivibeData)data;
+            }
+
+            if (!_hRadioClientControlSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                data = (Marshal.PtrToStructure(_lpRadioClientControlSharedMemoryAreaBaseAddress, typeof(RadioClientControl)));
+                toReturn.RadioClientControlData = (RadioClientControl)data;
+            }
+
+            if (!_hRadioClientStatusSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                data = (Marshal.PtrToStructure(_lpRadioClientStatusSharedMemoryAreaBaseAddress, typeof(RadioClientStatus)));
+                toReturn.RadioClientStatus = (RadioClientStatus)data;
             }
 
             return toReturn;
@@ -182,20 +306,39 @@ namespace F4SharedMem
         private void ConnectToFalcon()
         {
             if (!_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero)) return;
+            
             _hPrimarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ,
                 false, PrimarySharedMemoryAreaFileName);
             _lpPrimarySharedMemoryAreaBaseAddress =
                 NativeMethods.MapViewOfFile(_hPrimarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ,
                     0, 0, IntPtr.Zero);
+            
             _hSecondarySharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(
                 NativeMethods.SECTION_MAP_READ, false, SecondarySharedMemoryFileName);
             _lpSecondarySharedMemoryAreaBaseAddress =
                 NativeMethods.MapViewOfFile(_hSecondarySharedMemoryAreaFileMappingObject, NativeMethods.SECTION_MAP_READ,
                     0, 0, IntPtr.Zero);
+
             _hOsbSharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
                 OsbSharedMemoryAreaFileName);
             _lpOsbSharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hOsbSharedMemoryAreaFileMappingObject,
                 NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
+
+            _hIntelliVibeSharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
+                IntelliVibeSharedMemoryAreaFileName);
+            _lpIntelliVibeSharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hIntelliVibeSharedMemoryAreaFileMappingObject,
+                NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
+
+            _hRadioClientControlSharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
+                RadioClientControlSharedMemoryAreaFileName);
+            _lpRadioClientControlSharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hRadioClientControlSharedMemoryAreaFileMappingObject,
+                NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
+
+            _hRadioClientStatusSharedMemoryAreaFileMappingObject = NativeMethods.OpenFileMapping(NativeMethods.SECTION_MAP_READ, false,
+                RadioClientStatusSharedMemoryAreaFileName);
+            _lpRadioClientStatusSharedMemoryAreaBaseAddress = NativeMethods.MapViewOfFile(_hRadioClientStatusSharedMemoryAreaFileMappingObject,
+                NativeMethods.SECTION_MAP_READ, 0, 0, IntPtr.Zero);
+
         }
 
         private void Disconnect()
@@ -205,15 +348,35 @@ namespace F4SharedMem
                 NativeMethods.UnmapViewOfFile(_lpPrimarySharedMemoryAreaBaseAddress);
                 NativeMethods.CloseHandle(_hPrimarySharedMemoryAreaFileMappingObject);
             }
+
             if (!_hSecondarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
                 NativeMethods.UnmapViewOfFile(_lpSecondarySharedMemoryAreaBaseAddress);
                 NativeMethods.CloseHandle(_hSecondarySharedMemoryAreaFileMappingObject);
             }
+
             if (!_hOsbSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
             {
                 NativeMethods.UnmapViewOfFile(_lpOsbSharedMemoryAreaBaseAddress);
                 NativeMethods.CloseHandle(_hOsbSharedMemoryAreaFileMappingObject);
+            }
+
+            if (!_hIntelliVibeSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                NativeMethods.UnmapViewOfFile(_lpIntelliVibeSharedMemoryAreaBaseAddress);
+                NativeMethods.CloseHandle(_hIntelliVibeSharedMemoryAreaFileMappingObject);
+            }
+
+            if (!_hRadioClientControlSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                NativeMethods.UnmapViewOfFile(_lpRadioClientControlSharedMemoryAreaBaseAddress);
+                NativeMethods.CloseHandle(_hRadioClientControlSharedMemoryAreaFileMappingObject);
+            }
+
+            if (!_hRadioClientStatusSharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
+            {
+                NativeMethods.UnmapViewOfFile(_lpRadioClientStatusSharedMemoryAreaBaseAddress);
+                NativeMethods.CloseHandle(_hRadioClientStatusSharedMemoryAreaFileMappingObject);
             }
         }
 
