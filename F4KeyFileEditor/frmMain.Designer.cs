@@ -217,7 +217,8 @@
             this.grid.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.grid.Name = "grid";
             this.grid.ReadOnly = true;
-            this.grid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.grid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+
             this.grid.Size = new System.Drawing.Size(1893, 603);
             this.grid.TabIndex = 3;
             // 
