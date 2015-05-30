@@ -139,6 +139,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.PDF", "..\Common\PDF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4SharedMemViewer", "..\F4SharedMemViewer\F4SharedMemViewer.csproj", "{B88F8409-F306-4AF4-A619-F83760111585}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "F4SharedMemViewerSetup", "..\F4SharedMemViewer\F4SharedMemViewerSetup\F4SharedMemViewerSetup.vdproj", "{FDEF7EA6-DE58-41BC-B5FF-1802C85D2164}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -370,6 +372,10 @@ Global
 		{B88F8409-F306-4AF4-A619-F83760111585}.Debug|x86.Build.0 = Debug|x86
 		{B88F8409-F306-4AF4-A619-F83760111585}.Release|x86.ActiveCfg = Release|x86
 		{B88F8409-F306-4AF4-A619-F83760111585}.Release|x86.Build.0 = Release|x86
+		{FDEF7EA6-DE58-41BC-B5FF-1802C85D2164}.Debug|x86.ActiveCfg = Debug
+		{FDEF7EA6-DE58-41BC-B5FF-1802C85D2164}.Debug|x86.Build.0 = Debug
+		{FDEF7EA6-DE58-41BC-B5FF-1802C85D2164}.Release|x86.ActiveCfg = Release
+		{FDEF7EA6-DE58-41BC-B5FF-1802C85D2164}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -426,5 +432,6 @@ Global
 		{188090E9-8B00-457B-85EB-F48BCDD94B0B} = {C4A34955-72A3-4269-9790-40335BFEF688}
 		{5130F409-0E66-4D02-9DE9-7BFB11174C13} = {C4A34955-72A3-4269-9790-40335BFEF688}
 		{B88F8409-F306-4AF4-A619-F83760111585} = {CFD91C3A-9264-4829-A8C7-77C62AA82137}
+		{FDEF7EA6-DE58-41BC-B5FF-1802C85D2164} = {CFD91C3A-9264-4829-A8C7-77C62AA82137}
 	EndGlobalSection
 EndGlobal

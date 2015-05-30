@@ -3472,7 +3472,7 @@
             this.txtRwrObjectCount.Location = new System.Drawing.Point(93, 12);
             this.txtRwrObjectCount.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtRwrObjectCount.Name = "txtRwrObjectCount";
-            this.txtRwrObjectCount.ReadOnly = true;
+            this.txtRwrObjectCount.ReadOnly = false;
             this.txtRwrObjectCount.Size = new System.Drawing.Size(52, 20);
             this.txtRwrObjectCount.TabIndex = 2;
             // 
@@ -6779,7 +6779,7 @@
             this.MinimumSize = new System.Drawing.Size(21, 413);
             this.Name = "SharedMemoryViewer";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "BMS Shared Memory";
+            this.Text = "Falcon 4 Shared Memory Viewer";
             this.tabControl1.ResumeLayout(false);
             this.tabFDBits.ResumeLayout(false);
             this.tabFDBits.PerformLayout();
