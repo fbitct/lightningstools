@@ -26,7 +26,6 @@ namespace F4SharedMemViewer
             InitializeDEDGridView();
             InitializePFLGridView();
             InitializeFD2RWRGridView();
-            this.Height += 175;
         }
         protected override void OnLoad(EventArgs e)
         {
@@ -465,6 +464,10 @@ namespace F4SharedMemViewer
         private void BindFD2RWRInfoToFormElements()
         {
             var dataGridView = gvRwrInfo;
+            if (_lastFlightData == null || _lastFlightData.RwrInfo == null)
+            {
+                return;
+            }
             dataGridView.SuspendLayout();
             if (dataGridView.RowCount > 52)
             {
@@ -507,6 +510,10 @@ namespace F4SharedMemViewer
         }
         private void BindFD2PilotInfoToFormElements()
         {
+            if (_lastFlightData == null || _lastFlightData.pilotsCallsign == null)
+            {
+                return;
+            }
             txtPilotsInSession.Text = _lastFlightData.pilotsOnline.ToString();
             var dataGridView = gvPilotsInSession;
             
@@ -536,6 +543,10 @@ namespace F4SharedMemViewer
         }
         private void BindOSBDataToFormElements(F4SharedMem.FlightData.OptionSelectButtonLabel[] buttonLabels, DataGridView dataGridView)
         {
+            if (buttonLabels == null)
+            {
+                return;
+            }
             dataGridView.SuspendLayout();
             if (dataGridView.RowCount > buttonLabels.Length)
             {
@@ -603,6 +614,10 @@ namespace F4SharedMemViewer
 
         private void Bind_IVC_RCS_RCC_DataToFormElements()
         {
+            if (_lastFlightData == null || _lastFlightData.RadioClientControlData.Radios ==null)
+            {
+                return;
+            }
             BindRadioClientStatusDataToFormElements();
             BindRadioClientControlDataToFormElements();
         }
