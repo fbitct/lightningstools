@@ -105,6 +105,10 @@ namespace F4SharedMemMirror
                     byte[] primaryFlightData = null;
                     byte[] flightData2 = null;
                     byte[] osbData = null;
+                    byte[] intellivibeData = null;
+                    byte[] radioClientControlData = null;
+                    byte[] radioClientStatusData = null;
+
                     if (client != null)
                     {
                         try
@@ -112,6 +116,9 @@ namespace F4SharedMemMirror
                             primaryFlightData = client.GetPrimaryFlightData();
                             flightData2 = client.GetFlightData2();
                             osbData = client.GetOSBData();
+                            intellivibeData = client.GetIntellivibeData();
+                            radioClientControlData = client.GetRadioClientControlData();
+                            radioClientStatusData = client.GetRadioClientStatusData();
                         }
                         catch (RemotingException e)
                         {
@@ -121,6 +128,9 @@ namespace F4SharedMemMirror
                         _writer.WritePrimaryFlightData(primaryFlightData);
                         _writer.WriteFlightData2(flightData2);
                         _writer.WriteOSBData(osbData);
+                        _writer.WriteIntellivibeData(intellivibeData);
+                        _writer.WriteRadioClientControlData(radioClientControlData);
+                        _writer.WriteRadioClientStatusData(radioClientStatusData);
                     }
                 }
                 catch (Exception e)
@@ -165,9 +175,16 @@ namespace F4SharedMemMirror
                     var primaryFlightData = _smReader.GetRawPrimaryFlightData();
                     var flightData2 = _smReader.GetRawFlightData2();
                     var osbData = _smReader.GetRawOSBData();
+                    var intellivibeData = _smReader.GetRawIntelliVibeData();
+                    var radioClientControlData = _smReader.GetRawRadioClientControlData();
+                    var radioClientStatusData = _smReader.GetRawRadioClientStatusData();
+
                     SharedMemoryMirrorServer.SetPrimaryFlightData(primaryFlightData);
                     SharedMemoryMirrorServer.SetFlightData2(flightData2);
                     SharedMemoryMirrorServer.SetOSBData(osbData);
+                    SharedMemoryMirrorServer.SetIntellivibeData(intellivibeData);
+                    SharedMemoryMirrorServer.SetRadioClientControlData(radioClientControlData);
+                    SharedMemoryMirrorServer.SetRadioClientStatusData(radioClientStatusData);
                     Thread.Sleep(Settings.Default.PollingFrequencyMillis);
                     Application.DoEvents();
                 }

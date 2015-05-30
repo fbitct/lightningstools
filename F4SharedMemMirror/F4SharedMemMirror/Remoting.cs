@@ -13,6 +13,9 @@ namespace F4SharedMemMirror
         byte[] GetPrimaryFlightData();
         byte[] GetFlightData2();
         byte[] GetOSBData();
+        byte[] GetIntellivibeData();
+        byte[] GetRadioClientControlData();
+        byte[] GetRadioClientStatusData();
     }
 
     public interface ISharedMemoryMirrorServer
@@ -20,6 +23,9 @@ namespace F4SharedMemMirror
         byte[] GetPrimaryFlightData();
         byte[] GetFlightData2();
         byte[] GetOSBData();
+        byte[] GetIntellivibeData();
+        byte[] GetRadioClientControlData();
+        byte[] GetRadioClientStatusData();
     }
 
     public class SharedMemoryMirrorClient : ISharedMemoryMirrorClient
@@ -90,7 +96,18 @@ namespace F4SharedMemMirror
         {
             return _server.GetOSBData();
         }
-
+        public byte[] GetIntellivibeData()
+        {
+            return _server.GetIntellivibeData();
+        }
+        public byte[] GetRadioClientControlData()
+        {
+            return _server.GetRadioClientControlData();
+        }
+        public byte[] GetRadioClientStatusData()
+        {
+            return _server.GetRadioClientStatusData();
+        }
         #endregion
     }
 
@@ -99,6 +116,9 @@ namespace F4SharedMemMirror
         private static byte[] _primaryFlightData;
         private static byte[] _flightData2;
         private static byte[] _osbData;
+        private static byte[] _intellivibeData;
+        private static byte[] _radioClientControlData;
+        private static byte[] _radioClientStatusData;
 
         private SharedMemoryMirrorServer()
         {
@@ -119,6 +139,18 @@ namespace F4SharedMemMirror
         public byte[] GetOSBData()
         {
             return _osbData;
+        }
+        public byte[] GetIntellivibeData() 
+        {
+            return _intellivibeData;
+        }
+        public byte[] GetRadioClientControlData()
+        {
+            return _radioClientControlData;
+        }
+        public byte[] GetRadioClientStatusData()
+        {
+            return _radioClientStatusData;
         }
 
         #endregion
@@ -187,19 +219,31 @@ namespace F4SharedMemMirror
             }
         }
 
-        public static void SetPrimaryFlightData(byte[] primaryFlightData)
+        public static void SetPrimaryFlightData(byte[] data)
         {
-            _primaryFlightData = primaryFlightData;
+            _primaryFlightData = data;
         }
 
-        public static void SetFlightData2(byte[] flightData2)
+        public static void SetFlightData2(byte[] data)
         {
-            _flightData2 = flightData2;
+            _flightData2 = data;
         }
 
-        public static void SetOSBData(byte[] osbData)
+        public static void SetOSBData(byte[] data)
         {
-            _osbData = osbData;
+            _osbData = data;
+        }
+        public static void SetIntellivibeData(byte[] data)
+        {
+            _intellivibeData = data;
+        }
+        public static void SetRadioClientControlData(byte[] data)
+        {
+            _radioClientControlData = data;
+        }
+        public static void SetRadioClientStatusData(byte[] data)
+        {
+            _radioClientStatusData = data;
         }
     }
 }
