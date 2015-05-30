@@ -468,6 +468,30 @@
             this.chkIsOnGround = new System.Windows.Forms.CheckBox();
             this.chkIsExitGame = new System.Windows.Forms.CheckBox();
             this.tabIVC_RCS_RCC = new System.Windows.Forms.TabPage();
+            this.lblTelemetry = new System.Windows.Forms.Label();
+            this.gvTelemetry = new System.Windows.Forms.DataGridView();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblIcVolume = new System.Windows.Forms.Label();
+            this.txtIcVolume = new System.Windows.Forms.TextBox();
+            this.lblMainDevice = new System.Windows.Forms.Label();
+            this.chkFlightMode = new System.Windows.Forms.CheckBox();
+            this.chkUseAGC = new System.Windows.Forms.CheckBox();
+            this.lblPlayerCount = new System.Windows.Forms.Label();
+            this.txtPlayerCount = new System.Windows.Forms.TextBox();
+            this.lblPassword = new System.Windows.Forms.Label();
+            this.txtPassword = new System.Windows.Forms.TextBox();
+            this.lblPortNumber = new System.Windows.Forms.Label();
+            this.txtPortNumber = new System.Windows.Forms.TextBox();
+            this.chkSignalConnect = new System.Windows.Forms.CheckBox();
+            this.chkTerminateClient = new System.Windows.Forms.CheckBox();
+            this.lblAddress = new System.Windows.Forms.Label();
+            this.txtAddress = new System.Windows.Forms.TextBox();
+            this.lblConnection = new System.Windows.Forms.Label();
+            this.lblNickname = new System.Windows.Forms.Label();
+            this.txtNickname = new System.Windows.Forms.TextBox();
             this.chkGuardIsOn = new System.Windows.Forms.CheckBox();
             this.chkGuardPttDepressed = new System.Windows.Forms.CheckBox();
             this.lblGuardRxVolume = new System.Windows.Forms.Label();
@@ -491,46 +515,6 @@
             this.lblUhfFrequency = new System.Windows.Forms.Label();
             this.txtUhfFrequency = new System.Windows.Forms.TextBox();
             this.tabRawBits = new System.Windows.Forms.TabPage();
-            this.chkSignalConnect = new System.Windows.Forms.CheckBox();
-            this.chkTerminateClient = new System.Windows.Forms.CheckBox();
-            this.lblAddress = new System.Windows.Forms.Label();
-            this.txtAddress = new System.Windows.Forms.TextBox();
-            this.lblConnection = new System.Windows.Forms.Label();
-            this.lblNickname = new System.Windows.Forms.Label();
-            this.txtNickname = new System.Windows.Forms.TextBox();
-            this.lblPortNumber = new System.Windows.Forms.Label();
-            this.txtPortNumber = new System.Windows.Forms.TextBox();
-            this.lblPassword = new System.Windows.Forms.Label();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.lblPlayerCount = new System.Windows.Forms.Label();
-            this.txtPlayerCount = new System.Windows.Forms.TextBox();
-            this.chkFlightMode = new System.Windows.Forms.CheckBox();
-            this.chkUseAGC = new System.Windows.Forms.CheckBox();
-            this.lblMainDevice = new System.Windows.Forms.Label();
-            this.lblIcVolume = new System.Windows.Forms.Label();
-            this.txtIcVolume = new System.Windows.Forms.TextBox();
-            this.gvTelemetry = new System.Windows.Forms.DataGridView();
-            this.lblTelemetry = new System.Windows.Forms.Label();
-            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblHsiBitsUint = new System.Windows.Forms.Label();
-            this.txtHsiBitsUint = new System.Windows.Forms.TextBox();
-            this.lblLightBits3Uint = new System.Windows.Forms.Label();
-            this.txtLightBits3Uint = new System.Windows.Forms.TextBox();
-            this.lblLightBits2Uint = new System.Windows.Forms.Label();
-            this.txtLightBits2Uint = new System.Windows.Forms.TextBox();
-            this.lblFlightData = new System.Windows.Forms.Label();
-            this.lblLightBitsUint = new System.Windows.Forms.Label();
-            this.txtLightBitsUint = new System.Windows.Forms.TextBox();
-            this.lblBlinkBitsUint = new System.Windows.Forms.Label();
-            this.txtBlinkBitsUint = new System.Windows.Forms.TextBox();
-            this.lblPowerBitsUint = new System.Windows.Forms.Label();
-            this.txtPowerBitsUint = new System.Windows.Forms.TextBox();
-            this.lblFlightData2Uint = new System.Windows.Forms.Label();
-            this.lblAltBitsUint = new System.Windows.Forms.Label();
-            this.txtAltBitsUint = new System.Windows.Forms.TextBox();
             this.lblBlinkBitsHex = new System.Windows.Forms.Label();
             this.txtBlinkBitsHex = new System.Windows.Forms.TextBox();
             this.lblPowerBitsHex = new System.Windows.Forms.Label();
@@ -547,6 +531,30 @@
             this.lblFlightDataHex = new System.Windows.Forms.Label();
             this.lblLightBitsHex = new System.Windows.Forms.Label();
             this.txtLightBitsHex = new System.Windows.Forms.TextBox();
+            this.lblBlinkBitsUint = new System.Windows.Forms.Label();
+            this.txtBlinkBitsUint = new System.Windows.Forms.TextBox();
+            this.lblPowerBitsUint = new System.Windows.Forms.Label();
+            this.txtPowerBitsUint = new System.Windows.Forms.TextBox();
+            this.lblFlightData2Uint = new System.Windows.Forms.Label();
+            this.lblAltBitsUint = new System.Windows.Forms.Label();
+            this.txtAltBitsUint = new System.Windows.Forms.TextBox();
+            this.lblHsiBitsUint = new System.Windows.Forms.Label();
+            this.txtHsiBitsUint = new System.Windows.Forms.TextBox();
+            this.lblLightBits3Uint = new System.Windows.Forms.Label();
+            this.txtLightBits3Uint = new System.Windows.Forms.TextBox();
+            this.lblLightBits2Uint = new System.Windows.Forms.Label();
+            this.txtLightBits2Uint = new System.Windows.Forms.TextBox();
+            this.lblFlightData = new System.Windows.Forms.Label();
+            this.lblLightBitsUint = new System.Windows.Forms.Label();
+            this.txtLightBitsUint = new System.Windows.Forms.TextBox();
+            this.lblRadioClientStatus = new System.Windows.Forms.Label();
+            this.chkClientActive = new System.Windows.Forms.CheckBox();
+            this.chkConnected = new System.Windows.Forms.CheckBox();
+            this.chkConnectionFail = new System.Windows.Forms.CheckBox();
+            this.chkHostUnknown = new System.Windows.Forms.CheckBox();
+            this.chkBadPassword = new System.Windows.Forms.CheckBox();
+            this.chkNoMicrophone = new System.Windows.Forms.CheckBox();
+            this.chkNoSpeakers = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabFDBits.SuspendLayout();
             this.tabFDVars.SuspendLayout();
@@ -564,8 +572,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.gvLeftMfd)).BeginInit();
             this.tabIVibe.SuspendLayout();
             this.tabIVC_RCS_RCC.SuspendLayout();
-            this.tabRawBits.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gvTelemetry)).BeginInit();
+            this.tabRawBits.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -584,7 +592,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1413, 1241);
+            this.tabControl1.Size = new System.Drawing.Size(1413, 1262);
             this.tabControl1.TabIndex = 0;
             // 
             // tabFDBits
@@ -5290,6 +5298,14 @@
             // 
             // tabIVC_RCS_RCC
             // 
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkNoSpeakers);
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkBadPassword);
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkNoMicrophone);
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkConnectionFail);
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkHostUnknown);
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkClientActive);
+            this.tabIVC_RCS_RCC.Controls.Add(this.chkConnected);
+            this.tabIVC_RCS_RCC.Controls.Add(this.lblRadioClientStatus);
             this.tabIVC_RCS_RCC.Controls.Add(this.lblTelemetry);
             this.tabIVC_RCS_RCC.Controls.Add(this.gvTelemetry);
             this.tabIVC_RCS_RCC.Controls.Add(this.lblIcVolume);
@@ -5335,450 +5351,20 @@
             this.tabIVC_RCS_RCC.Location = new System.Drawing.Point(4, 34);
             this.tabIVC_RCS_RCC.Name = "tabIVC_RCS_RCC";
             this.tabIVC_RCS_RCC.Padding = new System.Windows.Forms.Padding(3);
-            this.tabIVC_RCS_RCC.Size = new System.Drawing.Size(1405, 1203);
+            this.tabIVC_RCS_RCC.Size = new System.Drawing.Size(1405, 1224);
             this.tabIVC_RCS_RCC.TabIndex = 8;
             this.tabIVC_RCS_RCC.Text = "IVC RCS/RCC";
             this.tabIVC_RCS_RCC.UseVisualStyleBackColor = true;
             // 
-            // chkGuardIsOn
-            // 
-            this.chkGuardIsOn.AutoSize = true;
-            this.chkGuardIsOn.Enabled = false;
-            this.chkGuardIsOn.Location = new System.Drawing.Point(390, 371);
-            this.chkGuardIsOn.Name = "chkGuardIsOn";
-            this.chkGuardIsOn.Size = new System.Drawing.Size(88, 29);
-            this.chkGuardIsOn.TabIndex = 97;
-            this.chkGuardIsOn.Text = "IsOn";
-            this.chkGuardIsOn.UseVisualStyleBackColor = true;
-            // 
-            // chkGuardPttDepressed
-            // 
-            this.chkGuardPttDepressed.AutoSize = true;
-            this.chkGuardPttDepressed.Enabled = false;
-            this.chkGuardPttDepressed.Location = new System.Drawing.Point(390, 401);
-            this.chkGuardPttDepressed.Name = "chkGuardPttDepressed";
-            this.chkGuardPttDepressed.Size = new System.Drawing.Size(174, 29);
-            this.chkGuardPttDepressed.TabIndex = 98;
-            this.chkGuardPttDepressed.Text = "PttDepressed";
-            this.chkGuardPttDepressed.UseVisualStyleBackColor = true;
-            // 
-            // lblGuardRxVolume
-            // 
-            this.lblGuardRxVolume.AutoSize = true;
-            this.lblGuardRxVolume.Enabled = false;
-            this.lblGuardRxVolume.Location = new System.Drawing.Point(46, 408);
-            this.lblGuardRxVolume.Name = "lblGuardRxVolume";
-            this.lblGuardRxVolume.Size = new System.Drawing.Size(110, 25);
-            this.lblGuardRxVolume.TabIndex = 96;
-            this.lblGuardRxVolume.Text = "RxVolume";
-            this.lblGuardRxVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtGuardRxVolume
-            // 
-            this.txtGuardRxVolume.Enabled = false;
-            this.txtGuardRxVolume.Location = new System.Drawing.Point(162, 405);
-            this.txtGuardRxVolume.Name = "txtGuardRxVolume";
-            this.txtGuardRxVolume.Size = new System.Drawing.Size(207, 31);
-            this.txtGuardRxVolume.TabIndex = 95;
-            // 
-            // lblGuardRadio
-            // 
-            this.lblGuardRadio.AutoSize = true;
-            this.lblGuardRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblGuardRadio.Location = new System.Drawing.Point(25, 334);
-            this.lblGuardRadio.Name = "lblGuardRadio";
-            this.lblGuardRadio.Size = new System.Drawing.Size(133, 25);
-            this.lblGuardRadio.TabIndex = 94;
-            this.lblGuardRadio.Text = "Guard Radio";
-            // 
-            // lblGuardFrequency
-            // 
-            this.lblGuardFrequency.AutoSize = true;
-            this.lblGuardFrequency.Enabled = false;
-            this.lblGuardFrequency.Location = new System.Drawing.Point(42, 371);
-            this.lblGuardFrequency.Name = "lblGuardFrequency";
-            this.lblGuardFrequency.Size = new System.Drawing.Size(114, 25);
-            this.lblGuardFrequency.TabIndex = 93;
-            this.lblGuardFrequency.Text = "Frequency";
-            this.lblGuardFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtGuardFrequency
-            // 
-            this.txtGuardFrequency.Enabled = false;
-            this.txtGuardFrequency.Location = new System.Drawing.Point(162, 368);
-            this.txtGuardFrequency.Name = "txtGuardFrequency";
-            this.txtGuardFrequency.Size = new System.Drawing.Size(207, 31);
-            this.txtGuardFrequency.TabIndex = 92;
-            // 
-            // chkVhfIsOn
-            // 
-            this.chkVhfIsOn.AutoSize = true;
-            this.chkVhfIsOn.Enabled = false;
-            this.chkVhfIsOn.Location = new System.Drawing.Point(390, 226);
-            this.chkVhfIsOn.Name = "chkVhfIsOn";
-            this.chkVhfIsOn.Size = new System.Drawing.Size(88, 29);
-            this.chkVhfIsOn.TabIndex = 90;
-            this.chkVhfIsOn.Text = "IsOn";
-            this.chkVhfIsOn.UseVisualStyleBackColor = true;
-            // 
-            // chkVhfPttDepressed
-            // 
-            this.chkVhfPttDepressed.AutoSize = true;
-            this.chkVhfPttDepressed.Enabled = false;
-            this.chkVhfPttDepressed.Location = new System.Drawing.Point(390, 256);
-            this.chkVhfPttDepressed.Name = "chkVhfPttDepressed";
-            this.chkVhfPttDepressed.Size = new System.Drawing.Size(174, 29);
-            this.chkVhfPttDepressed.TabIndex = 91;
-            this.chkVhfPttDepressed.Text = "PttDepressed";
-            this.chkVhfPttDepressed.UseVisualStyleBackColor = true;
-            // 
-            // lblVhfRxVolume
-            // 
-            this.lblVhfRxVolume.AutoSize = true;
-            this.lblVhfRxVolume.Enabled = false;
-            this.lblVhfRxVolume.Location = new System.Drawing.Point(46, 263);
-            this.lblVhfRxVolume.Name = "lblVhfRxVolume";
-            this.lblVhfRxVolume.Size = new System.Drawing.Size(110, 25);
-            this.lblVhfRxVolume.TabIndex = 89;
-            this.lblVhfRxVolume.Text = "RxVolume";
-            this.lblVhfRxVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtVhfRxVolume
-            // 
-            this.txtVhfRxVolume.Enabled = false;
-            this.txtVhfRxVolume.Location = new System.Drawing.Point(162, 260);
-            this.txtVhfRxVolume.Name = "txtVhfRxVolume";
-            this.txtVhfRxVolume.Size = new System.Drawing.Size(207, 31);
-            this.txtVhfRxVolume.TabIndex = 88;
-            // 
-            // lblVhfRadio
-            // 
-            this.lblVhfRadio.AutoSize = true;
-            this.lblVhfRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVhfRadio.Location = new System.Drawing.Point(25, 189);
-            this.lblVhfRadio.Name = "lblVhfRadio";
-            this.lblVhfRadio.Size = new System.Drawing.Size(116, 25);
-            this.lblVhfRadio.TabIndex = 87;
-            this.lblVhfRadio.Text = "VHF Radio";
-            // 
-            // lblVhfFrequency
-            // 
-            this.lblVhfFrequency.AutoSize = true;
-            this.lblVhfFrequency.Enabled = false;
-            this.lblVhfFrequency.Location = new System.Drawing.Point(42, 226);
-            this.lblVhfFrequency.Name = "lblVhfFrequency";
-            this.lblVhfFrequency.Size = new System.Drawing.Size(114, 25);
-            this.lblVhfFrequency.TabIndex = 86;
-            this.lblVhfFrequency.Text = "Frequency";
-            this.lblVhfFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtVhfFrequency
-            // 
-            this.txtVhfFrequency.Enabled = false;
-            this.txtVhfFrequency.Location = new System.Drawing.Point(162, 223);
-            this.txtVhfFrequency.Name = "txtVhfFrequency";
-            this.txtVhfFrequency.Size = new System.Drawing.Size(207, 31);
-            this.txtVhfFrequency.TabIndex = 85;
-            // 
-            // chkUhfIsOn
-            // 
-            this.chkUhfIsOn.AutoSize = true;
-            this.chkUhfIsOn.Enabled = false;
-            this.chkUhfIsOn.Location = new System.Drawing.Point(390, 95);
-            this.chkUhfIsOn.Name = "chkUhfIsOn";
-            this.chkUhfIsOn.Size = new System.Drawing.Size(88, 29);
-            this.chkUhfIsOn.TabIndex = 83;
-            this.chkUhfIsOn.Text = "IsOn";
-            this.chkUhfIsOn.UseVisualStyleBackColor = true;
-            // 
-            // chkUhfPttDepressed
-            // 
-            this.chkUhfPttDepressed.AutoSize = true;
-            this.chkUhfPttDepressed.Enabled = false;
-            this.chkUhfPttDepressed.Location = new System.Drawing.Point(390, 125);
-            this.chkUhfPttDepressed.Name = "chkUhfPttDepressed";
-            this.chkUhfPttDepressed.Size = new System.Drawing.Size(174, 29);
-            this.chkUhfPttDepressed.TabIndex = 84;
-            this.chkUhfPttDepressed.Text = "PttDepressed";
-            this.chkUhfPttDepressed.UseVisualStyleBackColor = true;
-            // 
-            // lblUhfRxVolume
-            // 
-            this.lblUhfRxVolume.AutoSize = true;
-            this.lblUhfRxVolume.Enabled = false;
-            this.lblUhfRxVolume.Location = new System.Drawing.Point(46, 132);
-            this.lblUhfRxVolume.Name = "lblUhfRxVolume";
-            this.lblUhfRxVolume.Size = new System.Drawing.Size(110, 25);
-            this.lblUhfRxVolume.TabIndex = 82;
-            this.lblUhfRxVolume.Text = "RxVolume";
-            this.lblUhfRxVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtUhfRxVolume
-            // 
-            this.txtUhfRxVolume.Enabled = false;
-            this.txtUhfRxVolume.Location = new System.Drawing.Point(162, 129);
-            this.txtUhfRxVolume.Name = "txtUhfRxVolume";
-            this.txtUhfRxVolume.Size = new System.Drawing.Size(207, 31);
-            this.txtUhfRxVolume.TabIndex = 81;
-            // 
-            // lblUhfRadio
-            // 
-            this.lblUhfRadio.AutoSize = true;
-            this.lblUhfRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUhfRadio.Location = new System.Drawing.Point(25, 58);
-            this.lblUhfRadio.Name = "lblUhfRadio";
-            this.lblUhfRadio.Size = new System.Drawing.Size(117, 25);
-            this.lblUhfRadio.TabIndex = 80;
-            this.lblUhfRadio.Text = "UHF Radio";
-            // 
-            // lblRadioClientControl
-            // 
-            this.lblRadioClientControl.AutoSize = true;
-            this.lblRadioClientControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblRadioClientControl.Location = new System.Drawing.Point(25, 19);
-            this.lblRadioClientControl.Name = "lblRadioClientControl";
-            this.lblRadioClientControl.Size = new System.Drawing.Size(210, 25);
-            this.lblRadioClientControl.TabIndex = 79;
-            this.lblRadioClientControl.Text = "RadioClientControl";
-            // 
-            // lblUhfFrequency
-            // 
-            this.lblUhfFrequency.AutoSize = true;
-            this.lblUhfFrequency.Enabled = false;
-            this.lblUhfFrequency.Location = new System.Drawing.Point(42, 96);
-            this.lblUhfFrequency.Name = "lblUhfFrequency";
-            this.lblUhfFrequency.Size = new System.Drawing.Size(114, 25);
-            this.lblUhfFrequency.TabIndex = 78;
-            this.lblUhfFrequency.Text = "Frequency";
-            this.lblUhfFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtUhfFrequency
-            // 
-            this.txtUhfFrequency.Enabled = false;
-            this.txtUhfFrequency.Location = new System.Drawing.Point(162, 92);
-            this.txtUhfFrequency.Name = "txtUhfFrequency";
-            this.txtUhfFrequency.Size = new System.Drawing.Size(207, 31);
-            this.txtUhfFrequency.TabIndex = 77;
-            // 
-            // tabRawBits
-            // 
-            this.tabRawBits.Controls.Add(this.lblBlinkBitsHex);
-            this.tabRawBits.Controls.Add(this.txtBlinkBitsHex);
-            this.tabRawBits.Controls.Add(this.lblPowerBitsHex);
-            this.tabRawBits.Controls.Add(this.txtPowerBitsHex);
-            this.tabRawBits.Controls.Add(this.lblFlightData2Hex);
-            this.tabRawBits.Controls.Add(this.lblAltBitsHex);
-            this.tabRawBits.Controls.Add(this.txtAltBitsHex);
-            this.tabRawBits.Controls.Add(this.lblHsiBitsHex);
-            this.tabRawBits.Controls.Add(this.txtHsiBitsHex);
-            this.tabRawBits.Controls.Add(this.lblLightBits3Hex);
-            this.tabRawBits.Controls.Add(this.txtLightBits3Hex);
-            this.tabRawBits.Controls.Add(this.lblLightBits2Hex);
-            this.tabRawBits.Controls.Add(this.txtLightBits2Hex);
-            this.tabRawBits.Controls.Add(this.lblFlightDataHex);
-            this.tabRawBits.Controls.Add(this.lblLightBitsHex);
-            this.tabRawBits.Controls.Add(this.txtLightBitsHex);
-            this.tabRawBits.Controls.Add(this.lblBlinkBitsUint);
-            this.tabRawBits.Controls.Add(this.txtBlinkBitsUint);
-            this.tabRawBits.Controls.Add(this.lblPowerBitsUint);
-            this.tabRawBits.Controls.Add(this.txtPowerBitsUint);
-            this.tabRawBits.Controls.Add(this.lblFlightData2Uint);
-            this.tabRawBits.Controls.Add(this.lblAltBitsUint);
-            this.tabRawBits.Controls.Add(this.txtAltBitsUint);
-            this.tabRawBits.Controls.Add(this.lblHsiBitsUint);
-            this.tabRawBits.Controls.Add(this.txtHsiBitsUint);
-            this.tabRawBits.Controls.Add(this.lblLightBits3Uint);
-            this.tabRawBits.Controls.Add(this.txtLightBits3Uint);
-            this.tabRawBits.Controls.Add(this.lblLightBits2Uint);
-            this.tabRawBits.Controls.Add(this.txtLightBits2Uint);
-            this.tabRawBits.Controls.Add(this.lblFlightData);
-            this.tabRawBits.Controls.Add(this.lblLightBitsUint);
-            this.tabRawBits.Controls.Add(this.txtLightBitsUint);
-            this.tabRawBits.Location = new System.Drawing.Point(4, 34);
-            this.tabRawBits.Name = "tabRawBits";
-            this.tabRawBits.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRawBits.Size = new System.Drawing.Size(1405, 1203);
-            this.tabRawBits.TabIndex = 9;
-            this.tabRawBits.Text = "Raw Bits";
-            this.tabRawBits.UseVisualStyleBackColor = true;
-            // 
-            // chkSignalConnect
-            // 
-            this.chkSignalConnect.AutoSize = true;
-            this.chkSignalConnect.Enabled = false;
-            this.chkSignalConnect.Location = new System.Drawing.Point(1037, 95);
-            this.chkSignalConnect.Name = "chkSignalConnect";
-            this.chkSignalConnect.Size = new System.Drawing.Size(184, 29);
-            this.chkSignalConnect.TabIndex = 104;
-            this.chkSignalConnect.Text = "SignalConnect";
-            this.chkSignalConnect.UseVisualStyleBackColor = true;
-            // 
-            // chkTerminateClient
-            // 
-            this.chkTerminateClient.AutoSize = true;
-            this.chkTerminateClient.Enabled = false;
-            this.chkTerminateClient.Location = new System.Drawing.Point(1037, 125);
-            this.chkTerminateClient.Name = "chkTerminateClient";
-            this.chkTerminateClient.Size = new System.Drawing.Size(195, 29);
-            this.chkTerminateClient.TabIndex = 105;
-            this.chkTerminateClient.Text = "TerminateClient";
-            this.chkTerminateClient.UseVisualStyleBackColor = true;
-            // 
-            // lblAddress
-            // 
-            this.lblAddress.AutoSize = true;
-            this.lblAddress.Enabled = false;
-            this.lblAddress.Location = new System.Drawing.Point(712, 132);
-            this.lblAddress.Name = "lblAddress";
-            this.lblAddress.Size = new System.Drawing.Size(91, 25);
-            this.lblAddress.TabIndex = 103;
-            this.lblAddress.Text = "Address";
-            this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtAddress
-            // 
-            this.txtAddress.Enabled = false;
-            this.txtAddress.Location = new System.Drawing.Point(809, 129);
-            this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(207, 31);
-            this.txtAddress.TabIndex = 102;
-            // 
-            // lblConnection
-            // 
-            this.lblConnection.AutoSize = true;
-            this.lblConnection.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblConnection.Location = new System.Drawing.Point(672, 58);
-            this.lblConnection.Name = "lblConnection";
-            this.lblConnection.Size = new System.Drawing.Size(121, 25);
-            this.lblConnection.TabIndex = 101;
-            this.lblConnection.Text = "Connection";
-            // 
-            // lblNickname
-            // 
-            this.lblNickname.AutoSize = true;
-            this.lblNickname.Enabled = false;
-            this.lblNickname.Location = new System.Drawing.Point(696, 96);
-            this.lblNickname.Name = "lblNickname";
-            this.lblNickname.Size = new System.Drawing.Size(107, 25);
-            this.lblNickname.TabIndex = 100;
-            this.lblNickname.Text = "Nickname";
-            this.lblNickname.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtNickname
-            // 
-            this.txtNickname.Enabled = false;
-            this.txtNickname.Location = new System.Drawing.Point(809, 92);
-            this.txtNickname.Name = "txtNickname";
-            this.txtNickname.Size = new System.Drawing.Size(207, 31);
-            this.txtNickname.TabIndex = 99;
-            // 
-            // lblPortNumber
-            // 
-            this.lblPortNumber.AutoSize = true;
-            this.lblPortNumber.Enabled = false;
-            this.lblPortNumber.Location = new System.Drawing.Point(677, 169);
-            this.lblPortNumber.Name = "lblPortNumber";
-            this.lblPortNumber.Size = new System.Drawing.Size(126, 25);
-            this.lblPortNumber.TabIndex = 107;
-            this.lblPortNumber.Text = "PortNumber";
-            this.lblPortNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtPortNumber
-            // 
-            this.txtPortNumber.Enabled = false;
-            this.txtPortNumber.Location = new System.Drawing.Point(809, 166);
-            this.txtPortNumber.Name = "txtPortNumber";
-            this.txtPortNumber.Size = new System.Drawing.Size(207, 31);
-            this.txtPortNumber.TabIndex = 106;
-            // 
-            // lblPassword
-            // 
-            this.lblPassword.AutoSize = true;
-            this.lblPassword.Enabled = false;
-            this.lblPassword.Location = new System.Drawing.Point(697, 206);
-            this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(106, 25);
-            this.lblPassword.TabIndex = 109;
-            this.lblPassword.Text = "Password";
-            this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtPassword
-            // 
-            this.txtPassword.Enabled = false;
-            this.txtPassword.Location = new System.Drawing.Point(809, 203);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(207, 31);
-            this.txtPassword.TabIndex = 108;
-            // 
-            // lblPlayerCount
-            // 
-            this.lblPlayerCount.AutoSize = true;
-            this.lblPlayerCount.Enabled = false;
-            this.lblPlayerCount.Location = new System.Drawing.Point(673, 243);
-            this.lblPlayerCount.Name = "lblPlayerCount";
-            this.lblPlayerCount.Size = new System.Drawing.Size(130, 25);
-            this.lblPlayerCount.TabIndex = 111;
-            this.lblPlayerCount.Text = "PlayerCount";
-            this.lblPlayerCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtPlayerCount
-            // 
-            this.txtPlayerCount.Enabled = false;
-            this.txtPlayerCount.Location = new System.Drawing.Point(809, 240);
-            this.txtPlayerCount.Name = "txtPlayerCount";
-            this.txtPlayerCount.Size = new System.Drawing.Size(207, 31);
-            this.txtPlayerCount.TabIndex = 110;
-            // 
-            // chkFlightMode
-            // 
-            this.chkFlightMode.AutoSize = true;
-            this.chkFlightMode.Enabled = false;
-            this.chkFlightMode.Location = new System.Drawing.Point(1037, 155);
-            this.chkFlightMode.Name = "chkFlightMode";
-            this.chkFlightMode.Size = new System.Drawing.Size(151, 29);
-            this.chkFlightMode.TabIndex = 112;
-            this.chkFlightMode.Text = "FlightMode";
-            this.chkFlightMode.UseVisualStyleBackColor = true;
-            // 
-            // chkUseAGC
-            // 
-            this.chkUseAGC.AutoSize = true;
-            this.chkUseAGC.Enabled = false;
-            this.chkUseAGC.Location = new System.Drawing.Point(1037, 185);
-            this.chkUseAGC.Name = "chkUseAGC";
-            this.chkUseAGC.Size = new System.Drawing.Size(127, 29);
-            this.chkUseAGC.TabIndex = 113;
-            this.chkUseAGC.Text = "UseAGC";
-            this.chkUseAGC.UseVisualStyleBackColor = true;
-            // 
-            // lblMainDevice
-            // 
-            this.lblMainDevice.AutoSize = true;
-            this.lblMainDevice.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMainDevice.Location = new System.Drawing.Point(677, 334);
-            this.lblMainDevice.Name = "lblMainDevice";
-            this.lblMainDevice.Size = new System.Drawing.Size(136, 25);
-            this.lblMainDevice.TabIndex = 114;
-            this.lblMainDevice.Text = "MAIN Device";
-            // 
-            // lblIcVolume
-            // 
-            this.lblIcVolume.AutoSize = true;
-            this.lblIcVolume.Enabled = false;
-            this.lblIcVolume.Location = new System.Drawing.Point(703, 374);
-            this.lblIcVolume.Name = "lblIcVolume";
-            this.lblIcVolume.Size = new System.Drawing.Size(100, 25);
-            this.lblIcVolume.TabIndex = 116;
-            this.lblIcVolume.Text = "IcVolume";
-            this.lblIcVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtIcVolume
-            // 
-            this.txtIcVolume.Enabled = false;
-            this.txtIcVolume.Location = new System.Drawing.Point(809, 371);
-            this.txtIcVolume.Name = "txtIcVolume";
-            this.txtIcVolume.Size = new System.Drawing.Size(207, 31);
-            this.txtIcVolume.TabIndex = 115;
+            // lblTelemetry
+            // 
+            this.lblTelemetry.AutoSize = true;
+            this.lblTelemetry.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTelemetry.Location = new System.Drawing.Point(26, 589);
+            this.lblTelemetry.Name = "lblTelemetry";
+            this.lblTelemetry.Size = new System.Drawing.Size(107, 25);
+            this.lblTelemetry.TabIndex = 118;
+            this.lblTelemetry.Text = "Telemetry";
             // 
             // gvTelemetry
             // 
@@ -5804,7 +5390,7 @@
             this.dataGridViewTextBoxColumn11});
             this.gvTelemetry.Enabled = false;
             this.gvTelemetry.GridColor = System.Drawing.SystemColors.Control;
-            this.gvTelemetry.Location = new System.Drawing.Point(30, 523);
+            this.gvTelemetry.Location = new System.Drawing.Point(31, 629);
             this.gvTelemetry.Name = "gvTelemetry";
             this.gvTelemetry.ReadOnly = true;
             dataGridViewCellStyle46.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -5831,16 +5417,6 @@
             this.gvTelemetry.ShowRowErrors = false;
             this.gvTelemetry.Size = new System.Drawing.Size(905, 584);
             this.gvTelemetry.TabIndex = 117;
-            // 
-            // lblTelemetry
-            // 
-            this.lblTelemetry.AutoSize = true;
-            this.lblTelemetry.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTelemetry.Location = new System.Drawing.Point(25, 483);
-            this.lblTelemetry.Name = "lblTelemetry";
-            this.lblTelemetry.Size = new System.Drawing.Size(107, 25);
-            this.lblTelemetry.TabIndex = 118;
-            this.lblTelemetry.Text = "Telemetry";
             // 
             // dataGridViewTextBoxColumn8
             // 
@@ -5898,158 +5474,445 @@
             this.dataGridViewTextBoxColumn11.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewTextBoxColumn11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // lblHsiBitsUint
+            // lblIcVolume
             // 
-            this.lblHsiBitsUint.AutoSize = true;
-            this.lblHsiBitsUint.Enabled = false;
-            this.lblHsiBitsUint.Location = new System.Drawing.Point(76, 178);
-            this.lblHsiBitsUint.Name = "lblHsiBitsUint";
-            this.lblHsiBitsUint.Size = new System.Drawing.Size(76, 25);
-            this.lblHsiBitsUint.TabIndex = 118;
-            this.lblHsiBitsUint.Text = "hsiBits";
-            this.lblHsiBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblIcVolume.AutoSize = true;
+            this.lblIcVolume.Enabled = false;
+            this.lblIcVolume.Location = new System.Drawing.Point(704, 480);
+            this.lblIcVolume.Name = "lblIcVolume";
+            this.lblIcVolume.Size = new System.Drawing.Size(100, 25);
+            this.lblIcVolume.TabIndex = 116;
+            this.lblIcVolume.Text = "IcVolume";
+            this.lblIcVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtHsiBitsUint
+            // txtIcVolume
             // 
-            this.txtHsiBitsUint.Enabled = false;
-            this.txtHsiBitsUint.Location = new System.Drawing.Point(158, 175);
-            this.txtHsiBitsUint.Name = "txtHsiBitsUint";
-            this.txtHsiBitsUint.Size = new System.Drawing.Size(207, 31);
-            this.txtHsiBitsUint.TabIndex = 117;
+            this.txtIcVolume.Enabled = false;
+            this.txtIcVolume.Location = new System.Drawing.Point(810, 477);
+            this.txtIcVolume.Name = "txtIcVolume";
+            this.txtIcVolume.Size = new System.Drawing.Size(207, 31);
+            this.txtIcVolume.TabIndex = 115;
             // 
-            // lblLightBits3Uint
+            // lblMainDevice
             // 
-            this.lblLightBits3Uint.AutoSize = true;
-            this.lblLightBits3Uint.Enabled = false;
-            this.lblLightBits3Uint.Location = new System.Drawing.Point(52, 141);
-            this.lblLightBits3Uint.Name = "lblLightBits3Uint";
-            this.lblLightBits3Uint.Size = new System.Drawing.Size(100, 25);
-            this.lblLightBits3Uint.TabIndex = 116;
-            this.lblLightBits3Uint.Text = "lightBits3";
-            this.lblLightBits3Uint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblMainDevice.AutoSize = true;
+            this.lblMainDevice.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMainDevice.Location = new System.Drawing.Point(678, 440);
+            this.lblMainDevice.Name = "lblMainDevice";
+            this.lblMainDevice.Size = new System.Drawing.Size(136, 25);
+            this.lblMainDevice.TabIndex = 114;
+            this.lblMainDevice.Text = "MAIN Device";
             // 
-            // txtLightBits3Uint
+            // chkFlightMode
             // 
-            this.txtLightBits3Uint.Enabled = false;
-            this.txtLightBits3Uint.Location = new System.Drawing.Point(158, 138);
-            this.txtLightBits3Uint.Name = "txtLightBits3Uint";
-            this.txtLightBits3Uint.Size = new System.Drawing.Size(207, 31);
-            this.txtLightBits3Uint.TabIndex = 115;
+            this.chkFlightMode.AutoSize = true;
+            this.chkFlightMode.Enabled = false;
+            this.chkFlightMode.Location = new System.Drawing.Point(1038, 261);
+            this.chkFlightMode.Name = "chkFlightMode";
+            this.chkFlightMode.Size = new System.Drawing.Size(151, 29);
+            this.chkFlightMode.TabIndex = 112;
+            this.chkFlightMode.Text = "FlightMode";
+            this.chkFlightMode.UseVisualStyleBackColor = true;
             // 
-            // lblLightBits2Uint
+            // chkUseAGC
             // 
-            this.lblLightBits2Uint.AutoSize = true;
-            this.lblLightBits2Uint.Enabled = false;
-            this.lblLightBits2Uint.Location = new System.Drawing.Point(52, 104);
-            this.lblLightBits2Uint.Name = "lblLightBits2Uint";
-            this.lblLightBits2Uint.Size = new System.Drawing.Size(100, 25);
-            this.lblLightBits2Uint.TabIndex = 114;
-            this.lblLightBits2Uint.Text = "lightBits2";
-            this.lblLightBits2Uint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkUseAGC.AutoSize = true;
+            this.chkUseAGC.Enabled = false;
+            this.chkUseAGC.Location = new System.Drawing.Point(1038, 291);
+            this.chkUseAGC.Name = "chkUseAGC";
+            this.chkUseAGC.Size = new System.Drawing.Size(127, 29);
+            this.chkUseAGC.TabIndex = 113;
+            this.chkUseAGC.Text = "UseAGC";
+            this.chkUseAGC.UseVisualStyleBackColor = true;
             // 
-            // txtLightBits2Uint
+            // lblPlayerCount
             // 
-            this.txtLightBits2Uint.Enabled = false;
-            this.txtLightBits2Uint.Location = new System.Drawing.Point(158, 101);
-            this.txtLightBits2Uint.Name = "txtLightBits2Uint";
-            this.txtLightBits2Uint.Size = new System.Drawing.Size(207, 31);
-            this.txtLightBits2Uint.TabIndex = 113;
+            this.lblPlayerCount.AutoSize = true;
+            this.lblPlayerCount.Enabled = false;
+            this.lblPlayerCount.Location = new System.Drawing.Point(674, 349);
+            this.lblPlayerCount.Name = "lblPlayerCount";
+            this.lblPlayerCount.Size = new System.Drawing.Size(130, 25);
+            this.lblPlayerCount.TabIndex = 111;
+            this.lblPlayerCount.Text = "PlayerCount";
+            this.lblPlayerCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lblFlightData
+            // txtPlayerCount
             // 
-            this.lblFlightData.AutoSize = true;
-            this.lblFlightData.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFlightData.Location = new System.Drawing.Point(21, 30);
-            this.lblFlightData.Name = "lblFlightData";
-            this.lblFlightData.Size = new System.Drawing.Size(247, 25);
-            this.lblFlightData.TabIndex = 112;
-            this.lblFlightData.Text = "FlightData (unsigned int)";
+            this.txtPlayerCount.Enabled = false;
+            this.txtPlayerCount.Location = new System.Drawing.Point(810, 346);
+            this.txtPlayerCount.Name = "txtPlayerCount";
+            this.txtPlayerCount.Size = new System.Drawing.Size(207, 31);
+            this.txtPlayerCount.TabIndex = 110;
             // 
-            // lblLightBitsUint
+            // lblPassword
             // 
-            this.lblLightBitsUint.AutoSize = true;
-            this.lblLightBitsUint.Enabled = false;
-            this.lblLightBitsUint.Location = new System.Drawing.Point(64, 67);
-            this.lblLightBitsUint.Name = "lblLightBitsUint";
-            this.lblLightBitsUint.Size = new System.Drawing.Size(88, 25);
-            this.lblLightBitsUint.TabIndex = 111;
-            this.lblLightBitsUint.Text = "lightBits";
-            this.lblLightBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.Enabled = false;
+            this.lblPassword.Location = new System.Drawing.Point(698, 312);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(106, 25);
+            this.lblPassword.TabIndex = 109;
+            this.lblPassword.Text = "Password";
+            this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtLightBitsUint
+            // txtPassword
             // 
-            this.txtLightBitsUint.Enabled = false;
-            this.txtLightBitsUint.Location = new System.Drawing.Point(158, 64);
-            this.txtLightBitsUint.Name = "txtLightBitsUint";
-            this.txtLightBitsUint.Size = new System.Drawing.Size(207, 31);
-            this.txtLightBitsUint.TabIndex = 110;
+            this.txtPassword.Enabled = false;
+            this.txtPassword.Location = new System.Drawing.Point(810, 309);
+            this.txtPassword.Name = "txtPassword";
+            this.txtPassword.Size = new System.Drawing.Size(207, 31);
+            this.txtPassword.TabIndex = 108;
             // 
-            // lblBlinkBitsUint
+            // lblPortNumber
             // 
-            this.lblBlinkBitsUint.AutoSize = true;
-            this.lblBlinkBitsUint.Enabled = false;
-            this.lblBlinkBitsUint.Location = new System.Drawing.Point(505, 141);
-            this.lblBlinkBitsUint.Name = "lblBlinkBitsUint";
-            this.lblBlinkBitsUint.Size = new System.Drawing.Size(93, 25);
-            this.lblBlinkBitsUint.TabIndex = 125;
-            this.lblBlinkBitsUint.Text = "blinkBits";
-            this.lblBlinkBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPortNumber.AutoSize = true;
+            this.lblPortNumber.Enabled = false;
+            this.lblPortNumber.Location = new System.Drawing.Point(678, 275);
+            this.lblPortNumber.Name = "lblPortNumber";
+            this.lblPortNumber.Size = new System.Drawing.Size(126, 25);
+            this.lblPortNumber.TabIndex = 107;
+            this.lblPortNumber.Text = "PortNumber";
+            this.lblPortNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtBlinkBitsUint
+            // txtPortNumber
             // 
-            this.txtBlinkBitsUint.Enabled = false;
-            this.txtBlinkBitsUint.Location = new System.Drawing.Point(604, 138);
-            this.txtBlinkBitsUint.Name = "txtBlinkBitsUint";
-            this.txtBlinkBitsUint.Size = new System.Drawing.Size(207, 31);
-            this.txtBlinkBitsUint.TabIndex = 124;
+            this.txtPortNumber.Enabled = false;
+            this.txtPortNumber.Location = new System.Drawing.Point(810, 272);
+            this.txtPortNumber.Name = "txtPortNumber";
+            this.txtPortNumber.Size = new System.Drawing.Size(207, 31);
+            this.txtPortNumber.TabIndex = 106;
             // 
-            // lblPowerBitsUint
+            // chkSignalConnect
             // 
-            this.lblPowerBitsUint.AutoSize = true;
-            this.lblPowerBitsUint.Enabled = false;
-            this.lblPowerBitsUint.Location = new System.Drawing.Point(492, 104);
-            this.lblPowerBitsUint.Name = "lblPowerBitsUint";
-            this.lblPowerBitsUint.Size = new System.Drawing.Size(106, 25);
-            this.lblPowerBitsUint.TabIndex = 123;
-            this.lblPowerBitsUint.Text = "powerBits";
-            this.lblPowerBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkSignalConnect.AutoSize = true;
+            this.chkSignalConnect.Enabled = false;
+            this.chkSignalConnect.Location = new System.Drawing.Point(1038, 201);
+            this.chkSignalConnect.Name = "chkSignalConnect";
+            this.chkSignalConnect.Size = new System.Drawing.Size(184, 29);
+            this.chkSignalConnect.TabIndex = 104;
+            this.chkSignalConnect.Text = "SignalConnect";
+            this.chkSignalConnect.UseVisualStyleBackColor = true;
             // 
-            // txtPowerBitsUint
+            // chkTerminateClient
             // 
-            this.txtPowerBitsUint.Enabled = false;
-            this.txtPowerBitsUint.Location = new System.Drawing.Point(604, 101);
-            this.txtPowerBitsUint.Name = "txtPowerBitsUint";
-            this.txtPowerBitsUint.Size = new System.Drawing.Size(207, 31);
-            this.txtPowerBitsUint.TabIndex = 122;
+            this.chkTerminateClient.AutoSize = true;
+            this.chkTerminateClient.Enabled = false;
+            this.chkTerminateClient.Location = new System.Drawing.Point(1038, 231);
+            this.chkTerminateClient.Name = "chkTerminateClient";
+            this.chkTerminateClient.Size = new System.Drawing.Size(195, 29);
+            this.chkTerminateClient.TabIndex = 105;
+            this.chkTerminateClient.Text = "TerminateClient";
+            this.chkTerminateClient.UseVisualStyleBackColor = true;
             // 
-            // lblFlightData2Uint
+            // lblAddress
             // 
-            this.lblFlightData2Uint.AutoSize = true;
-            this.lblFlightData2Uint.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFlightData2Uint.Location = new System.Drawing.Point(467, 30);
-            this.lblFlightData2Uint.Name = "lblFlightData2Uint";
-            this.lblFlightData2Uint.Size = new System.Drawing.Size(259, 25);
-            this.lblFlightData2Uint.TabIndex = 121;
-            this.lblFlightData2Uint.Text = "FlightData2 (unsigned int)";
+            this.lblAddress.AutoSize = true;
+            this.lblAddress.Enabled = false;
+            this.lblAddress.Location = new System.Drawing.Point(713, 238);
+            this.lblAddress.Name = "lblAddress";
+            this.lblAddress.Size = new System.Drawing.Size(91, 25);
+            this.lblAddress.TabIndex = 103;
+            this.lblAddress.Text = "Address";
+            this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // lblAltBitsUint
+            // txtAddress
             // 
-            this.lblAltBitsUint.AutoSize = true;
-            this.lblAltBitsUint.Enabled = false;
-            this.lblAltBitsUint.Location = new System.Drawing.Point(527, 67);
-            this.lblAltBitsUint.Name = "lblAltBitsUint";
-            this.lblAltBitsUint.Size = new System.Drawing.Size(71, 25);
-            this.lblAltBitsUint.TabIndex = 120;
-            this.lblAltBitsUint.Text = "altBits";
-            this.lblAltBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.txtAddress.Enabled = false;
+            this.txtAddress.Location = new System.Drawing.Point(810, 235);
+            this.txtAddress.Name = "txtAddress";
+            this.txtAddress.Size = new System.Drawing.Size(207, 31);
+            this.txtAddress.TabIndex = 102;
             // 
-            // txtAltBitsUint
+            // lblConnection
             // 
-            this.txtAltBitsUint.Enabled = false;
-            this.txtAltBitsUint.Location = new System.Drawing.Point(604, 64);
-            this.txtAltBitsUint.Name = "txtAltBitsUint";
-            this.txtAltBitsUint.Size = new System.Drawing.Size(207, 31);
-            this.txtAltBitsUint.TabIndex = 119;
+            this.lblConnection.AutoSize = true;
+            this.lblConnection.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblConnection.Location = new System.Drawing.Point(673, 164);
+            this.lblConnection.Name = "lblConnection";
+            this.lblConnection.Size = new System.Drawing.Size(121, 25);
+            this.lblConnection.TabIndex = 101;
+            this.lblConnection.Text = "Connection";
+            // 
+            // lblNickname
+            // 
+            this.lblNickname.AutoSize = true;
+            this.lblNickname.Enabled = false;
+            this.lblNickname.Location = new System.Drawing.Point(697, 202);
+            this.lblNickname.Name = "lblNickname";
+            this.lblNickname.Size = new System.Drawing.Size(107, 25);
+            this.lblNickname.TabIndex = 100;
+            this.lblNickname.Text = "Nickname";
+            this.lblNickname.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtNickname
+            // 
+            this.txtNickname.Enabled = false;
+            this.txtNickname.Location = new System.Drawing.Point(810, 198);
+            this.txtNickname.Name = "txtNickname";
+            this.txtNickname.Size = new System.Drawing.Size(207, 31);
+            this.txtNickname.TabIndex = 99;
+            // 
+            // chkGuardIsOn
+            // 
+            this.chkGuardIsOn.AutoSize = true;
+            this.chkGuardIsOn.Enabled = false;
+            this.chkGuardIsOn.Location = new System.Drawing.Point(391, 477);
+            this.chkGuardIsOn.Name = "chkGuardIsOn";
+            this.chkGuardIsOn.Size = new System.Drawing.Size(88, 29);
+            this.chkGuardIsOn.TabIndex = 97;
+            this.chkGuardIsOn.Text = "IsOn";
+            this.chkGuardIsOn.UseVisualStyleBackColor = true;
+            // 
+            // chkGuardPttDepressed
+            // 
+            this.chkGuardPttDepressed.AutoSize = true;
+            this.chkGuardPttDepressed.Enabled = false;
+            this.chkGuardPttDepressed.Location = new System.Drawing.Point(391, 507);
+            this.chkGuardPttDepressed.Name = "chkGuardPttDepressed";
+            this.chkGuardPttDepressed.Size = new System.Drawing.Size(174, 29);
+            this.chkGuardPttDepressed.TabIndex = 98;
+            this.chkGuardPttDepressed.Text = "PttDepressed";
+            this.chkGuardPttDepressed.UseVisualStyleBackColor = true;
+            // 
+            // lblGuardRxVolume
+            // 
+            this.lblGuardRxVolume.AutoSize = true;
+            this.lblGuardRxVolume.Enabled = false;
+            this.lblGuardRxVolume.Location = new System.Drawing.Point(47, 514);
+            this.lblGuardRxVolume.Name = "lblGuardRxVolume";
+            this.lblGuardRxVolume.Size = new System.Drawing.Size(110, 25);
+            this.lblGuardRxVolume.TabIndex = 96;
+            this.lblGuardRxVolume.Text = "RxVolume";
+            this.lblGuardRxVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtGuardRxVolume
+            // 
+            this.txtGuardRxVolume.Enabled = false;
+            this.txtGuardRxVolume.Location = new System.Drawing.Point(163, 511);
+            this.txtGuardRxVolume.Name = "txtGuardRxVolume";
+            this.txtGuardRxVolume.Size = new System.Drawing.Size(207, 31);
+            this.txtGuardRxVolume.TabIndex = 95;
+            // 
+            // lblGuardRadio
+            // 
+            this.lblGuardRadio.AutoSize = true;
+            this.lblGuardRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGuardRadio.Location = new System.Drawing.Point(26, 440);
+            this.lblGuardRadio.Name = "lblGuardRadio";
+            this.lblGuardRadio.Size = new System.Drawing.Size(133, 25);
+            this.lblGuardRadio.TabIndex = 94;
+            this.lblGuardRadio.Text = "Guard Radio";
+            // 
+            // lblGuardFrequency
+            // 
+            this.lblGuardFrequency.AutoSize = true;
+            this.lblGuardFrequency.Enabled = false;
+            this.lblGuardFrequency.Location = new System.Drawing.Point(43, 477);
+            this.lblGuardFrequency.Name = "lblGuardFrequency";
+            this.lblGuardFrequency.Size = new System.Drawing.Size(114, 25);
+            this.lblGuardFrequency.TabIndex = 93;
+            this.lblGuardFrequency.Text = "Frequency";
+            this.lblGuardFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtGuardFrequency
+            // 
+            this.txtGuardFrequency.Enabled = false;
+            this.txtGuardFrequency.Location = new System.Drawing.Point(163, 474);
+            this.txtGuardFrequency.Name = "txtGuardFrequency";
+            this.txtGuardFrequency.Size = new System.Drawing.Size(207, 31);
+            this.txtGuardFrequency.TabIndex = 92;
+            // 
+            // chkVhfIsOn
+            // 
+            this.chkVhfIsOn.AutoSize = true;
+            this.chkVhfIsOn.Enabled = false;
+            this.chkVhfIsOn.Location = new System.Drawing.Point(391, 332);
+            this.chkVhfIsOn.Name = "chkVhfIsOn";
+            this.chkVhfIsOn.Size = new System.Drawing.Size(88, 29);
+            this.chkVhfIsOn.TabIndex = 90;
+            this.chkVhfIsOn.Text = "IsOn";
+            this.chkVhfIsOn.UseVisualStyleBackColor = true;
+            // 
+            // chkVhfPttDepressed
+            // 
+            this.chkVhfPttDepressed.AutoSize = true;
+            this.chkVhfPttDepressed.Enabled = false;
+            this.chkVhfPttDepressed.Location = new System.Drawing.Point(391, 362);
+            this.chkVhfPttDepressed.Name = "chkVhfPttDepressed";
+            this.chkVhfPttDepressed.Size = new System.Drawing.Size(174, 29);
+            this.chkVhfPttDepressed.TabIndex = 91;
+            this.chkVhfPttDepressed.Text = "PttDepressed";
+            this.chkVhfPttDepressed.UseVisualStyleBackColor = true;
+            // 
+            // lblVhfRxVolume
+            // 
+            this.lblVhfRxVolume.AutoSize = true;
+            this.lblVhfRxVolume.Enabled = false;
+            this.lblVhfRxVolume.Location = new System.Drawing.Point(47, 369);
+            this.lblVhfRxVolume.Name = "lblVhfRxVolume";
+            this.lblVhfRxVolume.Size = new System.Drawing.Size(110, 25);
+            this.lblVhfRxVolume.TabIndex = 89;
+            this.lblVhfRxVolume.Text = "RxVolume";
+            this.lblVhfRxVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtVhfRxVolume
+            // 
+            this.txtVhfRxVolume.Enabled = false;
+            this.txtVhfRxVolume.Location = new System.Drawing.Point(163, 366);
+            this.txtVhfRxVolume.Name = "txtVhfRxVolume";
+            this.txtVhfRxVolume.Size = new System.Drawing.Size(207, 31);
+            this.txtVhfRxVolume.TabIndex = 88;
+            // 
+            // lblVhfRadio
+            // 
+            this.lblVhfRadio.AutoSize = true;
+            this.lblVhfRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblVhfRadio.Location = new System.Drawing.Point(26, 295);
+            this.lblVhfRadio.Name = "lblVhfRadio";
+            this.lblVhfRadio.Size = new System.Drawing.Size(116, 25);
+            this.lblVhfRadio.TabIndex = 87;
+            this.lblVhfRadio.Text = "VHF Radio";
+            // 
+            // lblVhfFrequency
+            // 
+            this.lblVhfFrequency.AutoSize = true;
+            this.lblVhfFrequency.Enabled = false;
+            this.lblVhfFrequency.Location = new System.Drawing.Point(43, 332);
+            this.lblVhfFrequency.Name = "lblVhfFrequency";
+            this.lblVhfFrequency.Size = new System.Drawing.Size(114, 25);
+            this.lblVhfFrequency.TabIndex = 86;
+            this.lblVhfFrequency.Text = "Frequency";
+            this.lblVhfFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtVhfFrequency
+            // 
+            this.txtVhfFrequency.Enabled = false;
+            this.txtVhfFrequency.Location = new System.Drawing.Point(163, 329);
+            this.txtVhfFrequency.Name = "txtVhfFrequency";
+            this.txtVhfFrequency.Size = new System.Drawing.Size(207, 31);
+            this.txtVhfFrequency.TabIndex = 85;
+            // 
+            // chkUhfIsOn
+            // 
+            this.chkUhfIsOn.AutoSize = true;
+            this.chkUhfIsOn.Enabled = false;
+            this.chkUhfIsOn.Location = new System.Drawing.Point(391, 201);
+            this.chkUhfIsOn.Name = "chkUhfIsOn";
+            this.chkUhfIsOn.Size = new System.Drawing.Size(88, 29);
+            this.chkUhfIsOn.TabIndex = 83;
+            this.chkUhfIsOn.Text = "IsOn";
+            this.chkUhfIsOn.UseVisualStyleBackColor = true;
+            // 
+            // chkUhfPttDepressed
+            // 
+            this.chkUhfPttDepressed.AutoSize = true;
+            this.chkUhfPttDepressed.Enabled = false;
+            this.chkUhfPttDepressed.Location = new System.Drawing.Point(391, 231);
+            this.chkUhfPttDepressed.Name = "chkUhfPttDepressed";
+            this.chkUhfPttDepressed.Size = new System.Drawing.Size(174, 29);
+            this.chkUhfPttDepressed.TabIndex = 84;
+            this.chkUhfPttDepressed.Text = "PttDepressed";
+            this.chkUhfPttDepressed.UseVisualStyleBackColor = true;
+            // 
+            // lblUhfRxVolume
+            // 
+            this.lblUhfRxVolume.AutoSize = true;
+            this.lblUhfRxVolume.Enabled = false;
+            this.lblUhfRxVolume.Location = new System.Drawing.Point(47, 238);
+            this.lblUhfRxVolume.Name = "lblUhfRxVolume";
+            this.lblUhfRxVolume.Size = new System.Drawing.Size(110, 25);
+            this.lblUhfRxVolume.TabIndex = 82;
+            this.lblUhfRxVolume.Text = "RxVolume";
+            this.lblUhfRxVolume.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtUhfRxVolume
+            // 
+            this.txtUhfRxVolume.Enabled = false;
+            this.txtUhfRxVolume.Location = new System.Drawing.Point(163, 235);
+            this.txtUhfRxVolume.Name = "txtUhfRxVolume";
+            this.txtUhfRxVolume.Size = new System.Drawing.Size(207, 31);
+            this.txtUhfRxVolume.TabIndex = 81;
+            // 
+            // lblUhfRadio
+            // 
+            this.lblUhfRadio.AutoSize = true;
+            this.lblUhfRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUhfRadio.Location = new System.Drawing.Point(26, 164);
+            this.lblUhfRadio.Name = "lblUhfRadio";
+            this.lblUhfRadio.Size = new System.Drawing.Size(117, 25);
+            this.lblUhfRadio.TabIndex = 80;
+            this.lblUhfRadio.Text = "UHF Radio";
+            // 
+            // lblRadioClientControl
+            // 
+            this.lblRadioClientControl.AutoSize = true;
+            this.lblRadioClientControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRadioClientControl.Location = new System.Drawing.Point(26, 125);
+            this.lblRadioClientControl.Name = "lblRadioClientControl";
+            this.lblRadioClientControl.Size = new System.Drawing.Size(210, 25);
+            this.lblRadioClientControl.TabIndex = 79;
+            this.lblRadioClientControl.Text = "RadioClientControl";
+            // 
+            // lblUhfFrequency
+            // 
+            this.lblUhfFrequency.AutoSize = true;
+            this.lblUhfFrequency.Enabled = false;
+            this.lblUhfFrequency.Location = new System.Drawing.Point(43, 202);
+            this.lblUhfFrequency.Name = "lblUhfFrequency";
+            this.lblUhfFrequency.Size = new System.Drawing.Size(114, 25);
+            this.lblUhfFrequency.TabIndex = 78;
+            this.lblUhfFrequency.Text = "Frequency";
+            this.lblUhfFrequency.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtUhfFrequency
+            // 
+            this.txtUhfFrequency.Enabled = false;
+            this.txtUhfFrequency.Location = new System.Drawing.Point(163, 198);
+            this.txtUhfFrequency.Name = "txtUhfFrequency";
+            this.txtUhfFrequency.Size = new System.Drawing.Size(207, 31);
+            this.txtUhfFrequency.TabIndex = 77;
+            // 
+            // tabRawBits
+            // 
+            this.tabRawBits.Controls.Add(this.lblBlinkBitsHex);
+            this.tabRawBits.Controls.Add(this.txtBlinkBitsHex);
+            this.tabRawBits.Controls.Add(this.lblPowerBitsHex);
+            this.tabRawBits.Controls.Add(this.txtPowerBitsHex);
+            this.tabRawBits.Controls.Add(this.lblFlightData2Hex);
+            this.tabRawBits.Controls.Add(this.lblAltBitsHex);
+            this.tabRawBits.Controls.Add(this.txtAltBitsHex);
+            this.tabRawBits.Controls.Add(this.lblHsiBitsHex);
+            this.tabRawBits.Controls.Add(this.txtHsiBitsHex);
+            this.tabRawBits.Controls.Add(this.lblLightBits3Hex);
+            this.tabRawBits.Controls.Add(this.txtLightBits3Hex);
+            this.tabRawBits.Controls.Add(this.lblLightBits2Hex);
+            this.tabRawBits.Controls.Add(this.txtLightBits2Hex);
+            this.tabRawBits.Controls.Add(this.lblFlightDataHex);
+            this.tabRawBits.Controls.Add(this.lblLightBitsHex);
+            this.tabRawBits.Controls.Add(this.txtLightBitsHex);
+            this.tabRawBits.Controls.Add(this.lblBlinkBitsUint);
+            this.tabRawBits.Controls.Add(this.txtBlinkBitsUint);
+            this.tabRawBits.Controls.Add(this.lblPowerBitsUint);
+            this.tabRawBits.Controls.Add(this.txtPowerBitsUint);
+            this.tabRawBits.Controls.Add(this.lblFlightData2Uint);
+            this.tabRawBits.Controls.Add(this.lblAltBitsUint);
+            this.tabRawBits.Controls.Add(this.txtAltBitsUint);
+            this.tabRawBits.Controls.Add(this.lblHsiBitsUint);
+            this.tabRawBits.Controls.Add(this.txtHsiBitsUint);
+            this.tabRawBits.Controls.Add(this.lblLightBits3Uint);
+            this.tabRawBits.Controls.Add(this.txtLightBits3Uint);
+            this.tabRawBits.Controls.Add(this.lblLightBits2Uint);
+            this.tabRawBits.Controls.Add(this.txtLightBits2Uint);
+            this.tabRawBits.Controls.Add(this.lblFlightData);
+            this.tabRawBits.Controls.Add(this.lblLightBitsUint);
+            this.tabRawBits.Controls.Add(this.txtLightBitsUint);
+            this.tabRawBits.Location = new System.Drawing.Point(4, 34);
+            this.tabRawBits.Name = "tabRawBits";
+            this.tabRawBits.Padding = new System.Windows.Forms.Padding(3);
+            this.tabRawBits.Size = new System.Drawing.Size(1405, 1203);
+            this.tabRawBits.TabIndex = 9;
+            this.tabRawBits.Text = "Raw Bits";
+            this.tabRawBits.UseVisualStyleBackColor = true;
             // 
             // lblBlinkBitsHex
             // 
@@ -6204,13 +6067,253 @@
             this.txtLightBitsHex.Size = new System.Drawing.Size(207, 31);
             this.txtLightBitsHex.TabIndex = 126;
             // 
+            // lblBlinkBitsUint
+            // 
+            this.lblBlinkBitsUint.AutoSize = true;
+            this.lblBlinkBitsUint.Enabled = false;
+            this.lblBlinkBitsUint.Location = new System.Drawing.Point(505, 141);
+            this.lblBlinkBitsUint.Name = "lblBlinkBitsUint";
+            this.lblBlinkBitsUint.Size = new System.Drawing.Size(93, 25);
+            this.lblBlinkBitsUint.TabIndex = 125;
+            this.lblBlinkBitsUint.Text = "blinkBits";
+            this.lblBlinkBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtBlinkBitsUint
+            // 
+            this.txtBlinkBitsUint.Enabled = false;
+            this.txtBlinkBitsUint.Location = new System.Drawing.Point(604, 138);
+            this.txtBlinkBitsUint.Name = "txtBlinkBitsUint";
+            this.txtBlinkBitsUint.Size = new System.Drawing.Size(207, 31);
+            this.txtBlinkBitsUint.TabIndex = 124;
+            // 
+            // lblPowerBitsUint
+            // 
+            this.lblPowerBitsUint.AutoSize = true;
+            this.lblPowerBitsUint.Enabled = false;
+            this.lblPowerBitsUint.Location = new System.Drawing.Point(492, 104);
+            this.lblPowerBitsUint.Name = "lblPowerBitsUint";
+            this.lblPowerBitsUint.Size = new System.Drawing.Size(106, 25);
+            this.lblPowerBitsUint.TabIndex = 123;
+            this.lblPowerBitsUint.Text = "powerBits";
+            this.lblPowerBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtPowerBitsUint
+            // 
+            this.txtPowerBitsUint.Enabled = false;
+            this.txtPowerBitsUint.Location = new System.Drawing.Point(604, 101);
+            this.txtPowerBitsUint.Name = "txtPowerBitsUint";
+            this.txtPowerBitsUint.Size = new System.Drawing.Size(207, 31);
+            this.txtPowerBitsUint.TabIndex = 122;
+            // 
+            // lblFlightData2Uint
+            // 
+            this.lblFlightData2Uint.AutoSize = true;
+            this.lblFlightData2Uint.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFlightData2Uint.Location = new System.Drawing.Point(467, 30);
+            this.lblFlightData2Uint.Name = "lblFlightData2Uint";
+            this.lblFlightData2Uint.Size = new System.Drawing.Size(259, 25);
+            this.lblFlightData2Uint.TabIndex = 121;
+            this.lblFlightData2Uint.Text = "FlightData2 (unsigned int)";
+            // 
+            // lblAltBitsUint
+            // 
+            this.lblAltBitsUint.AutoSize = true;
+            this.lblAltBitsUint.Enabled = false;
+            this.lblAltBitsUint.Location = new System.Drawing.Point(527, 67);
+            this.lblAltBitsUint.Name = "lblAltBitsUint";
+            this.lblAltBitsUint.Size = new System.Drawing.Size(71, 25);
+            this.lblAltBitsUint.TabIndex = 120;
+            this.lblAltBitsUint.Text = "altBits";
+            this.lblAltBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtAltBitsUint
+            // 
+            this.txtAltBitsUint.Enabled = false;
+            this.txtAltBitsUint.Location = new System.Drawing.Point(604, 64);
+            this.txtAltBitsUint.Name = "txtAltBitsUint";
+            this.txtAltBitsUint.Size = new System.Drawing.Size(207, 31);
+            this.txtAltBitsUint.TabIndex = 119;
+            // 
+            // lblHsiBitsUint
+            // 
+            this.lblHsiBitsUint.AutoSize = true;
+            this.lblHsiBitsUint.Enabled = false;
+            this.lblHsiBitsUint.Location = new System.Drawing.Point(76, 178);
+            this.lblHsiBitsUint.Name = "lblHsiBitsUint";
+            this.lblHsiBitsUint.Size = new System.Drawing.Size(76, 25);
+            this.lblHsiBitsUint.TabIndex = 118;
+            this.lblHsiBitsUint.Text = "hsiBits";
+            this.lblHsiBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtHsiBitsUint
+            // 
+            this.txtHsiBitsUint.Enabled = false;
+            this.txtHsiBitsUint.Location = new System.Drawing.Point(158, 175);
+            this.txtHsiBitsUint.Name = "txtHsiBitsUint";
+            this.txtHsiBitsUint.Size = new System.Drawing.Size(207, 31);
+            this.txtHsiBitsUint.TabIndex = 117;
+            // 
+            // lblLightBits3Uint
+            // 
+            this.lblLightBits3Uint.AutoSize = true;
+            this.lblLightBits3Uint.Enabled = false;
+            this.lblLightBits3Uint.Location = new System.Drawing.Point(52, 141);
+            this.lblLightBits3Uint.Name = "lblLightBits3Uint";
+            this.lblLightBits3Uint.Size = new System.Drawing.Size(100, 25);
+            this.lblLightBits3Uint.TabIndex = 116;
+            this.lblLightBits3Uint.Text = "lightBits3";
+            this.lblLightBits3Uint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtLightBits3Uint
+            // 
+            this.txtLightBits3Uint.Enabled = false;
+            this.txtLightBits3Uint.Location = new System.Drawing.Point(158, 138);
+            this.txtLightBits3Uint.Name = "txtLightBits3Uint";
+            this.txtLightBits3Uint.Size = new System.Drawing.Size(207, 31);
+            this.txtLightBits3Uint.TabIndex = 115;
+            // 
+            // lblLightBits2Uint
+            // 
+            this.lblLightBits2Uint.AutoSize = true;
+            this.lblLightBits2Uint.Enabled = false;
+            this.lblLightBits2Uint.Location = new System.Drawing.Point(52, 104);
+            this.lblLightBits2Uint.Name = "lblLightBits2Uint";
+            this.lblLightBits2Uint.Size = new System.Drawing.Size(100, 25);
+            this.lblLightBits2Uint.TabIndex = 114;
+            this.lblLightBits2Uint.Text = "lightBits2";
+            this.lblLightBits2Uint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtLightBits2Uint
+            // 
+            this.txtLightBits2Uint.Enabled = false;
+            this.txtLightBits2Uint.Location = new System.Drawing.Point(158, 101);
+            this.txtLightBits2Uint.Name = "txtLightBits2Uint";
+            this.txtLightBits2Uint.Size = new System.Drawing.Size(207, 31);
+            this.txtLightBits2Uint.TabIndex = 113;
+            // 
+            // lblFlightData
+            // 
+            this.lblFlightData.AutoSize = true;
+            this.lblFlightData.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFlightData.Location = new System.Drawing.Point(21, 30);
+            this.lblFlightData.Name = "lblFlightData";
+            this.lblFlightData.Size = new System.Drawing.Size(247, 25);
+            this.lblFlightData.TabIndex = 112;
+            this.lblFlightData.Text = "FlightData (unsigned int)";
+            // 
+            // lblLightBitsUint
+            // 
+            this.lblLightBitsUint.AutoSize = true;
+            this.lblLightBitsUint.Enabled = false;
+            this.lblLightBitsUint.Location = new System.Drawing.Point(64, 67);
+            this.lblLightBitsUint.Name = "lblLightBitsUint";
+            this.lblLightBitsUint.Size = new System.Drawing.Size(88, 25);
+            this.lblLightBitsUint.TabIndex = 111;
+            this.lblLightBitsUint.Text = "lightBits";
+            this.lblLightBitsUint.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtLightBitsUint
+            // 
+            this.txtLightBitsUint.Enabled = false;
+            this.txtLightBitsUint.Location = new System.Drawing.Point(158, 64);
+            this.txtLightBitsUint.Name = "txtLightBitsUint";
+            this.txtLightBitsUint.Size = new System.Drawing.Size(207, 31);
+            this.txtLightBitsUint.TabIndex = 110;
+            // 
+            // lblRadioClientStatus
+            // 
+            this.lblRadioClientStatus.AutoSize = true;
+            this.lblRadioClientStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblRadioClientStatus.Location = new System.Drawing.Point(26, 14);
+            this.lblRadioClientStatus.Name = "lblRadioClientStatus";
+            this.lblRadioClientStatus.Size = new System.Drawing.Size(201, 25);
+            this.lblRadioClientStatus.TabIndex = 119;
+            this.lblRadioClientStatus.Text = "RadioClientStatus";
+            // 
+            // chkClientActive
+            // 
+            this.chkClientActive.AutoSize = true;
+            this.chkClientActive.Enabled = false;
+            this.chkClientActive.Location = new System.Drawing.Point(31, 52);
+            this.chkClientActive.Name = "chkClientActive";
+            this.chkClientActive.Size = new System.Drawing.Size(152, 29);
+            this.chkClientActive.TabIndex = 120;
+            this.chkClientActive.Text = "clientactive";
+            this.chkClientActive.UseVisualStyleBackColor = true;
+            // 
+            // chkConnected
+            // 
+            this.chkConnected.AutoSize = true;
+            this.chkConnected.Enabled = false;
+            this.chkConnected.Location = new System.Drawing.Point(31, 82);
+            this.chkConnected.Name = "chkConnected";
+            this.chkConnected.Size = new System.Drawing.Size(144, 29);
+            this.chkConnected.TabIndex = 121;
+            this.chkConnected.Text = "connected";
+            this.chkConnected.UseVisualStyleBackColor = true;
+            // 
+            // chkConnectionFail
+            // 
+            this.chkConnectionFail.AutoSize = true;
+            this.chkConnectionFail.Enabled = false;
+            this.chkConnectionFail.Location = new System.Drawing.Point(204, 52);
+            this.chkConnectionFail.Name = "chkConnectionFail";
+            this.chkConnectionFail.Size = new System.Drawing.Size(177, 29);
+            this.chkConnectionFail.TabIndex = 122;
+            this.chkConnectionFail.Text = "connectionfail";
+            this.chkConnectionFail.UseVisualStyleBackColor = true;
+            // 
+            // chkHostUnknown
+            // 
+            this.chkHostUnknown.AutoSize = true;
+            this.chkHostUnknown.Enabled = false;
+            this.chkHostUnknown.Location = new System.Drawing.Point(204, 82);
+            this.chkHostUnknown.Name = "chkHostUnknown";
+            this.chkHostUnknown.Size = new System.Drawing.Size(171, 29);
+            this.chkHostUnknown.TabIndex = 123;
+            this.chkHostUnknown.Text = "hostunknown";
+            this.chkHostUnknown.UseVisualStyleBackColor = true;
+            // 
+            // chkBadPassword
+            // 
+            this.chkBadPassword.AutoSize = true;
+            this.chkBadPassword.Enabled = false;
+            this.chkBadPassword.Location = new System.Drawing.Point(402, 52);
+            this.chkBadPassword.Name = "chkBadPassword";
+            this.chkBadPassword.Size = new System.Drawing.Size(172, 29);
+            this.chkBadPassword.TabIndex = 124;
+            this.chkBadPassword.Text = "badpassword";
+            this.chkBadPassword.UseVisualStyleBackColor = true;
+            // 
+            // chkNoMicrophone
+            // 
+            this.chkNoMicrophone.AutoSize = true;
+            this.chkNoMicrophone.Enabled = false;
+            this.chkNoMicrophone.Location = new System.Drawing.Point(402, 82);
+            this.chkNoMicrophone.Name = "chkNoMicrophone";
+            this.chkNoMicrophone.Size = new System.Drawing.Size(180, 29);
+            this.chkNoMicrophone.TabIndex = 125;
+            this.chkNoMicrophone.Text = "nomicrophone";
+            this.chkNoMicrophone.UseVisualStyleBackColor = true;
+            // 
+            // chkNoSpeakers
+            // 
+            this.chkNoSpeakers.AutoSize = true;
+            this.chkNoSpeakers.Enabled = false;
+            this.chkNoSpeakers.Location = new System.Drawing.Point(613, 52);
+            this.chkNoSpeakers.Name = "chkNoSpeakers";
+            this.chkNoSpeakers.Size = new System.Drawing.Size(156, 29);
+            this.chkNoSpeakers.TabIndex = 126;
+            this.chkNoSpeakers.Text = "nospeakers";
+            this.chkNoSpeakers.UseVisualStyleBackColor = true;
+            // 
             // SharedMemoryViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1413, 1241);
+            this.ClientSize = new System.Drawing.Size(1413, 1262);
             this.Controls.Add(this.tabControl1);
             this.MinimumSize = new System.Drawing.Size(26, 1007);
             this.Name = "SharedMemoryViewer";
@@ -6242,9 +6345,9 @@
             this.tabIVibe.PerformLayout();
             this.tabIVC_RCS_RCC.ResumeLayout(false);
             this.tabIVC_RCS_RCC.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gvTelemetry)).EndInit();
             this.tabRawBits.ResumeLayout(false);
             this.tabRawBits.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gvTelemetry)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -6723,6 +6826,14 @@
         private System.Windows.Forms.Label lblFlightDataHex;
         private System.Windows.Forms.Label lblLightBitsHex;
         private System.Windows.Forms.TextBox txtLightBitsHex;
+        private System.Windows.Forms.CheckBox chkNoSpeakers;
+        private System.Windows.Forms.CheckBox chkBadPassword;
+        private System.Windows.Forms.CheckBox chkNoMicrophone;
+        private System.Windows.Forms.CheckBox chkConnectionFail;
+        private System.Windows.Forms.CheckBox chkHostUnknown;
+        private System.Windows.Forms.CheckBox chkClientActive;
+        private System.Windows.Forms.CheckBox chkConnected;
+        private System.Windows.Forms.Label lblRadioClientStatus;
 
     }
 }

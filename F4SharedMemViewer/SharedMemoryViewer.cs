@@ -603,6 +603,21 @@ namespace F4SharedMemViewer
 
         private void Bind_IVC_RCS_RCC_DataToFormElements()
         {
+            BindRadioClientStatusDataToFormElements();
+            BindRadioClientControlDataToFormElements();
+        }
+        private void BindRadioClientStatusDataToFormElements()
+        {
+            chkClientActive.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.ClientActive) == ClientFlags.ClientActive;
+            chkConnected.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.Connected) == ClientFlags.Connected;
+            chkConnectionFail.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.ConnectionFail) == ClientFlags.ConnectionFail;
+            chkHostUnknown.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.HostUnknown) == ClientFlags.HostUnknown;
+            chkBadPassword.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.BadPassword) == ClientFlags.BadPassword;
+            chkNoMicrophone.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.NoMicrophone) == ClientFlags.NoMicrophone;
+            chkNoSpeakers.Checked = (((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags) & ClientFlags.NoSpeakers) == ClientFlags.NoSpeakers;
+        }
+        private void BindRadioClientControlDataToFormElements()
+        {
             txtUhfFrequency.Text = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].Frequency.ToString();
             txtUhfRxVolume.Text = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].RxVolume.ToString();
             chkUhfPttDepressed.Checked = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].PttDepressed;
