@@ -5,17 +5,17 @@ using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 using Common.Application;
-using F4KeyFileEditor.Properties;
+using F4KeyFileViewer.Properties;
 using log4net;
 using Microsoft.VisualBasic.ApplicationServices;
 using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
 
 #endregion
 
-namespace F4KeyFileEditor
+namespace F4KeyFileViewer
 {
     /// <summary>
-    ///   Main program class.  Contains the startup method for the F4 KeyFile Editor application.
+    ///   Main program class.  Contains the startup method for the F4 KeyFile Viewer application.
     /// </summary>
     public static class Program
     {

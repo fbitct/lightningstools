@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace F4KeyFileEditor
+namespace F4KeyFileViewer
 {
     internal partial class frmHelpAbout : Form
     {

@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4KeyFile", "..\F4KeyFile\F4KeyFile.csproj", "{EEED5595-6EB8-473D-B487-334B45D753A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4KeyFileEditor", "..\F4KeyFileEditor\F4KeyFileEditor.csproj", "{91754154-EA85-4117-A570-71014BEC82AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4KeyFileViewer", "..\F4KeyFileViewer\F4KeyFileViewer.csproj", "{91754154-EA85-4117-A570-71014BEC82AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4ResourceFileEditor", "..\F4ResourceFileEditor\F4ResourceFileEditor.csproj", "{25AFABB4-A3BF-40CA-AB6B-D0A71BC8A2C6}"
 EndProject
@@ -59,7 +59,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TlkTool", "..\TlkTool\TlkTo
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "F16CpdSetup", "..\F16CPD\F16CpdSetup\F16CpdSetup.vdproj", "{35D37193-319A-4C5C-A4C9-FF61BC67805B}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "F4KeyFileEditorSetup", "..\F4KeyFileEditor\F4KeyFileEditorSetup\F4KeyFileEditorSetup.vdproj", "{DE3BC6ED-3EE3-4A30-B572-6A0F24FCF6D5}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "F4KeyFileViewerSetup", "..\F4KeyFileViewer\F4KeyFileViewerSetup\F4KeyFileViewerSetup.vdproj", "{DE3BC6ED-3EE3-4A30-B572-6A0F24FCF6D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TlkToolTest", "..\TlkTool\TlkToolTest\TlkToolTest.csproj", "{B3ED49B3-ADF0-4987-B20E-B930132912F4}"
 EndProject

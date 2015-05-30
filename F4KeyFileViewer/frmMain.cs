@@ -6,11 +6,11 @@ using System.Windows.Forms;
 using Common.Serialization;
 using F4KeyFile;
 
-namespace F4KeyFileEditor
+namespace F4KeyFileViewer
 {
     public partial class frmMain : Form
     {
-        private EditorState _editorState;
+        private ViewerState _viewerState;
 
         public frmMain()
         {
@@ -20,7 +20,7 @@ namespace F4KeyFileEditor
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            _editorState = new EditorState();
+            _viewerState = new ViewerState();
             Text = Application.ProductName + " v" + Application.ProductVersion;
         }
 
@@ -55,7 +55,7 @@ namespace F4KeyFileEditor
 
         private void ParseKeyFile()
         {
-            if (_editorState.KeyFile == null) throw new InvalidOperationException();
+            if (_viewerState.KeyFile == null) throw new InvalidOperationException();
             progressBar1.Visible = true;
             grid.Hide();
             grid.Enabled = false;
@@ -67,10 +67,10 @@ namespace F4KeyFileEditor
             }
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             grid.Rows.Clear();
-            if (_editorState.KeyFile.Lines == null) return;
-            progressBar1.Maximum = _editorState.KeyFile.Lines.Count()+1;
+            if (_viewerState.KeyFile.Lines == null) return;
+            progressBar1.Maximum = _viewerState.KeyFile.Lines.Count()+1;
             progressBar1.Value = 0;
-            foreach (var line in _editorState.KeyFile.Lines)
+            foreach (var line in _viewerState.KeyFile.Lines)
             {
                 if (line is DirectInputBinding)
                 {
@@ -234,38 +234,38 @@ namespace F4KeyFileEditor
             var file = new FileInfo(keyFileName);
             if (!file.Exists) throw new FileNotFoundException(keyFileName);
 
-            var oldEditorState = (EditorState) _editorState.Clone();
+            var oldViewerState = (ViewerState) _viewerState.Clone();
             try
             {
-                _editorState.Filename = keyFileName;
-                _editorState.KeyFile = KeyFile.Load(keyFileName);
+                _viewerState.Filename = keyFileName;
+                _viewerState.KeyFile = KeyFile.Load(keyFileName);
                 ParseKeyFile();
-                _editorState.ChangesMade = false;
+                _viewerState.ChangesMade = false;
             }
             catch (Exception e)
             {
                 MessageBox.Show(string.Format("An error occurred while loading the file.\n\n {0}", e.Message),
                                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
                                 MessageBoxDefaultButton.Button1);
-                _editorState = oldEditorState;
+                _viewerState = oldViewerState;
             }
         }
 
         private void SaveKeyFileAs(string fileName)
         {
-            var oldEditorState = (EditorState) _editorState.Clone();
+            var oldViewerState = (ViewerState) _viewerState.Clone();
             try
             {
-                _editorState.KeyFile.Save(fileName);
-                _editorState.Filename = fileName;
-                _editorState.ChangesMade = false;
+                _viewerState.KeyFile.Save(fileName);
+                _viewerState.Filename = fileName;
+                _viewerState.ChangesMade = false;
             }
             catch (Exception e)
             {
                 MessageBox.Show(string.Format("An error occurred while saving the file.\n\n {0}", e.Message),
                                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
                                 MessageBoxDefaultButton.Button1);
-                _editorState = oldEditorState;
+                _viewerState = oldViewerState;
             }
         }
 
@@ -313,7 +313,7 @@ namespace F4KeyFileEditor
 
         private bool CheckForUnsavedChangesAndSaveIfUserWantsTo()
         {
-            if (_editorState.ChangesMade)
+            if (_viewerState.ChangesMade)
             {
                 var res =
                     MessageBox.Show("There are unsaved changes. Would you like to save them before proceeding?",
@@ -324,7 +324,7 @@ namespace F4KeyFileEditor
                     case DialogResult.Cancel:
                         return true;
                     case DialogResult.Yes:
-                        SaveKeyFile(false, _editorState.Filename);
+                        SaveKeyFile(false, _viewerState.Filename);
                         break;
                 }
             }
@@ -335,9 +335,9 @@ namespace F4KeyFileEditor
         {
             if (CheckForUnsavedChangesAndSaveIfUserWantsTo())
             {
-                _editorState.KeyFile = new KeyFile();
-                _editorState.Filename = null;
-                _editorState.ChangesMade = false;
+                _viewerState.KeyFile = new KeyFile();
+                _viewerState.Filename = null;
+                _viewerState.ChangesMade = false;
             }
         }
 
@@ -368,12 +368,12 @@ namespace F4KeyFileEditor
 
         private void btnSaveFile_Click(object sender, EventArgs e)
         {
-            SaveKeyFile(false, _editorState.Filename);
+            SaveKeyFile(false, _viewerState.Filename);
         }
 
         private void mnuFileSave_Click(object sender, EventArgs e)
         {
-            SaveKeyFile(false, _editorState.Filename);
+            SaveKeyFile(false, _viewerState.Filename);
         }
 
         private void mnuFileSaveAs_Click(object sender, EventArgs e)
@@ -386,10 +386,10 @@ namespace F4KeyFileEditor
             Exit();
         }
 
-        #region Nested type: EditorState
+        #region Nested type: ViewerState
 
         [Serializable]
-        private class EditorState : ICloneable
+        private class ViewerState : ICloneable
         {
             public bool ChangesMade;
 

@@ -1,4 +1,4 @@
-﻿namespace F4KeyFileEditor
+﻿namespace F4KeyFileViewer
 {
     partial class frmMain
     {
@@ -323,7 +323,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "frmMain";
-            this.Text = "Falcon KeyFile Editor";
+            this.Text = "Falcon KeyFile Viewer";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

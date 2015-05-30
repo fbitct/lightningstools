@@ -9,7 +9,7 @@ IF ERRORLEVEL 1 GOTO END
 IF ERRORLEVEL 1 GOTO END
 "C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4KeyFile\F4KeyFile.sln
 IF ERRORLEVEL 1 GOTO END
-"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4KeyFileEditor\F4KeyFileEditor.sln
+"C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4KeyFileViewer\F4KeyFileViewer.sln
 IF ERRORLEVEL 1 GOTO END
 "C:\Program Files (x86)\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4ResourceFileEditor\F4ResourceFileEditor.sln
 IF ERRORLEVEL 1 GOTO END

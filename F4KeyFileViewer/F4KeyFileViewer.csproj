@@ -8,8 +8,8 @@
     <ProjectGuid>{91754154-EA85-4117-A570-71014BEC82AE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>F4KeyFileEditor</RootNamespace>
-    <AssemblyName>F4KeyFileEditor</AssemblyName>
+    <RootNamespace>F4KeyFileViewer</RootNamespace>
+    <AssemblyName>F4KeyFileViewer</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>

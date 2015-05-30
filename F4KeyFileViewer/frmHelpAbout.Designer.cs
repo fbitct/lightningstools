@@ -1,4 +1,4 @@
-﻿namespace F4KeyFileEditor
+﻿namespace F4KeyFileViewer
 {
     partial class frmHelpAbout
     {

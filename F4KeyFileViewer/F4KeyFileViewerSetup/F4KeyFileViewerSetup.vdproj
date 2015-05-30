@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:F4KeyFileEditorSetup"
+"ProjectName" = "8:F4KeyFileViewerSetup"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -195,7 +195,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\F4KeyFileEditorSetup.msi"
+        "OutputFilename" = "8:Debug\\F4KeyFileViewerSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -227,7 +227,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\F4KeyFileEditorSetup.msi"
+        "OutputFilename" = "8:Release\\F4KeyFileViewerSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -610,7 +610,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_5857F8F6A56042E7ADEA72159CE6A0A1"
                     {
-                    "Name" = "8:Falcon 4 Key File Editor"
+                    "Name" = "8:Falcon 4 Key File Viewer"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -647,7 +647,7 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Falcon 4 Key File Editor"
+        "ProductName" = "8:Falcon 4 Key File Viewer"
         "ProductCode" = "8:{939BEB9A-1C2F-4BD0-8351-CCAF71871D0F}"
         "PackageCode" = "8:{00035709-5C0D-48E0-8557-5FCFE13E1E6D}"
         "UpgradeCode" = "8:{38689F01-3991-46E6-AA8B-FF4733F74B8E}"
@@ -660,7 +660,7 @@
         "Manufacturer" = "8:Lightning's Free Tools & Utilities"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:F4 Key File Editor Setup"
+        "Title" = "8:F4 Key File Viewer Setup"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Lightning"
         "Keywords" = "8:"
@@ -771,7 +771,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_77BC63BB4FDC47458709CA717E3D4353"
             {
-            "Name" = "8:Falcon 4 Key File Editor"
+            "Name" = "8:Falcon 4 Key File Viewer"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -1184,7 +1184,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_266D9ABE110048ECA5975C366C335729"
             {
-            "SourcePath" = "8:..\\obj\\x86\\Release\\F4KeyFileEditor.exe"
+            "SourcePath" = "8:..\\obj\\x86\\Release\\F4KeyFileViewer.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_1FC163B06BF44F6DA2C5FDC45574CC30"

@@ -6,11 +6,11 @@ using log4net.Config;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Falcon 4 Keyfile Editor")]
+[assembly: AssemblyTitle("Falcon 4 Keyfile Viewer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Falcon 4 Keyfile Editor")]
+[assembly: AssemblyProduct("Falcon 4 Keyfile Viewer")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
