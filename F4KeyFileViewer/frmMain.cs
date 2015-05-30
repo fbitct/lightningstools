@@ -240,7 +240,6 @@ namespace F4KeyFileViewer
                 _viewerState.Filename = keyFileName;
                 _viewerState.KeyFile = KeyFile.Load(keyFileName);
                 ParseKeyFile();
-                _viewerState.ChangesMade = false;
             }
             catch (Exception e)
             {
@@ -251,100 +250,11 @@ namespace F4KeyFileViewer
             }
         }
 
-        private void SaveKeyFileAs(string fileName)
-        {
-            var oldViewerState = (ViewerState) _viewerState.Clone();
-            try
-            {
-                _viewerState.KeyFile.Save(fileName);
-                _viewerState.Filename = fileName;
-                _viewerState.ChangesMade = false;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("An error occurred while saving the file.\n\n {0}", e.Message),
-                                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error,
-                                MessageBoxDefaultButton.Button1);
-                _viewerState = oldViewerState;
-            }
-        }
-
-        private void SaveKeyFile(bool overwritePrompt, string keyFilePath)
-        {
-            if (string.IsNullOrEmpty(keyFilePath))
-            {
-                var dlgSave = new SaveFileDialog
-                                  {
-                                      AddExtension = true,
-                                      AutoUpgradeEnabled = true,
-                                      CheckFileExists = false,
-                                      CheckPathExists = true,
-                                      CreatePrompt = false,
-                                      DefaultExt = ".key",
-                                      DereferenceLinks = true,
-                                      FileName = null,
-                                      Filter = "Falcon 4 Key Files (*.key)|*.key",
-                                      FilterIndex = 0,
-                                      OverwritePrompt = overwritePrompt,
-                                      RestoreDirectory = true,
-                                      ShowHelp = false,
-                                      SupportMultiDottedExtensions = true,
-                                      Title = "Save Key File",
-                                      ValidateNames = true
-                                  };
-                //dlgSave.InitialDirectory = new FileInfo(Application.ExecutablePath).DirectoryName;
-                var result = dlgSave.ShowDialog(this);
-                if (result == DialogResult.Cancel)
-                {
-                    return;
-                }
-                keyFilePath = dlgSave.FileName;
-            }
-            SaveKeyFileAs(keyFilePath);
-        }
-
         private void Exit()
         {
-            if (!CheckForUnsavedChangesAndSaveIfUserWantsTo())
-            {
-                Application.Exit();
-            }
+            Application.Exit();
         }
 
-        private bool CheckForUnsavedChangesAndSaveIfUserWantsTo()
-        {
-            if (_viewerState.ChangesMade)
-            {
-                var res =
-                    MessageBox.Show("There are unsaved changes. Would you like to save them before proceeding?",
-                                    Application.ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question,
-                                    MessageBoxDefaultButton.Button3);
-                switch (res)
-                {
-                    case DialogResult.Cancel:
-                        return true;
-                    case DialogResult.Yes:
-                        SaveKeyFile(false, _viewerState.Filename);
-                        break;
-                }
-            }
-            return false;
-        }
-
-        private void NewKeyFile()
-        {
-            if (CheckForUnsavedChangesAndSaveIfUserWantsTo())
-            {
-                _viewerState.KeyFile = new KeyFile();
-                _viewerState.Filename = null;
-                _viewerState.ChangesMade = false;
-            }
-        }
-
-        private void mnuFileNew_Click(object sender, EventArgs e)
-        {
-            NewKeyFile();
-        }
 
         private void mnuFileOpen_Click(object sender, EventArgs e)
         {
@@ -356,29 +266,9 @@ namespace F4KeyFileViewer
             new frmHelpAbout().ShowDialog(this);
         }
 
-        private void btnNewFile_Click(object sender, EventArgs e)
-        {
-            NewKeyFile();
-        }
-
         private void btnOpenFile_Click(object sender, EventArgs e)
         {
             LoadKeyFile();
-        }
-
-        private void btnSaveFile_Click(object sender, EventArgs e)
-        {
-            SaveKeyFile(false, _viewerState.Filename);
-        }
-
-        private void mnuFileSave_Click(object sender, EventArgs e)
-        {
-            SaveKeyFile(false, _viewerState.Filename);
-        }
-
-        private void mnuFileSaveAs_Click(object sender, EventArgs e)
-        {
-            SaveKeyFile(true, null);
         }
 
         private void mnuFileExit_Click(object sender, EventArgs e)
@@ -391,8 +281,6 @@ namespace F4KeyFileViewer
         [Serializable]
         private class ViewerState : ICloneable
         {
-            public bool ChangesMade;
-
             public KeyFile KeyFile;
             public string Filename;
 
