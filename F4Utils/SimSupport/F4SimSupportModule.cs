@@ -234,8 +234,8 @@ namespace F4Utils.SimSupport
                                                            LightBits2.GEARHANDLE) == LightBits2.GEARHANDLE);
                         break;
                     case F4SimOutputs.GEAR_PANEL__PARKING_BRAKE_ENGAGED_FLAG:
-                        ((DigitalSignal) output).State = (((Bms4LightBits3) _lastFlightData.lightBits3 &
-                                                           Bms4LightBits3.ParkBrakeOn) == Bms4LightBits3.ParkBrakeOn);
+                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
+                                                           LightBits3.ParkBrakeOn) == LightBits3.ParkBrakeOn);
                         break;
                     case F4SimOutputs.ADI__PITCH_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.pitch*DEGREES_PER_RADIAN;
@@ -507,6 +507,10 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.T_L_CFG) ==
                                                           LightBits.T_L_CFG);
                         break;
+                    case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__OXY_LOW:
+                        ((DigitalSignal)output).State = (((LightBits)_lastFlightData.lightBits & LightBits.OXY_BROW) ==
+                                                          LightBits.OXY_BROW);
+                        break;
                     case F4SimOutputs.CAUTION_PANEL__FLCS_FAULT:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits &
                                                            LightBits.FltControlSys) == LightBits.FltControlSys);
@@ -607,8 +611,8 @@ namespace F4Utils.SimSupport
                                                           LightBits.IFF);
                         break;
                     case F4SimOutputs.CAUTION_PANEL__C_ADC:
-                        ((DigitalSignal) output).State = (((Bms4LightBits3) _lastFlightData.lightBits3 &
-                                                           Bms4LightBits3.cadc) == Bms4LightBits3.cadc);
+                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
+                                                           LightBits3.cadc) == LightBits3.cadc);
                         break;
                     case F4SimOutputs.AOA_INDEXER__AOA_TOO_HIGH:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.AOAAbove) ==
@@ -644,14 +648,34 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.TWP__PRIORITY_MODE_OPEN:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.PriMode) ==
-                                                          LightBits2.PriMode);
+                                                          LightBits2.PriMode)
+                                                          ||
+                                                          (
+                                                              (((LightBits2)_lastFlightData.lightBits2 & LightBits2.PriMode) ==
+                                                              LightBits2.PriMode)
+                                                                &&
+                                                              (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.PriMode) ==
+                                                              BlinkBits.PriMode)
+                                                                &&
+                                                              DateTime.Now.Millisecond %500 <250
+                                                            );
                         break;
                     case F4SimOutputs.TWP__UNKNOWN:
-                        ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.Unk) ==
-                                                          LightBits2.Unk);
+                        ((DigitalSignal)output).State = (((LightBits2)_lastFlightData.lightBits2 & LightBits2.Unk) ==
+                                                          LightBits2.Unk)
+                                                          ||
+                                                          (
+                                                              (((LightBits2)_lastFlightData.lightBits2 & LightBits2.Unk) ==
+                                                              LightBits2.Unk)
+                                                                &&
+                                                              (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.Unk) ==
+                                                              BlinkBits.Unk)
+                                                                &&
+                                                              DateTime.Now.Millisecond % 500 < 250
+                                                            );
                         break;
                     case F4SimOutputs.TWP__NAVAL:
-                        ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.Naval) ==
+                        ((DigitalSignal)output).State = (((LightBits2)_lastFlightData.lightBits2 & LightBits2.Naval) ==
                                                           LightBits2.Naval);
                         break;
                     case F4SimOutputs.TWP__TARGET_SEP:
@@ -829,12 +853,12 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.headYaw;
                         break;
                     case F4SimOutputs.FLIGHT_CONTROL__RUN:
-                        ((DigitalSignal) output).State = (((Bms4LightBits3) _lastFlightData.lightBits3 &
-                                                           Bms4LightBits3.FlcsBitRun) == Bms4LightBits3.FlcsBitRun);
+                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
+                                                           LightBits3.FlcsBitRun) == LightBits3.FlcsBitRun);
                         break;
                     case F4SimOutputs.FLIGHT_CONTROL__FAIL:
-                        ((DigitalSignal) output).State = (((Bms4LightBits3) _lastFlightData.lightBits3 &
-                                                           Bms4LightBits3.FlcsBitFail) == Bms4LightBits3.FlcsBitFail);
+                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
+                                                           LightBits3.FlcsBitFail) == LightBits3.FlcsBitFail);
                         break;
                     case F4SimOutputs.RWR__OBJECT_COUNT:
                         ((AnalogSignal) output).State = _lastFlightData.RwrObjectCount;
@@ -1466,6 +1490,9 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.RIGHT_EYEBROW_LIGHTS__CANOPY, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Right Eyebrow Lights", "TO/LDG CONFIG Light",
                                                 (int) F4SimOutputs.RIGHT_EYEBROW_LIGHTS__TO_LDG_CONFIG, typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Right Eyebrow Lights", "OXY LOW Light",
+                                                (int)F4SimOutputs.RIGHT_EYEBROW_LIGHTS__OXY_LOW, typeof(bool)));
+            
 
             AddF4SimOutput(CreateNewF4SimOutput("Caution Panel", "FLCS FAULT Light",
                                                 (int) F4SimOutputs.CAUTION_PANEL__FLCS_FAULT, typeof (bool)));
