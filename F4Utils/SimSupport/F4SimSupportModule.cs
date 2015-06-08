@@ -21,16 +21,21 @@ namespace F4Utils.SimSupport
         private FlightData _lastFlightData;
         private Reader _smReader;
         private IIndicatedRateOfTurnCalculator _rateOfTurnCalculator = new IndicatedRateOfTurnCalculator();
-        private static readonly ILog _log = LogManager.GetLogger (typeof(Falcon4SimSupportModule)); 
+        private static readonly ILog _log = LogManager.GetLogger (typeof(Falcon4SimSupportModule));
+        private MorseCode _morseCodeGenerator = new MorseCode();
+        private bool _disposed = false;
+        private bool _markerBeaconMorseCodeState = false;
         public Falcon4SimSupportModule()
         {
+            _morseCodeGenerator.CharactersPerMinute = 53;
+            _morseCodeGenerator.UnitTimeTick += _morseCodeGenerator_UnitTimeTick;
             EnsureSharedmemReaderIsCreated();
             CreateSimOutputsList();
         }
 
         public override string FriendlyName
         {
-            get { return "Falcon 4"; }
+            get { return "Falcon BMS"; }
         }
 
         private DateTime? _lastFalconSimRunningCheckTime;
@@ -172,8 +177,11 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.FUEL_QTY__EXTERNAL_FUEL_POUNDS:
                         ((AnalogSignal) output).State = _lastFlightData.externalFuel;
                         break;
-                    case F4SimOutputs.FUEL_FLOW__FUEL_FLOW_POUNDS_PER_HOUR:
+                    case F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR:
                         ((AnalogSignal) output).State = _lastFlightData.fuelFlow;
+                        break;
+                    case F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR:
+                        ((AnalogSignal)output).State = _lastFlightData.fuelFlow2;
                         break;
                     case F4SimOutputs.RPM1__RPM_PERCENT:
                         ((AnalogSignal) output).State = _lastFlightData.rpm;
@@ -189,6 +197,10 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.SPEED_BRAKE__POSITION:
                         ((AnalogSignal) output).State = _lastFlightData.speedBrake;
+                        break;
+                    case F4SimOutputs.SPEED_BRAKE__NOT_STOWED_FLAG:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3) 
+                            & LightBits3.SpeedBrake) == LightBits3.SpeedBrake;
                         break;
                     case F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT:
                         ((AnalogSignal) output).State = _lastFlightData.epuFuel;
@@ -334,6 +346,12 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.localizerCourse;
                         break;
+                    case F4SimOutputs.HSI__AIRBASE_FEET_NORTH_OF_MAP_ORIGIN:
+                        ((AnalogSignal)output).State = _lastFlightData.airbaseX;
+                        break;
+                    case F4SimOutputs.HSI__AIRBASE_FEET_EAST_OF_MAP_ORIGIN:
+                        ((AnalogSignal)output).State = _lastFlightData.airbaseY;
+                        break;
                     case F4SimOutputs.HSI__TO_FLAG:
                         {
                             var myCourseDeviationDecimalDegrees =
@@ -417,6 +435,12 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.AUX_COMM__TACAN_MODE_IS_AA:
                         ((DigitalSignal) output).State = _lastFlightData.AuxTacanIsAA;
                         break;
+                    case F4SimOutputs.AUX_COMM__UHF_PRESET:
+                        ((AnalogSignal)output).State = _lastFlightData.BupUhfPreset;
+                        break;
+                    case F4SimOutputs.AUX_COMM__UHF_FREQUENCY:
+                        ((AnalogSignal)output).State = _lastFlightData.BupUhfFreq;
+                        break;
 
                     case F4SimOutputs.FUEL_QTY__FOREWARD_QTY_LBS:
                         ((AnalogSignal) output).State = _lastFlightData.fwd;
@@ -479,6 +503,10 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits &
                                                            LightBits.MasterCaution) == LightBits.MasterCaution);
                         break;
+                    case F4SimOutputs.MASTER_CAUTION_ANNOUNCED:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 &
+                                                           LightBits3.MCAnnounced) == LightBits3.MCAnnounced);
+                        break;
                     case F4SimOutputs.LEFT_EYEBROW_LIGHTS__TFFAIL:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.TF) ==
                                                           LightBits.TF);
@@ -508,8 +536,23 @@ namespace F4Utils.SimSupport
                                                           LightBits.T_L_CFG);
                         break;
                     case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__OXY_LOW:
-                        ((DigitalSignal)output).State = (((LightBits)_lastFlightData.lightBits & LightBits.OXY_BROW) ==
-                                                          LightBits.OXY_BROW);
+                        ((DigitalSignal)output).State =
+                                                       (
+                                                        (((LightBits)_lastFlightData.lightBits & LightBits.OXY_BROW) ==
+                                                          LightBits.OXY_BROW)
+                                                                ||
+                                                            (
+                                                                (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.OXY_BROW) ==
+                                                              BlinkBits.OXY_BROW) 
+                                                                    &&
+                                                                DateTime.Now.Millisecond %500 <250
+                                                            )
+                                                        );
+
+                        break;
+                    case F4SimOutputs.RIGHT_EYEBROW_LIGHTS__DBU_ON:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 & LightBits3.DbuWarn) ==
+                                                          LightBits3.DbuWarn);
                         break;
                     case F4SimOutputs.CAUTION_PANEL__FLCS_FAULT:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits &
@@ -522,8 +565,18 @@ namespace F4Utils.SimSupport
                             (((LightBits3) _lastFlightData.lightBits3 & LightBits3.Lef_Fault) == LightBits3.Lef_Fault);
                         break;
                     case F4SimOutputs.CAUTION_PANEL__ELEC_SYS:
-                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
-                                                           LightBits3.Elec_Fault) == LightBits3.Elec_Fault);
+                        ((DigitalSignal) output).State = 
+                                                        (
+                                                            (((LightBits3) _lastFlightData.lightBits3 &
+                                                               LightBits3.Elec_Fault) == LightBits3.Elec_Fault)
+                                                                ||
+                                                            (
+                                                                (((BlinkBits) _lastFlightData.blinkBits &
+                                                                   BlinkBits.Elec_Fault) == BlinkBits.Elec_Fault)
+                                                                        &&
+                                                                DateTime.Now.Millisecond % 250 < 125
+                                                            )
+                                                        );
                         break;
                     case F4SimOutputs.CAUTION_PANEL__ENGINE_FAULT:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.EngineFault) ==
@@ -600,7 +653,14 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.CAUTION_PANEL__PROBE_HEAT:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 &
-                                                           LightBits2.PROBEHEAT) == LightBits2.PROBEHEAT);
+                                                           LightBits2.PROBEHEAT) == LightBits2.PROBEHEAT) 
+                                                                ||
+                                                        (
+                                                           (((BlinkBits)_lastFlightData.blinkBits &
+                                                            BlinkBits.PROBEHEAT) == BlinkBits.PROBEHEAT) 
+                                                                && 
+                                                           DateTime.Now.Millisecond % 250 < 125
+                                                        );
                         break;
                     case F4SimOutputs.CAUTION_PANEL__FUEL_LOW:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.FuelLow) ==
@@ -613,6 +673,10 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.CAUTION_PANEL__C_ADC:
                         ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
                                                            LightBits3.cadc) == LightBits3.cadc);
+                        break;
+                    case F4SimOutputs.CAUTION_PANEL__ATF_NOT_ENGAGED:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 &
+                                                           LightBits3.ATF_Not_Engaged) == LightBits3.ATF_Not_Engaged);
                         break;
                     case F4SimOutputs.AOA_INDEXER__AOA_TOO_HIGH:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.AOAAbove) ==
@@ -643,10 +707,17 @@ namespace F4Utils.SimSupport
                                                           LightBits2.HandOff);
                         break;
                     case F4SimOutputs.TWP__MISSILE_LAUNCH:
-                        ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.Launch) ==
-                                                          LightBits2.Launch);
+                        ((DigitalSignal)output).State = (((LightBits2)_lastFlightData.lightBits2 & LightBits2.Launch) ==
+                                                          LightBits2.Launch)
+                                                            ||
+                                                        (
+                                                          (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.Launch) ==
+                                                          BlinkBits.Launch) 
+                                                              && 
+                                                          DateTime.Now.Millisecond % 250 < 125
+                                                        );
                         break;
-                    case F4SimOutputs.TWP__PRIORITY_MODE_OPEN:
+                    case F4SimOutputs.TWP__PRIORITY_MODE:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.PriMode) ==
                                                           LightBits2.PriMode)
                                                           ||
@@ -657,7 +728,7 @@ namespace F4Utils.SimSupport
                                                               (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.PriMode) ==
                                                               BlinkBits.PriMode)
                                                                 &&
-                                                              DateTime.Now.Millisecond %500 <250
+                                                              DateTime.Now.Millisecond % 250 < 125
                                                             );
                         break;
                     case F4SimOutputs.TWP__UNKNOWN:
@@ -671,7 +742,7 @@ namespace F4Utils.SimSupport
                                                               (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.Unk) ==
                                                               BlinkBits.Unk)
                                                                 &&
-                                                              DateTime.Now.Millisecond % 500 < 250
+                                                              DateTime.Now.Millisecond % 250 < 125
                                                             );
                         break;
                     case F4SimOutputs.TWP__NAVAL:
@@ -682,9 +753,20 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.TgtSep) ==
                                                           LightBits2.TgtSep);
                         break;
+                    case F4SimOutputs.TWP__SYS_TEST:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 & LightBits3.SysTest) ==
+                                                          LightBits3.SysTest);
+                        break;
                     case F4SimOutputs.TWA__SEARCH:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.AuxSrch) ==
-                                                          LightBits2.AuxSrch);
+                                                          LightBits2.AuxSrch) 
+                                                                ||
+                                                        (
+                                                          (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.AuxSrch) ==
+                                                          BlinkBits.AuxSrch) 
+                                                            && 
+                                                          DateTime.Now.Millisecond % 250 < 125
+                                                        );
                         break;
                     case F4SimOutputs.TWA__ACTIVITY_POWER:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.AuxAct) ==
@@ -748,6 +830,9 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.FlareLo) ==
                                                           LightBits2.FlareLo);
                         break;
+                    case F4SimOutputs.CMDS__MODE:
+                        ((AnalogSignal)output).State = _lastFlightData.cmdsMode;
+                        break;
                     case F4SimOutputs.ELEC__FLCS_PMG:
                         ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 & LightBits3.FlcsPmg) ==
                                                           LightBits3.FlcsPmg);
@@ -793,46 +878,173 @@ namespace F4Utils.SimSupport
                                                           LightBits3.Air);
                         break;
                     case F4SimOutputs.EPU__RUN:
-                        ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.EPUOn) ==
-                                                          LightBits2.EPUOn);
+                        ((DigitalSignal)output).State =
+                                                       (
+                                                        (((LightBits2)_lastFlightData.lightBits2 & LightBits2.EPUOn) ==
+                                                          LightBits2.EPUOn)
+                                                                ||
+                                                            (
+                                                                (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.EPUOn) ==
+                                                              BlinkBits.EPUOn)
+                                                                &&
+                                                                DateTime.Now.Millisecond % 250 < 125
+                                                            )
+                                                        );
                         break;
                     case F4SimOutputs.AVTR__AVTR:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.AVTR) ==
                                                           HsiBits.AVTR);
                         break;
                     case F4SimOutputs.JFS__RUN:
-                        ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.JFSOn) ==
-                                                          LightBits2.JFSOn);
+                        ((DigitalSignal)output).State =
+                                                    (
+                                                        (((LightBits2)_lastFlightData.lightBits2 & LightBits2.JFSOn) ==
+                                                          LightBits2.JFSOn)
+                                                                ||
+                                                        (
+                                                            (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.JFSOn_Slow) ==
+                                                              BlinkBits.JFSOn_Slow)
+                                                                &&
+                                                            DateTime.Now.Millisecond % 1000 < 500
+                                                        )
+                                                                ||
+                                                        (
+                                                            (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.JFSOn_Fast) ==
+                                                              BlinkBits.JFSOn_Fast)
+                                                                &&
+                                                            DateTime.Now.Millisecond % 250 < 125
+                                                        )
+                                                    );
                         break;
-                    case F4SimOutputs.MARKER_BEACON__OUTER_MARKER:
+                    case F4SimOutputs.MARKER_BEACON__MRK_BCN_LIGHT:
+                        if (
+                            (((HsiBits)_lastFlightData.hsiBits & HsiBits.OuterMarker) ==
+                                                          HsiBits.OuterMarker)
+                        )
+                        {
+                            _morseCodeGenerator.PlainText = "T";
+                        }
+                        else if ((((HsiBits)_lastFlightData.hsiBits & HsiBits.MiddleMarker) ==
+                                                          HsiBits.MiddleMarker))
+                        {
+                            _morseCodeGenerator.PlainText = "A";
+                        }
+                        
+
+                        ((DigitalSignal)output).State = (
+                                                             //either outer or middle marker blink bit is set and morse code signal state is ON
+                                                            (
+                                                                (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.OuterMarker) ==
+                                                                  BlinkBits.OuterMarker)
+                                                                    ||
+                                                                (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.MiddleMarker) ==
+                                                                  BlinkBits.MiddleMarker)
+                                                            )
+                                                                  && _markerBeaconMorseCodeState
+                                                        ) 
+                                                             ||
+                                                        (
+                                                                //neither outer or middle marker blink bit is set but either the standard outer or middle marker bit are set (could be because of test bits)
+                                                                (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.OuterMarker) !=
+                                                                  BlinkBits.OuterMarker)
+                                                                  &&
+                                                                (((BlinkBits)_lastFlightData.blinkBits & BlinkBits.MiddleMarker) !=
+                                                                  BlinkBits.MiddleMarker)
+                                                                  && 
+                                                                  (
+                                                                      (((HsiBits)_lastFlightData.hsiBits & HsiBits.OuterMarker) ==
+                                                                        HsiBits.OuterMarker)
+                                                                        ||
+                                                                      (((HsiBits)_lastFlightData.hsiBits & HsiBits.MiddleMarker) ==
+                                                                        HsiBits.MiddleMarker)
+                                                                  )
+                                                        );
+                        break;
+                    case F4SimOutputs.MARKER_BEACON__OUTER_MARKER_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.OuterMarker) ==
                                                           HsiBits.OuterMarker);
 
-                        //TODO: make blink
                         break;
-                    case F4SimOutputs.MARKER_BEACON__MIDDLE_MARKER:
+                    case F4SimOutputs.MARKER_BEACON__MIDDLE_MARKER_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.MiddleMarker) ==
                                                           HsiBits.MiddleMarker);
-                        //TODO: make blink
                         break;
                     case F4SimOutputs.AIRCRAFT__ONGROUND:
                         ((DigitalSignal) output).State = (((LightBits) _lastFlightData.lightBits & LightBits.ONGROUND) ==
-                                                          LightBits.ONGROUND);
+                                                          LightBits.ONGROUND) 
+                                                          ||
+                                                           (((LightBits3)_lastFlightData.lightBits3 & LightBits3.OnGround) ==
+                                                          LightBits3.OnGround);
                         break;
-                    case F4SimOutputs.AIRCRAFT__ELEC_POWER_OFF:
-                        ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
+                    case F4SimOutputs.AIRCRAFT__MAIN_LANDING_GEAR__WEIGHT_ON_WHEELS:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 & LightBits3.MLGWOW) ==
+                                                          LightBits3.MLGWOW);
+                        break;
+                    case F4SimOutputs.AIRCRAFT__NOSE_LANDING_GEAR__WEIGHT_ON_WHEELS:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 & LightBits3.NLGWOW) ==
+                                                          LightBits3.NLGWOW);
+                        break;
+                    case F4SimOutputs.AIRCRAFT__LEADING_EDGE_FLAPS_POSITION:
+                        ((AnalogSignal)output).State = _lastFlightData.lefPos;
+                        break;
+                    case F4SimOutputs.AIRCRAFT__TRAILING_EDGE_FLAPS_POSITION:
+                        ((AnalogSignal)output).State = _lastFlightData.tefPos;
+                        break;
+                    case F4SimOutputs.AIRCRAFT__VTOL_POSITION:
+                        ((AnalogSignal)output).State = _lastFlightData.vtolPos;
+                        break;
+
+                    case F4SimOutputs.POWER__ELEC_POWER_OFF:
+                        ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 &
                                                            LightBits3.Power_Off) == LightBits3.Power_Off);
                         break;
-                    case F4SimOutputs.AIRCRAFT__MAIN_POWER:
-                        ((AnalogSignal) output).State = _lastFlightData.MainPower;
+                    case F4SimOutputs.POWER__MAIN_POWER:
+                        ((AnalogSignal)output).State = _lastFlightData.MainPower;
+                        break;
+                    case F4SimOutputs.POWER__BUS_POWER_BATTERY:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.BusPowerBattery) == PowerBits.BusPowerBattery);
+                        break;
+                    case F4SimOutputs.POWER__BUS_POWER_EMERGENCY:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.BusPowerEmergency) == PowerBits.BusPowerEmergency);
+                        break;
+                    case F4SimOutputs.POWER__BUS_POWER_ESSENTIAL:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.BusPowerEssential) == PowerBits.BusPowerEssential);
+                        break;
+                    case F4SimOutputs.POWER__BUS_POWER_NON_ESSENTIAL:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.BusPowerNonEssential) == PowerBits.BusPowerNonEssential);
+                        break;
+                    case F4SimOutputs.POWER__MAIN_GENERATOR:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.MainGenerator) == PowerBits.MainGenerator);
+                        break;
+                    case F4SimOutputs.POWER__STANDBY_GENERATOR:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.StandbyGenerator) == PowerBits.StandbyGenerator);
+                        break;
+                    case F4SimOutputs.POWER__JET_FUEL_STARTER:
+                        ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
+                                                           PowerBits.JetFuelStarter) == PowerBits.JetFuelStarter);
                         break;
 
                     case F4SimOutputs.SIM__BMS_PLAYER_IS_FLYING:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.Flying) ==
                                                           HsiBits.Flying);
                         break;
-                    case F4SimOutputs.SIM__SHARED_MEM_VERSION:
+                    case F4SimOutputs.SIM__FLIGHTDATA_VERSION_NUM:
                         ((AnalogSignal) output).State = _lastFlightData.VersionNum;
+                        break;
+                    case F4SimOutputs.SIM__FLIGHTDATA2_VERSION_NUM:
+                        ((AnalogSignal)output).State = _lastFlightData.VersionNum2;
+                        break;
+                    case F4SimOutputs.SIM__CURRENT_TIME:
+                        ((AnalogSignal)output).State = _lastFlightData.currentTime;
+                        break;
+                    case F4SimOutputs.SIM__VEHICLE_ACD:
+                        ((AnalogSignal)output).State = _lastFlightData.vehicleACD;
                         break;
                     case F4SimOutputs.PILOT__HEADX_OFFSET:
                         ((AnalogSignal) output).State = _lastFlightData.headX;
@@ -1050,8 +1262,10 @@ namespace F4Utils.SimSupport
                                                 (int)F4SimOutputs.HYD_PRESSURE_B__PSI, typeof(float)));
 
 
-            AddF4SimOutput(CreateNewF4SimOutput("FUEL FLOW", "Fuel flow (pounds/hour)",
-                                                (int) F4SimOutputs.FUEL_FLOW__FUEL_FLOW_POUNDS_PER_HOUR, typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("FUEL FLOW 1", "Fuel flow (pounds/hour)",
+                                                (int) F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR, typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("FUEL FLOW 2", "Fuel flow (pounds/hour)",
+                                                (int)F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float)));
             AddF4SimOutput(CreateNewF4SimOutput("RPM 1", "Engine 1 RPM (Percent 0-103)",
                                                 (int) F4SimOutputs.RPM1__RPM_PERCENT, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("RPM 2", "Engine 2 RPM(Percent 0-103)",
@@ -1062,6 +1276,8 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.FTIT2__FTIT_TEMP_DEG_CELCIUS, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("SPEED BRAKE", "Speedbrake position (0 = closed, 1 = 60 Degrees open)",
                                                 (int) F4SimOutputs.SPEED_BRAKE__POSITION, typeof (float)));
+            AddF4SimOutput(CreateNewF4SimOutput("SPEED BRAKE", "Speedbrake Not Stowed Flag",
+                                                (int)F4SimOutputs.SPEED_BRAKE__NOT_STOWED_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("EPU FUEL", "EPU fuel (Percent 0-100)",
                                                 (int) F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT, typeof (float)));
             AddF4SimOutput(CreateNewF4SimOutput("OIL PRESS 1", "Engine 1 Oil Pressure (Percent 0-100)",
@@ -1147,7 +1363,13 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "Localizer course (degrees)",
                                                 (int) F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES,
                                                 typeof (float)));
-            AddF4SimOutput(CreateNewF4SimOutput("HSI", "TO Flag", (int) F4SimOutputs.HSI__TO_FLAG, typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("HSI", "Airbase Position: Feet North of Map Origin",
+                                                (int)F4SimOutputs.HSI__AIRBASE_FEET_NORTH_OF_MAP_ORIGIN,
+                                                typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("HSI", "Airbase Position: Feet East of Map Origin",
+                                                (int)F4SimOutputs.HSI__AIRBASE_FEET_EAST_OF_MAP_ORIGIN,
+                                                typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("HSI", "TO Flag", (int)F4SimOutputs.HSI__TO_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "FROM Flag", (int) F4SimOutputs.HSI__FROM_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "OFF Flag", (int) F4SimOutputs.HSI__OFF_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("HSI", "HSI mode (0=ILS/TCN, 1=TACAN, 2=NAV, 3=ILS/NAV)",
@@ -1195,16 +1417,20 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Up-Front Controls", "TACAN Channel",
                                                 (int) F4SimOutputs.UFC__TACAN_CHANNEL, typeof (int)));
             AddF4SimOutput(CreateNewF4SimOutput("Up-Front Controls", "Tacan Band is X",
-                                                (int) F4SimOutputs.AUX_COMM__TACAN_BAND_IS_X, typeof (bool)));
+                                                (int) F4SimOutputs.UFC__TACAN_BAND_IS_X, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Up-Front Controls", "Tacan Mode is AA",
-                                                (int) F4SimOutputs.AUX_COMM__TACAN_MODE_IS_AA, typeof (bool)));
+                                                (int) F4SimOutputs.UFC__TACAN_MODE_IS_AA, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("AUX COMM Panel", "TACAN Channel",
                                                 (int) F4SimOutputs.AUX_COMM__TACAN_CHANNEL, typeof (int)));
             AddF4SimOutput(CreateNewF4SimOutput("AUX COMM Panel", "Tacan Band is X",
-                                                (int) F4SimOutputs.UFC__TACAN_BAND_IS_X, typeof (bool)));
+                                                (int) F4SimOutputs.AUX_COMM__TACAN_BAND_IS_X, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("AUX COMM Panel", "Tacan Mode is AA",
-                                                (int) F4SimOutputs.UFC__TACAN_MODE_IS_AA, typeof (bool)));
+                                                (int) F4SimOutputs.AUX_COMM__TACAN_MODE_IS_AA, typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("AUX COMM Panel", "UHF Preset",
+                                                (int)F4SimOutputs.AUX_COMM__UHF_PRESET, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("AUX COMM Panel", "UHF Frequency",
+                                                (int)F4SimOutputs.AUX_COMM__UHF_FREQUENCY, typeof(int)));
 
 
             AddF4SimOutput(CreateNewF4SimOutput("FUEL QTY Panel", "Internal fuel (pounds)",
@@ -1468,6 +1694,8 @@ namespace F4Utils.SimSupport
 
             AddF4SimOutput(CreateNewF4SimOutput("Right Aux Console", "Master Caution Light",
                                                 (int) F4SimOutputs.MASTER_CAUTION_LIGHT, typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Right Aux Console", "Master Caution Announced",
+                                                (int)F4SimOutputs.MASTER_CAUTION_ANNOUNCED, typeof(bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Left Eyebrow Lights", "TF-FAIL Light",
                                                 (int) F4SimOutputs.LEFT_EYEBROW_LIGHTS__TFFAIL, typeof (bool)));
@@ -1492,6 +1720,8 @@ namespace F4Utils.SimSupport
                                                 (int) F4SimOutputs.RIGHT_EYEBROW_LIGHTS__TO_LDG_CONFIG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Right Eyebrow Lights", "OXY LOW Light",
                                                 (int)F4SimOutputs.RIGHT_EYEBROW_LIGHTS__OXY_LOW, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Right Eyebrow Lights", "DBU ON Light",
+                                                (int)F4SimOutputs.RIGHT_EYEBROW_LIGHTS__DBU_ON, typeof(bool)));
             
 
             AddF4SimOutput(CreateNewF4SimOutput("Caution Panel", "FLCS FAULT Light",
@@ -1544,11 +1774,12 @@ namespace F4Utils.SimSupport
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Caution Panel", "C ADC Light", (int) F4SimOutputs.CAUTION_PANEL__C_ADC,
                                                 typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Caution Panel", "ATF NOT ENGAGED Light", (int)F4SimOutputs.CAUTION_PANEL__ATF_NOT_ENGAGED,
+                                                typeof(bool)));
 
             /*
              * MISSING CAUTION PANEL FLAGS
             ADC
-            ATF NOT ENGAGED
             INLET ICING
             EEC
             NUCLEAR
@@ -1580,13 +1811,15 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Prime Panel", "MISSILE LAUNCH Indicator Light",
                                                 (int) F4SimOutputs.TWP__MISSILE_LAUNCH, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Prime Panel", "PRIORITY MODE OPEN Indicator Light",
-                                                (int) F4SimOutputs.TWP__PRIORITY_MODE_OPEN, typeof (bool)));
+                                                (int) F4SimOutputs.TWP__PRIORITY_MODE, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Prime Panel", "UNKNOWN Indicator Light",
                                                 (int) F4SimOutputs.TWP__UNKNOWN, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Prime Panel", "NAVAL Indicator Light",
                                                 (int) F4SimOutputs.TWP__NAVAL, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Prime Panel", "TGT SEP Indicator Light",
                                                 (int) F4SimOutputs.TWP__TARGET_SEP, typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Prime Panel", "SYS TEST Indicator Light",
+                                                (int)F4SimOutputs.TWP__SYS_TEST, typeof(bool)));
 
 
             AddF4SimOutput(CreateNewF4SimOutput("Threat Warning Aux Panel", "SEARCH Indicator Light",
@@ -1622,6 +1855,8 @@ namespace F4Utils.SimSupport
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("CMDS Panel", "FLARE LO Flag", (int) F4SimOutputs.CMDS__FLARE_LO,
                                                 typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("CMDS Panel", "MODE", (int)F4SimOutputs.CMDS__MODE,
+                                                typeof(int)));
 
             AddF4SimOutput(CreateNewF4SimOutput("ELEC Panel", "FLCS PMG Indicator Light",
                                                 (int) F4SimOutputs.ELEC__FLCS_PMG, typeof (bool)));
@@ -1655,28 +1890,57 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("JFS Panel", "RUN Indicator Light", (int) F4SimOutputs.JFS__RUN,
                                                 typeof (bool)));
 
+            AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "MRK BCN Light",
+                                                (int)F4SimOutputs.MARKER_BEACON__MRK_BCN_LIGHT, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "Outer marker flag",
-                                                (int) F4SimOutputs.MARKER_BEACON__OUTER_MARKER, typeof (bool)));
+                                                (int) F4SimOutputs.MARKER_BEACON__OUTER_MARKER_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "Middle marker flag",
-                                                (int) F4SimOutputs.MARKER_BEACON__MIDDLE_MARKER, typeof (bool)));
+                                                (int) F4SimOutputs.MARKER_BEACON__MIDDLE_MARKER_FLAG, typeof (bool)));
 
-            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Weight-On-Wheels Sensor", (int) F4SimOutputs.AIRCRAFT__ONGROUND,
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "On Ground", (int) F4SimOutputs.AIRCRAFT__ONGROUND,
                                                 typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Electrical Power OFF flag",
-                                                (int) F4SimOutputs.AIRCRAFT__ELEC_POWER_OFF, typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Main Power flag", (int) F4SimOutputs.AIRCRAFT__MAIN_POWER,
-                                                typeof (int)));
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Main Landing Gear - Weight on Wheels", (int)F4SimOutputs.AIRCRAFT__MAIN_LANDING_GEAR__WEIGHT_ON_WHEELS,
+                                                typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Nose Landing Gear - Weight on Wheels", (int)F4SimOutputs.AIRCRAFT__NOSE_LANDING_GEAR__WEIGHT_ON_WHEELS,
+                                                typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Engine 2 Fire flag",
                                                 (int) F4SimOutputs.AIRCRAFT__ENGINE_2_FIRE, typeof (bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Leading edge flaps position", (int)F4SimOutputs.AIRCRAFT__LEADING_EDGE_FLAPS_POSITION,
+                        typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Trailing edge flaps position", (int)F4SimOutputs.AIRCRAFT__TRAILING_EDGE_FLAPS_POSITION,
+                                    typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "VTOL position", (int)F4SimOutputs.AIRCRAFT__VTOL_POSITION,
+                                    typeof(float)));
 
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Electrical Power OFF flag",
+                                                (int)F4SimOutputs.POWER__ELEC_POWER_OFF, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Main Power flag", (int)F4SimOutputs.POWER__MAIN_POWER,
+                                                typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Bus Power - Battery Power flag",
+                                                (int)F4SimOutputs.POWER__BUS_POWER_BATTERY, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Bus Power - Emergency Power flag",
+                                                (int)F4SimOutputs.POWER__BUS_POWER_EMERGENCY, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Bus Power - Essential Power flag",
+                                                (int)F4SimOutputs.POWER__BUS_POWER_ESSENTIAL, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Bus Power - Non-Essential Power flag",
+                                                (int)F4SimOutputs.POWER__BUS_POWER_NON_ESSENTIAL, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Main Generator flag",
+                                                (int)F4SimOutputs.POWER__MAIN_GENERATOR, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Standby Generator flag",
+                                                (int)F4SimOutputs.POWER__STANDBY_GENERATOR, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("Power", "Jet Fuel Starter flag",
+                                                (int)F4SimOutputs.POWER__JET_FUEL_STARTER, typeof(bool)));
 
-            AddF4SimOutput(CreateNewF4SimOutput("SIM", "SHOOT cue light", (int) F4SimOutputs.SIM__SHOOT_CUE,
-                                                typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("SIM", "LOCK cue light", (int) F4SimOutputs.SIM__LOCK_CUE, typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("SIM", "BMS 'PILOT IS FLYING' flag",
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "'Pilot Is Flying' flag",
                                                 (int) F4SimOutputs.SIM__BMS_PLAYER_IS_FLYING, typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Shared Memory Area Data Format Version Number",
-                                                (int) F4SimOutputs.SIM__SHARED_MEM_VERSION, typeof (int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Shared Memory Area \"FlightData\" Version Number",
+                                                (int) F4SimOutputs.SIM__FLIGHTDATA_VERSION_NUM, typeof (int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Shared Memory Area \"FlightData2\" Version Number",
+                                                (int)F4SimOutputs.SIM__FLIGHTDATA2_VERSION_NUM, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Current Time",
+                                                (int)F4SimOutputs.SIM__CURRENT_TIME, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Vehicle ACD",
+                                                (int)F4SimOutputs.SIM__VEHICLE_ACD, typeof(short)));
 
             /*
             AddF4SimOutput(CreateNewF4SimOutput("Pilot", "Head X offset from design eye (feet)",(int)F4SimOutputs.PILOT__HEADX_OFFSET,  typeof(float)));
@@ -1792,6 +2056,34 @@ namespace F4Utils.SimSupport
             {
                 showToFromFlag = false;
             }
+        }
+
+        private void _morseCodeGenerator_UnitTimeTick(object sender, UnitTimeTickEventArgs e)
+        {
+            _markerBeaconMorseCodeState = e.CurrentSignalLineState;
+        }
+
+
+        public override void Dispose()
+        {
+            Dispose(true);
+        }
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                if (_morseCodeGenerator.Sending)
+                {
+                    _morseCodeGenerator.StopSending();
+                }
+                _morseCodeGenerator.UnitTimeTick -= _morseCodeGenerator_UnitTimeTick;
+                Common.Util.DisposeObject(_morseCodeGenerator);
+                _disposed = true;
+            }
+        }
+        ~Falcon4SimSupportModule()
+        {
+            Dispose(false);
         }
     }
 

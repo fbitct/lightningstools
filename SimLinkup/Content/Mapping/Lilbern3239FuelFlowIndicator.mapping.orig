@@ -9,7 +9,7 @@
     <SignalMapping>
       <!-- F4 FUEL FLOW POUNDS PER HOUR OUTPUT-->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_FUEL_FLOW__FUEL_FLOW_POUNDS_PER_HOUR</Id>
+        <Id>F4_FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR</Id>
       </Source>
       <!-- Lilbern FUEL FLOW INDICATOR HARDWARE SUPPORT MODULE FUEL FLOW POUNDS PER HOUR INPUT-->
       <Destination xsi:type="AnalogSignal">

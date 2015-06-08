@@ -9,7 +9,7 @@
      <SignalMapping>
       <!-- F4 FUEL FLOW OUTPUT -->
       <Source xsi:type="AnalogSignal">
-        <Id>F4_FUEL_FLOW__FUEL_FLOW_POUNDS_PER_HOUR</Id>
+        <Id>F4_FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR</Id>
       </Source>
       <!-- SIMTEK FUEL FLOW INPUT-->
       <Destination xsi:type="AnalogSignal">

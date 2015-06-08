@@ -8,9 +8,8 @@ namespace Common.SimSupport
     {
         private int _charactersPerMinute; //CPM
         private bool _isDisposed;
-        private bool _keepSending;
-        private bool _sending;
         private int _unitTimeMillis; //standard Morse time unit, in milliseconds
+        private bool _keepSending;
         private BackgroundWorker _worker;
 
         public MorseCode()
@@ -30,16 +29,8 @@ namespace Common.SimSupport
 
         public string PlainText { get; set; }
 
-        public bool KeepSending
-        {
-            get { return _keepSending; }
-            set { _keepSending = value; }
-        }
-
-        public bool Sending
-        {
-            get { return _sending; }
-        }
+        public bool Sending { get; private set; }
+        
 
         #region IDisposable Members
 
@@ -57,7 +48,7 @@ namespace Common.SimSupport
 
         public void StartSending()
         {
-            if (_sending) throw new InvalidOperationException("Already sending");
+            if (Sending) throw new InvalidOperationException("Already sending");
             _worker = new BackgroundWorker();
             _worker.DoWork += WorkerDoWork;
             _worker.RunWorkerAsync();
@@ -65,7 +56,7 @@ namespace Common.SimSupport
 
         private void WorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            _sending = true;
+            Sending = true;
             do
             {
                 Send();
@@ -74,19 +65,19 @@ namespace Common.SimSupport
                     SendUnits(GetQuinaryStringForMorsePatternChar(' ')); //insert gap before repeating
                 }
             } while (_keepSending);
-            _sending = false;
+            Sending = false;
         }
 
         public void StopSending()
         {
             _keepSending = false;
-            while (_sending)
+            while (Sending)
             {
                 Thread.Sleep(20);
             }
         }
 
-        public void Send()
+        private void Send()
         {
             var words = PlainText.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
             for (var a = 0; a < words.Length; a++)
@@ -321,7 +312,7 @@ namespace Common.SimSupport
             }
         }
 
-        public virtual void OnUnitTimeTick(object sender, UnitTimeTickEventArgs e)
+        private void OnUnitTimeTick(object sender, UnitTimeTickEventArgs e)
         {
             if (UnitTimeTick != null)
             {

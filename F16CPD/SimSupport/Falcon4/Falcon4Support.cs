@@ -429,7 +429,6 @@ namespace F16CPD.SimSupport.Falcon4
                 }
                 if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
                 {
-                    _morseCodeGenerator.KeepSending = true;
                     _morseCodeGenerator.StartSending();
                 }
                 else if (!outerMarkerFromFalcon && !middleMarkerFromFalcon)
@@ -568,10 +567,6 @@ namespace F16CPD.SimSupport.Falcon4
                     if (_morseCodeGenerator != null)
                         if ((outerMarkerFromFalcon || middleMarkerFromFalcon) && !_morseCodeGenerator.Sending)
                         {
-                            if (!_morseCodeGenerator.KeepSending)
-                            {
-                                _morseCodeGenerator.KeepSending = true;
-                            }
                             if (!_morseCodeGenerator.Sending)
                             {
                                 _pendingMorseCodeUnits.Clear();
