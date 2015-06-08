@@ -358,8 +358,8 @@ namespace F16CPD.SimSupport.Falcon4
         private void UpdateCpdPowerState(FlightData flightData, F4SharedMem.FlightData fromFalcon)
         {
             
-            flightData.CpdPowerOnFlag = ((fromFalcon.lightBits3 & (int) Bms4LightBits3.Power_Off) !=
-                                            (int) Bms4LightBits3.Power_Off);
+            flightData.CpdPowerOnFlag = ((fromFalcon.lightBits3 & (int) LightBits3.Power_Off) !=
+                                            (int) LightBits3.Power_Off);
             
         }
 
@@ -490,7 +490,7 @@ namespace F16CPD.SimSupport.Falcon4
                     ((fromFalcon.lightBits & (int) LightBits.ONGROUND) == (int) LightBits.ONGROUND)
                     ||
                     (
-                        ((fromFalcon.lightBits3 & (int) Bms4LightBits3.OnGround) == (int) Bms4LightBits3.OnGround)
+                        ((fromFalcon.lightBits3 & (int) LightBits3.OnGround) == (int) LightBits3.OnGround)
                         
                         )
                     )
