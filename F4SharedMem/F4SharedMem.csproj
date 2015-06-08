@@ -62,7 +62,6 @@
     <Compile Include="Headers\AltBits.cs" />
     <Compile Include="Headers\BlinkBits.cs" />
     <Compile Include="Headers\BMS4FlightData.cs" />
-    <Compile Include="Headers\Bms4LightBits3.cs" />
     <Compile Include="Headers\Callsign_LineOfText.cs" />
     <Compile Include="Headers\CmdsModes.cs" />
     <Compile Include="Headers\DED_PFL_LineOfText.cs" />
