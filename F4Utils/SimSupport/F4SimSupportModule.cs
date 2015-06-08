@@ -7,6 +7,7 @@ using F4SharedMem;
 using F4SharedMem.Headers;
 using Util = F4Utils.Process.Util;
 using log4net;
+using System.Text;
 
 namespace F4Utils.SimSupport
 {
@@ -1046,6 +1047,104 @@ namespace F4Utils.SimSupport
                     case F4SimOutputs.SIM__VEHICLE_ACD:
                         ((AnalogSignal)output).State = _lastFlightData.vehicleACD;
                         break;
+                    case F4SimOutputs.SIM__PILOT_CALLSIGN:
+                        {
+                            string callsign = null;
+                            if (_lastFlightData.pilotsCallsign != null && ((Signal)output).Index.Value <= _lastFlightData.pilotsOnline)
+                            {
+                                callsign = (_lastFlightData.pilotsCallsign[((Signal)output).Index.Value] ?? string.Empty).TrimEnd();
+                            }
+                            else
+                            {
+                                callsign = string.Empty;
+                            }
+                            ((TextSignal)output).State = callsign;
+                        }
+                        break;
+                    case F4SimOutputs.SIM__PILOT_STATUS:
+                        {
+                            byte status;
+                            if (_lastFlightData.pilotsStatus != null && ((Signal)output).Index.Value <= _lastFlightData.pilotsOnline)
+                            {
+                                status = _lastFlightData.pilotsStatus[((Signal)output).Index.Value];
+                            }
+                            else
+                            {
+                                status = 0;
+                            }
+                            ((AnalogSignal)output).State = status;
+                        }
+                        break;
+                    case F4SimOutputs.SIM__AA_MISSILE_FIRED:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.AAMissileFired;
+                        break;
+                    case F4SimOutputs.SIM__AG_MISSILE_FIRED:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.AGMissileFired;
+                        break;
+                    case F4SimOutputs.SIM__BOMB_DROPPED:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.BombDropped;
+                        break;
+                    case F4SimOutputs.SIM__FLARE_DROPPED:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.FlareDropped;
+                        break;
+                    case F4SimOutputs.SIM__CHAFF_DROPPED:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.ChaffDropped;
+                        break;
+                    case F4SimOutputs.SIM__BULLETS_FIRED:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.BulletsFired;
+                        break;
+                    case F4SimOutputs.SIM__COLLISION_COUNTER:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.CollisionCounter;
+                        break;
+                    case F4SimOutputs.SIM__GFORCE:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.Gforce;
+                        break;
+                    case F4SimOutputs.SIM__LAST_DAMAGE:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.lastdamage;
+                        break;
+                    case F4SimOutputs.SIM__DAMAGE_FORCE:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.damageforce;
+                        break;
+                    case F4SimOutputs.SIM__WHEN_DAMAGE:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.whendamage;
+                        break;
+                    case F4SimOutputs.SIM__EYE_X:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.eyex;
+                        break;
+                    case F4SimOutputs.SIM__EYE_Y:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.eyey;
+                        break;
+                    case F4SimOutputs.SIM__EYE_Z:
+                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.eyez;
+                        break;
+                    case F4SimOutputs.SIM__IS_FIRING_GUN:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsFiringGun;
+                        break;
+                    case F4SimOutputs.SIM__IS_END_FLIGHT:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsEndFlight;
+                        break;
+                    case F4SimOutputs.SIM__IS_EJECTING:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsEjecting;
+                        break;
+                    case F4SimOutputs.SIM__IN_3D:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.In3D;
+                        break;
+                    case F4SimOutputs.SIM__IS_PAUSED:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsPaused;
+                        break;
+                    case F4SimOutputs.SIM__IS_FROZEN:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsFrozen;
+                        break;
+                    case F4SimOutputs.SIM__IS_OVER_G:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsOverG;
+                        break;
+                    case F4SimOutputs.SIM__IS_ON_GROUND:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsOnGround;
+                        break;
+                    case F4SimOutputs.SIM__IS_EXIT_GAME:
+                        ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsExitGame;
+                        break;
+
                     case F4SimOutputs.PILOT__HEADX_OFFSET:
                         ((AnalogSignal) output).State = _lastFlightData.headX;
                         break;
@@ -1135,6 +1234,16 @@ namespace F4Utils.SimSupport
                             {
                                 ((DigitalSignal) output).State = false;
                             }
+                        }
+                        break;
+                    case F4SimOutputs.RWR__ADDITIONAL_INFO:
+                        {
+                            string rwrInfo=string.Empty;
+                            if (_lastFlightData.RwrInfo != null)
+                            {
+                                rwrInfo = Encoding.Default.GetString(_lastFlightData.RwrInfo);
+                            }
+                            ((TextSignal)output).State = rwrInfo;
                         }
                         break;
 
@@ -1941,6 +2050,55 @@ namespace F4Utils.SimSupport
                                                 (int)F4SimOutputs.SIM__CURRENT_TIME, typeof(int)));
             AddF4SimOutput(CreateNewF4SimOutput("SIM", "Vehicle ACD",
                                                 (int)F4SimOutputs.SIM__VEHICLE_ACD, typeof(short)));
+            for (var i = 0; i < 32; i++)
+            {
+                AddF4SimOutput(CreateNewF4SimOutput("SIM", "Pilot Callsign", (int)F4SimOutputs.SIM__PILOT_CALLSIGN, i, typeof(string)));
+                AddF4SimOutput(CreateNewF4SimOutput("SIM", "Pilot Status", (int)F4SimOutputs.SIM__PILOT_STATUS, i, typeof(int)));
+            }
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "AA Missile Fired",
+                                                (int)F4SimOutputs.SIM__AA_MISSILE_FIRED, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Bomb Dropped",
+                                                (int)F4SimOutputs.SIM__BOMB_DROPPED, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Flare Dropped",
+                                                (int)F4SimOutputs.SIM__FLARE_DROPPED, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Chaff Dropped",
+                                                (int)F4SimOutputs.SIM__CHAFF_DROPPED, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Bullets Fired",
+                                                (int)F4SimOutputs.SIM__BULLETS_FIRED, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Collision Counter",
+                                                (int)F4SimOutputs.SIM__COLLISION_COUNTER, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "g Force",
+                                                (int)F4SimOutputs.SIM__GFORCE, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Last Damage",
+                                                (int)F4SimOutputs.SIM__LAST_DAMAGE, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Damage Force",
+                                                (int)F4SimOutputs.SIM__DAMAGE_FORCE, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "When Damage",
+                                                (int)F4SimOutputs.SIM__WHEN_DAMAGE, typeof(int)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Eye X",
+                                                (int)F4SimOutputs.SIM__EYE_X, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Eye Y",
+                                                (int)F4SimOutputs.SIM__EYE_Y, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Eye Z",
+                                                (int)F4SimOutputs.SIM__EYE_Z, typeof(float)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is Firing Gun flag",
+                                                (int)F4SimOutputs.SIM__IS_FIRING_GUN, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is End Flight flag",
+                                                (int)F4SimOutputs.SIM__IS_END_FLIGHT, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is Ejecting flag",
+                                                (int)F4SimOutputs.SIM__IS_EJECTING, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "In 3D flag",
+                                                (int)F4SimOutputs.SIM__IN_3D, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is Paused flag",
+                                                (int)F4SimOutputs.SIM__IS_PAUSED, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is Frozen flag",
+                                                (int)F4SimOutputs.SIM__IS_FROZEN, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is Over G flag",
+                                                (int)F4SimOutputs.SIM__IS_OVER_G, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is On Ground flag",
+                                                (int)F4SimOutputs.SIM__IS_ON_GROUND, typeof(bool)));
+            AddF4SimOutput(CreateNewF4SimOutput("SIM", "Is Exit Game flag",
+                                                (int)F4SimOutputs.SIM__IS_EXIT_GAME, typeof(bool)));
 
             /*
             AddF4SimOutput(CreateNewF4SimOutput("Pilot", "Head X offset from design eye (feet)",(int)F4SimOutputs.PILOT__HEADX_OFFSET,  typeof(float)));
@@ -1989,6 +2147,8 @@ namespace F4Utils.SimSupport
                                                                   string.Format("{0:00}", i + 1)),
                                                     (int) F4SimOutputs.RWR__NEWDETECTION_FLAG, i, typeof (bool)));
             }
+            AddF4SimOutput(CreateNewF4SimOutput("RWR", "Additional Info", (int)F4SimOutputs.RWR__ADDITIONAL_INFO,
+                                                typeof(string)));
         }
 
         public override void Update()
