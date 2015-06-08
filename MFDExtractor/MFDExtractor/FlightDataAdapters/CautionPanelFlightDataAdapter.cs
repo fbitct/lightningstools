@@ -20,7 +20,7 @@ namespace MFDExtractor.FlightDataAdapters
             cautionPanel.InstrumentState.AvionicsFault = ((flightData.lightBits &(int) LightBits.Avionics) ==(int) LightBits.Avionics);
             cautionPanel.InstrumentState.BUC = ((flightData.lightBits2 &(int) LightBits2.BUC) ==(int) LightBits2.BUC);
             cautionPanel.InstrumentState.CabinPress = ((flightData.lightBits &(int) LightBits.CabinPress) ==(int) LightBits.CabinPress);
-            cautionPanel.InstrumentState.CADC = ((flightData.lightBits3 &(int) Bms4LightBits3.cadc) ==(int) Bms4LightBits3.cadc);
+            cautionPanel.InstrumentState.CADC = ((flightData.lightBits3 &(int) LightBits3.cadc) ==(int) LightBits3.cadc);
             cautionPanel.InstrumentState.ECM = ((flightData.lightBits &(int) LightBits.ECM) ==(int) LightBits.ECM);
             cautionPanel.InstrumentState.ElecSys = ((flightData.lightBits3 &(int) LightBits3.Elec_Fault) ==(int) LightBits3.Elec_Fault);
             cautionPanel.InstrumentState.EngineFault = ((flightData.lightBits &(int) LightBits.EngineFault) ==(int) LightBits.EngineFault);

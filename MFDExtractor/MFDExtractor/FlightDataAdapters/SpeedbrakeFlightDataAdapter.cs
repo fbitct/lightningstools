@@ -15,7 +15,7 @@ namespace MFDExtractor.FlightDataAdapters
         public void Adapt(ISpeedbrakeIndicator speedbrakeIndicator, FlightData flightData)
         {
             speedbrakeIndicator.InstrumentState.PercentOpen = flightData.speedBrake * 100.0f;
-            speedbrakeIndicator.InstrumentState.PowerLoss = ((flightData.lightBits3 & (int)Bms4LightBits3.Power_Off) == (int)Bms4LightBits3.Power_Off);
+            speedbrakeIndicator.InstrumentState.PowerLoss = ((flightData.lightBits3 & (int)LightBits3.Power_Off) == (int)LightBits3.Power_Off);
         }
     }
 }

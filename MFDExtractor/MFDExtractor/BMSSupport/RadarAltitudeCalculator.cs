@@ -41,7 +41,7 @@ namespace MFDExtractor.BMSSupport
 
 		private static bool OnGround(FlightData flightData)
 		{
-			return ((flightData.lightBits3 & (int)Bms4LightBits3.OnGround) ==(int)Bms4LightBits3.OnGround);
+			return ((flightData.lightBits3 & (int)LightBits3.OnGround) ==(int)LightBits3.OnGround);
 		}
 
 		private static bool WeightOnWheels(FlightData flightData)
