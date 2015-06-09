@@ -37,11 +37,11 @@ namespace F4Utils.Terrain
         private bool _loadAllLods;
 
         private TerrainDB() {}
-        public TerrainDB(string falconExePath, bool loadAllLods = true):this()
+        public TerrainDB(string bmsBaseDirectory, bool loadAllLods = true):this()
         {
-            if (falconExePath == null) throw new ArgumentNullException("falconExePath");
-            if (!falconExePath.EndsWith(Path.DirectorySeparatorChar.ToString())) falconExePath += Path.DirectorySeparatorChar;
-            FalconExePath = falconExePath;
+            if (bmsBaseDirectory == null) throw new ArgumentNullException("bmsBaseDirectory");
+            if (!bmsBaseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString())) bmsBaseDirectory += Path.DirectorySeparatorChar;
+            BMSBaseDirectory = bmsBaseDirectory;
             _loadAllLods = loadAllLods;
             _elevationPostCoordinateClamper = new ElevationPostCoordinateClamper(this);
             _columnAndRowElevationPostRecordRetriever = new ColumnAndRowElevationPostRecordRetriever(this, _elevationPostCoordinateClamper);
@@ -62,13 +62,13 @@ namespace F4Utils.Terrain
             {
                 if (_theaterDotTdf == null)
                 {
-                    _theaterDotTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(FalconExePath);
+                    _theaterDotTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(BMSBaseDirectory);
                 }
                 return _theaterDotTdf;
             }
         }
-        public string FalconExePath { get; private set; }
-        public string DataPath { get { return FalconExePath + "..\\..\\data"; } }
+        public string BMSBaseDirectory { get; private set; }
+        public string DataPath { get { return BMSBaseDirectory + Path.DirectorySeparatorChar + "data"; } }
         public string TerrainBasePath { get { return DataPath + Path.DirectorySeparatorChar + TheaterDotTdf.terrainDir; } }
         public string CurrentTheaterTextureBaseFolderPath { get { return TerrainBasePath + Path.DirectorySeparatorChar + "texture"; } }
         public string FarTilesDotDdsFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "FARTILES.DDS"; } }

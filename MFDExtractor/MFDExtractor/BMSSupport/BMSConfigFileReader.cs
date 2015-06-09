@@ -21,10 +21,10 @@ namespace MFDExtractor.BMSSupport
 		{
 			get
 			{
-				var bmsPath = _bmsRunningExecutableLocator.BMSExePath;
-				if (string.IsNullOrEmpty(bmsPath)) return Enumerable.Empty<string>();
-
-				var configFilePath = ConfigFilePath(bmsPath);
+				var bmsExePath = _bmsRunningExecutableLocator.BMSExePath;
+				if (string.IsNullOrEmpty(bmsExePath)) return Enumerable.Empty<string>();
+                var bmsBasePath = new FileInfo(bmsExePath).Directory.Parent.Parent.FullName;
+                var configFilePath = bmsBasePath + Path.DirectorySeparatorChar + "\\User\\config\\Falcon BMS.cfg";
 				if (string.IsNullOrEmpty(configFilePath)) return Enumerable.Empty<string>();
 				var allLines = new List<string>();
 				using (var reader = new StreamReader(configFilePath))
@@ -38,15 +38,6 @@ namespace MFDExtractor.BMSSupport
 				return allLines;
 			}
 		}
-
-		private static string ConfigFilePath(string exePath)
-		{
-			return new[]
-			{
-				Path.Combine(exePath, "FalconBMS.cfg"),
-				Path.Combine(Path.Combine(exePath, "config"), "Falcon BMS.cfg"),
-				Path.Combine(Path.Combine(exePath, @"..\..\User\config"), "Falcon BMS.cfg")
-			}.FirstOrDefault(x => new FileInfo(x).Exists);
-		}
+		
 	}
 }

@@ -42,6 +42,7 @@ namespace F4Utils.Terrain
 
 
             var lRecord = _columnAndRowElevationPostRetriever.GetElevationPostRecordByColumnAndRow(col, row, lod);
+            if (lRecord == null) return null;
 
             var textureId = lRecord.TextureId;
             var bigTexture = _terrainTextureByTextureIdRetriever.GetTerrainTextureByTextureId(textureId, lod);

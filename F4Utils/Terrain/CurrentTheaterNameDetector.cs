@@ -6,14 +6,14 @@ using Microsoft.Win32;
 
 namespace F4Utils.Terrain
 {
-    internal interface ICurrentTheaterNameDetector
+    public interface ICurrentTheaterNameDetector
     {
-        string DetectCurrentTheaterName(string exePath);
+        string DetectCurrentTheaterName(string bmsBaseDirectory);
     }
-    internal class CurrentTheaterNameDetector : ICurrentTheaterNameDetector
+    public class CurrentTheaterNameDetector : ICurrentTheaterNameDetector
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CurrentTheaterNameDetector));
-        public string DetectCurrentTheaterName(string exePath)
+        public string DetectCurrentTheaterName(string bmsBaseDirectory)
         {
             string theaterName = null;
            
@@ -31,8 +31,8 @@ namespace F4Utils.Terrain
                             if (toRead != null)
                             {
                                 var baseDir = (string)toRead.GetValue("baseDir", null);
-                                var exePathFI = new FileInfo(exePath);
-                                if (baseDir != null && exePathFI.Directory.Parent.Parent.FullName.Equals(baseDir))
+                                var bmsBaseDirectoryFI = new FileInfo(bmsBaseDirectory);
+                                if (baseDir != null && bmsBaseDirectoryFI.FullName.Equals(baseDir))
                                 {
                                     theaterName = (string)toRead.GetValue("curTheater", null);
                                     break;

@@ -11,15 +11,12 @@ namespace MFDExtractor.BMSSupport
 
 	public class RadarAltitudeCalculator : IRadarAltitudeCalculator
 	{
-		private readonly ITerrainHeightCalculator _terrainHeightCalculator;
-		public RadarAltitudeCalculator(ITerrainHeightCalculator terrainHeightCalculator=null)
-		{
-			_terrainHeightCalculator = terrainHeightCalculator ?? new TerrainHeightCalculator();
-            
-		}
+        public RadarAltitudeCalculator()
+        {
+        }
 		public float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB)
 		{
-            var terrainHeight = _terrainHeightCalculator.CalculateTerrainHeight(flightData.x, flightData.y, terrainDB);
+            var terrainHeight = terrainDB.CalculateTerrainHeight(flightData.x, flightData.y);
 			var ralt = -flightData.z - terrainHeight;
 
 			//reset AGL altitude to zero if we're on the ground

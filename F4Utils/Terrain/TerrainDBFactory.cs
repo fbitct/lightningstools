@@ -14,18 +14,17 @@ namespace F4Utils.Terrain
     {
         public TerrainDB Create(bool loadAllLods)
         {
-            var falconExePath = GetFalconExePath();
-            if (falconExePath == null) return null;
-            return new TerrainDB(falconExePath, loadAllLods);
+            var bmsBaseDirectory = GetBmsBaseDirectory();
+            if (bmsBaseDirectory == null) return null;
+            return new TerrainDB(bmsBaseDirectory, loadAllLods);
         }
 
-        private string GetFalconExePath()
+        private string GetBmsBaseDirectory()
         {
-            //TODO: check these against other theaters, for correct way to read theater installation locations
             var exePath = Util.GetFalconExePath();
             if (exePath == null) return null;
-            var f4BasePathFI = new FileInfo(exePath);
-            return f4BasePathFI.DirectoryName + Path.DirectorySeparatorChar;
+            var exePathFI = new FileInfo(exePath);
+            return exePathFI.Directory.Parent.Parent.FullName + Path.DirectorySeparatorChar;
         }
     }
 }

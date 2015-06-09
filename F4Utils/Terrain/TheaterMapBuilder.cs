@@ -39,7 +39,7 @@ namespace F4Utils.Terrain
                 palette.Entries[i] = mapInfo.Pallete[i];
             }
             bmp.Palette = palette;
-
+            if (lodInfo.O == null || lodInfo.L == null) return bmp;
             var bmpLock = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly,
                                        bmp.PixelFormat);
             var scan0 = bmpLock.Scan0;

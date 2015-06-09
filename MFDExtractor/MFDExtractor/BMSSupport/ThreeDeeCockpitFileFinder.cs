@@ -13,7 +13,7 @@ namespace MFDExtractor.BMSSupport
     {
         FileInfo FindThreeDeeCockpitFile(int vehicleACD);
     }
-    class ThreeDeeCockpitFileFinder : IThreeDeeCockpitFileFinder2
+    internal class ThreeDeeCockpitFileFinder : IThreeDeeCockpitFileFinder2
     {
         private readonly ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader;
         private readonly IBMSRunningExecutableLocator _bmsRunningExecutableLocator;

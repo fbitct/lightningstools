@@ -20,13 +20,16 @@ namespace F4Utils.Terrain
             var oFileInfo =
                 new FileInfo(Path.GetDirectoryName(theaterDotMapFilePath) + Path.DirectorySeparatorChar + "theater.O" +
                              lodLevel);
-
             var toReturn = new TheaterDotLxFileInfo
             {
                 MinElevation = UInt16.MaxValue,
                 MaxElevation = 0,
                 LoDLevel = lodLevel
             };
+            if (!oFileInfo.Exists)
+            {
+                return toReturn;
+            }
 
             var bytesToRead = oFileInfo.Length;
             var bytesRead = new byte[bytesToRead];

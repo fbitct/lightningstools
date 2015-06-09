@@ -3,11 +3,11 @@ using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {
-    internal interface ICurrentTheaterDotTdfLoader
+    public interface ICurrentTheaterDotTdfLoader
     {
         TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath);
     }
-    internal class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
+    public class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
     {
         private readonly ICurrentTheaterNameDetector _currentTheaterNameDetector;
         private readonly ITheaterDotTdfFileReader _theaterDotTdfFileReader;
@@ -17,27 +17,17 @@ namespace F4Utils.Terrain
             _currentTheaterNameDetector = currentTheaterNameDetector ?? new CurrentTheaterNameDetector();
             _theaterDotTdfFileReader = theaterDotTdfFileReader ?? new TheaterDotTdfFileReader();
         }
-        public TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath)
+        public TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string bmsBaseDirectory)
         {
-            if (exePath == null) return null;
-            var currentTheaterName = _currentTheaterNameDetector.DetectCurrentTheaterName(exePath);
+            if (bmsBaseDirectory == null) return null;
+            var currentTheaterName = _currentTheaterNameDetector.DetectCurrentTheaterName(bmsBaseDirectory);
             if (currentTheaterName == null) return null;
-            var f4BaseDir = new FileInfo(exePath).DirectoryName;
-            FileInfo theaterDotLstFI;
-
-            theaterDotLstFI = new FileInfo(f4BaseDir + Path.DirectorySeparatorChar + "theater.lst");
-            if (!theaterDotLstFI.Exists)
-            {
-                theaterDotLstFI =
-                    new FileInfo(f4BaseDir + Path.DirectorySeparatorChar +
-                                    "terrdata\\theaterdefinition\\theater.lst");
-            }
-            if (!theaterDotLstFI.Exists)
-            {
-                theaterDotLstFI =
-                    new FileInfo(new DirectoryInfo(f4BaseDir).Parent.Parent.FullName + Path.DirectorySeparatorChar +
-                                    "data\\terrdata\\theaterdefinition\\theater.lst");
-            }
+            var theaterDotLstFI =
+                new FileInfo(new DirectoryInfo(bmsBaseDirectory).FullName + Path.DirectorySeparatorChar +
+                                "data" + Path.DirectorySeparatorChar + 
+                                "terrdata" + Path.DirectorySeparatorChar + 
+                                "theaterdefinition" + Path.DirectorySeparatorChar + 
+                                "theater.lst");
 
             if (theaterDotLstFI.Exists)
             {
@@ -47,13 +37,7 @@ namespace F4Utils.Terrain
                     while (!sw.EndOfStream)
                     {
                         var thisLine = sw.ReadLine();
-                        var tdfDetailsThisLine =
-                            _theaterDotTdfFileReader.ReadTheaterDotTdfFile(f4BaseDir + Path.DirectorySeparatorChar + thisLine);
-
-                        if (tdfDetailsThisLine == null)
-                        {
-                            tdfDetailsThisLine = _theaterDotTdfFileReader.ReadTheaterDotTdfFile(f4BaseDir + Path.DirectorySeparatorChar + "..\\..\\data" + Path.DirectorySeparatorChar + thisLine);
-                        }
+                        var tdfDetailsThisLine = _theaterDotTdfFileReader.ReadTheaterDotTdfFile(bmsBaseDirectory + Path.DirectorySeparatorChar + "data" + Path.DirectorySeparatorChar + thisLine);
                         if (tdfDetailsThisLine != null)
                         {
                             if (tdfDetailsThisLine.theaterName != null &&

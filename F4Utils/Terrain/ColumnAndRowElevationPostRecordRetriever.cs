@@ -26,6 +26,10 @@ namespace F4Utils.Terrain
                 return null;
             }
             var lodInfo = _terrainDB.TheaterDotLxFiles[lod];
+            if (lodInfo.O == null || lodInfo.L == null)
+            {
+                return null;
+            }
             var mapInfo = _terrainDB.TheaterDotMap;
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref postColumn, ref postRow, lodInfo.LoDLevel);

@@ -30,17 +30,17 @@
         {
             int col;
             int row;
-
-            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(0);
+            const int referenceLod = 2;
+            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(referenceLod);
 
             //determine the column and row in the DTED matrix where the nearest elevation post can be found
             _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row);
 
             //retrieve the 4 elevation posts which form a box around our current position (origin point x=0,y=0 is in lower left)
-            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, 0);
-            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, 0);
-            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, 0);
-            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, 0);
+            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, referenceLod);
+            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, referenceLod);
+            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, referenceLod);
+            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, referenceLod);
 
             if (Q11 == null || Q21 == null || Q22 == null || Q12 == null)
             {
