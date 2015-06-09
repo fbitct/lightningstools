@@ -21,80 +21,49 @@ namespace F4Utils.Terrain
             var bytesRead = new byte[bytesToRead];
 
             using (var stream = File.OpenRead(textureDotBinFilePath))
+            using (var reader = new BinaryReader(stream))
             {
-                stream.Seek(0, SeekOrigin.Begin);
-                stream.Read(bytesRead, 0, bytesToRead);
-                stream.Close();
-            }
-            var textureBinFileInfo = new TextureDotBinFileInfo();
-            var curByte = 0;
+                var textureBinFileInfo = new TextureDotBinFileInfo();
 
-            textureBinFileInfo.numSets = BitConverter.ToUInt32(bytesRead, curByte);
-            textureBinFileInfo.setRecords = new TextureBinSetRecord[textureBinFileInfo.numSets];
-            curByte += 4;
-            textureBinFileInfo.totalTiles = BitConverter.ToUInt32(bytesRead, curByte);
-            curByte += 4;
+                textureBinFileInfo.numSets = reader.ReadUInt32();
+                textureBinFileInfo.setRecords = new TextureBinSetRecord[textureBinFileInfo.numSets];
+                textureBinFileInfo.totalTiles = reader.ReadUInt32();
 
-            for (var h = 0; h < textureBinFileInfo.numSets; h++)
-            {
-                var thisSetRecord = new TextureBinSetRecord
+                for (var h = 0; h < textureBinFileInfo.numSets; h++)
                 {
-                    numTiles = BitConverter.ToUInt32(bytesRead, curByte)
-                };
-
-                curByte += 4;
-                thisSetRecord.terrainType = bytesRead[curByte];
-                curByte++;
-
-                thisSetRecord.tileRecords = new TextureBinTileRecord[thisSetRecord.numTiles];
-                for (var i = 0; i < thisSetRecord.numTiles; i++)
-                {
-                    var tileRecord = new TextureBinTileRecord
+                    var thisSetRecord = new TextureBinSetRecord
                     {
-                        tileName = Encoding.ASCII.GetString(bytesRead, curByte, 20)
+                        numTiles = reader.ReadUInt32()
                     };
-                    var nullLoc = tileRecord.tileName.IndexOf('\0');
-                    if (nullLoc > 0) tileRecord.tileName = tileRecord.tileName.Substring(0, nullLoc);
-                    curByte += 20;
-                    tileRecord.numAreas = BitConverter.ToUInt32(bytesRead, curByte);
-                    tileRecord.areaRecords = new TextureBinAreaRecord[tileRecord.numAreas];
-                    curByte += 4;
-                    tileRecord.numPaths = BitConverter.ToUInt32(bytesRead, curByte);
-                    tileRecord.pathRecords = new TextureBinPathRecord[tileRecord.numPaths];
-                    curByte += 4;
-                    for (var j = 0; j < tileRecord.numAreas; j++)
+
+                    thisSetRecord.terrainType = reader.ReadByte();
+
+                    thisSetRecord.tileRecords = new TextureBinTileRecord[thisSetRecord.numTiles];
+                    for (var i = 0; i < thisSetRecord.numTiles; i++)
                     {
-                        var thisAreaRecord = new TextureBinAreaRecord { type = BitConverter.ToInt32(bytesRead, curByte) };
-                        curByte += 4;
-                        thisAreaRecord.size = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        thisAreaRecord.x = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        thisAreaRecord.y = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        tileRecord.areaRecords[j] = thisAreaRecord;
+                        var tileRecord = new TextureBinTileRecord
+                        {
+                            tileName = Encoding.ASCII.GetString(reader.ReadBytes(20),0, 20).TrimEnd('\0')
+                        };
+                        tileRecord.numAreas = reader.ReadUInt32();
+                        tileRecord.areaRecords = new TextureBinAreaRecord[tileRecord.numAreas];
+                        tileRecord.numPaths = reader.ReadUInt32();
+                        tileRecord.pathRecords = new TextureBinPathRecord[tileRecord.numPaths];
+
+                        for (var j = 0; j < tileRecord.numAreas; j++)
+                        {
+                            tileRecord.areaRecords[j] = new TextureBinAreaRecord(stream); 
+                        }
+                        for (var k = 0; k < tileRecord.numPaths; k++)
+                        {
+                            tileRecord.pathRecords[k] = new TextureBinPathRecord(stream); 
+                        }
+                        thisSetRecord.tileRecords[i] = tileRecord;
                     }
-                    for (var k = 0; k < tileRecord.numPaths; k++)
-                    {
-                        var thisPathRecord = new TextureBinPathRecord { type = BitConverter.ToInt32(bytesRead, curByte) };
-                        curByte += 4;
-                        thisPathRecord.size = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        thisPathRecord.x1 = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        thisPathRecord.y1 = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        thisPathRecord.x2 = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        thisPathRecord.y2 = BitConverter.ToSingle(bytesRead, curByte);
-                        curByte += 4;
-                        tileRecord.pathRecords[k] = thisPathRecord;
-                    }
-                    thisSetRecord.tileRecords[i] = tileRecord;
+                    textureBinFileInfo.setRecords[h] = thisSetRecord;
                 }
-                textureBinFileInfo.setRecords[h] = thisSetRecord;
+                return textureBinFileInfo;
             }
-            return textureBinFileInfo;
         }
 
     }
