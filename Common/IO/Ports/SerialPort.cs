@@ -810,9 +810,10 @@ namespace Common.IO.Ports
         ///   managed and unmanaged resources used by this 
         ///   object before allowing garbage collection
         /// </summary>
-        public void Dispose()
+        public new void Dispose()
         {
             Dispose(true);
+            base.Dispose();
             GC.SuppressFinalize(this);
         }
 
