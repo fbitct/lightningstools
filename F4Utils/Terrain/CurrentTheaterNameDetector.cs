@@ -32,7 +32,7 @@ namespace F4Utils.Terrain
                             {
                                 var baseDir = (string)toRead.GetValue("baseDir", null);
                                 var bmsBaseDirectoryFI = new FileInfo(bmsBaseDirectory);
-                                if (baseDir != null && bmsBaseDirectoryFI.FullName.Equals(baseDir))
+                                if (baseDir != null && bmsBaseDirectoryFI.FullName.TrimEnd('\\').Equals(baseDir.TrimEnd('\\')))
                                 {
                                     theaterName = (string)toRead.GetValue("curTheater", null);
                                     break;

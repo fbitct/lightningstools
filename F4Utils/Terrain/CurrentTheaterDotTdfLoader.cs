@@ -31,7 +31,7 @@ namespace F4Utils.Terrain
 
             if (theaterDotLstFI.Exists)
             {
-                using (var fs = new FileStream(theaterDotLstFI.FullName, FileMode.Open))
+                using (var fs = new FileStream(theaterDotLstFI.FullName, FileMode.Open, FileAccess.Read))
                 using (var sw = new StreamReader(fs))
                 {
                     while (!sw.EndOfStream)
