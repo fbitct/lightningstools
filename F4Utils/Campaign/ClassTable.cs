@@ -12,7 +12,7 @@ namespace F4Utils.Campaign
             FileInfo ctFileInfo = new FileInfo(classTableFilePath);
             if (!ctFileInfo.Exists) throw new FileNotFoundException(classTableFilePath);
             byte[] bytes = new byte[ctFileInfo.Length];
-            using (FileStream fs = new FileStream(classTableFilePath, FileMode.Open))
+            using (FileStream fs = new FileStream(classTableFilePath, FileMode.Open, FileAccess.Read))
             {
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.Read(bytes, 0, (int)ctFileInfo.Length);

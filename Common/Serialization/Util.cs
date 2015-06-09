@@ -117,7 +117,7 @@ namespace Common.Serialization
             if (fileName == null) throw new ArgumentNullException();
             if (new FileInfo(fileName).Exists)
             {
-                using (var fs = new FileStream(fileName, FileMode.Open))
+                using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
                 {
                     var toReturn = DeserializeFromXmlStream<T>(fs);
                     fs.Close();

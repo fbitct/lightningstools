@@ -14,7 +14,7 @@ namespace F4Utils.Campaign
         private RadarDataType[] LoadRadarData(string fileName)
         {
             //reads RCD file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream))
             {
                 var entries = reader.ReadInt16();

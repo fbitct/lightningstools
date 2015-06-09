@@ -20,7 +20,7 @@ namespace F4Utils.Speech
 
             var commFile = new CommFile();
             var bytes = new byte[fi.Length];
-            using (var fs = new FileStream(commFilePath, FileMode.Open))
+            using (var fs = new FileStream(commFilePath, FileMode.Open, FileAccess.Read))
             {
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.Read(bytes, 0, (int) fi.Length);
@@ -222,7 +222,7 @@ namespace F4Utils.Speech
         {
             var toReturn = new CommFile();
             var headers = new CommFileHeaderRecord[0];
-            using (var fs = new FileStream(commXmlFilePath, FileMode.Open))
+            using (var fs = new FileStream(commXmlFilePath, FileMode.Open, FileAccess.Read))
             using (XmlReader xr = new XmlTextReader(fs))
             {
                 var thisHeader = new CommFileHeaderRecord();

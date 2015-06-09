@@ -20,7 +20,7 @@ namespace F4Utils.Speech
 
             var fragFile = new FragFile();
             var bytes = new byte[fi.Length];
-            using (var fs = new FileStream(fragFilePath, FileMode.Open))
+            using (var fs = new FileStream(fragFilePath, FileMode.Open, FileAccess.Read))
             {
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.Read(bytes, 0, (int) fi.Length);
@@ -191,7 +191,7 @@ namespace F4Utils.Speech
             var thisHeader = new FragFileHeaderRecord();
             var parsed = false;
             long val = 0;
-            using (var fs = new FileStream(fragXmlFilePath, FileMode.Open))
+            using (var fs = new FileStream(fragXmlFilePath, FileMode.Open, FileAccess.Read))
             using (XmlReader xr = new XmlTextReader(fs))
             {
                 while (xr.Read())

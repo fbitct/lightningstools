@@ -4,7 +4,7 @@ namespace F4Utils.Terrain
 {
     internal interface INearestElevationPostColumnAndRowCalculator
     {
-        void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row);
+        void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, uint lod, out int col, out int row);
     }
     internal class NearestElevationPostColumnAndRowCalculator:INearestElevationPostColumnAndRowCalculator
     {
@@ -19,9 +19,8 @@ namespace F4Utils.Terrain
             _distanceBetweenElevationPostsCalculator = distanceBetweenElevationPostsCalculator ?? new DistanceBetweenElevationPostsCalculator(_terrainDB);
             _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper(_terrainDB);
         }
-        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row)
+        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, uint lod, out int col, out int row)
         {
-            const int lod = 0;
             var feetBetweenElevationPosts = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod);
             col = (int)Math.Floor(feetEast / feetBetweenElevationPosts);
             row = (int)Math.Floor(feetNorth / feetBetweenElevationPosts);

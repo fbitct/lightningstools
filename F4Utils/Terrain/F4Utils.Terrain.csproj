@@ -60,6 +60,8 @@
     <Compile Include="NearTileTextureLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs\FarTilesDotPalFileInfo.cs" />
+    <Compile Include="Structs\TerrainDotBilFileInfo.cs" />
+    <Compile Include="Structs\TerrainDotTidFileInfo.cs" />
     <Compile Include="Structs\TextureBinAreaRecord.cs" />
     <Compile Include="Structs\TextureBinPathRecord.cs" />
     <Compile Include="Structs\TextureBinSetRecord.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="Structs\TheaterDotTdfFileInfo.cs" />
     <Compile Include="TerrainDB.cs" />
     <Compile Include="TerrainDBFactory.cs" />
+    <Compile Include="TerrainDotBilFileReader.cs" />
+    <Compile Include="TerrainDotTidFileReader.cs" />
     <Compile Include="TerrainHeightCalculator.cs" />
     <Compile Include="TerrainTextureByTextureIdRetriever.cs" />
     <Compile Include="TextureDotBinFileReader.cs" />

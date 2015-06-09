@@ -29,7 +29,7 @@ namespace F4Utils.Campaign
             FileInfo fi = new FileInfo(campaignFileBundleFileName);
             if (!fi.Exists) throw new FileNotFoundException(campaignFileBundleFileName);
             _rawBytes = new byte[fi.Length];
-            using (FileStream fs = new FileStream(campaignFileBundleFileName, FileMode.Open))
+            using (FileStream fs = new FileStream(campaignFileBundleFileName, FileMode.Open, FileAccess.Read))
             {
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.Read(_rawBytes, 0, (int)fi.Length);

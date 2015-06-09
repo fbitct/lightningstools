@@ -7,19 +7,26 @@ namespace F4Utils.Terrain
 {
     internal interface ITheaterDotLxFileReader
     {
-        TheaterDotLxFileInfo LoadTheaterDotLxFile(uint lodLevel, string theaterDotMapFilePath);
+        TheaterDotLxFileInfo LoadTheaterDotLxFile(uint lodLevel, string theaterDotMapFilePath, string tileset=null);
     }
     internal class TheaterDotLxFileReader:ITheaterDotLxFileReader
     {
-        public TheaterDotLxFileInfo LoadTheaterDotLxFile(uint lodLevel, string theaterDotMapFilePath)
+        public TheaterDotLxFileInfo LoadTheaterDotLxFile(uint lodLevel, string theaterDotMapFilePath, string tileset=null)
         {
+
             if (String.IsNullOrEmpty(theaterDotMapFilePath)) throw new ArgumentNullException("theaterMapFilePath");
+
             var lFileInfo =
-                new FileInfo(Path.GetDirectoryName(theaterDotMapFilePath) + Path.DirectorySeparatorChar + "theater.L" +
-                             lodLevel);
+                new FileInfo(Path.GetDirectoryName(theaterDotMapFilePath) + Path.DirectorySeparatorChar 
+                    + "theater"
+                    + (tileset != null ? "_" + tileset : "")
+                    + ".L" + lodLevel);
             var oFileInfo =
-                new FileInfo(Path.GetDirectoryName(theaterDotMapFilePath) + Path.DirectorySeparatorChar + "theater.O" +
-                             lodLevel);
+                new FileInfo(Path.GetDirectoryName(theaterDotMapFilePath) + Path.DirectorySeparatorChar
+                    + "theater"
+                    + (tileset != null ? "_" + tileset : "")
+                    + ".O" + lodLevel);
+
             var toReturn = new TheaterDotLxFileInfo
             {
                 MinElevation = UInt16.MaxValue,

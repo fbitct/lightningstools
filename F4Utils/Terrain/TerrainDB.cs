@@ -25,7 +25,9 @@ namespace F4Utils.Terrain
         private readonly ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever;
         private readonly INearTileTextureLoader _nearTileTextureLoader;
         private readonly IFarTileTextureRetriever _farTileTextureRetriever;
-        private readonly ColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever;
+        private readonly IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever;
+        private readonly ITerrainDotBilFileReader _terrainDotBilFileReader;
+        private readonly ITerrainDotTidFileReader _terrainDotTidFileReader;
         private readonly ILatLongCalculator _latLongCalculator;
         private Dictionary<string, ZipEntry> _textureDotZipFileEntries = new Dictionary<string, ZipEntry>();
         private TheaterDotTdfFileInfo _theaterDotTdf;
@@ -33,11 +35,13 @@ namespace F4Utils.Terrain
         private Nullable<TheaterDotMapFileInfo> _theaterDotMap;
         private Nullable<TextureDotBinFileInfo> _textureDotBin;
         private Nullable<FarTilesDotPalFileInfo> _farTilesDotPal;
+        private Nullable<TerrainDotTidFileInfo> _terrainDotTid;
+        private Nullable<TerrainDotBilFileInfo> _terrainDotBil;
         private ZipFile _textureZipFile;
         private bool _loadAllLods;
 
         private TerrainDB() {}
-        public TerrainDB(string bmsBaseDirectory, bool loadAllLods = true):this()
+        public TerrainDB(string bmsBaseDirectory, bool loadAllLods = false):this()
         {
             if (bmsBaseDirectory == null) throw new ArgumentNullException("bmsBaseDirectory");
             if (!bmsBaseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString())) bmsBaseDirectory += Path.DirectorySeparatorChar;
@@ -51,6 +55,8 @@ namespace F4Utils.Terrain
             _distanceBetweenElevationPostsCalculator = new DistanceBetweenElevationPostsCalculator(this);
             _terrainTextureByTextureIdRetriever = new TerrainTextureByTextureIdRetriever(this, _nearTileTextureLoader, _farTileTextureRetriever);
             _detailTextureForElevationPostRetriever = new DetailTextureForElevationPostRetriever(this, _elevationPostCoordinateClamper, _terrainTextureByTextureIdRetriever, _columnAndRowElevationPostRecordRetriever);
+            _terrainDotBilFileReader = new TerrainDotBilFileReader();
+            _terrainDotTidFileReader = new TerrainDotTidFileReader();
             _nearestElevationPostColumnAndRowCalculator = new NearestElevationPostColumnAndRowCalculator(this, _distanceBetweenElevationPostsCalculator, _elevationPostCoordinateClamper);
             _terrainHeightCalculator = new TerrainHeightCalculator(this, _columnAndRowElevationPostRecordRetriever, _distanceBetweenElevationPostsCalculator, _nearestElevationPostColumnAndRowCalculator);
             _latLongCalculator = new LatLongCalculator(this);
@@ -76,6 +82,36 @@ namespace F4Utils.Terrain
         public string FarTilesDotPalFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "FARTILES.PAL"; } }
         public string TheaterDotMapFilePath { get { return TerrainBasePath + Path.DirectorySeparatorChar + "terrain" + Path.DirectorySeparatorChar + "THEATER.MAP"; } }
         public string TextureDotBinFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "TEXTURE.BIN"; } }
+        public string TerrainDotTidFilePath { 
+            get 
+            {
+                return
+                       TerrainBasePath + Path.DirectorySeparatorChar 
+                       + "terrain" + Path.DirectorySeparatorChar
+                       + "terrain"
+                       + (TileSet != null ? "_" + TileSet : "")
+                       + ".TID";
+            } 
+        }
+        public string TerrainDotBilFilePath
+        {
+            get
+            {
+                return
+                       TerrainBasePath + Path.DirectorySeparatorChar
+                       + "terrain" + Path.DirectorySeparatorChar
+                       + "terrain"
+                       + (TileSet != null ? "_" + TileSet : "")
+                       + ".BIL";
+            }
+        }
+        public string TileSet
+        {
+            get
+            {
+                return "POLAK";
+            }
+        }
         public FarTilesDotPalFileInfo FarTilesDotPal 
         {
             get
@@ -126,22 +162,28 @@ namespace F4Utils.Terrain
             {
                 if (_theaterDotLxFiles == null)
                 {
-                    _theaterDotLxFiles = new TheaterDotLxFileInfo[TheaterDotMap.NumLODs];
-                    if (_loadAllLods)
-                    {
-                        Parallel.For(0, TheaterDotMap.NumLODs, i =>
-                        {
-                            _theaterDotLxFiles[i] = _theaterDotLxFileReader.LoadTheaterDotLxFile((uint)i, TheaterDotMapFilePath);
-                        });
-                    }
-                    else
-                    {
-                        TheaterDotLxFiles[0] = _theaterDotLxFileReader.LoadTheaterDotLxFile(0, TheaterDotMapFilePath);
-                    }
+                    LoadTerrainHeights();
                 }
                 return _theaterDotLxFiles;
             } 
         }
+
+        private void LoadTerrainHeights()
+        {
+            _theaterDotLxFiles = new TheaterDotLxFileInfo[TheaterDotMap.NumLODs];
+            if (_loadAllLods)
+            {
+                Parallel.For(0, TheaterDotMap.NumLODs, i =>
+                {
+                    _theaterDotLxFiles[i] = _theaterDotLxFileReader.LoadTheaterDotLxFile((uint)i, TheaterDotMapFilePath, TileSet);
+                });
+            }
+            else
+            {
+                TheaterDotLxFiles[2] = _theaterDotLxFileReader.LoadTheaterDotLxFile(2, TheaterDotMapFilePath, TileSet);
+            }
+        }
+
         public TheaterDotMapFileInfo TheaterDotMap
         {
             get
@@ -153,7 +195,37 @@ namespace F4Utils.Terrain
                 return _theaterDotMap.Value;
             }
         }
-        public float GetDistanceInFeetBetweenElevationPosts(int lod)
+        public Nullable<TerrainDotTidFileInfo> TerrainDotTid
+        {
+            get
+            {
+                if (!_terrainDotTid.HasValue)
+                {
+                    var tidFile = new FileInfo(TerrainDotTidFilePath);
+                    if (tidFile.Exists)
+                    {
+                        _terrainDotTid = _terrainDotTidFileReader.Read(tidFile.FullName);
+                    }
+                }
+                return _terrainDotTid;
+            }
+        }
+        public Nullable<TerrainDotBilFileInfo> TerrainDotBil
+        {
+            get
+            {
+                if (!_terrainDotBil.HasValue)
+                {
+                    var bilFile = new FileInfo(TerrainDotBilFilePath);
+                    if (bilFile.Exists)
+                    {
+                        _terrainDotBil = _terrainDotBilFileReader.Read(bilFile.FullName);
+                    }
+                }
+                return _terrainDotBil;
+            }
+        }
+        public float GetDistanceInFeetBetweenElevationPosts(uint lod)
         {
             return _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod);
         }
@@ -161,9 +233,9 @@ namespace F4Utils.Terrain
         {
             _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref postColumn, ref postRow, lod);
         }
-        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row)
+        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, uint lod, out int col, out int row)
         {
-            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row);
+            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, lod, out col, out row);
         }
         public TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod)
         {
@@ -179,9 +251,9 @@ namespace F4Utils.Terrain
         {
             _latLongCalculator.CalculateLatLong(feetNorth, feetEast, out latitudeWholeDegrees, out latitudeFractionalMinutes, out longitudeWholeDegrees, out longitudeFactionalMinutes);
         }
-        public float CalculateTerrainHeight(float feetNorth, float feetEast)
+        public float CalculateTerrainHeight(float feetNorth, float feetEast, uint lod)
         {
-            return _terrainHeightCalculator.CalculateTerrainHeight(feetNorth, feetEast);
+            return _terrainHeightCalculator.CalculateTerrainHeight(feetNorth, feetEast, lod);
         }
         public Bitmap GetNearTileTexture(string tileName)
         {

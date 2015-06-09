@@ -6,7 +6,7 @@ namespace F4Utils.SimSupport
 {
 	public interface IRadarAltitudeCalculator
 	{
-		float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB);
+		float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB, uint lod=2);
 	}
 
 	public class RadarAltitudeCalculator : IRadarAltitudeCalculator
@@ -14,9 +14,9 @@ namespace F4Utils.SimSupport
         public RadarAltitudeCalculator()
         {
         }
-		public float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB)
+		public float ComputeRadarAltitude(FlightData flightData, TerrainDB terrainDB, uint lod=2)
 		{
-            var terrainHeight = terrainDB.CalculateTerrainHeight(flightData.x, flightData.y);
+            var terrainHeight = terrainDB.CalculateTerrainHeight(flightData.x, flightData.y, lod);
 			var ralt = -flightData.z - terrainHeight;
 
 			//reset AGL altitude to zero if we're on the ground

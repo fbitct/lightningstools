@@ -20,7 +20,7 @@ namespace F4Utils.Speech
 
             var evalFile = new EvalFile();
             var bytes = new byte[fi.Length];
-            using (var fs = new FileStream(evalFilePath, FileMode.Open))
+            using (var fs = new FileStream(evalFilePath, FileMode.Open, FileAccess.Read))
             {
                 fs.Seek(0, SeekOrigin.Begin);
                 fs.Read(bytes, 0, (int) fi.Length);
@@ -184,7 +184,7 @@ namespace F4Utils.Speech
         {
             var toReturn = new EvalFile();
             var headers = new EvalFileHeaderRecord[0];
-            using (var fs = new FileStream(evalXmlFilePath, FileMode.Open))
+            using (var fs = new FileStream(evalXmlFilePath, FileMode.Open, FileAccess.Read))
             using (XmlReader xr = new XmlTextReader(fs))
             {
                 var thisHeader = new EvalFileHeaderRecord();

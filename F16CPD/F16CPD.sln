@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.UI", "..\Common\UI\C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.MacroProgramming", "..\Common\MacroProgramming\Common.MacroProgramming.csproj", "{320431C6-2454-4D95-8D3C-D27C8E2288E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Campaign", "..\F4Utils\Campaign\F4Utils.Campaign.csproj", "{D386EC91-6D89-421F-87BC-4849E0232722}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -171,6 +173,10 @@ Global
 		{320431C6-2454-4D95-8D3C-D27C8E2288E9}.Debug|x86.Build.0 = Debug|x86
 		{320431C6-2454-4D95-8D3C-D27C8E2288E9}.Release|x86.ActiveCfg = Release|x86
 		{320431C6-2454-4D95-8D3C-D27C8E2288E9}.Release|x86.Build.0 = Release|x86
+		{D386EC91-6D89-421F-87BC-4849E0232722}.Debug|x86.ActiveCfg = Debug|x86
+		{D386EC91-6D89-421F-87BC-4849E0232722}.Debug|x86.Build.0 = Debug|x86
+		{D386EC91-6D89-421F-87BC-4849E0232722}.Release|x86.ActiveCfg = Release|x86
+		{D386EC91-6D89-421F-87BC-4849E0232722}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,5 +200,6 @@ Global
 		{275C5E8D-A56A-45D2-8F70-93B0797C2E7B} = {B75892D5-8A05-4C57-82D7-C2886157DF41}
 		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08} = {B75892D5-8A05-4C57-82D7-C2886157DF41}
 		{320431C6-2454-4D95-8D3C-D27C8E2288E9} = {B75892D5-8A05-4C57-82D7-C2886157DF41}
+		{D386EC91-6D89-421F-87BC-4849E0232722} = {87B9C1D4-61AB-457C-8388-E6DA96325539}
 	EndGlobalSection
 EndGlobal

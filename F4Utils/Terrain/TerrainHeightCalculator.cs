@@ -2,7 +2,7 @@
 {
     internal interface ITerrainHeightCalculator
     {
-        float CalculateTerrainHeight(float feetNorth, float feetEast);
+        float CalculateTerrainHeight(float feetNorth, float feetEast, uint lod);
     }
     internal class TerrainHeightCalculator:ITerrainHeightCalculator
     {
@@ -26,22 +26,21 @@
         {
 
         }
-        public float CalculateTerrainHeight(float feetNorth, float feetEast)
+        public float CalculateTerrainHeight(float feetNorth, float feetEast, uint lod)
         {
             int col;
             int row;
-            const int referenceLod = 2;
-            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(referenceLod);
+            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod);
 
             //determine the column and row in the DTED matrix where the nearest elevation post can be found
-            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row);
+            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, lod, out col, out row);
 
             //retrieve the 4 elevation posts which form a box around our current position (origin point x=0,y=0 is in lower left)
-            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, referenceLod);
-            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, referenceLod);
-            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, referenceLod);
-            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, referenceLod);
-
+            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, lod);
+            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, lod);
+            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, lod);
+            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, lod);
+            
             if (Q11 == null || Q21 == null || Q22 == null || Q12 == null)
             {
                 return 0;

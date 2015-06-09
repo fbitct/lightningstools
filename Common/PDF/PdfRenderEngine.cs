@@ -174,7 +174,7 @@ namespace Common.PDF
                 {
                     try
                     {
-                        using (var fs = new FileStream(outputPath, FileMode.Open))
+                        using (var fs = new FileStream(outputPath, FileMode.Open, FileAccess.Read))
                         {
                             toReturn = (Bitmap) Image.FromStream(fs);
                         }

@@ -45,7 +45,7 @@ namespace F4Utils.Speech
         public static TlkFile Load(string tlkFilePath)
         {
             var tlkFile = new TlkFile(tlkFilePath);
-            using (var fs = new FileStream(tlkFilePath, FileMode.Open))
+            using (var fs = new FileStream(tlkFilePath, FileMode.Open, FileAccess.Read))
             using (var br = new BinaryReader(fs))
             {
                 fs.Seek(0, SeekOrigin.Begin);
@@ -77,7 +77,7 @@ namespace F4Utils.Speech
 
         private void GetCompressedAudioDataFromRecord(TlkFileRecord record, byte[] outputBuffer, int outputBufferOffset)
         {
-            using (var fs = new FileStream(_tlkFilePath, FileMode.Open))
+            using (var fs = new FileStream(_tlkFilePath, FileMode.Open, FileAccess.Read))
             {
                 try
                 {

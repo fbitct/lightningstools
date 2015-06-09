@@ -13,7 +13,7 @@ namespace Common.Imaging
             var fi = new FileInfo(filepath);
             if (!fi.Exists) throw new FileNotFoundException(filepath);
             byte[] bytes;
-            using (var fs = new FileStream(filepath, FileMode.Open))
+            using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read))
             {
                 bytes = new byte[fi.Length];
                 fs.Read(bytes, 0, (int) fi.Length);

@@ -2,7 +2,7 @@
 {
     internal interface IDistanceBetweenElevationPostsCalculator
     {
-        float GetNumFeetBetweenElevationPosts(int lod);
+        float GetNumFeetBetweenElevationPosts(uint lod);
     }
     internal class DistanceBetweenElevationPostsCalculator:IDistanceBetweenElevationPostsCalculator
     {
@@ -11,11 +11,11 @@
         {
             _terrainDB = terrainDB;
         }
-        public float GetNumFeetBetweenElevationPosts(int lod)
+        public float GetNumFeetBetweenElevationPosts(uint lod)
         {
             
             if (_terrainDB == null || _terrainDB.TheaterDotLxFiles == null) return 0;
-            var lodInfo = _terrainDB.TheaterDotLxFiles[0];
+            var lodInfo = _terrainDB.TheaterDotLxFiles[lod];
             var mapInfo = _terrainDB.TheaterDotMap;
             var feetBetweenPosts = mapInfo.FeetBetweenL0Posts;
             for (var i = 1; i <= lodInfo.LoDLevel; i++)

@@ -39,7 +39,7 @@ namespace F4Utils.Resources
             if (resourceIndexFileInfo.Exists)
             {
                 var bytes = new byte[resourceIndexFileInfo.Length];
-                using (var fs = new FileStream(resourceBundleIndexPath, FileMode.Open))
+                using (var fs = new FileStream(resourceBundleIndexPath, FileMode.Open, FileAccess.Read))
                 {
                     fs.Seek(0, SeekOrigin.Begin);
                     fs.Read(bytes, 0, (int) resourceIndexFileInfo.Length);
@@ -137,7 +137,7 @@ namespace F4Utils.Resources
                 {
                     bytes = new byte[resourceDataFileInfo.Length];
 
-                    using (var fs = new FileStream(resourceDataFileInfo.FullName, FileMode.Open))
+                    using (var fs = new FileStream(resourceDataFileInfo.FullName, FileMode.Open, FileAccess.Read))
                     {
                         fs.Seek(0, SeekOrigin.Begin);
                         fs.Read(bytes, 0, (int) resourceDataFileInfo.Length);

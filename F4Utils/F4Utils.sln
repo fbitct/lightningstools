@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.MacroProgramming", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.SimSupport", "..\Common\SimSupport\Common.SimSupport.csproj", "{275C5E8D-A56A-45D2-8F70-93B0797C2E7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.UI", "..\Common\UI\Common.UI.csproj", "{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -133,6 +135,10 @@ Global
 		{275C5E8D-A56A-45D2-8F70-93B0797C2E7B}.Debug|x86.Build.0 = Debug|x86
 		{275C5E8D-A56A-45D2-8F70-93B0797C2E7B}.Release|x86.ActiveCfg = Release|x86
 		{275C5E8D-A56A-45D2-8F70-93B0797C2E7B}.Release|x86.Build.0 = Release|x86
+		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08}.Debug|x86.ActiveCfg = Debug|x86
+		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08}.Debug|x86.Build.0 = Debug|x86
+		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08}.Release|x86.ActiveCfg = Release|x86
+		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,5 +157,6 @@ Global
 		{188090E9-8B00-457B-85EB-F48BCDD94B0B} = {DD75B5C3-A1EF-49AE-A1EF-26CD2668E25A}
 		{320431C6-2454-4D95-8D3C-D27C8E2288E9} = {DD75B5C3-A1EF-49AE-A1EF-26CD2668E25A}
 		{275C5E8D-A56A-45D2-8F70-93B0797C2E7B} = {DD75B5C3-A1EF-49AE-A1EF-26CD2668E25A}
+		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08} = {DD75B5C3-A1EF-49AE-A1EF-26CD2668E25A}
 	EndGlobalSection
 EndGlobal

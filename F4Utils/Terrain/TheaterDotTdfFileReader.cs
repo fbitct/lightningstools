@@ -26,7 +26,7 @@ namespace F4Utils.Terrain
             if (!basePathFI.Exists) return null;
 
             var toReturn = new TheaterDotTdfFileInfo();
-            using (var fs = new FileStream(path, FileMode.Open))
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (var sw = new StreamReader(fs))
             {
                 while (!sw.EndOfStream)

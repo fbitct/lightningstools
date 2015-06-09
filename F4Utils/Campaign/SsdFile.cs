@@ -14,7 +14,7 @@ namespace F4Utils.Campaign
         private SquadronStoresDataType[] LoadSquadronStoresData(string fileName)
         {
             //reads SSD file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream))
             {
                 var entries = reader.ReadInt16();

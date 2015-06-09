@@ -474,11 +474,11 @@ namespace F16CPD.SimSupport.Falcon4
             }
         }
 
-        private void UpdateAltitudeAGL(FlightData flightData, F4SharedMem.FlightData fromFalcon)
+        private void UpdateAltitudeAGL(FlightData flightData, F4SharedMem.FlightData fromFalcon, uint lod=2)
         {
             try
             {
-                float terrainHeight = _terrainDB.CalculateTerrainHeight(fromFalcon.x, fromFalcon.y);
+                float terrainHeight = _terrainDB.CalculateTerrainHeight(fromFalcon.x, fromFalcon.y, lod);
                 float agl = -fromFalcon.z - terrainHeight;
 
                 //reset AGL altitude to zero if we're on the ground
@@ -654,7 +654,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (_terrainDB == null)
             {
-                _terrainDB = _terrainDBFactory.Create(true);
+                _terrainDB = _terrainDBFactory.Create(false);
             }
         }
 

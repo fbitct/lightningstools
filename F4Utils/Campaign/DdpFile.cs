@@ -14,7 +14,7 @@ namespace F4Utils.Campaign
         private DirtyDataClassType[] LoadDirtyData(string fileName)
         {
             //reads DDP file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream))
             {
                 var entries = reader.ReadInt16();
