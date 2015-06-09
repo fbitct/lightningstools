@@ -3,27 +3,32 @@ using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {
-    public interface IColumnAndRowElevationPostRecordRetriever
+    internal interface IColumnAndRowElevationPostRecordRetriever
     {
-        TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod, TerrainDB terrainDB);
+        TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod);
     }
-    public class ColumnAndRowElevationPostRecordRetriever:IColumnAndRowElevationPostRecordRetriever
+    internal class ColumnAndRowElevationPostRecordRetriever:IColumnAndRowElevationPostRecordRetriever
     {
+        private readonly TerrainDB _terrainDB;
         private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
-        public ColumnAndRowElevationPostRecordRetriever(IElevationPostCoordinateClamper elevationPostCoordinateClamper = null)
+
+        public ColumnAndRowElevationPostRecordRetriever(
+            TerrainDB terrainDB, 
+            IElevationPostCoordinateClamper elevationPostCoordinateClamper = null)
         {
-            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
+            _terrainDB = terrainDB;
+            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper(_terrainDB);
         }
-        public TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod, TerrainDB terrainDB)
+        public TheaterDotLxFileRecord GetElevationPostRecordByColumnAndRow(int postColumn, int postRow, uint lod)
         {
-            if (terrainDB == null || terrainDB.TheaterDotLxFiles == null)
+            if (_terrainDB == null || _terrainDB.TheaterDotLxFiles == null)
             {
                 return null;
             }
-            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
-            var mapInfo = terrainDB.TheaterDotMap;
+            var lodInfo = _terrainDB.TheaterDotLxFiles[lod];
+            var mapInfo = _terrainDB.TheaterDotMap;
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref postColumn, ref postRow, lodInfo.LoDLevel, terrainDB);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref postColumn, ref postRow, lodInfo.LoDLevel);
             var blockRow = (int)Math.Floor((postRow / (float)postsAcross));
             var blockCol = (int)Math.Floor((postColumn / (float)postsAcross));
             var oIndex = (int)(blockRow * mapInfo.LODMapHeights[lodInfo.LoDLevel]) + blockCol;

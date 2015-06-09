@@ -1,44 +1,51 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace F4Utils.Terrain
 {
-    public interface ITerrainTextureByTextureIdRetriever
+    internal interface ITerrainTextureByTextureIdRetriever
     {
-        Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod, TerrainDB terrainDB);
+        Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod);
     }
-    public class TerrainTextureByTextureIdRetriever:ITerrainTextureByTextureIdRetriever
+    internal class TerrainTextureByTextureIdRetriever:ITerrainTextureByTextureIdRetriever
     {
         private readonly INearTileTextureLoader _nearTileTextureLoader;
         private readonly IFarTileTextureRetriever _farTileTextureRetriever;
-        public TerrainTextureByTextureIdRetriever(INearTileTextureLoader nearTileTextureLoader = null, IFarTileTextureRetriever farTileTextureRetriever = null)
+        private readonly Dictionary<uint, Bitmap> _nearTileTextures = new Dictionary<uint, Bitmap>();
+        private readonly TerrainDB _terrainDB;
+        public TerrainTextureByTextureIdRetriever(
+            TerrainDB terrainDB, 
+            INearTileTextureLoader nearTileTextureLoader = null, 
+            IFarTileTextureRetriever farTileTextureRetriever = null)
         {
-            _nearTileTextureLoader = nearTileTextureLoader ?? new NearTileTextureLoader();
-            _farTileTextureRetriever = farTileTextureRetriever ?? new FarTileTextureRetriever();
+            _terrainDB = terrainDB;
+            _nearTileTextureLoader = nearTileTextureLoader ?? new NearTileTextureLoader(_terrainDB);
+            _farTileTextureRetriever = farTileTextureRetriever ?? new FarTileTextureRetriever(_terrainDB);
         }
-        public Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod, TerrainDB terrainDB)
+        public Bitmap GetTerrainTextureByTextureId(uint textureId, uint lod)
         {
-            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
+            var lodInfo = _terrainDB.TheaterDotLxFiles[lod];
             Bitmap toReturn = null;
 
-            if (lod <= terrainDB.TheaterDotMap.LastNearTiledLOD)
+            if (lod <= _terrainDB.TheaterDotMap.LastNearTiledLOD)
             {
-                var textureBinInfo = terrainDB.TextureDotBin;
+                var textureBinInfo = _terrainDB.TextureDotBin;
                 textureId -= lodInfo.minTexOffset;
-                if (terrainDB.NearTileTextures.ContainsKey(textureId)) return terrainDB.NearTileTextures[textureId];
+                if (_nearTileTextures.ContainsKey(textureId)) return _nearTileTextures[textureId];
 
                 var setNum = textureId / Constants.NUM_TEXTURES_PER_SET;
                 var tileNum = textureId % Constants.NUM_TEXTURES_PER_SET;
                 var thisSet = textureBinInfo.setRecords[setNum];
                 var tileName = thisSet.tileRecords[tileNum].tileName;
-                toReturn = _nearTileTextureLoader.LoadNearTileTexture(tileName, terrainDB);
+                toReturn = _nearTileTextureLoader.LoadNearTileTexture(tileName);
                 if (toReturn != null)
                 {
-                    terrainDB.NearTileTextures.Add(textureId, toReturn);
+                    _nearTileTextures.Add(textureId, toReturn);
                 }
             }
-            else if (lod <= terrainDB.TheaterDotMap.LastFarTiledLOD)
+            else if (lod <= _terrainDB.TheaterDotMap.LastFarTiledLOD)
             {
-                toReturn = _farTileTextureRetriever.GetFarTileTexture(textureId, terrainDB);
+                toReturn = _farTileTextureRetriever.GetFarTileTexture(textureId);
             }
             return toReturn;
         }

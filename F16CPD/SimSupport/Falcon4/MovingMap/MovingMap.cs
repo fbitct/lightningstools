@@ -23,8 +23,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal class MovingMap : IMovingMap
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MovingMap));
-        private readonly IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever;
-        private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         private readonly object _mapImageLock = new object();
         private bool _isDisposed;
         private float _lastMapScale;
@@ -40,8 +38,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         private readonly IMovingMapCanvasPreparer _movingMapCanvasPreparer;
         public MovingMap( 
             TerrainDB terrainDB, 
-            IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever = null,
-            IElevationPostCoordinateClamper elevationPostCoordinateClamper = null,
             IMapTextureRenderer mapTextureRenderer=null,
             IMapLoadingMessageRenderer mapLoadingMessageRenderer = null,
             IMapRingRenderer mapRingRenderer=null,
@@ -49,9 +45,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             IMovingMapCanvasPreparer movingMapCanvasPreparer=null)
         {
             _terrainDB = terrainDB;
-            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
-            _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever ?? new DetailTextureForElevationPostRetriever();
-            _mapTextureRenderer = mapTextureRenderer ?? new MapTextureRenderer(terrainDB, detailTextureForElevationPostRetriever);
+            _mapTextureRenderer = mapTextureRenderer ?? new MapTextureRenderer(terrainDB);
             _mapLoadingMessageRenderer = mapLoadingMessageRenderer ?? new MapLoadingMessageRenderer();
             _mapRingRenderer = mapRingRenderer ?? new MapRingRenderer();
             _centerAirplaneRenderer = centerAirplaneRenderer ?? new CenterAirplaneRenderer();
@@ -178,8 +172,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 }
                 else
                 {
-                    var sample = _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost(0, 0, lod,
-                        _terrainDB);
+                    var sample = _terrainDB.GetDetailTextureForElevationPost(0, 0, lod);
                     thisLodDetailTextureWidthPixels = sample != null ? sample.Width : 1;
                 }
             }
@@ -224,10 +217,8 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             var clampRightXPost = rightXPost;
             var clampTopYPost = topYPost;
             var clampBottomYPost = bottomYPost;
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref clampLeftXPost, ref clampTopYPost, lod,
-                _terrainDB);
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref clampRightXPost, ref clampBottomYPost, lod,
-                _terrainDB);
+            _terrainDB.ClampElevationPostCoordinates(ref clampLeftXPost, ref clampTopYPost, lod);
+            _terrainDB.ClampElevationPostCoordinates(ref clampRightXPost, ref clampBottomYPost, lod);
 
             //now store those boundaries in a Size object for convenience
             var elevationPostsToRenderBoundsSize = new Size((Math.Abs(rightXPost - leftXPost)),

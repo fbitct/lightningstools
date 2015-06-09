@@ -52,7 +52,6 @@
     <Compile Include="DetailTextureForElevationPostRetriever.cs" />
     <Compile Include="DistanceBetweenElevationPostsCalculator.cs" />
     <Compile Include="ElevationPostCoordinateClamper.cs" />
-    <Compile Include="FarTileBackgroundLoader.cs" />
     <Compile Include="FarTilesDotPalFileReader.cs" />
     <Compile Include="FarTileTextureRetriever.cs" />
     <Compile Include="LatLongCalculator.cs" />

@@ -4,7 +4,7 @@ using Common.Serialization;
 namespace F4Utils.Terrain
 {
     [Serializable]
-    public class LodTextureKey
+    internal class LodTextureKey
     {
         public uint Lod;
         public uint chunkXIndex;

@@ -12,23 +12,20 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
 
     internal class MapTextureRenderer : IMapTextureRenderer
     {
-        private readonly IDetailTextureForElevationPostRetriever _detailTextureForElevationPostRetriever;
         private readonly TerrainDB _terrainDB;
 
         public MapTextureRenderer(
-            TerrainDB terrainDB,
-            IDetailTextureForElevationPostRetriever detailTextureForElevationPostRetriever=null 
+            TerrainDB terrainDB
             )
         {
             _terrainDB = terrainDB;
-            _detailTextureForElevationPostRetriever = detailTextureForElevationPostRetriever ?? new DetailTextureForElevationPostRetriever();
         }
 
         public void RenderMapTextureForCurrentElevationPost(uint lod, int detailTextureWidthPixels,
             int mapBoundsLeftX, int mapBoundsTopY, Graphics h, int y, int x)
         {
             //retrieve the detail texture corresponding to the current elevation post offset 
-            var detailTexture = _detailTextureForElevationPostRetriever.GetDetailTextureForElevationPost (x, y, lod, _terrainDB);
+            var detailTexture = _terrainDB.GetDetailTextureForElevationPost (x, y, lod);
             if (detailTexture == null) return;
            
             //now draw the detail texture onto the render target

@@ -1,34 +1,39 @@
 ﻿using System.Drawing;
 using Common.Imaging;
+using System.Collections.Generic;
 
 namespace F4Utils.Terrain
 {
-    public interface IDetailTextureForElevationPostRetriever
+    internal interface IDetailTextureForElevationPostRetriever
     {
-        Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod, TerrainDB terrainDB);
+        Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod);
     }
-    public class DetailTextureForElevationPostRetriever:IDetailTextureForElevationPostRetriever
+    internal class DetailTextureForElevationPostRetriever:IDetailTextureForElevationPostRetriever
     {
         private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         private readonly ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever;
         private readonly IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRetriever;
+        private readonly TerrainDB _terrainDB;
+        private readonly Dictionary<LodTextureKey, Bitmap> _elevationPostTextures = new Dictionary<LodTextureKey, Bitmap>();
         public DetailTextureForElevationPostRetriever(
-            IElevationPostCoordinateClamper elevationPostCoordinateClamper=null,
-            ITerrainTextureByTextureIdRetriever terrainTextureByTextureIdRetriever=null,
-            IColumnAndRowElevationPostRecordRetriever columnAndRowElevationPostRetriever=null
+            TerrainDB terrainDB,
+            IElevationPostCoordinateClamper elevationPostCoordinateClamper = null,
+            ITerrainTextureByTextureIdRetriever terrainTextureByTextureIdRetriever = null,
+            IColumnAndRowElevationPostRecordRetriever columnAndRowElevationPostRetriever = null
             )
         {
-            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
-            _terrainTextureByTextureIdRetriever = terrainTextureByTextureIdRetriever ?? new TerrainTextureByTextureIdRetriever();
-            _columnAndRowElevationPostRetriever = columnAndRowElevationPostRetriever ?? new ColumnAndRowElevationPostRecordRetriever();
+            _terrainDB = terrainDB;
+            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper(_terrainDB);
+            _terrainTextureByTextureIdRetriever = terrainTextureByTextureIdRetriever ?? new TerrainTextureByTextureIdRetriever(_terrainDB);
+            _columnAndRowElevationPostRetriever = columnAndRowElevationPostRetriever ?? new ColumnAndRowElevationPostRecordRetriever(_terrainDB, _elevationPostCoordinateClamper);
         }
-        public Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod, TerrainDB terrainDB)
+        public Bitmap GetDetailTextureForElevationPost(int postCol, int postRow, uint lod)
         {
            
             var col = postCol;
             var row = postRow;
 
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref col, ref row, lod, terrainDB);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref col, ref row, lod);
             if (postCol != col || postRow != row)
             {
                 col = 0;
@@ -36,13 +41,13 @@ namespace F4Utils.Terrain
             }
 
 
-            var lRecord = _columnAndRowElevationPostRetriever.GetElevationPostRecordByColumnAndRow(col, row, lod, terrainDB);
+            var lRecord = _columnAndRowElevationPostRetriever.GetElevationPostRecordByColumnAndRow(col, row, lod);
 
             var textureId = lRecord.TextureId;
-            var bigTexture = _terrainTextureByTextureIdRetriever.GetTerrainTextureByTextureId(textureId, lod, terrainDB);
+            var bigTexture = _terrainTextureByTextureIdRetriever.GetTerrainTextureByTextureId(textureId, lod);
 
             Bitmap toReturn;
-            if (lod <= terrainDB.TheaterDotMap.LastNearTiledLOD)
+            if (lod <= _terrainDB.TheaterDotMap.LastNearTiledLOD)
             {
                 var chunksWide = 4 >> (int)lod;
                 var thisChunkXIndex = (uint)(col % chunksWide);
@@ -55,9 +60,9 @@ namespace F4Utils.Terrain
                     chunkXIndex = thisChunkXIndex,
                     chunkYIndex = thisChunkYIndex
                 };
-                if (terrainDB.ElevationPostTextures.ContainsKey(key))
+                if (_elevationPostTextures.ContainsKey(key))
                 {
-                    toReturn = terrainDB.ElevationPostTextures[key];
+                    toReturn = _elevationPostTextures[key];
                 }
                 else
                 {
@@ -69,7 +74,7 @@ namespace F4Utils.Terrain
                     var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
 
                     toReturn = (Bitmap)Util.CropBitmap(bigTexture, sourceRect);
-                    terrainDB.ElevationPostTextures.Add(key, toReturn);
+                    _elevationPostTextures.Add(key, toReturn);
                 }
             }
             else

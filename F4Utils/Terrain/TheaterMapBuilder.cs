@@ -1,18 +1,34 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace F4Utils.Terrain
 {
-    public interface ITheaterMapBuilder
+    internal interface ITheaterMapBuilder
     {
-        Bitmap GetTheaterMap(uint lod, TerrainDB terrainDB);
+        Bitmap GetTheaterMap(uint lod);
     }
-    public class TheaterMapBuilder:ITheaterMapBuilder
+    internal class TheaterMapBuilder:ITheaterMapBuilder
     {
-        public unsafe Bitmap GetTheaterMap(uint lod, TerrainDB terrainDB)
+        private readonly TerrainDB _terrainDB;
+        private readonly Dictionary<uint, Bitmap> _theaterMaps = new Dictionary<uint, Bitmap>();
+        public TheaterMapBuilder(TerrainDB terrainDB)
         {
-            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
-            var mapInfo = terrainDB.TheaterDotMap;
+            _terrainDB = terrainDB;
+        }
+        public unsafe Bitmap GetTheaterMap(uint lod)
+        {
+            if (!_theaterMaps.ContainsKey(lod))
+            {
+                var thisMap = BuildTheaterMap(lod);
+                _theaterMaps[lod] = thisMap;
+            }
+            return _theaterMaps[lod];
+        }
+        public unsafe Bitmap BuildTheaterMap(uint lod)
+        {
+            var lodInfo = _terrainDB.TheaterDotLxFiles[lod];
+            var mapInfo = _terrainDB.TheaterDotMap;
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             var bmp = new Bitmap((int)mapInfo.LODMapWidths[lodInfo.LoDLevel] * postsAcross,
                                  (int)mapInfo.LODMapHeights[lodInfo.LoDLevel] * postsAcross,

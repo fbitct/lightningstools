@@ -1,21 +1,26 @@
 ﻿namespace F4Utils.Terrain
 {
-    public interface IElevationPostCoordinateClamper
+    internal interface IElevationPostCoordinateClamper
     {
-        void ClampElevationPostCoordinates(ref int postColumn, ref int postRow, uint lod, TerrainDB terrainDB);
+        void ClampElevationPostCoordinates(ref int postColumn, ref int postRow, uint lod);
     }
-    public class ElevationPostCoordinateClamper:IElevationPostCoordinateClamper
+    internal class ElevationPostCoordinateClamper:IElevationPostCoordinateClamper
     {
-        public void ClampElevationPostCoordinates(ref int postColumn, ref int postRow, uint lod, TerrainDB terrainDB)
+        private readonly TerrainDB _terrainDB;
+        public ElevationPostCoordinateClamper(TerrainDB terrainDB)
         {
-            if (terrainDB == null ||  terrainDB.TheaterDotLxFiles == null)
+            _terrainDB = terrainDB;
+        }
+        public void ClampElevationPostCoordinates(ref int postColumn, ref int postRow, uint lod)
+        {
+            if (_terrainDB == null ||  _terrainDB.TheaterDotLxFiles == null)
             {
                 postColumn = 0;
                 postRow = 0;
                 return;
             }
-            var mapInfo = terrainDB.TheaterDotMap;
-            var lodInfo = terrainDB.TheaterDotLxFiles[lod];
+            var mapInfo = _terrainDB.TheaterDotMap;
+            var lodInfo = _terrainDB.TheaterDotLxFiles[lod];
 
             const int postsAcross = Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             if (postColumn < 0) postColumn = 0;

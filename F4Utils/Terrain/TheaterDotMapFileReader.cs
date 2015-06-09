@@ -9,7 +9,7 @@ namespace F4Utils.Terrain
     {
         TheaterDotMapFileInfo ReadTheaterDotMapFile(string theaterDotMapFilePath);
     }
-    class TheaterDotMapFileReader:ITheaterDotMapFileReader
+    internal class TheaterDotMapFileReader:ITheaterDotMapFileReader
     {
         public TheaterDotMapFileInfo ReadTheaterDotMapFile(string theaterDotMapFilePath)
         {

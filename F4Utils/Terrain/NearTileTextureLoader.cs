@@ -8,23 +8,27 @@ using Util = Common.Compression.Zip.Util;
 
 namespace F4Utils.Terrain
 {
-    public interface INearTileTextureLoader
+    internal interface INearTileTextureLoader
     {
-        Bitmap LoadNearTileTexture(string tileName, TerrainDB terrainDB);
+        Bitmap LoadNearTileTexture(string tileName);
     }
-    public class NearTileTextureLoader:INearTileTextureLoader
+    internal class NearTileTextureLoader:INearTileTextureLoader
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(NearTileTextureLoader));
-
-        public Bitmap LoadNearTileTexture(string tileName, TerrainDB terrainDB)
+        private readonly TerrainDB _terrainDB;
+        public NearTileTextureLoader(TerrainDB terrainDB)
+        {
+            _terrainDB = terrainDB;
+        }
+        public Bitmap LoadNearTileTexture(string tileName)
         {
             Bitmap toReturn;
-            var tileFullPath = Path.Combine(terrainDB.CurrentTheaterTextureBaseFolderPath, tileName);
+            var tileFullPath = Path.Combine(_terrainDB.CurrentTheaterTextureBaseFolderPath, tileName);
 
             var tileInfo = new FileInfo(tileFullPath);
             if (string.Equals(tileInfo.Extension, ".PCX", StringComparison.InvariantCultureIgnoreCase))
             {
-                tileFullPath = Path.Combine(Path.Combine(terrainDB.CurrentTheaterTextureBaseFolderPath, "texture"),
+                tileFullPath = Path.Combine(Path.Combine(_terrainDB.CurrentTheaterTextureBaseFolderPath, "texture"),
                                             Path.GetFileNameWithoutExtension(tileInfo.Name) + ".DDS");
                 tileInfo = new FileInfo(tileFullPath);
             }
@@ -41,18 +45,9 @@ namespace F4Utils.Terrain
                 }
             }
 
-
-            if (terrainDB.TextureZipFile == null)
-            {
-                terrainDB.TextureZipFile = new ZipFile(terrainDB.CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "texture.zip");
-            }
-            if (terrainDB.TextureDotZipFileEntries == null || terrainDB.TextureDotZipFileEntries.Count == 0)
-            {
-                terrainDB.TextureDotZipFileEntries = Util.GetZipFileEntries(terrainDB.TextureZipFile);
-            }
-            if (!terrainDB.TextureDotZipFileEntries.ContainsKey(tileName.ToLowerInvariant())) return null;
-            var thisEntry = terrainDB.TextureDotZipFileEntries[tileName.ToLowerInvariant()];
-            using (var zipStream = terrainDB.TextureZipFile.GetInputStream(thisEntry))
+            if (!_terrainDB.TextureDotZipFileEntries.ContainsKey(tileName.ToLowerInvariant())) return null;
+            var thisEntry = _terrainDB.TextureDotZipFileEntries[tileName.ToLowerInvariant()];
+            using (var zipStream = _terrainDB.TextureZipFile.GetInputStream(thisEntry))
             {
                 var rawBytes = new byte[zipStream.Length];
                 zipStream.Read(rawBytes, 0, rawBytes.Length);

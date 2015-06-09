@@ -9,7 +9,7 @@ namespace F4Utils.Terrain
     {
         FarTilesDotPalFileInfo ReadFarTilesDotPalFile(string farTilesDotPalFilePath);
     }
-    class FarTilesDotPalFileReader:IFarTilesDotPalFileReader
+    internal class FarTilesDotPalFileReader:IFarTilesDotPalFileReader
     {
         public FarTilesDotPalFileInfo ReadFarTilesDotPalFile(string farTilesDotPalFilePath)
         {

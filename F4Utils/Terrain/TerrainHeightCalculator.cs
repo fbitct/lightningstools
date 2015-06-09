@@ -1,43 +1,46 @@
 ﻿namespace F4Utils.Terrain
 {
-    public interface ITerrainHeightCalculator
+    internal interface ITerrainHeightCalculator
     {
-        float CalculateTerrainHeight(float feetNorth, float feetEast, TerrainDB terrainDB);
+        float CalculateTerrainHeight(float feetNorth, float feetEast);
     }
-    public class TerrainHeightCalculator:ITerrainHeightCalculator
+    internal class TerrainHeightCalculator:ITerrainHeightCalculator
     {
+        private readonly TerrainDB _terrainDB;
         private readonly IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRecordRetriever;
         private readonly IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
         private readonly INearestElevationPostColumnAndRowCalculator _nearestElevationPostColumnAndRowCalculator;
         internal TerrainHeightCalculator(
+            TerrainDB terrainDB,
             IColumnAndRowElevationPostRecordRetriever columnAndRowElevationPostRecordRetriever = null,
             IDistanceBetweenElevationPostsCalculator distanceBetweenElevationPostsCalculator = null,
             INearestElevationPostColumnAndRowCalculator nearestElevationPostColumnAndRowCalculator=null)
         {
-            _columnAndRowElevationPostRecordRetriever = columnAndRowElevationPostRecordRetriever ?? new ColumnAndRowElevationPostRecordRetriever();
-            _distanceBetweenElevationPostsCalculator = distanceBetweenElevationPostsCalculator ?? new DistanceBetweenElevationPostsCalculator();
-            _nearestElevationPostColumnAndRowCalculator = nearestElevationPostColumnAndRowCalculator ?? new NearestElevationPostColumnAndRowCalculator();
+            _terrainDB = terrainDB;
+            _columnAndRowElevationPostRecordRetriever = columnAndRowElevationPostRecordRetriever ?? new ColumnAndRowElevationPostRecordRetriever(_terrainDB);
+            _distanceBetweenElevationPostsCalculator = distanceBetweenElevationPostsCalculator ?? new DistanceBetweenElevationPostsCalculator(_terrainDB);
+            _nearestElevationPostColumnAndRowCalculator = nearestElevationPostColumnAndRowCalculator ?? new NearestElevationPostColumnAndRowCalculator(_terrainDB);
         }
         public TerrainHeightCalculator()
             : this(null, null, null)
         {
 
         }
-        public float CalculateTerrainHeight(float feetNorth, float feetEast, TerrainDB terrainDB)
+        public float CalculateTerrainHeight(float feetNorth, float feetEast)
         {
             int col;
             int row;
 
-            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(0, terrainDB);
+            var feetAcross = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(0);
 
             //determine the column and row in the DTED matrix where the nearest elevation post can be found
-            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row, terrainDB);
+            _nearestElevationPostColumnAndRowCalculator.GetNearestElevationPostColumnAndRowForNorthEastCoordinates(feetNorth, feetEast, out col, out row);
 
             //retrieve the 4 elevation posts which form a box around our current position (origin point x=0,y=0 is in lower left)
-            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, 0, terrainDB);
-            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, 0, terrainDB);
-            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, 0,terrainDB);
-            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, 0, terrainDB);
+            var Q11 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row, 0);
+            var Q21 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row, 0);
+            var Q22 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col + 1, row + 1, 0);
+            var Q12 = _columnAndRowElevationPostRecordRetriever.GetElevationPostRecordByColumnAndRow(col, row + 1, 0);
 
             if (Q11 == null || Q21 == null || Q22 == null || Q12 == null)
             {

@@ -4,26 +4,28 @@ namespace F4Utils.Terrain
 {
     internal interface INearestElevationPostColumnAndRowCalculator
     {
-        void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row, TerrainDB terrainDB);
+        void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row);
     }
-    class NearestElevationPostColumnAndRowCalculator:INearestElevationPostColumnAndRowCalculator
+    internal class NearestElevationPostColumnAndRowCalculator:INearestElevationPostColumnAndRowCalculator
     {
+        private readonly TerrainDB _terrainDB;
         private readonly IDistanceBetweenElevationPostsCalculator _distanceBetweenElevationPostsCalculator;
         private readonly IElevationPostCoordinateClamper _elevationPostCoordinateClamper;
         public NearestElevationPostColumnAndRowCalculator(
+            TerrainDB terrainDB,
             IDistanceBetweenElevationPostsCalculator distanceBetweenElevationPostsCalculator = null,
             IElevationPostCoordinateClamper elevationPostCoordinateClamper = null) {
-            _distanceBetweenElevationPostsCalculator = distanceBetweenElevationPostsCalculator ?? new DistanceBetweenElevationPostsCalculator();
-            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper();
+                _terrainDB = terrainDB;
+            _distanceBetweenElevationPostsCalculator = distanceBetweenElevationPostsCalculator ?? new DistanceBetweenElevationPostsCalculator(_terrainDB);
+            _elevationPostCoordinateClamper = elevationPostCoordinateClamper ?? new ElevationPostCoordinateClamper(_terrainDB);
         }
-        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast,
-                                                                               out int col, out int row, TerrainDB terrainDB)
+        public void GetNearestElevationPostColumnAndRowForNorthEastCoordinates(float feetNorth, float feetEast, out int col, out int row)
         {
             const int lod = 0;
-            var feetBetweenElevationPosts = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod, terrainDB);
+            var feetBetweenElevationPosts = _distanceBetweenElevationPostsCalculator.GetNumFeetBetweenElevationPosts(lod);
             col = (int)Math.Floor(feetEast / feetBetweenElevationPosts);
             row = (int)Math.Floor(feetNorth / feetBetweenElevationPosts);
-            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref row, ref col, lod, terrainDB);
+            _elevationPostCoordinateClamper.ClampElevationPostCoordinates(ref row, ref col, lod);
         }
     }
 }

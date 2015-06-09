@@ -13,13 +13,9 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal class MovingMapCanvasPreparer : IMovingMapCanvasPreparer
     {
         private readonly TerrainDB _terrainDB;
-        private readonly ITheaterMapBuilder _theaterMapBuilder;
-        public MovingMapCanvasPreparer(
-            TerrainDB terrainDB,
-            ITheaterMapBuilder theaterMapBuilder=null)
+        public MovingMapCanvasPreparer(TerrainDB terrainDB)
         {
             _terrainDB = terrainDB;
-            _theaterMapBuilder = theaterMapBuilder ?? new TheaterMapBuilder();
         }
 
         public void PrepareCanvas(float magneticHeadingInDecimalDegrees, MapRotationMode rotationMode, Graphics h,
@@ -34,7 +30,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             h.ScaleTransform(toScale, toScale);
             h.TranslateTransform(-xOffset, -yOffset);
 
-            var crapMap = _theaterMapBuilder.GetTheaterMap(_terrainDB.TheaterDotMap.NumLODs - 1, _terrainDB);
+            var crapMap = _terrainDB.GetTheaterMapImage(_terrainDB.TheaterDotMap.NumLODs - 1);
             if (crapMap != null)
             {
                 h.Clear(crapMap.GetPixel(crapMap.Width - 1, crapMap.Height - 1));

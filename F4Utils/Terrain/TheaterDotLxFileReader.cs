@@ -9,7 +9,7 @@ namespace F4Utils.Terrain
     {
         TheaterDotLxFileInfo LoadTheaterDotLxFile(uint lodLevel, string theaterDotMapFilePath);
     }
-    class TheaterDotLxFileReader:ITheaterDotLxFileReader
+    internal class TheaterDotLxFileReader:ITheaterDotLxFileReader
     {
         public TheaterDotLxFileInfo LoadTheaterDotLxFile(uint lodLevel, string theaterDotMapFilePath)
         {

@@ -2,21 +2,26 @@
 
 namespace F4Utils.Terrain
 {
-    public interface ILatLongCalculator
+    internal interface ILatLongCalculator
     {
-        void CalculateLatLong(float baseLat, float baseLong, float feetNorth, float feetEast, out int latitudeWholeDegrees,
+        void CalculateLatLong(float feetNorth, float feetEast, out int latitudeWholeDegrees,
                                     out float latitudeFractionalMinutes, out int longitudeWholeDegrees,
                                     out float longitudeFactionalMinutes);
     }
-    public class LatLongCalculator:ILatLongCalculator
+    internal class LatLongCalculator:ILatLongCalculator
     {
-        public void CalculateLatLong(float baseLat, float baseLong, float feetNorth, float feetEast, out int latitudeWholeDegrees,
+        private readonly TerrainDB _terrainDB;
+        public LatLongCalculator(TerrainDB terrainDB)
+        {
+            _terrainDB = terrainDB;
+        }
+        public void CalculateLatLong( float feetNorth, float feetEast, out int latitudeWholeDegrees,
                                     out float latitudeFractionalMinutes, out int longitudeWholeDegrees,
                                     out float longitudeFactionalMinutes)
         {
            
-            var theatreOriginLatitudeInDegrees = baseLat;
-            var theatreOriginLongitudeInDegrees = baseLong;
+            var theatreOriginLatitudeInDegrees = _terrainDB.TheaterDotMap.baseLat;
+            var theatreOriginLongitudeInDegrees = _terrainDB.TheaterDotMap.baseLong;
             const float earthEquatorialRadiusInFeet = 2.09257E7F;
             const float feetPerMinuteOfLatLongAtEquator = 6087.03141F;
             const float feetPerDegreeOfLatLongAtEquator = feetPerMinuteOfLatLongAtEquator * 60.0F;

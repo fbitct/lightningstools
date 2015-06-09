@@ -1052,7 +1052,7 @@ namespace F4Utils.SimSupport
                             string callsign = null;
                             if (_lastFlightData.pilotsCallsign != null && ((Signal)output).Index.Value <= _lastFlightData.pilotsOnline)
                             {
-                                callsign = (_lastFlightData.pilotsCallsign[((Signal)output).Index.Value] ?? string.Empty).TrimEnd();
+                                callsign = (_lastFlightData.pilotsCallsign[((Signal)output).Index.Value] ?? string.Empty).TrimEnd('\0');
                             }
                             else
                             {

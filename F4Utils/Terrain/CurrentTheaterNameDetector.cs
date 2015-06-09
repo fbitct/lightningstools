@@ -6,18 +6,16 @@ using Microsoft.Win32;
 
 namespace F4Utils.Terrain
 {
-    public interface ICurrentTheaterNameDetector
+    internal interface ICurrentTheaterNameDetector
     {
-        string DetectCurrentTheaterName();
+        string DetectCurrentTheaterName(string exePath);
     }
-    public class CurrentTheaterNameDetector : ICurrentTheaterNameDetector
+    internal class CurrentTheaterNameDetector : ICurrentTheaterNameDetector
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(CurrentTheaterNameDetector));
-        public string DetectCurrentTheaterName()
+        public string DetectCurrentTheaterName(string exePath)
         {
             string theaterName = null;
-            var exePath = Util.GetFalconExePath();
-
            
             try
             {

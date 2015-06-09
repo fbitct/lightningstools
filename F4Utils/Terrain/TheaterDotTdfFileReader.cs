@@ -5,11 +5,11 @@ using F4Utils.Terrain.Structs;
 
 namespace F4Utils.Terrain
 {
-    public interface ITheaterDotTdfFileReader
+    internal interface ITheaterDotTdfFileReader
     {
         TheaterDotTdfFileInfo ReadTheaterDotTdfFile(string path);
     }
-    public class TheaterDotTdfFileReader:ITheaterDotTdfFileReader
+    internal class TheaterDotTdfFileReader:ITheaterDotTdfFileReader
     {
         private readonly ITokenJoiner _tokenJoiner;
         public TheaterDotTdfFileReader() : this(tokenJoiner:null) { }

@@ -9,7 +9,7 @@ namespace F4Utils.Terrain
     {
         TextureDotBinFileInfo ReadTextureDotBinFile(string textureDotBinFilePath);
     }
-    class TextureDotBinFileReader:ITextureDotBinFileReader
+    internal class TextureDotBinFileReader:ITextureDotBinFileReader
     {
         public TextureDotBinFileInfo ReadTextureDotBinFile(string textureDotBinFilePath)
         {

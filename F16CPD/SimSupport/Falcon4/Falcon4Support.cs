@@ -35,12 +35,10 @@ namespace F16CPD.SimSupport.Falcon4
             new IndicatedRateOfTurnCalculator();
 
         private readonly IInputControlEventHandler _inputControlEventHandler;
-        private readonly ILatLongCalculator _latLongCalculator = new LatLongCalculator();
 
         private readonly MorseCode _morseCodeGenerator;
         private readonly IServerSideInboundMessageProcessor _serverSideInboundMessageProcessor;
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
-        private readonly ITerrainHeightCalculator _terrainHeightCalulator = new TerrainHeightCalculator();
 
         private bool _isDisposed;
         private KeyFile _keyFile;
@@ -480,8 +478,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             try
             {
-                float terrainHeight = _terrainHeightCalulator.CalculateTerrainHeight(fromFalcon.x, fromFalcon.y,
-                    _terrainDB);
+                float terrainHeight = _terrainDB.CalculateTerrainHeight(fromFalcon.x, fromFalcon.y);
                 float agl = -fromFalcon.z - terrainHeight;
 
                 //reset AGL altitude to zero if we're on the ground
@@ -613,7 +610,7 @@ namespace F16CPD.SimSupport.Falcon4
             float latMinutes;
             int longWholeDegrees;
             float longMinutes;
-            _latLongCalculator.CalculateLatLong(_terrainDB.TheaterDotMap.baseLat, _terrainDB.TheaterDotMap.baseLong, fromFalcon.x, fromFalcon.y, out latWholeDegrees,
+            _terrainDB.CalculateLatLong(fromFalcon.x, fromFalcon.y, out latWholeDegrees,
                 out latMinutes,
                 out longWholeDegrees, out longMinutes);
             flightData.LatitudeInDecimalDegrees = latWholeDegrees + (latMinutes/60.0f);
