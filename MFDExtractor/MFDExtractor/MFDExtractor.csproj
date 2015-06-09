@@ -85,14 +85,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BMSSupport\BMSConfigFileReader.cs" />
-    <Compile Include="BMSSupport\BMSRunningExecutableLocator.cs" />
-    <Compile Include="BMSSupport\FlightDataExtensionData.cs" />
-    <Compile Include="BMSSupport\RadarAltitudeCalculator.cs" />
-    <Compile Include="BMSSupport\TexturesSharedMemoryImageCoordinates.cs" />
-    <Compile Include="BMSSupport\DoubleResolutionRTTChecker.cs" />
-    <Compile Include="BMSSupport\ThreeDeeCaptureCoordinateUpdater.cs" />
-    <Compile Include="BMSSupport\ThreeDeeCockpitFileFinder.cs" />
     <Compile Include="Configuration\GdiPlusOptionsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsReader.cs" />
     <Compile Include="Configuration\InstrumentFormSettingsWriter.cs" />

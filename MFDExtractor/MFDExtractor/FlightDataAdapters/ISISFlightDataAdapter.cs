@@ -2,7 +2,7 @@
 using F4SharedMem.Headers;
 using F4Utils.Terrain;
 using LightningGauges.Renderers.F16.ISIS;
-using MFDExtractor.BMSSupport;
+using F4Utils.SimSupport;
 
 namespace MFDExtractor.FlightDataAdapters
 {

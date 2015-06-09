@@ -5,7 +5,7 @@ namespace F4Utils.Terrain
 {
     public interface ICurrentTheaterDotTdfLoader
     {
-        TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string exePath);
+        TheaterDotTdfFileInfo GetCurrentTheaterDotTdf(string bmsBaseDirectory);
     }
     public class CurrentTheaterDotTdfLoader:ICurrentTheaterDotTdfLoader
     {

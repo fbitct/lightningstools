@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Common.InputSupport.DirectInput;
 using F4SharedMem;
 using F4Utils.Process;
-using MFDExtractor.BMSSupport;
+using F4Utils.SimSupport;
 using MFDExtractor.EventSystem;
 using MFDExtractor.Networking;
 using MFDExtractor.Properties;

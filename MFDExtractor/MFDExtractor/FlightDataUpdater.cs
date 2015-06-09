@@ -4,7 +4,7 @@ using Common.Math;
 using Common.Networking;
 using F4SharedMem;
 using F4SharedMem.Headers;
-using MFDExtractor.BMSSupport;
+using F4Utils.SimSupport;
 using MFDExtractor.FlightDataAdapters;
 using F4Utils.Terrain;
 using LightningGauges.Renderers.F16;

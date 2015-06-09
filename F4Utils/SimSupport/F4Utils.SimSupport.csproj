@@ -36,15 +36,24 @@
       <HintPath>..\..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BMSConfigFileReader.cs" />
+    <Compile Include="BMSRunningExecutableLocator.cs" />
     <Compile Include="DEDAlowReader.cs" />
+    <Compile Include="DoubleResolutionRTTChecker.cs" />
     <Compile Include="F4SimOutputs.cs" />
     <Compile Include="F4SimSupportModule.cs" />
+    <Compile Include="FlightDataExtensionData.cs" />
     <Compile Include="IndicatedRateOfTurnCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RadarAltitudeCalculator.cs" />
     <Compile Include="TacanBand.cs" />
     <Compile Include="TacanChannelSource.cs" />
+    <Compile Include="TexturesSharedMemoryImageCoordinates.cs" />
+    <Compile Include="ThreeDeeCaptureCoordinateUpdater.cs" />
+    <Compile Include="ThreeDeeCockpitFileFinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
@@ -59,13 +68,25 @@
       <Project>{275c5e8d-a56a-45d2-8f70-93b0797c2e7b}</Project>
       <Name>Common.SimSupport</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\UI\Common.UI.csproj">
+      <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
+      <Name>Common.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\F4SharedMem\F4SharedMem.csproj">
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>
       <Name>F4SharedMem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Campaign\F4Utils.Campaign.csproj">
+      <Project>{d386ec91-6d89-421f-87bc-4849e0232722}</Project>
+      <Name>F4Utils.Campaign</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Process\F4Utils.Process.csproj">
       <Project>{66242024-b7e5-4f66-ac1a-f0e2f1d70899}</Project>
       <Name>F4Utils.Process</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Terrain\F4Utils.Terrain.csproj">
+      <Project>{305b6164-1c7d-4627-9774-db6bd5cf50e8}</Project>
+      <Name>F4Utils.Terrain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
