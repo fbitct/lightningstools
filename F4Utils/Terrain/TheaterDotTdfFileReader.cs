@@ -91,6 +91,10 @@ namespace F4Utils.Terrain
                         {
                             toReturn.acmiDir = _tokenJoiner.JoinTokens(thisLineTokens, true);
                         }
+                        else if (thisLineTokens[0].ToLower() == "tileset")
+                        {
+                            toReturn.tileset = _tokenJoiner.JoinTokens(thisLineTokens, true);
+                        }
                     }
                 }
             }

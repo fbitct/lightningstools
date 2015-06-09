@@ -40,6 +40,8 @@
     <Reference Include="System.Management" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BMSConfigFileReader.cs" />
+    <Compile Include="BMSRunningExecutableLocator.cs" />
     <Compile Include="CallsignUtils.cs" />
     <Compile Include="KeyFileUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

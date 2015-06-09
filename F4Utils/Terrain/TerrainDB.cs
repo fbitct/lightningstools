@@ -29,6 +29,8 @@ namespace F4Utils.Terrain
         private readonly ITerrainDotBilFileReader _terrainDotBilFileReader;
         private readonly ITerrainDotTidFileReader _terrainDotTidFileReader;
         private readonly ILatLongCalculator _latLongCalculator;
+        private readonly ITileSetConfigValueReader _tileSetConfigValueReader;
+
         private Dictionary<string, ZipEntry> _textureDotZipFileEntries = new Dictionary<string, ZipEntry>();
         private TheaterDotTdfFileInfo _theaterDotTdf;
         private TheaterDotLxFileInfo[] _theaterDotLxFiles;
@@ -38,6 +40,7 @@ namespace F4Utils.Terrain
         private Nullable<TerrainDotTidFileInfo> _terrainDotTid;
         private Nullable<TerrainDotBilFileInfo> _terrainDotBil;
         private ZipFile _textureZipFile;
+        private string _tileSet;
         private bool _loadAllLods;
 
         private TerrainDB() {}
@@ -60,6 +63,7 @@ namespace F4Utils.Terrain
             _nearestElevationPostColumnAndRowCalculator = new NearestElevationPostColumnAndRowCalculator(this, _distanceBetweenElevationPostsCalculator, _elevationPostCoordinateClamper);
             _terrainHeightCalculator = new TerrainHeightCalculator(this, _columnAndRowElevationPostRecordRetriever, _distanceBetweenElevationPostsCalculator, _nearestElevationPostColumnAndRowCalculator);
             _latLongCalculator = new LatLongCalculator(this);
+            _tileSetConfigValueReader = new TileSetConfigValueReader();
         }
 
         public TheaterDotTdfFileInfo TheaterDotTdf
@@ -109,7 +113,19 @@ namespace F4Utils.Terrain
         {
             get
             {
-                return "POLAK";
+                if (_tileSet != null) 
+                { 
+                    return _tileSet; 
+                }
+                if ((TheaterDotTdf != null && !string.IsNullOrWhiteSpace(TheaterDotTdf.tileset)))
+                {
+                    _tileSet = TheaterDotTdf.tileset.Trim();
+                }
+                else
+                {
+                    _tileSet = _tileSetConfigValueReader.TileSetConfigValue;
+                }
+                return _tileSet;
             }
         }
         public FarTilesDotPalFileInfo FarTilesDotPal 

@@ -39,8 +39,6 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BMSConfigFileReader.cs" />
-    <Compile Include="BMSRunningExecutableLocator.cs" />
     <Compile Include="DEDAlowReader.cs" />
     <Compile Include="DoubleResolutionRTTChecker.cs" />
     <Compile Include="F4SimOutputs.cs" />

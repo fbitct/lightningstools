@@ -83,6 +83,7 @@
     <Compile Include="TheaterDotMapFileReader.cs" />
     <Compile Include="TheaterDotTdfFileReader.cs" />
     <Compile Include="TheaterMapBuilder.cs" />
+    <Compile Include="TileSetConfigValueReader.cs" />
     <Compile Include="TokenJoiner.cs" />
   </ItemGroup>
   <ItemGroup>

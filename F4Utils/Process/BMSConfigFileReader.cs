@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace F4Utils.SimSupport
+namespace F4Utils.Process
 {
 	public interface IBMSConfigFileReader
 	{

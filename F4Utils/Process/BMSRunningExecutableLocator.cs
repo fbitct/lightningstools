@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace F4Utils.SimSupport
+namespace F4Utils.Process
 {
 	public interface IBMSRunningExecutableLocator
 	{

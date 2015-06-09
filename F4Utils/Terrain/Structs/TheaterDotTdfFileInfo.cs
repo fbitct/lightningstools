@@ -16,5 +16,6 @@
         public string theaterDesc;
         public string theaterName;
         public string uiSoundDir;
+        public string tileset;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using F4Utils.Process;
+using System.Linq;
 namespace F4Utils.SimSupport
 {
 	public interface IDoubleResolutionRTTChecker
