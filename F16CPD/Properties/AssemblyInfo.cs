@@ -13,5 +13,5 @@ using log4net.Config;
 [assembly: XmlConfigurator]
 [assembly: ComVisible(false)]
 [assembly: Guid("26f076c6-6521-4eb4-ad74-eb259a74dfd5")]
-[assembly: AssemblyVersion("0.5.5.0")]
-[assembly: AssemblyFileVersion("0.5.5.0")]
+[assembly: AssemblyVersion("0.5.6.0")]
+[assembly: AssemblyFileVersion("0.5.6.0")]
