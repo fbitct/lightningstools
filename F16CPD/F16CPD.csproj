@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AltimeterMode.cs" />
+    <Compile Include="AltimeterUnits.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ControlBindingsLoader.cs" />
     <Compile Include="DirectInputEventHandler.cs" />

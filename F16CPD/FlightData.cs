@@ -12,7 +12,7 @@ namespace F16CPD
         private float _altitudeAboveGroundLevelInFeet;
         private float _angleOfAttackInDegrees;
         private int _automaticLowAltitudeWarningInFeet;
-        private float _barometricPressureInInchesOfMercury = 29.92f;
+        private float _barometricPressure = 29.92f;
         private float _betaAngleInDegrees;
         private float _gammaAngleInDegrees;
         private float _hsiBearingToBeaconInDegrees;
@@ -228,18 +228,16 @@ namespace F16CPD
             }
         }
 
-        public float BarometricPressureInDecimalInchesOfMercury
+        public float BarometricPressure
         {
-            get { return _barometricPressureInInchesOfMercury; }
+            get { return _barometricPressure; }
             set
             {
                 if (float.IsInfinity(value) || float.IsNaN(value)) value = 0.0f;
-                if (value < 27.97f) value = 27.97f;
-                if (value > 31.11f) value = 31.11f;
-                _barometricPressureInInchesOfMercury = value;
+                _barometricPressure = value;
             }
         }
-
+        public AltimeterUnits AltimeterUnits { get; set; }
         public float AngleOfAttackInDegrees
         {
             get { return _angleOfAttackInDegrees; }

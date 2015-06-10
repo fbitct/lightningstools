@@ -7,11 +7,9 @@ namespace F16CPD.FlightInstruments.Pfd
 {
     internal class AltitudeTapeRenderer
     {
-        private const float BARO_CHANGE_PER_THOUSAND_FEET = 1.08f;
-
         internal static void DrawAltitudeTape(Graphics g, 
-            float trueAltitudeAboveMeanSeaLevelInDecimalFeet, float indicatedAltitudeAboveMeanSeaLevelInDecimalFeet,
-            float barometricPressureInDecimalInchesOfMercury, float altitudeIndexInFeet)
+             float indicatedAltitudeAboveMeanSeaLevelInDecimalFeet,
+            float barometricPressure, AltimeterUnits altimeterUnits, float altitudeIndexInFeet)
         {
             //*******************************
             //* ALTITUDE TAPE
@@ -41,16 +39,7 @@ namespace F16CPD.FlightInstruments.Pfd
             var barometricPressureFont = new Font("Lucida Console", 10, FontStyle.Bold);
             var altitudeFeetTextFont = new Font("Lucida Console", 14, FontStyle.Bold);
 
-            var trueAltitudeMsl = (trueAltitudeAboveMeanSeaLevelInDecimalFeet);
             var indicatedAltitude = (indicatedAltitudeAboveMeanSeaLevelInDecimalFeet);
-            if (trueAltitudeMsl == indicatedAltitude)
-                //perform our own simulated indicated altitude adjustment for F4 versions that do not support the barometer setting
-            {
-                var baroDifference = barometricPressureInDecimalInchesOfMercury - 29.92f;
-                var indicatedAltitudeCorrection = (baroDifference/BARO_CHANGE_PER_THOUSAND_FEET)*1000.0f;
-                indicatedAltitude = trueAltitudeMsl + indicatedAltitudeCorrection;
-                //correct indicated altitude for current baro pressure setting
-            }
 
             var altitudeTapeBitmap = AltitudeTapeBitmapFactory.GetAltitudeTapeBitmap(indicatedAltitude, altitudeStripBoundingBox.Width - 1,
                 altitudeStripBoundingBox.Height, altitudeIndexInFeet);
@@ -98,9 +87,8 @@ namespace F16CPD.FlightInstruments.Pfd
             };
             g.FillRectangle(Brushes.Black, barometricPressureBox);
 
-            var barometricPressure = barometricPressureInDecimalInchesOfMercury;
             //add barometric pressure text to barometric pressure box
-            g.DrawStringFast(string.Format("{0:00.00IN}", barometricPressure), barometricPressureFont, greenBrush,
+            g.DrawStringFast(string.Format("{0:00.00}{1}", barometricPressure, (altimeterUnits == AltimeterUnits.Hg) ? "IN":  "MB"), barometricPressureFont, greenBrush,
                 barometricPressureBox, baroPressureFormat);
 
             //draw altitude counter

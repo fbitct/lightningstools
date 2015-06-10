@@ -40,7 +40,7 @@ namespace F16CPD.FlightInstruments.Pfd
             g.Transform = origTransform;
 
             //draw altitude tape
-            AltitudeTapeRenderer.DrawAltitudeTape(g, Manager.FlightData.TrueAltitudeAboveMeanSeaLevelInDecimalFeet, Manager.FlightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet, Manager.FlightData.BarometricPressureInDecimalInchesOfMercury, Manager.AltitudeIndexInFeet);
+            AltitudeTapeRenderer.DrawAltitudeTape(g, Manager.FlightData.IndicatedAltitudeAboveMeanSeaLevelInDecimalFeet, Manager.FlightData.BarometricPressure, Manager.FlightData.AltimeterUnits, Manager.AltitudeIndexInFeet);
 
             //draw PFD summary text
             PfdSummaryTextRenderer.DrawPfdSummaryText(g, Manager.FlightData.GroundSpeedInDecimalFeetPerSecond, Manager.FlightData.MachNumber, Manager.FlightData.AutomaticLowAltitudeWarningInFeet, Manager.FlightData.AltitudeAboveGroundLevelInDecimalFeet, Manager.FlightData.RadarAltimeterOffFlag);

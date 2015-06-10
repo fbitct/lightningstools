@@ -185,7 +185,8 @@ namespace F16CPD.SimSupport.Falcon4
             FlightData flightData = Manager.FlightData;
             flightData.AltimeterMode = AltimeterMode.Electronic;
             flightData.AutomaticLowAltitudeWarningInFeet = 300;
-            flightData.BarometricPressureInDecimalInchesOfMercury = 29.92f;
+            flightData.BarometricPressure = 29.92f;
+            flightData.AltimeterUnits = AltimeterUnits.Hg;
             flightData.HsiCourseDeviationLimitInDecimalDegrees = 10;
             flightData.HsiDesiredCourseInDegrees = 0;
             flightData.HsiDesiredHeadingInDegrees = 0;
@@ -246,10 +247,6 @@ namespace F16CPD.SimSupport.Falcon4
 
                 flightData.RadarAltimeterOffFlag = ((fromFalcon.lightBits & (int) LightBits.RadarAlt) ==
                                                     (int) LightBits.RadarAlt);
-                flightData.AltimeterMode = ((fromFalcon.altBits & (int) AltBits.PneuFlag) == (int) AltBits.PneuFlag)
-                    ? AltimeterMode.Pneumatic
-                    : AltimeterMode.Electronic;
-
                 Manager
                     .FindMenuPageByName("Instruments Display Page")
                     .FindOptionSelectButtonByFunctionName("ToggleAltimeterModeElecPneu")
@@ -257,9 +254,9 @@ namespace F16CPD.SimSupport.Falcon4
 
 
 
-                //TODO: support hPA alt calibration, not just inches hg
-                flightData.BarometricPressureInDecimalInchesOfMercury = (fromFalcon.AltCalReading/100.00f);
-
+                flightData.BarometricPressure = (fromFalcon.AltCalReading/100.00f);
+                flightData.AltimeterUnits = (((AltBits)fromFalcon.altBits & AltBits.CalType) == AltBits.CalType) ? AltimeterUnits.Hg : AltimeterUnits.hPa;
+                flightData.AltimeterMode = (((AltBits)fromFalcon.altBits & AltBits.PneuFlag) == AltBits.PneuFlag) ? AltimeterMode.Pneumatic : AltimeterMode.Electronic;
                 UpdateIndicatedAltitude(flightData, fromFalcon);
                 UpdateAltitudeAGL(flightData, fromFalcon);
                 UpdateIndicatedAirspeed(flightData, fromFalcon);

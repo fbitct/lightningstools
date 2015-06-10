@@ -28,8 +28,8 @@ namespace F4Utils.Terrain
             var tileInfo = new FileInfo(tileFullPath);
             if (string.Equals(tileInfo.Extension, ".PCX", StringComparison.InvariantCultureIgnoreCase))
             {
-                tileFullPath = Path.Combine(Path.Combine(_terrainDB.CurrentTheaterTextureBaseFolderPath, "texture"),
-                                            Path.GetFileNameWithoutExtension(tileInfo.Name) + ".DDS");
+                var textureSubfolder = !string.IsNullOrWhiteSpace(_terrainDB.TileSet) ? "TEXTURE_" + _terrainDB.TileSet: "TEXTURE"; 
+                tileFullPath = Path.Combine(Path.Combine(_terrainDB.CurrentTheaterTextureBaseFolderPath,textureSubfolder), Path.GetFileNameWithoutExtension(tileInfo.Name) + ".DDS");
                 tileInfo = new FileInfo(tileFullPath);
             }
             if (tileInfo.Exists)

@@ -85,8 +85,18 @@ namespace F4Utils.Terrain
         public string FarTilesDotRawFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "FARTILES.RAW"; } }
         public string FarTilesDotPalFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "FARTILES.PAL"; } }
         public string TheaterDotMapFilePath { get { return TerrainBasePath + Path.DirectorySeparatorChar + "terrain" + Path.DirectorySeparatorChar + "THEATER.MAP"; } }
-        public string TextureDotBinFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "TEXTURE.BIN"; } }
-        public string TerrainDotTidFilePath { 
+        public string TextureDotBinFilePath 
+        { 
+            get 
+            { 
+                return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar
+                        + "TEXTURE"
+                           + (TileSet != null ? "_" + TileSet : "")
+                           + ".BIN";
+            } 
+        }
+        public string TerrainDotTidFilePath 
+        { 
             get 
             {
                 return

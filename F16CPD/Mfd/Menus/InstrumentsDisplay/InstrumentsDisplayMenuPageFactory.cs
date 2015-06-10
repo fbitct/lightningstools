@@ -203,13 +203,13 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
 
         private void barometricPressureUpButton_Press(object sender, EventArgs e)
         {
-            _mfdManager.FlightData.BarometricPressureInDecimalInchesOfMercury += 0.01f;
+            _mfdManager.FlightData.BarometricPressure += 0.01f;
             if (_mfdManager.SimSupportModule != null)
                 _mfdManager.SimSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton9, (OptionSelectButton)sender);
         }
         private void barometricPressureDownButton_Press(object sender, EventArgs e)
         {
-            _mfdManager.FlightData.BarometricPressureInDecimalInchesOfMercury -= 0.01f;
+            _mfdManager.FlightData.BarometricPressure -= 0.01f;
             if (_mfdManager.SimSupportModule != null)
                 _mfdManager.SimSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton10, (OptionSelectButton)sender);
         }
