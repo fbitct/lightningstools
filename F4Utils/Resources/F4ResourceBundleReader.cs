@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace F4Utils.Resources
@@ -260,48 +262,47 @@ namespace F4Utils.Resources
         protected virtual Bitmap GetImageResource(F4ImageResourceHeader imageHeader)
         {
             if (imageHeader == null) return null;
-            var toReturn = new Bitmap(imageHeader.Width, imageHeader.Height);
             var palette = new ushort[imageHeader.PaletteSize];
-            if ((imageHeader.Flags & (uint) F4ResourceFlags.EightBit) == (uint) F4ResourceFlags.EightBit)
+            for (var i = 0; i < palette.Length; i++)
             {
-                for (var i = 0; i < palette.Length; i++)
+                palette[i] = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
+                                                    (int) imageHeader.PaletteOffset + (i*2));
+            }
+            var pixelFormat= (((imageHeader.Flags & (uint)F4ResourceFlags.EightBit) == (uint)F4ResourceFlags.EightBit)) 
+                                ? PixelFormat.Format8bppIndexed
+                                : PixelFormat.Format16bppRgb555;
+            var bytesPerPixel = (((imageHeader.Flags & (uint)F4ResourceFlags.EightBit) == (uint)F4ResourceFlags.EightBit))
+                                ? 1
+                                : 2;
+            var toReturn=new Bitmap(imageHeader.Width, imageHeader.Height, pixelFormat);
+            var lockBits = toReturn.LockBits(new Rectangle(0, 0, imageHeader.Width, imageHeader.Height), ImageLockMode.WriteOnly, pixelFormat);
+            try
+            {
+                var stride = lockBits.Stride;
+                for (var y = 0; y < imageHeader.Height; y++)
                 {
-                    palette[i] = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
-                                                       (int) imageHeader.PaletteOffset + (i*2));
+                    Marshal.Copy(_resourceIndex.ResourceData.Data,
+                        (int)imageHeader.ImageOffset + (y * imageHeader.Width * bytesPerPixel),
+                        IntPtr.Add(lockBits.Scan0, y * stride),
+                        imageHeader.Width * bytesPerPixel);
                 }
             }
-            var curByte = 0;
-            for (var y = 0; y < imageHeader.Height; y++)
+            finally
             {
-                for (var x = 0; x < imageHeader.Width; x++)
+                toReturn.UnlockBits(lockBits);
+            }
+            if (((imageHeader.Flags & (uint)F4ResourceFlags.EightBit) == (uint)F4ResourceFlags.EightBit))
+            {
+                var colorPalette = toReturn.Palette;
+                for (var i = 0; i < palette.Length; i++)
                 {
-                    var A = 0;
-                    var R = 0;
-                    var G = 0;
-                    var B = 0;
-                    if ((imageHeader.Flags & (uint) F4ResourceFlags.EightBit) == (uint) F4ResourceFlags.EightBit)
-                    {
-                        var thisPixelPaletteIndex = _resourceIndex.ResourceData.Data[imageHeader.ImageOffset + curByte];
-                        var thisPixelPaletteEntry = palette[thisPixelPaletteIndex];
-                        A = 255;
-                        R = ((thisPixelPaletteEntry & 0x7C00) >> 10) << 3;
-                        G = ((thisPixelPaletteEntry & 0x3E0) >> 5) << 3;
-                        B = (thisPixelPaletteEntry & 0x1F) << 3;
-                        curByte++;
-                    }
-                    else if ((imageHeader.Flags & (uint) F4ResourceFlags.SixteenBit) == (uint) F4ResourceFlags.SixteenBit)
-                    {
-                        var thisPixelPaletteEntry = BitConverter.ToUInt16(_resourceIndex.ResourceData.Data,
-                                                                          (int)
-                                                                          (imageHeader.ImageOffset + curByte));
-                        A = 255;
-                        R = ((thisPixelPaletteEntry & 0x7C00) >> 10) << 3;
-                        G = ((thisPixelPaletteEntry & 0x3E0) >> 5) << 3;
-                        B = (thisPixelPaletteEntry & 0x1F) << 3;
-                        curByte += 2;
-                    }
-                    toReturn.SetPixel(x, y, Color.FromArgb(A, R, G, B));
+                    var A = 255;
+                    var R = ((palette[i] & 0x7C00) >> 10) << 3;
+                    var G = ((palette[i] & 0x3E0) >> 5) << 3;
+                    var B = (palette[i] & 0x1F) << 3;
+                    colorPalette.Entries[i] = Color.FromArgb(A, R, G, B);
                 }
+                toReturn.Palette = colorPalette;
             }
             return toReturn;
         }
