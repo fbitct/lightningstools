@@ -28,19 +28,6 @@ namespace F16CPD.Mfd.Menus
             var thisPage = new MfdMenuPage(_mfdManager);
             var buttons = new List<OptionSelectButton>();
 
-            var testPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToTestPage();
-            buttons.Add(testPageSelectButton);
-
-            buttons.Add(_optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 10, "CLR MSG", false));
-
-            var imagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToImagingPage();
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToMessagePage();
-            buttons.Add(messagingPageSelectButton);
 
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     false);
@@ -55,7 +42,6 @@ namespace F16CPD.Mfd.Menus
             headDownDisplayPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToInstrumentsPage();
             buttons.Add(headDownDisplayPageSelectButton);
 
-            buttons.Add(_optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 22, "CAP", false));
             thisPage.OptionSelectButtons = buttons;
             thisPage.Name = "Targeting Pod Page";
             return thisPage;

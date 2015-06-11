@@ -42,27 +42,22 @@ namespace F16CPD
     {
         private const int MAX_BRIGHTNESS = 255;
         private const int NUM_BRIGHTNESS_STEPS = 30;
-        private readonly IBitmapAnnotationMenuPageFactory _bitmapAnnotationMenuPageFactory;
         private readonly IBrightnessDecreaseButtonFactory _brightnessDecreaseButtonFactory;
         private readonly IBrightnessIncreaseButtonFactory _brightnessIncreaseButtonFactory;
         private readonly IChartsMenuPageFactory _chartsMenuPageFactory;
         private readonly IChecklistMenuPageFactory _checklistMenuPageFactory;
-        private readonly IControlMapMenuPageFactory _controlMapMenuPageFactory;
-        private readonly IControlOverlayMenuPageFactory _controlOverlayMenuPageFactory;
         private readonly IDayModeButtonFactory _dayModeButtonFactory;
         private readonly IExtFuelTransSwitchFactory _extFuelTransSwitchFactory;
         private readonly IFuelSelectSwitchFactory _fuelSelectSwitchFactory;
         private readonly IHsiModeSlectorSwitchFactory _hsiModeSelectorSwitchFactory;
         private readonly IInstrumentsDisplayMenuPageFactory _instrumentsDisplayMenuPageFactory;
         private readonly object _mapImageLock = new object();
-        private readonly IMessageMenuPageFactory _messagePageMenuFactory;
         private readonly IMfdInputControlFinder _mfdInputControlFinder;
         private readonly INightModeButtonFactory _nightModeButtonFactory;
         private readonly IParamSelectKnobFactory _paramSelectKnobFactory;
         private readonly IPrimaryMenuPageFactory _primaryMenuPageFactory;
         private readonly ITADMenuPageFactory _tadMenuPageFactory;
         private readonly ITargetingPodMenuPageFactory _targetingPodMenuPageFactory;
-        private readonly ITestMenuPageFactory _testMenuPageFactory;
         private int _airspeedIndexInKnots;
         private int _altitudeIndexInFeet;
         private int _brightness = 255;
@@ -91,15 +86,10 @@ namespace F16CPD
         internal F16CpdMfdManager(Size screenBoundsPixels,
             IPrimaryMenuPageFactory primaryMenuPageFactory = null,
             IInstrumentsDisplayMenuPageFactory instrumentsDisplayMenuPageFactory = null,
-            ITestMenuPageFactory testMenuPageFactory = null,
             ITargetingPodMenuPageFactory targetingPodMenuPageFactory = null,
-            IMessageMenuPageFactory messageMenuPageFactory = null,
             ITADMenuPageFactory tadMenuPageFactory = null,
             IChecklistMenuPageFactory checklistMenuPageFactory = null,
             IChartsMenuPageFactory chartsMenuPageFactory = null,
-            IControlMapMenuPageFactory controlMapMenuPageFactory = null,
-            IControlOverlayMenuPageFactory controlOverlayMenuPageFactory = null,
-            IBitmapAnnotationMenuPageFactory bitmapAnnotationMenuPageFactory = null,
             IMfdInputControlFinder mfdInputControlFinder = null,
             IHsiModeSlectorSwitchFactory hsiModeSelectorSwitchFactory = null,
             IFuelSelectSwitchFactory fuelSelectSwitchFactory = null,
@@ -114,16 +104,10 @@ namespace F16CPD
             _primaryMenuPageFactory = primaryMenuPageFactory ?? new PrimaryMenuPageFactory(this);
             _instrumentsDisplayMenuPageFactory = instrumentsDisplayMenuPageFactory ??
                                                  new InstrumentsDisplayMenuPageFactory(this);
-            _testMenuPageFactory = testMenuPageFactory ?? new TestMenuPageFactory(this);
             _targetingPodMenuPageFactory = targetingPodMenuPageFactory ?? new TargetingPodMenuPageFactory(this);
-            _messagePageMenuFactory = messageMenuPageFactory ?? new MessageMenuPageFactory(this);
             _tadMenuPageFactory = tadMenuPageFactory ?? new TADMenuPageFactory(this);
             _checklistMenuPageFactory = checklistMenuPageFactory ?? new ChecklistMenuPageFactory(this);
             _chartsMenuPageFactory = chartsMenuPageFactory ?? new ChartsMenuPageFactory(this);
-            _controlMapMenuPageFactory = controlMapMenuPageFactory ?? new ControlMapMenuPageFactory(this);
-            _controlOverlayMenuPageFactory = controlOverlayMenuPageFactory ?? new ControlOverlayMenuPageFactory(this);
-            _bitmapAnnotationMenuPageFactory = bitmapAnnotationMenuPageFactory ??
-                                               new BitmapAnnotationMenuPageFactory(this);
             _mfdInputControlFinder = mfdInputControlFinder ?? new MfdInputControlFinder(this);
             _hsiModeSelectorSwitchFactory = hsiModeSelectorSwitchFactory ?? new HsiModeSelectorSwitchFactory(this);
             _fuelSelectSwitchFactory = fuelSelectSwitchFactory ?? new FuelSelectSwitchFactory(this);
@@ -356,19 +340,14 @@ namespace F16CPD
         {
             var primaryPage = _primaryMenuPageFactory.CreatePrimaryMenuPage();
             var instrumentsDisplayPage = _instrumentsDisplayMenuPageFactory.BuildInstrumentsDisplayMenuPage();
-            var testPage = _testMenuPageFactory.BuildTestPage();
             var tgpPage = _targetingPodMenuPageFactory.BuildTargetingPodMenuPage();
-            var messagePage = _messagePageMenuFactory.BuildMessageMenuPage();
             var tadPage = _tadMenuPageFactory.BuildTADMenuPage();
             var checklistsPage = _checklistMenuPageFactory.BuildChecklistMenuPage();
             var chartsPage = _chartsMenuPageFactory.BuildChartsMenuPage();
-            var controlMapPage = _controlMapMenuPageFactory.BuildControlMapMenuPage();
-            var controlOverlayPage = _controlOverlayMenuPageFactory.BuildControlOverlayMenuPage();
-            var bitmapAnnotationPage = _bitmapAnnotationMenuPageFactory.BuildBitmapAnnotationMenuPage();
             MenuPages = new[]
             {
-                primaryPage, instrumentsDisplayPage, testPage, tgpPage, messagePage, tadPage,
-                controlMapPage, controlOverlayPage, bitmapAnnotationPage, checklistsPage, chartsPage
+                primaryPage, instrumentsDisplayPage, tgpPage, tadPage,
+                checklistsPage, chartsPage
             };
             foreach (var thisPage in MenuPages)
             {
@@ -419,11 +398,6 @@ namespace F16CPD
             SetPage("TAD Page");
         }
 
-        public void SwitchToMessagePage()
-        {
-            SetPage("Message Page");
-        }
-
         public void SwitchToChecklistsPage()
         {
             SetPage("Checklists Page");
@@ -444,24 +418,9 @@ namespace F16CPD
             SetPage("Charts Page");
         }
 
-        public void SwitchToImagingPage()
-        {
-            SetPage("Bitmap Annotation Page");
-        }
-
-        public void SwitchToControlOverlayPage()
-        {
-            SetPage("Control Overlay Page");
-        }
-
         public void SwitchToControlMapPage()
         {
             SetPage("Control Map Page");
-        }
-
-        public void SwitchToTestPage()
-        {
-            SetPage("Test Page");
         }
 
         private void UpdateCurrentChecklistPageCount()
@@ -848,10 +807,6 @@ namespace F16CPD
             switch (ActiveMenuPage.Name)
             {
                 case "Instruments Display Page":
-                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AcknowledgeMessage");
-                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
-                    button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("TestHdd");
-                    button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
                     button = ActiveMenuPage.FindOptionSelectButtonByFunctionName("AltitudeIndexIncrease");
                     button.Visible = !FlightData.PfdOffFlag & FlightData.CpdPowerOnFlag;
                     button = ActiveMenuPage.FindOptionSelectButtonByLabelText("ALT");

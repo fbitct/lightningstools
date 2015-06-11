@@ -29,10 +29,6 @@ namespace F16CPD.Mfd.Menus
             var thisPage = new MfdMenuPage(_mfdManager);
             var buttons = new List<OptionSelectButton>();
 
-            var controlMapPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 1, "CNTL", false);
-            controlMapPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToControlMapPage();
-            buttons.Add(controlMapPageSelectButton);
-
             var chartPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 2, "CHARTS", true);
             chartPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToChartsPage();
             buttons.Add(chartPageSelectButton);
@@ -45,10 +41,6 @@ namespace F16CPD.Mfd.Menus
             mapPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToTADPage();
             buttons.Add(mapPageSelectButton);
 
-            var testPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToTestPage(); ;
-            buttons.Add(testPageSelectButton);
-
             var previousChartFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, "^", false);
             previousChartFileSelectButton.Pressed += (s,e)=>_mfdManager.PrevChartFile();
             buttons.Add(previousChartFileSelectButton);
@@ -60,14 +52,6 @@ namespace F16CPD.Mfd.Menus
             var nextChartFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 9, @"\/", false);
             nextChartFileSelectButton.Pressed += (s,e)=>_mfdManager.NextChartFile();
             buttons.Add(nextChartFileSelectButton);
-
-            var imagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToImagingPage();
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToMessagePage();
-            buttons.Add(messagingPageSelectButton);
 
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     true);

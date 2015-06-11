@@ -34,14 +34,6 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
             altimeterModeButton.FunctionName = "ToggleAltimeterModeElecPneu";
             altimeterModeButton.Pressed += pneuElecButton_Press;
 
-            var ackButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 4, "ACK", false);
-            ackButton.FunctionName = "AcknowledgeMessage";
-            ackButton.Pressed += ackButton_Press;
-            
-            var testPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.FunctionName = "TestHdd";
-            testPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToTestPage();
-            
             var altitudeIndexUpButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, "^", false,
                                                                  triangleLegLengthPixels);
             altitudeIndexUpButton.FunctionName = "AltitudeIndexIncrease";
@@ -77,12 +69,6 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
                                                                   triangleLegLengthPixels);
             courseSelectDownButton.FunctionName = "CourseSelectDecrease";
             courseSelectDownButton.Pressed += courseSelectDownButton_Press;
-            
-            var imagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToImagingPage();
-            
-            var messagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToMessagePage();
             
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     false);
@@ -132,8 +118,6 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
             airspeedIndexSelectUpButton.Pressed += airspeedIndexSelectUpButton_Press;
 
             buttons.Add(altimeterModeButton);
-            buttons.Add(ackButton);
-            buttons.Add(testPageSelectButton);
             buttons.Add(altitudeIndexUpButton);
             buttons.Add(altitudeIndexLabel);
             buttons.Add(altitudeIndexDownButton);
@@ -143,8 +127,6 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
             buttons.Add(courseSelectUpButton);
             buttons.Add(courseSelectLabel);
             buttons.Add(courseSelectDownButton);
-            buttons.Add(imagingPageSelectButton);
-            buttons.Add(messagingPageSelectButton);
             buttons.Add(tacticalAwarenessDisplayPageSelectButton);
             buttons.Add(targetingPodPageSelectButton);
             buttons.Add(headDownDisplayPageSelectButton);
@@ -160,11 +142,6 @@ namespace F16CPD.Mfd.Menus.InstrumentsDisplay
             thisPage.OptionSelectButtons = buttons;
             thisPage.Name = "Instruments Display Page";
             return thisPage;
-        }
-        private void ackButton_Press(object sender, MomentaryButtonPressedEventArgs args)
-        {
-            if (_mfdManager.SimSupportModule != null)
-                _mfdManager.SimSupportModule.HandleInputControlEvent(CpdInputControls.OsbButton4, (OptionSelectButton)sender);
         }
         private void pneuElecButton_Press(object sender, EventArgs args)
         {

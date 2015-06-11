@@ -28,10 +28,6 @@ namespace F16CPD.Mfd.Menus
             var thisPage = new MfdMenuPage(_mfdManager);
             var buttons = new List<OptionSelectButton>();
 
-            var controlMapPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 1, "CNTL", false);
-            controlMapPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToControlMapPage();
-            buttons.Add(controlMapPageSelectButton);
-
             var chartPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 2, "CHARTS", false);
             chartPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToChartsPage();
             buttons.Add(chartPageSelectButton);
@@ -43,10 +39,6 @@ namespace F16CPD.Mfd.Menus
             var mapOnOffButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 4, "MAP", true);
             mapOnOffButton.Pressed += (s,e)=>_mfdManager.SwitchToTADPage();
             buttons.Add(mapOnOffButton);
-
-            var testPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 5, "TEST", false);
-            testPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToTestPage();
-            buttons.Add(testPageSelectButton);
 
             var scaleIncreaseButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, "^", false);
             scaleIncreaseButton.Pressed += (s,e)=>_mfdManager.IncreaseMapScale();
@@ -61,16 +53,6 @@ namespace F16CPD.Mfd.Menus
             var scaleDecreaseButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 8, @"\/", false);
             scaleDecreaseButton.Pressed += (s, e) => _mfdManager.DecreaseMapScale();
             buttons.Add(scaleDecreaseButton);
-            buttons.Add(_optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 9, "CNTR\r\nOWN", false));
-            buttons.Add(_optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 10, "CLR MSG", false));
-
-            var imagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 14, "IMG", false);
-            imagingPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToImagingPage();
-            buttons.Add(imagingPageSelectButton);
-
-            var messagingPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 15, "MSG", false);
-            messagingPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToMessagePage();
-            buttons.Add(messagingPageSelectButton);
 
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     true);
@@ -84,8 +66,6 @@ namespace F16CPD.Mfd.Menus
             var headDownDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 18, "HDD", false);
             headDownDisplayPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToInstrumentsPage();
             buttons.Add(headDownDisplayPageSelectButton);
-
-            buttons.Add(_optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 22, "CAP", false));
 
             var mapRangeIncrease = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 25, @"^", false);
             mapRangeIncrease.Pressed += (s,e)=>_mfdManager.IncreaseMapRange();
