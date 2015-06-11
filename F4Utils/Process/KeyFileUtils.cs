@@ -11,6 +11,8 @@ namespace F4Utils.Process
     public static class KeyFileUtils
     {
         private const string KEYSTROKE_FILE_NAME__DEFAULT = "BMS - Full.key";
+        private const string KEYSTROKE_FILE_NAME__FALLBACK = "BMS.key";
+        private const string KEYSTROKE_FILE_NAME__FALLBACK2 = "keystrokes.key";
         private const string PLAYER_OPTS_FILENAME__DEFAULT = "viper.pop";
         private const string PLAYER_OPTS_FILE_EXTENSION = ".pop";
         private const string KEYFILE_EXENSION_DEFAULT = ".key";
@@ -73,6 +75,21 @@ namespace F4Utils.Process
 
             var falconKeyFilePath = configFolder + Path.DirectorySeparatorChar + keyFileName;
             var keyFileInfo = new FileInfo(falconKeyFilePath);
+
+            if (!keyFileInfo.Exists)
+            {
+                keyFileName = KEYSTROKE_FILE_NAME__FALLBACK;
+                falconKeyFilePath = configFolder + Path.DirectorySeparatorChar + keyFileName;
+                keyFileInfo = new FileInfo(falconKeyFilePath);
+            }
+
+            if (!keyFileInfo.Exists)
+            {
+                keyFileName = KEYSTROKE_FILE_NAME__FALLBACK2;
+                falconKeyFilePath = configFolder + Path.DirectorySeparatorChar + keyFileName;
+                keyFileInfo = new FileInfo(falconKeyFilePath);
+            }
+
             if (!keyFileInfo.Exists) return null;
             try
             {
