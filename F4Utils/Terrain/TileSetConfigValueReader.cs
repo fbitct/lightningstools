@@ -30,7 +30,8 @@ namespace F4Utils.Terrain
                         tokens[1].ToLowerInvariant() == "g_sTileSet".ToLowerInvariant())
                     .FirstOrDefault();
 
-                
+                if (matchingConfigLine ==null) return null;
+                            
                 return matchingConfigLine
                     .Skip(2)
                     .Take(1)
