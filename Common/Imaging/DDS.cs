@@ -8,8 +8,10 @@ namespace Common.Imaging
     {
         public static Bitmap Load(string filePath)
         {
-            return
-                FreeImage.GetBitmap(FreeImage.Load(FREE_IMAGE_FORMAT.FIF_DDS, filePath, FREE_IMAGE_LOAD_FLAGS.DEFAULT));
+            var fBitmap = FreeImage.Load(FREE_IMAGE_FORMAT.FIF_DDS, filePath, FREE_IMAGE_LOAD_FLAGS.DEFAULT);
+            var toReturn = FreeImage.GetBitmap(fBitmap);
+            FreeImage.Unload(fBitmap);
+            return toReturn;
         }
 
         public static Bitmap GetBitmapFromDDSFileBytes(byte[] bytes)
@@ -24,7 +26,10 @@ namespace Common.Imaging
         public static Bitmap GetBitmapFromDDSFileStream(Stream s)
         {
             var format = FREE_IMAGE_FORMAT.FIF_DDS;
-            return FreeImage.GetBitmap(FreeImage.LoadFromStream(s, FREE_IMAGE_LOAD_FLAGS.DEFAULT, ref format));
+            var fBitmap = FreeImage.LoadFromStream(s, FREE_IMAGE_LOAD_FLAGS.DEFAULT, ref format);
+            var toReturn= FreeImage.GetBitmap(fBitmap);
+            FreeImage.Unload(fBitmap);
+            return toReturn;
         }
 
      

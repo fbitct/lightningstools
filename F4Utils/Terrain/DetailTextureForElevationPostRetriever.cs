@@ -14,7 +14,6 @@ namespace F4Utils.Terrain
         private readonly ITerrainTextureByTextureIdRetriever _terrainTextureByTextureIdRetriever;
         private readonly IColumnAndRowElevationPostRecordRetriever _columnAndRowElevationPostRetriever;
         private readonly TerrainDB _terrainDB;
-        private readonly Dictionary<LodTextureKey, Bitmap> _elevationPostTextures = new Dictionary<LodTextureKey, Bitmap>();
         public DetailTextureForElevationPostRetriever(
             TerrainDB terrainDB,
             IElevationPostCoordinateClamper elevationPostCoordinateClamper = null,
@@ -54,29 +53,15 @@ namespace F4Utils.Terrain
                 var thisChunkXIndex = (uint)(col % chunksWide);
                 var thisChunkYIndex = (uint)(row % chunksWide);
 
-                var key = new LodTextureKey
-                {
-                    Lod = lod,
-                    textureId = textureId,
-                    chunkXIndex = thisChunkXIndex,
-                    chunkYIndex = thisChunkYIndex
-                };
-                if (_elevationPostTextures.ContainsKey(key))
-                {
-                    toReturn = _elevationPostTextures[key];
-                }
-                else
-                {
-                    var leftX = (int)(thisChunkXIndex * (bigTexture.Width / chunksWide));
-                    var rightX = (int)((thisChunkXIndex + 1) * (bigTexture.Width / chunksWide)) - 1;
-                    var topY = (int)(bigTexture.Height - (thisChunkYIndex + 1) * (bigTexture.Height / chunksWide));
-                    var bottomY = (int)(bigTexture.Height - thisChunkYIndex * (bigTexture.Height / chunksWide)) - 1;
+                var leftX = (int)(thisChunkXIndex * (bigTexture.Width / chunksWide));
+                var rightX = (int)((thisChunkXIndex + 1) * (bigTexture.Width / chunksWide)) - 1;
+                var topY = (int)(bigTexture.Height - (thisChunkYIndex + 1) * (bigTexture.Height / chunksWide));
+                var bottomY = (int)(bigTexture.Height - thisChunkYIndex * (bigTexture.Height / chunksWide)) - 1;
 
-                    var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
+                var sourceRect = new Rectangle(leftX, topY, (rightX - leftX) + 1, (bottomY - topY) + 1);
 
-                    toReturn = (Bitmap)Util.CropBitmap(bigTexture, sourceRect);
-                    _elevationPostTextures.Add(key, toReturn);
-                }
+                toReturn = (Bitmap)Util.CropBitmap(bigTexture, sourceRect);
+                bigTexture.Dispose();
             }
             else
             {

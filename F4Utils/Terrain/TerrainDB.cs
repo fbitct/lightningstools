@@ -79,7 +79,20 @@ namespace F4Utils.Terrain
         }
         public string BMSBaseDirectory { get; private set; }
         public string DataPath { get { return BMSBaseDirectory + Path.DirectorySeparatorChar + "data"; } }
-        public string TerrainBasePath { get { return DataPath + Path.DirectorySeparatorChar + TheaterDotTdf.terrainDir; } }
+        public string TerrainBasePath 
+        { 
+            get 
+            { 
+                return DataPath + Path.DirectorySeparatorChar + 
+                    (
+                    TheaterDotTdf.terrainDir ?? 
+                        (
+                        Path.DirectorySeparatorChar + 
+                        "terrdata" + Path.DirectorySeparatorChar + 
+                        "korea" + Path.DirectorySeparatorChar                         )
+                    ); 
+            } 
+        }
         public string CurrentTheaterTextureBaseFolderPath { get { return TerrainBasePath + Path.DirectorySeparatorChar + "texture"; } }
         public string FarTilesDotDdsFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "FARTILES.DDS"; } }
         public string FarTilesDotRawFilePath { get { return CurrentTheaterTextureBaseFolderPath + Path.DirectorySeparatorChar + "FARTILES.RAW"; } }

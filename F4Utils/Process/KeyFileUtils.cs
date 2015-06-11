@@ -16,7 +16,6 @@ namespace F4Utils.Process
         private const string KEYFILE_EXENSION_DEFAULT = ".key";
         private const string CONFIG_DIRECTORY_NAME = "config";
         private const string USEROPTS_DIRECTORY_NAME = "User";
-        private const int KEY_DELAY_MILLISECONDS = 1;
         private static readonly ILog Log = LogManager.GetLogger(typeof (KeyFileUtils));
         private static KeyFile _keyFile;
         private static readonly object KeySenderLock = new object();
@@ -35,39 +34,13 @@ namespace F4Utils.Process
 
         public static void SendCallbackToFalcon(string callback)
         {
+            var keyBinding = FindKeyBinding(callback);
+            if (keyBinding == null) return;
             Util.ActivateFalconWindow();
-            var binding = FindKeyBinding(callback);
-            if (binding == null) return;
             lock (KeySenderLock)
             {
-                var primaryKeyWithModifiers = binding.Key;
-                var comboKeyWithModifiers = binding.ComboKey;
-
-                SendClearingKeystrokes();
-                WaitToSendNextKeystrokes();
-
-                SendUpKeystrokes(primaryKeyWithModifiers);
-                WaitToSendNextKeystrokes();
-                SendDownKeystrokes(primaryKeyWithModifiers);
-                WaitToSendNextKeystrokes();
-                SendUpKeystrokes(primaryKeyWithModifiers);
-                WaitToSendNextKeystrokes();
-
-                SendUpKeystrokes(comboKeyWithModifiers);
-                WaitToSendNextKeystrokes();
-                SendDownKeystrokes(comboKeyWithModifiers);
-                WaitToSendNextKeystrokes();
-                SendUpKeystrokes(comboKeyWithModifiers);
-                WaitToSendNextKeystrokes();
-
-                SendClearingKeystrokes();
-                WaitToSendNextKeystrokes();
+                keyBinding.SendCallback();
             }
-        }
-
-        private static void WaitToSendNextKeystrokes()
-        {
-            Thread.Sleep(KEY_DELAY_MILLISECONDS);
         }
 
         public static KeyFile GetCurrentKeyFile()
@@ -136,50 +109,5 @@ namespace F4Utils.Process
         }
        
 
-        private static void SendClearingKeystrokes()
-        {
-            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LShift, false, true);
-            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LMenu, false, true);
-            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LControl, false, true);
-            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.RShift, false, true);
-            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.RMenu, false, true);
-            KeyAndMouseFunctions.SendKey((ushort) ScanCodes.RControl, false, true);
-        }
-
-        private static void SendDownKeystrokes(KeyWithModifiers keyWithModifiers)
-        {
-            //send down keystrokes
-            if ((keyWithModifiers.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift)
-            {
-                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LShift, true, false);
-            }
-            if ((keyWithModifiers.Modifiers & KeyModifiers.Alt) == KeyModifiers.Alt)
-            {
-                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LMenu, true, false);
-            }
-            if ((keyWithModifiers.Modifiers & KeyModifiers.Ctrl) == KeyModifiers.Ctrl)
-            {
-                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LControl, true, false);
-            }
-            KeyAndMouseFunctions.SendKey((ushort) keyWithModifiers.ScanCode, true, false);
-        }
-
-        private static void SendUpKeystrokes(KeyWithModifiers keyWithModifiers)
-        {
-            //send up keystrokes
-            KeyAndMouseFunctions.SendKey((ushort) keyWithModifiers.ScanCode, false, true);
-            if ((keyWithModifiers.Modifiers & KeyModifiers.Ctrl) == KeyModifiers.Ctrl)
-            {
-                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LControl, false, true);
-            }
-            if ((keyWithModifiers.Modifiers & KeyModifiers.Alt) == KeyModifiers.Alt)
-            {
-                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LMenu, false, true);
-            }
-            if ((keyWithModifiers.Modifiers & KeyModifiers.Shift) == KeyModifiers.Shift)
-            {
-                KeyAndMouseFunctions.SendKey((ushort) ScanCodes.LShift, false, true);
-            }
-        }
     }
 }

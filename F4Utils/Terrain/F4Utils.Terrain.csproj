@@ -55,7 +55,6 @@
     <Compile Include="FarTilesDotPalFileReader.cs" />
     <Compile Include="FarTileTextureRetriever.cs" />
     <Compile Include="LatLongCalculator.cs" />
-    <Compile Include="LodTextureKey.cs" />
     <Compile Include="NearestElevationPostColumnAndRowCalculator.cs" />
     <Compile Include="NearTileTextureLoader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,11 +1,14 @@
 ﻿using F16CPD.Networking;
 using F16CPD.Properties;
+using F16CPD.UI.Forms;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace F16CPD.SimSupport.Falcon4
 {
@@ -26,11 +29,20 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (!Settings.Default.RunAsClient)
             {
+                var mainForm = Application.OpenForms.OfType<F16CpdEngine>().FirstOrDefault();
+                bool cpdWasInForeground = mainForm.ContainsFocus;
+                var mousePosition = Cursor.Position;
                 SendCallbackToFalconLocal(callback);
+                if (cpdWasInForeground)
+                {
+                    mainForm.Activate();
+                    mainForm.Capture = true;
+                    Cursor.Position = mousePosition;
+                }
             }
             else if (Settings.Default.RunAsClient)
             {
-                var message = new Message("Falcon4SendCallbackMessage", callback);
+                var message = new F16CPD.Networking.Message("Falcon4SendCallbackMessage", callback);
                 _mfdManager.Client.SendMessageToServer(message);
             }
         }

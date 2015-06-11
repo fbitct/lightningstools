@@ -147,35 +147,19 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             var posX = mapCoordinateFeetEast;
             var posY = mapCoordinateFeetNorth;
 
-            //determine which Level of Detail to use for rendering the map
-            //start with the lowest Level of Detail available (i.e. highest-resolution map) and work upward (i.e. toward lower-resolution maps covering greater areas)
             uint lod = 0;
             var feetBetweenElevationPosts = feetBetweenL0ElevationPosts;
             float numThisLodElevationPostsToRender = numL0ElevationPostsToRender;
-            var thisLodDetailTextureWidthPixels = 64;
-
             const int numAdditionalElevationPostsToRender = 1;
 
-            while ((numThisLodElevationPostsToRender*thisLodDetailTextureWidthPixels) > originalRenderDiameterPixels)
-                //choose LoD that requires fewest unnecessary pixels to be rendered
+            while (lod <2)
             {
-                if (lod + 1 > _terrainDB.TheaterDotMap.LastFarTiledLOD)
-                {
-                    break;
-                }
                 lod++;
                 feetBetweenElevationPosts *= 2.0f;
                 numThisLodElevationPostsToRender /= 2.0f;
-                if (lod > _terrainDB.TheaterDotMap.LastNearTiledLOD)
-                {
-                    thisLodDetailTextureWidthPixels = 32;
-                }
-                else
-                {
-                    var sample = _terrainDB.GetDetailTextureForElevationPost(0, 0, lod);
-                    thisLodDetailTextureWidthPixels = sample != null ? sample.Width : 1;
-                }
             }
+            var sample = _terrainDB.GetDetailTextureForElevationPost(0, 0, lod);
+            var thisLodDetailTextureWidthPixels = sample != null ? sample.Width : 1;
 
             //there's no such thing as a fractional elevation post, so round up to the next integral number of elevation posts
             numThisLodElevationPostsToRender = (float) Math.Ceiling(numThisLodElevationPostsToRender);

@@ -44,6 +44,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                     detailTextureWidthPixels + 2));
 
             h.DrawImageFast(detailTexture, destRect, sourceRect, GraphicsUnit.Pixel);
+            detailTexture.Dispose();
         }
     }
 }

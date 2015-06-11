@@ -16,17 +16,12 @@ namespace F4Utils.Terrain
     internal class FarTileTextureRetriever:IFarTileTextureRetriever
     {
         private readonly TerrainDB _terrainDB;
-        private readonly Dictionary<uint, Bitmap> _farTileTextures = new Dictionary<uint, Bitmap>();
         public FarTileTextureRetriever(TerrainDB terrainDB)
         {
             _terrainDB = terrainDB;
         }
         public Bitmap GetFarTileTexture(uint textureId)
         {
-            if (_farTileTextures.ContainsKey(textureId))
-            {
-                return _farTileTextures[textureId];
-            }
             if (String.IsNullOrEmpty(_terrainDB.FarTilesDotDdsFilePath) && (String.IsNullOrEmpty(_terrainDB.FarTilesDotRawFilePath)))
                 return null;
 
@@ -72,10 +67,6 @@ namespace F4Utils.Terrain
                         stream.Read(ddsBytes, headerSize + 4, imageSize);
                         bitmap = DDS.GetBitmapFromDDSFileBytes(ddsBytes);
 
-                        if (_farTileTextures != null && !_farTileTextures.ContainsKey(textureId))
-                        {
-                            _farTileTextures.Add(textureId, bitmap);
-                        }
                         stream.Close();
                     }
                 }
@@ -101,10 +92,6 @@ namespace F4Utils.Terrain
                         var width = lockData.Width;
                         Marshal.Copy(bytesRead, 0, scan0, width * height);
                         bitmap.UnlockBits(lockData);
-                        if (_farTileTextures != null && !_farTileTextures.ContainsKey(textureId))
-                        {
-                            _farTileTextures.Add(textureId, bitmap);
-                        }
                         stream.Close();
                     }
                 }

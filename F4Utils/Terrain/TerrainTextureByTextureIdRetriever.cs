@@ -11,7 +11,6 @@ namespace F4Utils.Terrain
     {
         private readonly INearTileTextureLoader _nearTileTextureLoader;
         private readonly IFarTileTextureRetriever _farTileTextureRetriever;
-        private readonly Dictionary<uint, Bitmap> _nearTileTextures = new Dictionary<uint, Bitmap>();
         private readonly TerrainDB _terrainDB;
         public TerrainTextureByTextureIdRetriever(
             TerrainDB terrainDB, 
@@ -31,17 +30,12 @@ namespace F4Utils.Terrain
             {
                 var textureBinInfo = _terrainDB.TextureDotBin;
                 textureId -= lodInfo.minTexOffset;
-                if (_nearTileTextures.ContainsKey(textureId)) return _nearTileTextures[textureId];
 
                 var setNum = textureId / Constants.NUM_TEXTURES_PER_SET;
                 var tileNum = textureId % Constants.NUM_TEXTURES_PER_SET;
                 var thisSet = textureBinInfo.setRecords[setNum];
                 var tileName = thisSet.tileRecords[tileNum].tileName;
                 toReturn = _nearTileTextureLoader.LoadNearTileTexture(tileName);
-                if (toReturn != null)
-                {
-                    _nearTileTextures.Add(textureId, toReturn);
-                }
             }
             else if (lod <= _terrainDB.TheaterDotMap.LastFarTiledLOD)
             {
