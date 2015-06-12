@@ -9,15 +9,28 @@ using System.Text;
 
 namespace F4Utils.Resources
 {
-    public enum F4ResourceType : uint
+    public enum ResourceType : uint
     {
         Unknown = 0,
         ImageResource = 100,
         SoundResource = 101,
         FlatResource = 102,
     }
+    public interface IResourceBundleReader
+    {
+        byte[] GetFlatResource(int resourceNum);
+        byte[] GetFlatResource(string resourceId);
+        System.Drawing.Bitmap GetImageResource(int resourceNum);
+        System.Drawing.Bitmap GetImageResource(string resourceId);
+        string GetResourceID(int resourceNum);
+        ResourceType GetResourceType(int resourceNum);
+        byte[] GetSoundResource(int resourceNum);
+        byte[] GetSoundResource(string resourceId);
+        void Load(string resourceBundleIndexPath);
+        int NumResources { get; }
+    }
 
-    public class F4ResourceBundleReader
+    public class ResourceBundleReader : IResourceBundleReader
     {
         private const string RESOURCE_FILE_EXTENSION = ".rsc";
         private F4ResourceBundleIndex _resourceIndex;
@@ -69,7 +82,7 @@ namespace F4Utils.Resources
                     var resourceName = Encoding.ASCII.GetString(resourceId);
                     var nullLoc = resourceName.IndexOf('\0');
                     resourceName = nullLoc > 0 ? resourceName.Substring(0, nullLoc) : null;
-                    if (resourceType == (uint) (F4ResourceType.ImageResource))
+                    if (resourceType == (uint) (ResourceType.ImageResource))
                     {
                         var thisResourceHeader = new F4ImageResourceHeader
                                                      {
@@ -95,7 +108,7 @@ namespace F4Utils.Resources
                         headers.Add(thisResourceHeader);
                         size -= 60;
                     }
-                    else if (resourceType == (uint) (F4ResourceType.SoundResource))
+                    else if (resourceType == (uint) (ResourceType.SoundResource))
                     {
                         var thisResourceHeader = new F4SoundResourceHeader
                                                      {
@@ -115,7 +128,7 @@ namespace F4Utils.Resources
                         headers.Add(thisResourceHeader);
                         size -= 52;
                     }
-                    else if (resourceType == (uint) (F4ResourceType.FlatResource))
+                    else if (resourceType == (uint) (ResourceType.FlatResource))
                     {
                         var thisResourceHeader = new F4FlatResourceHeader
                                                      {
@@ -167,13 +180,13 @@ namespace F4Utils.Resources
             }
         }
 
-        public virtual F4ResourceType GetResourceType(int resourceNum)
+        public virtual ResourceType GetResourceType(int resourceNum)
         {
             if (_resourceIndex == null)
             {
-                return F4ResourceType.Unknown;
+                return ResourceType.Unknown;
             }
-            return (F4ResourceType) _resourceIndex.ResourceHeaders[resourceNum].Type;
+            return (ResourceType) _resourceIndex.ResourceHeaders[resourceNum].Type;
         }
 
         public virtual string GetResourceID(int resourceNum)

@@ -14,7 +14,7 @@ namespace F4ResourceFileEditor
     public partial class frmMain : Form
     {
         private EditorState _editorState = new EditorState();
-        private F4ResourceBundleReader _reader = new F4ResourceBundleReader();
+        private ResourceBundleReader _reader = new ResourceBundleReader();
 
         public frmMain()
         {
@@ -124,7 +124,7 @@ namespace F4ResourceFileEditor
             {
                 _editorState = new EditorState();
                 _editorState.FilePath = resourceFilePath;
-                _reader = new F4ResourceBundleReader();
+                _reader = new ResourceBundleReader();
                 _reader.Load(resourceIndexFileFI.FullName);
                 for (var i = 0; i < _reader.NumResources; i++)
                 {
@@ -134,9 +134,9 @@ namespace F4ResourceFileEditor
                     thisResourceStateRecord.ID = _reader.GetResourceID(i);
                     switch (thisResourceType)
                     {
-                        case F4ResourceType.Unknown:
+                        case ResourceType.Unknown:
                             break;
-                        case F4ResourceType.ImageResource:
+                        case ResourceType.ImageResource:
                             var resourceData = _reader.GetImageResource(i);
                             using (var ms = new MemoryStream())
                             {
@@ -147,10 +147,10 @@ namespace F4ResourceFileEditor
                                 ms.Close();
                             }
                             break;
-                        case F4ResourceType.SoundResource:
+                        case ResourceType.SoundResource:
                             thisResourceStateRecord.Data = _reader.GetSoundResource(thisResourceStateRecord.ID);
                             break;
-                        case F4ResourceType.FlatResource:
+                        case ResourceType.FlatResource:
                             thisResourceStateRecord.Data = _reader.GetFlatResource(thisResourceStateRecord.ID);
                             break;
                         default:
@@ -177,15 +177,15 @@ namespace F4ResourceFileEditor
 
             switch (thisResource.ResourceType)
             {
-                case F4ResourceType.Unknown:
+                case ResourceType.Unknown:
                     break;
-                case F4ResourceType.ImageResource:
+                case ResourceType.ImageResource:
                     RenderImageResource(thisResource.ID);
                     break;
-                case F4ResourceType.SoundResource:
+                case ResourceType.SoundResource:
                     RenderSoundResource(thisResource.ID);
                     break;
-                case F4ResourceType.FlatResource:
+                case ResourceType.FlatResource:
                     break;
                 default:
                     break;
@@ -331,7 +331,7 @@ namespace F4ResourceFileEditor
             {
                 public byte[] Data;
                 public string ID;
-                public F4ResourceType ResourceType;
+                public ResourceType ResourceType;
             }
 
             #endregion

@@ -113,9 +113,9 @@ namespace F16CPD.SimSupport.Falcon4
                 _movingMap = new MovingMap.MovingMap(_terrainDB);
             }
             _movingMap.RenderMap(
-                g, renderRect, 
-                mapScale, 
-                Manager.FlightData.MapCoordinateFeetNorth, Manager.FlightData.MapCoordinateFeetEast, Manager.FlightData.MagneticHeadingInDecimalDegrees, 
+                g, renderRect,
+                mapScale,
+                Manager.FlightData.MapCoordinateFeetEast, Manager.FlightData.MapCoordinateFeetNorth,Manager.FlightData.MagneticHeadingInDecimalDegrees, 
                 rangeRingDiameterInNauticalMiles, rotationMode);
         }
 
