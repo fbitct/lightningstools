@@ -1210,17 +1210,48 @@ namespace F16CPD
 
             if (FlightData.SplitMapDisplay)
             {
-                var pfdRenderRectangle = new Rectangle(overallRenderRectangle.X + LabelWidth+10, overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen), (int)(overallRenderRectangle.Width / 2.0)-LabelWidth -10, mapHeightDifferenceFromFullScreen - LabelHeight -10);
+                var bigPfdRenderSize = new Size(610, 495);
+
+                var pfdRenderRectangle = new Rectangle(
+                    overallRenderRectangle.X + LabelWidth+10, 
+                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen), 
+                    (int)(overallRenderRectangle.Width / 2.0)-LabelWidth -10, 
+                    0);
+
+                pfdRenderRectangle.Height = (int)(bigPfdRenderSize.Height * ((float)pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width));
+
                 using (var smallPfdRenderTarget = new Bitmap(pfdRenderRectangle.Width, pfdRenderRectangle.Height, PixelFormat.Format16bppRgb555))
                 using (var smallG = Graphics.FromImage(smallPfdRenderTarget))
                 {
                     var pfd = Pfd;
                     pfd.Manager = this;
-                    var pfdRenderSize = new Size(610, 495);
-                    smallG.ScaleTransform((pfdRenderRectangle.Width / (float)pfdRenderSize.Width),
-                        (pfdRenderRectangle.Height / (float)pfdRenderSize.Height));
-                    pfd.Render(smallG, pfdRenderSize);
-                    g.DrawImageFast(smallPfdRenderTarget, new Point(LabelWidth +10, pfdRenderRectangle.Y));
+                    smallG.ScaleTransform((pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width),
+                        (pfdRenderRectangle.Height / (float)bigPfdRenderSize.Height));
+                    pfd.Render(smallG, bigPfdRenderSize);
+                    g.DrawImageFast(smallPfdRenderTarget, new Point(LabelWidth, pfdRenderRectangle.Y));
+                }
+            }
+
+            if (FlightData.SplitMapDisplay)
+            {
+                var bigHsiRenderSize = new Size(596, 391);
+
+                var hsiRenderRectangle = new Rectangle(
+                    (int)((overallRenderRectangle.Width - LabelWidth - 10) / 2),
+                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen),
+                    (int)(overallRenderRectangle.Width / 2) - LabelWidth - 10,
+                    0);
+                hsiRenderRectangle.Height = (int)(bigHsiRenderSize.Height * ((float)hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width));
+
+                using (var smallHsiRenderTarget = new Bitmap(hsiRenderRectangle.Width, hsiRenderRectangle.Height, PixelFormat.Format16bppRgb555))
+                using (var smallG = Graphics.FromImage(smallHsiRenderTarget))
+                {
+                    var hsi = Hsi;
+                    hsi.Manager = this;
+                    smallG.ScaleTransform((hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width),
+                        (hsiRenderRectangle.Height / (float)bigHsiRenderSize.Height));
+                    hsi.Render(smallG, bigHsiRenderSize);
+                    g.DrawImageFast(smallHsiRenderTarget, new Point((int)(overallRenderRectangle.Width/2), hsiRenderRectangle.Y));
                 }
             }
         }

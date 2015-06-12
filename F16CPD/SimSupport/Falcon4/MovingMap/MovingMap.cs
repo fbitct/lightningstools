@@ -80,7 +80,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 {
                     using (var h = Graphics.FromImage(renderTarget))
                     {
-                        var backgroundColor = Color.Black;
+                        var backgroundColor = Color.FromArgb(181,186,222);
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         h.Clear(backgroundColor);
                         if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
