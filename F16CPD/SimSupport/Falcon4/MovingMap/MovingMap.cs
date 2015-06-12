@@ -49,7 +49,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             var mapWidthInL2Segments = _terrainDB.TheaterDotMap.LODMapWidths[2];
             var mapWidthInL2Posts = mapWidthInL2Segments * F4Utils.Terrain.Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             var mapWidthInFeet = mapWidthInL2Posts * (_terrainDB.TheaterDotMap.FeetBetweenL0Posts*4);
-            var mapImage = _terrainDB.GetTheaterMapImage(2);
+            Bitmap mapImage=null;
             if (_resourceBundleReader.NumResources <= 0)
             {
                 try
@@ -67,12 +67,16 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             {
                 mapImage = _resourceBundleReader.GetImageResource("BIG_MAP_ID");
             }
+            else
+            {
+                return false;
+            }
             var mapImageFeetPerPixel = mapWidthInFeet / (float)mapImage.Width;
-            var scaleX = (float)renderRectangle.Width / (float)mapImage.Width;
-            var scaleY = (float)renderRectangle.Height / (float)mapImage.Height;
-            var xOffset = -(mapCoordinateFeetEast / mapImageFeetPerPixel) + ((float)mapImage.Width / 2.0f);
-            var yOffset = ((mapCoordinateFeetNorth / mapImageFeetPerPixel) - ((float)mapImage.Height / 2.0f));
-
+            var zoom = 1/(mapScale / 50000.0f) ;
+            var scaleX = (float)renderRectangle.Width / ((float)mapImage.Width);
+            var scaleY = (float)renderRectangle.Height / ((float)mapImage.Height);
+            var xOffset = (-(mapCoordinateFeetEast / mapImageFeetPerPixel) + (((float)mapImage.Width / 2.0f)));
+            var yOffset = (((mapCoordinateFeetNorth / mapImageFeetPerPixel) - (((float)mapImage.Height / 2.0f))));
             try
             {
                 using (var renderTarget = new Bitmap(renderRectangle.Width, renderRectangle.Height, PixelFormat.Format16bppRgb565))
@@ -82,20 +86,27 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                         var backgroundColor = Color.FromArgb(181,186,222);
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         h.Clear(backgroundColor);
+                        h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
+                        h.ScaleTransform(zoom, zoom);
+                        h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
                         if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
                         {
                             h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
                             h.RotateTransform(-(magneticHeadingInDecimalDegrees));
                             h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
                         }
-                        h.ScaleTransform(scaleX, scaleY);
-                        h.DrawImageFast(mapImage, new PointF(xOffset, yOffset));
+                        
+                       h.ScaleTransform(scaleX, scaleY);
+                       h.TranslateTransform(xOffset, yOffset);
+                        h.DrawImageFast(mapImage,0, 0, new RectangleF(0, 0, mapImage.Width, mapImage.Height), GraphicsUnit.Pixel);
+
                         mapImage.Dispose();
                     }
+                    
                     g.DrawImageFast(
                         renderTarget,
                         renderRectangle,
-                        new Rectangle(0,0,renderTarget.Width, renderTarget.Height),
+                        new Rectangle(0, 0, renderTarget.Width, renderTarget.Height),
                         GraphicsUnit.Pixel
                         );
                     _centerAirplaneRenderer.DrawCenterAirplaneSymbol(g, renderRectangle);

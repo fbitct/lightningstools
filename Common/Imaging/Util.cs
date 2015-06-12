@@ -232,10 +232,10 @@ namespace Common.Imaging
             var destHeight = (int) (sourceHeight*nPercent);
 
             var bitmap = new Bitmap(destWidth, destHeight, imgToResize.PixelFormat);
-            var g = Graphics.FromImage(bitmap);
-
-            g.DrawImageFast(imgToResize, 0, 0, destWidth, destHeight);
-            g.Dispose();
+            using (var g = Graphics.FromImage(bitmap))
+            {
+                g.DrawImageFast(imgToResize, 0, 0, destWidth, destHeight);
+            }
 
             return bitmap;
         }
