@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.MacroProgramming", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Campaign", "..\F4Utils\Campaign\F4Utils.Campaign.csproj", "{D386EC91-6D89-421F-87BC-4849E0232722}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "F4Utils.Resources", "..\F4Utils\Resources\F4Utils.Resources.csproj", "{A95B675E-E59B-4D44-B66E-8E642B2D825F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -177,6 +179,10 @@ Global
 		{D386EC91-6D89-421F-87BC-4849E0232722}.Debug|x86.Build.0 = Debug|x86
 		{D386EC91-6D89-421F-87BC-4849E0232722}.Release|x86.ActiveCfg = Release|x86
 		{D386EC91-6D89-421F-87BC-4849E0232722}.Release|x86.Build.0 = Release|x86
+		{A95B675E-E59B-4D44-B66E-8E642B2D825F}.Debug|x86.ActiveCfg = Debug|x86
+		{A95B675E-E59B-4D44-B66E-8E642B2D825F}.Debug|x86.Build.0 = Debug|x86
+		{A95B675E-E59B-4D44-B66E-8E642B2D825F}.Release|x86.ActiveCfg = Release|x86
+		{A95B675E-E59B-4D44-B66E-8E642B2D825F}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -201,5 +207,6 @@ Global
 		{3FC238BA-7FC2-47AE-AE45-7CF199EDBE08} = {B75892D5-8A05-4C57-82D7-C2886157DF41}
 		{320431C6-2454-4D95-8D3C-D27C8E2288E9} = {B75892D5-8A05-4C57-82D7-C2886157DF41}
 		{D386EC91-6D89-421F-87BC-4849E0232722} = {87B9C1D4-61AB-457C-8388-E6DA96325539}
+		{A95B675E-E59B-4D44-B66E-8E642B2D825F} = {87B9C1D4-61AB-457C-8388-E6DA96325539}
 	EndGlobalSection
 EndGlobal
