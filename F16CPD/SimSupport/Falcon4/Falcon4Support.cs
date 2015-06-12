@@ -18,9 +18,7 @@ using log4net;
 
 namespace F16CPD.SimSupport.Falcon4
 {
-    //TODO: PRIO create configurable reset key
     //TODO: PRIO blank RALTs in certain attitudes
-    //TODO: PRIO is there a way to read initial switch state in falcon and synchronize to that?
     internal sealed class Falcon4Support : ISimSupportModule, IDisposable
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (Falcon4Support));
@@ -257,6 +255,21 @@ namespace F16CPD.SimSupport.Falcon4
                 flightData.BarometricPressure = (fromFalcon.AltCalReading/100.00f);
                 flightData.AltimeterUnits = (((AltBits)fromFalcon.altBits & AltBits.CalType) == AltBits.CalType) ? AltimeterUnits.Hg : AltimeterUnits.hPa;
                 flightData.AltimeterMode = (((AltBits)fromFalcon.altBits & AltBits.PneuFlag) == AltBits.PneuFlag) ? AltimeterMode.Pneumatic : AltimeterMode.Electronic;
+                switch (fromFalcon.navMode) 
+                { 
+                    case (byte)F4SharedMem.Headers.NavModes.ILS_NAV:
+                        flightData.NavMode = NavModes.IlsNav;
+                        break;
+                    case (byte)F4SharedMem.Headers.NavModes.ILS_TACAN:
+                        flightData.NavMode = NavModes.IlsTcn;
+                        break;
+                    case (byte)F4SharedMem.Headers.NavModes.TACAN:
+                        flightData.NavMode = NavModes.Tcn;
+                        break;
+                    case (byte)F4SharedMem.Headers.NavModes.NAV:
+                        flightData.NavMode = NavModes.Nav;
+                        break;
+                }
                 UpdateIndicatedAltitude(flightData, fromFalcon);
                 UpdateAltitudeAGL(flightData, fromFalcon);
                 UpdateIndicatedAirspeed(flightData, fromFalcon);

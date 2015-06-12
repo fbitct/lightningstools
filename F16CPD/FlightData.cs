@@ -433,6 +433,7 @@ namespace F16CPD
         public bool AdiLocalizerInvalidFlag { get; set; }
         public bool AdiEnableCommandBars { get; set; }
         public AltimeterMode AltimeterMode { get; set; }
+        public NavModes NavMode { get; set; }
         public bool HsiOffFlag { get; set; }
         public bool AdiOffFlag { get; set; }
         public bool RadarAltimeterOffFlag { get; set; }

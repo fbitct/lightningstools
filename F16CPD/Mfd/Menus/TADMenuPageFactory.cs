@@ -55,7 +55,7 @@ namespace F16CPD.Mfd.Menus
             buttons.Add(scaleDecreaseButton);
 
 
-            var mapRotationModeLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 11,
+            var mapRotationModeLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 9,
                                           _mfdManager.GetMapRotationModeText(_mfdManager.MapRotationMode), false);
             mapRotationModeLabel.FunctionName = "MapRotationModeLabel";
             mapRotationModeLabel.Pressed += (s, e) => { 

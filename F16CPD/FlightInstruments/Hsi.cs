@@ -13,6 +13,8 @@ namespace F16CPD.FlightInstruments
         private static Font _textFont = new Font("Lucida Console", 12, FontStyle.Bold);
         private Bitmap _compassRose;
         private Bitmap _courseDeviationDiamond;
+        private DateTime _currentNavModeDisplayedSince=DateTime.MinValue;
+        private NavModes _currentNavMode;
         private bool _isDisposed;
         public F16CpdMfdManager Manager { get; set; }
 
@@ -140,11 +142,7 @@ namespace F16CPD.FlightInstruments
                     crg.DrawImageFast(courseDeviationDiamond, new Point(233, 166));
 
                     //draw HSI TO/FROM flags
-                    //Brush toFromFlagSolidColorBrush = Brushes.Red;
-                    //if (this.Manager.NightMode)
-                    //{
                     var toFromFlagSolidColorBrush = Brushes.White;
-                    //}
                     whitePen.Width = 1;
 
                     //draw TO flag
@@ -156,7 +154,6 @@ namespace F16CPD.FlightInstruments
                     {
                         crg.FillPolygon(toFromFlagSolidColorBrush, points);
                     }
-                    //crg.DrawPolygon(whitePen, points);
 
                     //draw FROM flag
                     pointA = new Point((compassRose.Width/2) + 25, (compassRose.Height/2) + 20); //left
@@ -168,7 +165,6 @@ namespace F16CPD.FlightInstruments
                     {
                         crg.FillPolygon(toFromFlagSolidColorBrush, points);
                     }
-                    //crg.DrawPolygon(whitePen, points);
 
                     //draw HSI Course Deviation Invalid flag
                     var courseInvalidFlagBrush = Brushes.Red;
@@ -182,7 +178,6 @@ namespace F16CPD.FlightInstruments
                     pointD = new Point((compassRose.Width/2) - 50, (compassRose.Height/2) - 20); //left bottom
                     points = new[] {pointA, pointB, pointC, pointD};
 
-                    //crg.DrawPolygon(whitePen, points);
                     if (Manager.FlightData.HsiDeviationInvalidFlag)
                     {
                         crg.FillPolygon(courseInvalidFlagBrush, points);
@@ -392,12 +387,6 @@ namespace F16CPD.FlightInstruments
 
                 var dme = (Manager.FlightData.HsiDistanceToBeaconInNauticalMiles);
                 var dmeText = string.Format("{0:000.0}", dme);
-                /*
-                while (dmeText.StartsWith("0") && !dmeText.StartsWith("0.0"))
-                {
-                    dmeText = dmeText.Substring(1, dmeText.Length - 1);
-                }
-                 */
                 textFormat.LineAlignment = StringAlignment.Near;
                 textFormat.Alignment = StringAlignment.Near;
                 g.DrawStringFast(dmeText + " MILES", _textFont, whiteBrush, dmeTextRectangle, textFormat);
@@ -425,6 +414,29 @@ namespace F16CPD.FlightInstruments
                     }
                     g.Clip = currentClip;
                 }
+
+                if (Manager.FlightData.NavMode != _currentNavMode) 
+                {
+                    _currentNavModeDisplayedSince = DateTime.Now;
+                    _currentNavMode = Manager.FlightData.NavMode;
+                }
+                //draw HSI nav mode
+                if (DateTime.Now.Subtract(_currentNavModeDisplayedSince).TotalSeconds < 2)
+                {
+                    var navModeRectangle = new Rectangle(243, 165, 95, 22);
+                    var navModeText = string.Format("{0}", _currentNavMode.ToString().ToUpper().Replace("ILS", "ILS/"));
+                    textFormat.LineAlignment = StringAlignment.Center;
+                    textFormat.Alignment = StringAlignment.Center;
+
+                    var path = new GraphicsPath();
+                    path.AddString(navModeText, FontFamily.GenericSansSerif, (int)FontStyle.Bold, 20, navModeRectangle, textFormat);
+                    g.FillPathFast(Brushes.Aqua, path);
+                }
+                
+                
+                
+            
+            
             }
         }
 
