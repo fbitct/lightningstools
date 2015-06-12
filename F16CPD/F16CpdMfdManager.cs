@@ -82,7 +82,6 @@ namespace F16CPD
         private float _mapScale = 500000.0f;
         private bool _nightMode;
         private ISimSupportModule _simSupportModule;
-
         internal F16CpdMfdManager(Size screenBoundsPixels,
             IPrimaryMenuPageFactory primaryMenuPageFactory = null,
             IInstrumentsDisplayMenuPageFactory instrumentsDisplayMenuPageFactory = null,
@@ -395,7 +394,14 @@ namespace F16CPD
 
         public void SwitchToTADPage()
         {
-            SetPage("TAD Page");
+            if (ActiveMenuPage.Name == "TAD Page")
+            {
+                ToggleSplitMapDisplay();
+            }
+            else
+            {
+                SetPage("TAD Page");
+            }
         }
 
         public void SwitchToChecklistsPage()
@@ -418,11 +424,10 @@ namespace F16CPD
             SetPage("Charts Page");
         }
 
-        public void SwitchToControlMapPage()
+        private void ToggleSplitMapDisplay()
         {
-            SetPage("Control Map Page");
+            FlightData.SplitMapDisplay = !FlightData.SplitMapDisplay;
         }
-
         private void UpdateCurrentChecklistPageCount()
         {
             if (_currentChecklistFile != null)
@@ -792,14 +797,13 @@ namespace F16CPD
                 ProcessPendingMessagesToClientFromServer();
             }
         }
-
+        private int LabelWidth { get { return (int)(35 * (ScreenBoundsPixels.Width / Constants.F_NATIVE_RES_WIDTH)); } }
+        private int LabelHeight { get { return (int)(20 * (ScreenBoundsPixels.Height / Constants.F_NATIVE_RES_HEIGHT)); } }
         public override void Render(Graphics g)
         {
             var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
 
             //g.Clear(Color.Transparent);
-            var labelWidth = (int) (35*(ScreenBoundsPixels.Width/Constants.F_NATIVE_RES_WIDTH));
-            var labelHeight = (int) (20*(ScreenBoundsPixels.Height/Constants.F_NATIVE_RES_HEIGHT));
             var overallRenderRectangle = new Rectangle(0, 0, ScreenBoundsPixels.Width, ScreenBoundsPixels.Height);
             OptionSelectButton button;
             var origTransform = g.Transform;
@@ -940,9 +944,9 @@ namespace F16CPD
                 {
                     var pfd = Pfd;
                     pfd.Manager = this;
-                    var pfdRenderRectangle = new Rectangle(labelWidth + 1, labelHeight + 1,
-                        (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
-                        ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))/2) + 10);
+                    var pfdRenderRectangle = new Rectangle(LabelWidth + 1, LabelHeight + 1,
+                        (ScreenBoundsPixels.Width - ((LabelWidth + 1)*2)),
+                        ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))/2) + 10);
                     pfdRenderRectangle = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Top,
                         (pfdRenderRectangle.Width), (pfdRenderRectangle.Height));
                     var pfdRenderSize = new Size(610, 495);
@@ -999,18 +1003,18 @@ namespace F16CPD
                 case "Checklists Page":
                     if (_currentChecklistFile != null)
                     {
-                        var checklistRenderRectangle = new Rectangle(labelWidth + 1, labelHeight + 1,
-                            (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
-                            ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))));
+                        var checklistRenderRectangle = new Rectangle(LabelWidth + 1, LabelHeight + 1,
+                            (ScreenBoundsPixels.Width - ((LabelWidth + 1)*2)),
+                            ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))));
                         RenderCurrentChecklist(g, checklistRenderRectangle);
                     }
                     break;
                 case "Charts Page":
                     if (_currentChartFile != null)
                     {
-                        var chartRenderRectangle = new Rectangle(labelWidth + 1, labelHeight + 1,
-                            (ScreenBoundsPixels.Width - ((labelWidth + 1)*2)),
-                            ((ScreenBoundsPixels.Height - ((labelHeight + 1)*2))));
+                        var chartRenderRectangle = new Rectangle(LabelWidth + 1, LabelHeight + 1,
+                            (ScreenBoundsPixels.Width - ((LabelWidth + 1)*2)),
+                            ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))));
                         RenderCurrentChart(g, chartRenderRectangle);
                     }
                     break;
@@ -1186,8 +1190,39 @@ namespace F16CPD
 
         private void RenderMapLocally(Graphics g, float mapScale, int rangeRingDiameterInNauticalMiles)
         {
-            var renderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
-            RenderMapLocally(g, renderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
+            var overallRenderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
+            var mapRenderRectangle = overallRenderRectangle;
+            var mapHeightDifferenceFromFullScreen = (int)(overallRenderRectangle.Height * (3.0/8.0));
+            if (FlightData.SplitMapDisplay)
+            {
+                mapRenderRectangle = new Rectangle(overallRenderRectangle.X, overallRenderRectangle.Y, overallRenderRectangle.Width, overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen);
+                using (var smallMapRenderTarget = new Bitmap(mapRenderRectangle.Width, mapRenderRectangle.Height, PixelFormat.Format16bppRgb555))
+                using (var smallG = Graphics.FromImage(smallMapRenderTarget))
+                {
+                    RenderMapLocally(smallG, mapRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
+                    g.DrawImageFast(smallMapRenderTarget, new Point(0,0));
+                }
+            }
+            else
+            {
+                RenderMapLocally(g, mapRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
+            }
+
+            if (FlightData.SplitMapDisplay)
+            {
+                var pfdRenderRectangle = new Rectangle(overallRenderRectangle.X + LabelWidth+10, overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen), (int)(overallRenderRectangle.Width / 2.0)-LabelWidth -10, mapHeightDifferenceFromFullScreen - LabelHeight -10);
+                using (var smallPfdRenderTarget = new Bitmap(pfdRenderRectangle.Width, pfdRenderRectangle.Height, PixelFormat.Format16bppRgb555))
+                using (var smallG = Graphics.FromImage(smallPfdRenderTarget))
+                {
+                    var pfd = Pfd;
+                    pfd.Manager = this;
+                    var pfdRenderSize = new Size(610, 495);
+                    smallG.ScaleTransform((pfdRenderRectangle.Width / (float)pfdRenderSize.Width),
+                        (pfdRenderRectangle.Height / (float)pfdRenderSize.Height));
+                    pfd.Render(smallG, pfdRenderSize);
+                    g.DrawImageFast(smallPfdRenderTarget, new Point(LabelWidth +10, pfdRenderRectangle.Y));
+                }
+            }
         }
 
         private void RenderMapLocally(Graphics g, Rectangle renderRectangle, float mapScale,

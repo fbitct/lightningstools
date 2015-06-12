@@ -9,6 +9,7 @@ using log4net;
 using System.Drawing.Drawing2D;
 using F4Utils.Resources;
 using System.IO;
+using F16CPD.FlightInstruments.Pfd;
 namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
     internal interface IMovingMap : IDisposable
@@ -38,6 +39,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             _mapRingRenderer = mapRingRenderer ?? new MapRingRenderer();
             _centerAirplaneRenderer = centerAirplaneRenderer ?? new CenterAirplaneRenderer();
             _resourceBundleReader = resourceBundleReader ?? new ResourceBundleReader();
+
         }
 
         public bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
@@ -89,6 +91,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                         }
                         h.ScaleTransform(scaleX, scaleY);
                         h.DrawImageFast(mapImage, new PointF(xOffset, yOffset));
+                        mapImage.Dispose();
                     }
                     g.DrawImageFast(
                         renderTarget,
