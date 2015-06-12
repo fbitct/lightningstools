@@ -2,7 +2,7 @@
 {
     public enum MapRotationMode
     {
-        NorthOnTop,
-        CurrentHeadingOnTop
+        NorthUp=0,
+        HeadingUp
     }
 }

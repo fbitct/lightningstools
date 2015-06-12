@@ -89,7 +89,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                         h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
                         h.ScaleTransform(zoom, zoom);
                         h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
-                        if (rotationMode == MapRotationMode.CurrentHeadingOnTop)
+                        if (rotationMode == MapRotationMode.HeadingUp)
                         {
                             h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
                             h.RotateTransform(-(magneticHeadingInDecimalDegrees));
@@ -109,9 +109,25 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                         new Rectangle(0, 0, renderTarget.Width, renderTarget.Height),
                         GraphicsUnit.Pixel
                         );
-                    _centerAirplaneRenderer.DrawCenterAirplaneSymbol(g, renderRectangle);
 
+                    var originalTransform = g.Transform;
+                    if (rotationMode == MapRotationMode.NorthUp)
+                    {
+                        g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
+                        g.RotateTransform(-(magneticHeadingInDecimalDegrees));
+                        g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
+                    }
+                    _centerAirplaneRenderer.DrawCenterAirplaneSymbol(g, renderRectangle);
+                    g.Transform = originalTransform;
+
+                    if (rotationMode == MapRotationMode.NorthUp)
+                    {
+                        g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
+                        g.RotateTransform(magneticHeadingInDecimalDegrees);
+                        g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
+                    }
                     _mapRingRenderer.DrawMapRing(g, renderRectangle, 200, 1, magneticHeadingInDecimalDegrees);
+                    g.Transform = originalTransform;
                 }
             }
             catch (Exception ex)

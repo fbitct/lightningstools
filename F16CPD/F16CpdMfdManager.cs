@@ -187,6 +187,7 @@ namespace F16CPD
         {
             get { return _mapScale; }
         }
+        public MapRotationMode MapRotationMode { get; set; }
 
         internal ToggleSwitchMfdInputControl HsiModeSelectorSwitch { get; private set; }
 
@@ -572,7 +573,17 @@ namespace F16CPD
             }
             if (_mapRangeRingsDiameterInNauticalMiles > 5000) _mapRangeRingsDiameterInNauticalMiles = 5000;
         }
-
+        internal string GetMapRotationModeText(MapRotationMode mapRotationMode)
+        {
+            switch (MapRotationMode)
+            {
+                case F16CPD.MapRotationMode.HeadingUp:
+                    return "HDG UP";
+                case F16CPD.MapRotationMode.NorthUp:
+                    return "NORTH UP";
+            }
+            return GetMapRotationModeText(MapRotationMode.NorthUp);
+        }
         internal string GetCADRGScaleTextForMapScale(float mapScale)
         {
             var toReturn = "1:";
@@ -857,6 +868,11 @@ namespace F16CPD
                     var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
                     var mapRangeString = _mapRangeRingsDiameterInNauticalMiles.ToString(CultureInfo.InvariantCulture);
                     mapRangeLabel.LabelText = mapRangeString;
+
+                    var mapRotationModeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRotationModeLabel");
+                    var mapRotationModeString = GetMapRotationModeText(MapRotationMode);
+                    mapRotationModeLabel.LabelText = mapRotationModeString;
+
                 }
                     break;
                 case "Checklists Page":
@@ -1261,7 +1277,7 @@ namespace F16CPD
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
             SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
-                MapRotationMode.CurrentHeadingOnTop);
+                MapRotationMode);
 
             var scaleX = (tadRenderRectangle.Width)/Constants.F_NATIVE_RES_WIDTH;
             var scaleY = (tadRenderRectangle.Height)/Constants.F_NATIVE_RES_HEIGHT;

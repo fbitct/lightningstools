@@ -54,6 +54,16 @@ namespace F16CPD.Mfd.Menus
             scaleDecreaseButton.Pressed += (s, e) => _mfdManager.DecreaseMapScale();
             buttons.Add(scaleDecreaseButton);
 
+
+            var mapRotationModeLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 11,
+                                          _mfdManager.GetMapRotationModeText(_mfdManager.MapRotationMode), false);
+            mapRotationModeLabel.FunctionName = "MapRotationModeLabel";
+            mapRotationModeLabel.Pressed += (s, e) => { 
+                _mfdManager.MapRotationMode++; if ((int)_mfdManager.MapRotationMode > 1) _mfdManager.MapRotationMode = 0; 
+            };
+            buttons.Add(mapRotationModeLabel);
+
+            
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     true);
             tacticalAwarenessDisplayPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToTADPage();
