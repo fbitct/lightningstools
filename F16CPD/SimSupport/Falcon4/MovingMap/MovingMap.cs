@@ -46,7 +46,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode)
         {
             if (_terrainDB == null || _terrainDB.TerrainBasePath == null) return false;
-            renderRectangle.Inflate((int)(-renderRectangle.Width *0.06f), -(int)(renderRectangle.Height * 0.03f)); //don't render over or behind the OSB button label areas
             var mapWidthInL2Segments = _terrainDB.TheaterDotMap.LODMapWidths[2];
             var mapWidthInL2Posts = mapWidthInL2Segments * F4Utils.Terrain.Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
             var mapWidthInFeet = mapWidthInL2Posts * (_terrainDB.TheaterDotMap.FeetBetweenL0Posts*4);

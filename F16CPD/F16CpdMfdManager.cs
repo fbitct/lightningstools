@@ -29,8 +29,6 @@ namespace F16CPD
     //TODO: add map centering options on map screen
     //TODO: add track options on map screen (track up, north up, 
     //TODO: add orientation feature to map screen
-    //TODO: implement split screen mode in map screen
-    //TODO: trim label highlighting to boundary of text
     //TODO: implement built-in test mode
     //TODO: implement other MFD pages
     //TODO: PRIO create way to save input assignments
@@ -852,7 +850,6 @@ namespace F16CPD
                     break;
                 case "TAD Page":
                 {
-                    //Debug.WriteLine("here 3 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                     var scaleLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapScaleLabel");
                     var scaleString = "CADRG\r\n" + GetCADRGScaleTextForMapScale(_mapScale);
                     scaleLabel.LabelText = scaleString;
@@ -860,7 +857,6 @@ namespace F16CPD
                     var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
                     var mapRangeString = _mapRangeRingsDiameterInNauticalMiles.ToString(CultureInfo.InvariantCulture);
                     mapRangeLabel.LabelText = mapRangeString;
-                    //Debug.WriteLine("here 4 at " + DateTime.Now.Subtract(startTime).TotalMilliseconds);
                 }
                     break;
                 case "Checklists Page":
@@ -944,8 +940,8 @@ namespace F16CPD
                 {
                     var pfd = Pfd;
                     pfd.Manager = this;
-                    var pfdRenderRectangle = new Rectangle(LabelWidth + 1, LabelHeight + 1,
-                        (ScreenBoundsPixels.Width - ((LabelWidth + 1)*2)),
+                    var pfdRenderRectangle = new Rectangle(LabelWidth + 5, LabelHeight + 1,
+                        (ScreenBoundsPixels.Width - ((LabelWidth + 5)*2)),
                         ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))/2) + 10);
                     pfdRenderRectangle = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Top,
                         (pfdRenderRectangle.Width), (pfdRenderRectangle.Height));
@@ -1192,7 +1188,7 @@ namespace F16CPD
         {
             var overallRenderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
             var mapRenderRectangle = overallRenderRectangle;
-            var mapHeightDifferenceFromFullScreen = (int)(overallRenderRectangle.Height * (3.0/8.0));
+            var mapHeightDifferenceFromFullScreen = (int)(overallRenderRectangle.Height * 0.395);
             if (FlightData.SplitMapDisplay)
             {
                 mapRenderRectangle = new Rectangle(overallRenderRectangle.X, overallRenderRectangle.Y, overallRenderRectangle.Width, overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen);
@@ -1213,9 +1209,9 @@ namespace F16CPD
                 var bigPfdRenderSize = new Size(610, 495);
 
                 var pfdRenderRectangle = new Rectangle(
-                    overallRenderRectangle.X + LabelWidth+10, 
-                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen), 
-                    (int)(overallRenderRectangle.Width / 2.0)-LabelWidth -10, 
+                    overallRenderRectangle.X,
+                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + 20), 
+                    (int)(overallRenderRectangle.Width / 2.0), 
                     0);
 
                 pfdRenderRectangle.Height = (int)(bigPfdRenderSize.Height * ((float)pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width));
@@ -1228,7 +1224,7 @@ namespace F16CPD
                     smallG.ScaleTransform((pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width),
                         (pfdRenderRectangle.Height / (float)bigPfdRenderSize.Height));
                     pfd.Render(smallG, bigPfdRenderSize);
-                    g.DrawImageFast(smallPfdRenderTarget, new Point(LabelWidth, pfdRenderRectangle.Y));
+                    g.DrawImageFast(smallPfdRenderTarget, new Point(0, pfdRenderRectangle.Y));
                 }
             }
 
@@ -1237,9 +1233,9 @@ namespace F16CPD
                 var bigHsiRenderSize = new Size(596, 391);
 
                 var hsiRenderRectangle = new Rectangle(
-                    (int)((overallRenderRectangle.Width - LabelWidth - 10) / 2),
-                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen),
-                    (int)(overallRenderRectangle.Width / 2) - LabelWidth - 10,
+                    (int)(overallRenderRectangle.Width / 2),
+                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen +20),
+                    (int)(overallRenderRectangle.Width / 2),
                     0);
                 hsiRenderRectangle.Height = (int)(bigHsiRenderSize.Height * ((float)hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width));
 
@@ -1260,7 +1256,8 @@ namespace F16CPD
             int rangeRingDiameterInNauticalMiles)
         {
             if (Settings.Default.RunAsClient) return;
-            var greenBrush = Brushes.Green;
+            var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
+            
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
             SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,

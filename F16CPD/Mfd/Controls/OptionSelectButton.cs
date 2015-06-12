@@ -19,7 +19,7 @@ namespace F16CPD.Mfd.Controls
         {
             _page = page;
             ForeColor = Color.FromArgb(0, 255, 0);
-            BackColor = Color.Transparent;
+            BackColor = Color.Black;
             TextFont = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold, GraphicsUnit.Point);
             TextHAlignment = HAlignment.Center;
             TextVAlignment = VAlignment.Center;
@@ -68,13 +68,21 @@ namespace F16CPD.Mfd.Controls
             var maxTextAreaWidth = backgroundRectangle.Width;
             var numLinesOfText = 1 + text.Count(thisChar => thisChar == '\n');
             var textSize = new Size(maxTextAreaWidth, (font.Height*numLinesOfText));
-
             var textFormat = new StringFormat
                                  {
                                      Trimming = StringTrimming.EllipsisCharacter,
                                      LineAlignment = StringAlignment.Center,
                                      Alignment = StringAlignment.Center
                                  };
+            string textToMeasure = text;
+            var minTextSize = g.MeasureString(textToMeasure, font, maxTextAreaWidth, textFormat);
+            if (textToMeasure == @"\/" || textToMeasure == "^")
+            {
+                minTextSize.Width = 16;
+                minTextSize.Height = 16;
+            }
+            textSize.Width = (int)Math.Ceiling(minTextSize.Width);
+            textSize.Height = (int)minTextSize.Height;
 
             var textX = 0;
             var textY = 0;
