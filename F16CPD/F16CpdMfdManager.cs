@@ -274,6 +274,9 @@ namespace F16CPD
             if (processed) return;
             switch (pendingMessage.MessageType)
             {
+                case "ToggleSplitMapDisplay":
+                    ToggleSplitMapDisplay();
+                    break;
                 case "RequestNewMapImage":
                     //any other "New Map Image Requested" messages in the queue will be removed at this time
                     F16CPDServer.ClearPendingServerMessagesOfType("RequestNewMapImage");
@@ -425,7 +428,16 @@ namespace F16CPD
 
         private void ToggleSplitMapDisplay()
         {
-            FlightData.SplitMapDisplay = !FlightData.SplitMapDisplay;
+            if (!Settings.Default.RunAsClient)
+            {
+                FlightData.SplitMapDisplay = !FlightData.SplitMapDisplay;
+            }
+            else
+            {
+                var message = new Message("ToggleSplitMapDisplay", null);
+                Client.SendMessageToServer(message);
+
+            }
         }
         private void UpdateCurrentChecklistPageCount()
         {
