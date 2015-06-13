@@ -32,7 +32,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "F-16 Center Pedestal Display Output Window";
             this.SizeChanged += new System.EventHandler(this.F16CpdEngine_SizeChanged);
-            this.LocationChanged += new System.EventHandler(this.F16CpdEngine_LocationChanged);
             this.ResumeLayout(false);
 
         }

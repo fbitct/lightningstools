@@ -212,12 +212,20 @@ namespace F16CPD
         public void Stop()
         {
             _keepRunning = false;
+            SavePositionAndSize();
             Application.DoEvents();
             _keyboardWatcher.Stop();
             Close();
             Dispose();
         }
-
+        private void SavePositionAndSize()
+        {
+            Settings.Default.CpdWindowWidth = DesktopBounds.Width;
+            Settings.Default.CpdWindowHeight = DesktopBounds.Height;
+            Settings.Default.CpdWindowX = Location.X;
+            Settings.Default.CpdWindowY = Location.Y;
+            Util.SaveCurrentProperties();
+        }
         protected void Render()
         {
             if (_isDisposed || !_keepRunning || _disposing) return;
@@ -329,19 +337,9 @@ namespace F16CPD
 
         
 
-        private void F16CpdEngine_LocationChanged(object sender, EventArgs e)
-        {
-            Settings.Default.CpdWindowX = Location.X;
-            Settings.Default.CpdWindowY = Location.Y;
-            Util.SaveCurrentProperties();
-        }
-
         private void F16CpdEngine_SizeChanged(object sender, EventArgs e)
         {
             UpdateMfdManagerSize();
-            Settings.Default.CpdWindowWidth = DesktopBounds.Width;
-            Settings.Default.CpdWindowHeight = DesktopBounds.Height;
-            Util.SaveCurrentProperties();
 
             Common.Util.DisposeObject(_renderTarget);
             _renderTarget = CreateRenderTarget();
