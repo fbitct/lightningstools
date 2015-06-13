@@ -30,7 +30,7 @@ namespace F16CPD.SimSupport.Falcon4
             if (!Settings.Default.RunAsClient)
             {
                 var mainForm = Application.OpenForms.OfType<F16CpdEngine>().FirstOrDefault();
-                bool cpdWasInForeground = mainForm.ContainsFocus;
+                bool cpdWasInForeground = mainForm !=null && mainForm.ContainsFocus;
                 var mousePosition = Cursor.Position;
                 SendCallbackToFalconLocal(callback);
                 if (cpdWasInForeground)
