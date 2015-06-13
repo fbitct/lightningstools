@@ -39,9 +39,14 @@ namespace F16CPD
         {
             _mouseDown = true;
             _mouseDownTime = DateTime.Now;
+            bool alreadyHandledOnce =false;
             while (_mouseDown && ((Form.MouseButtons & MouseButtons.Left) == MouseButtons.Left))
             {
-                HandleMouseClick(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
+                if (!alreadyHandledOnce || (alreadyHandledOnce && DateTime.Now.Subtract(_mouseDownTime.Value).TotalMilliseconds > 500))
+                {
+                    HandleMouseClick(new MouseEventArgs(MouseButtons.Left, 1, Cursor.Position.X, Cursor.Position.Y, 0));
+                }
+                alreadyHandledOnce = true;
                 _whileMouseDown();
             }
             _mouseDown = false;
