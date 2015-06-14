@@ -1021,6 +1021,7 @@ namespace F16CPD
                         };
             var message = new Message("RequestNewMapImage", payload);
             Client.SendMessageToServer(message);
+            GetLatestMapImageFromServerAsync();
         }
 
         private void RenderPfd(Graphics g)
