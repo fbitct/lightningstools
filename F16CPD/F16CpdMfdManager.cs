@@ -966,63 +966,16 @@ namespace F16CPD
             {
                 case "Instruments Display Page":
                 {
-                    var pfd = Pfd;
-                    pfd.Manager = this;
-                    var pfdRenderRectangle = new Rectangle(LabelWidth + 5, LabelHeight + 1,
-                        (ScreenBoundsPixels.Width - ((LabelWidth + 5)*2)),
-                        ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))/2) + 10);
-                    pfdRenderRectangle = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Top,
-                        (pfdRenderRectangle.Width), (pfdRenderRectangle.Height));
-                    var pfdRenderSize = new Size(610, 495);
-                    g.SetClip(pfdRenderRectangle);
-                    g.TranslateTransform(pfdRenderRectangle.X, pfdRenderRectangle.Y);
-                    g.ScaleTransform((pfdRenderRectangle.Width/(float) pfdRenderSize.Width),
-                        (pfdRenderRectangle.Height/(float) pfdRenderSize.Height));
-                    pfd.Render(g, pfdRenderSize);
-                    g.Transform = origTransform;
+                    RenderPfd(g);
 
-                    var hsi = Hsi;
-                    hsi.Manager = this;
-                    var hsiRenderBounds = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Bottom + 5,
-                        pfdRenderRectangle.Width, pfdRenderRectangle.Height - 40);
-                    var hsiRenderSize = new Size(596, 391);
-                    origTransform = g.Transform;
-                    g.SetClip(hsiRenderBounds);
-                    g.TranslateTransform(hsiRenderBounds.X, hsiRenderBounds.Y);
-                    g.ScaleTransform((hsiRenderBounds.Width/(float) hsiRenderSize.Width),
-                        (hsiRenderBounds.Height/(float) hsiRenderSize.Height));
-                    hsi.Render(g, hsiRenderSize);
-                    g.Transform = origTransform;
                 }
                     break;
                 case "TAD Page":
-                    if (Settings.Default.RunAsClient)
+                    if (Settings.Default.RunAsClient && _lastMapFromServer ==null)
                     {
-                        //render last map image we obtained from the server
-                        lock (_mapImageLock)
-                        {
-                            if (_lastMapFromServer != null)
-                            {
-                                g.DrawImageFast(_lastMapFromServer, new Point(0, 0));
-                            }
-                        }
-                        //invoke an async operation that will retrieve any pending map image available at the server
-                        GetLatestMapImageFromServerAsync();
-
-                        //send new request to server to generate a new map image 
-                        var payload = new Dictionary<string, object>
-                        {
-                            {"RenderSize", ScreenBoundsPixels},
-                            {"MapScale", _mapScale},
-                            {"RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles}
-                        };
-                        var message = new Message("RequestNewMapImage", payload);
-                        Client.SendMessageToServer(message);
+                        RequestNewMapFromServer(g);
                     }
-                    else
-                    {
-                        RenderMapLocally(g, _mapScale, _mapRangeRingsDiameterInNauticalMiles);
-                    }
+                    RenderTADPage(g, _mapScale, _mapRangeRingsDiameterInNauticalMiles, FlightData.SplitMapDisplay);
                     break;
                 case "Checklists Page":
                     if (_currentChecklistFile != null)
@@ -1054,6 +1007,57 @@ namespace F16CPD
             {
                 thisButton.DrawLabel(g);
             }
+            g.Transform = origTransform;
+        }
+
+        private void RequestNewMapFromServer(Graphics g)
+        {
+            //send new request to server to generate a new map image 
+            var payload = new Dictionary<string, object>
+                        {
+                            {"RenderSize", ScreenBoundsPixels},
+                            {"MapScale", _mapScale},
+                            {"RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles}
+                        };
+            var message = new Message("RequestNewMapImage", payload);
+            Client.SendMessageToServer(message);
+        }
+
+        private void RenderPfd(Graphics g)
+        {
+            var origTransform = g.Transform;
+            var pfd = Pfd;
+            pfd.Manager = this;
+            var pfdRenderRectangle = new Rectangle(LabelWidth + 5, LabelHeight + 1,
+                (ScreenBoundsPixels.Width - ((LabelWidth + 5) * 2)),
+                ((ScreenBoundsPixels.Height - ((LabelHeight + 1) * 2)) / 2) + 10);
+            pfdRenderRectangle = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Top,
+                (pfdRenderRectangle.Width), (pfdRenderRectangle.Height));
+            var pfdRenderSize = new Size(610, 495);
+            g.SetClip(pfdRenderRectangle);
+            g.TranslateTransform(pfdRenderRectangle.X, pfdRenderRectangle.Y);
+            g.ScaleTransform((pfdRenderRectangle.Width / (float)pfdRenderSize.Width),
+                (pfdRenderRectangle.Height / (float)pfdRenderSize.Height));
+            pfd.Render(g, pfdRenderSize);
+            g.Transform = origTransform;
+            RenderHsi(g, pfdRenderRectangle);
+
+        }
+
+        private void RenderHsi(Graphics g, Rectangle pfdRenderRectangle)
+        {
+            var origTransform = g.Transform;
+            var hsi = Hsi;
+            hsi.Manager = this;
+            var hsiRenderBounds = new Rectangle(pfdRenderRectangle.Left, pfdRenderRectangle.Bottom + 5,
+                pfdRenderRectangle.Width, pfdRenderRectangle.Height - 40);
+            var hsiRenderSize = new Size(596, 391);
+            origTransform = g.Transform;
+            g.SetClip(hsiRenderBounds);
+            g.TranslateTransform(hsiRenderBounds.X, hsiRenderBounds.Y);
+            g.ScaleTransform((hsiRenderBounds.Width / (float)hsiRenderSize.Width),
+                (hsiRenderBounds.Height / (float)hsiRenderSize.Height));
+            hsi.Render(g, hsiRenderSize);
             g.Transform = origTransform;
         }
 
@@ -1212,12 +1216,12 @@ namespace F16CPD
             return rendered;
         }
 
-        private void RenderMapLocally(Graphics g, float mapScale, int rangeRingDiameterInNauticalMiles)
+        private void RenderTADPage(Graphics g, float mapScale, int rangeRingDiameterInNauticalMiles, bool splitDisplay)
         {
             var overallRenderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
             var mapRenderRectangle = overallRenderRectangle;
             var mapHeightDifferenceFromFullScreen = (int)(overallRenderRectangle.Height * 0.395);
-            if (FlightData.SplitMapDisplay)
+            if (splitDisplay)
             {
                 mapRenderRectangle = new Rectangle(overallRenderRectangle.X, overallRenderRectangle.Y, overallRenderRectangle.Width, overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen);
                 using (var smallMapRenderTarget = new Bitmap(mapRenderRectangle.Width, mapRenderRectangle.Height, PixelFormat.Format16bppRgb555))
@@ -1232,64 +1236,87 @@ namespace F16CPD
                 RenderMapLocally(g, mapRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
             }
 
-            if (FlightData.SplitMapDisplay)
+            if (splitDisplay)
             {
-                var bigPfdRenderSize = new Size(610, 495);
-
-                var pfdRenderRectangle = new Rectangle(
-                    overallRenderRectangle.X,
-                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + 20), 
-                    (int)(overallRenderRectangle.Width / 2.0), 
-                    0);
-
-                pfdRenderRectangle.Height = (int)(bigPfdRenderSize.Height * ((float)pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width));
-
-                using (var smallPfdRenderTarget = new Bitmap(pfdRenderRectangle.Width, pfdRenderRectangle.Height, PixelFormat.Format16bppRgb555))
-                using (var smallG = Graphics.FromImage(smallPfdRenderTarget))
-                {
-                    var pfd = Pfd;
-                    pfd.Manager = this;
-                    smallG.ScaleTransform((pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width),
-                        (pfdRenderRectangle.Height / (float)bigPfdRenderSize.Height));
-                    pfd.Render(smallG, bigPfdRenderSize);
-                    g.DrawImageFast(smallPfdRenderTarget, new Point(0, pfdRenderRectangle.Y));
-                }
+                RenderSplitDisplayPfd(g, overallRenderRectangle, mapHeightDifferenceFromFullScreen);
             }
 
-            if (FlightData.SplitMapDisplay)
+            if (splitDisplay)
             {
-                var bigHsiRenderSize = new Size(596, 391);
+                RenderSplitDisplayHsi(g, overallRenderRectangle, mapHeightDifferenceFromFullScreen);
+            }
+        }
 
-                var hsiRenderRectangle = new Rectangle(
-                    (int)(overallRenderRectangle.Width / 2),
-                    overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen +20),
-                    (int)(overallRenderRectangle.Width / 2),
-                    0);
-                hsiRenderRectangle.Height = (int)(bigHsiRenderSize.Height * ((float)hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width));
+        private void RenderSplitDisplayPfd(Graphics g, Rectangle overallRenderRectangle, int mapHeightDifferenceFromFullScreen)
+        {
+            var bigPfdRenderSize = new Size(610, 495);
 
-                using (var smallHsiRenderTarget = new Bitmap(hsiRenderRectangle.Width, hsiRenderRectangle.Height, PixelFormat.Format16bppRgb555))
-                using (var smallG = Graphics.FromImage(smallHsiRenderTarget))
-                {
-                    var hsi = Hsi;
-                    hsi.Manager = this;
-                    smallG.ScaleTransform((hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width),
-                        (hsiRenderRectangle.Height / (float)bigHsiRenderSize.Height));
-                    hsi.Render(smallG, bigHsiRenderSize);
-                    g.DrawImageFast(smallHsiRenderTarget, new Point((int)(overallRenderRectangle.Width/2), hsiRenderRectangle.Y));
-                }
+            var pfdRenderRectangle = new Rectangle(
+                overallRenderRectangle.X,
+                overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + 20),
+                (int)(overallRenderRectangle.Width / 2.0),
+                0);
+
+            pfdRenderRectangle.Height = (int)(bigPfdRenderSize.Height * ((float)pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width));
+
+            using (var smallPfdRenderTarget = new Bitmap(pfdRenderRectangle.Width, pfdRenderRectangle.Height, PixelFormat.Format16bppRgb555))
+            using (var smallG = Graphics.FromImage(smallPfdRenderTarget))
+            {
+                var pfd = Pfd;
+                pfd.Manager = this;
+                smallG.ScaleTransform((pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width),
+                    (pfdRenderRectangle.Height / (float)bigPfdRenderSize.Height));
+                pfd.Render(smallG, bigPfdRenderSize);
+                g.DrawImageFast(smallPfdRenderTarget, new Point(0, pfdRenderRectangle.Y));
+            }
+        }
+
+        private void RenderSplitDisplayHsi(Graphics g, Rectangle overallRenderRectangle, int mapHeightDifferenceFromFullScreen)
+        {
+            var bigHsiRenderSize = new Size(596, 391);
+
+            var hsiRenderRectangle = new Rectangle(
+                (int)(overallRenderRectangle.Width / 2),
+                overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + 20),
+                (int)(overallRenderRectangle.Width / 2),
+                0);
+            hsiRenderRectangle.Height = (int)(bigHsiRenderSize.Height * ((float)hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width));
+
+            using (var smallHsiRenderTarget = new Bitmap(hsiRenderRectangle.Width, hsiRenderRectangle.Height, PixelFormat.Format16bppRgb555))
+            using (var smallG = Graphics.FromImage(smallHsiRenderTarget))
+            {
+                var hsi = Hsi;
+                hsi.Manager = this;
+                smallG.ScaleTransform((hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width),
+                    (hsiRenderRectangle.Height / (float)bigHsiRenderSize.Height));
+                hsi.Render(smallG, bigHsiRenderSize);
+                g.DrawImageFast(smallHsiRenderTarget, new Point((int)(overallRenderRectangle.Width / 2), hsiRenderRectangle.Y));
             }
         }
 
         private void RenderMapLocally(Graphics g, Rectangle renderRectangle, float mapScale,
             int rangeRingDiameterInNauticalMiles)
         {
-            if (Settings.Default.RunAsClient) return;
             var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
             
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
-            SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
-                MapRotationMode);
+            if (Settings.Default.RunAsClient)
+            {
+                //render last map image we obtained from the server
+                lock (_mapImageLock)
+                {
+                    if (_lastMapFromServer != null)
+                    {
+                        g.DrawImageFast(_lastMapFromServer, new Point(0, 0));
+                    }
+                }
+            }
+            else
+            {
+                SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
+                    MapRotationMode);
+            }
 
             var scaleX = (tadRenderRectangle.Width)/Constants.F_NATIVE_RES_WIDTH;
             var scaleY = (tadRenderRectangle.Height)/Constants.F_NATIVE_RES_HEIGHT;
