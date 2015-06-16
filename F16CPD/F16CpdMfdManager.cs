@@ -118,6 +118,7 @@ namespace F16CPD
             BuildNonOsbInputControls();
             InitializeFlightInstruments();
             _brightness = Settings.Default.Brightness;
+            MapRotationMode = MapRotationMode.HeadingUp;
         }
 
         public int AltitudeIndexInFeet
@@ -179,7 +180,7 @@ namespace F16CPD
             set { _nightMode = value; }
         }
 
-        internal float MapScale
+        public float MapScale
         {
             get { return _mapScale; }
         }
