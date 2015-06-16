@@ -70,9 +70,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             {
                 return null;
             }
-            Common.Imaging.Util.ConvertPixelFormat(ref theaterMap, PixelFormat.Format16bppRgb565);
             _theaterMap = (Bitmap)theaterMap;
-
             _mapWidthInFeet = mapWidthInFeet;
             if (Properties.Settings.Default.RunAsServer)
             {
