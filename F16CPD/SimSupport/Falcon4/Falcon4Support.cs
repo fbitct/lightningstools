@@ -21,19 +21,13 @@ namespace F16CPD.SimSupport.Falcon4
     //TODO: PRIO blank RALTs in certain attitudes
     internal sealed class Falcon4Support : ISimSupportModule, IDisposable
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof (Falcon4Support));
-
-        #region Instance variables
-
         private const TacanBand BackupTacanBand = TacanBand.X;
+        private static readonly ILog Log = LogManager.GetLogger(typeof (Falcon4Support));
         private readonly IClientSideInboundMessageProcessor _clientSideInboundMessageProcessor;
         private readonly IDEDAlowReader _dedAlowReader;
-
         private readonly F4Utils.SimSupport.IIndicatedRateOfTurnCalculator _indicatedRateOfTurnCalculator =
             new IndicatedRateOfTurnCalculator();
-
         private readonly IInputControlEventHandler _inputControlEventHandler;
-
         private readonly MorseCode _morseCodeGenerator;
         private readonly IServerSideInboundMessageProcessor _serverSideInboundMessageProcessor;
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
@@ -47,8 +41,7 @@ namespace F16CPD.SimSupport.Falcon4
         private Reader _sharedMemReader;
         private TacanChannelSource TacanChannelSource = TacanChannelSource.Ufc;
         private TerrainDB _terrainDB;
-
-        #endregion
+        private ITheaterMapRetriever _theaterMapRetriever;
 
         public Falcon4Support(F16CpdMfdManager manager)
         {
@@ -108,7 +101,7 @@ namespace F16CPD.SimSupport.Falcon4
         {
             if (_movingMap == null)
             {
-                _movingMap = new MovingMap.MovingMap(_terrainDB);
+                _movingMap = new MovingMap.MovingMap(_terrainDB, Manager.Client);
             }
             _movingMap.RenderMap(
                 g, renderRect,
@@ -665,7 +658,15 @@ namespace F16CPD.SimSupport.Falcon4
             if (_terrainDB == null)
             {
                 _terrainDB = _terrainDBFactory.Create(false);
+                _theaterMapRetriever = new TheaterMapRetriever(_terrainDB, Manager.Client);
+                PublishTheaterMapForClients();
             }
+        }
+
+        private void PublishTheaterMapForClients()
+        {
+            float mapWidthInFeet = float.NaN;
+            _theaterMapRetriever.GetTheaterMapImage(ref mapWidthInFeet);
         }
 
         #endregion

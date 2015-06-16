@@ -10,9 +10,10 @@ using System.Drawing.Drawing2D;
 using F4Utils.Resources;
 using System.IO;
 using F16CPD.FlightInstruments.Pfd;
+using F16CPD.Networking;
 namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
-    internal interface IMovingMap : IDisposable
+    internal interface IMovingMap 
     {
 
         bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale,
@@ -23,60 +24,36 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal class MovingMap : IMovingMap
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof (MovingMap));
-        private bool _isDisposed;
-        private TerrainDB _terrainDB;
         private readonly IMapRingRenderer _mapRingRenderer;
         private readonly ICenterAirplaneRenderer _centerAirplaneRenderer;
-        private readonly IResourceBundleReader _resourceBundleReader;
+        private readonly ITheaterMapRetriever _theaterMapRetriever;
+        private readonly IF16CPDClient _client;
+        private Bitmap _theaterMap;
+        private float _mapWidthInFeet;
         public MovingMap( 
             TerrainDB terrainDB, 
+            IF16CPDClient client,
+            ITheaterMapRetriever theaterMapRetriever=null,
             IMapRingRenderer mapRingRenderer=null,
-            ICenterAirplaneRenderer centerAirplaneRenderer=null,
-            IResourceBundleReader resourceBundleReader=null
+            ICenterAirplaneRenderer centerAirplaneRenderer=null
             )
         {
-            _terrainDB = terrainDB;
             _mapRingRenderer = mapRingRenderer ?? new MapRingRenderer();
             _centerAirplaneRenderer = centerAirplaneRenderer ?? new CenterAirplaneRenderer();
-            _resourceBundleReader = resourceBundleReader ?? new ResourceBundleReader();
-
+            _theaterMapRetriever = theaterMapRetriever ?? new TheaterMapRetriever(terrainDB, client);
         }
 
         public bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
             int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode)
         {
-            if (_terrainDB == null || _terrainDB.TerrainBasePath == null) return false;
-            var mapWidthInL2Segments = _terrainDB.TheaterDotMap.LODMapWidths[2];
-            var mapWidthInL2Posts = mapWidthInL2Segments * F4Utils.Terrain.Constants.NUM_ELEVATION_POSTS_ACROSS_SINGLE_LOD_SEGMENT;
-            var mapWidthInFeet = mapWidthInL2Posts * (_terrainDB.TheaterDotMap.FeetBetweenL0Posts*4);
-            Bitmap mapImage=null;
-            if (_resourceBundleReader.NumResources <= 0)
-            {
-                try
-                {
-                    var campMapResourceBundleIndexPath =
-                                                         _terrainDB.DataPath + Path.DirectorySeparatorChar
-                                                        + _terrainDB.TheaterDotTdf.artDir + Path.DirectorySeparatorChar
-                                                        + "resource" + Path.DirectorySeparatorChar
-                                                        + "campmap.idx";
-                    _resourceBundleReader.Load(campMapResourceBundleIndexPath);
-                }
-                catch { }
-            }
-            if (_resourceBundleReader.NumResources > 0)
-            {
-                mapImage = _resourceBundleReader.GetImageResource("BIG_MAP_ID");
-            }
-            else
-            {
-                return false;
-            }
-            var mapImageFeetPerPixel = mapWidthInFeet / (float)mapImage.Width;
+            _theaterMap = _theaterMap ?? _theaterMapRetriever.GetTheaterMapImage(ref _mapWidthInFeet);
+            if (_theaterMap == null) return false;
+            var mapImageFeetPerPixel = _mapWidthInFeet / (float)_theaterMap.Width;
             var zoom = 1/(mapScale / 50000.0f) ;
-            var scaleX = (float)renderRectangle.Width / ((float)mapImage.Width);
-            var scaleY = (float)renderRectangle.Height / ((float)mapImage.Height);
-            var xOffset = (-(mapCoordinateFeetEast / mapImageFeetPerPixel) + (((float)mapImage.Width / 2.0f)));
-            var yOffset = (((mapCoordinateFeetNorth / mapImageFeetPerPixel) - (((float)mapImage.Height / 2.0f))));
+            var scaleX = (float)renderRectangle.Width / ((float)_theaterMap.Width);
+            var scaleY = (float)renderRectangle.Height / ((float)_theaterMap.Height);
+            var xOffset = (-(mapCoordinateFeetEast / mapImageFeetPerPixel) + (((float)_theaterMap.Width / 2.0f)));
+            var yOffset = (((mapCoordinateFeetNorth / mapImageFeetPerPixel) - (((float)_theaterMap.Height / 2.0f))));
             try
             {
                 using (var renderTarget = new Bitmap(renderRectangle.Width, renderRectangle.Height, PixelFormat.Format16bppRgb565))
@@ -98,9 +75,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                         
                        h.ScaleTransform(scaleX, scaleY);
                        h.TranslateTransform(xOffset, yOffset);
-                        h.DrawImageFast(mapImage,0, 0, new RectangleF(0, 0, mapImage.Width, mapImage.Height), GraphicsUnit.Pixel);
-
-                        mapImage.Dispose();
+                       h.DrawImage(_theaterMap, 0, 0, new Rectangle(0, 0, _theaterMap.Width,_theaterMap.Height), GraphicsUnit.Pixel);
                     }
                     
                     g.DrawImageFast(
@@ -137,38 +112,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             }
             return true;
         }
-
-
-        #region Destructors
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~MovingMap()
-        {
-            Dispose();
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!_isDisposed)
-            {
-                if (disposing)
-                {
-                    //dispose of managed resources here
-                    Common.Util.DisposeObject(_terrainDB);
-                    _terrainDB = null;
-                }
-            }
-            // Code to dispose the un-managed resources of the class
-            _isDisposed = true;
-        }
-
-        #endregion
-
 
     }
 }

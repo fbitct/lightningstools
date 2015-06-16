@@ -195,6 +195,7 @@
     <Compile Include="SimSupport\Falcon4\MovingMap\MovingMap.cs" />
     <Compile Include="SimSupport\Falcon4\MovingMap\OuterMapRangeCircleRenderer.cs" />
     <Compile Include="SimSupport\Falcon4\Networking\ClientSideInboundMessageProcessor.cs" />
+    <Compile Include="SimSupport\Falcon4\MovingMap\TheaterMapRetriever.cs" />
     <Compile Include="SimSupport\Falcon4\Networking\ServerSideInboundMessageProcessor.cs" />
     <Compile Include="SimSupport\Falcon4\FalconCallbackSender.cs" />
     <Compile Include="SimSupport\Falcon4\EventHandlers\InputControlEventHandler.cs" />

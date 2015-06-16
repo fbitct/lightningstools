@@ -27,8 +27,7 @@ namespace F16CPD
 {
     //TODO: fix nautical miles scale on map screen (mostly fixed, need to test bounds -- how high should this go?)
     //TODO: add map centering options on map screen
-    //TODO: add track options on map screen (track up, north up, 
-    //TODO: add orientation feature to map screen
+    //TODO: add track options on map screen (track up, desired track up, etc.) 
     //TODO: implement built-in test mode
     //TODO: implement other MFD pages
     //TODO: PRIO create way to save input assignments
@@ -67,7 +66,6 @@ namespace F16CPD
         private int _currentChecklistPageNum = 1;
         private int _currentChecklistPagesTotal;
         private bool _isDisposed;
-        private Bitmap _lastMapFromServer;
 
         private FileInfo _lastRenderedChartFile;
         private int _lastRenderedChartPageNum = 1;
@@ -75,7 +73,6 @@ namespace F16CPD
         private FileInfo _lastRenderedChecklistFile;
         private int _lastRenderedChecklistPageNum = 1;
         private Bitmap _lastRenderedChecklistPdfPage;
-        private BackgroundWorker _mapFetchingBackgroundWorker;
         private int _mapRangeRingsDiameterInNauticalMiles = 40;
         private float _mapScale = 500000.0f;
         private bool _nightMode;
@@ -121,7 +118,6 @@ namespace F16CPD
             BuildNonOsbInputControls();
             InitializeFlightInstruments();
             _brightness = Settings.Default.Brightness;
-            SetupMapFetchingBackgroundWorker();
         }
 
         public int AltitudeIndexInFeet
@@ -222,13 +218,6 @@ namespace F16CPD
         }
 
 
-        private void SetupMapFetchingBackgroundWorker()
-        {
-            if (!Settings.Default.RunAsClient) return;
-            _mapFetchingBackgroundWorker = new BackgroundWorker();
-            _mapFetchingBackgroundWorker.DoWork += mapFetchingBackgroundWorker_DoWork;
-        }
-
         private static void TeardownService()
         {
             if (!Settings.Default.RunAsServer) return;
@@ -276,28 +265,6 @@ namespace F16CPD
             {
                 case "ToggleSplitMapDisplay":
                     ToggleSplitMapDisplay();
-                    break;
-                case "RequestNewMapImage":
-                    //any other "New Map Image Requested" messages in the queue will be removed at this time
-                    F16CPDServer.ClearPendingServerMessagesOfType("RequestNewMapImage");
-                    var payload = (Dictionary<string, object>) pendingMessage.Payload;
-                    var renderSize = (Size) payload["RenderSize"];
-                    var mapScale = (float) payload["MapScale"];
-                    var mapRangeDiameter = (int) payload["RangeRingsDiameter"];
-                    var renderedMap = RenderMapOnBehalfOfRemoteClient(renderSize, mapScale, mapRangeDiameter);
-                    if (renderedMap != null)
-                    {
-                        using (var ms = new MemoryStream())
-                        {
-                            renderedMap.Save(ms, ImageFormat.Png);
-                            ms.Flush();
-                            ms.Seek(0, SeekOrigin.Begin);
-                            var rawBytes = new byte[ms.Length];
-                            ms.Read(rawBytes, 0, (int) ms.Length);
-                            F16CPDServer.SetSimProperty("CurrentMapImage", rawBytes);
-                        }
-                        Common.Util.DisposeObject(renderedMap);
-                    }
                     break;
             }
         }
@@ -971,10 +938,6 @@ namespace F16CPD
                 }
                     break;
                 case "TAD Page":
-                    if (Settings.Default.RunAsClient && _lastMapFromServer ==null)
-                    {
-                        RequestNewMapFromServer(g);
-                    }
                     RenderTADPage(g, _mapScale, _mapRangeRingsDiameterInNauticalMiles, FlightData.SplitMapDisplay);
                     break;
                 case "Checklists Page":
@@ -1008,20 +971,6 @@ namespace F16CPD
                 thisButton.DrawLabel(g);
             }
             g.Transform = origTransform;
-        }
-
-        private void RequestNewMapFromServer(Graphics g)
-        {
-            //send new request to server to generate a new map image 
-            var payload = new Dictionary<string, object>
-                        {
-                            {"RenderSize", ScreenBoundsPixels},
-                            {"MapScale", _mapScale},
-                            {"RangeRingsDiameter", _mapRangeRingsDiameterInNauticalMiles}
-                        };
-            var message = new Message("RequestNewMapImage", payload);
-            Client.SendMessageToServer(message);
-            GetLatestMapImageFromServerAsync();
         }
 
         private void RenderPfd(Graphics g)
@@ -1168,43 +1117,6 @@ namespace F16CPD
             target.CompositingQuality = origCompositQuality;
         }
 
-        private void GetLatestMapImageFromServerAsync()
-        {
-            if (_mapFetchingBackgroundWorker == null) return;
-            if (!_mapFetchingBackgroundWorker.IsBusy)
-            {
-                _mapFetchingBackgroundWorker.RunWorkerAsync();
-            }
-        }
-
-        private void mapFetchingBackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            GetLatestMapImageFromServer();
-        }
-
-        private void GetLatestMapImageFromServer()
-        {
-            //get any pending map image from server
-            var mapBytes = (byte[]) Client.GetSimProperty("CurrentMapImage");
-            //causes a method invoke on the server to occur
-            Bitmap mapFromServer = null;
-            if (mapBytes != null && mapBytes.Length > 0)
-            {
-                using (var ms = new MemoryStream())
-                {
-                    ms.Write(mapBytes, 0, mapBytes.Length);
-                    ms.Flush();
-                    ms.Seek(0, SeekOrigin.Begin);
-                    mapFromServer = (Bitmap) Image.FromStream(ms);
-                }
-            }
-            lock (_mapImageLock)
-            {
-                Common.Util.DisposeObject(_lastMapFromServer);
-                _lastMapFromServer = mapFromServer;
-            }
-        }
-
         private Bitmap RenderMapOnBehalfOfRemoteClient(Size renderSize, float mapScale,
             int rangeRingDiameterInNauticalMiles)
         {
@@ -1302,22 +1214,8 @@ namespace F16CPD
             
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
-            if (Settings.Default.RunAsClient)
-            {
-                //render last map image we obtained from the server
-                lock (_mapImageLock)
-                {
-                    if (_lastMapFromServer != null)
-                    {
-                        g.DrawImageFast(_lastMapFromServer, new Point(0, 0));
-                    }
-                }
-            }
-            else
-            {
-                SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
-                    MapRotationMode);
-            }
+            SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
+                MapRotationMode);
 
             var scaleX = (tadRenderRectangle.Width)/Constants.F_NATIVE_RES_WIDTH;
             var scaleY = (tadRenderRectangle.Height)/Constants.F_NATIVE_RES_HEIGHT;
