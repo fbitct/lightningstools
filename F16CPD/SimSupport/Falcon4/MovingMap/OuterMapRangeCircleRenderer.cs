@@ -7,14 +7,14 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal interface IOuterMapRangeCircleRenderer
     {
         void DrawOuterMapRangeCircle(Graphics g, Rectangle renderRectangle,
-            float outerMapRingDiameterPixelsUnscaled, out int outerMapRingDiameterPixelsScaled,
+            float outerMapRingRadiusPixelsUnscaled, out int outerMapRingRadiusPixelsScaled,
             float renderRectangleScaleFactor, Pen mapRingPen, int mapRingLineWidths);
     }
 
     internal class OuterMapRangeCircleRenderer : IOuterMapRangeCircleRenderer
     {
         public void DrawOuterMapRangeCircle(Graphics g, Rectangle renderRectangle,
-            float outerMapRingDiameterPixelsUnscaled, out int outerMapRingDiameterPixelsScaled,
+            float outerMapRingRadiusPixelsUnscaled, out int outerMapRingRadiusPixelsScaled,
             float renderRectangleScaleFactor, Pen mapRingPen, int mapRingLineWidths)
         {
             //rotate 45 degrees before drawing outer map range circle
@@ -25,12 +25,12 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
 
             //now draw outer map range circle
-            outerMapRingDiameterPixelsScaled =
-                (int) Math.Floor(outerMapRingDiameterPixelsUnscaled*renderRectangleScaleFactor);
+            outerMapRingRadiusPixelsScaled =
+                (int) Math.Floor(outerMapRingRadiusPixelsUnscaled*renderRectangleScaleFactor);
             var outerMapRingBoundingRect =
-                new Rectangle(((renderRectangle.Width - outerMapRingDiameterPixelsScaled)/2),
-                    ((renderRectangle.Height - outerMapRingDiameterPixelsScaled)/2),
-                    outerMapRingDiameterPixelsScaled, outerMapRingDiameterPixelsScaled);
+                new Rectangle(((renderRectangle.Width - (outerMapRingRadiusPixelsScaled*2))/2),
+                    ((renderRectangle.Height - (outerMapRingRadiusPixelsScaled*2))/2),
+                    outerMapRingRadiusPixelsScaled*2, outerMapRingRadiusPixelsScaled*2);
             g.DrawEllipse(mapRingPen, outerMapRingBoundingRect);
             var outerMapRingBoundingRectMiddleX = outerMapRingBoundingRect.X +
                                                   (int) (Math.Floor(outerMapRingBoundingRect.Width/(float) 2));

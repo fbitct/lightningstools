@@ -96,7 +96,7 @@ namespace F16CPD.SimSupport.Falcon4
 
 
         public void RenderMap(Graphics g, Rectangle renderRect, float mapScale, 
-            int rangeRingDiameterInNauticalMiles,
+            int rangeRingRadiusInNauticalMiles,
             MapRotationMode rotationMode)
         {
             if (_movingMap == null)
@@ -107,7 +107,7 @@ namespace F16CPD.SimSupport.Falcon4
                 g, renderRect,
                 mapScale,
                 Manager.FlightData.MapCoordinateFeetEast, Manager.FlightData.MapCoordinateFeetNorth,Manager.FlightData.MagneticHeadingInDecimalDegrees, 
-                rangeRingDiameterInNauticalMiles, rotationMode);
+                rangeRingRadiusInNauticalMiles, rotationMode);
         }
 
         #region Destructors

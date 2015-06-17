@@ -18,7 +18,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
 
         bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale,
             float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
-            int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode );
+            int outerMapRingRadiusInNauticalMiles, MapRotationMode rotationMode );
     }
 
     internal class MovingMap : IMovingMap
@@ -44,65 +44,83 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         }
 
         public bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
-            int rangeRingDiameterInNauticalMiles, MapRotationMode rotationMode)
+            int outerMapRingRadiusInNauticalMiles, MapRotationMode rotationMode)
         {
             _theaterMap = _theaterMap ?? _theaterMapRetriever.GetTheaterMapImage(ref _mapWidthInFeet);
             if (_theaterMap == null) return false;
+            
             var mapImageFeetPerPixel = _mapWidthInFeet / (float)_theaterMap.Width;
+            var outerMapRingRadiusPixels = (outerMapRingRadiusInNauticalMiles * Common.Math.Constants.FEET_PER_NM) / mapImageFeetPerPixel ;
             var zoom = 1/(mapScale / 50000.0f) ;
-            var scaleX = (float)renderRectangle.Width / ((float)_theaterMap.Width);
-            var scaleY = (float)renderRectangle.Height / ((float)_theaterMap.Height);
             var xOffset = (-(mapCoordinateFeetEast / mapImageFeetPerPixel) + (((float)_theaterMap.Width / 2.0f)));
             var yOffset = (((mapCoordinateFeetNorth / mapImageFeetPerPixel) - (((float)_theaterMap.Height / 2.0f))));
             try
             {
-                using (var renderTarget = new Bitmap(renderRectangle.Width, renderRectangle.Height, PixelFormat.Format16bppRgb565))
+                using (var renderTarget = new Bitmap(Math.Max(renderRectangle.Width, renderRectangle.Height), Math.Max(renderRectangle.Width, renderRectangle.Height), PixelFormat.Format16bppRgb565))
                 {
+                    var scaleX = (float)renderTarget.Width / ((float)_theaterMap.Width);
+                    var scaleY = (float)renderTarget.Height / ((float)_theaterMap.Height);
+                    var scaleFactor = (float)Math.Sqrt((scaleX * scaleX) + (scaleY * scaleY));
                     using (var h = Graphics.FromImage(renderTarget))
                     {
                         var backgroundColor = Color.FromArgb(181,186,222);
                         h.PixelOffsetMode = PixelOffsetMode.Half;
                         h.Clear(backgroundColor);
+                        var origTransform = h.Transform;
+
                         h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
                         h.ScaleTransform(zoom, zoom);
                         h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
+                        var zoomedTransform = h.Transform;
+
                         if (rotationMode == MapRotationMode.HeadingUp)
                         {
                             h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
                             h.RotateTransform(-(magneticHeadingInDecimalDegrees));
                             h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
                         }
-                        
-                       h.ScaleTransform(scaleX, scaleY);
-                       h.TranslateTransform(xOffset, yOffset);
-                       h.DrawImage(_theaterMap, 0, 0, new Rectangle(0, 0, _theaterMap.Width,_theaterMap.Height), GraphicsUnit.Pixel);
+                        h.ScaleTransform(scaleX, scaleY);
+                        h.TranslateTransform(xOffset, yOffset);
+                        h.DrawImage(_theaterMap,
+                            0,
+                            0,
+                            new Rectangle(0, 0, _theaterMap.Width, _theaterMap.Height), 
+                            GraphicsUnit.Pixel);
+
+                        h.Transform = zoomedTransform;
+                        if (rotationMode == MapRotationMode.NorthUp)
+                        {
+                            h.TranslateTransform(renderTarget.Width / 2.0f, renderTarget.Height / 2.0f);
+                            h.RotateTransform(magneticHeadingInDecimalDegrees);
+                            h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
+                        }
+                        h.ScaleTransform(scaleX, scaleY);
+                        _mapRingRenderer.DrawMapRing(h, new Rectangle(0, 0, _theaterMap.Width, _theaterMap.Height), (int)outerMapRingRadiusPixels, scaleFactor * zoom, magneticHeadingInDecimalDegrees);
+
+
                     }
                     
                     g.DrawImageFast(
                         renderTarget,
                         renderRectangle,
-                        new Rectangle(0, 0, renderTarget.Width, renderTarget.Height),
-                        GraphicsUnit.Pixel
+                        new Rectangle(
+                            (renderTarget.Width - renderRectangle.Width) / 2, 
+                            (renderTarget.Height - renderRectangle.Height) / 2,
+                            renderRectangle.Width, renderRectangle.Height),
+                            GraphicsUnit.Pixel
                         );
 
-                    var originalTransform = g.Transform;
-                    if (rotationMode == MapRotationMode.NorthUp)
-                    {
-                        g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
-                        g.RotateTransform(-(magneticHeadingInDecimalDegrees));
-                        g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
-                    }
-                    _centerAirplaneRenderer.DrawCenterAirplaneSymbol(g, renderRectangle);
-                    g.Transform = originalTransform;
 
+                    var originalTransform = g.Transform;
                     if (rotationMode == MapRotationMode.NorthUp)
                     {
                         g.TranslateTransform(renderRectangle.Width / 2.0f, renderRectangle.Height / 2.0f);
                         g.RotateTransform(magneticHeadingInDecimalDegrees);
                         g.TranslateTransform(-renderRectangle.Width / 2.0f, -renderRectangle.Height / 2.0f);
                     }
-                    _mapRingRenderer.DrawMapRing(g, renderRectangle, 200, 1, magneticHeadingInDecimalDegrees);
+                    _centerAirplaneRenderer.DrawCenterAirplaneSymbol(g, new Rectangle(0, 0, renderRectangle.Width, renderRectangle.Height));
                     g.Transform = originalTransform;
+
                 }
             }
             catch (Exception ex)

@@ -4,7 +4,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
     internal interface IMapRingRenderer
     {
-        void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingDiameterPixelsUnscaled,
+        void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingRadiusPixelsUnscaled,
             float renderRectangleScaleFactor, float magneticHeadingInDecimalDegrees);
     }
 
@@ -24,7 +24,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             _innerMapRangeCircleNorthMarkerRenderer = innerMapRangeCircleNorthMarkerRenderer ?? new InnerMapRangeCircleNorthMarkerRenderer();
         }
 
-        public void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingDiameterPixelsUnscaled,
+        public void DrawMapRing(Graphics g, Rectangle renderRectangle, float outerMapRingRadiusPixelsUnscaled,
             float renderRectangleScaleFactor, float magneticHeadingInDecimalDegrees)
         {
             var mapRingPen = new Pen(Color.Magenta);
@@ -38,14 +38,14 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             g.RotateTransform(-magneticHeadingInDecimalDegrees);
             g.TranslateTransform(-renderRectangle.Width/2.0f, -renderRectangle.Height/2.0f);
 
-            int outerMapRingDiameterPixelsScaled;
-            _outerMapRangeCircleRenderer.DrawOuterMapRangeCircle(g, renderRectangle, outerMapRingDiameterPixelsUnscaled,
-                out outerMapRingDiameterPixelsScaled, renderRectangleScaleFactor, mapRingPen, mapRingLineWidths);
+            int outerMapRingRadiusPixelsScaled;
+            _outerMapRangeCircleRenderer.DrawOuterMapRangeCircle(g, renderRectangle, outerMapRingRadiusPixelsUnscaled,
+                out outerMapRingRadiusPixelsScaled, renderRectangleScaleFactor, mapRingPen, mapRingLineWidths);
 
             Rectangle innerMapRingBoundingRect;
             int innerMapRingBoundingRectMiddleX;
             _innerMapRangeCircleRenderer.DrawInnerMapRangeCircle(g, renderRectangle, mapRingPen, mapRingLineWidths,
-                outerMapRingDiameterPixelsScaled, out innerMapRingBoundingRect, out innerMapRingBoundingRectMiddleX);
+                outerMapRingRadiusPixelsScaled, out innerMapRingBoundingRect, out innerMapRingBoundingRectMiddleX);
             _innerMapRangeCircleNorthMarkerRenderer.DrawNorthMarkerOnInnerMapRangeCircle(g, mapRingBrush, innerMapRingBoundingRect,
                 innerMapRingBoundingRectMiddleX);
             g.Transform = originalGTransform;

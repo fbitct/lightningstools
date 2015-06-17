@@ -65,6 +65,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             if (_resourceBundleReader.NumResources > 0)
             {
                 theaterMap = (Image)_resourceBundleReader.GetImageResource("BIG_MAP_ID");
+                Common.Imaging.Util.ConvertPixelFormat(ref theaterMap, PixelFormat.Format16bppRgb555);
             }
             else
             {

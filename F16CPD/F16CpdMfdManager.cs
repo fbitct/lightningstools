@@ -73,7 +73,7 @@ namespace F16CPD
         private FileInfo _lastRenderedChecklistFile;
         private int _lastRenderedChecklistPageNum = 1;
         private Bitmap _lastRenderedChecklistPdfPage;
-        private int _mapRangeRingsDiameterInNauticalMiles = 40;
+        private int _mapRangeRingsRadiusInNauticalMiles = 60;
         private float _mapScale = 25000.0f;
         private bool _nightMode;
         private ISimSupportModule _simSupportModule;
@@ -143,10 +143,10 @@ namespace F16CPD
             }
         }
 
-        public int MapRangeRingsDiameterInNauticalMiles
+        public int MapRangeRingsRadiusInNauticalMiles
         {
-            get { return _mapRangeRingsDiameterInNauticalMiles; }
-            set { _mapRangeRingsDiameterInNauticalMiles = value; }
+            get { return _mapRangeRingsRadiusInNauticalMiles; }
+            set { _mapRangeRingsRadiusInNauticalMiles = value; }
         }
 
         public IF16CPDClient Client
@@ -530,28 +530,28 @@ namespace F16CPD
 
         internal void DecreaseMapRange()
         {
-            if (_mapRangeRingsDiameterInNauticalMiles > 25)
+            if (_mapRangeRingsRadiusInNauticalMiles > 25)
             {
-                _mapRangeRingsDiameterInNauticalMiles -= 5;
+                _mapRangeRingsRadiusInNauticalMiles -= 5;
             }
             else
             {
-                _mapRangeRingsDiameterInNauticalMiles -= 1;
+                _mapRangeRingsRadiusInNauticalMiles -= 1;
             }
-            if (_mapRangeRingsDiameterInNauticalMiles < 0) _mapRangeRingsDiameterInNauticalMiles = 0;
+            if (_mapRangeRingsRadiusInNauticalMiles < 1) _mapRangeRingsRadiusInNauticalMiles = 1;
         }
 
         internal void IncreaseMapRange()
         {
-            if (_mapRangeRingsDiameterInNauticalMiles >= 20)
+            if (_mapRangeRingsRadiusInNauticalMiles >= 20)
             {
-                _mapRangeRingsDiameterInNauticalMiles += 5;
+                _mapRangeRingsRadiusInNauticalMiles += 5;
             }
             else
             {
-                _mapRangeRingsDiameterInNauticalMiles += 1;
+                _mapRangeRingsRadiusInNauticalMiles += 1;
             }
-            if (_mapRangeRingsDiameterInNauticalMiles > 5000) _mapRangeRingsDiameterInNauticalMiles = 5000;
+            if (_mapRangeRingsRadiusInNauticalMiles > 5000) _mapRangeRingsRadiusInNauticalMiles = 5000;
         }
         internal string GetMapRotationModeText(MapRotationMode mapRotationMode)
         {
@@ -846,7 +846,7 @@ namespace F16CPD
                     scaleLabel.LabelText = scaleString;
 
                     var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
-                    var mapRangeString = _mapRangeRingsDiameterInNauticalMiles.ToString(CultureInfo.InvariantCulture);
+                    var mapRangeString = _mapRangeRingsRadiusInNauticalMiles.ToString(CultureInfo.InvariantCulture);
                     mapRangeLabel.LabelText = mapRangeString;
 
                     var mapRotationModeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRotationModeLabel");
@@ -939,7 +939,7 @@ namespace F16CPD
                 }
                     break;
                 case "TAD Page":
-                    RenderTADPage(g, _mapScale, _mapRangeRingsDiameterInNauticalMiles, FlightData.SplitMapDisplay);
+                    RenderTADPage(g, _mapScale, _mapRangeRingsRadiusInNauticalMiles, FlightData.SplitMapDisplay);
                     break;
                 case "Checklists Page":
                     if (_currentChecklistFile != null)
@@ -1119,18 +1119,18 @@ namespace F16CPD
         }
 
         private Bitmap RenderMapOnBehalfOfRemoteClient(Size renderSize, float mapScale,
-            int rangeRingDiameterInNauticalMiles)
+            int rangeRingRadiusInNauticalMiles)
         {
             var rendered = new Bitmap(renderSize.Width, renderSize.Height, PixelFormat.Format16bppRgb565);
             using (var g = Graphics.FromImage(rendered))
             {
                 var renderRectangle = new Rectangle(new Point(0, 0), renderSize);
-                RenderMapLocally(g, renderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
+                RenderMapLocally(g, renderRectangle, mapScale, rangeRingRadiusInNauticalMiles);
             }
             return rendered;
         }
 
-        private void RenderTADPage(Graphics g, float mapScale, int rangeRingDiameterInNauticalMiles, bool splitDisplay)
+        private void RenderTADPage(Graphics g, float mapScale, int rangeRingRadiusInNauticalMiles, bool splitDisplay)
         {
             var overallRenderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
             var mapRenderRectangle = overallRenderRectangle;
@@ -1141,13 +1141,13 @@ namespace F16CPD
                 using (var smallMapRenderTarget = new Bitmap(mapRenderRectangle.Width, mapRenderRectangle.Height, PixelFormat.Format16bppRgb555))
                 using (var smallG = Graphics.FromImage(smallMapRenderTarget))
                 {
-                    RenderMapLocally(smallG, mapRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
+                    RenderMapLocally(smallG, mapRenderRectangle, mapScale, rangeRingRadiusInNauticalMiles);
                     g.DrawImageFast(smallMapRenderTarget, new Point(0,0));
                 }
             }
             else
             {
-                RenderMapLocally(g, mapRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles);
+                RenderMapLocally(g, mapRenderRectangle, mapScale, rangeRingRadiusInNauticalMiles);
             }
 
             if (splitDisplay)
@@ -1209,13 +1209,13 @@ namespace F16CPD
         }
 
         private void RenderMapLocally(Graphics g, Rectangle renderRectangle, float mapScale,
-            int rangeRingDiameterInNauticalMiles)
+            int rangeRingRadiusInNauticalMiles)
         {
             var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
             
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
-            SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingDiameterInNauticalMiles,
+            SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingRadiusInNauticalMiles,
                 MapRotationMode);
 
             var scaleX = (tadRenderRectangle.Width)/Constants.F_NATIVE_RES_WIDTH;

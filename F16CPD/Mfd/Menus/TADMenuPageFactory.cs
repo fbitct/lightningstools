@@ -86,7 +86,7 @@ namespace F16CPD.Mfd.Menus
             buttons.Add(mapRangeDecrease);
 
             var mapRangeLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24.5f,
-                                                         _mfdManager.MapRangeRingsDiameterInNauticalMiles.ToString(),
+                                                         _mfdManager.MapRangeRingsRadiusInNauticalMiles.ToString(),
                                                          false);
             mapRangeLabel.FunctionName = "MapRangeLabel";
             buttons.Add(mapRangeLabel);
