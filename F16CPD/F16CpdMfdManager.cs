@@ -74,7 +74,7 @@ namespace F16CPD
         private int _lastRenderedChecklistPageNum = 1;
         private Bitmap _lastRenderedChecklistPdfPage;
         private int _mapRangeRingsDiameterInNauticalMiles = 40;
-        private float _mapScale = 500000.0f;
+        private float _mapScale = 25000.0f;
         private bool _nightMode;
         private ISimSupportModule _simSupportModule;
         internal F16CpdMfdManager(Size screenBoundsPixels,
