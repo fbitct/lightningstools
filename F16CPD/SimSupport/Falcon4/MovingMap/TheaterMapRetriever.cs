@@ -58,6 +58,23 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                                                         + _terrainDB.TheaterDotTdf.artDir + Path.DirectorySeparatorChar
                                                         + "resource" + Path.DirectorySeparatorChar
                                                         + "campmap.idx";
+                    if (!new FileInfo(campMapResourceBundleIndexPath).Exists)
+                    {
+                        campMapResourceBundleIndexPath =
+                                                         _terrainDB.DataPath + Path.DirectorySeparatorChar
+                                                        + _terrainDB.TheaterDotTdf.artDir + Path.DirectorySeparatorChar
+                                                        + "art" + Path.DirectorySeparatorChar 
+                                                        + "resource" + Path.DirectorySeparatorChar
+                                                        + "campmap.idx";
+                    }
+                    if (!new FileInfo(campMapResourceBundleIndexPath).Exists)
+                    {
+                        campMapResourceBundleIndexPath =
+                                                         _terrainDB.DataPath + Path.DirectorySeparatorChar
+                                                        + "art" + Path.DirectorySeparatorChar
+                                                        + "resource" + Path.DirectorySeparatorChar
+                                                        + "campmap.idx";
+                    }
                     _resourceBundleReader.Load(campMapResourceBundleIndexPath);
                 }
                 catch { }

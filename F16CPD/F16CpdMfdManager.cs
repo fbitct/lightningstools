@@ -847,7 +847,7 @@ namespace F16CPD
 
                     var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
                     var mapRangeString = _mapRangeRingsRadiusInNauticalMiles.ToString(CultureInfo.InvariantCulture);
-                    mapRangeLabel.LabelText = mapRangeString;
+                    mapRangeLabel.LabelText = string.Format("{0} NM", mapRangeString);
 
                     var mapRotationModeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRotationModeLabel");
                     var mapRotationModeString = GetMapRotationModeText(MapRotationMode);
