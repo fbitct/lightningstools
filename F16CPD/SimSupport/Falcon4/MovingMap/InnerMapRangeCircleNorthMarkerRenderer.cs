@@ -14,12 +14,12 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             Rectangle innerMapRingBoundingRect, int innerMapRingBoundingRectMiddleX)
         {
             //draw north marker on inner map range circle
-            var northMarkerPoints = new Point[3];
-            northMarkerPoints[0] = new Point(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Top - 15);
-            northMarkerPoints[1] = new Point(innerMapRingBoundingRectMiddleX - 12,
-                innerMapRingBoundingRect.Top + 1);
-            northMarkerPoints[2] = new Point(innerMapRingBoundingRectMiddleX + 12,
-                innerMapRingBoundingRect.Top + 1);
+            var northMarkerPoints = new PointF[3];
+            northMarkerPoints[0] = new PointF(innerMapRingBoundingRectMiddleX, innerMapRingBoundingRect.Top - (15*(innerMapRingBoundingRect.Width*0.01f)));
+            northMarkerPoints[1] = new PointF(innerMapRingBoundingRectMiddleX - (12*(innerMapRingBoundingRect.Width*0.01f)),
+                innerMapRingBoundingRect.Top + (innerMapRingBoundingRect.Width*0.01f));
+            northMarkerPoints[2] = new PointF(innerMapRingBoundingRectMiddleX + (12*(innerMapRingBoundingRect.Width * 0.01f)),
+                innerMapRingBoundingRect.Top + (innerMapRingBoundingRect.Width * 0.01f));
             g.FillPolygon(mapRingBrush, northMarkerPoints);
         }
     }

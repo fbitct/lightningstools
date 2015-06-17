@@ -94,7 +94,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                             h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
                         }
                         h.ScaleTransform(scaleX, scaleY);
-                        _mapRingRenderer.DrawMapRing(h, _theaterMap.Size, (int)outerMapRingRadiusPixels, magneticHeadingInDecimalDegrees);
+                        _mapRingRenderer.DrawMapRing(h,_theaterMap.Size, (int)outerMapRingRadiusPixels, magneticHeadingInDecimalDegrees);
 
 
                     }

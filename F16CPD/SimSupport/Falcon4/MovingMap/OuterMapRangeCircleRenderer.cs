@@ -7,14 +7,15 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal interface IOuterMapRangeCircleRenderer
     {
         void DrawOuterMapRangeCircle(Graphics g, Size theaterMapSizePixels,
-            int outerMapRingRadiusPixels, Pen mapRingPen, int mapRingLineWidths);
+            int outerMapRingRadiusPixels, Pen mapRingPen);
     }
 
     internal class OuterMapRangeCircleRenderer : IOuterMapRangeCircleRenderer
     {
         public void DrawOuterMapRangeCircle(Graphics g, Size theaterMapSizePixels,
-            int outerMapRingRadiusPixels,  Pen mapRingPen, int mapRingLineWidths)
+            int outerMapRingRadiusPixels,  Pen mapRingPen)
         {
+            var mapRingLineLength = outerMapRingRadiusPixels/4;
             //rotate 45 degrees before drawing outer map range circle
             var preRotate = g.Transform;
             //capture current rotation so we can set it back before drawing inner map range circle
@@ -31,20 +32,21 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                                                   (int) (Math.Floor(outerMapRingBoundingRect.Width/(float) 2));
             var outerMapRingBoundingRectMiddleY = outerMapRingBoundingRect.Y +
                                                   (int) (Math.Floor(outerMapRingBoundingRect.Height/(float) 2));
+
             g.DrawLineFast(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Top),
                 new Point(outerMapRingBoundingRectMiddleX,
-                    outerMapRingBoundingRect.Top + mapRingLineWidths));
+                    outerMapRingBoundingRect.Top + mapRingLineLength));
             g.DrawLineFast(mapRingPen, new Point(outerMapRingBoundingRect.X, outerMapRingBoundingRectMiddleY),
-                new Point(outerMapRingBoundingRect.X + mapRingLineWidths, outerMapRingBoundingRectMiddleY));
+                new Point(outerMapRingBoundingRect.X + mapRingLineLength, outerMapRingBoundingRectMiddleY));
             g.DrawLineFast(mapRingPen,
                 new Point(outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width,
                     outerMapRingBoundingRectMiddleY),
                 new Point(
-                    outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineWidths,
+                    outerMapRingBoundingRect.X + outerMapRingBoundingRect.Width - mapRingLineLength,
                     outerMapRingBoundingRectMiddleY));
             g.DrawLineFast(mapRingPen, new Point(outerMapRingBoundingRectMiddleX, outerMapRingBoundingRect.Bottom),
                 new Point(outerMapRingBoundingRectMiddleX,
-                    outerMapRingBoundingRect.Bottom - mapRingLineWidths));
+                    outerMapRingBoundingRect.Bottom - mapRingLineLength));
 
             //set rotation back before drawing inner map range circle
             g.Transform = preRotate;

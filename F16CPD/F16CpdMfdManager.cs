@@ -530,7 +530,7 @@ namespace F16CPD
 
         internal void DecreaseMapRange()
         {
-            if (_mapRangeRingsRadiusInNauticalMiles > 25)
+            if (_mapRangeRingsRadiusInNauticalMiles >= 25)
             {
                 _mapRangeRingsRadiusInNauticalMiles -= 5;
             }
@@ -1167,12 +1167,11 @@ namespace F16CPD
 
             var pfdRenderRectangle = new Rectangle(
                 overallRenderRectangle.X,
-                overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + 20),
+                overallRenderRectangle.Y + (int)(overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + (overallRenderRectangle.Height*.025)),
                 (int)(overallRenderRectangle.Width / 2.0),
                 0);
 
-            pfdRenderRectangle.Height = (int)(bigPfdRenderSize.Height * ((float)pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width));
-
+            pfdRenderRectangle.Height = (int)(mapHeightDifferenceFromFullScreen - ((overallRenderRectangle.Height * .025)*3));
             using (var smallPfdRenderTarget = new Bitmap(pfdRenderRectangle.Width, pfdRenderRectangle.Height, PixelFormat.Format16bppRgb555))
             using (var smallG = Graphics.FromImage(smallPfdRenderTarget))
             {
