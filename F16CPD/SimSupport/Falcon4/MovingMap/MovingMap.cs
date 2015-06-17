@@ -60,7 +60,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                 {
                     var scaleX = (float)renderTarget.Width / ((float)_theaterMap.Width);
                     var scaleY = (float)renderTarget.Height / ((float)_theaterMap.Height);
-                    var scaleFactor = (float)Math.Sqrt((scaleX * scaleX) + (scaleY * scaleY));
                     using (var h = Graphics.FromImage(renderTarget))
                     {
                         var backgroundColor = Color.FromArgb(181,186,222);
@@ -95,7 +94,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
                             h.TranslateTransform(-renderTarget.Width / 2.0f, -renderTarget.Height / 2.0f);
                         }
                         h.ScaleTransform(scaleX, scaleY);
-                        _mapRingRenderer.DrawMapRing(h, new Rectangle(0, 0, _theaterMap.Width, _theaterMap.Height), (int)outerMapRingRadiusPixels, scaleFactor * zoom, magneticHeadingInDecimalDegrees);
+                        _mapRingRenderer.DrawMapRing(h, _theaterMap.Size, (int)outerMapRingRadiusPixels, magneticHeadingInDecimalDegrees);
 
 
                     }

@@ -6,19 +6,18 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
 {
     internal interface IInnerMapRangeCircleRenderer
     {
-        void DrawInnerMapRangeCircle(Graphics g, Rectangle renderRectangle, Pen mapRingPen, int mapRingLineWidths, int outerMapRingRadiusPixelsScaled, out Rectangle innerMapRingBoundingRect, out int innerMapRingBoundingRectMiddleX);
+        void DrawInnerMapRangeCircle(Graphics g, Size theaterMapSizePixels, Pen mapRingPen, int mapRingLineWidths, int innerMapRingRadiusPixels, out Rectangle innerMapRingBoundingRect, out int innerMapRingBoundingRectMiddleX);
     }
 
     internal class InnerMapRangeCircleRenderer : IInnerMapRangeCircleRenderer
     {
-        public void DrawInnerMapRangeCircle(Graphics g, Rectangle renderRectangle, Pen mapRingPen, int mapRingLineWidths, int outerMapRingRadiusPixelsScaled, out Rectangle innerMapRingBoundingRect, out int innerMapRingBoundingRectMiddleX)
+        public void DrawInnerMapRangeCircle(Graphics g, Size theaterMapSizePixels, Pen mapRingPen, int mapRingLineWidths, int innerMapRingRadiusPixels, out Rectangle innerMapRingBoundingRect, out int innerMapRingBoundingRectMiddleX)
         {
             //draw inner map range circle
-            var innerMapRingRadiusPixelsScaled = (int) (Math.Floor(outerMapRingRadiusPixelsScaled/2.0f));
             innerMapRingBoundingRect =
-                new Rectangle(((renderRectangle.Width - (innerMapRingRadiusPixelsScaled*2))/2),
-                    ((renderRectangle.Height - (innerMapRingRadiusPixelsScaled*2))/2),
-                    innerMapRingRadiusPixelsScaled*2, innerMapRingRadiusPixelsScaled*2);
+                new Rectangle(((theaterMapSizePixels.Width - (innerMapRingRadiusPixels*2))/2),
+                    ((theaterMapSizePixels.Height - (innerMapRingRadiusPixels*2))/2),
+                    innerMapRingRadiusPixels*2, innerMapRingRadiusPixels*2);
             g.DrawEllipse(mapRingPen, innerMapRingBoundingRect);
             innerMapRingBoundingRectMiddleX = innerMapRingBoundingRect.X +
                                               (int) (Math.Floor(innerMapRingBoundingRect.Width/(float) 2));

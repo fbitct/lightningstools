@@ -73,7 +73,7 @@ namespace F16CPD
         private FileInfo _lastRenderedChecklistFile;
         private int _lastRenderedChecklistPageNum = 1;
         private Bitmap _lastRenderedChecklistPdfPage;
-        private int _mapRangeRingsRadiusInNauticalMiles = 60;
+        private int _mapRangeRingsRadiusInNauticalMiles = 30;
         private float _mapScale = 25000.0f;
         private bool _nightMode;
         private ISimSupportModule _simSupportModule;
