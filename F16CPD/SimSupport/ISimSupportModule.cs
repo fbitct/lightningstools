@@ -15,7 +15,7 @@ namespace F16CPD.SimSupport
         bool ProcessPendingMessageToClientFromServer(Message message);
         bool ProcessPendingMessageToServerFromClient(Message message);
 
-        void RenderMap(Graphics g, Rectangle renderRect, float mapScale, int rangeRingRadiusInNauticalMiles,
+        void RenderMap(Graphics g, Rectangle renderRect, float mapZoom, int rangeRingRadiusInNauticalMiles,
                        MapRotationMode rotationMode);
     }
 }

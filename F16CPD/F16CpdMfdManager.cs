@@ -76,7 +76,7 @@ namespace F16CPD
         private int _lastRenderedChecklistPageNum = 1;
         private Bitmap _lastRenderedChecklistPdfPage;
         private int _mapRangeRingsRadiusInNauticalMiles = 30;
-        private float _mapScale = 25000.0f;
+        private float _mapZoom = 25000.0f;
         private bool _nightMode;
         private ISimSupportModule _simSupportModule;
         internal F16CpdMfdManager(Size screenBoundsPixels,
@@ -182,9 +182,9 @@ namespace F16CPD
             set { _nightMode = value; }
         }
 
-        public float MapScale
+        public float MapZoom
         {
-            get { return _mapScale; }
+            get { return _mapZoom; }
         }
         public MapRotationMode MapRotationMode { get; set; }
 
@@ -279,9 +279,6 @@ namespace F16CPD
             {
                 case "ToggleSplitMapDisplay":
                     ToggleSplitMapDisplay();
-                    break;
-                case "ToggleSplitTGPDisplay":
-                    ToggleSplitTGPDisplay();
                     break;
                 case "SetLMFDActiveOnTGP":
                     SetLMFDActiveOnTGP();
@@ -408,15 +405,7 @@ namespace F16CPD
 
         public void SwitchToTargetingPodPage()
         {
-            if (ActiveMenuPage.Name == "Targeting Pod Page")
-            {
-                ToggleSplitTGPDisplay();
-            }
-            else
-            {
-                SetPage("Targeting Pod Page");
-            }
-
+            SetPage("Targeting Pod Page");
         }
 
         public void SwitchToChartsPage()
@@ -447,18 +436,7 @@ namespace F16CPD
                 Client.SendMessageToServer(message);
             }
         }
-        private void ToggleSplitTGPDisplay()
-        {
-            if (!Settings.Default.RunAsClient)
-            {
-                FlightData.SplitTGPDisplay = !FlightData.SplitTGPDisplay;
-            }
-            else
-            {
-                var message = new Message("ToggleSplitTGPDisplay", null);
-                Client.SendMessageToServer(message);
-            }
-        }
+
         private void ToggleSplitMapDisplay()
         {
             if (!Settings.Default.RunAsClient)
@@ -628,205 +606,14 @@ namespace F16CPD
             }
             return GetMapRotationModeText(MapRotationMode.NorthUp);
         }
-        internal string GetCADRGScaleTextForMapScale(float mapScale)
+        internal void MapZoomOut()
         {
-            var toReturn = "1:";
-
-            var millions = (int) Math.Round(mapScale/(1000.0f*1000.0f), 0);
-            var thousands = (int) Math.Round(mapScale/1000.0f, 0);
-            var hundreds = (int) Math.Round(mapScale/100.0f, 0);
-            var ones = (int) Math.Round(mapScale, 0);
-            if (millions > 0)
-            {
-                toReturn += millions + " M";
-            }
-            else if (thousands > 0)
-            {
-                toReturn += thousands + " K";
-            }
-            else if (hundreds > 0)
-            {
-                toReturn += hundreds.ToString(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                toReturn += ones.ToString(CultureInfo.InvariantCulture);
-            }
-            return toReturn;
+            _mapZoom = _mapZoom * 1.1f;
         }
 
-        private static float GetMapScaleForCADRGScaleText(string CADRGScaletext)
+        internal void MapZoomIn()
         {
-            float toReturn = float.NaN;
-            switch (CADRGScaletext)
-            {
-                case "1:250 M":
-                    toReturn = 250*1000*1000;
-                    break;
-                case "1:100 M":
-                    toReturn = 100*1000*1000;
-                    break;
-                case "1:50 M":
-                    toReturn = 50*1000*1000;
-                    break;
-                case "1:25 M":
-                    toReturn = 25*1000*1000;
-                    break;
-                case "1:10 M":
-                    toReturn = 10*1000*1000;
-                    break;
-                case "1:5 M":
-                    toReturn = 5*1000*1000;
-                    break;
-                case "1:2 M":
-                    toReturn = 2*1000*1000;
-                    break;
-                case "1:1 M":
-                    toReturn = 1000*1000;
-                    break;
-                case "1:500 K":
-                    toReturn = 500*1000;
-                    break;
-                case "1:250 K":
-                    toReturn = 250*1000;
-                    break;
-                case "1:100 K":
-                    toReturn = 100*1000;
-                    break;
-                case "1:50 K":
-                    toReturn = 50*1000;
-                    break;
-                case "1:25 K":
-                    toReturn = 25*1000;
-                    break;
-                case "1:10 K":
-                    toReturn = 10*1000;
-                    break;
-                case "1:5 K":
-                    toReturn = 5*1000;
-                    break;
-            }
-            return toReturn;
-        }
-
-        private float GetNextLowerMapScale(float mapScale)
-        {
-            float toReturn = mapScale;
-            string mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
-            switch (mapScaleText)
-            {
-                case "1:250 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:250 M");
-                    break;
-                case "1:100 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:250 M");
-                    break;
-                case "1:50 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:100 M");
-                    break;
-                case "1:25 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:50 M");
-                    break;
-                case "1:10 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:25 M");
-                    break;
-                case "1:5 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:10 M");
-                    break;
-                case "1:2 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:5 M");
-                    break;
-                case "1:1 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:2 M");
-                    break;
-                case "1:500 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:1 M");
-                    break;
-                case "1:250 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:500 K");
-                    break;
-                case "1:100 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:250 K");
-                    break;
-                case "1:50 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:100 K");
-                    break;
-                case "1:25 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:50 K");
-                    break;
-                case "1:10 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:25 K");
-                    break;
-                case "1:5 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:10 K");
-                    break;
-            }
-            return toReturn;
-        }
-
-        private float GetNextHigherMapScale(float mapScale)
-        {
-            float toReturn = mapScale;
-            string mapScaleText = GetCADRGScaleTextForMapScale(mapScale);
-            switch (mapScaleText)
-            {
-                case "1:250 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:100 M");
-                    break;
-                case "1:100 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:50 M");
-                    break;
-                case "1:50 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:25 M");
-                    break;
-                case "1:25 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:10 M");
-                    break;
-                case "1:10 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:5 M");
-                    break;
-                case "1:5 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:2 M");
-                    break;
-                case "1:2 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:1 M");
-                    break;
-                case "1:1 M":
-                    toReturn = GetMapScaleForCADRGScaleText("1:500 K");
-                    break;
-                case "1:500 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:250 K");
-                    break;
-                case "1:250 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:100 K");
-                    break;
-                case "1:100 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:50 K");
-                    break;
-                case "1:50 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:25 K");
-                    break;
-                case "1:25 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:10 K");
-                    break;
-                case "1:10 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:5 K");
-                    break;
-                case "1:5 K":
-                    toReturn = GetMapScaleForCADRGScaleText("1:5 K");
-                    break;
-            }
-            return toReturn;
-        }
-
-        internal void DecreaseMapScale()
-        {
-            _mapScale = GetNextLowerMapScale(_mapScale);
-        }
-
-        internal void IncreaseMapScale()
-        {
-            _mapScale = GetNextHigherMapScale(_mapScale);
+            _mapZoom = _mapZoom * 0.9f;
         }
 
         private void SetPage(string pageName)
@@ -905,10 +692,6 @@ namespace F16CPD
                     break;
                 case "TAD Page":
                 {
-                    var scaleLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapScaleLabel");
-                    var scaleString = "CADRG\r\n" + GetCADRGScaleTextForMapScale(_mapScale);
-                    scaleLabel.LabelText = scaleString;
-
                     var mapRangeLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("MapRangeLabel");
                     var mapRangeString = _mapRangeRingsRadiusInNauticalMiles.ToString(CultureInfo.InvariantCulture);
                     mapRangeLabel.LabelText = string.Format("{0} NM", mapRangeString);
@@ -1019,7 +802,7 @@ namespace F16CPD
                     RenderTGPPage(g, tgpRenderRectangle);
                     break;
                 case "TAD Page":
-                    RenderTADPage(g, _mapScale, _mapRangeRingsRadiusInNauticalMiles, FlightData.SplitMapDisplay);
+                    RenderTADPage(g, _mapZoom, _mapRangeRingsRadiusInNauticalMiles, FlightData.SplitMapDisplay);
                     break;
                 case "Checklists Page":
                     if (_currentChecklistFile != null)
@@ -1137,13 +920,13 @@ namespace F16CPD
                         using (var copy = (Bitmap) Common.Imaging.Util.CopyBitmap(_lastRenderedChecklistPdfPage))
                         using (var reverseVideo = (Bitmap) Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
-                            target.DrawImageFast(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
+                            target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
                                 GraphicsUnit.Pixel);
                         }
                     }
                     else
                     {
-                        target.DrawImageFast(_lastRenderedChecklistPdfPage, targetRect, 0, 0,
+                        target.DrawImage(_lastRenderedChecklistPdfPage, targetRect, 0, 0,
                             _lastRenderedChecklistPdfPage.Width, _lastRenderedChecklistPdfPage.Height,
                             GraphicsUnit.Pixel);
                     }
@@ -1182,13 +965,13 @@ namespace F16CPD
                         using (var copy = (Bitmap) Common.Imaging.Util.CopyBitmap(_lastRenderedChartPdfPage))
                         using (var reverseVideo = (Bitmap) Common.Imaging.Util.GetDimmerImage(copy, 0.4f))
                         {
-                            target.DrawImageFast(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
+                            target.DrawImage(reverseVideo, targetRect, 0, 0, reverseVideo.Width, reverseVideo.Height,
                                 GraphicsUnit.Pixel);
                         }
                     }
                     else
                     {
-                        target.DrawImageFast(_lastRenderedChartPdfPage, targetRect, 0, 0, _lastRenderedChartPdfPage.Width,
+                        target.DrawImage(_lastRenderedChartPdfPage, targetRect, 0, 0, _lastRenderedChartPdfPage.Width,
                             _lastRenderedChartPdfPage.Height, GraphicsUnit.Pixel);
                     }
                 }
@@ -1198,14 +981,14 @@ namespace F16CPD
             target.CompositingQuality = origCompositQuality;
         }
 
-        private Bitmap RenderMapOnBehalfOfRemoteClient(Size renderSize, float mapScale,
+        private Bitmap RenderMapOnBehalfOfRemoteClient(Size renderSize, float mapZoom,
             int rangeRingRadiusInNauticalMiles)
         {
             var rendered = new Bitmap(renderSize.Width, renderSize.Height, PixelFormat.Format16bppRgb565);
             using (var g = Graphics.FromImage(rendered))
             {
                 var renderRectangle = new Rectangle(new Point(0, 0), renderSize);
-                RenderMapLocally(g, renderRectangle, mapScale, rangeRingRadiusInNauticalMiles);
+                RenderMapLocally(g, renderRectangle, mapZoom, rangeRingRadiusInNauticalMiles);
             }
             return rendered;
         }
@@ -1228,25 +1011,26 @@ namespace F16CPD
 
             if (activeMFDImage != null)
             {
-                var mfdRenderRectangle = tgpRenderRectangle;
-
-                if (FlightData.SplitTGPDisplay)
+                var mfdRenderRectangleHeight = tgpRenderRectangle.Height - ((int)(tgpRenderRectangle.Height * 0.395));
+                var mfdRenderRectangleWidth = Math.Min(mfdRenderRectangleHeight, tgpRenderRectangle.Width);
+                if (mfdRenderRectangleWidth < mfdRenderRectangleHeight)
                 {
-                    mfdRenderRectangle = new Rectangle(tgpRenderRectangle.X, tgpRenderRectangle.Y, tgpRenderRectangle.Width, tgpRenderRectangle.Height - ((int)(tgpRenderRectangle.Height * 0.395)));
-                    g.DrawImageFast(activeMFDImage, mfdRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
+                    mfdRenderRectangleHeight = mfdRenderRectangleWidth;
+                }
+                var mfdRenderRectangle = new Rectangle(
+                    tgpRenderRectangle.X + ((tgpRenderRectangle.Width - mfdRenderRectangleWidth) / 2), 
+                    tgpRenderRectangle.Y,
+                    mfdRenderRectangleWidth, 
+                    mfdRenderRectangleHeight);
+                g.DrawImage(activeMFDImage, mfdRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
 
-                    var fullScreenRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
-                    var splitTGPPaneHeightDifferenceFromFullScreen = (int)(fullScreenRectangle.Height * 0.395);
-                    RenderSplitDisplayPfd(g, fullScreenRectangle, splitTGPPaneHeightDifferenceFromFullScreen);
-                    RenderSplitDisplayHsi(g, fullScreenRectangle, splitTGPPaneHeightDifferenceFromFullScreen);
-                }
-                else 
-                {
-                    g.DrawImageFast(activeMFDImage, mfdRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
-                }
+                var fullScreenRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
+                var splitTGPPaneHeightDifferenceFromFullScreen = (int)(fullScreenRectangle.Height * 0.395);
+                RenderSplitDisplayPfd(g, fullScreenRectangle, splitTGPPaneHeightDifferenceFromFullScreen);
+                RenderSplitDisplayHsi(g, fullScreenRectangle, splitTGPPaneHeightDifferenceFromFullScreen);
             }
         }
-        private void RenderTADPage(Graphics g, float mapScale, int rangeRingRadiusInNauticalMiles, bool splitDisplay)
+        private void RenderTADPage(Graphics g, float mapZoom, int rangeRingRadiusInNauticalMiles, bool splitDisplay)
         {
             var overallRenderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
             var mapRenderRectangle = overallRenderRectangle;
@@ -1257,13 +1041,13 @@ namespace F16CPD
                 using (var smallMapRenderTarget = new Bitmap(mapRenderRectangle.Width, mapRenderRectangle.Height, PixelFormat.Format16bppRgb555))
                 using (var smallG = Graphics.FromImage(smallMapRenderTarget))
                 {
-                    RenderMapLocally(smallG, mapRenderRectangle, mapScale, rangeRingRadiusInNauticalMiles);
-                    g.DrawImageFast(smallMapRenderTarget, new Point(0,0));
+                    RenderMapLocally(smallG, mapRenderRectangle, mapZoom, rangeRingRadiusInNauticalMiles);
+                    g.DrawImage(smallMapRenderTarget, new Point(0,0));
                 }
             }
             else
             {
-                RenderMapLocally(g, mapRenderRectangle, mapScale, rangeRingRadiusInNauticalMiles);
+                RenderMapLocally(g, mapRenderRectangle, mapZoom, rangeRingRadiusInNauticalMiles);
             }
 
             if (splitDisplay)
@@ -1296,7 +1080,7 @@ namespace F16CPD
                 smallG.ScaleTransform((pfdRenderRectangle.Width / (float)bigPfdRenderSize.Width),
                     (pfdRenderRectangle.Height / (float)bigPfdRenderSize.Height));
                 pfd.Render(smallG, bigPfdRenderSize);
-                g.DrawImageFast(smallPfdRenderTarget, new Point(0, pfdRenderRectangle.Y));
+                g.DrawImage(smallPfdRenderTarget, new Point(0, pfdRenderRectangle.Y));
             }
         }
 
@@ -1319,18 +1103,18 @@ namespace F16CPD
                 smallG.ScaleTransform((hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width),
                     (hsiRenderRectangle.Height / (float)bigHsiRenderSize.Height));
                 hsi.Render(smallG, bigHsiRenderSize);
-                g.DrawImageFast(smallHsiRenderTarget, new Point((int)(overallRenderRectangle.Width / 2), hsiRenderRectangle.Y));
+                g.DrawImage(smallHsiRenderTarget, new Point((int)(overallRenderRectangle.Width / 2), hsiRenderRectangle.Y));
             }
         }
 
-        private void RenderMapLocally(Graphics g, Rectangle renderRectangle, float mapScale,
+        private void RenderMapLocally(Graphics g, Rectangle renderRectangle, float mapZoom,
             int rangeRingRadiusInNauticalMiles)
         {
             var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
             
             var tadRenderRectangle = renderRectangle;
             g.SetClip(tadRenderRectangle);
-            SimSupportModule.RenderMap(g, tadRenderRectangle, mapScale, rangeRingRadiusInNauticalMiles,
+            SimSupportModule.RenderMap(g, tadRenderRectangle, mapZoom, rangeRingRadiusInNauticalMiles,
                 MapRotationMode);
 
             var scaleX = (tadRenderRectangle.Width)/Constants.F_NATIVE_RES_WIDTH;

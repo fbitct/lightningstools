@@ -16,7 +16,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
     internal interface IMovingMap 
     {
 
-        bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale,
+        bool RenderMap(Graphics g, Rectangle renderRectangle, float mapZoom,
             float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
             int outerMapRingRadiusInNauticalMiles, MapRotationMode rotationMode );
     }
@@ -27,7 +27,6 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
         private readonly IMapRingRenderer _mapRingRenderer;
         private readonly ICenterAirplaneRenderer _centerAirplaneRenderer;
         private readonly ITheaterMapRetriever _theaterMapRetriever;
-        private readonly IF16CPDClient _client;
         private Bitmap _theaterMap;
         private float _mapWidthInFeet;
         public MovingMap( 
@@ -43,7 +42,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             _theaterMapRetriever = theaterMapRetriever ?? new TheaterMapRetriever(terrainDB, client);
         }
 
-        public bool RenderMap(Graphics g, Rectangle renderRectangle, float mapScale, float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
+        public bool RenderMap(Graphics g, Rectangle renderRectangle, float mapZoom, float mapCoordinateFeetEast, float mapCoordinateFeetNorth, float magneticHeadingInDecimalDegrees,
             int outerMapRingRadiusInNauticalMiles, MapRotationMode rotationMode)
         {
             _theaterMap = _theaterMap ?? _theaterMapRetriever.GetTheaterMapImage(ref _mapWidthInFeet);
@@ -51,7 +50,7 @@ namespace F16CPD.SimSupport.Falcon4.MovingMap
             
             var mapImageFeetPerPixel = _mapWidthInFeet / (float)_theaterMap.Width;
             var outerMapRingRadiusPixels = (outerMapRingRadiusInNauticalMiles * Common.Math.Constants.FEET_PER_NM) / mapImageFeetPerPixel ;
-            var zoom = 1/(mapScale / 50000.0f) ;
+            var zoom = 1/(mapZoom / 50000.0f) ;
             var xOffset = (-(mapCoordinateFeetEast / mapImageFeetPerPixel) + (((float)_theaterMap.Width / 2.0f)));
             var yOffset = (((mapCoordinateFeetNorth / mapImageFeetPerPixel) - (((float)_theaterMap.Height / 2.0f))));
             try

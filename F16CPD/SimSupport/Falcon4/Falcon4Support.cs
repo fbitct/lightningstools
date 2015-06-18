@@ -99,7 +99,7 @@ namespace F16CPD.SimSupport.Falcon4
         }
 
 
-        public void RenderMap(Graphics g, Rectangle renderRect, float mapScale, 
+        public void RenderMap(Graphics g, Rectangle renderRect, float mapZoom, 
             int rangeRingRadiusInNauticalMiles,
             MapRotationMode rotationMode)
         {
@@ -109,7 +109,7 @@ namespace F16CPD.SimSupport.Falcon4
             }
             _movingMap.RenderMap(
                 g, renderRect,
-                mapScale,
+                mapZoom,
                 Manager.FlightData.MapCoordinateFeetEast, Manager.FlightData.MapCoordinateFeetNorth,Manager.FlightData.MagneticHeadingInDecimalDegrees, 
                 rangeRingRadiusInNauticalMiles, rotationMode);
         }
@@ -699,8 +699,10 @@ namespace F16CPD.SimSupport.Falcon4
                 var latestSharedMem = ReadF4SharedMem();
                 var vehicleAcd = latestSharedMem.vehicleACD;
                 _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile(vehicleAcd);
-                var image = _texSharedMemReader.GetImage(sourceRectangle);
-                return Common.Imaging.Util.BytesFromBitmap(image, "RLE", "PNG");
+                using (var image = _texSharedMemReader.GetImage(sourceRectangle))
+                {
+                    return Common.Imaging.Util.BytesFromBitmap(image, "RLE", "PNG");
+                }
             }
             return null;
         }

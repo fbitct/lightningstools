@@ -41,17 +41,15 @@ namespace F16CPD.Mfd.Menus
             buttons.Add(mapOnOffButton);
 
             var scaleIncreaseButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, "^", false);
-            scaleIncreaseButton.Pressed += (s,e)=>_mfdManager.IncreaseMapScale();
+            scaleIncreaseButton.Pressed += (s,e)=>_mfdManager.MapZoomIn();
             buttons.Add(scaleIncreaseButton);
 
             var scaleLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7.5f,
-                                                      "CADRG\r\n" +
-                                                      _mfdManager.GetCADRGScaleTextForMapScale(_mfdManager.MapScale), false);
-            scaleLabel.FunctionName = "MapScaleLabel";
+                                                      "ZOOM", false);
             buttons.Add(scaleLabel);
 
             var scaleDecreaseButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 8, @"\/", false);
-            scaleDecreaseButton.Pressed += (s, e) => _mfdManager.DecreaseMapScale();
+            scaleDecreaseButton.Pressed += (s, e) => _mfdManager.MapZoomOut();
             buttons.Add(scaleDecreaseButton);
 
 

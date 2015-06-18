@@ -442,7 +442,6 @@ namespace F16CPD
         public bool CpdPowerOnFlag { get; set; }
         public bool PfdOffFlag { get; set; }
         public bool SplitMapDisplay { get; set; }
-        public bool SplitTGPDisplay { get; set; }
         public string ActiveMFD { get; set; }
         public bool MarkerBeaconOuterMarkerFlag { get; set; }
         public bool MarkerBeaconMiddleMarkerFlag { get; set; }
