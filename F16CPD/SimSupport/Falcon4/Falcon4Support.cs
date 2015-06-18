@@ -238,13 +238,6 @@ namespace F16CPD.SimSupport.Falcon4
 
                 flightData.RadarAltimeterOffFlag = ((fromFalcon.lightBits & (int) LightBits.RadarAlt) ==
                                                     (int) LightBits.RadarAlt);
-                Manager
-                    .FindMenuPageByName("Instruments Display Page")
-                    .FindOptionSelectButtonByFunctionName("ToggleAltimeterModeElecPneu")
-                    .LabelText = flightData.AltimeterMode == AltimeterMode.Electronic ? "ELEC" : "PNEU";
-
-
-
                 flightData.BarometricPressure = (fromFalcon.AltCalReading/100.00f);
                 flightData.AltimeterUnits = (((AltBits)fromFalcon.altBits & AltBits.CalType) == AltBits.CalType) ? AltimeterUnits.Hg : AltimeterUnits.hPa;
                 flightData.AltimeterMode = (((AltBits)fromFalcon.altBits & AltBits.PneuFlag) == AltBits.PneuFlag) ? AltimeterMode.Pneumatic : AltimeterMode.Electronic;

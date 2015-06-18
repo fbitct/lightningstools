@@ -234,6 +234,11 @@ namespace F16CPD
             {
                 _manager.ProcessPendingMessages();
                 _simSupportModule.UpdateManagerFlightData();
+                _manager
+                    .FindMenuPageByName("Instruments Display Page")
+                    .FindOptionSelectButtonByFunctionName("ToggleAltimeterModeElecPneu")
+                    .LabelText = _manager.FlightData.AltimeterMode == AltimeterMode.Electronic ? "ELEC" : "PNEU";
+
                 if (Settings.Default.RunAsServer)
                 {
                     return; //no rendering needed in server mode
