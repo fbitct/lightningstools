@@ -41,17 +41,16 @@ namespace F16CPD.Mfd.Menus
             mapPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToTADPage();
             buttons.Add(mapPageSelectButton);
 
-            var previousChartFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, "^", false);
-            previousChartFileSelectButton.Pressed += (s,e)=>_mfdManager.PrevChartFile();
-            buttons.Add(previousChartFileSelectButton);
+            var prevChartPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, @"^", false);
+            prevChartPageSelectButton.Pressed += (s, e) => _mfdManager.PrevChartPage();
+            buttons.Add(prevChartPageSelectButton);
 
-            var currentChartFileLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 8, "NO CHART\nFILES", false);
-            currentChartFileLabel.FunctionName = "CurrentChartFileLabel";
-            buttons.Add(currentChartFileLabel);
+            var chartPageLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7.5f, "P\nA\nG\nE", false);
+            buttons.Add(chartPageLabel);
 
-            var nextChartFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 9, @"\/", false);
-            nextChartFileSelectButton.Pressed += (s,e)=>_mfdManager.NextChartFile();
-            buttons.Add(nextChartFileSelectButton);
+            var nextChartPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 8, @"\/", false);
+            nextChartPageSelectButton.Pressed += (s, e) => _mfdManager.NextChartPage();
+            buttons.Add(nextChartPageSelectButton);
 
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     true);
@@ -66,18 +65,16 @@ namespace F16CPD.Mfd.Menus
             headDownDisplayPageSelectButton.Pressed += (s,e)=>_mfdManager.SwitchToInstrumentsPage();
             buttons.Add(headDownDisplayPageSelectButton);
 
+            var nextChartFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24, @"\/", false);
+            nextChartFileSelectButton.Pressed += (s, e) => _mfdManager.NextChartFile();
+            buttons.Add(nextChartFileSelectButton);
 
-            var nextChartPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 23, @"\/", false);
-            nextChartPageSelectButton.Pressed += (s,e)=>_mfdManager.NextChartPage();
-            buttons.Add(nextChartPageSelectButton);
+            var chartListLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24.5f, "L\nI\nS\nT", false);
+            buttons.Add(chartListLabel);
 
-            var currentChartPageNumLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24, "page", false);
-            currentChartPageNumLabel.FunctionName = "CurrentChartPageNumLabel";
-            buttons.Add(currentChartPageNumLabel);
-
-            var prevChartPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 25, @"^", false);
-            prevChartPageSelectButton.Pressed += (s,e)=>_mfdManager.PrevChartPage();
-            buttons.Add(prevChartPageSelectButton);
+            var previousChartFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 25, "^", false);
+            previousChartFileSelectButton.Pressed += (s, e) => _mfdManager.PrevChartFile();
+            buttons.Add(previousChartFileSelectButton);
 
             thisPage.OptionSelectButtons = buttons;
             thisPage.Name = "Charts Page";

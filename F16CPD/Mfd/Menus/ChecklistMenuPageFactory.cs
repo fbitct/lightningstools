@@ -40,18 +40,17 @@ namespace F16CPD.Mfd.Menus
             mapPageSelectButton.Pressed += (s, e) => _mfdManager.SwitchToTADPage();
             buttons.Add(mapPageSelectButton);
 
-            var previousChecklistFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, "^", false);
-            previousChecklistFileSelectButton.Pressed += (s,e)=>_mfdManager.PrevChecklistFile();
-            buttons.Add(previousChecklistFileSelectButton);
-
-            var currentChecklistFileLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 8, "NO CHKLST\nFILES",
-                                                                     false);
-            currentChecklistFileLabel.FunctionName = "CurrentChecklistFileLabel";
-            buttons.Add(currentChecklistFileLabel);
-
-            var nextChecklistFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 9, @"\/", false);
-            nextChecklistFileSelectButton.Pressed += (s,e)=>_mfdManager.NextChecklistFile();
+            var nextChecklistFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24, @"\/", false);
+            nextChecklistFileSelectButton.Pressed += (s, e) => _mfdManager.NextChecklistFile();
             buttons.Add(nextChecklistFileSelectButton);
+
+            var checklistListLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24.5f, "L\nI\nS\nT",
+                                                                     false);
+            buttons.Add(checklistListLabel);
+
+            var previousChecklistFileSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 25, "^", false);
+            previousChecklistFileSelectButton.Pressed += (s, e) => _mfdManager.PrevChecklistFile();
+            buttons.Add(previousChecklistFileSelectButton);
 
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     true);
@@ -67,15 +66,14 @@ namespace F16CPD.Mfd.Menus
             buttons.Add(headDownDisplayPageSelectButton);
 
 
-            var nextChecklistPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 23, @"\/", false);
+            var nextChecklistPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 8, @"\/", false);
             nextChecklistPageSelectButton.Pressed += (s,e)=>_mfdManager.NextChecklistPage();
             buttons.Add(nextChecklistPageSelectButton);
 
-            var currentChecklistPageNumLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 24, "page", false);
-            currentChecklistPageNumLabel.FunctionName = "CurrentChecklistPageNumLabel";
-            buttons.Add(currentChecklistPageNumLabel);
+            var checklistPageLabel = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7.5f, "P\nA\nG\nE", false);
+            buttons.Add(checklistPageLabel);
 
-            var prevChecklistPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 25, @"^", false);
+            var prevChecklistPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 7, @"^", false);
             prevChecklistPageSelectButton.Pressed += (s,e)=>_mfdManager.PrevChecklistPage();
             buttons.Add(prevChecklistPageSelectButton);
 

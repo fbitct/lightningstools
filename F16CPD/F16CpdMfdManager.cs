@@ -643,7 +643,6 @@ namespace F16CPD
         {
             var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
 
-            //g.Clear(Color.Transparent);
             var overallRenderRectangle = new Rectangle(0, 0, ScreenBoundsPixels.Width, ScreenBoundsPixels.Height);
             OptionSelectButton button;
             var origTransform = g.Transform;
@@ -714,47 +713,24 @@ namespace F16CPD
                 case "Checklists Page":
                 {
                     if (_currentChecklistFile == null) NextChecklistFile();
-                    var currentChecklistFileLabel =
-                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistFileLabel");
-                    string shortName = null;
-                    if (_currentChecklistFile != null)
-                    {
-                        shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChecklistFile.FullName);
-                        shortName = Common.Win32.Paths.Util.Compact(_currentChecklistFile.Name, 64);
-                        shortName = BreakStringIntoLines(shortName, 9);
-                    }
-                    if (shortName != null)
-                    {
-                        var labelText = shortName.ToUpperInvariant();
-                        currentChecklistFileLabel.LabelText = labelText;
-                    }
-
-                    var currentChecklistPageNumLabel =
-                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChecklistPageNumLabel");
-                    currentChecklistPageNumLabel.LabelText = _currentChecklistPageNum + "/" + _currentChecklistPagesTotal;
                 }
                     break;
                 case "Charts Page":
                 {
                     if (_currentChartFile == null) NextChartFile();
-                    var currentChartFileLabel =
-                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartFileLabel");
                     string shortName = null;
                     if (_currentChartFile != null)
                     {
                         shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChartFile.FullName);
                         shortName = Common.Win32.Paths.Util.Compact(_currentChartFile.Name, 64);
-                        shortName = BreakStringIntoLines(shortName, 9);
                     }
                     if (shortName != null)
                     {
                         var labelText = shortName.ToUpperInvariant();
-                        currentChartFileLabel.LabelText = labelText;
+                        //currentChartFileLabel.LabelText = labelText;
                     }
 
-                    var currentChartPageNumLabel =
-                        ActiveMenuPage.FindOptionSelectButtonByFunctionName("CurrentChartPageNumLabel");
-                    currentChartPageNumLabel.LabelText = _currentChartPageNum + "/" + _currentChartPagesTotal;
+                    //currentChartPageNumLabel.LabelText = _currentChartPageNum + "/" + _currentChartPagesTotal;
                 }
                     break;
             }
@@ -891,7 +867,7 @@ namespace F16CPD
             return sb.ToString();
         }
 
-        private void RenderCurrentChecklist(Graphics target, Rectangle targetRect)
+        private void RenderCurrentChecklist(Graphics target, Rectangle fullSizeTargetRect)
         {
             var origCompositQuality = target.CompositingQuality;
             var origSmoothingMode = target.SmoothingMode;
@@ -900,6 +876,8 @@ namespace F16CPD
             target.InterpolationMode = InterpolationMode.HighQualityBicubic;
             target.SmoothingMode = SmoothingMode.HighQuality;
             target.CompositingQuality = CompositingQuality.HighQuality;
+            var targetRect = new Rectangle(fullSizeTargetRect.X, fullSizeTargetRect.Y, fullSizeTargetRect.Width, (int)(fullSizeTargetRect.Height * 0.95f));
+            var labelRect = new Rectangle(targetRect.X, targetRect.Y + targetRect.Height, targetRect.Width, fullSizeTargetRect.Height - targetRect.Height);
             if (_currentChecklistFile != null)
             {
                 if (_lastRenderedChecklistFile == null ||
@@ -930,14 +908,42 @@ namespace F16CPD
                             _lastRenderedChecklistPdfPage.Width, _lastRenderedChecklistPdfPage.Height,
                             GraphicsUnit.Pixel);
                     }
+
+                    string shortName = string.Empty;
+                    string labelText = string.Empty ;
+                    if (_currentChecklistFile != null)
+                    {
+                        shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChecklistFile.FullName);
+                        shortName = Common.Win32.Paths.Util.Compact(_currentChecklistFile.Name, 60);
+                        labelText = shortName.ToUpperInvariant();
+                    }
+                    labelText = labelText.PadRight(60, ' ');
+                    var pageNumString = _currentChecklistPageNum + "/" + _currentChecklistPagesTotal;
+                    labelText = labelText.Substring(0, labelText.Length - pageNumString.Length) + pageNumString;
+                    DrawString(target, labelText, labelRect);
                 }
             }
             target.InterpolationMode = origInterpolationMode;
             target.SmoothingMode = origSmoothingMode;
             target.CompositingQuality = origCompositQuality;
         }
+        private void DrawString(Graphics g, string aString, Rectangle targetRectangle)
+        {
+            var greenBrush = new SolidBrush(Color.FromArgb(0, 255, 0));
 
-        private void RenderCurrentChart(Graphics target, Rectangle targetRect)
+            var path = new GraphicsPath();
+            var sf = new StringFormat(StringFormatFlags.NoWrap)
+            {
+                Alignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Center
+            };
+            var f = new Font(FontFamily.GenericMonospace, 14, FontStyle.Bold);
+            path.AddString(aString, f.FontFamily, (int)f.Style, f.SizeInPoints, targetRectangle, sf);
+            g.FillPathFast(greenBrush, path);
+
+        }
+
+        private void RenderCurrentChart(Graphics target, Rectangle fullSizeTargetRect)
         {
             var origCompositQuality = target.CompositingQuality;
             var origSmoothingMode = target.SmoothingMode;
@@ -946,6 +952,9 @@ namespace F16CPD
             target.InterpolationMode = InterpolationMode.HighQualityBicubic;
             target.SmoothingMode = SmoothingMode.HighQuality;
             target.CompositingQuality = CompositingQuality.HighQuality;
+            var targetRect = new Rectangle(fullSizeTargetRect.X, fullSizeTargetRect.Y, fullSizeTargetRect.Width, (int)(fullSizeTargetRect.Height * 0.95f));
+            var labelRect = new Rectangle(targetRect.X, targetRect.Y + targetRect.Height, targetRect.Width, fullSizeTargetRect.Height - targetRect.Height);
+
             if (_currentChartFile != null)
             {
                 if (_lastRenderedChartFile == null || _currentChartFile.FullName != _lastRenderedChartFile.FullName ||
@@ -974,6 +983,18 @@ namespace F16CPD
                         target.DrawImage(_lastRenderedChartPdfPage, targetRect, 0, 0, _lastRenderedChartPdfPage.Width,
                             _lastRenderedChartPdfPage.Height, GraphicsUnit.Pixel);
                     }
+                    string shortName = string.Empty;
+                    string labelText = string.Empty;
+                    if (_currentChartFile != null)
+                    {
+                        shortName = Common.Win32.Paths.Util.GetShortPathName(_currentChartFile.FullName);
+                        shortName = Common.Win32.Paths.Util.Compact(_currentChartFile.Name, 60);
+                        labelText = shortName.ToUpperInvariant();
+                    }
+                    labelText = labelText.PadRight(60, ' ');
+                    var pageNumString = _currentChartPageNum + "/" + _currentChartPagesTotal;
+                    labelText = labelText.Substring(0, labelText.Length - pageNumString.Length) + pageNumString;
+                    DrawString(target, labelText, labelRect);
                 }
             }
             target.InterpolationMode = origInterpolationMode;
