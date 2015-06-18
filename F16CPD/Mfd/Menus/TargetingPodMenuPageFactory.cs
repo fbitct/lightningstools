@@ -28,6 +28,18 @@ namespace F16CPD.Mfd.Menus
             var thisPage = new MfdMenuPage(_mfdManager);
             var buttons = new List<OptionSelectButton>();
 
+            var leftMfdSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 22, "LMFD",
+                                                                        false);
+            leftMfdSelectButton.FunctionName = "SetLMFDActiveOnTGP";
+            leftMfdSelectButton.Pressed += (s, e) => _mfdManager.SetLMFDActiveOnTGP();
+            buttons.Add(leftMfdSelectButton);
+
+            var rightMfdSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 21, "RMFD",
+                                                                        false);
+            rightMfdSelectButton.FunctionName = "SetRMFDActiveOnTGP";
+            rightMfdSelectButton.Pressed += (s, e) => _mfdManager.SetRMFDActiveOnTGP();
+            buttons.Add(rightMfdSelectButton);
+
 
             var tacticalAwarenessDisplayPageSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 16, "TAD",
                                                                                     false);

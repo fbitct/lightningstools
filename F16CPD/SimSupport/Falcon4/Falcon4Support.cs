@@ -31,6 +31,7 @@ namespace F16CPD.SimSupport.Falcon4
         private readonly MorseCode _morseCodeGenerator;
         private readonly IServerSideInboundMessageProcessor _serverSideInboundMessageProcessor;
         private readonly ITerrainDBFactory _terrainDBFactory = new TerrainDBFactory();
+        private readonly IThreeDeeCaptureCoordinateUpdater _threeDeeCaptureCoordinateUpdater;
 
         private bool _isDisposed;
         private KeyFile _keyFile;
@@ -38,11 +39,12 @@ namespace F16CPD.SimSupport.Falcon4
         private IMovingMap _movingMap;
         private KeyWithModifiers _pendingComboKeys;
         private Queue<bool> _pendingMorseCodeUnits = new Queue<bool>();
-        private Reader _sharedMemReader;
+        private F4SharedMem.Reader _sharedMemReader;
+        private F4TexSharedMem.Reader _texSharedMemReader;
         private TacanChannelSource TacanChannelSource = TacanChannelSource.Ufc;
         private TerrainDB _terrainDB;
         private ITheaterMapRetriever _theaterMapRetriever;
-
+        private TexturesSharedMemoryImageCoordinates _texturesSharedMemoryImageCoordinates;
         public Falcon4Support(F16CpdMfdManager manager)
         {
             Manager = manager;
@@ -55,6 +57,8 @@ namespace F16CPD.SimSupport.Falcon4
 
             _clientSideInboundMessageProcessor = new ClientSideInboundMessageProcessor();
             _serverSideInboundMessageProcessor = new ServerSideInboundMessageProcessor(Manager);
+            _texturesSharedMemoryImageCoordinates = new TexturesSharedMemoryImageCoordinates();
+            _threeDeeCaptureCoordinateUpdater = new ThreeDeeCaptureCoordinateUpdater(_texturesSharedMemoryImageCoordinates);
         }
 
         #region ISimSupportModule Members
@@ -134,6 +138,8 @@ namespace F16CPD.SimSupport.Falcon4
                     _keyFile = null;
                     Common.Util.DisposeObject(_sharedMemReader);
                     _sharedMemReader = null;
+                    Common.Util.DisposeObject(_texSharedMemReader);
+                    _texSharedMemReader = null;
                     Common.Util.DisposeObject(_pendingComboKeys);
                     _pendingComboKeys = null;
                     Common.Util.DisposeObject(_terrainDB);
@@ -195,6 +201,7 @@ namespace F16CPD.SimSupport.Falcon4
             flightData.MarkerBeaconMiddleMarkerFlag = false;
             flightData.AdiEnableCommandBars = false;
             flightData.TacanChannel = "106X";
+            flightData.ActiveMFD = "LMFD";
             _morseCodeSignalLineValue = false;
             _indicatedRateOfTurnCalculator.Reset();
             IsSimRunning = false;
@@ -310,6 +317,8 @@ namespace F16CPD.SimSupport.Falcon4
 
                 UpdateTACANChannel(flightData, fromFalcon);
                 UpdateMapPosition(flightData, fromFalcon);
+                flightData.LMFDImage = GetLMFDImage();
+                flightData.RMFDImage = GetRMFDImage();
             }
             else //Falcon's not running
             {
@@ -324,6 +333,11 @@ namespace F16CPD.SimSupport.Falcon4
                 {
                     Common.Util.DisposeObject(_sharedMemReader);
                     _sharedMemReader = null;
+                }
+                if (_texSharedMemReader != null)
+                {
+                    Common.Util.DisposeObject(_texSharedMemReader);
+                    _texSharedMemReader = null;
                 }
 
                 Common.Util.DisposeObject(_keyFile);
@@ -677,12 +691,40 @@ namespace F16CPD.SimSupport.Falcon4
             }
             return toReturn;
         }
+        private byte[] GetMFDImage(Rectangle sourceRectangle)
+        {
+            CreateTexSharedMemReaderIfNotExists();
+            if (_texSharedMemReader != null && _texSharedMemReader.IsDataAvailable)
+            {
+                var latestSharedMem = ReadF4SharedMem();
+                var vehicleAcd = latestSharedMem.vehicleACD;
+                _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile(vehicleAcd);
+                var image = _texSharedMemReader.GetImage(sourceRectangle);
+                return Common.Imaging.Util.BytesFromBitmap(image, "RLE", "PNG");
+            }
+            return null;
+        }
+        private byte[] GetLMFDImage()
+        {
+            return GetMFDImage(_texturesSharedMemoryImageCoordinates.LMFD);  
+        }
+        private byte[] GetRMFDImage()
+        {
+            return GetMFDImage(_texturesSharedMemoryImageCoordinates.RMFD);
+        }
 
         private void CreateSharedMemReaderIfNotExists()
         {
             if (_sharedMemReader == null && !Settings.Default.RunAsClient)
             {
-                _sharedMemReader = new Reader();
+                _sharedMemReader = new F4SharedMem.Reader();
+            }
+        }
+        private void CreateTexSharedMemReaderIfNotExists()
+        {
+            if (_texSharedMemReader == null && !Settings.Default.RunAsClient)
+            {
+                _texSharedMemReader = new F4TexSharedMem.Reader();
             }
         }
 

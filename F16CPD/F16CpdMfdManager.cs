@@ -280,6 +280,12 @@ namespace F16CPD
                 case "ToggleSplitMapDisplay":
                     ToggleSplitMapDisplay();
                     break;
+                case "SetLMFDActiveOnTGP":
+                    SetLMFDActiveOnTGP();
+                    break;
+                case "SetRMFDActiveOnTGP":
+                    SetRMFDActiveOnTGP();
+                    break;
             }
         }
 
@@ -406,6 +412,30 @@ namespace F16CPD
         {
             SetPage("Charts Page");
         }
+        public void SetLMFDActiveOnTGP()
+        {
+            if (!Settings.Default.RunAsClient)
+            {
+                FlightData.ActiveMFD = "LMFD";
+            }
+            else
+            {
+                var message = new Message("SetLMFDActiveOnTGP", null);
+                Client.SendMessageToServer(message);
+            }
+        }
+        public void SetRMFDActiveOnTGP()
+        {
+            if (!Settings.Default.RunAsClient)
+            {
+                FlightData.ActiveMFD = "RMFD";
+            }
+            else
+            {
+                var message = new Message("SetRMFDActiveOnTGP", null);
+                Client.SendMessageToServer(message);
+            }
+        }
 
         private void ToggleSplitMapDisplay()
         {
@@ -417,7 +447,6 @@ namespace F16CPD
             {
                 var message = new Message("ToggleSplitMapDisplay", null);
                 Client.SendMessageToServer(message);
-
             }
         }
         private void UpdateCurrentChecklistPageCount()
@@ -868,6 +897,15 @@ namespace F16CPD
 
                 }
                     break;
+                case "Targeting Pod Page":
+                    {
+                        var lmfdSelectLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("SetLMFDActiveOnTGP");
+                        lmfdSelectLabel.InvertLabelText = FlightData.ActiveMFD == "LMFD";
+
+                        var rmfdSelectLabel = ActiveMenuPage.FindOptionSelectButtonByFunctionName("SetRMFDActiveOnTGP");
+                        rmfdSelectLabel.InvertLabelText = FlightData.ActiveMFD == "RMFD";
+                    }
+                    break;
                 case "Checklists Page":
                 {
                     if (_currentChecklistFile == null) NextChecklistFile();
@@ -950,6 +988,12 @@ namespace F16CPD
                     RenderPfd(g);
 
                 }
+                    break;
+                case "Targeting Pod Page":
+                    var tgpRenderRectangle = new Rectangle(LabelWidth + 1, LabelHeight + 1,
+                        (ScreenBoundsPixels.Width - ((LabelWidth + 1)*2)),
+                        ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))));
+                    RenderTGPPage(g, tgpRenderRectangle);
                     break;
                 case "TAD Page":
                     RenderTADPage(g, _mapScale, _mapRangeRingsRadiusInNauticalMiles, FlightData.SplitMapDisplay);
@@ -1142,7 +1186,28 @@ namespace F16CPD
             }
             return rendered;
         }
+        private void RenderTGPPage(Graphics g, Rectangle tgpRenderRectangle)
+        {
+            byte[] activeMFDImageBytes = null;
+            if (FlightData.ActiveMFD == "LMFD") 
+            {
+                activeMFDImageBytes = FlightData.LMFDImage;
+            }
+            else if (FlightData.ActiveMFD == "RMFD") 
+            {
+                activeMFDImageBytes = FlightData.RMFDImage;
+            }
+            Bitmap activeMFDImage=null;
+            if (activeMFDImageBytes !=null)
+            {
+                activeMFDImage = (Bitmap)Common.Imaging.Util.BitmapFromBytes(activeMFDImageBytes);
+            }
 
+            if (activeMFDImage != null)
+            {
+                g.DrawImageFast(activeMFDImage, tgpRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
+            }
+        }
         private void RenderTADPage(Graphics g, float mapScale, int rangeRingRadiusInNauticalMiles, bool splitDisplay)
         {
             var overallRenderRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
