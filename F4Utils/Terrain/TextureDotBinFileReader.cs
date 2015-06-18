@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using F4Utils.Terrain.Structs;
+using Common.Strings;
 
 namespace F4Utils.Terrain
 {
@@ -43,8 +44,9 @@ namespace F4Utils.Terrain
                     {
                         var tileRecord = new TextureBinTileRecord
                         {
-                            tileName = Encoding.ASCII.GetString(reader.ReadBytes(20),0, 20).TrimEnd('\0')
+                            tileName = Encoding.ASCII.GetString(reader.ReadBytes(20), 0, 20).TrimAtNull()
                         };
+                        
                         tileRecord.numAreas = reader.ReadUInt32();
                         tileRecord.areaRecords = new TextureBinAreaRecord[tileRecord.numAreas];
                         tileRecord.numPaths = reader.ReadUInt32();

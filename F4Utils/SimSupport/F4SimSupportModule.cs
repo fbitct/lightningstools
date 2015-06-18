@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common.MacroProgramming;
 using Common.Math;
 using Common.SimSupport;
+using Common.Strings;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using Util = F4Utils.Process.Util;
@@ -1052,7 +1053,7 @@ namespace F4Utils.SimSupport
                             string callsign = null;
                             if (_lastFlightData.pilotsCallsign != null && ((Signal)output).Index.Value <= _lastFlightData.pilotsOnline)
                             {
-                                callsign = (_lastFlightData.pilotsCallsign[((Signal)output).Index.Value] ?? string.Empty).TrimEnd('\0');
+                                callsign = (_lastFlightData.pilotsCallsign[((Signal)output).Index.Value] ?? string.Empty).TrimAtNull();
                             }
                             else
                             {
@@ -1203,16 +1204,16 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].PttDepressed;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__NICKNAME:
-                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Nickname).TrimEnd('\0');
+                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Nickname).TrimAtNull();
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__ADDRESS:
-                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Address).TrimEnd('\0');
+                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Address).TrimAtNull();
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PORT_NUMBER:
                         ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.PortNumber;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PASSWORD:
-                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Password).TrimEnd('\0');
+                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Password).TrimAtNull();
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PLAYER_COUNT:
                         ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.PlayerCount;

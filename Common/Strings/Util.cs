@@ -58,5 +58,11 @@ namespace Common.Strings
             if (aString != null) return Encoding.Default.GetBytes(aString);
             return new byte[0];
         }
+        public static string TrimAtNull(this string toTrim)
+        {
+            if (toTrim == null) return toTrim;
+            var firstNull = toTrim.IndexOf('\0');
+            return toTrim.Substring(0, firstNull);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Math;
+using Common.Strings;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using System;
@@ -648,10 +649,10 @@ namespace F4SharedMemViewer
             chkGuardPttDepressed.Checked = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].PttDepressed;
             chkGuardIsOn.Checked = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].IsOn;
 
-            txtNickname.Text = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Nickname).TrimEnd('\0');
-            txtAddress.Text = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Address).TrimEnd('\0');
+            txtNickname.Text = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Nickname).TrimAtNull();
+            txtAddress.Text = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Address).TrimAtNull();
             txtPortNumber.Text = _lastFlightData.RadioClientControlData.PortNumber.ToString();
-            txtPassword.Text = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Password).TrimEnd('\0');
+            txtPassword.Text = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Password).TrimAtNull();
             txtPlayerCount.Text = _lastFlightData.RadioClientControlData.PlayerCount.ToString();
             chkSignalConnect.Checked = _lastFlightData.RadioClientControlData.SignalConnect;
             chkTerminateClient.Checked = _lastFlightData.RadioClientControlData.TerminateClient;
@@ -676,7 +677,7 @@ namespace F4SharedMemViewer
             for (var i = 0; i < _lastFlightData.RadioClientControlData.PlayerMap.Length; i++)
             {
                 dataGridView.Rows[i].HeaderCell.Value = (i + 1).ToString();
-                var logbookName = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.PlayerMap[i].LogbookName).TrimEnd('\0');
+                var logbookName = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.PlayerMap[i].LogbookName).TrimAtNull();
                 dataGridView.Rows[i].Cells[0].Value = logbookName;
                 dataGridView.Rows[i].Cells[1].Value = _lastFlightData.RadioClientControlData.PlayerMap[i].Agl.FormatDecimal(decimalPlaces: 2);
                 dataGridView.Rows[i].Cells[2].Value = _lastFlightData.RadioClientControlData.PlayerMap[i].Range.FormatDecimal(decimalPlaces: 2);
