@@ -13,7 +13,7 @@ namespace F4SharedMem.Headers
     // 116: bitfields are now unsigned instead of signed
     // 117: added ATF_Not_Engaged to LightBits3
 
-    [ComVisible(false)]
+    [ComVisible(true)]
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BMS4FlightData

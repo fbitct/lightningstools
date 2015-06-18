@@ -53,7 +53,6 @@ namespace F4SharedMem
             GC.SuppressFinalize(this);
         }
 
-        [ComVisible(false)]
         public byte[] GetRawOSBData()
         {
             if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
@@ -84,7 +83,6 @@ namespace F4SharedMem
             var toReturn = bytesRead.ToArray();
             return toReturn.Length == 0 ? null : toReturn;
         }
-        [ComVisible(false)]
         public byte[] GetRawIntelliVibeData()
         {
             if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
@@ -115,7 +113,6 @@ namespace F4SharedMem
             var toReturn = bytesRead.ToArray();
             return toReturn.Length == 0 ? null : toReturn;
         }
-        [ComVisible(false)]
         public byte[] GetRawRadioClientControlData()
         {
             if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
@@ -147,7 +144,6 @@ namespace F4SharedMem
             return toReturn.Length == 0 ? null : toReturn;
         }
 
-        [ComVisible(false)]
         public byte[] GetRawRadioClientStatusData()
         {
             if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
@@ -186,7 +182,6 @@ namespace F4SharedMem
             return mbi.RegionSize.ToInt64();
         }
 
-        [ComVisible(false)]
         public byte[] GetRawFlightData2()
         {
             if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
@@ -219,7 +214,6 @@ namespace F4SharedMem
             return toReturn.Length == 0 ? null : toReturn;
         }
 
-        [ComVisible(false)]
         public byte[] GetRawPrimaryFlightData()
         {
             if (_hPrimarySharedMemoryAreaFileMappingObject.Equals(IntPtr.Zero))
