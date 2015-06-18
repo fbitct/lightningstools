@@ -333,6 +333,7 @@ namespace F16CPD.UI.Forms
 
         private void Quit()
         {
+            Stop();
             LogManager.Shutdown();
             try
             {
