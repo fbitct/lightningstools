@@ -28,13 +28,13 @@ namespace F16CPD.Mfd.Menus
             var thisPage = new MfdMenuPage(_mfdManager);
             var buttons = new List<OptionSelectButton>();
 
-            var leftMfdSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 22, "LMFD",
+            var leftMfdSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 23, "LMFD",
                                                                         false);
             leftMfdSelectButton.FunctionName = "SetLMFDActiveOnTGP";
             leftMfdSelectButton.Pressed += (s, e) => _mfdManager.SetLMFDActiveOnTGP();
             buttons.Add(leftMfdSelectButton);
 
-            var rightMfdSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 21, "RMFD",
+            var rightMfdSelectButton = _optionSelectButtonFactory.CreateOptionSelectButton(thisPage, 22, "RMFD",
                                                                         false);
             rightMfdSelectButton.FunctionName = "SetRMFDActiveOnTGP";
             rightMfdSelectButton.Pressed += (s, e) => _mfdManager.SetRMFDActiveOnTGP();

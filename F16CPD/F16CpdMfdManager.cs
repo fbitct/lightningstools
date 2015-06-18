@@ -280,6 +280,9 @@ namespace F16CPD
                 case "ToggleSplitMapDisplay":
                     ToggleSplitMapDisplay();
                     break;
+                case "ToggleSplitTGPDisplay":
+                    ToggleSplitTGPDisplay();
+                    break;
                 case "SetLMFDActiveOnTGP":
                     SetLMFDActiveOnTGP();
                     break;
@@ -405,7 +408,15 @@ namespace F16CPD
 
         public void SwitchToTargetingPodPage()
         {
-            SetPage("Targeting Pod Page");
+            if (ActiveMenuPage.Name == "Targeting Pod Page")
+            {
+                ToggleSplitTGPDisplay();
+            }
+            else
+            {
+                SetPage("Targeting Pod Page");
+            }
+
         }
 
         public void SwitchToChartsPage()
@@ -436,7 +447,18 @@ namespace F16CPD
                 Client.SendMessageToServer(message);
             }
         }
-
+        private void ToggleSplitTGPDisplay()
+        {
+            if (!Settings.Default.RunAsClient)
+            {
+                FlightData.SplitTGPDisplay = !FlightData.SplitTGPDisplay;
+            }
+            else
+            {
+                var message = new Message("ToggleSplitTGPDisplay", null);
+                Client.SendMessageToServer(message);
+            }
+        }
         private void ToggleSplitMapDisplay()
         {
             if (!Settings.Default.RunAsClient)
@@ -991,8 +1013,9 @@ namespace F16CPD
                     break;
                 case "Targeting Pod Page":
                     var tgpRenderRectangle = new Rectangle(LabelWidth + 1, LabelHeight + 1,
-                        (ScreenBoundsPixels.Width - ((LabelWidth + 1)*2)),
-                        ((ScreenBoundsPixels.Height - ((LabelHeight + 1)*2))));
+                                                (ScreenBoundsPixels.Width - ((LabelWidth + 1) * 2)),
+                                                ((ScreenBoundsPixels.Height - ((LabelHeight + 1) * 2))));
+
                     RenderTGPPage(g, tgpRenderRectangle);
                     break;
                 case "TAD Page":
@@ -1205,7 +1228,22 @@ namespace F16CPD
 
             if (activeMFDImage != null)
             {
-                g.DrawImageFast(activeMFDImage, tgpRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
+                var mfdRenderRectangle = tgpRenderRectangle;
+
+                if (FlightData.SplitTGPDisplay)
+                {
+                    mfdRenderRectangle = new Rectangle(tgpRenderRectangle.X, tgpRenderRectangle.Y, tgpRenderRectangle.Width, tgpRenderRectangle.Height - ((int)(tgpRenderRectangle.Height * 0.395)));
+                    g.DrawImageFast(activeMFDImage, mfdRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
+
+                    var fullScreenRectangle = new Rectangle(0, 0, (ScreenBoundsPixels.Width), (ScreenBoundsPixels.Height));
+                    var splitTGPPaneHeightDifferenceFromFullScreen = (int)(fullScreenRectangle.Height * 0.395);
+                    RenderSplitDisplayPfd(g, fullScreenRectangle, splitTGPPaneHeightDifferenceFromFullScreen);
+                    RenderSplitDisplayHsi(g, fullScreenRectangle, splitTGPPaneHeightDifferenceFromFullScreen);
+                }
+                else 
+                {
+                    g.DrawImageFast(activeMFDImage, mfdRenderRectangle, 0, 0, activeMFDImage.Width, activeMFDImage.Height, GraphicsUnit.Pixel);
+                }
             }
         }
         private void RenderTADPage(Graphics g, float mapScale, int rangeRingRadiusInNauticalMiles, bool splitDisplay)
@@ -1239,17 +1277,17 @@ namespace F16CPD
             }
         }
 
-        private void RenderSplitDisplayPfd(Graphics g, Rectangle overallRenderRectangle, int mapHeightDifferenceFromFullScreen)
+        private void RenderSplitDisplayPfd(Graphics g, Rectangle overallRenderRectangle, int heightDifferenceFromFullScreen)
         {
             var bigPfdRenderSize = new Size(610, 495);
 
             var pfdRenderRectangle = new Rectangle(
                 overallRenderRectangle.X,
-                overallRenderRectangle.Y + (int)(overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + (overallRenderRectangle.Height*.025)),
+                overallRenderRectangle.Y + (int)(overallRenderRectangle.Height - heightDifferenceFromFullScreen + (overallRenderRectangle.Height*.025)),
                 (int)(overallRenderRectangle.Width / 2.0),
                 0);
 
-            pfdRenderRectangle.Height = (int)(mapHeightDifferenceFromFullScreen - ((overallRenderRectangle.Height * .025)*3));
+            pfdRenderRectangle.Height = (int)(heightDifferenceFromFullScreen - ((overallRenderRectangle.Height * .025)*3));
             using (var smallPfdRenderTarget = new Bitmap(pfdRenderRectangle.Width, pfdRenderRectangle.Height, PixelFormat.Format16bppRgb555))
             using (var smallG = Graphics.FromImage(smallPfdRenderTarget))
             {
@@ -1262,13 +1300,13 @@ namespace F16CPD
             }
         }
 
-        private void RenderSplitDisplayHsi(Graphics g, Rectangle overallRenderRectangle, int mapHeightDifferenceFromFullScreen)
+        private void RenderSplitDisplayHsi(Graphics g, Rectangle overallRenderRectangle, int heightDifferenceFromFullScreen)
         {
             var bigHsiRenderSize = new Size(596, 391);
 
             var hsiRenderRectangle = new Rectangle(
                 (int)(overallRenderRectangle.Width / 2),
-                overallRenderRectangle.Y + (overallRenderRectangle.Height - mapHeightDifferenceFromFullScreen + 20),
+                overallRenderRectangle.Y + (overallRenderRectangle.Height - heightDifferenceFromFullScreen + 20),
                 (int)(overallRenderRectangle.Width / 2),
                 0);
             hsiRenderRectangle.Height = (int)(bigHsiRenderSize.Height * ((float)hsiRenderRectangle.Width / (float)bigHsiRenderSize.Width));
