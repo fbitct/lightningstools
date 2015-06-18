@@ -86,7 +86,7 @@ namespace Common.PDF
             RegistryKey key;
             try
             {
-                key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\GPL GhostScript\8.64", false);
+                key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\GPL GhostScript", false);
             }
             catch (Exception e)
             {
@@ -95,6 +95,19 @@ namespace Common.PDF
             }
 
             if (key == null) return false;
+
+            float highestDetectedVersion = 0;
+            foreach (var subkey in key.GetSubKeyNames())
+            {
+                float version = 0;
+                var isNumeric = float.TryParse(subkey, out version);
+                if (isNumeric && version > highestDetectedVersion)
+                {
+                    highestDetectedVersion = version;
+                } 
+            }
+            key.Close();
+            key = Registry.LocalMachine.OpenSubKey(string.Format(@"SOFTWARE\GPL GhostScript\{0}", highestDetectedVersion), false);
             var val = key.GetValue("GS_DLL");
             if (val == null) return false;
             var valString = val.ToString();
