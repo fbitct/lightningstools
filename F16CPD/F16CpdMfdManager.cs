@@ -22,6 +22,7 @@ using F16CPD.Networking;
 using F16CPD.Properties;
 using F16CPD.SimSupport;
 using Message = F16CPD.Networking.Message;
+using log4net;
 
 namespace F16CPD
 {
@@ -39,6 +40,7 @@ namespace F16CPD
     {
         private const int MAX_BRIGHTNESS = 255;
         private const int NUM_BRIGHTNESS_STEPS = 30;
+        private static readonly ILog _log = LogManager.GetLogger(typeof(F16CpdMfdManager));
         private readonly IBrightnessDecreaseButtonFactory _brightnessDecreaseButtonFactory;
         private readonly IBrightnessIncreaseButtonFactory _brightnessIncreaseButtonFactory;
         private readonly IChartsMenuPageFactory _chartsMenuPageFactory;
@@ -225,7 +227,11 @@ namespace F16CPD
             var portNumber = Settings.Default.ServerPortNum;
             int port;
             Int32.TryParse(portNumber, out port);
-            F16CPDServer.TearDownService(port);
+            try
+            {
+                F16CPDServer.TearDownService(port);
+            }
+            catch { }
         }
 
         private void SetupNetworking()
@@ -235,7 +241,14 @@ namespace F16CPD
                 var portNumber = Settings.Default.ServerPortNum;
                 int port;
                 Int32.TryParse(portNumber, out port);
-                F16CPDServer.CreateService("F16CPDService", port);
+                try
+                {
+                    F16CPDServer.CreateService("F16CPDService", port);
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e.Message, e);
+                }
             }
             else if (Settings.Default.RunAsClient)
             {
