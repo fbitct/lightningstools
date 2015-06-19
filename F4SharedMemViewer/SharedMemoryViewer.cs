@@ -694,13 +694,13 @@ namespace F4SharedMemViewer
         }
         private void BindRawBitsToFormElements()
         {
-            txtLightBitsUint.Text = _lastFlightData.lightBits.ToString();
-            txtLightBits2Uint.Text = _lastFlightData.lightBits2.ToString();
-            txtLightBits3Uint.Text = _lastFlightData.lightBits3.ToString();
-            txtHsiBitsUint.Text = _lastFlightData.hsiBits.ToString();
-            txtAltBitsUint.Text = _lastFlightData.altBits.ToString();
-            txtPowerBitsUint.Text = _lastFlightData.powerBits.ToString();
-            txtBlinkBitsUint.Text = _lastFlightData.blinkBits.ToString();
+            txtLightBitsUint.Text = ((uint)_lastFlightData.lightBits).ToString();
+            txtLightBits2Uint.Text = ((uint)_lastFlightData.lightBits2).ToString();
+            txtLightBits3Uint.Text = ((uint)_lastFlightData.lightBits3).ToString();
+            txtHsiBitsUint.Text = ((uint)_lastFlightData.hsiBits).ToString();
+            txtAltBitsUint.Text = ((uint)_lastFlightData.altBits).ToString();
+            txtPowerBitsUint.Text = ((uint)_lastFlightData.powerBits).ToString();
+            txtBlinkBitsUint.Text = ((uint)_lastFlightData.blinkBits).ToString();
 
             txtLightBitsHex.Text = "0x" + _lastFlightData.lightBits.ToString("X").PadLeft(8,'0');
             txtLightBits2Hex.Text = "0x" + _lastFlightData.lightBits2.ToString("X").PadLeft(8, '0');
