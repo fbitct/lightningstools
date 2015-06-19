@@ -44,6 +44,10 @@ IF ERRORLEVEL 1 GOTO END
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\F4SharedMemMirror\F4SharedMemMirror.sln
 IF ERRORLEVEL 1 GOTO END
+"%ProgFiles86Root%\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4SharedMemoryRecorder\F4SharedMemoryRecorder.sln
+IF ERRORLEVEL 1 GOTO END
+"%ProgFiles86Root%\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\F4SharedMemoryRecorder\F4SharedMemoryRecorder.sln
+IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Release /p:Platform=x86 ..\F4TexSharedMem\F4TexSharedMem.sln
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\MSBuild\12.0\Bin\MSBuild.exe" /p:Configuration=Debug /p:Platform=x86 ..\F4TexSharedMem\F4TexSharedMem.sln

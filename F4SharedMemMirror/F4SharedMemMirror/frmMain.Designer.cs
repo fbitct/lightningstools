@@ -42,7 +42,7 @@
             this.txtServerPortNum = new System.Windows.Forms.TextBox();
             this.lblPortNum = new System.Windows.Forms.Label();
             this.lblServerIPAddress = new System.Windows.Forms.Label();
-            this.txtServerIPAddress = new F4SharedMemMirror.IPAddressControl();
+            this.txtServerIPAddress = new Common.UI.UserControls.IPAddressControl();
             this.rdoServerMode = new System.Windows.Forms.RadioButton();
             this.rdoClientMode = new System.Windows.Forms.RadioButton();
             this.nfyTrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
@@ -422,7 +422,7 @@
         private System.Windows.Forms.TextBox txtServerPortNum;
         private System.Windows.Forms.Label lblPortNum;
         private System.Windows.Forms.Label lblServerIPAddress;
-        private IPAddressControl txtServerIPAddress;
+        private Common.UI.UserControls.IPAddressControl txtServerIPAddress;
         private System.Windows.Forms.GroupBox gbPerformanceOptions;
         private System.Windows.Forms.Label lblPollFrequencyMillis;
         private System.Windows.Forms.NumericUpDown nudPollFrequency;

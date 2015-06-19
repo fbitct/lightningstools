@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace F4SharedMemMirror
+namespace F4SharedMem
 {
     public sealed class Writer : IDisposable
     {
@@ -82,12 +82,12 @@ namespace F4SharedMemMirror
         private void CreateSharedMemoryArea(string sharedMemoryAreaFileName, ushort length, out IntPtr hFileMappingObject, out IntPtr lpBaseAddress)
         {
             hFileMappingObject =
-                NativeMethods.CreateFileMapping(new IntPtr(NativeMethods.INVALID_HANDLE_VALUE), IntPtr.Zero,
-                                                NativeMethods.PageProtection.ReadWrite, 0, length,
+                F4SharedMem.Win32.NativeMethods.CreateFileMapping(new IntPtr(F4SharedMem.Win32.NativeMethods.INVALID_HANDLE_VALUE), IntPtr.Zero,
+                                                F4SharedMem.Win32.NativeMethods.PageProtection.ReadWrite, 0, length,
                                                 sharedMemoryAreaFileName);
             lpBaseAddress =
-                NativeMethods.MapViewOfFile(hFileMappingObject,
-                                            NativeMethods.SECTION_MAP_READ | NativeMethods.SECTION_MAP_WRITE, 0, 0,
+                F4SharedMem.Win32.NativeMethods.MapViewOfFile(hFileMappingObject,
+                                            F4SharedMem.Win32.NativeMethods.SECTION_MAP_READ | F4SharedMem.Win32.NativeMethods.SECTION_MAP_WRITE, 0, 0,
                                             IntPtr.Zero);
         }
 
@@ -105,8 +105,8 @@ namespace F4SharedMemMirror
         {
             if (!hFileMappingObject.Equals(IntPtr.Zero))
             {
-                NativeMethods.UnmapViewOfFile(lpBaseAddress);
-                NativeMethods.CloseHandle(hFileMappingObject);
+                F4SharedMem.Win32.NativeMethods.UnmapViewOfFile(lpBaseAddress);
+                F4SharedMem.Win32.NativeMethods.CloseHandle(hFileMappingObject);
             }
             lpBaseAddress = IntPtr.Zero;
             hFileMappingObject = IntPtr.Zero;

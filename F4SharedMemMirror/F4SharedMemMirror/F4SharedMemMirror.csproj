@@ -76,28 +76,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crc32.cs" />
-    <Compile Include="DotControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="F4SharedMemWriter.cs" />
-    <Compile Include="FieldControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FloatControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="IPAddressControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="IPAddressControlDesigner.cs" />
     <Compile Include="Mirror.cs" />
-    <Compile Include="NativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmMain.resx">
@@ -166,6 +151,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\UI\Common.UI.csproj">
+      <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
+      <Name>Common.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\F4SharedMem\F4SharedMem.csproj">
       <Project>{517D1B4D-E8C7-4331-BBE7-300FD6B78441}</Project>
       <Name>F4SharedMem</Name>

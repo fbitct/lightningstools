@@ -44,6 +44,10 @@ IF ERRORLEVEL 1 GOTO END
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"  /Build "Debug" ..\F4SharedMemMirror\F4SharedMemMirror.sln
 IF ERRORLEVEL 1 GOTO END
+"%ProgFiles86Root%\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"  /Build "Release" ..\F4SharedMemoryRecorder\F4SharedMemoryRecorder.sln
+IF ERRORLEVEL 1 GOTO END
+"%ProgFiles86Root%\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"  /Build "Debug" ..\F4SharedMemoryRecorder\F4SharedMemoryRecorder.sln
+IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"  /Build "Release" ..\F4TexSharedMem\F4TexSharedMem.sln
 IF ERRORLEVEL 1 GOTO END
 "%ProgFiles86Root%\Microsoft Visual Studio 12.0\Common7\IDE\devenv.com"  /Build "Debug" ..\F4TexSharedMem\F4TexSharedMem.sln
