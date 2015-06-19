@@ -199,12 +199,12 @@ namespace F4SharedMemoryRecorder.Runtime
                     _playbackTimer.Stop();
                     return;
                 }
-                if (_fileStream.Position == _fileStream.Length)
+                CurrentSample++;
+                if (CurrentSample > NumSamples)
                 {
                     Stop();
                     return;
                 }
-                CurrentSample++;
                 var sample = ReadNextSampleFromFile();
                 WriteSampleToSharedMemory(sample);
                 ReportPlaybackProgress();
@@ -275,6 +275,10 @@ namespace F4SharedMemoryRecorder.Runtime
         }
         private void WriteSampleToFile(SharedMemorySample sample)
         {
+            if (_gzipStreamBinaryWriter == null)
+            {
+                return;
+            }
             _gzipStreamBinaryWriter.Write(sample.PrimaryFlightDataLength);
             if (sample.PrimaryFlightDataLength > 0)
             {
