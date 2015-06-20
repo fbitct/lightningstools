@@ -15,7 +15,7 @@ namespace SimLinkup.UI.UserControls
     public partial class ModuleList : UserControl
     {
         private IEnumerable<SimSupportModule> _simSupportModules;
-        private IEnumerable<HardwareSupportModuleBase> _hardwareSupportModules;
+        private IEnumerable<IHardwareSupportModule> _hardwareSupportModules;
         public ModuleList()
         {
             InitializeComponent();
@@ -27,6 +27,10 @@ namespace SimLinkup.UI.UserControls
             {
                 panel.Controls.Clear();
                 _simSupportModules = value;
+                if (_simSupportModules == null)
+                {
+                    return;
+                }
                 foreach (var ssm in _simSupportModules)
                 {
                     var visualizer = new ModuleBasicVisualizer();
@@ -39,14 +43,18 @@ namespace SimLinkup.UI.UserControls
                 }
             }
         }
-        public IEnumerable<HardwareSupportModuleBase> HardwareSupportModules
+        public IEnumerable<IHardwareSupportModule> HardwareSupportModules
         {
             get { return _hardwareSupportModules; }
             set
             {
                 panel.Controls.Clear();
                 _hardwareSupportModules = value;
-                foreach (var ssm in _simSupportModules)
+                if (_hardwareSupportModules == null)
+                {
+                    return;
+                }
+                foreach (var ssm in _hardwareSupportModules)
                 {
                     var visualizer = new ModuleBasicVisualizer();
                     visualizer.ModuleName = ssm.FriendlyName;

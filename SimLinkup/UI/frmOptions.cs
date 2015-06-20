@@ -48,34 +48,8 @@ namespace SimLinkup.UI
 
         private void DiscoverPlugins()
         {
-            var hsms = Runtime.Runtime.GetRegisteredHardwareSupportModules();
-            var hsmSb = new StringBuilder();
-            if (hsms != null)
-            {
-                foreach (var hsm in hsms)
-                {
-                    if (hsm != null)
-                    {
-                        hsmSb.Append("\u2022 " + hsm.FriendlyName + "\r\n");
-                    }
-                }
-            }
-            txtHardwareSupportModules.Text = hsmSb.ToString();
-
-
-            var ssms = Runtime.Runtime.GetRegisteredSimSupportModules();
-            var ssmSb = new StringBuilder();
-            if (ssms != null)
-            {
-                foreach (var ssm in ssms)
-                {
-                    if (ssm != null)
-                    {
-                        ssmSb.Append("\u2022 " + ssm.FriendlyName + "\r\n");
-                    }
-                }
-            }
-            txtSimSupportModules.Text = ssmSb.ToString();
+            hardwareSupportModuleList.HardwareSupportModules = Runtime.Runtime.GetRegisteredHardwareSupportModules();
+            simSupportModuleList.SimSupportModules = Runtime.Runtime.GetRegisteredSimSupportModules();
         }
 
         private void LoadSettings()
