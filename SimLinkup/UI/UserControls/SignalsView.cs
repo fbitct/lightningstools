@@ -168,7 +168,13 @@ namespace SimLinkup.UI.UserControls
             }
             else if (signal is AnalogSignal)
             {
-                return ((AnalogSignal)signal).State.FormatDecimal(2);
+                var aSig = ((AnalogSignal)signal);
+                var value= aSig.State.FormatDecimal(2);
+                if (aSig.IsVoltage)
+                {
+                    value += "V";
+                }
+                return value;
             }
             else if (signal is TextSignal)
             {
