@@ -166,7 +166,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = -10.00; //volts
             return thisSignal;
         }
 
@@ -276,7 +276,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         vviOutputValue = 10;
                     }
 
-                    _vviOutputSignal.State = ((vviOutputValue + 10.0000)/20.0000);
+                    _vviOutputSignal.State = vviOutputValue;
                 }
             }
         }

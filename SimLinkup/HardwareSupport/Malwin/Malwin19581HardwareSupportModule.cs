@@ -177,7 +177,7 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 1.00f;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
         private AnalogSignal CreateHydPressureBSINOutputSignal()
@@ -190,7 +190,7 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 1.00f;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -204,7 +204,7 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.5f;
+            thisSignal.State = 10.00; //volts
             return thisSignal;
         }
 
@@ -218,7 +218,7 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.5f;
+            thisSignal.State = 10.00; //volts
             return thisSignal;
         }
 
@@ -292,7 +292,7 @@ namespace SimLinkup.HardwareSupport.Malwin
                         hydPressureASINOutputValue = 10;
                     }
 
-                    _hydPressureASINOutputSignal.State = ((hydPressureASINOutputValue + 10.0000) / 20.0000);
+                    _hydPressureASINOutputSignal.State = hydPressureASINOutputValue;
                 }
 
                 if (_hydPressureACOSOutputSignal != null)
@@ -322,7 +322,7 @@ namespace SimLinkup.HardwareSupport.Malwin
                         hydPressureACOSOutputValue = 10;
                     }
 
-                    _hydPressureACOSOutputSignal.State = ((hydPressureACOSOutputValue + 10.0000) / 20.0000);
+                    _hydPressureACOSOutputSignal.State = hydPressureACOSOutputValue;
                 }
 
             }
@@ -359,7 +359,7 @@ namespace SimLinkup.HardwareSupport.Malwin
                         hydPressureBSINOutputValue = 10;
                     }
 
-                    _hydPressureBSINOutputSignal.State = ((hydPressureBSINOutputValue + 10.0000) / 20.0000);
+                    _hydPressureBSINOutputSignal.State = hydPressureBSINOutputValue;
                 }
 
                 if (_hydPressureBCOSOutputSignal != null)
@@ -389,7 +389,7 @@ namespace SimLinkup.HardwareSupport.Malwin
                         hydPressureBCOSOutputValue = 10;
                     }
 
-                    _hydPressureBCOSOutputSignal.State = ((hydPressureBCOSOutputValue + 10.0000) / 20.0000);
+                    _hydPressureBCOSOutputSignal.State = hydPressureBCOSOutputValue;
                 }
 
             }

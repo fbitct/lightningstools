@@ -168,7 +168,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = -10.00; //volts
             ;
             return thisSignal;
         }
@@ -183,7 +183,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = -10.00; //volts
             ;
             return thisSignal;
         }
@@ -236,7 +236,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                 double machReferenceVoltage = 0;
                 if (_machOutputSignal != null)
                 {
-                    var airspeedVoltage = _airspeedOutputSignal !=null ?( (_airspeedOutputSignal.State * 20.00)-10.0000):0.0000;
+                    var airspeedVoltage = _airspeedOutputSignal !=null ?_airspeedOutputSignal.State :0.0000;
                     var absoluteAirspeedNeedleAngle = (airspeedVoltage+10.0) / (20.0000/340.0000);
 
                     if (machInput < 0.5)
@@ -404,7 +404,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         machOutputVoltage = 10;
                     }
 
-                    _machOutputSignal.State = ((machOutputVoltage + 10.0000)/20.0000);
+                    _machOutputSignal.State = machOutputVoltage;
                 }
             }
         }
@@ -603,7 +603,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         airspeedOutputValue = 10;
                     }
 
-                    _airspeedOutputSignal.State = ((airspeedOutputValue + 10.0000)/20.0000);
+                    _airspeedOutputSignal.State = airspeedOutputValue;
                 }
             }
         }

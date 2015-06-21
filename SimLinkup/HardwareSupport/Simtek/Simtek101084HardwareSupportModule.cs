@@ -204,7 +204,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -218,7 +218,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -232,7 +232,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -246,7 +246,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -325,7 +325,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         pitchSinOutputValue = 10;
                     }
 
-                    _pitchSinOutputSignal.State = ((pitchSinOutputValue + 10.0000)/20.0000);
+                    _pitchSinOutputSignal.State = pitchSinOutputValue;
                 }
 
                 if (_pitchCosOutputSignal != null)
@@ -339,7 +339,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         pitchCosOutputValue = 10;
                     }
 
-                    _pitchCosOutputSignal.State = ((pitchCosOutputValue + 10.0000)/20.0000);
+                    _pitchCosOutputSignal.State = pitchCosOutputValue;
                 }
             }
         }
@@ -368,7 +368,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         rollSinOutputValue = 10;
                     }
 
-                    _rollSinOutputSignal.State = ((rollSinOutputValue + 10.0000)/20.0000);
+                    _rollSinOutputSignal.State = rollSinOutputValue;
                 }
 
                 if (_rollCosOutputSignal != null)
@@ -382,7 +382,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         rollCosOutputValue = 10;
                     }
 
-                    _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000)/20.0000);
+                    _rollCosOutputSignal.State = rollCosOutputValue;
                 }
             }
         }

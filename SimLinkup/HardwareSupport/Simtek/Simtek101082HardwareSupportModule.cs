@@ -168,7 +168,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = -10.00; //volts
             return thisSignal;
         }
 
@@ -182,7 +182,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = -10.00; //volts
             return thisSignal;
         }
 
@@ -394,7 +394,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         machOutputValue = 10;
                     }
 
-                    _machOutputSignal.State = ((machOutputValue + 10.0000)/20.0000);
+                    _machOutputSignal.State = machOutputValue;
                 }
             }
         }
@@ -593,7 +593,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         airspeedOutputValue = 10;
                     }
 
-                    _airspeedOutputSignal.State = ((airspeedOutputValue + 10.0000)/20.0000);
+                    _airspeedOutputSignal.State = airspeedOutputValue;
                 }
             }
         }

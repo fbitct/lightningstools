@@ -20,7 +20,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         private readonly AnalogSignal[] _analogOutputSignals;
         private a.DenseDacEvalBoard _device;
         private bool _isDisposed;
-
+        private int _deviceIndex;
         #endregion
 
         #region Constructors
@@ -33,6 +33,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
         {
             //if (device == null) throw new ArgumentNullException("device");
             _device = device;
+            _deviceIndex = deviceIndex;
             CreateOutputSignals(_device, deviceIndex, out _analogOutputSignals);
         }
 
@@ -41,7 +42,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             get
             {
                 return String.Format("Analog Devices AD536x/AD537x on {0}",
-                    _device == null ? "{FAKE}" : _device.SymbolicName);
+                    _device == null ? string.Format("{{FAKE{0}}}", _deviceIndex) : _device.SymbolicName);
             }
         }
 
@@ -143,14 +144,14 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.Index = i;
                 thisSignal.PublisherObject = this;
                 thisSignal.Source = device;
-                thisSignal.SourceFriendlyName = "Analog Devices AD536x/AD537x";
+                thisSignal.SourceFriendlyName = this.FriendlyName;
                 thisSignal.SourceAddress = device != null ? device.SymbolicName : null;
                 thisSignal.SubSource = null;
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
-                thisSignal.State = 0.500;
+                thisSignal.State = 0; //O Volts
                 thisSignal.SignalChanged += DAC_OutputSignalChanged;
-                thisSignal.Precision = -1;
+                thisSignal.Precision = -1; //arbitrary decimal precision (limited to 14-16 bits output precision)
                 analogSignalsToReturn.Add(thisSignal);
             }
             analogSignals = analogSignalsToReturn.ToArray();
@@ -171,7 +172,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                     _device.SetDacChannelDataSource((a.ChannelAddress)outputSignal.Index.Value + 8,
                         a.DacChannelDataSource.DataValueA);
                     _device.SetDacChannelDataValueA((a.ChannelAddress)outputSignal.Index.Value + 8,
-                        (ushort) (outputSignal.State*0xFFFF));
+                        (ushort) (((outputSignal.State +10.0000)/20.0000)*0xFFFF));
                 }
             }
         }

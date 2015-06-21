@@ -160,7 +160,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = ((-10.00 + 10.0)/20.0);
+            thisSignal.State = -10.00; //volts
             return thisSignal;
         }
 
@@ -197,7 +197,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
                         fuelFlowOutputValue = 10;
                     }
 
-                    _fuelFlowOutputSignal.State = ((fuelFlowOutputValue + 10.0000)/20.0000);
+                    _fuelFlowOutputSignal.State = fuelFlowOutputValue;
                 }
             }
         }

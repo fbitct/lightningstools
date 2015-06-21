@@ -145,7 +145,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (-10.00 + 10.00)/20.00;
+            thisSignal.State = -10.00; //volts
             ;
             return thisSignal;
         }
@@ -246,7 +246,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                     {
                         rpmOutputValue = 10;
                     }
-                    _rpmOutputSignal.State = ((rpmOutputValue + 10.0000)/20.0000);
+                    _rpmOutputSignal.State = rpmOutputValue;
                 }
             }
         }

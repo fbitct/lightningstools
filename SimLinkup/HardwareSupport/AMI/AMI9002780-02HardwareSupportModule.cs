@@ -396,7 +396,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -410,7 +410,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -424,7 +424,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -438,7 +438,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (6 + 10.00)/20.00;
+            thisSignal.State = 6.00; //volts
             return thisSignal;
         }
 
@@ -452,7 +452,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (6 + 10.00)/20.00;
+            thisSignal.State = 6.00; //volts
             return thisSignal;
         }
 
@@ -466,7 +466,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -516,7 +516,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         pitchOutputValue = 10;
                     }
 
-                    _pitchOutputSignal.State = ((pitchOutputValue + 10.0000)/20.0000);
+                    _pitchOutputSignal.State = pitchOutputValue;
                 }
             }
         }
@@ -546,7 +546,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         rollSinOutputValue = 10;
                     }
 
-                    _rollSinOutputSignal.State = ((rollSinOutputValue + 10.0000)/20.0000);
+                    _rollSinOutputSignal.State = rollSinOutputValue;
                 }
 
                 if (_rollCosOutputSignal != null)
@@ -560,7 +560,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         rollCosOutputValue = 10;
                     }
 
-                    _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000)/20.0000);
+                    _rollCosOutputSignal.State = rollCosOutputValue;
                 }
             }
         }
@@ -593,7 +593,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         outputValue = 10;
                     }
 
-                    _horizontalCommandBarOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                    _horizontalCommandBarOutputSignal.State = outputValue;
                 }
             }
         }
@@ -626,7 +626,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         outputValue = 10;
                     }
 
-                    _verticalCommandBarOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                    _verticalCommandBarOutputSignal.State = outputValue;
                 }
             }
         }
@@ -652,7 +652,7 @@ namespace SimLinkup.HardwareSupport.AMI
                         outputValue = 0;
                     }
 
-                    _rateOfTurnOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                    _rateOfTurnOutputSignal.State = outputValue;
                 }
             }
         }

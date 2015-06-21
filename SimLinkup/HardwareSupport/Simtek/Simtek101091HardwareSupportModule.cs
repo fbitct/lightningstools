@@ -149,7 +149,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 1.00f;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -163,7 +163,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.5f;
+            thisSignal.State = 10.00; //volts
             return thisSignal;
         }
         private AnalogSignal CreateOilInputSignal()
@@ -218,7 +218,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         oilPressureSINOutputValue = 10;
                     }
 
-                    _oilPressureSINOutputSignal.State = ((oilPressureSINOutputValue + 10.0000)/20.0000);
+                    _oilPressureSINOutputSignal.State = oilPressureSINOutputValue;
                 }
 
                 if (_oilPressureCOSOutputSignal != null)
@@ -248,7 +248,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         oilPressureCOSOutputValue = 10;
                     }
 
-                    _oilPressureCOSOutputSignal.State = ((oilPressureCOSOutputValue + 10.0000) / 20.0000);
+                    _oilPressureCOSOutputSignal.State = oilPressureCOSOutputValue;
                 }
 
             }

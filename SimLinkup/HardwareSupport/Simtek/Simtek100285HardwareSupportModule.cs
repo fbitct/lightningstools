@@ -209,7 +209,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -223,7 +223,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -237,7 +237,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -251,7 +251,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -304,7 +304,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         altitudeFineSinOutputValue = 10;
                     }
 
-                    _altitudeFineSinOutputSignal.State = ((altitudeFineSinOutputValue + 10.0000)/20.0000);
+                    _altitudeFineSinOutputSignal.State = altitudeFineSinOutputValue;
                 }
 
                 if (_altitudeFineCosOutputSignal != null)
@@ -318,7 +318,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         altitudeFineCosOutputValue = 10;
                     }
 
-                    _altitudeFineCosOutputSignal.State = ((altitudeFineCosOutputValue + 10.0000)/20.0000);
+                    _altitudeFineCosOutputSignal.State = altitudeFineCosOutputValue;
                 }
 
                 if (_altitudeCoarseSinOutputSignal != null)
@@ -332,7 +332,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         altitudeCoarseSinOutputValue = 10;
                     }
 
-                    _altitudeCoarseSinOutputSignal.State = ((altitudeCoarseSinOutputValue + 10.0000)/20.0000);
+                    _altitudeCoarseSinOutputSignal.State = altitudeCoarseSinOutputValue;
                 }
 
                 if (_altitudeCoarseCosOutputSignal != null)
@@ -346,7 +346,7 @@ namespace SimLinkup.HardwareSupport.Simtek
                         altitudeCoarseCosOutputValue = 10;
                     }
 
-                    _altitudeCoarseCosOutputSignal.State = ((altitudeCoarseCosOutputValue + 10.0000)/20.0000);
+                    _altitudeCoarseCosOutputSignal.State = altitudeCoarseCosOutputValue;
                 }
             }
         }

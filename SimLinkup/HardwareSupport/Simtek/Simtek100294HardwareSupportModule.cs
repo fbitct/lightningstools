@@ -235,7 +235,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -249,7 +249,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -263,7 +263,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -276,15 +276,15 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_foreRightOutputSignal != null)
             {
-                _foreRightOutputSignal.State = (_foreRightFuelInputSignal.State/1000.00)/42.00;
+                _foreRightOutputSignal.State = ((_foreRightFuelInputSignal.State / 1000.00) / 42.00) * 10.00;
             }
             if (_aftLeftOutputSignal != null)
             {
-                _aftLeftOutputSignal.State = (_aftLeftFuelInputSignal.State/1000.00)/42.00;
+                _aftLeftOutputSignal.State = ((_aftLeftFuelInputSignal.State / 1000.00) / 42.00) * 10.00;
             }
             if (_counterOutputSignal != null)
             {
-                _counterOutputSignal.State = _totalFuelInputSignal.State/9900;
+                _counterOutputSignal.State = (_totalFuelInputSignal.State / 9900) * 10.00;
             }
         }
 

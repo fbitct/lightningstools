@@ -450,7 +450,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -464,7 +464,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -478,7 +478,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00; //volts;
             return thisSignal;
         }
 
@@ -492,7 +492,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -506,7 +506,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (6.00 + 10.00)/20.00;
+            thisSignal.State = 6.00; //volts
             return thisSignal;
         }
 
@@ -520,7 +520,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (6.00 + 10.00)/20.00;
+            thisSignal.State = 6.00; //volts
             return thisSignal;
         }
 
@@ -534,7 +534,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -548,7 +548,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00) / 20.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
@@ -608,7 +608,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         pitchSinOutputValue = 10;
                     }
 
-                    _pitchSinOutputSignal.State = ((pitchSinOutputValue + 10.0000)/20.0000);
+                    _pitchSinOutputSignal.State = pitchSinOutputValue;
                 }
 
                 if (_pitchCosOutputSignal != null)
@@ -622,7 +622,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         pitchCosOutputValue = 10;
                     }
 
-                    _pitchCosOutputSignal.State = ((pitchCosOutputValue + 10.0000)/20.0000);
+                    _pitchCosOutputSignal.State = pitchCosOutputValue;
                 }
             }
         }
@@ -650,7 +650,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         rollSinOutputValue = 10;
                     }
 
-                    _rollSinOutputSignal.State = ((rollSinOutputValue + 10.0000)/20.0000);
+                    _rollSinOutputSignal.State = rollSinOutputValue;
                 }
 
                 if (_rollCosOutputSignal != null)
@@ -664,7 +664,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         rollCosOutputValue = 10;
                     }
 
-                    _rollCosOutputSignal.State = ((rollCosOutputValue + 10.0000)/20.0000);
+                    _rollCosOutputSignal.State = rollCosOutputValue;
                 }
             }
         }
@@ -697,7 +697,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         outputValue = 10;
                     }
 
-                    _horizontalCommandBarOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                    _horizontalCommandBarOutputSignal.State = outputValue;
                 }
             }
         }
@@ -730,7 +730,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         outputValue = 10;
                     }
 
-                    _verticalCommandBarOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                    _verticalCommandBarOutputSignal.State = outputValue;
                 }
             }
         }
@@ -756,7 +756,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         outputValue = 0;
                     }
 
-                    _rateOfTurnOutputSignal.State = ((outputValue + 10.0000)/20.0000);
+                    _rateOfTurnOutputSignal.State = outputValue;
                 }
             }
         }
@@ -783,7 +783,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
                         outputValue = 0;
                     }
 
-                    _inclinometerOutputSignal.State = ((outputValue + 10.0000) / 20.0000);
+                    _inclinometerOutputSignal.State = outputValue;
                 }
             }
         }

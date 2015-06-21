@@ -161,7 +161,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -178,15 +178,15 @@ namespace SimLinkup.HardwareSupport.Simtek
                 var fuelFlow = _fuelFlowInputSignal.State;
                 if (fuelFlow <= 10000)
                 {
-                    _fuelFlowOutputSignal.State = Math.Min((_fuelFlowInputSignal.State / 9900.00), 1.00);
+                    _fuelFlowOutputSignal.State = (Math.Min((_fuelFlowInputSignal.State / 9900.00), 1.00)) * 10.00;
                 }
                 else if (fuelFlow >=10000 && fuelFlow <80000)
                 {
-                    _fuelFlowOutputSignal.State = _fuelFlowInputSignal.State / 99000.00;
+                    _fuelFlowOutputSignal.State = (_fuelFlowInputSignal.State / 99000.00) * 10.00;
                 }
                 else if (fuelFlow >=80000)
                 {
-                    _fuelFlowOutputSignal.State = 8000/9900.00;
+                    _fuelFlowOutputSignal.State = (8000/9900.00) * 10.00;
                 }
             }
         }

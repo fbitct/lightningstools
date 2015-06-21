@@ -615,7 +615,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = (0.00 + 10.00)/20.00
+                State = 0.00 //volts
             };
             return thisSignal;
         }
@@ -630,7 +630,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -644,7 +644,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -659,7 +659,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = (10.00 + 10.00)/20.00
+                State = +10.00 //volts
             };
             return thisSignal;
         }
@@ -674,7 +674,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -688,7 +688,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -702,7 +702,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -716,7 +716,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -730,7 +730,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -744,7 +744,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -758,7 +758,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -772,7 +772,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -786,7 +786,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -800,7 +800,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (10.00 + 10.00)/20.00;
+            thisSignal.State = +10.00; //volts
             return thisSignal;
         }
 
@@ -814,7 +814,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = (0.00 + 10.00)/20.00;
+            thisSignal.State = 0.00;//volts;
             return thisSignal;
         }
 
@@ -981,7 +981,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     compassSINOutputValue = 10;
                 }
-                _compassSINOutputSignal.State = ((compassSINOutputValue + 10.0000)/20.0000);
+                _compassSINOutputSignal.State = compassSINOutputValue;
 
                 var compassCOSOutputValue = 10.0000*Math.Cos(compassDegrees*Constants.RADIANS_PER_DEGREE);
                 if (compassCOSOutputValue < -10)
@@ -992,7 +992,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     compassCOSOutputValue = 10;
                 }
-                _compassCOSOutputSignal.State = ((compassCOSOutputValue + 10.0000)/20.0000);
+                _compassCOSOutputSignal.State = compassCOSOutputValue;
             }
         }
 
@@ -1014,7 +1014,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     headingSINOutputValue = 10;
                 }
-                _headingSINOutputSignal.State = ((headingSINOutputValue + 10.0000)/20.0000);
+                _headingSINOutputSignal.State = headingSINOutputValue;
 
                 var headingCOSOutputValue = 10.0000*
                                             Math.Cos((desiredHeadingDegrees - magneticHeadingDegrees)*
@@ -1027,7 +1027,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     headingCOSOutputValue = 10;
                 }
-                _headingCOSOutputSignal.State = ((headingCOSOutputValue + 10.0000)/20.0000);
+                _headingCOSOutputSignal.State = headingCOSOutputValue;
             }
         }
 
@@ -1045,7 +1045,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     courseSINOutputValue = 10;
                 }
-                _courseSINOutputSignal.State = ((courseSINOutputValue + 10.0000)/20.0000);
+                _courseSINOutputSignal.State = courseSINOutputValue;
 
                 var courseCOSOutputValue = 10.0000*Math.Cos((desiredCourseDegrees)*Constants.RADIANS_PER_DEGREE);
                 if (courseCOSOutputValue < -10)
@@ -1056,7 +1056,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     courseCOSOutputValue = 10;
                 }
-                _courseCOSOutputSignal.State = ((courseCOSOutputValue + 10.0000)/20.0000);
+                _courseCOSOutputSignal.State = courseCOSOutputValue;
             }
         }
 
@@ -1078,7 +1078,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     bearingSINOutputValue = 10;
                 }
-                _bearingSINOutputSignal.State = ((bearingSINOutputValue + 10.0000)/20.0000);
+                _bearingSINOutputSignal.State = bearingSINOutputValue;
 
                 var bearingCOSOutputValue = 10.0000*
                                             Math.Cos((-(magneticHeadingDegrees - bearingToBeaconDegrees))*
@@ -1091,7 +1091,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     bearingCOSOutputValue = 10;
                 }
-                _bearingCOSOutputSignal.State = ((bearingCOSOutputValue + 10.0000)/20.0000);
+                _bearingCOSOutputSignal.State = bearingCOSOutputValue;
             }
         }
 
@@ -1125,7 +1125,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     DMEx100SINOutputValue = 10;
                 }
-                _DMEx100SINOutputSignal.State = ((DMEx100SINOutputValue + 10.0000)/20.0000);
+                _DMEx100SINOutputSignal.State = DMEx100SINOutputValue;
 
                 var DMEx100COSOutputValue = 10.0000*Math.Cos((DMEx100/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
                 if (DMEx100COSOutputValue < -10)
@@ -1136,7 +1136,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     DMEx100COSOutputValue = 10;
                 }
-                _DMEx100COSOutputSignal.State = ((DMEx100COSOutputValue + 10.0000)/20.0000);
+                _DMEx100COSOutputSignal.State = DMEx100COSOutputValue;
 
 
                 var DMEx10SINOutputValue = 10.0000*Math.Sin((DMEx10/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
@@ -1148,7 +1148,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     DMEx10SINOutputValue = 10;
                 }
-                _DMEx10SINOutputSignal.State = ((DMEx10SINOutputValue + 10.0000)/20.0000);
+                _DMEx10SINOutputSignal.State = DMEx10SINOutputValue;
 
                 var DMEx10COSOutputValue = 10.0000*Math.Cos((DMEx10/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
                 if (DMEx10COSOutputValue < -10)
@@ -1159,7 +1159,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     DMEx10COSOutputValue = 10;
                 }
-                _DMEx10COSOutputSignal.State = ((DMEx10COSOutputValue + 10.0000)/20.0000);
+                _DMEx10COSOutputSignal.State = DMEx10COSOutputValue;
 
 
                 var DMEx1SINOutputValue = 10.0000*Math.Sin((DMEx1/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
@@ -1171,7 +1171,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     DMEx1SINOutputValue = 10;
                 }
-                _DMEx1SINOutputSignal.State = ((DMEx1SINOutputValue + 10.0000)/20.0000);
+                _DMEx1SINOutputSignal.State = DMEx1SINOutputValue;
 
                 var DMEx1COSOutputValue = 10.0000*Math.Cos((DMEx1/10.0000)*360.0000*Constants.RADIANS_PER_DEGREE);
                 if (DMEx1COSOutputValue < -10)
@@ -1182,7 +1182,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     DMEx1COSOutputValue = 10;
                 }
-                _DMEx1COSOutputSignal.State = ((DMEx1COSOutputValue + 10.0000)/20.0000);
+                _DMEx1COSOutputSignal.State = DMEx1COSOutputValue;
             }
         }
 
@@ -1211,7 +1211,7 @@ namespace SimLinkup.HardwareSupport.AMI
                 {
                     courseDeviationOutputValue = 10;
                 }
-                _courseDeviationOutputSignal.State = ((courseDeviationOutputValue + 10.0000)/20.0000);
+                _courseDeviationOutputSignal.State = courseDeviationOutputValue;
             }
         }
 

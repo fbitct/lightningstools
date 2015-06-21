@@ -149,7 +149,7 @@ namespace SimLinkup.HardwareSupport.Gould
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 1.00f;
+            thisSignal.State = 0.00; //volts
             return thisSignal;
         }
 
@@ -163,7 +163,7 @@ namespace SimLinkup.HardwareSupport.Gould
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.5f;
+            thisSignal.State = 10.00; //volts
             return thisSignal;
         }
         private AnalogSignal CreateCompassInputSignal()
@@ -205,7 +205,7 @@ namespace SimLinkup.HardwareSupport.Gould
                         compassSINOutputValue = 10;
                     }
 
-                    _compassSINOutputSignal.State = ((compassSINOutputValue + 10.0000) / 20.0000);
+                    _compassSINOutputSignal.State = compassSINOutputValue;
                 }
 
                 if (_compassCOSOutputSignal != null)
@@ -223,7 +223,7 @@ namespace SimLinkup.HardwareSupport.Gould
                         compassCOSOutputValue = 10;
                     }
 
-                    _compassCOSOutputSignal.State = ((compassCOSOutputValue + 10.0000) / 20.0000);
+                    _compassCOSOutputSignal.State = compassCOSOutputValue;
                 }
 
             }
