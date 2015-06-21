@@ -39,9 +39,9 @@ namespace SimLinkup.UI.UserControls
                 {
                     foreach (var signalSource in distinctSignalSources)
                     {
-                        var tn = new TreeNode(signalSource);
-                        tn.Tag = signalSource;
-                        tvSignalCategories.Nodes.Add(tn);
+                        var signalSourceTreeNode = new TreeNode(signalSource);
+                        signalSourceTreeNode.Tag = signalSource;
+                        tvSignalCategories.Nodes.Add(signalSourceTreeNode);
 
                         var signalsThisSource =
                             Signals.GetSignalsFromSource(signalSource);
@@ -50,9 +50,9 @@ namespace SimLinkup.UI.UserControls
                         {
                             foreach (var signalCollectionName in signalCollections)
                             {
-                                var tn2 = new TreeNode(signalCollectionName);
-                                tn2.Tag = signalCollectionName;
-                                tn.Nodes.Add(tn2);
+                                var signalCollectionTreeNode = new TreeNode(signalCollectionName);
+                                signalCollectionTreeNode.Tag = signalCollectionName;
+                                signalSourceTreeNode.Nodes.Add(signalCollectionTreeNode);
                             }
                         }
                     }
@@ -74,17 +74,20 @@ namespace SimLinkup.UI.UserControls
 
             lvSignals.Columns.Clear();
             lvSignals.Columns.Add("Signal");
-            lvSignals.Columns.Add("Signal Type");
             lvSignals.Columns.Add("Value");
 
             var signalsThisCollection = signalsThisSource.GetSignalsByCollection(signalCollectionName);
-
+            if (signalsThisCollection == null && tvSignalCategories.SelectedNode.Parent !=null)
+            {
+                signalsThisCollection = signalsThisSource.GetSignalsByCollection(tvSignalCategories.SelectedNode.Parent.Tag as string);
+            }
             if (signalsThisCollection != null)
             {
                 var subSources = signalsThisCollection.GetUniqueSubSources();
 
                 if (subSources != null && subSources.Count > 0)
                 {
+                    var signalsAlreadyAdded = new SignalList<Signal>();
                     foreach (var subSource in subSources)
                     {
                         var lvg = new ListViewGroup(subSource, HorizontalAlignment.Left);
@@ -97,7 +100,14 @@ namespace SimLinkup.UI.UserControls
                             RegisterForSignalStateChangedEvents(lvi, signal);
                             lvg.Items.Add(lvi);
                             lvSignals.Items.Add(lvi);
+                            signalsAlreadyAdded.Add(signal);
                         }
+                    }
+                    foreach (var signal in signalsThisCollection.Except(signalsAlreadyAdded))
+                    {
+                        var lvi = CreateListViewItemFromSignal(signal);
+                        RegisterForSignalStateChangedEvents(lvi, signal);
+                        lvSignals.Items.Add(lvi);
                     }
                 }
                 else
@@ -125,7 +135,6 @@ namespace SimLinkup.UI.UserControls
         {
             var lvi = new ListViewItem();
             lvi.Text = signal.FriendlyName;
-            lvi.SubItems.Add(new ListViewItem.ListViewSubItem { Name = "Signal Type", Text = signal.SignalType });
             lvi.SubItems.Add(new ListViewItem.ListViewSubItem { Name = "Value", Text = GetValue(signal) });
             lvi.Tag = signal;
             return lvi;
@@ -155,7 +164,7 @@ namespace SimLinkup.UI.UserControls
         {
             if (signal is DigitalSignal)
             {
-                return ((DigitalSignal)signal).State ? "\u2611 ON/TRUE/LOGIC 1" : "\u2610 OFF/FALSE/LOGIC 0";
+                return ((DigitalSignal)signal).State ? "  \u2611" : "  \u2610";
             }
             else if (signal is AnalogSignal)
             {

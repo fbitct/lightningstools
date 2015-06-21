@@ -76,7 +76,7 @@ namespace Common.MacroProgramming
             for (var index = 0; index < Count; index++)
             {
                 var signal = this[index];
-                if (!string.IsNullOrEmpty(signal.CollectionName) && !toReturn.Contains(signal.CollectionName))
+                if (!string.IsNullOrWhiteSpace(signal.CollectionName) && !toReturn.Contains(signal.CollectionName))
                 {
                     toReturn.Add(signal.CollectionName);
                 }
@@ -90,7 +90,7 @@ namespace Common.MacroProgramming
             toReturn.AddRange(
                 this.Where(
                     signal =>
-                    !string.IsNullOrEmpty(signal.CollectionName) &&
+                    !string.IsNullOrWhiteSpace(signal.CollectionName) &&
                     string.Equals(collectionName, signal.CollectionName, StringComparison.InvariantCultureIgnoreCase)));
             return toReturn;
         }
@@ -101,7 +101,7 @@ namespace Common.MacroProgramming
             foreach (var signal in
                 this.Where(
                     signal =>
-                    !string.IsNullOrEmpty(signal.SubSourceFriendlyName) &&
+                    !string.IsNullOrWhiteSpace(signal.SubSourceFriendlyName) &&
                     !toReturn.Contains(signal.SubSourceFriendlyName)))
             {
                 toReturn.Add(signal.SubSourceFriendlyName);
@@ -115,7 +115,7 @@ namespace Common.MacroProgramming
             toReturn.AddRange(
                 this.Where(
                     signal =>
-                    !string.IsNullOrEmpty(signal.SubSourceFriendlyName) &&
+                    !string.IsNullOrWhiteSpace(signal.SubSourceFriendlyName) &&
                     string.Equals(subSourceFriendlyName, signal.SubSourceFriendlyName,
                                   StringComparison.InvariantCultureIgnoreCase)));
             return toReturn;

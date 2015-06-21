@@ -87,7 +87,7 @@ namespace SimLinkup
             Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
             mainForm = new frmMain();
             Thread.CurrentThread.Name = "MainThread";
-            //Application.EnableVisualStyles();
+            Application.EnableVisualStyles();
 
             if (Settings.Default.UpgradeNeeded)
             {
