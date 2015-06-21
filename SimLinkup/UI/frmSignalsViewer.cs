@@ -24,7 +24,7 @@ namespace SimLinkup.UI
         }
         protected override void OnShown(EventArgs e)
         {
-            signalsView.Update();
+            signalsView.UpdateContents();
             base.OnShown(e);
 
         }

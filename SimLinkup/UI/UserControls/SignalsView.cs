@@ -24,7 +24,7 @@ namespace SimLinkup.UI.UserControls
         }
 
         public SignalList<Signal> Signals { get; set; }
-        public void Update()
+        public void UpdateContents()
         {
             BuildTreeView();
         }
@@ -62,7 +62,7 @@ namespace SimLinkup.UI.UserControls
             tvSignalCategories.EndUpdate();
         }
 
-        private void UpdateListView()
+        private void UpdateListViewAfterTreeViewItemSelect()
         {
             var signalCollectionName = tvSignalCategories.SelectedNode.Tag as string;
             var signalSource = tvSignalCategories.SelectedNode.Parent.Tag;
@@ -94,6 +94,7 @@ namespace SimLinkup.UI.UserControls
                         foreach (var signal in signalsThisSubsource)
                         {
                             var lvi = CreateListViewItemFromSignal(signal);
+                            RegisterForSignalStateChangedEvents(lvi, signal);
                             lvg.Items.Add(lvi);
                             lvSignals.Items.Add(lvi);
                         }
@@ -104,6 +105,7 @@ namespace SimLinkup.UI.UserControls
                     foreach (var signal in signalsThisCollection)
                     {
                         var lvi = CreateListViewItemFromSignal(signal);
+                        RegisterForSignalStateChangedEvents(lvi, signal);
                         lvSignals.Items.Add(lvi);
                     }
                 }
@@ -128,11 +130,32 @@ namespace SimLinkup.UI.UserControls
             lvi.Tag = signal;
             return lvi;
         }
+        private void RegisterForSignalStateChangedEvents(ListViewItem listViewItem, Signal signal)
+        {
+            if (signal is DigitalSignal) 
+            { 
+                ((DigitalSignal)signal).SignalChanged += (s, e) => { UpdateSignalValue(listViewItem, signal); }; 
+            }
+            else if (signal is AnalogSignal) 
+            { 
+                ((AnalogSignal)signal).SignalChanged += (s, e) => { UpdateSignalValue(listViewItem, signal); }; 
+            }
+            else if (signal is TextSignal) 
+            { 
+                ((TextSignal)signal).SignalChanged += (s, e) => { UpdateSignalValue(listViewItem, signal); }; 
+            }
+        }
+
+        private void UpdateSignalValue(ListViewItem listViewItem, Signal signal)
+        {
+            listViewItem.SubItems["Value"].Text = GetValue(signal);
+            lvSignals.Update();
+        }
         private static string GetValue(Signal signal) 
         {
             if (signal is DigitalSignal)
             {
-                return ((DigitalSignal)signal).State ? "ON" : "OFF";
+                return ((DigitalSignal)signal).State ? "\u2611 ON/TRUE/LOGIC 1" : "\u2610 OFF/FALSE/LOGIC 0";
             }
             else if (signal is AnalogSignal)
             {
@@ -151,7 +174,7 @@ namespace SimLinkup.UI.UserControls
             if (tvSignalCategories.SelectedNode.Tag != null && tvSignalCategories.SelectedNode.Parent != null &&
                 tvSignalCategories.SelectedNode.Parent.Tag != null)
             {
-                UpdateListView();
+                UpdateListViewAfterTreeViewItemSelect();
             }
             else
             {
