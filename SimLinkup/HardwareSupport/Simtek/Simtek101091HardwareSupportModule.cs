@@ -150,6 +150,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -164,6 +165,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
         private AnalogSignal CreateOilInputSignal()

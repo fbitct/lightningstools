@@ -162,13 +162,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Fine SIN";
+            thisSignal.FriendlyName = "Altitude - Fine (SIN)";
             thisSignal.Id = "101081_Altitude_Fine_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -176,13 +177,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Fine COS";
+            thisSignal.FriendlyName = "Altitude - Fine (COS)";
             thisSignal.Id = "101081_Altitude_Fine_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -190,14 +192,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Altitude Coarse";
+            thisSignal.FriendlyName = "Altitude - Coarse";
             thisSignal.Id = "101081_Altitude_Coarse_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = -10.00; //volts
-            ;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 

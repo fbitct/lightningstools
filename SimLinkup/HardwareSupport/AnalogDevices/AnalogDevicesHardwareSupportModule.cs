@@ -139,7 +139,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
             {
                 var thisSignal = new AnalogSignal();
                 thisSignal.CollectionName = "DAC Outputs";
-                thisSignal.FriendlyName = string.Format("DAC #{0}", i);
+                thisSignal.FriendlyName = string.Format("DAC #{0} (Volts)", i);
                 thisSignal.Id = string.Format("AnalogDevices_AD536x/537x__DAC_OUTPUT[{0}][{1}]", deviceIndex, i);
                 thisSignal.Index = i;
                 thisSignal.PublisherObject = this;
@@ -152,6 +152,7 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.State = 0; //O Volts
                 thisSignal.SignalChanged += DAC_OutputSignalChanged;
                 thisSignal.Precision = -1; //arbitrary decimal precision (limited to 14-16 bits output precision)
+                thisSignal.IsVoltage = true;
                 analogSignalsToReturn.Add(thisSignal);
             }
             analogSignals = analogSignalsToReturn.ToArray();

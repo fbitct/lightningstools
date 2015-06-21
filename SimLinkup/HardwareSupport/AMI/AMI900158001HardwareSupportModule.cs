@@ -615,7 +615,8 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0.00 //volts
+                State = 0.00,//volts
+                IsVoltage = true
             };
             return thisSignal;
         }
@@ -631,6 +632,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -645,6 +647,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -659,7 +662,8 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = +10.00 //volts
+                State = +10.00,//volts
+                IsVoltage = true
             };
             return thisSignal;
         }
@@ -675,6 +679,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -689,6 +694,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -703,6 +709,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -717,6 +724,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -731,6 +739,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -745,6 +754,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -759,6 +769,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -773,6 +784,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -787,6 +799,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -801,6 +814,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -815,6 +829,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 

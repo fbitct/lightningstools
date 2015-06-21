@@ -167,6 +167,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = -10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 

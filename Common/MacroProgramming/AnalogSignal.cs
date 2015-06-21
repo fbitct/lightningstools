@@ -47,7 +47,9 @@ namespace Common.MacroProgramming
             get { return _precision; }
             set { _precision = value; }
         }
-
+        public bool IsVoltage { get; set; }
+        public bool IsPercentage { get; set; }
+        
         [XmlIgnore]
         public double State
         {

@@ -160,13 +160,14 @@ namespace SimLinkup.HardwareSupport.Malwin
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Cabin Pressure Altitude SIN";
+            thisSignal.FriendlyName = "Cabin Pressure Altitude (SIN)";
             thisSignal.Id = "246102_Cabin_Pressure_Altitude_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -174,13 +175,14 @@ namespace SimLinkup.HardwareSupport.Malwin
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Cabin Pressure Altitude COS";
+            thisSignal.FriendlyName = "Cabin Pressure Altitude (COS)";
             thisSignal.Id = "246102_Cabin_Pressure_Altitude_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 

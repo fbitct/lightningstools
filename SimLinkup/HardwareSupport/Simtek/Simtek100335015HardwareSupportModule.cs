@@ -198,13 +198,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Pitch SIN";
+            thisSignal.FriendlyName = "Pitch (SIN)";
             thisSignal.Id = "10033501_Pitch_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -212,13 +213,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Pitch COS";
+            thisSignal.FriendlyName = "Pitch (COS)";
             thisSignal.Id = "10033501_Pitch_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -226,13 +228,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Roll SIN";
+            thisSignal.FriendlyName = "Roll (SIN)";
             thisSignal.Id = "10033501_Roll_SIN_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
@@ -240,13 +243,14 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             var thisSignal = new AnalogSignal();
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "Roll COS";
+            thisSignal.FriendlyName = "Roll (COS)";
             thisSignal.Id = "10033501_Roll_COS_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
+            thisSignal.IsVoltage = true;
             return thisSignal;
         }
 
