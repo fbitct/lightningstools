@@ -83,18 +83,18 @@ namespace SimLinkup.UI.UserControls
             }
             if (signalsThisCollection != null)
             {
-                var subSources = signalsThisCollection.GetUniqueSubSources();
+                var subCollections = signalsThisCollection.GetUniqueSubcollections(signalCollectionName);
 
-                if (subSources != null && subSources.Count > 0)
+                if (subCollections != null && subCollections.Count > 0)
                 {
                     var signalsAlreadyAdded = new SignalList<Signal>();
-                    foreach (var subSource in subSources)
+                    foreach (var subcollectionName in subCollections)
                     {
-                        var lvg = new ListViewGroup(subSource, HorizontalAlignment.Left);
+                        var lvg = new ListViewGroup(subcollectionName, HorizontalAlignment.Left);
                         lvSignals.Groups.Add(lvg);
-                        var signalsThisSubsource =
-                            signalsThisCollection.GetSignalsBySubSourceFriendlyName(subSource);
-                        foreach (var signal in signalsThisSubsource)
+                        var signalsThisSubcollection =
+                            signalsThisCollection.GetSignalsBySubcollectionName(signalCollectionName, subcollectionName);
+                        foreach (var signal in signalsThisSubcollection)
                         {
                             var lvi = CreateListViewItemFromSignal(signal);
                             RegisterForSignalStateChangedEvents(lvi, signal);
@@ -169,7 +169,7 @@ namespace SimLinkup.UI.UserControls
             else if (signal is AnalogSignal)
             {
                 var aSig = ((AnalogSignal)signal);
-                var value= aSig.State.FormatDecimal(2);
+                var value= aSig.State.FormatDecimal(aSig.Precision >0 ? aSig.Precision: 2);
                 if (aSig.IsVoltage)
                 {
                     value += "V";

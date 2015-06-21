@@ -59,6 +59,7 @@ namespace Common.MacroProgramming
         public string Id { get; set; }
         public abstract string SignalType { get; }
         public string CollectionName { get; set; }
+        public string SubcollectionName { get; set; }
 
         public int? Index { get; set; }
 

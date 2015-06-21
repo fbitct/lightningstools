@@ -66,7 +66,7 @@ namespace Common.MacroProgramming
                     signal =>
                     signal.Source == source ||
                     string.Equals(signal.SourceFriendlyName, source.ToString(),
-                                  StringComparison.InvariantCultureIgnoreCase)));
+                                  StringComparison.OrdinalIgnoreCase)));
             return toReturn;
         }
 
@@ -91,7 +91,7 @@ namespace Common.MacroProgramming
                 this.Where(
                     signal =>
                     !string.IsNullOrWhiteSpace(signal.CollectionName) &&
-                    string.Equals(collectionName, signal.CollectionName, StringComparison.InvariantCultureIgnoreCase)));
+                    string.Equals(collectionName, signal.CollectionName, StringComparison.OrdinalIgnoreCase)));
             return toReturn;
         }
 
@@ -108,6 +108,20 @@ namespace Common.MacroProgramming
             }
             return toReturn;
         }
+        public List<string> GetUniqueSubcollections(string collectionName)
+        {
+            var toReturn = new List<string>();
+            foreach (var signal in
+                this.Where(
+                    signal =>
+                    string.Equals(collectionName, signal.CollectionName, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(signal.SubcollectionName) &&
+                    !toReturn.Contains(signal.SubcollectionName)))
+            {
+                toReturn.Add(signal.SubcollectionName);
+            }
+            return toReturn;
+        }
 
         public SignalList<T> GetSignalsBySubSourceFriendlyName(string subSourceFriendlyName)
         {
@@ -117,7 +131,19 @@ namespace Common.MacroProgramming
                     signal =>
                     !string.IsNullOrWhiteSpace(signal.SubSourceFriendlyName) &&
                     string.Equals(subSourceFriendlyName, signal.SubSourceFriendlyName,
-                                  StringComparison.InvariantCultureIgnoreCase)));
+                                  StringComparison.OrdinalIgnoreCase)));
+            return toReturn;
+        }
+        public SignalList<T> GetSignalsBySubcollectionName(string collectionName, string subcollectionName)
+        {
+            var toReturn = new SignalList<T>();
+            toReturn.AddRange(
+                this.Where(
+                    signal =>
+                    string.Equals(collectionName, signal.CollectionName, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(signal.SubcollectionName) &&
+                    string.Equals(subcollectionName, signal.SubcollectionName,
+                                  StringComparison.OrdinalIgnoreCase)));
             return toReturn;
         }
     }
