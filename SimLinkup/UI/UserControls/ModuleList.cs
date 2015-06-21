@@ -61,7 +61,7 @@ namespace SimLinkup.UI.UserControls
                     visualizer.ModuleName = hsm.FriendlyName;
                     visualizer.ShowSignals += (s, e) =>
                     {
-                        var signalPicker = new SignalPicker();
+                        var signalsView = new frmSignalsViewer();
                         var signalList = new SignalList<Signal>();
                         if (hsm.AnalogInputs != null)
                         {
@@ -79,8 +79,8 @@ namespace SimLinkup.UI.UserControls
                         {
                             signalList.AddRange(hsm.DigitalOutputs);
                         }
-                        signalPicker.Signals = signalList;
-                        signalPicker.ShowDialog(this.ParentForm);
+                        signalsView.Signals = signalList;
+                        signalsView.ShowDialog(this.ParentForm);
                     };
                     panel.Controls.Add(visualizer);
                 }

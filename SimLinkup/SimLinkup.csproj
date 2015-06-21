@@ -84,11 +84,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\frmMappings.resx">
+      <DependentUpon>frmMappings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\frmSignalsViewer.resx">
+      <DependentUpon>frmSignalsViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\UserControls\ModuleBasicVisualizer.resx">
       <DependentUpon>ModuleBasicVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\UserControls\ModuleList.resx">
       <DependentUpon>ModuleList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\UserControls\SignalsView.resx">
+      <DependentUpon>SignalsView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -186,18 +195,11 @@
       <DependentUpon>HelpAbout.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\SignalPicker.resx">
-      <DependentUpon>SignalPicker.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\Signals.resx">
-      <DependentUpon>Signals.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Content\Mapping\AMI900158001horizontalsituationindicator.mapping">
       <SubType>Designer</SubType>
@@ -301,6 +303,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UI\frmSignalsViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\frmSignalsViewer.Designer.cs">
+      <DependentUpon>frmSignalsViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\frmOptions.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -313,17 +321,11 @@
     <Compile Include="UI\HelpAbout.Designer.cs">
       <DependentUpon>HelpAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\SignalPicker.cs">
+    <Compile Include="UI\frmMappings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\SignalPicker.Designer.cs">
-      <DependentUpon>SignalPicker.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Signals.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Signals.Designer.cs">
-      <DependentUpon>Signals.cs</DependentUpon>
+    <Compile Include="UI\frmMappings.Designer.cs">
+      <DependentUpon>frmMappings.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\UserControls\ModuleBasicVisualizer.cs">
       <SubType>UserControl</SubType>
@@ -336,6 +338,12 @@
     </Compile>
     <Compile Include="UI\UserControls\ModuleList.Designer.cs">
       <DependentUpon>ModuleList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\UserControls\SignalsView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\UserControls\SignalsView.Designer.cs">
+      <DependentUpon>SignalsView.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
   </ItemGroup>

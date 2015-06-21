@@ -1,6 +1,6 @@
 ﻿namespace SimLinkup.UI
 {
-    partial class Signals
+    partial class frmMappings
     {
         /// <summary>
         /// Required designer variable.

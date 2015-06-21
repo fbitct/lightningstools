@@ -42,12 +42,12 @@ namespace SimLinkup.UI
 
         private void FileExit()
         {
+            Stop();
             Close();
         }
 
         private void Start()
         {
-            StopAndDisposeRuntime();
             btnStop.Enabled = true;
             mnuActionsStop.Enabled = true;
             mnuTrayStop.Enabled = true;
@@ -65,20 +65,9 @@ namespace SimLinkup.UI
                 WindowState = FormWindowState.Minimized;
             }
 
-            CreateAndStartRuntime();
-        }
-
-        private void CreateAndStartRuntime()
-        {
-            CreateRuntime();
             SharedRuntime.Start();
         }
 
-        private void CreateRuntime()
-        {
-            if (SharedRuntime != null) StopAndDisposeRuntime();
-            SharedRuntime = new Runtime.Runtime();
-        }
 
         private void StopAndDisposeRuntime()
         {
@@ -88,7 +77,6 @@ namespace SimLinkup.UI
                 {
                     Stop();
                 }
-                DisposeRuntime();
             }
         }
 
@@ -199,12 +187,18 @@ namespace SimLinkup.UI
         {
             nfyTrayIcon.Text = Application.ProductName;
             Text = Application.ProductName + " v" + Application.ProductVersion;
+            SharedRuntime = new Runtime.Runtime();
+            PopulateSignalsView();
             if (Settings.Default.StartRunningWhenLaunched)
             {
                 Start();
             }
         }
-
+        private void PopulateSignalsView()
+        {
+            signalsView.Signals = SharedRuntime.ScriptingContext.AllSignals;
+            signalsView.Update();
+        }
         private void mnuTrayStart_Click(object sender, EventArgs e)
         {
             Start();
@@ -230,21 +224,11 @@ namespace SimLinkup.UI
             RestoreFromTray();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
-            {
-                CreateRuntime();
-                var form = new Signals {Mappings = SharedRuntime.Mappings};
-                var result = form.ShowDialog(this);
-                if ((result == DialogResult.OK))
-                {
-                }
-            }
-            finally
-            {
-                DisposeRuntime();
-            }
+            Stop();
+            DisposeRuntime();
         }
+
     }
 }

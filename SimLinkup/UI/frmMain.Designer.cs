@@ -57,10 +57,12 @@
             this.mnuTrayOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuTrayExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.button1 = new System.Windows.Forms.Button();
+            this.panel = new System.Windows.Forms.Panel();
+            this.signalsView = new SimLinkup.UI.UserControls.SignalsView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.mnuTray.SuspendLayout();
+            this.panel.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -74,7 +76,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(268, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(850, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -164,11 +166,12 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(0, 161);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 593);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(268, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(850, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
@@ -182,7 +185,7 @@
             this.btnOptions});
             this.toolStrip1.Location = new System.Drawing.Point(0, 28);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(268, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(850, 27);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -305,33 +308,41 @@
             this.mnuTrayExit.Text = "E&xit";
             this.mnuTrayExit.Click += new System.EventHandler(this.mnuTrayExit_Click);
             // 
-            // button1
+            // panel
             // 
-            this.button1.Location = new System.Drawing.Point(27, 120);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 28);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.panel.Controls.Add(this.signalsView);
+            this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel.Location = new System.Drawing.Point(0, 55);
+            this.panel.Name = "panel";
+            this.panel.Size = new System.Drawing.Size(850, 538);
+            this.panel.TabIndex = 3;
+            // 
+            // signalsView
+            // 
+            this.signalsView.AutoSize = true;
+            this.signalsView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.signalsView.Location = new System.Drawing.Point(0, 0);
+            this.signalsView.Name = "signalsView";
+            this.signalsView.Signals = null;
+            this.signalsView.Size = new System.Drawing.Size(850, 538);
+            this.signalsView.TabIndex = 0;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(268, 183);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(850, 615);
+            this.Controls.Add(this.panel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "frmMain";
             this.ShowInTaskbar = false;
             this.Text = "Sim Linkup";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.SizeChanged += new System.EventHandler(this.frmMain_SizeChanged);
             this.menuStrip1.ResumeLayout(false);
@@ -339,6 +350,8 @@
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.mnuTray.ResumeLayout(false);
+            this.panel.ResumeLayout(false);
+            this.panel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -373,7 +386,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuTrayExit;
         private System.Windows.Forms.ToolStripMenuItem mnuTrayRestore;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem6;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Panel panel;
+        private UserControls.SignalsView signalsView;
 
     }
 }

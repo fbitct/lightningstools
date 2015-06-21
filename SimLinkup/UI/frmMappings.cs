@@ -4,11 +4,11 @@ using SimLinkup.Signals;
 
 namespace SimLinkup.UI
 {
-    public partial class Signals : Form
+    public partial class frmMappings : Form
     {
         private IEnumerable<SignalMapping> _mappings = new List<SignalMapping>();
 
-        public Signals()
+        public frmMappings()
         {
             InitializeComponent();
         }

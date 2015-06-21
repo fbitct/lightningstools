@@ -1,16 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common.UI;
-using SimLinkup.Scripting;
 using Common.MacroProgramming;
 
-namespace SimLinkup.UI
+namespace SimLinkup.UI.UserControls
 {
-    public partial class SignalPicker : Form
+    public partial class SignalsView : UserControl
     {
         private readonly ListViewColumnSorter lvwColumnSorter;
-
-        public SignalPicker()
+        public SignalsView()
         {
             InitializeComponent();
             lvwColumnSorter = new ListViewColumnSorter();
@@ -19,12 +24,10 @@ namespace SimLinkup.UI
         }
 
         public SignalList<Signal> Signals { get; set; }
-
-        private void SignalPicker_Load(object sender, EventArgs e)
+        public void Update()
         {
             BuildTreeView();
         }
-
         private void BuildTreeView()
         {
             tvSignalCategories.BeginUpdate();
@@ -168,14 +171,6 @@ namespace SimLinkup.UI
             lvSignals.Sort();
         }
 
-        private void cmdOK_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
 
-        private void cmdCancel_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
     }
 }
