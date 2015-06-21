@@ -1168,52 +1168,97 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = ((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags & ClientFlags.NoMicrophone) == ClientFlags.NoMicrophone;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__FREQUENCY:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].Frequency;
+                        ((AnalogSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].Frequency
+                            : double.NaN;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__RX_VOLUME:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].RxVolume;
+                        ((AnalogSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].RxVolume
+                            : double.NaN;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__IS_ON_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].IsOn;
+                        ((DigitalSignal)output).State =
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].IsOn
+                            : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__PTT_DEPRESSED_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].PttDepressed;
+                        ((DigitalSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].PttDepressed
+                            : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__FREQUENCY:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].Frequency;
+                        ((AnalogSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].Frequency
+                            : double.NaN;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__RX_VOLUME:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].RxVolume;
+                        ((AnalogSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].RxVolume
+                            : double.NaN;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__IS_ON_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].IsOn;
+                        ((DigitalSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].IsOn
+                            : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__PTT_DEPRESSED_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].PttDepressed;
+                        ((DigitalSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].PttDepressed
+                            : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__FREQUENCY:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].Frequency;
+                        ((AnalogSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].Frequency
+                            : double.NaN;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__RX_VOLUME:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].RxVolume;
+                        ((AnalogSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].RxVolume
+                            : double.NaN;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__IS_ON_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].IsOn;
+                        ((DigitalSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].IsOn
+                            : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__PTT_DEPRESSED_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].PttDepressed;
+                        ((DigitalSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Radios != null
+                            ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].PttDepressed
+                            : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__NICKNAME:
-                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Nickname).TrimAtNull();
+                        ((TextSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Nickname != null
+                            ? Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Nickname).TrimAtNull()
+                            : string.Empty;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__ADDRESS:
-                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Address).TrimAtNull();
+                        ((TextSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Address != null
+                            ? Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Address).TrimAtNull()
+                            : string.Empty;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PORT_NUMBER:
                         ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.PortNumber;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PASSWORD:
-                        ((TextSignal)output).State = Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Password).TrimAtNull();
+                        ((TextSignal)output).State = 
+                            _lastFlightData.RadioClientControlData.Nickname != null
+                            ? Encoding.Default.GetString(_lastFlightData.RadioClientControlData.Password).TrimAtNull()
+                            : string.Empty;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PLAYER_COUNT:
                         ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.PlayerCount;
@@ -1222,7 +1267,7 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.SignalConnect;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__TERMINATE_CLIENT_FLAG:
-                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.SignalConnect;
+                        ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.TerminateClient;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__FLIGHT_MODE_FLAG:
                         ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.FlightMode;
@@ -1231,7 +1276,10 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.UseAGC;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__MAIN_DEVICE__IC_VOLUME:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.Devices[(int)Devices.MAIN].IcVolume;
+                        ((AnalogSignal)output).State =
+                            _lastFlightData.RadioClientControlData.Devices !=null
+                            ? _lastFlightData.RadioClientControlData.Devices[(int)Devices.MAIN].IcVolume
+                            : double.NaN;
                         break;
 
                     case F4SimOutputs.PILOT__HEADX_OFFSET:
@@ -2241,7 +2289,7 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Radio Client Control", "Connection: Password",
                                     (int)F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PASSWORD, typeof(string)));
             AddF4SimOutput(CreateNewF4SimOutput("Radio Client Control", "Connection: Player Count",
-                                    (int)F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PLAYER_COUNT, typeof(string)));
+                                    (int)F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PLAYER_COUNT, typeof(int)));
             AddF4SimOutput(CreateNewF4SimOutput("Radio Client Control", "Connection: Signal Connect flag",
                                     (int)F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__SIGNAL_CONNECT_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Radio Client Control", "Connection: Terminate Client flag",
