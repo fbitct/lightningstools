@@ -139,6 +139,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateEPUOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "EPU Fuel Quantity %";
             thisSignal.Id = "101090_EPU_To_Instrument";
@@ -154,6 +155,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateEPUInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "EPU Fuel Quantity %";
             thisSignal.Id = "101090_EPU_From_Sim";

@@ -394,6 +394,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new DigitalSignal
             {
+                Category= "Inputs",
                 CollectionName = "Digital Inputs",
                 FriendlyName = "Off flag",
                 Id = "900158001_Off_Flag_From_Sim",
@@ -410,6 +411,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new DigitalSignal
             {
+                Category = "Inputs",
                 CollectionName = "Digital Inputs",
                 FriendlyName = "Deviation flag",
                 Id = "900158001_Deviation_Flag_From_Sim",
@@ -426,6 +428,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new DigitalSignal
             {
+                Category = "Inputs",
                 CollectionName = "Digital Inputs",
                 FriendlyName = "DME Shutter flag",
                 Id = "900158001_DME_Shutter_Flag_From_Sim",
@@ -442,6 +445,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new DigitalSignal
             {
+                Category = "Inputs",
                 CollectionName = "Digital Inputs",
                 FriendlyName = "TO flag",
                 Id = "900158001_TO_Flag_From_Sim",
@@ -458,6 +462,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new DigitalSignal
             {
+                Category = "Inputs",
                 CollectionName = "Digital Inputs",
                 FriendlyName = "FROM flag",
                 Id = "900158001_FROM_Flag_From_Sim",
@@ -474,6 +479,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Inputs",
                 CollectionName = "Analog Inputs",
                 FriendlyName = "Compass",
                 Id = "900158001_Compass_From_Sim",
@@ -489,6 +495,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateHeadingInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Heading";
             thisSignal.Id = "900158001_Heading_From_Sim";
@@ -504,6 +511,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Inputs",
                 CollectionName = "Analog Inputs",
                 FriendlyName = "Course",
                 Id = "900158001_Course_From_Sim",
@@ -520,6 +528,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Inputs",
                 CollectionName = "Analog Inputs",
                 FriendlyName = "Bearing",
                 Id = "900158001_Bearing_From_Sim",
@@ -536,6 +545,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Inputs",
                 CollectionName = "Analog Inputs",
                 FriendlyName = "DME",
                 Id = "900158001_DME_From_Sim",
@@ -552,6 +562,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Inputs",
                 CollectionName = "Analog Inputs",
                 FriendlyName = "Course Deviation",
                 Id = "900158001_Course_Deviation_From_Sim",
@@ -568,6 +579,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Inputs",
                 CollectionName = "Analog Inputs",
                 FriendlyName = "Course Deviation Limit",
                 Id = "900158001_Course_Deviation_Limit_From_Sim",
@@ -608,6 +620,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Outputs",
                 CollectionName = "Analog Outputs",
                 FriendlyName = "Compass (SIN)",
                 Id = "900158001_Compass_SIN_To_Instrument",
@@ -624,6 +637,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateCompassCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Compass (COS)";
             thisSignal.Id = "900158001_Compass_COS_To_Instrument";
@@ -639,6 +653,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateHeadingSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Heading (SIN)";
             thisSignal.Id = "900158001_Heading_SIN_To_Instrument";
@@ -655,6 +670,7 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             var thisSignal = new AnalogSignal
             {
+                Category = "Outputs",
                 CollectionName = "Analog Outputs",
                 FriendlyName = "Heading (COS)",
                 Id = "900158001_Heading_COS_To_Instrument",
@@ -671,6 +687,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateCourseSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Course (SIN)";
             thisSignal.Id = "900158001_Course_SIN_To_Instrument";
@@ -686,6 +703,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateCourseCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Course (COS)";
             thisSignal.Id = "900158001_Course_COS_To_Instrument";
@@ -701,6 +719,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateBearingSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Bearing (SIN)";
             thisSignal.Id = "900158001_Bearing_SIN_To_Instrument";
@@ -716,6 +735,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateBearingCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Bearing (COS)";
             thisSignal.Id = "900158001_Bearing_COS_To_Instrument";
@@ -731,6 +751,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateDMEx100SINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "DME x100 (SIN)";
             thisSignal.Id = "900158001_DME_x100_SIN_To_Instrument";
@@ -746,6 +767,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateDMEx100COSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "DME x100 (COS)";
             thisSignal.Id = "900158001_DME_x100_COS_To_Instrument";
@@ -761,6 +783,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateDMEx10SINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "DME x10 (SIN)";
             thisSignal.Id = "900158001_DME_x10_SIN_To_Instrument";
@@ -776,6 +799,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateDMEx10COSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "DME x10 (COS)";
             thisSignal.Id = "900158001_DME_x10_COS_To_Instrument";
@@ -791,6 +815,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateDMEx1SINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "DME x1 (SIN)";
             thisSignal.Id = "900158001_DME_x1_SIN_To_Instrument";
@@ -806,6 +831,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateDMEx1COSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "DME x1 (COS)";
             thisSignal.Id = "900158001_DME_x1_COS_To_Instrument";
@@ -821,6 +847,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal CreateCourseDeviationOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Course Deviation";
             thisSignal.Id = "900158001_Course_Deviation_To_Instrument";
@@ -836,6 +863,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private DigitalSignal CreateOffFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital Outputs";
             thisSignal.FriendlyName = "OFF flag";
             thisSignal.Id = "900158001_OFF_Flag_To_Instrument";
@@ -850,6 +878,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private DigitalSignal CreateDeviationFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital Outputs";
             thisSignal.FriendlyName = "Deviation flag";
             thisSignal.Id = "900158001_Deviation_Flag_To_Instrument";
@@ -864,6 +893,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private DigitalSignal CreateDMEShutterOutputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital Outputs";
             thisSignal.FriendlyName = "DME Shutter";
             thisSignal.Id = "900158001_DME_Shutter_To_Instrument";
@@ -878,6 +908,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private DigitalSignal CreateToFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital Outputs";
             thisSignal.FriendlyName = "TO Flag";
             thisSignal.Id = "900158001_TO_Flag_To_Instrument";
@@ -892,6 +923,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private DigitalSignal CreateFromFlagOutputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Digital Outputs";
             thisSignal.FriendlyName = "FROM Flag";
             thisSignal.Id = "900158001_FROM_Flag_To_Instrument";

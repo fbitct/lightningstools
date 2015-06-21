@@ -167,6 +167,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAltitudeInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Altitude (Indicated)";
             thisSignal.Id = "100285_Altitude_From_Sim";
@@ -180,6 +181,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateBarometricPressureInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Barometric Pressure (Indicated), In. Hg.";
             thisSignal.Id = "100285_Barometric_Pressure_From_Sim";
@@ -202,6 +204,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAltitudeFineSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Altitude - Fine (SIN)";
             thisSignal.Id = "100285_Altitude_Fine_SIN_To_Instrument";
@@ -217,6 +220,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAltitudeFineCosOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Altitude - Fine (COS)";
             thisSignal.Id = "100285_Altitude_Fine_COS_To_Instrument";
@@ -232,6 +236,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAltitudeCoarseSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Altitude - Coarse (SIN)";
             thisSignal.Id = "100285_Altitude_Coarse_SIN_To_Instrument";
@@ -247,6 +252,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAltitudeCoarseCosOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Altitude - Coarse (COS)";
             thisSignal.Id = "100285_Altitude_Coarse_COS_To_Instrument";

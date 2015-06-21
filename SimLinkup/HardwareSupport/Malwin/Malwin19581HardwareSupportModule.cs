@@ -170,6 +170,7 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal CreateHydPressureASINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Hydraulic Pressure A (SIN)";
             thisSignal.Id = "19581_Hydraulic_Pressure_A_SIN_To_Instrument";
@@ -184,6 +185,7 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal CreateHydPressureBSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Hydraulic Pressure B (SIN)";
             thisSignal.Id = "19581_Hydraulic_Pressure_B_SIN_To_Instrument";
@@ -199,6 +201,7 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal CreateHydPressureACOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Hydraulic Pressure A (COS)";
             thisSignal.Id = "19581_Hydraulic_Pressure_A_COS_To_Instrument";
@@ -214,6 +217,7 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal CreateHydPressureBCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Hydraulic Pressure B (COS)";
             thisSignal.Id = "19581_Hydraulic_Pressure_B_COS_To_Instrument";
@@ -229,6 +233,7 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal CreateHydraulicPressureAInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Hydraulic Pressure A";
             thisSignal.Id = "19581_Hydraulic_Pressure_A_From_Sim";
@@ -243,6 +248,7 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal CreateHydraulicPressureBInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Hydraulic Pressure B";
             thisSignal.Id = "19581_Hydraulic_Pressure_B_From_Sim";

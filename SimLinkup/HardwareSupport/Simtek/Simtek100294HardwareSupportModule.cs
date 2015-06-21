@@ -178,6 +178,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateTotalFuelInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Total Fuel (Pounds)";
             thisSignal.Id = "100294_Total_Fuel_From_Sim";
@@ -192,6 +193,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAftLeftFuelInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "A/L Fuel";
             thisSignal.Id = "100294_AftAndLeft_Fuel_From_Sim";
@@ -206,6 +208,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateForeRightFuelInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "F/R Fuel";
             thisSignal.Id = "100294_ForeAndRight_Fuel_From_Sim";
@@ -228,6 +231,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateForeRightOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "F/R";
             thisSignal.Id = "100294_FR_To_Instrument";
@@ -243,6 +247,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAftLeftOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "A/L";
             thisSignal.Id = "100294_AL_To_Instrument";
@@ -258,6 +263,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateCounterOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Counter";
             thisSignal.Id = "100294_Counter_To_Instrument";

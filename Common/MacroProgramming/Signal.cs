@@ -58,6 +58,7 @@ namespace Common.MacroProgramming
         public string FriendlyName { get; set; }
         public string Id { get; set; }
         public abstract string SignalType { get; }
+        public string Category { get; set; }
         public string CollectionName { get; set; }
         public string SubcollectionName { get; set; }
 

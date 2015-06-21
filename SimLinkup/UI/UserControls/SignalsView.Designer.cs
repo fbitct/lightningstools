@@ -30,7 +30,7 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tvSignalCategories = new System.Windows.Forms.TreeView();
+            this.tvSignals = new System.Windows.Forms.TreeView();
             this.lvSignals = new System.Windows.Forms.ListView();
             this.Source = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel1.SuspendLayout();
@@ -66,7 +66,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tvSignalCategories);
+            this.splitContainer1.Panel1.Controls.Add(this.tvSignals);
             this.splitContainer1.Panel1MinSize = 40;
             // 
             // splitContainer1.Panel2
@@ -79,14 +79,14 @@
             // 
             // tvSignalCategories
             // 
-            this.tvSignalCategories.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvSignalCategories.FullRowSelect = true;
-            this.tvSignalCategories.Location = new System.Drawing.Point(0, 0);
-            this.tvSignalCategories.Margin = new System.Windows.Forms.Padding(4);
-            this.tvSignalCategories.Name = "tvSignalCategories";
-            this.tvSignalCategories.Size = new System.Drawing.Size(324, 729);
-            this.tvSignalCategories.TabIndex = 3;
-            this.tvSignalCategories.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSignalCategories_AfterSelect);
+            this.tvSignals.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvSignals.FullRowSelect = true;
+            this.tvSignals.Location = new System.Drawing.Point(0, 0);
+            this.tvSignals.Margin = new System.Windows.Forms.Padding(4);
+            this.tvSignals.Name = "tvSignalCategories";
+            this.tvSignals.Size = new System.Drawing.Size(324, 729);
+            this.tvSignals.TabIndex = 3;
+            this.tvSignals.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSignals_AfterSelect);
             // 
             // lvSignals
             // 
@@ -126,7 +126,7 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TreeView tvSignalCategories;
+        private System.Windows.Forms.TreeView tvSignals;
         private System.Windows.Forms.ListView lvSignals;
         private System.Windows.Forms.ColumnHeader Source;
     }

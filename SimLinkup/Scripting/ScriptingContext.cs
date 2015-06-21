@@ -127,7 +127,7 @@ namespace SimLinkup.Scripting
                 {
                     foreach (var command in ssm.SimCommands.Values)
                     {
-                        this[command.Id] = command;
+                        this[command.In.Id] = command.In;
                     }
                 }
             }

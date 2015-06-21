@@ -142,6 +142,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateOilSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Oil  Pressure (SIN)";
             thisSignal.Id = "101091_Oil_Pressure_SIN_To_Instrument";
@@ -157,6 +158,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateOilCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Oil  Pressure (COS)";
             thisSignal.Id = "101091_Oil_Pressure_COS_To_Instrument";
@@ -171,6 +173,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateOilInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Oil Pressure";
             thisSignal.Id = "101091_Oil_Pressure_From_Sim";

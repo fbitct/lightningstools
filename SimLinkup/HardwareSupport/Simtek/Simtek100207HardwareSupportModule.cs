@@ -138,6 +138,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateRPMOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "RPM";
             thisSignal.Id = "100207_RPM_To_Instrument";
@@ -153,6 +154,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateRPMInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "RPM";
             thisSignal.Id = "100207_RPM_From_Sim";

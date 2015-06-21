@@ -309,6 +309,7 @@ namespace SimLinkup.HardwareSupport.Phcc
             for (var i = 0; i < 35; i++)
             {
                 var thisSignal = new AnalogSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = string.Format("Analog Input {0}", string.Format("{0:0}", i + 1));
                 thisSignal.Id = string.Format("PhccAnalogInput[{0}][{1}]", portName, i);
@@ -329,6 +330,7 @@ namespace SimLinkup.HardwareSupport.Phcc
             for (var i = 0; i < 1024; i++)
             {
                 var thisSignal = new DigitalSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Digital Inputs";
                 thisSignal.FriendlyName = string.Format("Digital Input {0}", string.Format("{0:0}", i + 1));
                 thisSignal.Id = string.Format("PhccDigitalInput[{0}][{1}]", portName, i);
@@ -364,6 +366,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                     for (var i = 0; i < 40; i++)
                     {
                         var thisSignal = new DigitalSignal();
+                        thisSignal.Category = "Outputs";
                         thisSignal.CollectionName = "Digital Outputs";
                         thisSignal.FriendlyName = string.Format("Digital Output {0}", string.Format("{0:0}", i + 1));
                         thisSignal.Id = string.Format("DOA_40DO[{0}][{1}][{2}]", portName, baseAddress, i);
@@ -390,6 +393,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                         for (var j = 0; j < 8; j++)
                         {
                             var thisSignal = new DigitalSignal();
+                            thisSignal.Category = "Outputs";
                             thisSignal.CollectionName = "Digital Outputs";
                             thisSignal.FriendlyName = string.Format("Display {0}, Output Line {1}",
                                 string.Format("{0:0}", j + 1),
@@ -417,6 +421,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                     for (var i = 0; i < 8; i++)
                     {
                         var thisSignal = new AnalogSignal();
+                        thisSignal.Category = "Outputs";
                         thisSignal.CollectionName = "Motor Outputs";
                         thisSignal.FriendlyName = string.Format("Motor {0}", i + 1);
                         thisSignal.Id = string.Format("DOA_8SERVO[{0}][{1}][{2}]", portName, baseAddress, i);
@@ -441,6 +446,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                     for (var i = 0; i < 4; i++)
                     {
                         var thisSignal = new AnalogSignal();
+                        thisSignal.Category = "Outputs";
                         thisSignal.CollectionName = "Motor Outputs";
                         thisSignal.FriendlyName = string.Format("Motor {0}", i + 1);
                         thisSignal.Id = string.Format("DOA_AIRCORE[{0}][{1}][{2}]", portName, baseAddress, i);
@@ -464,6 +470,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                     for (var i = 0; i < 16; i++)
                     {
                         var thisSignal = new AnalogSignal();
+                        thisSignal.Category = "Outputs";
                         thisSignal.CollectionName = "Analog Outputs";
                         thisSignal.FriendlyName = string.Format("Analog Output {0}", string.Format("{0:0}", i + 1));
                         thisSignal.Id = string.Format("DOA_ANOUT1[{0}][{1}][{2}]", baseAddress, portName, i);
@@ -489,6 +496,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                     for (var i = 0; i < 4; i++)
                     {
                         var thisSignal = new AnalogSignal();
+                        thisSignal.Category = "Outputs";
                         thisSignal.CollectionName = "Motor Outputs";
                         thisSignal.FriendlyName = string.Format("Motor {0}", i + 1);
                         thisSignal.Id = string.Format("DOA_STEPPER[{0}][{1}][{2}]", portName, baseAddress, i);

@@ -364,6 +364,7 @@ namespace SimLinkup.HardwareSupport.Powell
 
             {
                 var thisSignal = new AnalogSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = "Magnetic Heading (Degrees)";
                 thisSignal.Id = "IP1310ALR__Magnetic_Heading_Degrees";
@@ -381,6 +382,7 @@ namespace SimLinkup.HardwareSupport.Powell
             }
             {
                 var thisSignal = new AnalogSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = "RWR Symbol Count";
                 thisSignal.Id = "IP1310ALR__RWR_Symbol_Count";
@@ -401,6 +403,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new AnalogSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} Symbol ID", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Symbol_ID[{0}]", i);
@@ -419,6 +422,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new AnalogSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} Bearing (degrees)", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Bearing_Degrees[{0}]", i);
@@ -438,6 +442,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new AnalogSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Analog Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} Lethality", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Lethality[{0}]", i);
@@ -457,6 +462,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new DigitalSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Digital Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} Missile Activity Flag", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Missile_Activity_Flag[{0}]", i);
@@ -475,6 +481,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new DigitalSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Digital Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} Missile Launch Flag", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Missile_Launch_Flag[{0}]", i);
@@ -493,6 +500,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new DigitalSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Digital Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} Selected Flag", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_Selected_Flag[{0}]", i);
@@ -511,6 +519,7 @@ namespace SimLinkup.HardwareSupport.Powell
             for (int i = 0; i < MAX_RWR_SYMBOLS_AS_INPUTS; i++)
             {
                 var thisSignal = new DigitalSignal();
+                thisSignal.Category = "Inputs";
                 thisSignal.CollectionName = "Digital Inputs";
                 thisSignal.FriendlyName = string.Format("RWR Object #{0} New Detection Flag", i);
                 thisSignal.Id = string.Format("IP1310ALR__RWR_Object_New_Detection_Flag[{0}]", i);

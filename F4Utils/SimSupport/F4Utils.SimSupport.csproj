@@ -47,6 +47,7 @@
     <Compile Include="IndicatedRateOfTurnCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RadarAltitudeCalculator.cs" />
+    <Compile Include="SendCallbackCommand.cs" />
     <Compile Include="TacanBand.cs" />
     <Compile Include="TacanChannelSource.cs" />
     <Compile Include="TexturesSharedMemoryImageCoordinates.cs" />
@@ -69,6 +70,10 @@
     <ProjectReference Include="..\..\Common\UI\Common.UI.csproj">
       <Project>{3fc238ba-7fc2-47ae-ae45-7cf199edbe08}</Project>
       <Name>Common.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\F4KeyFile\F4KeyFile.csproj">
+      <Project>{eeed5595-6eb8-473d-b487-334b45d753a6}</Project>
+      <Name>F4KeyFile</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\F4SharedMem\F4SharedMem.csproj">
       <Project>{517d1b4d-e8c7-4331-bbe7-300fd6b78441}</Project>

@@ -1,14 +1,17 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Common.Generic;
 using Common.MacroProgramming;
 using Common.Math;
 using Common.SimSupport;
 using Common.Strings;
+using F4KeyFile;
 using F4SharedMem;
 using F4SharedMem.Headers;
 using Util = F4Utils.Process.Util;
-using log4net;
-using System.Text;
 
 namespace F4Utils.SimSupport
 {
@@ -20,6 +23,7 @@ namespace F4Utils.SimSupport
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
         private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
+        private readonly Dictionary<string, SimCommand> _simCommands = new Dictionary<string, SimCommand>();
         private FlightData _lastFlightData;
         private Reader _smReader;
         private IIndicatedRateOfTurnCalculator _rateOfTurnCalculator = new IndicatedRateOfTurnCalculator();
@@ -33,6 +37,7 @@ namespace F4Utils.SimSupport
             _morseCodeGenerator.UnitTimeTick += _morseCodeGenerator_UnitTimeTick;
             EnsureSharedmemReaderIsCreated();
             CreateSimOutputsList();
+            CreateSimCommandsList();
         }
 
         public override string FriendlyName
@@ -62,7 +67,7 @@ namespace F4Utils.SimSupport
 
         public override Dictionary<string, SimCommand> SimCommands
         {
-            get { return new Dictionary<string, SimCommand>(); }
+            get { return _simCommands; }
         }
 
         private void EnsureSharedmemReaderIsCreated()
@@ -1389,6 +1394,22 @@ namespace F4Utils.SimSupport
                 }
             }
         }
+        private SimCommand CreateNewF4SimCommand(string collectionName, string subcollectionName, string signalFriendlyName, Callbacks callback)
+        {
+            var simCommand = new SendCallbackCommand();
+            var falconInput = simCommand.In;
+            falconInput.Category = "Sim Inputs (Callbacks)";
+            falconInput.CollectionName = collectionName;
+            falconInput.SubcollectionName = subcollectionName;
+            falconInput.FriendlyName = signalFriendlyName;
+            falconInput.Id = "F4_CALLBACK__" + (Enum.GetName(typeof(Callbacks), callback)).ToUpperInvariant();
+            falconInput.PublisherObject = this;
+            falconInput.Source = this;
+            falconInput.SourceFriendlyName = "Falcon BMS";
+            simCommand.Id = "F4_SEND_CALLBACK" + simCommand.In.Id;
+            simCommand.FriendlyName = simCommand.In.FriendlyName;
+            return simCommand;
+        }
 
         private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType)
         {
@@ -1398,6 +1419,7 @@ namespace F4Utils.SimSupport
             {
                 return new TextSimOutput
                            {
+                               Category = "Sim Outputs",
                                CollectionName = collectionName,
                                SubcollectionName = subcollectionName,
                                FriendlyName = signalFriendlyName,
@@ -1412,6 +1434,7 @@ namespace F4Utils.SimSupport
             {
                 return new DigitalSimOutput
                            {
+                               Category = "Sim Outputs",
                                CollectionName = collectionName,
                                SubcollectionName = subcollectionName,
                                FriendlyName = signalFriendlyName,
@@ -1424,6 +1447,7 @@ namespace F4Utils.SimSupport
             }
             return new AnalogSimOutput
                        {
+                           Category = "Sim Outputs",
                            CollectionName = collectionName,
                            SubcollectionName = subcollectionName,
                            FriendlyName = signalFriendlyName,
@@ -1454,7 +1478,25 @@ namespace F4Utils.SimSupport
         {
             _simOutputs.Add(output.Id, output);
         }
+        private void AddF4SimCommand(SimCommand simCommand)
+        {
+            _simCommands.Add(simCommand.Id, simCommand);
+        }
+        private void CreateSimCommandsList()
+        {
+            _simCommands.Clear();
+            foreach (Callbacks callback in Enum.GetValues(typeof(Callbacks)))
+            {
+                var category = EnumAttributeReader.GetAttribute<CategoryAttribute>(callback).Category;
+                if (string.Compare(category, "NOOP", StringComparison.OrdinalIgnoreCase)>-1) continue;
+                var subCategory = EnumAttributeReader.GetAttribute<SubCategoryAttribute>(callback).SubCategory;
+                var description = EnumAttributeReader.GetAttribute<DescriptionAttribute>(callback).Description;
+                var shortDescription = EnumAttributeReader.GetAttribute<ShortDescriptionAttribute>(callback).ShortDescription;
+                var simCommand = CreateNewF4SimCommand(category, subCategory, description, callback);
+                AddF4SimCommand(simCommand);
+            }
 
+        }
         private void CreateSimOutputsList()
         {
             _simOutputs.Clear();

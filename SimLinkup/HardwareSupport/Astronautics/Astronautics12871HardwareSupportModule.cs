@@ -277,6 +277,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreatePitchInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Pitch (Degrees)";
             thisSignal.Id = "12871_Pitch_From_Sim";
@@ -291,6 +292,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateRollInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Roll (Degrees)";
             thisSignal.Id = "12871_Roll_From_Sim";
@@ -305,6 +307,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateHorizontalCommandBarInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Horizontal Command Bar (Degrees)";
             thisSignal.Id = "12871_Horizontal_Command_Bar_From_Sim";
@@ -319,6 +322,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateVerticalCommandBarInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Vertical Command Bar (Degrees)";
             thisSignal.Id = "12871_Vertical_Command_Bar_From_Sim";
@@ -333,6 +337,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateRateOfTurnInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Rate of Turn Indicator (Degrees)";
             thisSignal.Id = "12871_Rate_Of_Turn_Indicator_From_Sim";
@@ -347,6 +352,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateInclinometerInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Inclinometer Position";
             thisSignal.Id = "12871_Inclinometer_From_Sim";
@@ -361,6 +367,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private DigitalSignal CreateAuxFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "AUX Flag";
             thisSignal.Id = "12871_AUX_Flag_From_Sim";
@@ -375,6 +382,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private DigitalSignal CreateOffFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "OFF Flag";
             thisSignal.Id = "12871_OFF_Flag_From_Sim";
@@ -389,6 +397,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private DigitalSignal CreateGSFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "GS Flag";
             thisSignal.Id = "12871_GS_Flag_From_Sim";
@@ -403,6 +412,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private DigitalSignal CreateLOCFlagInputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "LOC Flag";
             thisSignal.Id = "12871_LOC_Flag_From_Sim";
@@ -417,6 +427,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private DigitalSignal CreateShowCommandBarsInputSignal()
         {
             var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
             thisSignal.FriendlyName = "Show Command Bars";
             thisSignal.Id = "12871_Show_Command_Bars_From_Sim";
@@ -443,6 +454,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreatePitchSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Pitch (SIN)";
             thisSignal.Id = "12871_Pitch_SIN_To_Instrument";
@@ -458,6 +470,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreatePitchCosOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Pitch (COS)";
             thisSignal.Id = "12871_Pitch_COS_To_Instrument";
@@ -473,6 +486,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateRollSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Roll (SIN)";
             thisSignal.Id = "12871_Roll_SIN_To_Instrument";
@@ -488,6 +502,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateRollCosOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Roll (COS)";
             thisSignal.Id = "12871_Roll_COS_To_Instrument";
@@ -503,6 +518,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateHorizontalCommandBarOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Horizontal Command Bar";
             thisSignal.Id = "12871_Horizontal_Command_Bar_To_Instrument";
@@ -518,6 +534,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateVerticalCommandBarOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Vertical Command Bar";
             thisSignal.Id = "12871_Vertical_Command_Bar_To_Instrument";
@@ -533,6 +550,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateRateOfTurnOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Rate of Turn Indicator";
             thisSignal.Id = "12871_Rate_Of_Turn_To_Instrument";
@@ -548,6 +566,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal CreateInclinometerOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Inclinometer Indicator";
             thisSignal.Id = "12871_Inclinometer_To_Instrument";

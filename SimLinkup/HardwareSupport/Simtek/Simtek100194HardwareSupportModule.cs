@@ -161,6 +161,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateMachOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Mach";
             thisSignal.Id = "100194_Mach_To_Instrument";
@@ -176,6 +177,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAirspeedOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Airspeed";
             thisSignal.Id = "100194_Airspeed_To_Instrument";
@@ -191,6 +193,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateMachInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Mach";
             thisSignal.Id = "100194_Mach_From_Sim";
@@ -205,6 +208,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateAirspeedInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Airspeed";
             thisSignal.Id = "100194_Airspeed_From_Sim";

@@ -134,6 +134,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
         private AnalogSignal CreateFuelFlowInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Fuel Flow (pounds per hour)";
             thisSignal.Id = "3239_Fuel_Flow_Pounds_Per_Hour_From_Sim";
@@ -153,6 +154,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
         private AnalogSignal CreateFuelFlowPoundsPerHourOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Fuel Flow (pounds per hour)";
             thisSignal.Id = "3239_Fuel_Flow_Pounds_Per_Hour_To_Instrument";

@@ -142,6 +142,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateNozzlePositionSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Nozzle Position (SIN)";
             thisSignal.Id = "101088_Nozzle_Position_SIN_To_Instrument";
@@ -157,6 +158,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateNozzlePositionCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Nozzle Position (COS)";
             thisSignal.Id = "101088_Nozzle_Position_COS_To_Instrument";
@@ -171,6 +173,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateNozzlePositionInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Nozzle Position";
             thisSignal.Id = "101088_Nozzle_Position_From_Sim";

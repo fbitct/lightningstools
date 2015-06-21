@@ -142,6 +142,7 @@ namespace SimLinkup.HardwareSupport.Gould
         private AnalogSignal CreateCompassSINOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Compass (SIN)";
             thisSignal.Id = "HS070D51341_Compass__SIN_To_Instrument";
@@ -157,6 +158,7 @@ namespace SimLinkup.HardwareSupport.Gould
         private AnalogSignal CreateCompassCOSOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Compass (COS)";
             thisSignal.Id = "HS070D51341_Compass__COS_To_Instrument";
@@ -171,6 +173,7 @@ namespace SimLinkup.HardwareSupport.Gould
         private AnalogSignal CreateCompassInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Magnetic Heading (Degrees)";
             thisSignal.Id = "HS070D51341_Compass__Magnetic_Heading_From_Sim";

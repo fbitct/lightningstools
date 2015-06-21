@@ -134,6 +134,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateFuelFlowInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Fuel Flow (pounds per hour)";
             thisSignal.Id = "100295_Fuel_Flow_From_Sim";
@@ -154,6 +155,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateFuelFlowOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Fuel Flow";
             thisSignal.Id = "100295_Fuel_Flow_To_Instrument";

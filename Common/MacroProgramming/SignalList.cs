@@ -43,7 +43,7 @@ namespace Common.MacroProgramming
         {
             var toReturn = new List<string>();
             foreach (var signal in
-                this.Where(signal => signal.SourceFriendlyName != null && !toReturn.Contains(signal.SourceFriendlyName))
+                this.Where(x => x.SourceFriendlyName != null && !toReturn.Contains(x.SourceFriendlyName))
                 )
             {
                 toReturn.Add(signal.SourceFriendlyName);
@@ -69,7 +69,19 @@ namespace Common.MacroProgramming
                                   StringComparison.OrdinalIgnoreCase)));
             return toReturn;
         }
-
+        public List<string> GetDistinctSignalCategories()
+        {
+            var toReturn = new List<string>();
+            for (var index = 0; index < Count; index++)
+            {
+                var signal = this[index];
+                if (!string.IsNullOrWhiteSpace(signal.Category) && !toReturn.Contains(signal.Category))
+                {
+                    toReturn.Add(signal.Category);
+                }
+            }
+            return toReturn;
+        }
         public List<string> GetDistinctSignalCollectionNames()
         {
             var toReturn = new List<string>();
@@ -83,7 +95,16 @@ namespace Common.MacroProgramming
             }
             return toReturn;
         }
-
+        public SignalList<T> GetSignalsByCategory(string category)
+        {
+            var toReturn = new SignalList<T>();
+            toReturn.AddRange(
+                this.Where(
+                    signal =>
+                    !string.IsNullOrWhiteSpace(signal.Category) &&
+                    string.Equals(category, signal.Category, StringComparison.OrdinalIgnoreCase)));
+            return toReturn;
+        }
         public SignalList<T> GetSignalsByCollection(string collectionName)
         {
             var toReturn = new SignalList<T>();
@@ -100,9 +121,9 @@ namespace Common.MacroProgramming
             var toReturn = new List<string>();
             foreach (var signal in
                 this.Where(
-                    signal =>
-                    !string.IsNullOrWhiteSpace(signal.SubSourceFriendlyName) &&
-                    !toReturn.Contains(signal.SubSourceFriendlyName)))
+                    x =>
+                    !string.IsNullOrWhiteSpace(x.SubSourceFriendlyName) &&
+                    !toReturn.Contains(x.SubSourceFriendlyName)))
             {
                 toReturn.Add(signal.SubSourceFriendlyName);
             }
@@ -111,12 +132,13 @@ namespace Common.MacroProgramming
         public List<string> GetUniqueSubcollections(string collectionName)
         {
             var toReturn = new List<string>();
+
             foreach (var signal in
                 this.Where(
-                    signal =>
-                    string.Equals(collectionName, signal.CollectionName, StringComparison.OrdinalIgnoreCase) &&
-                    !string.IsNullOrWhiteSpace(signal.SubcollectionName) &&
-                    !toReturn.Contains(signal.SubcollectionName)))
+                    x =>
+                    string.Equals(collectionName, x.CollectionName, StringComparison.OrdinalIgnoreCase) &&
+                    !string.IsNullOrWhiteSpace(x.SubcollectionName) &&
+                    !toReturn.Contains(x.SubcollectionName)))
             {
                 toReturn.Add(signal.SubcollectionName);
             }

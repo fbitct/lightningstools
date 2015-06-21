@@ -30,8 +30,8 @@ namespace SimLinkup.UI.UserControls
         }
         private void BuildTreeView()
         {
-            tvSignalCategories.BeginUpdate();
-            tvSignalCategories.Nodes.Clear();
+            tvSignals.BeginUpdate();
+            tvSignals.Nodes.Clear();
             if (Signals != null)
             {
                 var distinctSignalSources = Signals.GetDistinctSignalSourceNames();
@@ -40,50 +40,67 @@ namespace SimLinkup.UI.UserControls
                     foreach (var signalSource in distinctSignalSources)
                     {
                         var signalSourceTreeNode = new TreeNode(signalSource);
-                        signalSourceTreeNode.Tag = signalSource;
-                        tvSignalCategories.Nodes.Add(signalSourceTreeNode);
+                        signalSourceTreeNode.Tag = "SOURCE:" + signalSource;
+                        tvSignals.Nodes.Add(signalSourceTreeNode);
 
                         var signalsThisSource =
                             Signals.GetSignalsFromSource(signalSource);
-                        var signalCollections = signalsThisSource.GetDistinctSignalCollectionNames();
-                        if (signalCollections != null)
+
+                        var signalCategoriesThisSource = signalsThisSource.GetDistinctSignalCategories();
+                        if (signalCategoriesThisSource != null)
                         {
-                            foreach (var signalCollectionName in signalCollections)
+                            foreach (var signalCategory in signalCategoriesThisSource)
                             {
-                                var signalCollectionTreeNode = new TreeNode(signalCollectionName);
-                                signalCollectionTreeNode.Tag = signalCollectionName;
-                                signalSourceTreeNode.Nodes.Add(signalCollectionTreeNode);
+                                var signalCategoryTreeNode = new TreeNode(signalCategory);
+                                signalCategoryTreeNode.Tag = "CATEGORY:" + signalCategory;
+                                signalSourceTreeNode.Nodes.Add(signalCategoryTreeNode);
+                                var signalsThisCategory = signalsThisSource.GetSignalsByCategory(signalCategory);
+                                if (signalsThisCategory != null)
+                                {
+                                    var signalCollections = signalsThisCategory.GetDistinctSignalCollectionNames();
+                                    if (signalCollections != null)
+                                    {
+                                        foreach (var signalCollectionName in signalCollections)
+                                        {
+                                            var signalCollectionTreeNode = new TreeNode(signalCollectionName);
+                                            signalCollectionTreeNode.Tag = "COLLECTION:" + signalCollectionName;
+                                            signalCategoryTreeNode.Nodes.Add(signalCollectionTreeNode);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
             //tvSignalCategories.Sort();
-            tvSignalCategories.EndUpdate();
+            tvSignals.EndUpdate();
         }
 
         private void UpdateListViewAfterTreeViewItemSelect()
         {
-            var signalCollectionName = tvSignalCategories.SelectedNode.Tag as string;
-            var signalSource = tvSignalCategories.SelectedNode.Parent.Tag;
-            var signalsThisSource = Signals.GetSignalsFromSource(signalSource);
             lvSignals.SuspendLayout();
             lvSignals.BeginUpdate();
             lvSignals.Clear();
             lvSignals.Groups.Clear();
 
+            var collectionIdentifier = tvSignals.SelectedNode.Tag as string;
+            if (!collectionIdentifier.StartsWith("COLLECTION", StringComparison.OrdinalIgnoreCase)) return;
+            collectionIdentifier = collectionIdentifier.Substring("COLLECTION:".Length);
+            var categoryIdentifier = (tvSignals.SelectedNode.Parent.Tag as string).Substring("CATEGORY:".Length);
+            var sourceIdentifier = (tvSignals.SelectedNode.Parent.Parent.Tag as string).Substring("SOURCE:".Length);
+
             lvSignals.Columns.Clear();
             lvSignals.Columns.Add("Signal");
             lvSignals.Columns.Add("Value");
 
-            var signalsThisCollection = signalsThisSource.GetSignalsByCollection(signalCollectionName);
-            if (signalsThisCollection == null && tvSignalCategories.SelectedNode.Parent !=null)
-            {
-                signalsThisCollection = signalsThisSource.GetSignalsByCollection(tvSignalCategories.SelectedNode.Parent.Tag as string);
-            }
+            var signalsThisSource = Signals.GetSignalsFromSource(sourceIdentifier);
+            var signalsThisCategory = signalsThisSource.GetSignalsByCategory(categoryIdentifier);
+            var signalsThisCollection = signalsThisCategory.GetSignalsByCollection(collectionIdentifier);
+
             if (signalsThisCollection != null)
             {
-                var subCollections = signalsThisCollection.GetUniqueSubcollections(signalCollectionName);
+                var subCollections = signalsThisCollection.GetUniqueSubcollections(collectionIdentifier);
 
                 if (subCollections != null && subCollections.Count > 0)
                 {
@@ -93,7 +110,7 @@ namespace SimLinkup.UI.UserControls
                         var lvg = new ListViewGroup(subcollectionName, HorizontalAlignment.Left);
                         lvSignals.Groups.Add(lvg);
                         var signalsThisSubcollection =
-                            signalsThisCollection.GetSignalsBySubcollectionName(signalCollectionName, subcollectionName);
+                            signalsThisCollection.GetSignalsBySubcollectionName(collectionIdentifier, subcollectionName);
                         foreach (var signal in signalsThisSubcollection)
                         {
                             var lvi = CreateListViewItemFromSignal(signal);
@@ -126,6 +143,7 @@ namespace SimLinkup.UI.UserControls
                 lvSignals.Columns[i].TextAlign = HorizontalAlignment.Left;
                 lvSignals.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             }
+            lvSignals.Update();
             lvSignals.EndUpdate();
             lvSignals.ResumeLayout();
             lvSignals.Sort();
@@ -184,10 +202,10 @@ namespace SimLinkup.UI.UserControls
         }
 
 
-        private void tvSignalCategories_AfterSelect(object sender, TreeViewEventArgs e)
+        private void tvSignals_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (tvSignalCategories.SelectedNode.Tag != null && tvSignalCategories.SelectedNode.Parent != null &&
-                tvSignalCategories.SelectedNode.Parent.Tag != null)
+            if (tvSignals.SelectedNode.Tag != null && tvSignals.SelectedNode.Parent != null &&
+                tvSignals.SelectedNode.Parent.Tag != null)
             {
                 UpdateListViewAfterTreeViewItemSelect();
             }

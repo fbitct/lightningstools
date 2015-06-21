@@ -161,6 +161,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreatePitchInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Pitch (Degrees)";
             thisSignal.Id = "10033501_Pitch_From_Sim";
@@ -175,6 +176,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateRollInputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
             thisSignal.FriendlyName = "Roll (Degrees)";
             thisSignal.Id = "10033501_Roll_From_Sim";
@@ -197,6 +199,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreatePitchSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Pitch (SIN)";
             thisSignal.Id = "10033501_Pitch_SIN_To_Instrument";
@@ -212,6 +215,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreatePitchCosOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Pitch (COS)";
             thisSignal.Id = "10033501_Pitch_COS_To_Instrument";
@@ -227,6 +231,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateRollSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Roll (SIN)";
             thisSignal.Id = "10033501_Roll_SIN_To_Instrument";
@@ -242,6 +247,7 @@ namespace SimLinkup.HardwareSupport.Simtek
         private AnalogSignal CreateRollCosOutputSignal()
         {
             var thisSignal = new AnalogSignal();
+            thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
             thisSignal.FriendlyName = "Roll (COS)";
             thisSignal.Id = "10033501_Roll_COS_To_Instrument";
