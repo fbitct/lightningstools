@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common.UI;
 using Common.MacroProgramming;
-
+using Common.Math;
 namespace SimLinkup.UI.UserControls
 {
     public partial class SignalsView : UserControl
@@ -75,6 +75,7 @@ namespace SimLinkup.UI.UserControls
             lvSignals.Columns.Clear();
             lvSignals.Columns.Add("Signal");
             lvSignals.Columns.Add("Signal Type");
+            lvSignals.Columns.Add("Value");
 
             var signalsThisCollection = signalsThisSource.GetSignalsByCollection(signalCollectionName);
 
@@ -92,11 +93,7 @@ namespace SimLinkup.UI.UserControls
                             signalsThisCollection.GetSignalsBySubSourceFriendlyName(subSource);
                         foreach (var signal in signalsThisSubsource)
                         {
-                            var lvi = new ListViewItem();
-                            lvi.Text = signal.FriendlyName;
-                            lvi.SubItems.Add(new ListViewItem.ListViewSubItem
-                            {Name = "Signal Type", Text = signal.SignalType});
-                            lvi.Tag = signal;
+                            var lvi = CreateListViewItemFromSignal(signal);
                             lvg.Items.Add(lvi);
                             lvSignals.Items.Add(lvi);
                         }
@@ -106,11 +103,7 @@ namespace SimLinkup.UI.UserControls
                 {
                     foreach (var signal in signalsThisCollection)
                     {
-                        var lvi = new ListViewItem();
-                        lvi.Text = signal.FriendlyName;
-                        lvi.Tag = signal;
-                        lvi.SubItems.Add(new ListViewItem.ListViewSubItem
-                        {Name = "Signal Type", Text = signal.SignalType});
+                        var lvi = CreateListViewItemFromSignal(signal);
                         lvSignals.Items.Add(lvi);
                     }
                 }
@@ -125,6 +118,33 @@ namespace SimLinkup.UI.UserControls
             lvSignals.ResumeLayout();
             lvSignals.Sort();
         }
+
+        private static ListViewItem CreateListViewItemFromSignal(Signal signal)
+        {
+            var lvi = new ListViewItem();
+            lvi.Text = signal.FriendlyName;
+            lvi.SubItems.Add(new ListViewItem.ListViewSubItem { Name = "Signal Type", Text = signal.SignalType });
+            lvi.SubItems.Add(new ListViewItem.ListViewSubItem { Name = "Value", Text = GetValue(signal) });
+            lvi.Tag = signal;
+            return lvi;
+        }
+        private static string GetValue(Signal signal) 
+        {
+            if (signal is DigitalSignal)
+            {
+                return ((DigitalSignal)signal).State ? "ON" : "OFF";
+            }
+            else if (signal is AnalogSignal)
+            {
+                return ((AnalogSignal)signal).State.FormatDecimal(2);
+            }
+            else if (signal is TextSignal)
+            {
+                return ((TextSignal)signal).State;
+            }
+            return string.Empty;
+        }
+
 
         private void tvSignalCategories_AfterSelect(object sender, TreeViewEventArgs e)
         {
