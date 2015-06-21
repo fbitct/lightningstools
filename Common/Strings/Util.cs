@@ -62,6 +62,7 @@ namespace Common.Strings
         {
             if (toTrim == null) return toTrim;
             var firstNull = toTrim.IndexOf('\0');
+            if (firstNull < 0) return toTrim;
             return toTrim.Substring(0, firstNull);
         }
     }
