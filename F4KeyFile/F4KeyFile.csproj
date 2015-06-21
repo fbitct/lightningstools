@@ -70,6 +70,8 @@
     <Compile Include="CallbackInvocationBehavior.cs" />
     <Compile Include="Callbacks.cs" />
     <Compile Include="CallbackSender.cs" />
+    <Compile Include="CategoryAttribute.cs" />
+    <Compile Include="DescriptionAttribute.cs" />
     <Compile Include="DirectInputBindingType.cs" />
     <Compile Include="PovDirections.cs" />
     <Compile Include="ScanCodes.cs" />
@@ -81,6 +83,8 @@
     <Compile Include="KeyFile.cs" />
     <Compile Include="KeyModifiers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShortDescriptionAttribute.cs" />
+    <Compile Include="SubCategoryAttribute.cs" />
     <Compile Include="TriggeringEvent.cs" />
     <Compile Include="UIVisibility.cs" />
     <Compile Include="UnparsableLine.cs" />
