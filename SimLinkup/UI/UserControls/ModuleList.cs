@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Common.SimSupport;
 using Common.HardwareSupport;
+using Common.MacroProgramming;
 
 namespace SimLinkup.UI.UserControls
 {
@@ -54,13 +55,32 @@ namespace SimLinkup.UI.UserControls
                 {
                     return;
                 }
-                foreach (var ssm in _hardwareSupportModules)
+                foreach (var hsm in _hardwareSupportModules)
                 {
                     var visualizer = new ModuleBasicVisualizer();
-                    visualizer.ModuleName = ssm.FriendlyName;
+                    visualizer.ModuleName = hsm.FriendlyName;
                     visualizer.ShowSignals += (s, e) =>
                     {
-
+                        var signalPicker = new SignalPicker();
+                        var signalList = new SignalList<Signal>();
+                        if (hsm.AnalogInputs != null)
+                        {
+                            signalList.AddRange(hsm.AnalogInputs);
+                        }
+                        if (hsm.AnalogOutputs != null)
+                        {
+                            signalList.AddRange(hsm.AnalogOutputs);
+                        }
+                        if (hsm.DigitalInputs != null)
+                        {
+                            signalList.AddRange(hsm.DigitalInputs);
+                        }
+                        if (hsm.DigitalOutputs != null)
+                        {
+                            signalList.AddRange(hsm.DigitalOutputs);
+                        }
+                        signalPicker.Signals = signalList;
+                        signalPicker.ShowDialog(this.ParentForm);
                     };
                     panel.Controls.Add(visualizer);
                 }

@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Common.UI;
 using SimLinkup.Scripting;
+using Common.MacroProgramming;
 
 namespace SimLinkup.UI
 {
@@ -17,7 +18,7 @@ namespace SimLinkup.UI
             lvSignals.ListViewItemSorter = lvwColumnSorter;
         }
 
-        public ScriptingContext ScriptingContext { get; set; }
+        public SignalList<Signal> Signals { get; set; }
 
         private void SignalPicker_Load(object sender, EventArgs e)
         {
@@ -28,9 +29,9 @@ namespace SimLinkup.UI
         {
             tvSignalCategories.BeginUpdate();
             tvSignalCategories.Nodes.Clear();
-            if (ScriptingContext != null)
+            if (Signals != null)
             {
-                var distinctSignalSources = ScriptingContext.AllSignals.GetDistinctSignalSourceNames();
+                var distinctSignalSources = Signals.GetDistinctSignalSourceNames();
                 if (distinctSignalSources != null && distinctSignalSources.Count > 0)
                 {
                     foreach (var signalSource in distinctSignalSources)
@@ -40,7 +41,7 @@ namespace SimLinkup.UI
                         tvSignalCategories.Nodes.Add(tn);
 
                         var signalsThisSource =
-                            ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
+                            Signals.GetSignalsFromSource(signalSource);
                         var signalCollections = signalsThisSource.GetDistinctSignalCollectionNames();
                         if (signalCollections != null)
                         {
@@ -62,7 +63,7 @@ namespace SimLinkup.UI
         {
             var signalCollectionName = tvSignalCategories.SelectedNode.Tag as string;
             var signalSource = tvSignalCategories.SelectedNode.Parent.Tag;
-            var signalsThisSource = ScriptingContext.AllSignals.GetSignalsFromSource(signalSource);
+            var signalsThisSource = Signals.GetSignalsFromSource(signalSource);
             lvSignals.SuspendLayout();
             lvSignals.BeginUpdate();
             lvSignals.Clear();

@@ -84,20 +84,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\UserControls\AnalogSignalBasicVisualizer.resx">
-      <DependentUpon>AnalogSignalBasicVisualizer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\UserControls\DigitalSignalBasicVisualizer.resx">
-      <DependentUpon>DigitalSignalBasicVisualizer.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\UserControls\ModuleBasicVisualizer.resx">
       <DependentUpon>ModuleBasicVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\UserControls\ModuleList.resx">
       <DependentUpon>ModuleList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\UserControls\SignalCollectionBasicVisualizer.resx">
-      <DependentUpon>SignalCollectionBasicVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Content\Mapping\GouldHS070D51341standbyCompass.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -334,18 +325,6 @@
     <Compile Include="UI\Signals.Designer.cs">
       <DependentUpon>Signals.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\UserControls\AnalogSignalBasicVisualizer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\UserControls\AnalogSignalBasicVisualizer.Designer.cs">
-      <DependentUpon>AnalogSignalBasicVisualizer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UserControls\DigitalSignalBasicVisualizer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\UserControls\DigitalSignalBasicVisualizer.Designer.cs">
-      <DependentUpon>DigitalSignalBasicVisualizer.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\UserControls\ModuleBasicVisualizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -357,12 +336,6 @@
     </Compile>
     <Compile Include="UI\UserControls\ModuleList.Designer.cs">
       <DependentUpon>ModuleList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UserControls\SignalCollectionBasicVisualizer.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\UserControls\SignalCollectionBasicVisualizer.Designer.cs">
-      <DependentUpon>SignalCollectionBasicVisualizer.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
   </ItemGroup>
