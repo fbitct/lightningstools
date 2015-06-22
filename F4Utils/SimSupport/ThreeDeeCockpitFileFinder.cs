@@ -7,7 +7,7 @@ using F4Utils.Campaign;
 using F4Utils.Campaign.F4Structs;
 using F4Utils.Terrain;
 using F4Utils.Process;
-
+using Common.Strings;
 namespace F4Utils.SimSupport
 {
     public interface IThreeDeeCockpitFileFinder2
@@ -33,8 +33,8 @@ namespace F4Utils.SimSupport
             var bmsBaseDirectory = new DirectoryInfo(exePath).Parent.Parent.FullName + Path.DirectorySeparatorChar;
             var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(bmsBaseDirectory);
             var dataDir = Path.Combine(bmsBaseDirectory, "data");
-            var artDir = Path.Combine(dataDir, currentTheaterTdf.artDir);
-            var objectDir = Path.Combine(dataDir, currentTheaterTdf.objectDir);
+            var artDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.artDir ?? "art" : "art");
+            var objectDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.objectDir ?? @"terrdata\objects" : @"terrdata\objects");
             var classTable = ClassTable.ReadClassTable(Path.Combine(objectDir, "FALCON4.CT"));
             var vehicleDataTable = new VcdFile(Path.Combine(objectDir, "FALCON4.VCD")).VehicleDataTable;
             var vehicleClass = classTable.Where(x => x.dataType == (byte)Data_Types.DTYPE_VEHICLE 
@@ -43,8 +43,8 @@ namespace F4Utils.SimSupport
                 && x.vehicleDataIndex == vehicleACD).FirstOrDefault();
                
             var vehicleData = vehicleDataTable[vehicleClass.dataPtr];
-            var vehicleName = Encoding.ASCII.GetString(vehicleData.Name).Substring(0, Array.IndexOf<byte>(vehicleData.Name, 0x00));
-            var vehicleNCTR = Encoding.ASCII.GetString(vehicleData.NCTR).Substring(0, Array.IndexOf<byte>(vehicleData.NCTR, 0x00));
+            var vehicleName = Encoding.ASCII.GetString(vehicleData.Name).TrimAtNull().Replace("*", "");
+            var vehicleNCTR = Encoding.ASCII.GetString(vehicleData.NCTR).TrimAtNull().Replace("*", "");
             var visType = vehicleClass.visType[0];
 
             var mainCkptArtFolder = Path.Combine(artDir, "ckptart");
@@ -78,6 +78,17 @@ namespace F4Utils.SimSupport
         {
             try
             {
+                var invalidPathChars = Path.GetInvalidPathChars();
+                var invalidFilenameChars = Path.GetInvalidFileNameChars();
+                string pathPart = Path.GetDirectoryName(fileName);
+                string fileNamePart = Path.GetFileName(fileName);
+                if (
+                    invalidPathChars.Intersect(pathPart.ToCharArray()).Count() > 0 
+                        ||
+                    invalidFilenameChars.Intersect(fileNamePart.ToCharArray()).Count() > 0)
+                {
+                    return false;
+                }
                 return File.Exists(fileName);
             }
             catch {}
