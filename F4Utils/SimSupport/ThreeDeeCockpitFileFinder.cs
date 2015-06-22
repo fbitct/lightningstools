@@ -8,6 +8,7 @@ using F4Utils.Campaign.F4Structs;
 using F4Utils.Terrain;
 using F4Utils.Process;
 using Common.Strings;
+using log4net;
 namespace F4Utils.SimSupport
 {
     public interface IThreeDeeCockpitFileFinder2
@@ -16,6 +17,7 @@ namespace F4Utils.SimSupport
     }
     public class ThreeDeeCockpitFileFinder : IThreeDeeCockpitFileFinder2
     {
+        private static ILog _log = LogManager.GetLogger(typeof(ThreeDeeCockpitFileFinder));
         private readonly ICurrentTheaterDotTdfLoader _currentTheaterDotTdfLoader;
         private readonly IBMSRunningExecutableLocator _bmsRunningExecutableLocator;
         public ThreeDeeCockpitFileFinder(IBMSRunningExecutableLocator bmsRunningExecutableLocator=null, ICurrentTheaterDotTdfLoader currentTheaterDotTdfLoader = null)
@@ -27,48 +29,55 @@ namespace F4Utils.SimSupport
         {
             if (vehicleACD ==-1) return FindThreeDeeCockpitFileUsingOldMethod();
 
-            var exePath = _bmsRunningExecutableLocator.BMSExePath;
-            if (exePath == null) return null;
-            exePath += Path.DirectorySeparatorChar;
-            var bmsBaseDirectory = new DirectoryInfo(exePath).Parent.Parent.FullName + Path.DirectorySeparatorChar;
-            var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(bmsBaseDirectory);
-            var dataDir = Path.Combine(bmsBaseDirectory, "data");
-            var artDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.artDir ?? "art" : "art");
-            var objectDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.objectDir ?? @"terrdata\objects" : @"terrdata\objects");
-            var classTable = ClassTable.ReadClassTable(Path.Combine(objectDir, "FALCON4.CT"));
-            var vehicleDataTable = new VcdFile(Path.Combine(objectDir, "FALCON4.VCD")).VehicleDataTable;
-            var vehicleClass = classTable.Where(x => x.dataType == (byte)Data_Types.DTYPE_VEHICLE 
-                && x.vuClassData.classInfo_[ (int)VuClassHierarchy.VU_DOMAIN ] == (byte)Classtable_Domains.DOMAIN_AIR  
-                && x.vuClassData.classInfo_[ (int)VuClassHierarchy.VU_TYPE ] == (byte)Classtable_Types.TYPE_AIRPLANE  
-                && x.vehicleDataIndex == vehicleACD).FirstOrDefault();
-               
-            var vehicleData = vehicleDataTable[vehicleClass.dataPtr];
-            var vehicleName = Encoding.ASCII.GetString(vehicleData.Name).TrimAtNull().Replace("*", "");
-            var vehicleNCTR = Encoding.ASCII.GetString(vehicleData.NCTR).TrimAtNull().Replace("*", "");
-            var visType = vehicleClass.visType[0];
+            string file=string.Empty;
+            try
+            {
+                var exePath = _bmsRunningExecutableLocator.BMSExePath;
+                if (exePath == null) return null;
+                exePath += Path.DirectorySeparatorChar;
+                var bmsBaseDirectory = new DirectoryInfo(exePath).Parent.Parent.FullName + Path.DirectorySeparatorChar;
+                var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(bmsBaseDirectory);
+                var dataDir = Path.Combine(bmsBaseDirectory, "data");
+                var artDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.artDir ?? "art" : "art");
+                var objectDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.objectDir ?? @"terrdata\objects" : @"terrdata\objects");
+                var classTable = ClassTable.ReadClassTable(Path.Combine(objectDir, "FALCON4.CT"));
+                var vehicleDataTable = new VcdFile(Path.Combine(objectDir, "FALCON4.VCD")).VehicleDataTable;
+                var vehicleClass = classTable.Where(x => x.dataType == (byte)Data_Types.DTYPE_VEHICLE
+                    && x.vuClassData.classInfo_[(int)VuClassHierarchy.VU_DOMAIN] == (byte)Classtable_Domains.DOMAIN_AIR
+                    && x.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_AIRPLANE
+                    && x.vehicleDataIndex == vehicleACD).FirstOrDefault();
 
-            var mainCkptArtFolder = Path.Combine(artDir, "ckptart");
-            const string threeDeeCockpitDatFile = "3dckpit.dat";
-            string file;
-            if (visType == (short) Vis_Types.VIS_F16C)
-            {
-                file = Path.Combine(mainCkptArtFolder, threeDeeCockpitDatFile);
-            }
-            else
-            {
-                file = Path.Combine(mainCkptArtFolder, visType.ToString(), threeDeeCockpitDatFile);
-                if (!FileExists(file))
+                var vehicleData = vehicleDataTable[vehicleClass.dataPtr];
+                var vehicleName = Encoding.ASCII.GetString(vehicleData.Name).TrimAtNull().Replace("*", "");
+                var vehicleNCTR = Encoding.ASCII.GetString(vehicleData.NCTR).TrimAtNull().Replace("*", "");
+                var visType = vehicleClass.visType[0];
+
+                var mainCkptArtFolder = Path.Combine(artDir, "ckptart");
+                const string threeDeeCockpitDatFile = "3dckpit.dat";
+                if (visType == (short)Vis_Types.VIS_F16C)
                 {
-                    file = Path.Combine(mainCkptArtFolder, vehicleName, threeDeeCockpitDatFile);
+                    file = Path.Combine(mainCkptArtFolder, threeDeeCockpitDatFile);
+                }
+                else
+                {
+                    file = Path.Combine(mainCkptArtFolder, visType.ToString(), threeDeeCockpitDatFile);
                     if (!FileExists(file))
                     {
-                        file = Path.Combine(mainCkptArtFolder, vehicleNCTR, threeDeeCockpitDatFile);
+                        file = Path.Combine(mainCkptArtFolder, vehicleName, threeDeeCockpitDatFile);
                         if (!FileExists(file))
                         {
-                            file = Path.Combine(mainCkptArtFolder, threeDeeCockpitDatFile);
+                            file = Path.Combine(mainCkptArtFolder, vehicleNCTR, threeDeeCockpitDatFile);
+                            if (!FileExists(file))
+                            {
+                                file = Path.Combine(mainCkptArtFolder, threeDeeCockpitDatFile);
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message, e);
             }
             var fi = new FileInfo(file);
             return FileExists(file) ? fi : FindThreeDeeCockpitFileUsingOldMethod();
@@ -112,10 +121,13 @@ namespace F4Utils.SimSupport
             if (!dir.Exists) return null;
             var subdirectories = dir.GetDirectories();
 
-            return subdirectories.Concat(new[] { dir })
+            var cockpitFilesInUse= subdirectories.Concat(new[] { dir })
                 .Select(x => new FileInfo(Path.Combine(x.FullName, fileName)))
                 .Where(FileExistsAndIsInUse)
-                .FirstOrDefault();
+                .OrderByDescending(x=>x.LastAccessTime)
+                .ToList();
+
+            return cockpitFilesInUse.FirstOrDefault();
         }
         private static bool FileExistsAndIsInUse(FileInfo file)
         {
