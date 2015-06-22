@@ -1994,8 +1994,8 @@ namespace F4Utils.SimSupport
                                                 F4SimOutputs.SIM__BMS_PLAYER_IS_FLYING, typeof(bool)));
             for (var i = 0; i < 32; i++)
             {
-                AddF4SimOutput(CreateNewF4SimOutput("Simulation", string.Format("Pilot #{0}", i + 1), string.Format("Callsign", i + 1), F4SimOutputs.SIM__PILOT_CALLSIGN, i, typeof(string)));
-                AddF4SimOutput(CreateNewF4SimOutput("Simulation", string.Format("Pilot #{0}", i + 1), string.Format("Status (0=In UI, 1=Loading, 2=Waiting, 3=Flying, 4=Dead, 5=Unknown)", i + 1), F4SimOutputs.SIM__PILOT_STATUS, i, typeof(int)));
+                AddF4SimOutput(CreateNewF4SimOutput("Pilots", string.Format("Pilot #{0}", i + 1), string.Format("Callsign", i + 1), F4SimOutputs.SIM__PILOT_CALLSIGN, i, typeof(string)));
+                AddF4SimOutput(CreateNewF4SimOutput("Pilots", string.Format("Pilot #{0}", i + 1), string.Format("Status (0=In UI, 1=Loading, 2=Waiting, 3=Flying, 4=Dead, 5=Unknown)", i + 1), F4SimOutputs.SIM__PILOT_STATUS, i, typeof(int)));
                 /*
                  IN_UI = 0, // UI      - in the UI
                 LOADING = 1, // UI>3D   - loading the sim data

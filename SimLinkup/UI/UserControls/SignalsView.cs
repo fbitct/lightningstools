@@ -79,8 +79,6 @@ namespace SimLinkup.UI.UserControls
 
         private void UpdateListViewAfterTreeViewItemSelect()
         {
-            lvSignals.SuspendLayout();
-            lvSignals.BeginUpdate();
             lvSignals.Clear();
             lvSignals.Groups.Clear();
 
@@ -94,10 +92,10 @@ namespace SimLinkup.UI.UserControls
             lvSignals.Columns.Add("Signal");
             lvSignals.Columns.Add("Value");
 
+            lvSignals.BeginUpdate();
             var signalsThisSource = Signals.GetSignalsFromSource(sourceIdentifier);
             var signalsThisCategory = signalsThisSource.GetSignalsByCategory(categoryIdentifier);
             var signalsThisCollection = signalsThisCategory.GetSignalsByCollection(collectionIdentifier);
-
             if (signalsThisCollection != null)
             {
                 var subCollections = signalsThisCollection.GetUniqueSubcollections(collectionIdentifier);
@@ -137,15 +135,12 @@ namespace SimLinkup.UI.UserControls
                     }
                 }
             }
-
             for (var i = 0; i < lvSignals.Columns.Count; i++)
             {
                 lvSignals.Columns[i].TextAlign = HorizontalAlignment.Left;
                 lvSignals.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             }
-            lvSignals.Update();
             lvSignals.EndUpdate();
-            lvSignals.ResumeLayout();
             lvSignals.Sort();
         }
 
@@ -246,7 +241,5 @@ namespace SimLinkup.UI.UserControls
             // Perform the sort with these new sort options.
             lvSignals.Sort();
         }
-
-
     }
 }
