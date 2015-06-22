@@ -65,7 +65,23 @@ namespace F4Utils.SimSupport
 					{
 						_coordinates.RMFD= ReadCaptureCoordinates(currentLine);
 					}
-				}
+                    else if (currentLine.ToLowerInvariant().StartsWith("ded\t"))
+                    {
+                        _coordinates.DED = ReadCaptureCoordinates(currentLine);
+                    }
+                    else if (currentLine.ToLowerInvariant().StartsWith("pfl\t"))
+                    {
+                        _coordinates.PFL = ReadCaptureCoordinates(currentLine);
+                    }
+                    else if (currentLine.ToLowerInvariant().StartsWith("rwr\t"))
+                    {
+                        _coordinates.RWR = ReadCaptureCoordinates(currentLine);
+                    }
+                    else if (currentLine.ToLowerInvariant().StartsWith("hms\t"))
+                    {
+                        _coordinates.HMS = ReadCaptureCoordinates(currentLine);
+                    }
+                }
 			}
 			if (isDoubleResolution)
 			{
@@ -74,7 +90,11 @@ namespace F4Utils.SimSupport
                 _coordinates.MFD3 = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.MFD3, 2);
                 _coordinates.MFD4 = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.MFD4, 2);
                 _coordinates.HUD = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.HUD, 2);
-			}
+                _coordinates.PFL = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.PFL, 2);
+                _coordinates.DED = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.DED, 2);
+                _coordinates.RWR = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.RWR, 2);
+                _coordinates.RWR = Common.UI.Layout.Util.MultiplyRectangle(_coordinates.HMS, 2);
+            }
 		}
 
 		private Rectangle ReadCaptureCoordinates(string configLine)
