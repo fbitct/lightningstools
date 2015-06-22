@@ -2020,7 +2020,7 @@
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.5.6.1"
+        "ProductVersion" = "8:0.5.7"
         "Manufacturer" = "8:Lightning's Free Tools & Utilities"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:http://www.assembla.com/spaces/lightningstools"
