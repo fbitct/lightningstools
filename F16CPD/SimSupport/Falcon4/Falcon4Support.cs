@@ -518,28 +518,42 @@ namespace F16CPD.SimSupport.Falcon4
         private static void UpdateHSIToFromFlagVisibilityAndADICommandBarsVisibilityBasedOnBMS4NavMode(
             FlightData flightData, F4SharedMem.FlightData fromFalcon)
         {
-            /*
-            This value is called navMode and is unsigned char type with 4 possible values: ILS/TCN=0, TCN=1, NAV=2, ILS/NAV=3
-            */
+            var showToFromFlag = true;
+            var showCommandBars =
+                           ((Math.Abs((fromFalcon.AdiIlsVerPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= (fromFalcon.deviationLimit / 5.0f))
+                               &&
+                           (Math.Abs((fromFalcon.AdiIlsHorPos / Common.Math.Constants.RADIANS_PER_DEGREE)) <= fromFalcon.deviationLimit))
+                               &&
+                           !(((HsiBits)fromFalcon.hsiBits & HsiBits.ADI_GS) == HsiBits.ADI_GS)
+                           &&
+                           !(((HsiBits)fromFalcon.hsiBits & HsiBits.ADI_LOC) == HsiBits.ADI_LOC)
+                           &&
+                           !(((HsiBits)fromFalcon.hsiBits & HsiBits.ADI_OFF) == HsiBits.ADI_OFF);
 
-            byte bmsNavMode = fromFalcon.navMode;
-            switch (bmsNavMode)
+            switch (fromFalcon.navMode)
             {
                 case 0: //NavModes.PlsTcn:
-                    flightData.HsiDisplayToFromFlag = false;
+                    showToFromFlag = false;
                     break;
                 case 1: //NavModes.Tcn:
-                    flightData.HsiDisplayToFromFlag = true;
-                    flightData.AdiEnableCommandBars = false;
+                    showToFromFlag = true;
+                    showCommandBars = false;
                     break;
                 case 2: //NavModes.Nav:
-                    flightData.HsiDisplayToFromFlag = false;
-                    flightData.AdiEnableCommandBars = false;
+                    showToFromFlag = false;
+                    showCommandBars = false;
                     break;
                 case 3: //NavModes.PlsNav:
-                    flightData.HsiDisplayToFromFlag = false;
+                    showToFromFlag = false;
                     break;
             }
+
+            if (showCommandBars)
+            {
+                showToFromFlag = false;
+            }
+            flightData.AdiEnableCommandBars = showCommandBars;
+            flightData.HsiDisplayToFromFlag = showToFromFlag;
         }
 
         private void PerformClientSideFlightDataUpdates()
