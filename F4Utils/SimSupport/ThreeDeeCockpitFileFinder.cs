@@ -39,6 +39,11 @@ namespace F4Utils.SimSupport
                 var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(bmsBaseDirectory);
                 var dataDir = Path.Combine(bmsBaseDirectory, "data");
                 var artDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.artDir ?? "art" : "art");
+                var mainCkptArtFolder = Path.Combine(artDir, "ckptart");
+                if (!Directory.Exists(mainCkptArtFolder))
+                {
+                    mainCkptArtFolder = Path.Combine(dataDir, @"art\ckptart");
+                }
                 var objectDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.objectDir ?? @"terrdata\objects" : @"terrdata\objects");
                 var classTable = ClassTable.ReadClassTable(Path.Combine(objectDir, "FALCON4.CT"));
                 var vehicleDataTable = new VcdFile(Path.Combine(objectDir, "FALCON4.VCD")).VehicleDataTable;
@@ -52,7 +57,6 @@ namespace F4Utils.SimSupport
                 var vehicleNCTR = Encoding.ASCII.GetString(vehicleData.NCTR).TrimAtNull().Replace("*", "");
                 var visType = vehicleClass.visType[0];
 
-                var mainCkptArtFolder = Path.Combine(artDir, "ckptart");
                 const string threeDeeCockpitDatFile = "3dckpit.dat";
                 if (visType == (short)Vis_Types.VIS_F16C)
                 {

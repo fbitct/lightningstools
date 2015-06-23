@@ -70,7 +70,7 @@ namespace MFDExtractor
 	    private  IFlightDataRetriever _flightDataRetriever;
 		private readonly TexturesSharedMemoryImageCoordinates _texturesSharedMemoryImageCoordinates = new TexturesSharedMemoryImageCoordinates();
 	    private readonly PerformanceCounterInstaller _performanceCounterInstaller;
-
+        private int _lastVehicleACD;
 	    #endregion
 
 
@@ -449,15 +449,28 @@ namespace MFDExtractor
 
 	    private void EnsureThreeDeeCaptureCoordinatesAreLoaded(int vehicleACD)
 	    {
-			if ((_texturesSharedMemoryImageCoordinates.HUD == Rectangle.Empty) &&
-				(_texturesSharedMemoryImageCoordinates.LMFD == Rectangle.Empty) &&
-				(_texturesSharedMemoryImageCoordinates.RMFD == Rectangle.Empty) &&
-				(_texturesSharedMemoryImageCoordinates.MFD3 == Rectangle.Empty) &&
-				(_texturesSharedMemoryImageCoordinates.MFD4 == Rectangle.Empty))
+            if (ThreeDeeCaptureCoordinatesAreEmpty || vehicleACD != _lastVehicleACD) 
 	        {
 	            _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile(vehicleACD);
+                _lastVehicleACD = vehicleACD;
 	        }
 	    }
+
+        private bool ThreeDeeCaptureCoordinatesAreEmpty
+        {
+            get
+            {
+                return (_texturesSharedMemoryImageCoordinates.HUD == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.LMFD == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.RMFD == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.MFD3 == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.MFD4 == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.RWR == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.DED == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.PFL == Rectangle.Empty) &&
+                                (_texturesSharedMemoryImageCoordinates.HMS == Rectangle.Empty);
+            }
+        }
 
 	    private void ResetThreeDeeCaptureCoordinates()
 	    {
@@ -466,6 +479,10 @@ namespace MFDExtractor
             _texturesSharedMemoryImageCoordinates.RMFD = Rectangle.Empty;
             _texturesSharedMemoryImageCoordinates.MFD3 = Rectangle.Empty;
             _texturesSharedMemoryImageCoordinates.MFD4 = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.RWR = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.DED = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.PFL = Rectangle.Empty;
+            _texturesSharedMemoryImageCoordinates.HMS = Rectangle.Empty;
         }
 
 	    private static bool NeedToCaptureMFDsAndOrHud
