@@ -23,18 +23,18 @@ namespace MFDExtractor.FlightDataAdapters
                 var mfd = instrument.Renderer as IMfdRenderer;
                 try
                 {
-                    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Client && instrument.Form !=null && instrument.Form.Visible)
+                    mfd.InstrumentState.TestMode = Extractor.State.OptionsFormIsShowing;
+                    if ((NetworkMode)Settings.Default.NetworkingMode == NetworkMode.Client && instrument.Form != null && instrument.Form.Visible)
                     {
                         mfd.InstrumentState.SourceImage = ExtractorClient.GetInstrumentImage(instrumentType);
                     }
-                    else
+                    else if (!mfd.InstrumentState.TestMode)
                     {
                         mfd.InstrumentState.SourceImage = sourceRectangle.IsEmpty
                             ? null
                             : texSharedMemReader != null ? texSharedMemReader.GetImage(sourceRectangle) : null;
                     }
                     mfd.InstrumentState.SourceRectangle = mfd.InstrumentState.SourceImage != null ? new Rectangle(0, 0, mfd.InstrumentState.SourceImage.Width, mfd.InstrumentState.SourceImage.Height) : Rectangle.Empty;
-                    mfd.InstrumentState.TestMode = Extractor.State.OptionsFormIsShowing && !Extractor.State.SimRunning;
                     mfd.InstrumentState.Blank = !Extractor.State.SimRunning;
                     if (!Extractor.State.Running || !Extractor.State.KeepRunning)
                     {
