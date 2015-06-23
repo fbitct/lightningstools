@@ -38,13 +38,19 @@ namespace F4Utils.SimSupport
                 var bmsBaseDirectory = new DirectoryInfo(exePath).Parent.Parent.FullName + Path.DirectorySeparatorChar;
                 var currentTheaterTdf = _currentTheaterDotTdfLoader.GetCurrentTheaterDotTdf(bmsBaseDirectory);
                 var dataDir = Path.Combine(bmsBaseDirectory, "data");
+
                 var artDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.artDir ?? "art" : "art");
                 var mainCkptArtFolder = Path.Combine(artDir, "ckptart");
                 if (!Directory.Exists(mainCkptArtFolder))
                 {
                     mainCkptArtFolder = Path.Combine(dataDir, @"art\ckptart");
                 }
+
                 var objectDir = Path.Combine(dataDir, currentTheaterTdf != null ? currentTheaterTdf.objectDir ?? @"terrdata\objects" : @"terrdata\objects");
+                if (!Directory.Exists(objectDir)) 
+                {
+                    objectDir = Path.Combine(dataDir, @"terrdata\objects");
+                }
                 var classTable = ClassTable.ReadClassTable(Path.Combine(objectDir, "FALCON4.CT"));
                 var vehicleDataTable = new VcdFile(Path.Combine(objectDir, "FALCON4.VCD")).VehicleDataTable;
                 var vehicleClass = classTable.Where(x => x.dataType == (byte)Data_Types.DTYPE_VEHICLE
