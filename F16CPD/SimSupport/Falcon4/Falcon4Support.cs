@@ -45,6 +45,7 @@ namespace F16CPD.SimSupport.Falcon4
         private TerrainDB _terrainDB;
         private ITheaterMapRetriever _theaterMapRetriever;
         private TexturesSharedMemoryImageCoordinates _texturesSharedMemoryImageCoordinates;
+        private int _lastVehicleAcd;
         public Falcon4Support(F16CpdMfdManager manager)
         {
             Manager = manager;
@@ -711,11 +712,18 @@ namespace F16CPD.SimSupport.Falcon4
             if (_texSharedMemReader != null && _texSharedMemReader.IsDataAvailable)
             {
                 var latestSharedMem = ReadF4SharedMem();
-                var vehicleAcd = latestSharedMem.vehicleACD;
-                _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile(vehicleAcd);
-                using (var image = _texSharedMemReader.GetImage(sourceRectangle))
+                if (latestSharedMem != null)
                 {
-                    return Common.Imaging.Util.BytesFromBitmap(image, "RLE", "PNG");
+                    var vehicleAcd = latestSharedMem.vehicleACD;
+                    if (vehicleAcd != _lastVehicleAcd)
+                    {
+                        _threeDeeCaptureCoordinateUpdater.Update3DCoordinatesFromCurrentBmsDatFile(vehicleAcd);
+                        _lastVehicleAcd = vehicleAcd;
+                    }
+                    using (var image = _texSharedMemReader.GetImage(sourceRectangle))
+                    {
+                        return Common.Imaging.Util.BytesFromBitmap(image, "RLE", "PNG");
+                    }
                 }
             }
             return null;
