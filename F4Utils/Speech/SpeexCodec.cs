@@ -115,12 +115,12 @@ namespace F4Utils.Speech
         public int Encode(byte[] inputBuffer, int inputBufferOffset, int dataLength, byte[] outputBuffer,
                           int outputBufferOffset)
         {
-            return Encode(inputBuffer, inputBufferOffset, dataLength, outputBuffer, outputBufferOffset, 3);
+            return Encode(inputBuffer, inputBufferOffset, dataLength, outputBuffer, outputBufferOffset, 8);
         }
 
         public int Encode(Stream inputStream, int dataLength, Stream outputStream)
         {
-            return Encode(inputStream, dataLength, outputStream, 3);
+            return Encode(inputStream, dataLength, outputStream, 8);
         }
 
         public int Decode(Stream inputStream, int dataLength, int uncompressedLength, Stream outputStream)
