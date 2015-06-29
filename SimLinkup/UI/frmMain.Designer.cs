@@ -76,7 +76,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(850, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1117, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -168,10 +168,10 @@
             // 
             this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(0, 593);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 760);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(850, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1117, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
@@ -185,7 +185,7 @@
             this.btnOptions});
             this.toolStrip1.Location = new System.Drawing.Point(0, 28);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(850, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1117, 27);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -314,7 +314,7 @@
             this.panel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel.Location = new System.Drawing.Point(0, 55);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(850, 538);
+            this.panel.Size = new System.Drawing.Size(1117, 705);
             this.panel.TabIndex = 3;
             // 
             // signalsView
@@ -324,7 +324,7 @@
             this.signalsView.Location = new System.Drawing.Point(0, 0);
             this.signalsView.Name = "signalsView";
             this.signalsView.Signals = null;
-            this.signalsView.Size = new System.Drawing.Size(850, 538);
+            this.signalsView.Size = new System.Drawing.Size(1117, 705);
             this.signalsView.TabIndex = 0;
             // 
             // frmMain
@@ -332,7 +332,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(850, 615);
+            this.ClientSize = new System.Drawing.Size(1117, 782);
             this.Controls.Add(this.panel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);

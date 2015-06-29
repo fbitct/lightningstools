@@ -73,18 +73,18 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.lvSignals);
             this.splitContainer1.Size = new System.Drawing.Size(1107, 729);
-            this.splitContainer1.SplitterDistance = 324;
+            this.splitContainer1.SplitterDistance = 465;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 1;
             // 
-            // tvSignalCategories
+            // tvSignals
             // 
             this.tvSignals.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvSignals.FullRowSelect = true;
             this.tvSignals.Location = new System.Drawing.Point(0, 0);
             this.tvSignals.Margin = new System.Windows.Forms.Padding(4);
-            this.tvSignals.Name = "tvSignalCategories";
-            this.tvSignals.Size = new System.Drawing.Size(324, 729);
+            this.tvSignals.Name = "tvSignals";
+            this.tvSignals.Size = new System.Drawing.Size(465, 729);
             this.tvSignals.TabIndex = 3;
             this.tvSignals.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSignals_AfterSelect);
             // 
@@ -99,7 +99,7 @@
             this.lvSignals.Margin = new System.Windows.Forms.Padding(4);
             this.lvSignals.MultiSelect = false;
             this.lvSignals.Name = "lvSignals";
-            this.lvSignals.Size = new System.Drawing.Size(778, 729);
+            this.lvSignals.Size = new System.Drawing.Size(637, 729);
             this.lvSignals.TabIndex = 2;
             this.lvSignals.UseCompatibleStateImageBehavior = false;
             this.lvSignals.View = System.Windows.Forms.View.Details;
