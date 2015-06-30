@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace F4Utils.Campaign.F4Structs
 {
     // Team flags
+    [Flags]
     public enum TeamFlagsEnum
     {
         TEAM_ACTIVE = 0x01,	// Set if team is being used
