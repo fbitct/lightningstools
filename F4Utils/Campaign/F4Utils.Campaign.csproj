@@ -79,6 +79,7 @@
     <Compile Include="F4Structs\Falcon4EntityClassType.cs" />
     <Compile Include="F4Structs\FeatureClassDataType.cs" />
     <Compile Include="F4Structs\FeatureEntry.cs" />
+    <Compile Include="F4Structs\FmapWeatherCell.cs" />
     <Compile Include="F4Structs\IRSTDataType.cs" />
     <Compile Include="F4Structs\LoadoutArray.cs" />
     <Compile Include="F4Structs\LoadoutStruct.cs" />
@@ -129,6 +130,9 @@
     <Compile Include="F4Structs\WeaponListDataType.cs" />
     <Compile Include="F4Structs\WeaponOverwriteFlags.cs" />
     <Compile Include="F4Structs\WeaponsConstants.cs" />
+    <Compile Include="F4Structs\WeatherCell.cs" />
+    <Compile Include="F4Structs\WeatherConstants.cs" />
+    <Compile Include="F4Structs\WeatherEnums.cs" />
     <Compile Include="FcdFile.cs" />
     <Compile Include="FedFile.cs" />
     <Compile Include="IcdFile.cs" />
@@ -139,6 +143,8 @@
     <Compile Include="RcdFile.cs" />
     <Compile Include="RktFile.cs" />
     <Compile Include="RwdFile.cs" />
+    <Compile Include="Save\FmapFile.cs" />
+    <Compile Include="Save\FrcFile.cs" />
     <Compile Include="SsdFile.cs" />
     <Compile Include="SwdFile.cs" />
     <Compile Include="UcdFile.cs" />
