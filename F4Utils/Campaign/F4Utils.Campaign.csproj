@@ -50,6 +50,8 @@
     <Compile Include="ClassTable.cs" />
     <Compile Include="CmpFile.cs" />
     <Compile Include="DdpFile.cs" />
+    <Compile Include="F4Structs\AirActionTypeEnum.cs" />
+    <Compile Include="F4Structs\AirTacticTypeEnum.cs" />
     <Compile Include="F4Structs\AltLethality.cs" />
     <Compile Include="F4Structs\Bbox_Types.cs" />
     <Compile Include="F4Structs\CampEvent.cs" />
@@ -80,6 +82,9 @@
     <Compile Include="F4Structs\FeatureClassDataType.cs" />
     <Compile Include="F4Structs\FeatureEntry.cs" />
     <Compile Include="F4Structs\FmapWeatherCell.cs" />
+    <Compile Include="F4Structs\GroundActionTypeEnum.cs" />
+    <Compile Include="F4Structs\ROEAllowedEnum.cs" />
+    <Compile Include="F4Structs\ROEEngagementQueryTypeEnum.cs" />
     <Compile Include="F4Structs\IRSTDataType.cs" />
     <Compile Include="F4Structs\LoadoutArray.cs" />
     <Compile Include="F4Structs\LoadoutStruct.cs" />
@@ -108,8 +113,12 @@
     <Compile Include="F4Structs\SquadInfo.cs" />
     <Compile Include="F4Structs\SquadronStoresDataType.cs" />
     <Compile Include="F4Structs\Sub_Types.cs" />
+    <Compile Include="F4Structs\table_of_equipment_manufacturers.cs" />
     <Compile Include="F4Structs\TeamAirActionType.cs" />
     <Compile Include="F4Structs\TeamBasicInfo.cs" />
+    <Compile Include="F4Structs\TeamConstants.cs" />
+    <Compile Include="F4Structs\TeamDataEnum.cs" />
+    <Compile Include="F4Structs\TeamFlagsEnum.cs" />
     <Compile Include="F4Structs\TeamGndActionType.cs" />
     <Compile Include="F4Structs\TeamStatus.cs" />
     <Compile Include="F4Structs\UnitClassDataType.cs" />
