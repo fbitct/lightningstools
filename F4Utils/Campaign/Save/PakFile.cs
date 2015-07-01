@@ -21,7 +21,7 @@ namespace F4Utils.Campaign.Save
             {
                 MapData = new byte[stream.Length];
                 stream.Read(MapData, 0, (int)stream.Length);
-            }
+             }
             var dims = (int)Math.Sqrt(MapData.Length);
             System.Drawing.Bitmap mapImage = new System.Drawing.Bitmap(width:dims, height:dims, format: PixelFormat.Format8bppIndexed);
             var bitmapData = mapImage.LockBits(new System.Drawing.Rectangle(0, 0, dims, dims), ImageLockMode.WriteOnly, PixelFormat.Format8bppIndexed);

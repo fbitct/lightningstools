@@ -141,6 +141,7 @@
     <Compile Include="F4Structs\TeamStatus.cs" />
     <Compile Include="F4Structs\Temp.cs" />
     <Compile Include="F4Structs\UnitClassDataType.cs" />
+    <Compile Include="F4Structs\UnitHistoryType.cs" />
     <Compile Include="F4Structs\vector.cs" />
     <Compile Include="F4Structs\VehicleClassDataType.cs" />
     <Compile Include="F4Structs\Veh_types.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="RwdFile.cs" />
     <Compile Include="Save\FmapFile.cs" />
     <Compile Include="Save\FrcFile.cs" />
+    <Compile Include="Save\HisFile.cs" />
     <Compile Include="Save\PakFile.cs" />
     <Compile Include="Save\PriFile.cs" />
     <Compile Include="Save\PriFiles.cs" />
