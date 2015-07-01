@@ -22,7 +22,7 @@ namespace F4Utils.Campaign.Save
         private void LoadTtFile(string fileName)
         {
             //reads TT file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream))
             {
                 AirTactics = reader.ReadInt16();

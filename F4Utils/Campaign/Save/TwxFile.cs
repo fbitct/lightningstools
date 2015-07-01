@@ -66,7 +66,7 @@ namespace F4Utils.Campaign.Save
         private void LoadTwxFile(string fileName)
         {
             //reads TWX file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream))
             {
                 Version = reader.ReadUInt32();

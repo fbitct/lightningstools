@@ -17,7 +17,7 @@ namespace F4Utils.Campaign.Save
         private void LoadFmapFile(string fileName)
         {
             //reads FMAP file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream))
             {
                 XCELLS = reader.ReadInt32();

@@ -1,6 +1,8 @@
 ﻿using F4Utils.Campaign.F4Structs;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign.Save
 {
@@ -19,9 +21,10 @@ namespace F4Utils.Campaign.Save
 
          private void LoadHisFile(string fileName)
          {
+             List<HsiFileRecord> records = new List<HsiFileRecord>();
              //reads HIS file
-             using (var stream = new FileStream(fileName, FileMode.Open))
-             using (var reader = new BinaryReader(stream))
+             using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
              {
                  while (stream.Position != stream.Length)
                  {
@@ -36,8 +39,10 @@ namespace F4Utils.Campaign.Save
                             rec.UnitHistory[i] = new UnitHistoryType(stream);
                          }
                      }
+                     records.Add(rec);
                  }
              }
+             HistoryRecords = records.ToArray();
          }
     }
 }

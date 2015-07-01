@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace F4Utils.PlayerOp
 {
@@ -80,7 +81,7 @@ namespace F4Utils.PlayerOp
 
         public PlayerOp(Stream stream) : this()
         {
-            using (var br = new BinaryReader(stream))
+            using (var br = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
                 DispFlags = br.ReadInt32();
                 DispTerrainDist = br.ReadSingle();

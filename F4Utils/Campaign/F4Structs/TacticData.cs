@@ -36,7 +36,7 @@ namespace F4Utils.Campaign.F4Structs
         public TacticData() { }
         public TacticData(Stream stream)
         {
-            using (var reader = new BinaryReader(stream))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 id = reader.ReadInt16();
                 name = reader.ReadChars(30);

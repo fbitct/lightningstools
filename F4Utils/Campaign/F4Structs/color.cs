@@ -21,7 +21,7 @@ namespace F4Utils.Campaign.F4Structs
 	    }
         public color(Stream stream)
         {
-            using (var reader = new BinaryReader(stream))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
                 r = reader.ReadSingle();
                 g = reader.ReadSingle();

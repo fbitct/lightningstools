@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 namespace F4Utils.Campaign.F4Structs
 {
     [Serializable]
@@ -10,7 +11,7 @@ namespace F4Utils.Campaign.F4Structs
         public ConditionPreset() { }
         public ConditionPreset(Stream stream): this()
         {
-            using (var reader = new BinaryReader(stream))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
                 nMinTemperature = reader.ReadInt32();
                 nMidTemperature = reader.ReadInt32();
