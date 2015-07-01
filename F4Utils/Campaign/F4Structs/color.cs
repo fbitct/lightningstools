@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 namespace F4Utils.Campaign.F4Structs
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack=1)]
-    public struct color
+    public class color
     {
-        float r, g, b;
-        float h, s, v;
-        float X, Y, Z;
-        float x, y, L;
+        public float r, g, b;
+        public float h, s, v;
+        public float X, Y, Z;
+        public float x, y, L;
 
         private const float SMALL_NUMBER		=(1e-8f);
         private const float KINDA_SMALL_NUMBER	=(1e-4f);
@@ -285,27 +286,27 @@ namespace F4Utils.Campaign.F4Structs
 		    else return false;
 	    }
 
-        public color operator *(float Scale, color V)
+        public static color operator *(float Scale, color V)
 	    {
 		    return new color(V.r * Scale,V.g * Scale,V.b * Scale);
 	    }
 
-        public color operator +(color V) 
+        public static color operator +(color V1, color V2) 
 	    {
-		    return new color(r + V.r,g + V.g,b + V.b);
+		    return new color(V1.r + V2.r,V1.g + V2.g,V1.b + V2.b);
 	    }
 
-        public color operator -(color V) 
+        public static color operator -(color V1, color V2) 
 	    {
-		    return new color(r - V.r,g - V.g,b - V.b);
+		    return new color(V1.r - V2.r,V1.g - V2.g,V1.b - V2.b);
 	    }
 
-        public bool operator ==(color V1, color V2) 
+        public static bool operator ==(color V1, color V2) 
 	    {
 		    return V1.r == V2.r && V1.g==V2.g && V1.b==V2.b;
 	    }
 
-	    public bool operator !=(color V1, color V2) 
+        public static bool operator !=(color V1, color V2) 
 	    {
 		    return V1.r != V2.r || V1.g!=V2.g || V1.b!=V2.b;
 	    }
@@ -330,7 +331,35 @@ namespace F4Utils.Campaign.F4Structs
         {
             return ((a << 24) + (r << 16) + (g << 8) + b);
         }
-
+        public override bool Equals(object obj)
+        {
+            return obj !=null && (obj is color) &&
+                r == ((color)obj).r && g == ((color)obj).g && b == ((color)obj).b;
+        }
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append(("color {,"));
+            sb.Append(string.Format("r:{0},", r));
+            sb.Append(string.Format("g:{0},",g));
+            sb.Append(string.Format("b:{0},",b));
+            sb.Append(string.Format("h:{0},",h));
+            sb.Append(string.Format("s:{0},",s));
+            sb.Append(string.Format("v:{0},",v));
+            sb.Append(string.Format("X:{0},",X));
+            sb.Append(string.Format("Y:{0},",Y));
+            sb.Append(string.Format("Z:{0},",Z));
+            sb.Append(string.Format("x:{0},",x));
+            sb.Append(string.Format("y:{0},",y));
+            sb.Append(string.Format("L:{0}",L));
+            sb.Append(("}"));
+            return sb.ToString();
+        }
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
     }
+
 }
 

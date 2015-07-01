@@ -5,7 +5,7 @@ namespace F4Utils.Campaign.F4Structs
 {
     [Serializable]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct ConditionPreset
+    public class ConditionPreset
     {
         public ConditionPreset() { }
         public ConditionPreset(Stream stream): this()

@@ -60,6 +60,8 @@
     <Compile Include="F4Structs\Classtable_Classes.cs" />
     <Compile Include="F4Structs\Classtable_Domains.cs" />
     <Compile Include="F4Structs\Classtable_Types.cs" />
+    <Compile Include="F4Structs\color.cs" />
+    <Compile Include="F4Structs\ConditionPreset.cs" />
     <Compile Include="F4Structs\CountryListEnum.cs" />
     <Compile Include="F4Structs\DamageDataType.cs" />
     <Compile Include="F4Structs\Data_Types.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="F4Structs\MissionRollEnum.cs" />
     <Compile Include="F4Structs\MissionTargetTypeEnum.cs" />
     <Compile Include="F4Structs\MissionTypeEnum.cs" />
+    <Compile Include="F4Structs\Press.cs" />
     <Compile Include="F4Structs\ROEAllowedEnum.cs" />
     <Compile Include="F4Structs\ROEEngagementQueryTypeEnum.cs" />
     <Compile Include="F4Structs\IRSTDataType.cs" />
@@ -123,6 +126,7 @@
     <Compile Include="F4Structs\SquadronStoresDataType.cs" />
     <Compile Include="F4Structs\Sub_Types.cs" />
     <Compile Include="F4Structs\table_of_equipment_manufacturers.cs" />
+    <Compile Include="F4Structs\TacticData.cs" />
     <Compile Include="F4Structs\TankerConditionalModeEnum.cs" />
     <Compile Include="F4Structs\TargetAreaProfileEnum.cs" />
     <Compile Include="F4Structs\TargetDescriptionType.cs" />
@@ -134,6 +138,7 @@
     <Compile Include="F4Structs\TeamFlagsEnum.cs" />
     <Compile Include="F4Structs\TeamGndActionType.cs" />
     <Compile Include="F4Structs\TeamStatus.cs" />
+    <Compile Include="F4Structs\Temp.cs" />
     <Compile Include="F4Structs\UnitClassDataType.cs" />
     <Compile Include="F4Structs\vector.cs" />
     <Compile Include="F4Structs\VehicleClassDataType.cs" />
@@ -155,6 +160,9 @@
     <Compile Include="F4Structs\WeatherCell.cs" />
     <Compile Include="F4Structs\WeatherConstants.cs" />
     <Compile Include="F4Structs\WeatherEnums.cs" />
+    <Compile Include="F4Structs\WeatherShifts.cs" />
+    <Compile Include="F4Structs\Wind.cs" />
+    <Compile Include="F4Structs\WthTurbu.cs" />
     <Compile Include="FcdFile.cs" />
     <Compile Include="FedFile.cs" />
     <Compile Include="IcdFile.cs" />
@@ -169,6 +177,8 @@
     <Compile Include="Save\FrcFile.cs" />
     <Compile Include="Save\PriFile.cs" />
     <Compile Include="Save\PriFiles.cs" />
+    <Compile Include="Save\TtFile.cs" />
+    <Compile Include="Save\TwxFile.cs" />
     <Compile Include="SsdFile.cs" />
     <Compile Include="SwdFile.cs" />
     <Compile Include="UcdFile.cs" />
