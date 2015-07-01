@@ -37,6 +37,7 @@
       <HintPath>..\..\Common\ThirdParty\Log4Net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AcdFile.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="RwdFile.cs" />
     <Compile Include="Save\FmapFile.cs" />
     <Compile Include="Save\FrcFile.cs" />
+    <Compile Include="Save\PakFile.cs" />
     <Compile Include="Save\PriFile.cs" />
     <Compile Include="Save\PriFiles.cs" />
     <Compile Include="Save\TtFile.cs" />
