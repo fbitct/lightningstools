@@ -50,5 +50,10 @@ namespace F4Utils.Campaign.F4Structs
         public const int STRATUSTHICKNESS = 2000;
         public const int CIRRUSTHICKNESS = 100;
 
+        public const uint FilteredWaterNormalMapTextureIndex = 5;
+        public const uint SkyEnvMapTextureIndex = 4;
+        public const uint campFileWeatherInfoFileVersion = 2;
+        public const uint campFileMapWeatherInfoFileVersion = 3;
+
     }
 }

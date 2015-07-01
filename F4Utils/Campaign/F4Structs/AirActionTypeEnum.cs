@@ -1,5 +1,6 @@
 ﻿namespace F4Utils.Campaign.F4Structs
 {
+
     // Air Action types
     public enum AirActionTypeEnum
     {
