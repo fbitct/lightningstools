@@ -7,9 +7,9 @@ namespace F4Utils.Campaign.Save
 {
     public class PriFile
     {
-        public byte[,] DefaultObjtypePriority=new byte[(int)AirTacticTypeEnum.TAT_CAS,TeamConstants.MAX_TGTTYPE];		// AI's suggested settings
-        public byte[,] DefaultUnittypePriority = new byte[(int)AirTacticTypeEnum.TAT_CAS, TeamConstants.MAX_UNITTYPE];		
-        public byte[,] DefaultMissionPriority = new byte[(int)AirTacticTypeEnum.TAT_CAS, (int)MissionTypeEnum.AMIS_OTHER];		
+        public byte[] ObjectiveTargetPriorities=new byte[TeamConstants.MAX_TGTTYPE];		// AI's suggested settings
+        public byte[] UnitTypePriorities = new byte[TeamConstants.MAX_UNITTYPE];		
+        public byte[] MissionPriorities = new byte[(int)MissionTypeEnum.AMIS_OTHER];		
 
         public PriFile(string fileName)
         {
@@ -19,28 +19,27 @@ namespace F4Utils.Campaign.Save
         private void LoadPriFile(string fileName)
         {
             int n=0;
-            int t = 0;
             //reads PRI file
             using (var stream = new FileStream(fileName, FileMode.Open))
             using (var reader = new StreamReader(stream))
             {
 
-                n = ParseInt(GetNextToken(reader));		// # of objective target priorities
+                n = ParseInt(GetNextToken(reader));		// index into objective target priorities table
                 while (n >= 0)
                 {
-                    DefaultObjtypePriority[t,n] = (byte)ParseInt(GetNextToken(reader));
+                    ObjectiveTargetPriorities[n] = (byte)ParseInt(GetNextToken(reader));
                     n = ParseInt(GetNextToken(reader));
                 }
-                n = ParseInt(GetNextToken(reader));		// # of unit target priorities
+                n = ParseInt(GetNextToken(reader));		// index into unit target priorities table
                 while (n >= 0)
                 {
-                    DefaultUnittypePriority[t, n] = (byte)ParseInt(GetNextToken(reader));
+                    UnitTypePriorities[n] = (byte)ParseInt(GetNextToken(reader));
                     n = ParseInt(GetNextToken(reader));
                 }
-                n = ParseInt(GetNextToken(reader));		// # of mission priorities
+                n = ParseInt(GetNextToken(reader));		// index into mission priorities table
                 while (n >= 0)
                 {
-                    DefaultMissionPriority[t, n] = (byte)ParseInt(GetNextToken(reader));
+                    MissionPriorities[n] = (byte)ParseInt(GetNextToken(reader));
                     n = ParseInt(GetNextToken(reader));
                 }
 
@@ -54,43 +53,33 @@ namespace F4Utils.Campaign.Save
         }
         private string GetNextToken(StreamReader reader)
         {
-            string line=string.Empty;
-            var isComment = false;
-            while (isComment)
+            var sb = new StringBuilder();
+            while (reader.Peek() >= 0)
             {
-                try
+                char nextChar = (char)reader.Read();
+                if (nextChar == ';' || nextChar == '#' || nextChar == '\r' || nextChar == '\n') //if this is a newline or it's the start of a comment
                 {
-                    line = ReadString(reader,160);
-                    isComment = (line.StartsWith(";") || line.StartsWith("#"));
-                }
-                catch (IOException) { }
-            }
-            return line;
-            
-        }
-        private string ReadString(StreamReader reader, int maxLength)
-        {
-            var readBuffer = new char[1];
-            var sb = new StringBuilder(maxLength);
-            bool hasReadNonWhitespaceChar = false;
-            for (var i=0;i<maxLength;i++) 
-            {
-                var read = reader.Read(readBuffer, 0,1);
-                if (read > 0)
-                {
-                    if (!char.IsWhiteSpace(readBuffer[0]))
-                    {
-                        sb.Append(readBuffer, 0, 1);
-                    }
-                    else if (hasReadNonWhitespaceChar)
+                    reader.ReadLine(); //skip to end of line
+                    if (sb.Length > 0)
                     {
                         break;
                     }
                 }
+                else if (char.IsWhiteSpace(nextChar))
+                {
+                    if (sb.Length > 0)
+                    {
+                        break;
+                    }
+                }
+                else 
+                {
+                    sb.Append(nextChar);
+                }
             }
-            return sb.ToString();
+            return sb.ToString().Trim();
         }
-
+       
 
     }
 }

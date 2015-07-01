@@ -168,6 +168,7 @@
     <Compile Include="Save\FmapFile.cs" />
     <Compile Include="Save\FrcFile.cs" />
     <Compile Include="Save\PriFile.cs" />
+    <Compile Include="Save\PriFiles.cs" />
     <Compile Include="SsdFile.cs" />
     <Compile Include="SwdFile.cs" />
     <Compile Include="UcdFile.cs" />
