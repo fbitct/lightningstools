@@ -27,10 +27,10 @@ namespace F4KeyFileViewer
         private static string GetKeyDescription(KeyWithModifiers keys)
         {
             if (keys == null) throw new ArgumentNullException("keys");
-            var keyScancodeDescriptionAttibute=Common.Generic.EnumAttributeReader.GetAttribute<DescriptionAttribute>((ScanCodes)keys.ScanCode);
+            var keyScancodeDescriptionAttibute=Common.Generic.EnumAttributeReader.GetAttribute<F4KeyFile.DescriptionAttribute>((ScanCodes)keys.ScanCode);
             var keyScanCodeName = keyScancodeDescriptionAttibute !=null ? keyScancodeDescriptionAttibute.Description: keys.ScanCode.ToString();
             var keyModifierDescriptionAttribute =
-                Common.Generic.EnumAttributeReader.GetAttribute<DescriptionAttribute>(keys.Modifiers);
+                Common.Generic.EnumAttributeReader.GetAttribute<F4KeyFile.DescriptionAttribute>(keys.Modifiers);
 
             var keyModifierNames = keyModifierDescriptionAttribute !=null ? keyModifierDescriptionAttribute.Description: keys.Modifiers.ToString();
            
