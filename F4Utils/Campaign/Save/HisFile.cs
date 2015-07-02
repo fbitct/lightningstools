@@ -6,14 +6,14 @@ using System.Text;
 
 namespace F4Utils.Campaign.Save
 {
-    public class HsiFileRecord
+    public class HisFileRecord
     {
         public uint Time { get; internal set; }
         public UnitHistoryType[] UnitHistory { get; internal set; }
     }
-    class HisFile
+    public class HisFile
     {
-        public HsiFileRecord[] HistoryRecords { get; internal set; }
+        public HisFileRecord[] HistoryRecords { get; internal set; }
         public HisFile(string fileName)
         {
             LoadHisFile(fileName);
@@ -21,14 +21,14 @@ namespace F4Utils.Campaign.Save
 
          private void LoadHisFile(string fileName)
          {
-             List<HsiFileRecord> records = new List<HsiFileRecord>();
+             List<HisFileRecord> records = new List<HisFileRecord>();
              //reads HIS file
              using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
              using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
              {
                  while (stream.Position != stream.Length)
                  {
-                     var rec = new HsiFileRecord();
+                     var rec = new HisFileRecord();
                      rec.Time = reader.ReadUInt32();
                      var count = reader.ReadInt16();
                      if (count > 0)

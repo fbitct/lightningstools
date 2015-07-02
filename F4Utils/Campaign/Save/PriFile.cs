@@ -7,7 +7,7 @@ namespace F4Utils.Campaign.Save
 {
     public class PriFile
     {
-        public byte[] ObjectiveTargetPriorities=new byte[TeamConstants.MAX_TGTTYPE];		// AI's suggested settings
+        public byte[] ObjectiveTargetPriorities=new byte[TeamConstants.MAX_TGTTYPE];	
         public byte[] UnitTypePriorities = new byte[TeamConstants.MAX_UNITTYPE];		
         public byte[] MissionPriorities = new byte[(int)MissionTypeEnum.AMIS_OTHER];		
 
