@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -14,43 +16,37 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public PstFile(byte[] bytes, int version)
+        public PstFile(Stream stream, int version)
             : this()
         {
-            Decode(bytes, version);
+            Decode(stream, version);
         }
-        protected void Decode(byte[] bytes, int version)
+        protected void Decode(Stream stream, int version)
         {
-            int offset = 0;
-            numPersistantObjects = 0;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                numPersistantObjects = 0;
 
-            if (version < 69)
-            {
-                return;
-            }
-            numPersistantObjects = BitConverter.ToInt32(bytes, offset);
-            offset += 4;
-            persistantObjects = new PersistantObject[numPersistantObjects];
-            for (int i = 0; i < numPersistantObjects; i++)
-            {
-                PersistantObject thisObject = new PersistantObject();
-                thisObject.x = BitConverter.ToSingle(bytes, offset);
-                offset += 4;
-                thisObject.y = BitConverter.ToSingle(bytes, offset);
-                offset += 4;
-                thisObject.unionData = new PackedVUID();
-                thisObject.unionData.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                thisObject.unionData.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                thisObject.unionData.index_ = bytes[offset];
-                offset++;
-                offset += 3; //align on Int32 boundary
-                thisObject.visType = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                thisObject.flags = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                persistantObjects[i] = thisObject;
+                if (version < 69)
+                {
+                    return;
+                }
+                numPersistantObjects = reader.ReadInt32();
+                persistantObjects = new PersistantObject[numPersistantObjects];
+                for (int i = 0; i < numPersistantObjects; i++)
+                {
+                    PersistantObject thisObject = new PersistantObject();
+                    thisObject.x = reader.ReadSingle();
+                    thisObject.y = reader.ReadSingle();
+                    thisObject.unionData = new PackedVUID();
+                    thisObject.unionData.creator_ = reader.ReadUInt32();
+                    thisObject.unionData.num_ = reader.ReadUInt32();
+                    thisObject.unionData.index_ = reader.ReadByte();
+                    reader.ReadBytes(3); //align on Int32 boundary
+                    thisObject.visType = reader.ReadInt16();
+                    thisObject.flags = reader.ReadInt16();
+                    persistantObjects[i] = thisObject;
+                }
             }
         }
     }

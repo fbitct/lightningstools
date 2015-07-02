@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -15,18 +17,17 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public GroundUnit(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public GroundUnit(Stream stream, int version)
+            : base(stream, version)
         {
-            orders = bytes[offset];
-            offset++;
-            division = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            aobj = new VU_ID();
-            aobj.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            aobj.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                orders = reader.ReadByte();
+                division = reader.ReadInt16();
+                aobj = new VU_ID();
+                aobj.num_ = reader.ReadUInt32();
+                aobj.creator_ = reader.ReadUInt32();
+            }
 
         }
 

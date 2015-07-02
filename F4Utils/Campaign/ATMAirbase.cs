@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -13,20 +15,20 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public ATMAirbase(byte[] bytes, ref int offset, int version)
+        public ATMAirbase(Stream stream, int version)
             : this()
         {
-            id = new VU_ID();
-            id.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            id.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            schedule = new byte[32];
-            for (int j = 0; j < schedule.Length; j++)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                schedule[j] = bytes[offset];
-                offset++;
+                id = new VU_ID();
+                id.num_ = reader.ReadUInt32();
+                id.creator_ = reader.ReadUInt32();
+
+                schedule = new byte[32];
+                for (int j = 0; j < schedule.Length; j++)
+                {
+                    schedule[j] = reader.ReadByte();
+                }
             }
         }
     }

@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -23,45 +25,35 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public CampaignBase(byte[] bytes, ref int offset, int version)
+        public CampaignBase(Stream stream, int version)
             : this()
         {
-            id = new VU_ID();
-            id.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            id.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            entityType = BitConverter.ToUInt16(bytes, offset);
-            offset += 2;
-
-            x = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-
-            y = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-
-            if (version < 70)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                z = 0;
-            }
-            else
-            {
-                z = BitConverter.ToSingle(bytes, offset);
-                offset += 4;
-            }
-            spotTime = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            spotted = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            baseFlags = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            owner = bytes[offset];
-            offset++;
-            campId = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
+                id = new VU_ID();
+                id.num_ = reader.ReadUInt32();
+                id.creator_ = reader.ReadUInt32();
 
+                entityType = reader.ReadUInt16();
+
+                x = reader.ReadInt16();
+                y = reader.ReadInt16();
+
+                if (version < 70)
+                {
+                    z = 0;
+                }
+                else
+                {
+                    z = reader.ReadSingle();
+                }
+                spotTime = reader.ReadUInt32();
+                spotted = reader.ReadInt16();
+                baseFlags = reader.ReadInt16();
+                owner = reader.ReadByte();
+                campId = reader.ReadInt16();
+
+            }
         }
-
     }
 }

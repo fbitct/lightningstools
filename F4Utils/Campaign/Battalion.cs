@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -27,50 +29,35 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Battalion(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public Battalion(Stream stream, int version)
+            : base(stream, version)
         {
-            last_move = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            last_combat = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            parent_id = new VU_ID();
-            parent_id.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            parent_id.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            last_obj = new VU_ID();
-            last_obj.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            last_obj.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            supply = bytes[offset];
-            offset++;
-
-            fatigue = bytes[offset];
-            offset++;
-
-            morale = bytes[offset];
-            offset++;
-
-            heading = bytes[offset];
-            offset++;
-
-            final_heading = bytes[offset];
-            offset++;
-
-            if (version < 15)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                dummy = bytes[offset];
-                offset++;
-            }
-            position = bytes[offset];
-            offset++;
+                last_move = reader.ReadUInt32();
+                last_combat = reader.ReadUInt32();
 
+                parent_id = new VU_ID();
+                parent_id.num_ = reader.ReadUInt32();
+                parent_id.creator_ = reader.ReadUInt32();
+
+                last_obj = new VU_ID();
+                last_obj.num_ = reader.ReadUInt32();
+                last_obj.creator_ = reader.ReadUInt32();
+
+                supply = reader.ReadByte();
+                fatigue = reader.ReadByte();
+                morale = reader.ReadByte();
+                heading = reader.ReadByte();
+                final_heading = reader.ReadByte();
+
+                if (version < 15)
+                {
+                    dummy = reader.ReadByte();
+                }
+                position = reader.ReadByte();
+
+            }
         }
     }
 }

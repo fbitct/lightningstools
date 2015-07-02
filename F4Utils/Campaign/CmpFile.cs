@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
 
 namespace F4Utils.Campaign
 {
@@ -79,392 +80,272 @@ namespace F4Utils.Campaign
         }
         protected void Decode(byte[] bytes)
         {
-            int curByte = 0;
-            int nullLoc = 0;
-            CurrentTime = BitConverter.ToUInt32(bytes, curByte);
-            if (CurrentTime == 0) CurrentTime = 1;
-            curByte += 4;
-
-            if (_version >= 48)
+            using (var stream = new MemoryStream(bytes))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
-                TE_StartTime = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
+                int nullLoc = 0;
+                CurrentTime = reader.ReadUInt32();
+                if (CurrentTime == 0) CurrentTime = 1;
 
-                TE_TimeLimit = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                if (_version >= 49)
+                if (_version >= 48)
                 {
-                    TE_VictoryPoints = BitConverter.ToInt32(bytes, curByte);
-                    curByte += 4;
+                    TE_StartTime = reader.ReadUInt32();
+                    TE_TimeLimit = reader.ReadUInt32();
+                    if (_version >= 49)
+                    {
+                        TE_VictoryPoints = reader.ReadInt32();
+                    }
+                    else
+                    {
+                        TE_VictoryPoints = 0;
+                    }
                 }
                 else
                 {
+                    TE_StartTime = CurrentTime;
+                    TE_TimeLimit = CurrentTime + (60 * 60 * 5 * 1000);
                     TE_VictoryPoints = 0;
                 }
-            }
-            else
-            {
-                TE_StartTime = CurrentTime;
-                TE_TimeLimit = CurrentTime + (60 * 60 * 5 * 1000);
-                TE_VictoryPoints = 0;
-            }
-            if (_version >= 52)
-            {
-                TE_Type = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
-
-                TE_number_teams = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
-
-                for (int i = 0; i < 8; i++)
+                if (_version >= 52)
                 {
-                    TE_number_aircraft[i] = BitConverter.ToInt32(bytes, curByte);
-                    curByte += 4;
-                }
+                    TE_Type = reader.ReadInt32();
+                    TE_number_teams = reader.ReadInt32();
 
-                for (int i = 0; i < 8; i++)
-                {
-                    TE_number_f16s[i] = BitConverter.ToInt32(bytes, curByte);
-                    curByte += 4;
-                }
-
-                TE_team = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
-
-                for (int i = 0; i < 8; i++)
-                {
-                    TE_team_pts[i] = BitConverter.ToInt32(bytes, curByte);
-                    curByte += 4;
-                }
-
-                TE_flags = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
-
-                nullLoc = 0;
-                for (int i = 0; i < 8; i++)
-                {
-                    TeamBasicInfo info = new TeamBasicInfo();
-                    info.teamFlag = bytes[curByte];
-                    curByte++;
-                    info.teamColor = bytes[curByte];
-                    curByte++;
-                    info.teamName = Encoding.ASCII.GetString(bytes, curByte, 20);
-                    curByte += 20;
-                    nullLoc = info.teamName.IndexOf('\0');
-                    if (nullLoc > -1) info.teamName = info.teamName.Substring(0, nullLoc);
-                    info.teamMotto = Encoding.ASCII.GetString(bytes, curByte, 200);
-                    curByte += 200;
-                    nullLoc = info.teamMotto.IndexOf('\0');
-                    if (nullLoc > -1) info.teamMotto = info.teamMotto.Substring(0, nullLoc);
-                    this.TeamBasicInfo[i] = info;
-                }
-            }
-            else
-            {
-                TE_Type = 0;
-                TE_number_teams = 0;
-                TE_number_aircraft = new int[8];
-                TE_number_f16s = new int[8];
-                TE_team = 0;
-                TE_team_pts = new int[8];
-                TE_flags = 0;
-            }
-            if (_version >= 19)
-            {
-                lastMajorEvent = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-            }
-            lastResupply = BitConverter.ToUInt32(bytes, curByte);
-            curByte += 4;
-
-            lastRepair = BitConverter.ToUInt32(bytes, curByte);
-            curByte += 4;
-
-            lastReinforcement = BitConverter.ToUInt32(bytes, curByte);
-            curByte += 4;
-
-            this.TimeStamp = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            Group = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            GroundRatio = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            AirRatio = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            AirDefenseRatio = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            NavalRatio = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            Brief = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            TheaterSizeX = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            TheaterSizeY = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            CurrentDay = bytes[curByte];
-            curByte++;
-
-            ActiveTeams = bytes[curByte];
-            curByte++;
-
-            DayZero = bytes[curByte];
-            curByte++;
-
-            EndgameResult = bytes[curByte];
-            curByte++;
-
-            Situation = bytes[curByte];
-            curByte++;
-
-            EnemyAirExp = bytes[curByte];
-            curByte++;
-
-            EnemyADExp = bytes[curByte];
-            curByte++;
-
-            BullseyeName = bytes[curByte];
-            curByte++;
-
-            BullseyeX = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            BullseyeY = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-
-            TheaterName = Encoding.ASCII.GetString(bytes, curByte, 40);
-            curByte += 40;
-            nullLoc = TheaterName.IndexOf('\0');
-            if (nullLoc > -1) TheaterName = TheaterName.Substring(0, nullLoc);
-
-            Scenario = Encoding.ASCII.GetString(bytes, curByte, 40);
-            curByte += 40;
-            nullLoc = Scenario.IndexOf('\0');
-            if (nullLoc > -1) Scenario = Scenario.Substring(0, nullLoc);
-
-            SaveFile = Encoding.ASCII.GetString(bytes, curByte, 40);
-            curByte += 40;
-            nullLoc = SaveFile.IndexOf('\0');
-            if (nullLoc > -1) SaveFile = SaveFile.Substring(0, nullLoc);
-
-            UIName = Encoding.ASCII.GetString(bytes, curByte, 40);
-            curByte += 40;
-            nullLoc = UIName.IndexOf('\0');
-            if (nullLoc > -1) UIName = UIName.Substring(0, nullLoc);
-
-            VU_ID squadronId = new VU_ID();
-            squadronId.num_ = BitConverter.ToUInt32(bytes, curByte);
-            curByte += 4;
-            squadronId.creator_ = BitConverter.ToUInt32(bytes, curByte);
-            curByte += 4;
-            PlayerSquadronID = squadronId;
-
-            NumRecentEventEntries = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-            if (NumRecentEventEntries > 0)
-            {
-                RecentEventEntries = new EventNode[NumRecentEventEntries];
-                for (int i = 0; i < NumRecentEventEntries; i++)
-                {
-                    EventNode thisNode = new EventNode();
-                    thisNode.x = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-                    thisNode.y = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-
-                    thisNode.time = BitConverter.ToUInt32(bytes, curByte);
-                    curByte += 4;
-
-                    thisNode.flags = bytes[curByte];
-                    curByte++;
-
-                    thisNode.Team = bytes[curByte];
-                    curByte++;
-
-                    curByte += 2; //align on int32 boundary
-                    //skip EventText pointer
-                    curByte += 4;
-                    //skip UiEventNode pointer
-                    curByte += 4;
-                    short eventTextSize = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-                    string eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
-                    curByte += eventTextSize;
-                    nullLoc = eventText.IndexOf('\0');
-                    if (nullLoc > -1) eventText = eventText.Substring(0, nullLoc);
-                    thisNode.eventText = eventText;
-                    RecentEventEntries[i] = thisNode;
-                }
-            }
-
-
-            NumPriorityEventEntries = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-            if (NumPriorityEventEntries > 0)
-            {
-                PriorityEventEntries = new EventNode[NumPriorityEventEntries];
-                for (int i = 0; i < NumPriorityEventEntries; i++)
-                {
-                    EventNode thisNode = new EventNode();
-                    thisNode.x = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-                    thisNode.y = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-
-                    thisNode.time = BitConverter.ToUInt32(bytes, curByte);
-                    curByte += 4;
-
-                    thisNode.flags = bytes[curByte];
-                    curByte++;
-
-                    thisNode.Team = bytes[curByte];
-                    curByte++;
-
-                    curByte += 2; //align on int32 boundary
-                    //skip EventText pointer
-                    curByte += 4;
-                    //skip UiEventNode pointer
-                    curByte += 4;
-
-                    short eventTextSize = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
-                    string eventText = Encoding.ASCII.GetString(bytes, curByte, eventTextSize);
-                    curByte += eventTextSize;
-                    nullLoc = eventText.IndexOf('\0');
-                    if (nullLoc > -1) eventText = eventText.Substring(0, nullLoc);
-                    thisNode.eventText = eventText;
-                    PriorityEventEntries[i] = thisNode;
-                }
-            }
-            CampMapSize = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-            if (CampMapSize > 0)
-            {
-                CampMap = new byte[CampMapSize];
-                Array.Copy(bytes, CampMap, CampMapSize);
-            }
-            curByte += CampMapSize;
-
-            LastIndexNum = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-            NumAvailableSquadrons = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-            if (NumAvailableSquadrons > 0)
-            {
-                if (_version < 42)
-                {
-                    SquadInfo = new SquadInfo[NumAvailableSquadrons];
-                    for (int i = 0; i < NumAvailableSquadrons; i++)
+                    for (int i = 0; i < 8; i++)
                     {
-                        SquadInfo thisSquadInfo = new SquadInfo();
-                        thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
-                        curByte += 4;
-                        thisSquadInfo.y = BitConverter.ToSingle(bytes, curByte);
-                        curByte += 4;
+                        TE_number_aircraft[i] = reader.ReadInt32();
+                    }
 
-                        VU_ID thisSquadId = new VU_ID();
-                        thisSquadId.num_ = BitConverter.ToUInt32(bytes, curByte);
-                        curByte += 4;
-                        thisSquadId.creator_ = BitConverter.ToUInt32(bytes, curByte);
-                        curByte += 4;
-                        thisSquadInfo.id = thisSquadId;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        TE_number_f16s[i] = reader.ReadInt32();
+                    }
 
-                        thisSquadInfo.descriptionIndex = BitConverter.ToInt16(bytes, curByte);
-                        curByte += 2;
+                    TE_team = reader.ReadInt32();
 
-                        thisSquadInfo.nameId = BitConverter.ToInt16(bytes, curByte);
-                        curByte += 2;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        TE_team_pts[i] = reader.ReadInt32();
+                    }
 
-                        thisSquadInfo.specialty = bytes[curByte];
-                        curByte++;
+                    TE_flags = reader.ReadInt32();
 
-                        thisSquadInfo.currentStrength = bytes[curByte];
-                        curByte++;
-
-                        thisSquadInfo.country = bytes[curByte];
-                        curByte++;
-
-                        thisSquadInfo.airbaseName = Encoding.ASCII.GetString(bytes, curByte, 80);
-                        nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
-                        if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
-                        curByte += 80;
-
-                        curByte++; //align on int32 boundary
-                        SquadInfo[i] = thisSquadInfo;
+                    nullLoc = 0;
+                    for (int i = 0; i < 8; i++)
+                    {
+                        TeamBasicInfo info = new TeamBasicInfo();
+                        info.teamFlag = reader.ReadByte();
+                        info.teamColor = reader.ReadByte();
+                        var teamNameBytes = reader.ReadBytes(20);
+                        info.teamName = Encoding.ASCII.GetString(teamNameBytes, 0, 20);
+                        nullLoc = info.teamName.IndexOf('\0');
+                        if (nullLoc > -1) info.teamName = info.teamName.Substring(0, nullLoc);
+                        var teamMottoBytes = reader.ReadBytes(200);
+                        info.teamMotto = Encoding.ASCII.GetString(teamMottoBytes, 0, 200);
+                        nullLoc = info.teamMotto.IndexOf('\0');
+                        if (nullLoc > -1) info.teamMotto = info.teamMotto.Substring(0, nullLoc);
+                        this.TeamBasicInfo[i] = info;
                     }
                 }
                 else
                 {
-                    SquadInfo = new SquadInfo[NumAvailableSquadrons];
-                    for (int i = 0; i < NumAvailableSquadrons; i++)
+                    TE_Type = 0;
+                    TE_number_teams = 0;
+                    TE_number_aircraft = new int[8];
+                    TE_number_f16s = new int[8];
+                    TE_team = 0;
+                    TE_team_pts = new int[8];
+                    TE_flags = 0;
+                }
+                if (_version >= 19)
+                {
+                    lastMajorEvent = reader.ReadUInt32();
+                }
+
+                lastResupply = reader.ReadUInt32();
+                lastRepair = reader.ReadUInt32();
+                lastReinforcement = reader.ReadUInt32();
+                this.TimeStamp = reader.ReadInt16();
+
+                Group = reader.ReadInt16();
+                GroundRatio = reader.ReadInt16();
+                AirRatio = reader.ReadInt16();
+                AirDefenseRatio = reader.ReadInt16();
+                NavalRatio = reader.ReadInt16();
+                Brief = reader.ReadInt16();
+                TheaterSizeX = reader.ReadInt16();
+                TheaterSizeY = reader.ReadInt16();
+                CurrentDay = reader.ReadByte();
+                ActiveTeams = reader.ReadByte();
+                DayZero = reader.ReadByte();
+                EndgameResult = reader.ReadByte();
+                Situation = reader.ReadByte();
+                EnemyAirExp = reader.ReadByte();
+                EnemyADExp = reader.ReadByte();
+                BullseyeName = reader.ReadByte();
+                BullseyeX = reader.ReadInt16();
+                BullseyeY = reader.ReadInt16();
+                var theaterNameBytes = reader.ReadBytes(40);
+                TheaterName = Encoding.ASCII.GetString(theaterNameBytes, 0, 40);
+                nullLoc = TheaterName.IndexOf('\0');
+                if (nullLoc > -1) TheaterName = TheaterName.Substring(0, nullLoc);
+
+                var scenarioBytes = reader.ReadBytes(40);
+                Scenario = Encoding.ASCII.GetString(scenarioBytes, 0, 40);
+                nullLoc = Scenario.IndexOf('\0');
+                if (nullLoc > -1) Scenario = Scenario.Substring(0, nullLoc);
+
+                var saveFileBytes = reader.ReadBytes(40);
+                SaveFile = Encoding.ASCII.GetString(saveFileBytes, 0, 40);
+                nullLoc = SaveFile.IndexOf('\0');
+                if (nullLoc > -1) SaveFile = SaveFile.Substring(0, nullLoc);
+
+                var uiNameBytes = reader.ReadBytes(40);
+                UIName = Encoding.ASCII.GetString(uiNameBytes, 0, 40);
+                nullLoc = UIName.IndexOf('\0');
+                if (nullLoc > -1) UIName = UIName.Substring(0, nullLoc);
+
+                VU_ID squadronId = new VU_ID();
+                squadronId.num_ = reader.ReadUInt32();
+                squadronId.creator_ = reader.ReadUInt32();
+                PlayerSquadronID = squadronId;
+
+                NumRecentEventEntries = reader.ReadInt16();
+                if (NumRecentEventEntries > 0)
+                {
+                    RecentEventEntries = new EventNode[NumRecentEventEntries];
+                    for (int i = 0; i < NumRecentEventEntries; i++)
                     {
-                        SquadInfo thisSquadInfo = new SquadInfo();
-                        thisSquadInfo.x = BitConverter.ToSingle(bytes, curByte);
-                        curByte += 4;
-                        thisSquadInfo.y = BitConverter.ToSingle(bytes, curByte);
-                        curByte += 4;
-
-                        VU_ID thisSquadId = new VU_ID();
-                        thisSquadId.num_ = BitConverter.ToUInt32(bytes, curByte);
-                        curByte += 4;
-                        thisSquadId.creator_ = BitConverter.ToUInt32(bytes, curByte);
-                        curByte += 4;
-                        thisSquadInfo.id = thisSquadId;
-
-                        thisSquadInfo.descriptionIndex = BitConverter.ToInt16(bytes, curByte);
-                        curByte += 2;
-
-                        thisSquadInfo.nameId = BitConverter.ToInt16(bytes, curByte);
-                        curByte += 2;
-
-                        thisSquadInfo.airbaseIcon = BitConverter.ToInt16(bytes, curByte);
-                        curByte += 2;
-
-                        thisSquadInfo.squadronPath = BitConverter.ToInt16(bytes, curByte);
-                        curByte += 2;
-
-                        thisSquadInfo.specialty = bytes[curByte];
-                        curByte++;
-
-                        thisSquadInfo.currentStrength = bytes[curByte];
-                        curByte++;
-
-                        thisSquadInfo.country = bytes[curByte];
-                        curByte++;
-
-                        thisSquadInfo.airbaseName = Encoding.ASCII.GetString(bytes, curByte, 40);
-                        nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
-                        if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
-                        curByte += 40;
-
-                        curByte++; //align on int32 boundary
-                        SquadInfo[i] = thisSquadInfo;
+                        EventNode thisNode = new EventNode();
+                        thisNode.x = reader.ReadInt16();
+                        thisNode.y = reader.ReadInt16();
+                        thisNode.time = reader.ReadUInt32();
+                        thisNode.flags = reader.ReadByte();
+                        thisNode.Team = reader.ReadByte();
+                        reader.ReadBytes(2); //align on int32 boundary
+                        //skip EventText pointer
+                        reader.ReadBytes(4);
+                        //skip UiEventNode pointer
+                        reader.ReadBytes(4);
+                        short eventTextSize = reader.ReadInt16();
+                        var eventTextBytes = reader.ReadBytes(eventTextSize);
+                        string eventText = Encoding.ASCII.GetString(eventTextBytes, 0, eventTextSize);
+                        nullLoc = eventText.IndexOf('\0');
+                        if (nullLoc > -1) eventText = eventText.Substring(0, nullLoc);
+                        thisNode.eventText = eventText;
+                        RecentEventEntries[i] = thisNode;
                     }
                 }
-            }
-            if (_version >= 31)
-            {
-                Tempo = bytes[curByte];
-                curByte++;
-            }
-            if (_version >= 43)
-            {
-                CreatorIP = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
 
-                CreationTime = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
 
-                CreationRand = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
+                NumPriorityEventEntries = reader.ReadInt16();
+                if (NumPriorityEventEntries > 0)
+                {
+                    PriorityEventEntries = new EventNode[NumPriorityEventEntries];
+                    for (int i = 0; i < NumPriorityEventEntries; i++)
+                    {
+                        EventNode thisNode = new EventNode();
+                        thisNode.x = reader.ReadInt16();
+                        thisNode.y = reader.ReadInt16();
+                        thisNode.time = reader.ReadUInt32();
+                        thisNode.flags = reader.ReadByte();
+                        thisNode.Team = reader.ReadByte();
+
+                        reader.ReadBytes(2); //align on int32 boundary
+                        //skip EventText pointer
+                        reader.ReadBytes(4);
+                        //skip UiEventNode pointer
+                        reader.ReadBytes(4);
+
+                        short eventTextSize = reader.ReadInt16();
+                        var eventTextBytes = reader.ReadBytes(eventTextSize);
+                        string eventText = Encoding.ASCII.GetString(eventTextBytes, 0, eventTextSize);
+                        nullLoc = eventText.IndexOf('\0');
+                        if (nullLoc > -1) eventText = eventText.Substring(0, nullLoc);
+                        thisNode.eventText = eventText;
+                        PriorityEventEntries[i] = thisNode;
+                    }
+                }
+                CampMapSize = reader.ReadInt16();
+                if (CampMapSize > 0)
+                {
+                    CampMap = reader.ReadBytes(CampMapSize);
+                }
+
+                LastIndexNum = reader.ReadInt16();
+                NumAvailableSquadrons = reader.ReadInt16();
+                if (NumAvailableSquadrons > 0)
+                {
+                    if (_version < 42)
+                    {
+                        SquadInfo = new SquadInfo[NumAvailableSquadrons];
+                        for (int i = 0; i < NumAvailableSquadrons; i++)
+                        {
+                            SquadInfo thisSquadInfo = new SquadInfo();
+                            thisSquadInfo.x = reader.ReadSingle();
+                            thisSquadInfo.y = reader.ReadSingle();
+
+                            VU_ID thisSquadId = new VU_ID();
+                            thisSquadId.num_ = reader.ReadUInt32();
+                            thisSquadId.creator_ = reader.ReadUInt32();
+                            thisSquadInfo.id = thisSquadId;
+
+                            thisSquadInfo.descriptionIndex = reader.ReadInt16();
+                            thisSquadInfo.nameId = reader.ReadInt16();
+                            thisSquadInfo.specialty = reader.ReadByte();
+                            thisSquadInfo.currentStrength = reader.ReadByte();
+                            thisSquadInfo.country = reader.ReadByte();
+
+                            var airbaseNameBytes = reader.ReadBytes(80);
+                            thisSquadInfo.airbaseName = Encoding.ASCII.GetString(airbaseNameBytes, 0, 80);
+                            nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
+                            if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
+
+                            reader.ReadByte(); //align on int32 boundary
+                            SquadInfo[i] = thisSquadInfo;
+                        }
+                    }
+                    else
+                    {
+                        SquadInfo = new SquadInfo[NumAvailableSquadrons];
+                        for (int i = 0; i < NumAvailableSquadrons; i++)
+                        {
+                            SquadInfo thisSquadInfo = new SquadInfo();
+                            thisSquadInfo.x = reader.ReadSingle();
+                            thisSquadInfo.y = reader.ReadSingle();
+
+                            VU_ID thisSquadId = new VU_ID();
+                            thisSquadId.num_ = reader.ReadUInt32();
+                            thisSquadId.creator_ = reader.ReadUInt32();
+                            thisSquadInfo.id = thisSquadId;
+
+                            thisSquadInfo.descriptionIndex = reader.ReadInt16();
+                            thisSquadInfo.nameId = reader.ReadInt16();
+                            thisSquadInfo.airbaseIcon = reader.ReadInt16();
+                            thisSquadInfo.squadronPath = reader.ReadInt16();
+                            thisSquadInfo.specialty = reader.ReadByte();
+                            thisSquadInfo.currentStrength = reader.ReadByte();
+                            thisSquadInfo.country = reader.ReadByte();
+                            var airbaseNameBytes = reader.ReadBytes(40);
+                            thisSquadInfo.airbaseName = Encoding.ASCII.GetString(airbaseNameBytes, 0, 40);
+                            nullLoc = thisSquadInfo.airbaseName.IndexOf('\0');
+                            if (nullLoc > -1) thisSquadInfo.airbaseName = thisSquadInfo.airbaseName.Substring(0, nullLoc);
+
+                            reader.ReadByte(); //align on int32 boundary
+                            SquadInfo[i] = thisSquadInfo;
+                        }
+                    }
+                }
+                if (_version >= 31)
+                {
+                    Tempo = reader.ReadByte();
+                }
+                if (_version >= 43)
+                {
+                    CreatorIP = reader.ReadInt32();
+                    CreationTime = reader.ReadInt32();
+                    CreationRand = reader.ReadInt32();
+                }
             }
         }
         protected static byte[] Expand(byte[] compressed)

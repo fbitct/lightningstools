@@ -38,5 +38,29 @@ namespace F4Utils.Campaign
                 return simACDefTable;
             }
         }
+        public void Save(string fileName)
+        {
+            //writes ACD file
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                for (var i = 0; i < SimACDefTable.Length; i++)
+                {
+                    var entry = SimACDefTable[i];
+                    writer.Write(entry.combatClass);
+                    writer.Write(entry.airframeIdx);
+                    writer.Write(entry.signatureIdx);
+
+                    for (var j = 0; j < entry.sensorType.Length; j++)
+                    {
+                        writer.Write(entry.sensorType[j]);
+                    }
+                    for (var j = 0; j < entry.sensorIdx.Length; j++)
+                    {
+                        writer.Write(entry.sensorIdx[j]);
+                    }
+                }
+            }
+        }
     }
 }

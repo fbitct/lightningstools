@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -27,78 +29,65 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Unit(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public Unit(Stream stream, int version)
+            : base(stream, version)
         {
-            last_check = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            roster = BitConverter.ToInt32(bytes, offset);
-            offset += 4;
-            unit_flags = BitConverter.ToInt32(bytes, offset);
-            offset += 4;
-            dest_x = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            dest_y = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            target_id = new VU_ID();
-            target_id.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            target_id.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                last_check = reader.ReadUInt32();
+                roster = reader.ReadInt32();
+                unit_flags = reader.ReadInt32();
+                dest_x = reader.ReadInt16();
+                dest_y = reader.ReadInt16();
+                target_id = new VU_ID();
+                target_id.num_ = reader.ReadUInt32();
+                target_id.creator_ = reader.ReadUInt32();
 
-            if (version > 1)
-            {
-                cargo_id = new VU_ID();
-                cargo_id.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                cargo_id.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-            }
-            else
-            {
-                cargo_id = new VU_ID();
-            }
-            moved = bytes[offset];
-            offset++;
-            losses = bytes[offset];
-            offset++;
-            tactic = bytes[offset];
-            offset++;
+                if (version > 1)
+                {
+                    cargo_id = new VU_ID();
+                    cargo_id.num_ = reader.ReadUInt32();
+                    cargo_id.creator_ = reader.ReadUInt32();
+                }
+                else
+                {
+                    cargo_id = new VU_ID();
+                }
+                moved = reader.ReadByte();
+                losses = reader.ReadByte();
+                tactic = reader.ReadByte();
 
-            if (version >= 71)
-            {
-                current_wp = BitConverter.ToUInt16(bytes, offset);
-                offset += 2;
+                if (version >= 71)
+                {
+                    current_wp = reader.ReadUInt16();
+                }
+                else
+                {
+                    current_wp = reader.ReadByte();
+                }
+                name_id = reader.ReadInt16();
+                reinforcement = reader.ReadInt16();
+                DecodeWaypoints(stream, version);
             }
-            else
-            {
-                current_wp = bytes[offset];
-                offset++;
-            }
-            name_id = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            reinforcement = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            DecodeWaypoints(bytes, ref offset, version);
-
         }
-        protected void DecodeWaypoints(byte[] bytes, ref int offset, int version)
+        protected void DecodeWaypoints(Stream stream, int version)
         {
-            if (version >= 71)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                numWaypoints = BitConverter.ToUInt16(bytes, offset);
-                offset += 2;
-            }
-            else
-            {
-                numWaypoints = (ushort)bytes[offset];
-                offset++;
-            }
-            if (numWaypoints > 500) return;
-            waypoints = new Waypoint[numWaypoints];
-            for (int i = 0; i < numWaypoints; i++)
-            {
-                waypoints[i] = new Waypoint(bytes, ref offset, version);
+                if (version >= 71)
+                {
+                    numWaypoints = reader.ReadUInt16();
+                }
+                else
+                {
+                    numWaypoints = (ushort)reader.ReadByte();
+                }
+                if (numWaypoints > 500) return;
+                waypoints = new Waypoint[numWaypoints];
+                for (int i = 0; i < numWaypoints; i++)
+                {
+                    waypoints[i] = new Waypoint(stream, version);
+                }
             }
         }
         protected bool Final

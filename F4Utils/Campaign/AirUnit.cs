@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 namespace F4Utils.Campaign
 {
     public class AirUnit : Unit
@@ -7,8 +8,8 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public AirUnit(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public AirUnit(Stream stream, int version)
+            : base(stream, version)
         {
 
         }

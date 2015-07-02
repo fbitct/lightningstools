@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 namespace F4Utils.Campaign
 {
     public class TaskForce : Unit
@@ -12,13 +14,14 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public TaskForce(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public TaskForce(Stream stream, int version)
+            : base(stream, version)
         {
-            orders = bytes[offset];
-            offset++;
-            supply = bytes[offset];
-            offset++;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                orders = reader.ReadByte();
+                supply = reader.ReadByte();
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -43,256 +45,213 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Flight(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public Flight(Stream stream, int version)
+            : base(stream, version)
         {
-            z = BitConverter.ToSingle(bytes, offset);
-            offset += 4;
-
-            fuel_burnt = BitConverter.ToInt32(bytes, offset);
-            offset += 4;
-
-            if (version < 65)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                fuel_burnt = 0;
-            }
+                z = reader.ReadSingle();
+                fuel_burnt = reader.ReadInt32();
 
-            last_move = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            last_combat = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            time_on_target = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            mission_over_time = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            mission_target = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-
-            loadouts = 0;
-            if (version < 24)
-            {
-                use_loadout = 0;
-                weapons = new byte[16];
-                loadouts = 1;
-                loadout = new LoadoutStruct[loadouts];
-                if (version >= 8)
+                if (version < 65)
                 {
-                    use_loadout = (sbyte) bytes[offset];
-                    offset++;
-
-                    if (use_loadout != 0)
-                    {
-                        LoadoutArray junk = new LoadoutArray();
-                        junk.Stores = new LoadoutStruct[5];
-                        for (int j = 0; j < 5; j++)
-                        {
-                            LoadoutStruct thisStore = junk.Stores[j];
-                            thisStore.WeaponID = new ushort[16];
-                            for (int k = 0; k < 16; k++)
-                            {
-                                thisStore.WeaponID[k] = bytes[offset];
-                                offset++;
-                            }
-
-                            thisStore.WeaponCount = new byte[16];
-                            for (int k = 0; k < 16; k++)
-                            {
-                                thisStore.WeaponCount[k] = bytes[offset];
-                                offset++;
-                            }
-
-                        }
-                        loadout[0] = junk.Stores[0];
-                    }
+                    fuel_burnt = 0;
                 }
-                weapon = new short[16];
-                if (version < 18)
+
+                last_move = reader.ReadUInt32();
+                last_combat = reader.ReadUInt32();
+                time_on_target = reader.ReadUInt32();
+                mission_over_time = reader.ReadUInt32();
+                mission_target = reader.ReadInt16();
+
+                loadouts = 0;
+                if (version < 24)
                 {
+                    use_loadout = 0;
+                    weapons = new byte[16];
+                    loadouts = 1;
+                    loadout = new LoadoutStruct[loadouts];
+                    if (version >= 8)
+                    {
+                        use_loadout = reader.ReadSByte();
+
+                        if (use_loadout != 0)
+                        {
+                            LoadoutArray junk = new LoadoutArray();
+                            junk.Stores = new LoadoutStruct[5];
+                            for (int j = 0; j < 5; j++)
+                            {
+                                LoadoutStruct thisStore = junk.Stores[j];
+                                thisStore.WeaponID = new ushort[16];
+                                for (int k = 0; k < 16; k++)
+                                {
+                                    thisStore.WeaponID[k] = reader.ReadByte();
+                                }
+
+                                thisStore.WeaponCount = new byte[16];
+                                for (int k = 0; k < 16; k++)
+                                {
+                                    thisStore.WeaponCount[k] = reader.ReadByte();
+                                }
+
+                            }
+                            loadout[0] = junk.Stores[0];
+                        }
+                    }
+                    weapon = new short[16];
+                    if (version < 18)
+                    {
+                        for (int j = 0; j < 16; j++)
+                        {
+                            weapon[j] = reader.ReadInt16();
+                        }
+                        if (use_loadout == 0)
+                        {
+                            for (int j = 0; j < 16; j++)
+                            {
+                                loadout[0].WeaponID[j] = (byte)weapon[j];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < 16; j++)
+                        {
+                            weapon[j] = reader.ReadByte();
+                        }
+                        if (use_loadout == 0)
+                        {
+                            for (int j = 0; j < 16; j++)
+                            {
+                                loadout[0].WeaponID[j] = (byte)weapon[j];
+                            }
+                        }
+                    }
                     for (int j = 0; j < 16; j++)
                     {
-                        weapon[j] = BitConverter.ToInt16(bytes, offset);
-                        offset += 2;
+                        weapons[j] = reader.ReadByte();
                     }
                     if (use_loadout == 0)
                     {
                         for (int j = 0; j < 16; j++)
                         {
-                            loadout[0].WeaponID[j] = (byte)weapon[j];
+                            loadout[0].WeaponCount[j] = weapons[j];
                         }
                     }
                 }
                 else
                 {
-                    for (int j = 0; j < 16; j++)
+                    loadouts = reader.ReadByte();
+                    loadout = new LoadoutStruct[loadouts];
+                    for (int j = 0; j < loadouts; j++)
                     {
-                        weapon[j] = bytes[offset];
-                        offset++;
-                    }
-                    if (use_loadout == 0)
-                    {
-                        for (int j = 0; j < 16; j++)
+                        LoadoutStruct thisLoadout = new LoadoutStruct();
+                        thisLoadout.WeaponID = new ushort[16];
+                        for (int k = 0; k < 16; k++)
                         {
-                            loadout[0].WeaponID[j] = (byte)weapon[j];
+                            if (version >= WEAPON_IDS_WIDENED_VERSION)
+                            {
+                                thisLoadout.WeaponID[k] = reader.ReadUInt16();
+                            }
+                            else
+                            {
+                                thisLoadout.WeaponID[k] = reader.ReadByte();
+                            }
                         }
-                    }
-                }
-                for (int j = 0; j < 16; j++)
-                {
-                    weapons[j] = bytes[offset];
-                    offset++;
-                }
-                if (use_loadout == 0)
-                {
-                    for (int j = 0; j < 16; j++)
-                    {
-                        loadout[0].WeaponCount[j] = weapons[j];
-                    }
-                }
-            }
-            else
-            {
-                loadouts = bytes[offset];
-                offset++;
-                loadout = new LoadoutStruct[loadouts];
-                for (int j = 0; j < loadouts; j++)
-                {
-                    LoadoutStruct thisLoadout = new LoadoutStruct();
-                    thisLoadout.WeaponID = new ushort[16];
-                    for (int k = 0; k < 16; k++)
-                    {
-                        if (version >= WEAPON_IDS_WIDENED_VERSION)
+                        thisLoadout.WeaponCount = new byte[16];
+                        for (int k = 0; k < 16; k++)
                         {
-                            thisLoadout.WeaponID[k] = BitConverter.ToUInt16(bytes, offset);
-                            offset+=2;
+                            thisLoadout.WeaponCount[k] = reader.ReadByte();
                         }
-                        else
-                        {
-                            thisLoadout.WeaponID[k] = bytes[offset];
-                            offset++;
-                        }
+                        loadout[j] = thisLoadout;
                     }
-                    thisLoadout.WeaponCount = new byte[16];
-                    for (int k = 0; k < 16; k++)
-                    {
-                        thisLoadout.WeaponCount[k] = bytes[offset];
-                        offset++;
-                    }
-                    loadout[j] = thisLoadout;
                 }
-            }
-            mission = bytes[offset];
-            offset++;
+                mission = reader.ReadByte();
 
-            if (version > 65)
-            {
-                old_mission = bytes[offset];
-                offset++;
-            }
-            else
-            {
-                old_mission = mission;
-            }
-            last_direction = bytes[offset];
-            offset++;
+                if (version > 65)
+                {
+                    old_mission = reader.ReadByte();
+                }
+                else
+                {
+                    old_mission = mission;
+                }
+                last_direction = reader.ReadByte();
 
-            priority = bytes[offset];
-            offset++;
+                priority = reader.ReadByte();
 
-            mission_id = bytes[offset];
-            offset++;
+                mission_id = reader.ReadByte();
 
-            if (version < 14)
-            {
-                dummy = bytes[offset];
-                offset++;
-            }
-            eval_flags = bytes[offset];
-            offset++;
+                if (version < 14)
+                {
+                    dummy = reader.ReadByte();
+                }
+                eval_flags = reader.ReadByte();
 
-            if (version > 65)
-            {
-                mission_context = bytes[offset];
-                offset++;
-            }
-            else
-            {
-                mission_context = 0;
-            }
+                if (version > 65)
+                {
+                    mission_context = reader.ReadByte();
+                }
+                else
+                {
+                    mission_context = 0;
+                }
 
-            package = new VU_ID();
-            package.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            package.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
+                package = new VU_ID();
+                package.num_ = reader.ReadUInt32();
+                package.creator_ = reader.ReadUInt32();
 
-            squadron = new VU_ID();
-            squadron.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            squadron.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
+                squadron = new VU_ID();
+                squadron.num_ = reader.ReadUInt32();
+                squadron.creator_ = reader.ReadUInt32();
 
-            if (version > 65)
-            {
-                requester = new VU_ID();
-                requester.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                requester.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-            }
-            else
-            {
-                requester = new VU_ID();
-            }
+                if (version > 65)
+                {
+                    requester = new VU_ID();
+                    requester.num_ = reader.ReadUInt32();
+                    requester.creator_ = reader.ReadUInt32();
+                }
+                else
+                {
+                    requester = new VU_ID();
+                }
 
-            slots = new byte[4];
-            for (int j = 0; j < 4; j++)
-            {
-                slots[j] = bytes[offset];
-                offset++;
-            }
+                slots = new byte[4];
+                for (int j = 0; j < 4; j++)
+                {
+                    slots[j] = reader.ReadByte();
+                }
 
-            pilots = new byte[4];
-            for (int j = 0; j < 4; j++)
-            {
-                pilots[j] = bytes[offset];
-                offset++;
-            }
+                pilots = new byte[4];
+                for (int j = 0; j < 4; j++)
+                {
+                    pilots[j] = reader.ReadByte();
+                }
 
-            plane_stats = new byte[4];
-            for (int j = 0; j < 4; j++)
-            {
-                plane_stats[j] = bytes[offset];
-                offset++;
-            }
+                plane_stats = new byte[4];
+                for (int j = 0; j < 4; j++)
+                {
+                    plane_stats[j] = reader.ReadByte();
+                }
 
-            player_slots = new byte[4];
-            for (int j = 0; j < 4; j++)
-            {
-                player_slots[j] = bytes[offset];
-                offset++;
-            }
+                player_slots = new byte[4];
+                for (int j = 0; j < 4; j++)
+                {
+                    player_slots[j] = reader.ReadByte();
+                }
 
-            last_player_slot = bytes[offset];
-            offset++;
+                last_player_slot = reader.ReadByte();
+                callsign_id = reader.ReadByte();
+                callsign_num = reader.ReadByte();
 
-            callsign_id = bytes[offset];
-            offset++;
-
-            callsign_num = bytes[offset];
-            offset++;
-
-            if (version >= 72)
-            {
-                refuelQuantity = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-            }
-            else
-            {
-                refuelQuantity = 0;
+                if (version >= 72)
+                {
+                    refuelQuantity = reader.ReadUInt32();
+                }
+                else
+                {
+                    refuelQuantity = 0;
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using F4Utils.Campaign.F4Structs;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -12,84 +13,55 @@ namespace F4Utils.Campaign
             FileInfo ctFileInfo = new FileInfo(classTableFilePath);
             if (!ctFileInfo.Exists) throw new FileNotFoundException(classTableFilePath);
             byte[] bytes = new byte[ctFileInfo.Length];
-            using (FileStream fs = new FileStream(classTableFilePath, FileMode.Open, FileAccess.Read))
+            using (var stream = new FileStream(classTableFilePath, FileMode.Open, FileAccess.Read))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
-                fs.Seek(0, SeekOrigin.Begin);
-                fs.Read(bytes, 0, (int)ctFileInfo.Length);
-                fs.Close();
-            }
-            int curByte = 0;
-            short numEntities = BitConverter.ToInt16(bytes, curByte);
-            curByte += 2;
-            Falcon4EntityClassType[] classTable = new Falcon4EntityClassType[numEntities];
-            for (int i = 0; i < numEntities; i++)
-            {
-                Falcon4EntityClassType thisClass = new Falcon4EntityClassType();
-                thisClass.vuClassData = new VuEntityType();
-                thisClass.vuClassData.id_ = BitConverter.ToUInt16(bytes, curByte);
-                curByte += 2;
-                thisClass.vuClassData.collisionType_ = BitConverter.ToUInt16(bytes, curByte);
-                curByte += 2;
-                thisClass.vuClassData.collisionRadius_ = BitConverter.ToSingle(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.classInfo_ = new byte[8];
-                for (int j = 0; j < 8; j++)
+                short numEntities = reader.ReadInt16();
+                Falcon4EntityClassType[] classTable = new Falcon4EntityClassType[numEntities];
+                for (int i = 0; i < numEntities; i++)
                 {
-                    thisClass.vuClassData.classInfo_[j] = bytes[curByte];
-                    curByte++;
-                }
-                thisClass.vuClassData.updateRate_ = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.updateTolerance_ = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.fineUpdateRange_ = BitConverter.ToSingle(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.fineUpdateForceRange_ = BitConverter.ToSingle(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.fineUpdateMultiplier_ = BitConverter.ToSingle(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.damageSeed_ = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.hitpoints_ = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
-                thisClass.vuClassData.majorRevisionNumber_ = BitConverter.ToUInt16(bytes, curByte);
-                curByte += 2;
-                thisClass.vuClassData.minorRevisionNumber_ = BitConverter.ToUInt16(bytes, curByte);
-                curByte += 2;
-                thisClass.vuClassData.createPriority_ = BitConverter.ToUInt16(bytes, curByte);
-                curByte += 2;
-                thisClass.vuClassData.managementDomain_ = bytes[curByte];
-                curByte++;
-                thisClass.vuClassData.transferable_ = bytes[curByte];
-                curByte++;
-                thisClass.vuClassData.private_ = bytes[curByte];
-                curByte++;
-                thisClass.vuClassData.tangible_ = bytes[curByte];
-                curByte++;
-                thisClass.vuClassData.collidable_ = bytes[curByte];
-                curByte++;
-                thisClass.vuClassData.global_ = bytes[curByte];
-                curByte++;
-                thisClass.vuClassData.persistent_ = bytes[curByte];
-                curByte++;
-                curByte += 3;            //align on int32 boundary
+                    Falcon4EntityClassType thisClass = new Falcon4EntityClassType();
+                    thisClass.vuClassData = new VuEntityType();
+                    thisClass.vuClassData.id_ = reader.ReadUInt16();
+                    thisClass.vuClassData.collisionType_ = reader.ReadUInt16();
+                    thisClass.vuClassData.collisionRadius_ = reader.ReadSingle();
+                    thisClass.vuClassData.classInfo_ = new byte[8];
+                    for (int j = 0; j < 8; j++)
+                    {
+                        thisClass.vuClassData.classInfo_[j] = reader.ReadByte();
+                    }
+                    thisClass.vuClassData.updateRate_ = reader.ReadUInt32();
+                    thisClass.vuClassData.updateTolerance_ = reader.ReadUInt32();
+                    thisClass.vuClassData.fineUpdateRange_ = reader.ReadSingle();
+                    thisClass.vuClassData.fineUpdateForceRange_ = reader.ReadSingle();
+                    thisClass.vuClassData.fineUpdateMultiplier_ = reader.ReadSingle();
+                    thisClass.vuClassData.damageSeed_ = reader.ReadUInt32();
+                    thisClass.vuClassData.hitpoints_ = reader.ReadInt32();
+                    thisClass.vuClassData.majorRevisionNumber_ = reader.ReadUInt16();
+                    thisClass.vuClassData.minorRevisionNumber_ = reader.ReadUInt16();
+                    thisClass.vuClassData.createPriority_ = reader.ReadUInt16();
+                    thisClass.vuClassData.managementDomain_ = reader.ReadByte();
+                    thisClass.vuClassData.transferable_ = reader.ReadByte();
+                    thisClass.vuClassData.private_ = reader.ReadByte();
+                    thisClass.vuClassData.tangible_ = reader.ReadByte();
+                    thisClass.vuClassData.collidable_ = reader.ReadByte();
+                    thisClass.vuClassData.global_ = reader.ReadByte();
+                    thisClass.vuClassData.persistent_ = reader.ReadByte();
+                    reader.ReadBytes(3);            //align on int32 boundary
 
 
-                thisClass.visType = new short[7];
-                for (int j = 0; j < 7; j++)
-                {
-                    thisClass.visType[j] = BitConverter.ToInt16(bytes, curByte);
-                    curByte += 2;
+                    thisClass.visType = new short[7];
+                    for (int j = 0; j < 7; j++)
+                    {
+                        thisClass.visType[j] = reader.ReadInt16();
+                    }
+                    thisClass.vehicleDataIndex = reader.ReadInt16();
+                    thisClass.dataType = reader.ReadByte();
+                    thisClass.dataPtr = reader.ReadInt32();
+                    classTable[i] = thisClass;
                 }
-                thisClass.vehicleDataIndex = BitConverter.ToInt16(bytes, curByte);
-                curByte += 2;
-                thisClass.dataType = bytes[curByte];
-                curByte++;
-                thisClass.dataPtr = BitConverter.ToInt32(bytes, curByte);
-                curByte += 4;
-                classTable[i] = thisClass;
+                return classTable;
             }
-            return classTable;
         }
     }
 }

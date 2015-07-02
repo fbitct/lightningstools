@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -30,188 +32,144 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Squadron(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public Squadron(Stream stream, int version)
+            : base(stream, version)
         {
-            fuel = BitConverter.ToInt32(bytes, offset);
-            offset += 4;
-            specialty = bytes[offset];
-            offset++;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                fuel = reader.ReadInt32();
+                specialty = reader.ReadByte();
 
-            if (version < 69)
-            {
-                stores = new byte[200];
-                for (int i = 0; i < 200; i++)
+                if (version < 69)
                 {
-                    stores[i] = bytes[offset];
-                    offset++;
+                    stores = new byte[200];
+                    for (int i = 0; i < 200; i++)
+                    {
+                        stores[i] = reader.ReadByte();
+                    }
                 }
-            }
-            else if (version < 72)
-            {
-                stores = new byte[220];
+                else if (version < 72)
+                {
+                    stores = new byte[220];
                     for (int i = 0; i < 220; i++)
                     {
-                        stores[i] = bytes[offset];
-                        offset++;
+                        stores[i] = reader.ReadByte();
                     }
-            }
-            else
-            {
-                stores = new byte[600];
+                }
+                else
+                {
+                    stores = new byte[600];
                     for (int i = 0; i < 600; i++)
                     {
-                        stores[i] = bytes[offset];
-                        offset++;
+                        stores[i] = reader.ReadByte();
                     }
-            }
-           
+                }
 
-            if (version < 47)
-            {
-                if (version >= 29)
+
+                if (version < 47)
+                {
+                    if (version >= 29)
+                    {
+                        pilots = new Pilot[48];
+                        for (int j = 0; j < pilots.Length; j++)
+                        {
+                            Pilot thisPilot = new Pilot();
+                            thisPilot.pilot_id = reader.ReadInt16();
+                            thisPilot.pilot_skill_and_rating = reader.ReadByte();
+                            thisPilot.pilot_status = reader.ReadByte();
+                            thisPilot.aa_kills = reader.ReadByte();
+                            thisPilot.ag_kills = reader.ReadByte();
+                            thisPilot.as_kills = reader.ReadByte();
+                            thisPilot.an_kills = reader.ReadByte();
+                            /*
+                            p.missions_flown = reader.ReadInt16();
+                             */
+                            pilots[j] = thisPilot;
+                        }
+                    }
+                    else
+                    {
+                        pilots = new Pilot[36];
+                        for (int j = 0; j < pilots.Length; j++)
+                        {
+                            Pilot thisPilot = new Pilot();
+                            thisPilot.pilot_id = reader.ReadInt16();
+                            thisPilot.pilot_skill_and_rating = reader.ReadByte();
+                            thisPilot.pilot_status = reader.ReadByte();
+                            thisPilot.aa_kills = reader.ReadByte();
+                            thisPilot.ag_kills = reader.ReadByte();
+                            thisPilot.as_kills = reader.ReadByte();
+                            thisPilot.an_kills = reader.ReadByte();
+                            /*
+                            p.missions_flown = reader.ReadInt16();
+                             */
+                            pilots[j] = thisPilot;
+                        }
+                    }
+                }
+                else
                 {
                     pilots = new Pilot[48];
                     for (int j = 0; j < pilots.Length; j++)
                     {
                         Pilot thisPilot = new Pilot();
-                        thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
-                        offset += 2;
-                        thisPilot.pilot_skill_and_rating = bytes[offset];
-                        offset++;
-                        thisPilot.pilot_status = bytes[offset];
-                        offset++;
-                        thisPilot.aa_kills = bytes[offset];
-                        offset++;
-                        thisPilot.ag_kills = bytes[offset];
-                        offset++;
-                        thisPilot.as_kills = bytes[offset];
-                        offset++;
-                        thisPilot.an_kills = bytes[offset];
-                        offset++;
-                        /*
-                        p.missions_flown = BitConverter.ToInt16(bytes, offset);
-                        offset += 2;
-                         */
+                        thisPilot.pilot_id = reader.ReadInt16();
+                        thisPilot.pilot_skill_and_rating = reader.ReadByte();
+                        thisPilot.pilot_status = reader.ReadByte();
+                        thisPilot.aa_kills = reader.ReadByte();
+                        thisPilot.ag_kills = reader.ReadByte();
+                        thisPilot.as_kills = reader.ReadByte();
+                        thisPilot.an_kills = reader.ReadByte();
+                        thisPilot.missions_flown = reader.ReadInt16();
                         pilots[j] = thisPilot;
                     }
+                }
+                schedule = new int[16];
+                for (int j = 0; j < schedule.Length; j++)
+                {
+                    schedule[j] = reader.ReadInt32();
+                }
+                airbase_id = new VU_ID();
+                airbase_id.num_ = reader.ReadUInt32();
+                airbase_id.creator_ = reader.ReadUInt32();
+
+                hot_spot = new VU_ID();
+                hot_spot.num_ = reader.ReadUInt32();
+                hot_spot.creator_ = reader.ReadUInt32();
+
+                if (version >= 6 && version < 16)
+                {
+                    junk = new VU_ID();
+                    junk.num_ = reader.ReadUInt32();
+                    junk.creator_ = reader.ReadUInt32();
+                }
+                rating = new byte[16];
+                for (int j = 0; j < rating.Length; j++)
+                {
+                    rating[j] = reader.ReadByte();
+                }
+                aa_kills = reader.ReadInt16();
+                ag_kills = reader.ReadInt16();
+                as_kills = reader.ReadInt16();
+                an_kills = reader.ReadInt16();
+                missions_flown = reader.ReadInt16();
+                mission_score = reader.ReadInt16();
+                total_losses = reader.ReadByte();
+
+                if (version >= 9)
+                {
+                    pilot_losses = reader.ReadByte();
                 }
                 else
                 {
-                    pilots = new Pilot[36];
-                    for (int j = 0; j < pilots.Length; j++)
-                    {
-                        Pilot thisPilot = new Pilot();
-                        thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
-                        offset += 2;
-                        thisPilot.pilot_skill_and_rating = bytes[offset];
-                        offset++;
-                        thisPilot.pilot_status = bytes[offset];
-                        offset++;
-                        thisPilot.aa_kills = bytes[offset];
-                        offset++;
-                        thisPilot.ag_kills = bytes[offset];
-                        offset++;
-                        thisPilot.as_kills = bytes[offset];
-                        offset++;
-                        thisPilot.an_kills = bytes[offset];
-                        offset++;
-                        /*
-                        p.missions_flown = BitConverter.ToInt16(bytes, offset);
-                        offset += 2;
-                         */
-                        pilots[j] = thisPilot;
-                    }
+                    pilot_losses = 0;
                 }
-            }
-            else
-            {
-                pilots = new Pilot[48];
-                for (int j = 0; j < pilots.Length; j++)
+
+                if (version >= 45)
                 {
-                    Pilot thisPilot = new Pilot();
-                    thisPilot.pilot_id = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    thisPilot.pilot_skill_and_rating = bytes[offset];
-                    offset++;
-                    thisPilot.pilot_status = bytes[offset];
-                    offset++;
-                    thisPilot.aa_kills = bytes[offset];
-                    offset++;
-                    thisPilot.ag_kills = bytes[offset];
-                    offset++;
-                    thisPilot.as_kills = bytes[offset];
-                    offset++;
-                    thisPilot.an_kills = bytes[offset];
-                    offset++;
-                    thisPilot.missions_flown = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                    pilots[j] = thisPilot;
+                    squadron_patch = reader.ReadByte();
                 }
             }
-            schedule = new int[16];
-            for (int j = 0; j < schedule.Length; j++)
-            {
-                schedule[j] = BitConverter.ToInt32(bytes, offset);
-                offset += 4;
-            }
-            airbase_id = new VU_ID();
-            airbase_id.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            airbase_id.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            hot_spot = new VU_ID();
-            hot_spot.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            hot_spot.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            if (version >= 6 && version < 16)
-            {
-                junk = new VU_ID();
-                junk.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                junk.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-            }
-            rating = new byte[16];
-            for (int j = 0; j < rating.Length; j++)
-            {
-                rating[j] = bytes[offset];
-                offset++;
-            }
-            aa_kills = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            ag_kills = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            as_kills = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            an_kills = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            missions_flown = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            mission_score = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            total_losses = bytes[offset];
-            offset++;
-
-            if (version >= 9)
-            {
-                pilot_losses = bytes[offset];
-                offset++;
-            }
-            else
-            {
-                pilot_losses = 0;
-            }
-
-            if (version >=45)
-            {
-                squadron_patch = bytes[offset];
-                offset++;
-            }
-
         }
     }
 }

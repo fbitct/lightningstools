@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -17,22 +19,17 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public CampaignManager(byte[] bytes, ref int offset, int version)
+        public CampaignManager(Stream stream, int version)
         {
-            id = new VU_ID();
-            id.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            id.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-
-            entityType = BitConverter.ToUInt16(bytes, offset);
-            offset += 2;
-
-            managerFlags = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-
-            owner = bytes[offset];
-            offset++;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                id = new VU_ID();
+                id.num_ = reader.ReadUInt32();
+                id.creator_ = reader.ReadUInt32();
+                entityType = reader.ReadUInt16();
+                managerFlags = reader.ReadInt16();
+                owner = reader.ReadByte();
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -29,62 +31,50 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Waypoint(byte[] bytes, ref int offset, int version)
+        public Waypoint(Stream stream, int version)
             : this()
         {
-            haves = bytes[offset];
-            offset++;
-            GridX = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            GridY = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            GridZ = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
-            Arrive = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            Action = bytes[offset];
-            offset++;
-            RouteAction = bytes[offset];
-            offset++;
-            var tmp = bytes[offset];
-            offset++;
-            Formation = (byte)(tmp & 0x0f);
-            FormationSpacing = (short)( ((tmp >> 4) & 0x0F) - 8);
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                haves = reader.ReadByte();
+                GridX = reader.ReadInt16();
+                GridY = reader.ReadInt16();
+                GridZ = reader.ReadInt16();
+                Arrive = reader.ReadUInt32();
+                Action = reader.ReadByte();
+                RouteAction = reader.ReadByte();
+                var tmp = reader.ReadByte();
+                Formation = (byte)(tmp & 0x0f);
+                FormationSpacing = (short)(((tmp >> 4) & 0x0F) - 8);
 
-            if (version < 72)
-            {
-                Flags = BitConverter.ToUInt16(bytes, offset);
-                offset += 2;
-            }
-            else
-            {
-                Flags = BitConverter.ToUInt32(bytes, offset);
-                offset += 4; 
-
-            }
-            if ((haves & WP_HAVE_TARGET) != 0)
-            {
-                TargetID = new VU_ID();
-                TargetID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                TargetID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                TargetBuilding = bytes[offset];
-                offset++;
-            }
-            else
-            {
-                TargetID = new VU_ID();
-                TargetBuilding = 255;
-            }
-            if ((haves & WP_HAVE_DEPTIME) !=0)
-            {
-                Depart = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-            }
-            else
-            {
-                Depart = Arrive;
+                if (version < 72)
+                {
+                    Flags = reader.ReadUInt16();
+                }
+                else
+                {
+                    Flags = reader.ReadUInt32();
+                }
+                if ((haves & WP_HAVE_TARGET) != 0)
+                {
+                    TargetID = new VU_ID();
+                    TargetID.num_ = reader.ReadUInt32();
+                    TargetID.creator_ = reader.ReadUInt32();
+                    TargetBuilding = reader.ReadByte();
+                }
+                else
+                {
+                    TargetID = new VU_ID();
+                    TargetBuilding = 255;
+                }
+                if ((haves & WP_HAVE_DEPTIME) != 0)
+                {
+                    Depart = reader.ReadUInt32();
+                }
+                else
+                {
+                    Depart = Arrive;
+                }
             }
         }
     }

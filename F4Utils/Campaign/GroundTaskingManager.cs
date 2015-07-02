@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 namespace F4Utils.Campaign
 {
     public class GroundTaskingManager : CampaignManager
@@ -11,11 +13,13 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public GroundTaskingManager(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public GroundTaskingManager(Stream stream, int version)
+            : base(stream, version)
         {
-            flags = BitConverter.ToInt16(bytes, offset);
-            offset += 2;
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
+            {
+                flags = reader.ReadInt16();
+            }
         }
 
     }

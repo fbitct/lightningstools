@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -15,20 +17,20 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Brigade(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public Brigade(Stream stream, int version)
+            : base(stream, version)
         {
-            elements = bytes[offset];
-            offset++;
-            element = new VU_ID[elements];
-            for (int i = 0; i < elements; i++)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                VU_ID thisElement = new VU_ID();
-                thisElement.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                thisElement.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                element[i] = thisElement;
+                elements = reader.ReadByte();
+                element = new VU_ID[elements];
+                for (int i = 0; i < elements; i++)
+                {
+                    VU_ID thisElement = new VU_ID();
+                    thisElement.num_ = reader.ReadUInt32();
+                    thisElement.creator_ = reader.ReadUInt32();
+                    element[i] = thisElement;
+                }
             }
 
         }

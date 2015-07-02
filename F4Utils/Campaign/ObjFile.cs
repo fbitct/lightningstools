@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -27,32 +29,32 @@ namespace F4Utils.Campaign
         {
             this.objectives = new Objective[numObjectives];
 
-            int curByte = 0;
-            curByte = 0;
-            for (int i = 0; i < numObjectives; i++)
+            using (var stream = new MemoryStream(bytes))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
-                short thisObjectiveType = BitConverter.ToInt16(bytes, curByte);
-                curByte += 2;
-                Objective thisObjective = new Objective(bytes, ref curByte, version);
-                this.objectives[i] = thisObjective;
+                for (int i = 0; i < numObjectives; i++)
+                {
+                    short thisObjectiveType = reader.ReadInt16();
+                    Objective thisObjective = new Objective(stream, version);
+                    this.objectives[i] = thisObjective;
+                }
             }
         }
         protected static byte[] Expand(byte[] compressed, out short numObjectives)
         {
-            int curByte = 0;
-            numObjectives = BitConverter.ToInt16(compressed, curByte);
-            curByte += 2;
-            int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
-            curByte += 4;
-            int newSize = BitConverter.ToInt32(compressed, curByte);
-            curByte += 4;
-            if (uncompressedSize == 0) return null;
+            using (var stream = new MemoryStream(compressed))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
+            {
+                numObjectives = reader.ReadInt16();
+                int uncompressedSize = reader.ReadInt32();
+                int newSize = reader.ReadInt32();
+                if (uncompressedSize == 0) return null;
 
-            byte[] actualCompressed = new byte[compressed.Length - 10];
-            Array.Copy(compressed, 10, actualCompressed, 0, actualCompressed.Length);
-            byte[] uncompressed = null;
-            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
-            return uncompressed;
+                var actualCompressed = reader.ReadBytes(compressed.Length - 10);
+                byte[] uncompressed = null;
+                uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
+                return uncompressed;
+            }
         }
     }
 }

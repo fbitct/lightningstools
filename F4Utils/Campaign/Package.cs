@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -41,292 +43,188 @@ namespace F4Utils.Campaign
             : base()
         {
         }
-        public Package(byte[] bytes, ref int offset, int version)
-            : base(bytes, ref offset, version)
+        public Package(Stream stream, int version)
+            : base(stream, version)
         {
-            elements = bytes[offset];
-            offset++;
-            element = new VU_ID[elements];
-            for (int i = 0; i < elements; i++)
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                VU_ID thisElement = new VU_ID();
-                thisElement.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                thisElement.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                element[i] = thisElement;
-            }
-            interceptor = new VU_ID();
-            interceptor.num_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            interceptor.creator_ = BitConverter.ToUInt32(bytes, offset);
-            offset += 4;
-            if (version >= 7)
-            {
-                awacs = new VU_ID();
-                awacs.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                awacs.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                jstar = new VU_ID();
-                jstar.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                jstar.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                ecm = new VU_ID();
-                ecm.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                ecm.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                tanker = new VU_ID();
-                tanker.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                tanker.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-            }
-            wait_cycles = bytes[offset];
-            offset++;
-
-            mis_request = new MissionRequest();
-
-            if (Final && wait_cycles == 0)
-            {
-                requests = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                if (version < 35)
+                elements = reader.ReadByte();
+                element = new VU_ID[elements];
+                for (int i = 0; i < elements; i++)
                 {
-                    threat_stats = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
+                    VU_ID thisElement = new VU_ID();
+                    thisElement.num_ = reader.ReadUInt32();
+                    thisElement.creator_ = reader.ReadUInt32();
+                    element[i] = thisElement;
                 }
-
-                responses = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.mission = (byte)BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.context = (byte)BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.requesterID = new VU_ID();
-                mis_request.requesterID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                mis_request.requesterID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.targetID = new VU_ID();
-                mis_request.targetID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                mis_request.targetID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                if (version >= 26)
+                interceptor = new VU_ID();
+                interceptor.num_ = reader.ReadUInt32();
+                interceptor.creator_ = reader.ReadUInt32();
+                if (version >= 7)
                 {
-                    mis_request.tot = BitConverter.ToUInt32(bytes, offset);
-                    offset += 4;
+                    awacs = new VU_ID();
+                    awacs.num_ = reader.ReadUInt32();
+                    awacs.creator_ = reader.ReadUInt32();
+
+                    jstar = new VU_ID();
+                    jstar.num_ = reader.ReadUInt32();
+                    jstar.creator_ = reader.ReadUInt32();
+
+                    ecm = new VU_ID();
+                    ecm.num_ = reader.ReadUInt32();
+                    ecm.creator_ = reader.ReadUInt32();
+
+                    tanker = new VU_ID();
+                    tanker.num_ = reader.ReadUInt32();
+                    tanker.creator_ = reader.ReadUInt32();
+
                 }
-                else if (version >=16)
+                wait_cycles = reader.ReadByte();
+
+                mis_request = new MissionRequest();
+
+                if (Final && wait_cycles == 0)
                 {
-                    mis_request.tot = BitConverter.ToUInt32(bytes, offset);
-                    offset += 4;
-                }
-                if (version >= 35)
-                {
-                    mis_request.action_type = bytes[offset];
-                    offset++;
-                }
-                else
-                {
-                    mis_request.action_type = 0;
-                }
+                    requests = reader.ReadInt16();
 
-                if (version >= 41)
-                {
-                    mis_request.priority = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                }
-                else
-                {
-                    mis_request.priority = 1;
-                }
-                package_flags = 0;
-            }
-            else
-            {
-                flights = bytes[offset];
-                offset++;
-                wait_for = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                iax = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                iay = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                eax = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                eay = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                bpx = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                bpy = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                tpx = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-                tpy = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                takeoff = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                tp_time = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                package_flags = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                caps = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                requests = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                if (version < 35)
-                {
-                    threat_stats = BitConverter.ToInt16(bytes, offset);
-                    offset += 2;
-                }
-
-                responses = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                num_ingress_waypoints = bytes[offset];
-                offset++;
-
-                ingress_waypoints = new Waypoint[num_ingress_waypoints];
-                for (int j = 0; j < num_ingress_waypoints; j++)
-                {
-                    ingress_waypoints[j] = new Waypoint(bytes, ref offset, version);
-                }
-
-                num_egress_waypoints = bytes[offset];
-                offset++;
-                egress_waypoints = new Waypoint[num_egress_waypoints];
-                for (int j = 0; j < num_egress_waypoints; j++)
-                {
-                    egress_waypoints[j] = new Waypoint(bytes, ref offset, version);
-                }
-
-                mis_request.requesterID = new VU_ID();
-                mis_request.requesterID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                mis_request.requesterID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.targetID = new VU_ID();
-                mis_request.targetID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                mis_request.targetID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.secondaryID = new VU_ID();
-                mis_request.secondaryID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                mis_request.secondaryID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.pakID = new VU_ID();
-                mis_request.pakID.num_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-                mis_request.pakID.creator_ = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.who = bytes[offset];
-                offset++;
-
-                mis_request.vs = bytes[offset];
-                offset++;
-
-                offset += 2; //align on int32 boundary
-
-                mis_request.tot = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.tx = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.ty = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.flags = BitConverter.ToUInt32(bytes, offset);
-                offset += 4;
-
-                mis_request.caps = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.target_num = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.speed = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.match_strength = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.priority = BitConverter.ToInt16(bytes, offset);
-                offset += 2;
-
-                mis_request.tot_type = bytes[offset];
-                offset++;
-
-                mis_request.action_type = bytes[offset];
-                offset++;
-
-
-                mis_request.mission = bytes[offset];
-                offset++;
-
-                mis_request.aircraft = bytes[offset];
-                offset++;
-
-                mis_request.context = bytes[offset];
-                offset++;
-
-                mis_request.roe_check = bytes[offset];
-                offset++;
-
-                if (!(version < 35))
-                {
-
-                    mis_request.delayed = bytes[offset];
-                    offset++;
-
-                    mis_request.start_block = bytes[offset];
-                    offset++;
-
-                    mis_request.final_block = bytes[offset];
-                    offset++;
-
-                    mis_request.slots = new byte[4];
-                    for (int k = 0; k < 4; k++)
+                    if (version < 35)
                     {
-                        mis_request.slots[k] = bytes[offset];
-                        offset++;
+                        threat_stats = reader.ReadInt16();
                     }
 
-                    mis_request.min_to = (sbyte)bytes[offset];
-                    offset++;
+                    responses = reader.ReadInt16();
 
-                    mis_request.max_to = (sbyte)bytes[offset];
-                    offset++;
+                    mis_request.mission = (byte)reader.ReadInt16();
+                    mis_request.context = (byte)reader.ReadInt16();
 
-                    offset += 3;// align on int32 boundary
+                    mis_request.requesterID = new VU_ID();
+                    mis_request.requesterID.num_ = reader.ReadUInt32();
+                    mis_request.requesterID.creator_ = reader.ReadUInt32();
+
+                    mis_request.targetID = new VU_ID();
+                    mis_request.targetID.num_ = reader.ReadUInt32();
+                    mis_request.targetID.creator_ = reader.ReadUInt32();
+
+                    if (version >= 26)
+                    {
+                        mis_request.tot = reader.ReadUInt32();
+                    }
+                    else if (version >= 16)
+                    {
+                        mis_request.tot = reader.ReadUInt32();
+                    }
+                    if (version >= 35)
+                    {
+                        mis_request.action_type = reader.ReadByte();
+                    }
+                    else
+                    {
+                        mis_request.action_type = 0;
+                    }
+
+                    if (version >= 41)
+                    {
+                        mis_request.priority = reader.ReadInt16();
+                    }
+                    else
+                    {
+                        mis_request.priority = 1;
+                    }
+                    package_flags = 0;
+                }
+                else
+                {
+                    flights = reader.ReadByte();
+                    wait_for = reader.ReadInt16();
+                    iax = reader.ReadInt16();
+                    iay = reader.ReadInt16();
+                    eax = reader.ReadInt16();
+                    eay = reader.ReadInt16();
+                    bpx = reader.ReadInt16();
+                    bpy = reader.ReadInt16();
+                    tpx = reader.ReadInt16();
+                    tpy = reader.ReadInt16();
+                    takeoff = reader.ReadUInt32();
+                    tp_time = reader.ReadUInt32();
+                    package_flags = reader.ReadUInt32();
+                    caps = reader.ReadInt16();
+                    requests = reader.ReadInt16();
+
+                    if (version < 35)
+                    {
+                        threat_stats = reader.ReadInt16();
+                    }
+
+                    responses = reader.ReadInt16();
+                    num_ingress_waypoints = reader.ReadByte();
+
+                    ingress_waypoints = new Waypoint[num_ingress_waypoints];
+                    for (int j = 0; j < num_ingress_waypoints; j++)
+                    {
+                        ingress_waypoints[j] = new Waypoint(stream, version);
+                    }
+
+                    num_egress_waypoints = reader.ReadByte();
+                    egress_waypoints = new Waypoint[num_egress_waypoints];
+                    for (int j = 0; j < num_egress_waypoints; j++)
+                    {
+                        egress_waypoints[j] = new Waypoint(stream, version);
+                    }
+
+                    mis_request.requesterID = new VU_ID();
+                    mis_request.requesterID.num_ = reader.ReadUInt32();
+                    mis_request.requesterID.creator_ = reader.ReadUInt32();
+
+                    mis_request.targetID = new VU_ID();
+                    mis_request.targetID.num_ = reader.ReadUInt32();
+                    mis_request.targetID.creator_ = reader.ReadUInt32();
+
+                    mis_request.secondaryID = new VU_ID();
+                    mis_request.secondaryID.num_ = reader.ReadUInt32();
+                    mis_request.secondaryID.creator_ = reader.ReadUInt32();
+
+                    mis_request.pakID = new VU_ID();
+                    mis_request.pakID.num_ = reader.ReadUInt32();
+                    mis_request.pakID.creator_ = reader.ReadUInt32();
+
+                    mis_request.who = reader.ReadByte();
+                    mis_request.vs = reader.ReadByte();
+
+                    reader.ReadBytes(2); //align on int32 boundary
+
+                    mis_request.tot = reader.ReadUInt32();
+                    mis_request.tx = reader.ReadInt16();
+                    mis_request.ty = reader.ReadInt16();
+                    mis_request.flags = reader.ReadUInt32();
+                    mis_request.caps = reader.ReadInt16();
+                    mis_request.target_num = reader.ReadInt16();
+                    mis_request.speed = reader.ReadInt16();
+                    mis_request.match_strength = reader.ReadInt16();
+                    mis_request.priority = reader.ReadInt16();
+                    mis_request.tot_type = reader.ReadByte();
+                    mis_request.action_type = reader.ReadByte();
+                    mis_request.mission = reader.ReadByte();
+                    mis_request.aircraft = reader.ReadByte();
+                    mis_request.context = reader.ReadByte();
+                    mis_request.roe_check = reader.ReadByte();
+
+                    if (!(version < 35))
+                    {
+
+                        mis_request.delayed = reader.ReadByte();
+                        mis_request.start_block = reader.ReadByte();
+                        mis_request.final_block = reader.ReadByte();
+                        mis_request.slots = new byte[4];
+                        for (int k = 0; k < 4; k++)
+                        {
+                            mis_request.slots[k] = reader.ReadByte();
+                        }
+                        mis_request.min_to = reader.ReadSByte();
+                        mis_request.max_to = reader.ReadSByte();
+                        reader.ReadBytes(3);// align on int32 boundary
+                    }
                 }
             }
-            
 
         }
     }

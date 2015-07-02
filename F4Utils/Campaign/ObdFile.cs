@@ -1,5 +1,7 @@
 ﻿using System;
 using F4Utils.Campaign.F4Structs;
+using System.IO;
+using System.Text;
 
 namespace F4Utils.Campaign
 {
@@ -28,64 +30,56 @@ namespace F4Utils.Campaign
         }
         protected void Decode(byte[] bytes, int version, short numObjectiveDeltas)
         {
-            int curByte = 0;
-            deltas = new ObjectiveDelta[numObjectiveDeltas];
-
-            for (int i = 0; i < numObjectiveDeltas; i++)
+            using (var stream = new MemoryStream(bytes))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
-                ObjectiveDelta thisObjectiveDelta = new ObjectiveDelta();
+                deltas = new ObjectiveDelta[numObjectiveDeltas];
 
-                VU_ID id = new VU_ID();
-                id.num_ = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                id.creator_ = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                thisObjectiveDelta.id = id;
+                for (int i = 0; i < numObjectiveDeltas; i++)
+                {
+                    ObjectiveDelta thisObjectiveDelta = new ObjectiveDelta();
 
-                thisObjectiveDelta.last_repair = BitConverter.ToUInt32(bytes, curByte);
-                curByte += 4;
-                thisObjectiveDelta.owner = bytes[curByte];
-                curByte++;
-                thisObjectiveDelta.supply = bytes[curByte];
-                curByte++;
-                thisObjectiveDelta.fuel = bytes[curByte];
-                curByte++;
-                thisObjectiveDelta.losses = bytes[curByte];
-                curByte++;
-                byte numFstatus = bytes[curByte];
-                curByte++;
-                thisObjectiveDelta.fStatus = new byte[numFstatus];
-                if (version < 64)
-                {
-                    thisObjectiveDelta.fStatus[0] = bytes[curByte];
-                    curByte++;
-                }
-                else
-                {
-                    for (int j = 0; j < numFstatus; j++)
+                    VU_ID id = new VU_ID();
+                    id.num_ = reader.ReadUInt32();
+                    id.creator_ = reader.ReadUInt32();
+                    thisObjectiveDelta.id = id;
+
+                    thisObjectiveDelta.last_repair = reader.ReadUInt32();
+                    thisObjectiveDelta.owner = reader.ReadByte();
+                    thisObjectiveDelta.supply = reader.ReadByte();
+                    thisObjectiveDelta.fuel = reader.ReadByte();
+                    thisObjectiveDelta.losses = reader.ReadByte();
+                    var numFstatus = reader.ReadByte();
+                    thisObjectiveDelta.fStatus = new byte[numFstatus];
+                    if (version < 64)
                     {
-                        thisObjectiveDelta.fStatus[j] = bytes[curByte];
-                        curByte++;
+                        thisObjectiveDelta.fStatus[0] = reader.ReadByte();
                     }
+                    else
+                    {
+                        for (int j = 0; j < numFstatus; j++)
+                        {
+                            thisObjectiveDelta.fStatus[j] = reader.ReadByte();
+                        }
+                    }
+                    deltas[i] = thisObjectiveDelta;
                 }
-                deltas[i] = thisObjectiveDelta;
             }
         }
         protected static byte[] Expand(byte[] compressed, out short numObjectiveDeltas)
         {
-            int curByte = 0;
-            int cSize = BitConverter.ToInt32(compressed, curByte);
-            curByte += 4;
-            numObjectiveDeltas = BitConverter.ToInt16(compressed, curByte);
-            curByte += 2;
-            int uncompressedSize = BitConverter.ToInt32(compressed, curByte);
-            curByte += 4;
-            if (uncompressedSize == 0) return null;
-            byte[] actualCompressed = new byte[compressed.Length - 10];
-            Array.Copy(compressed, 10, actualCompressed, 0, actualCompressed.Length);
-            byte[] uncompressed = null;
-            uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
-            return uncompressed;
+            using (var stream = new MemoryStream(compressed))
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
+            {
+                int cSize = reader.ReadInt32();
+                numObjectiveDeltas = reader.ReadInt16();
+                int uncompressedSize = reader.ReadInt32();
+                if (uncompressedSize == 0) return null;
+                var actualCompressed = reader.ReadBytes(compressed.Length - 10);
+                byte[] uncompressed = null;
+                uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
+                return uncompressed;
+            }
         }
     }
 }
