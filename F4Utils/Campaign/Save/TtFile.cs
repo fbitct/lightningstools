@@ -39,5 +39,20 @@ namespace F4Utils.Campaign.Save
                 }
             }
         }
+        public void Save(string fileName)
+        {
+            //writes TT file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(AirTactics);
+                writer.Write(GroundTactics);
+                writer.Write(NavalTactics);
+                for (var i = 0; i < TacticsTable.Length; i++)
+                {
+                    TacticsTable[i].Write(stream);
+                }
+            }
+        }
     }
 }

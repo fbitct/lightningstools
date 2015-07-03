@@ -48,6 +48,11 @@ namespace F4Utils.Campaign
         public Flight(Stream stream, int version)
             : base(stream, version)
         {
+            ReadFlight(stream, version);
+        }
+
+        private void ReadFlight(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 z = reader.ReadSingle();
@@ -251,6 +256,149 @@ namespace F4Utils.Campaign
                 else
                 {
                     refuelQuantity = 0;
+                }
+            }
+        }
+        public void WriteFlight(Stream stream, int version)
+        {
+            base.WriteAirUnit(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(z);
+                writer.Write(fuel_burnt);
+                writer.Write(last_move);
+                writer.Write(last_combat);
+                writer.Write(time_on_target); 
+                writer.Write(mission_over_time);
+                writer.Write(mission_target);
+
+                if (version < 24)
+                {
+                    if (version >= 8)
+                    {
+                        writer.Write(use_loadout); 
+                        if (use_loadout != 0)
+                        {
+                            for (int j = 0; j < 5; j++)
+                            {
+                                var thisStore = loadout[j];
+                                for (int k = 0; k < 16; k++)
+                                {
+                                    writer.Write((byte)thisStore.WeaponID[k]);
+                                }
+
+                                for (int k = 0; k < 16; k++)
+                                {
+                                    writer.Write((byte)thisStore.WeaponCount[k]);
+                                }
+
+                            }
+                        }
+                    }
+                    if (version < 18)
+                    {
+                        for (int j = 0; j < 16; j++)
+                        {
+                            writer.Write(weapon[j]);
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < 16; j++)
+                        {
+                            writer.Write((byte)weapon[j]);
+                        }
+                    }
+                    for (int j = 0; j < 16; j++)
+                    {
+                        writer.Write((byte)weapons[j]);
+                    }
+                }
+                else
+                {
+                    writer.Write(loadouts);
+                    for (int j = 0; j < loadouts; j++)
+                    {
+                        var thisLoadout = loadout[j];
+                        for (int k = 0; k < 16; k++)
+                        {
+                            if (version >= WEAPON_IDS_WIDENED_VERSION)
+                            {
+                                writer.Write(thisLoadout.WeaponID[k]);
+                            }
+                            else
+                            {
+                                writer.Write((byte)thisLoadout.WeaponID[k]);
+                            }
+                        }
+                        for (int k = 0; k < 16; k++)
+                        {
+                            writer.Write(thisLoadout.WeaponCount[k]);
+                        }
+                        
+                    }
+                }
+                writer.Write(mission);
+
+                if (version > 65)
+                {
+                    writer.Write(old_mission);
+                }
+
+                writer.Write(last_direction);
+                writer.Write(priority);
+                writer.Write(mission_id);
+
+                if (version < 14)
+                {
+                    writer.Write((byte)0x00);//dummy
+                }
+                writer.Write(eval_flags);
+
+                if (version > 65)
+                {
+                    writer.Write(mission_context);
+                }
+
+                writer.Write(package.num_ );
+                writer.Write( package.creator_);
+
+                writer.Write(squadron.num_);
+                writer.Write(squadron.creator_);
+
+                if (version > 65)
+                {
+                    writer.Write(requester.num_);
+                    writer.Write(requester.creator_);
+                }
+
+                for (int j = 0; j < 4; j++)
+                {
+                    writer.Write(slots[j]);
+                }
+
+                for (int j = 0; j < 4; j++)
+                {
+                    writer.Write(pilots[j]);
+                }
+
+                for (int j = 0; j < 4; j++)
+                {
+                    writer.Write(plane_stats[j]);
+                }
+
+                for (int j = 0; j < 4; j++)
+                {
+                    writer.Write(player_slots[j]);
+                }
+
+                writer.Write(last_player_slot);
+                writer.Write(callsign_id);
+                writer.Write(callsign_num);
+
+                if (version >= 72)
+                {
+                    writer.Write(refuelQuantity);
                 }
             }
         }

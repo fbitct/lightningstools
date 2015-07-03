@@ -32,6 +32,11 @@ namespace F4Utils.Campaign
         public Battalion(Stream stream, int version)
             : base(stream, version)
         {
+            ReadBattalion(stream, version);
+        }
+
+        protected void ReadBattalion(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 last_move = reader.ReadUInt32();
@@ -56,6 +61,34 @@ namespace F4Utils.Campaign
                     dummy = reader.ReadByte();
                 }
                 position = reader.ReadByte();
+
+            }
+        }
+        public void WriteBattalion(Stream stream, int version)
+        {
+            base.WriteGroundUnit(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(last_move);
+                writer.Write(last_combat);
+
+                writer.Write(parent_id.num_);
+                writer.Write(parent_id.creator_);
+
+                writer.Write(last_obj.num_);
+                writer.Write(last_obj.creator_);
+
+                writer.Write(supply);
+                writer.Write(fatigue);
+                writer.Write(morale);
+                writer.Write(heading);
+                writer.Write(final_heading);
+
+                if (version < 15)
+                {
+                    writer.Write((byte)0x00);
+                }
+                writer.Write(position);
 
             }
         }

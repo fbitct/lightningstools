@@ -34,6 +34,11 @@ namespace F4Utils.Campaign
         public Waypoint(Stream stream, int version)
             : this()
         {
+            Read(stream, version);
+        }
+
+        public void Read(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 haves = reader.ReadByte();
@@ -74,6 +79,42 @@ namespace F4Utils.Campaign
                 else
                 {
                     Depart = Arrive;
+                }
+            }
+        }
+        public void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(haves);
+                writer.Write(GridX);
+                writer.Write(GridY);
+                writer.Write(GridZ);
+                writer.Write(Arrive);
+                writer.Write(Action);
+                writer.Write(RouteAction);
+
+                var tmp = (byte)( (Formation & 0x0F) | (((FormationSpacing +8) & 0x0F) <<4));
+                writer.Write(tmp);
+
+                if (version < 72)
+                {
+                    writer.Write((ushort)Flags);
+                }
+                else
+                {
+                    writer.Write(Flags);
+                }
+                if ((haves & WP_HAVE_TARGET) != 0)
+                {
+                    writer.Write(TargetID.num_);
+                    writer.Write(TargetID.creator_);
+                    writer.Write(TargetBuilding);
+                }
+
+                if ((haves & WP_HAVE_DEPTIME) != 0)
+                {
+                    writer.Write(Depart);
                 }
             }
         }

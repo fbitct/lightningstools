@@ -50,5 +50,41 @@ namespace F4Utils.Campaign
             }
     
         }
+        private void Save(string fileName)
+        {
+            //writes WCD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)WeaponDataTable.Length);
+                for (var i = 0; i < WeaponDataTable.Length; i++)
+                {
+                    var entry = WeaponDataTable[i];
+                    writer.Write(entry.Index);
+                    writer.Write(entry.Union1);
+                    writer.Write((int)entry.DamageType);
+                    writer.Write(entry.Range);
+                    writer.Write(entry.Flags);
+                    writer.Write(entry.Name);
+                    writer.Write(entry.MinAlt);
+                    writer.Write(entry.BulletDispersion);
+                    writer.Write(entry.HitChance);
+                    writer.Write(entry.FireRate);
+                    writer.Write(entry.Rariety);
+                    writer.Write(entry.GuidanceFlags);
+                    writer.Write(entry.Collective);
+                    writer.Write(entry.BulletInfo);
+                    writer.Write(entry.RackGroup);
+                    writer.Write(entry.Weight); 
+                    writer.Write(entry.DragIndex);
+                    writer.Write(entry.Union2);
+                    writer.Write(entry.RadarType);
+                    writer.Write(entry.SimDataIdx);
+                    writer.Write(entry.MaxAlt);
+                    writer.Write(entry.BulletRoundsPerSec);
+                }
+            }
+
+        }
     }
 }

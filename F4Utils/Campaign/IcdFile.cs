@@ -33,5 +33,24 @@ namespace F4Utils.Campaign
             }
 
         }
+        public void Save(string fileName)
+        {
+            //writes ICD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(IRSTDataTable.Length);
+                for (var i = 0; i < IRSTDataTable.Length; i++)
+                {
+                    var entry = IRSTDataTable[i];
+                    writer.Write(entry.NominalRange);
+                    writer.Write(entry.FOVHalfAngle);
+                    writer.Write(entry.GimbalLimitHalfAngle);
+                    writer.Write( entry.GroundFactor);
+                    writer.Write(entry.FlareChance);
+                }
+            }
+
+        }
     }
 }

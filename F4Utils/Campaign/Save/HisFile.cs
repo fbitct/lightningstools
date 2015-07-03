@@ -44,5 +44,25 @@ namespace F4Utils.Campaign.Save
              }
              HistoryRecords = records.ToArray();
          }
+         public void Save(string fileName)
+         {
+             //writes HIS file
+             using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+             using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+             {
+                 foreach (var rec in HistoryRecords)
+                 {
+                     writer.Write(rec.Time);
+                     writer.Write((short)rec.UnitHistory.Length);
+                     if (rec.UnitHistory !=null)
+                     {
+                         for (var i = 0; i < rec.UnitHistory.Length; i++)
+                         {
+                             rec.UnitHistory[i].Write(stream);
+                         }
+                     }
+                 }
+             }
+         }
     }
 }

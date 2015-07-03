@@ -1,5 +1,4 @@
-﻿using System;
-using F4Utils.Campaign.F4Structs;
+﻿using F4Utils.Campaign.F4Structs;
 using System.IO;
 using System.Text;
 
@@ -11,12 +10,14 @@ namespace F4Utils.Campaign
         public VU_ID id;
         public byte[] schedule;
         #endregion
-        protected ATMAirbase()
-            : base()
-        {
-        }
+        protected ATMAirbase(){}
         public ATMAirbase(Stream stream, int version)
             : this()
+        {
+            Read(stream, version);
+        }
+
+        protected void Read(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
@@ -28,6 +29,19 @@ namespace F4Utils.Campaign
                 for (int j = 0; j < schedule.Length; j++)
                 {
                     schedule[j] = reader.ReadByte();
+                }
+            }
+        }
+        public void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(id.num_);
+                writer.Write(id.creator_);
+
+                for (int j = 0; j < schedule.Length; j++)
+                {
+                    writer.Write(schedule[j]);
                 }
             }
         }

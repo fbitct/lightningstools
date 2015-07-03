@@ -23,6 +23,11 @@ namespace F4Utils.Campaign
         public TeaFile(Stream stream, int version)
             : this()
         {
+            Read(stream, version);
+        }
+
+        protected void Read(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 _version = version;
@@ -42,6 +47,20 @@ namespace F4Utils.Campaign
                     airTaskingManagers[i] = new AirTaskingManager(stream, version);
                     groundTaskingManagers[i] = new GroundTaskingManager(stream, version);
                     navalTaskingManagers[i] = new NavalTaskingManager(stream, version);
+                }
+            }
+        }
+        public void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(numTeams);
+                for (int i = 0; i < numTeams; i++)
+                {
+                    teams[i].Write(stream, version);
+                    airTaskingManagers[i].WriteAirTaskingManager(stream, version);
+                    groundTaskingManagers[i].WriteGroundTaskingManager(stream, version);
+                    navalTaskingManagers[i].WriteNavalTaskingManager(stream, version);
                 }
             }
         }

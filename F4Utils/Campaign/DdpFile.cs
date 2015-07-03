@@ -28,5 +28,19 @@ namespace F4Utils.Campaign
                 return dirtyDataTable;
             }
         }
+        public void Save(string fileName)
+        {
+            //writes DDP file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)DirtyDataTable.Length);
+                for (var i = 0; i < DirtyDataTable.Length; i++)
+                {
+                    var entry = DirtyDataTable[i];
+                    writer.Write((int)entry.priority);
+                }
+            }
+        }
     }
 }

@@ -38,5 +38,28 @@ namespace F4Utils.Campaign.Save
                 }
             }
         }
+        public void Save(string fileName)
+        {
+            //writes FRC file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(Timestamp);
+                writer.Write((short)TeamStats.Length);
+                for (var i = 0; i < TeamStats.Length; i++)
+                {
+                    var thisTeamStats = TeamStats[i];
+                    writer.Write(thisTeamStats.airDefenseVehs);
+                    writer.Write(thisTeamStats.aircraft);
+                    writer.Write(thisTeamStats.groundVehs);
+                    writer.Write(thisTeamStats.ships);
+                    writer.Write(thisTeamStats.supply);
+                    writer.Write(thisTeamStats.fuel);
+                    writer.Write(thisTeamStats.airbases);
+                    writer.Write(thisTeamStats.supplyLevel);
+                    writer.Write(thisTeamStats.fuelLevel);
+                }
+            }
+        }
     }
 }

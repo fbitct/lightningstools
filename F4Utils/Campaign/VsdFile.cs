@@ -33,5 +33,24 @@ namespace F4Utils.Campaign
             }
 
         }
+        public void Save(string fileName)
+        {
+            //writes VSD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)VisualDataTable.Length);
+                for (var i = 0; i < VisualDataTable.Length; i++)
+                {
+                    var entry = VisualDataTable[i];
+                    writer.Write(entry.nominalRange);
+                    writer.Write(entry.top);
+                    writer.Write(entry.bottom);
+                    writer.Write(entry.left);
+                    writer.Write(entry.right);
+                }
+            }
+
+        }
     }
 }

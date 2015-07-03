@@ -20,19 +20,38 @@ namespace F4Utils.Campaign
         public Brigade(Stream stream, int version)
             : base(stream, version)
         {
+            ReadBrigade(stream, version);
+
+        }
+
+        protected void ReadBrigade(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 elements = reader.ReadByte();
                 element = new VU_ID[elements];
                 for (int i = 0; i < elements; i++)
                 {
-                    VU_ID thisElement = new VU_ID();
+                    var thisElement = new VU_ID();
                     thisElement.num_ = reader.ReadUInt32();
                     thisElement.creator_ = reader.ReadUInt32();
                     element[i] = thisElement;
                 }
             }
-
+        }
+        public void WriteBrigade(Stream stream, int version)
+        {
+            base.WriteGroundUnit(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(elements);
+                for (int i = 0; i < elements; i++)
+                {
+                    var thisElement = element[i];
+                    writer.Write(thisElement.num_);
+                    writer.Write(thisElement.creator_);
+                }
+            }
         }
     }
 }

@@ -35,6 +35,11 @@ namespace F4Utils.Campaign
         public Squadron(Stream stream, int version)
             : base(stream, version)
         {
+            ReadSquadron(stream, version);
+        }
+
+        private void ReadSquadron(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 fuel = reader.ReadInt32();
@@ -168,6 +173,92 @@ namespace F4Utils.Campaign
                 if (version >= 45)
                 {
                     squadron_patch = reader.ReadByte();
+                }
+            }
+        }
+        public void WriteSquadron(Stream stream, int version)
+        {
+            base.WriteAirUnit(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(fuel);
+                writer.Write(specialty);
+
+                if (version < 69)
+                {
+                    for (int i = 0; i < 200; i++)
+                    {
+                        writer.Write(stores[i]);
+                    }
+                }
+                else if (version < 72)
+                {
+                    for (int i = 0; i < 220; i++)
+                    {
+                        writer.Write(stores[i]);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 600; i++)
+                    {
+                        writer.Write(stores[i]);
+                    }
+                }
+
+
+                for (int j = 0; j < pilots.Length; j++)
+                {
+                    var thisPilot = pilots[j];
+                    writer.Write(thisPilot.pilot_id);
+                    writer.Write(thisPilot.pilot_skill_and_rating);
+                    writer.Write(thisPilot.pilot_status);
+                    writer.Write(thisPilot.aa_kills);
+                    writer.Write(thisPilot.ag_kills);
+                    writer.Write(thisPilot.as_kills);
+                    writer.Write(thisPilot.an_kills);
+                    if (version >= 47)
+                    {
+                        writer.Write(thisPilot.missions_flown);
+                    }
+                }
+
+                for (int j = 0; j < schedule.Length; j++)
+                {
+                    writer.Write(schedule[j]);
+                }
+                writer.Write(airbase_id.num_);
+                writer.Write(airbase_id.creator_);
+
+                writer.Write(hot_spot.num_);
+                writer.Write(hot_spot.creator_);
+
+                if (version >= 6 && version < 16)
+                {
+                    writer.Write(junk.num_);
+                    writer.Write(junk.creator_);
+                }
+
+                for (int j = 0; j < rating.Length; j++)
+                {
+                    writer.Write(rating[j]);
+                }
+                writer.Write(aa_kills);
+                writer.Write(ag_kills);
+                writer.Write(as_kills);
+                writer.Write(an_kills);
+                writer.Write(missions_flown);
+                writer.Write(mission_score);
+                writer.Write(total_losses);
+
+                if (version >= 9)
+                {
+                    writer.Write(pilot_losses);
+                }
+
+                if (version >= 45)
+                {
+                    writer.Write(squadron_patch);
                 }
             }
         }

@@ -41,5 +41,32 @@ namespace F4Utils.Campaign
             }
 
         }
+        private void Save(string fileName)
+        {
+            //writes FCD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)FeatureDataTable.Length);
+                for (var i = 0; i < FeatureDataTable.Length; i++)
+                {
+                    var entry = FeatureDataTable[i];
+                    writer.Write(entry.Index);
+                    writer.Write(entry.RepairTime);
+                    writer.Write(entry.Priority);
+                    writer.Write((byte)0x00);//padding
+                    writer.Write(entry.Flags);
+                    writer.Write(entry.Name);
+                    writer.Write(entry.HitPoints);
+                    writer.Write(entry.Height);
+                    writer.Write(entry.Angle);
+                    writer.Write(entry.RadarType);
+                    writer.Write(entry.Detection);
+                    writer.Write(entry.DamageMod);
+                    writer.Write(new byte[3]);//padding
+                }
+            }
+
+        }
     }
 }

@@ -32,7 +32,25 @@ namespace F4Utils.Campaign
                 }
                 return rwrDataTable;
             }
-
+        }
+        public void Save(string fileName)
+        {
+            //writes RWD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)RWRDataTable.Length);
+                for (var i = 0; i < RWRDataTable.Length; i++)
+                {
+                    var entry = RWRDataTable[i];
+                    writer.Write(entry.nominalRange);
+                    writer.Write(entry.top);
+                    writer.Write(entry.bottom);
+                    writer.Write(entry.left);
+                    writer.Write(entry.right);
+                    writer.Write(entry.flag);
+                }
+            }
         }
     }
 }

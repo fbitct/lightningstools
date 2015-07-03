@@ -37,5 +37,28 @@ namespace F4Utils.Campaign
                 return ptDataTable;
             }
         }
+        public void Save(string fileName)
+        {
+            //writes PDX file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)PtDataTable.Length);
+                for (var i = 0; i < PtDataTable.Length; i++)
+                {
+                    var entry = PtDataTable[i];
+                    writer.Write(entry.xOffset);
+                    writer.Write(entry.yOffset);
+                    writer.Write(entry.zOffset);
+                    writer.Write(entry.height);
+                    writer.Write(entry.width);
+                    writer.Write(entry.length);
+                    writer.Write(entry.type);
+                    writer.Write(entry.flags);
+                    writer.Write(entry.rootIdx);
+                    writer.Write(entry.branchIdx);
+                }
+            }
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace F4Utils.Campaign.Save
         private void LoadPakFile(string fileName)
         {
             //reads PAK file
-            using (var stream = new FileStream(fileName, FileMode.Open))
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
             {
                 MapData = new byte[stream.Length];
                 stream.Read(MapData, 0, (int)stream.Length);
@@ -28,6 +28,14 @@ namespace F4Utils.Campaign.Save
             Marshal.Copy(MapData, 0, bitmapData.Scan0, MapData.Length);
             mapImage.UnlockBits(bitmapData);
             PakMap = mapImage;
+        }
+        public void Save(string fileName)
+        {
+            //writes PAK file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+                stream.Write(MapData, 0, (int)MapData.Length);
+            }
         }
     }
 }

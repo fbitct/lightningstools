@@ -39,8 +39,30 @@ namespace F4Utils.Campaign
                 }
                 return featureEntryDataTable;
             }
-
-
+        }
+        public void Save(string fileName)
+        {
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)FeatureEntryDataTable.Length);
+                for (var i = 0; i < FeatureEntryDataTable.Length; i++)
+                {
+                    var entry = FeatureEntryDataTable[i];
+                    
+                    writer.Write(entry.Index);
+                    writer.Write(entry.Flags);
+                    writer.Write(entry.eClass);
+                    writer.Write(entry.Value);
+                    writer.Write(new byte[3]); //padding
+                    writer.Write(entry.Offset.x);
+                    writer.Write(entry.Offset.y);
+                    writer.Write(entry.Offset.z);
+                    writer.Write(entry.Facing);
+                    writer.Write(new byte[2]);//padding
+                    
+                }
+            }
         }
     }
 }

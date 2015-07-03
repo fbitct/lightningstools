@@ -31,5 +31,22 @@ namespace F4Utils.Campaign
                 return squadronStoresDataTable;
             }
         }
+        public void Save(string fileName)
+        {
+            //writes SSD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)SquadronStoresDataTable.Length);
+                for (var i = 0; i < SquadronStoresDataTable.Length; i++)
+                {
+                    var entry = SquadronStoresDataTable[i];
+                    writer.Write(entry.Stores);
+                    writer.Write(entry.infiniteAG);
+                    writer.Write(entry.infiniteAA);
+                    writer.Write(entry.infiniteGun);
+                }
+            }
+        }
     }
 }

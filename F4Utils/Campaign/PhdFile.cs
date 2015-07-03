@@ -42,5 +42,31 @@ namespace F4Utils.Campaign
             }
 
         }
+        private void Save(string fileName)
+        {
+            //writes PHD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)PtHeaderDataTable.Length);
+                for (var i = 0; i < PtHeaderDataTable.Length; i++)
+                {
+                    var entry = PtHeaderDataTable[i];
+                    writer.Write(entry.objID);
+                    writer.Write(entry.type);
+                    writer.Write(entry.count);
+                    writer.Write(entry.features);
+                    writer.Write((byte)0x00); //padding
+                    writer.Write(entry.data);
+                    writer.Write(entry.sinHeading);
+                    writer.Write(entry.cosHeading);
+                    writer.Write(entry.first);
+                    writer.Write(entry.texIdx);
+                    writer.Write(entry.runwayNum);
+                    writer.Write(entry.ltrt);
+                    writer.Write(entry.nextHeader);
+                }
+            }
+        }
     }
 }

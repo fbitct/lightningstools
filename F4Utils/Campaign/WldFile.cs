@@ -38,5 +38,28 @@ namespace F4Utils.Campaign
             }
 
         }
+        public void Save(string fileName)
+        {
+            //writes WLD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)WeaponListDataTable.Length);
+                for (var i = 0; i < WeaponListDataTable.Length; i++)
+                {
+                    var entry = WeaponListDataTable[i];
+                    for (var j = 0; j < 16; j++)
+                    {
+                        writer.Write(entry.Name[j]);
+                    }
+                    for (var j = 0; j < WeaponsConstants.MAX_WEAPONS_IN_LIST; j++)
+                    {
+                        writer.Write(entry.WeaponID[j]);
+                    }
+                    writer.Write(entry.Quantity);
+
+                }
+            }
+        }
     }
 }

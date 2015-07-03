@@ -64,5 +64,53 @@ namespace F4Utils.Campaign.Save
 			    }
             }
         }
+        public void Save(string fileName)
+        {
+            //writes FMAP file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(XCELLS);
+                writer.Write(YCELLS);
+                for (int i = (XCELLS - 1); i > -1; i--)
+                {
+                    for (int j = 0; j < YCELLS; j++)
+                    {
+                        writer.Write(CellArray[i, j].BasicCondition);
+                    }
+                }
+
+                for (int i = (XCELLS - 1); i > -1; i--)
+                {
+                    for (int j = 0; j < YCELLS; j++)
+                    {
+                        writer.Write(CellArray[i, j].Pressure);
+                    }
+                }
+
+                for (int i = (XCELLS - 1); i > -1; i--)
+                {
+                    for (int j = 0; j < YCELLS; j++)
+                    {
+                        writer.Write(CellArray[i, j].Temperature);
+                    }
+                }
+
+                for (int i = (XCELLS - 1); i > -1; i--)
+                {
+                    for (int j = 0; j < YCELLS; j++)
+                    {
+                        writer.Write(CellArray[i, j].WindSpeed);
+                    }
+                }
+                for (int i = (XCELLS - 1); i > -1; i--)
+                {
+                    for (int j = 0; j < YCELLS; j++)
+                    {
+                        writer.Write(CellArray[i, j].WindHeading);
+                    }
+                }
+            }
+        }
     }
 }

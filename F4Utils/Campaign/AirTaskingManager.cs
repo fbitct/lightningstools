@@ -19,12 +19,13 @@ namespace F4Utils.Campaign
         public MissionRequest[] missionRequests;
         #endregion
 
-        protected AirTaskingManager()
-            : base()
+        protected AirTaskingManager(){}
+        public AirTaskingManager(Stream stream, int version):base(stream, version)
         {
+            ReadAirTaskingManager(stream, version);
         }
-        public AirTaskingManager(Stream stream, int version)
-            : base(stream, version)
+
+        protected void ReadAirTaskingManager(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
@@ -70,7 +71,7 @@ namespace F4Utils.Campaign
                 {
                     for (int j = 0; j < numMissionRequests; j++)
                     {
-                        MissionRequest mis_request = new MissionRequest();
+                        var mis_request = new MissionRequest();
 
                         mis_request.requesterID = new VU_ID();
                         mis_request.requesterID.num_ = reader.ReadUInt32();
@@ -122,6 +123,93 @@ namespace F4Utils.Campaign
                         reader.ReadBytes(3);// align on int32 boundary
                         missionRequests[j] = mis_request;
 
+                    }
+                }
+            }
+        }
+        public void WriteAirTaskingManager(Stream stream, int version)
+        {
+            base.WriteCampaignManager(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(flags);
+
+                if (version >= 28)
+                {
+                    if (version >= 63)
+                    {
+                        writer.Write(averageCAStrength);
+                    }
+                    writer.Write(averageCAMissions);
+                    writer.Write(sampleCycles);
+                }
+                writer.Write(numAirbases);
+
+                for (int j = 0; j < numAirbases; j++)
+                {
+                    airbases[j].Write(stream, version);
+                }
+
+                writer.Write(cycle);
+
+                writer.Write(numMissionRequests);
+
+                if (version < 35)
+                {
+                    for (int j = 0; j < numMissionRequests; j++)
+                    {
+                        writer.Write(new byte[64]);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < numMissionRequests; j++)
+                    {
+                        var mis_request = missionRequests[j];
+
+                        writer.Write(mis_request.requesterID.num_);
+                        writer.Write(mis_request.requesterID.creator_);
+
+                        writer.Write(mis_request.targetID.num_);
+                        writer.Write(mis_request.targetID.creator_);
+
+                        writer.Write(mis_request.secondaryID.num_);
+                        writer.Write(mis_request.secondaryID.creator_);
+
+                        writer.Write(mis_request.pakID.num_);
+                        writer.Write(mis_request.pakID.creator_);
+
+                        writer.Write(mis_request.who);
+                        writer.Write(mis_request.vs);
+                        writer.Write(new byte[2]);//align on int32 boundary
+
+                        writer.Write(mis_request.tot);
+                        writer.Write(mis_request.tx);
+                        writer.Write(mis_request.ty);
+                        writer.Write(mis_request.flags);
+                        writer.Write(mis_request.caps);
+                        writer.Write(mis_request.target_num);
+                        writer.Write(mis_request.speed);
+                        writer.Write(mis_request.match_strength);
+                        writer.Write(mis_request.priority);
+                        writer.Write(mis_request.tot_type);
+                        writer.Write(mis_request.action_type);
+                        writer.Write(mis_request.mission);
+                        writer.Write(mis_request.aircraft);
+                        writer.Write(mis_request.context);
+                        writer.Write(mis_request.roe_check);
+                        writer.Write(mis_request.delayed);
+                        writer.Write(mis_request.start_block);
+                        writer.Write(mis_request.final_block);
+
+                        for (int k = 0; k < 4; k++)
+                        {
+                            writer.Write(mis_request.slots[k]);
+                        }
+
+                        writer.Write(mis_request.min_to);
+                        writer.Write(mis_request.max_to);
+                        writer.Write(new byte[3]);// align on int32 boundary
                     }
                 }
             }

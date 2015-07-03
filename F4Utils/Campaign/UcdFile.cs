@@ -62,6 +62,54 @@ namespace F4Utils.Campaign
                 return unitDataTable;
             }
         }
+        public void Save(string fileName)
+        {
+            //writes UCD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)UnitData.Length);
+                for (var i = 0; i < UnitData.Length; i++)
+                {
+                    var entry = UnitData[i];
+                    writer.Write(entry.Index);
+                    writer.Write((short)0); //padding
+                    for (var j = 0; j < entry.NumElements.Length; j++)
+                    {
+                        writer.Write(entry.NumElements[j]);
+                    }
+                    for (var j = 0; j < entry.VehicleType.Length; j++)
+                    {
+                        writer.Write(entry.VehicleType[j]);
+                    }
+                    for (var j = 0; j < entry.VehicleClass.Length; j++)
+                    {
+                        writer.Write(entry.VehicleClass[j]);
+                    }
+                    writer.Write(entry.Flags);
+                    writer.Write(entry.Name);
+                    writer.Write((short)0);//padding
+                    writer.Write((int)entry.MovementType);
+                    writer.Write(entry.MovementSpeed);
+                    writer.Write(entry.MaxRange);
+                    writer.Write(entry.Fuel);
+                    writer.Write(entry.Rate);
+                    writer.Write(entry.PtDataIndex);
+                    writer.Write(entry.Scores);
+                    writer.Write(entry.Role);
+                    writer.Write(entry.HitChance);
+                    writer.Write(entry.Strength);
+                    writer.Write(entry.Range);
+                    writer.Write(entry.Detection);
+                    writer.Write(entry.DamageMod);
+                    writer.Write(entry.RadarVehicle);
+                    writer.Write((byte)0x00);//padding
+                    writer.Write(entry.SpecialIndex);
+                    writer.Write(entry.IconIndex);
+                    writer.Write((short)0);//padding
+                }
+            }
+        }
 
     }
 }

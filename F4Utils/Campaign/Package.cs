@@ -46,6 +46,11 @@ namespace F4Utils.Campaign
         public Package(Stream stream, int version)
             : base(stream, version)
         {
+            ReadPackage(stream, version);
+        }
+
+        protected void ReadPackage(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 elements = reader.ReadByte();
@@ -225,7 +230,161 @@ namespace F4Utils.Campaign
                     }
                 }
             }
-
         }
+        public void WritePackage(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(elements);
+                for (int i = 0; i < elements; i++)
+                {
+                    var thisElement = element[i];
+                    writer.Write(thisElement.num_);
+                    writer.Write(thisElement.creator_);
+                }
+                writer.Write(interceptor.num_);
+                writer.Write(interceptor.creator_);
+                if (version >= 7)
+                {
+                    writer.Write(awacs.num_);
+                    writer.Write(awacs.creator_);
+
+                    writer.Write(jstar.num_);
+                    writer.Write(jstar.creator_);
+
+                    writer.Write(ecm.num_);
+                    writer.Write(ecm.creator_);
+
+                    writer.Write(tanker.num_);
+                    writer.Write(tanker.creator_);
+
+                }
+                writer.Write(wait_cycles);
+
+                if (Final && wait_cycles == 0)
+                {
+                    writer.Write(requests);
+
+                    if (version < 35)
+                    {
+                        writer.Write(threat_stats);
+                    }
+
+                    writer.Write(responses);
+
+                    writer.Write((short)mis_request.mission);
+                    writer.Write((short)mis_request.context);
+
+                    writer.Write(mis_request.requesterID.num_);
+                    writer.Write(mis_request.requesterID.creator_);
+
+                    writer.Write(mis_request.targetID.num_);
+                    writer.Write(mis_request.targetID.creator_);
+
+                    if (version >= 26)
+                    {
+                        writer.Write(mis_request.tot);
+                    }
+                    else if (version >= 16)
+                    {
+                        writer.Write(mis_request.tot);
+                    }
+                    if (version >= 35)
+                    {
+                        writer.Write(mis_request.action_type);
+                    }
+                    if (version >= 41)
+                    {
+                        writer.Write(mis_request.priority);
+                    }
+                }
+                else
+                {
+                    writer.Write(flights);
+                    writer.Write(wait_for);
+                    writer.Write(iax);
+                    writer.Write(iay);
+                    writer.Write(eax);
+                    writer.Write(eay);
+                    writer.Write(bpx);
+                    writer.Write(bpy);
+                    writer.Write(tpx);
+                    writer.Write(tpy);
+                    writer.Write(takeoff);
+                    writer.Write(tp_time);
+                    writer.Write(package_flags);
+                    writer.Write(caps);
+                    writer.Write(requests);
+
+                    if (version < 35)
+                    {
+                        writer.Write(threat_stats);
+                    }
+
+                    writer.Write(responses);
+                    writer.Write(num_ingress_waypoints);
+
+                    for (int j = 0; j < num_ingress_waypoints; j++)
+                    {
+                        ingress_waypoints[j].Write(stream, version);
+                    }
+
+                    writer.Write(num_egress_waypoints);
+                    for (int j = 0; j < num_egress_waypoints; j++)
+                    {
+                        egress_waypoints[j].Write(stream, version);
+                    }
+
+                    writer.Write(mis_request.requesterID.num_);
+                    writer.Write(mis_request.requesterID.creator_);
+
+                    writer.Write(mis_request.targetID.num_);
+                    writer.Write(mis_request.targetID.creator_);
+
+                    writer.Write(mis_request.secondaryID.num_);
+                    writer.Write(mis_request.secondaryID.creator_);
+
+                    writer.Write(mis_request.pakID.num_);
+                    writer.Write(mis_request.pakID.creator_);
+
+                    writer.Write(mis_request.who);
+                    writer.Write(mis_request.vs);
+
+                    writer.Write(new byte[2]); //align on int32 boundary
+
+                    writer.Write(mis_request.tot);
+                    writer.Write(mis_request.tx);
+                    writer.Write(mis_request.ty);
+                    writer.Write(mis_request.flags);
+                    writer.Write(mis_request.caps);
+                    writer.Write(mis_request.target_num); 
+                    writer.Write(mis_request.speed);
+                    writer.Write(mis_request.match_strength);
+                    writer.Write(mis_request.priority);
+                    writer.Write(mis_request.tot_type);
+                    writer.Write(mis_request.action_type);
+                    writer.Write(mis_request.mission);
+                    writer.Write(mis_request.aircraft);
+                    writer.Write(mis_request.context);
+                    writer.Write(mis_request.roe_check);
+
+                    if (!(version < 35))
+                    {
+
+                        writer.Write(mis_request.delayed);
+                        writer.Write(mis_request.start_block);
+                        writer.Write(mis_request.final_block);
+                        for (int k = 0; k < 4; k++)
+                        {
+                            writer.Write(mis_request.slots[k]);
+                        }
+                        writer.Write(mis_request.min_to);
+                        writer.Write(mis_request.max_to);
+                        writer.Write(new byte[3]);// align on int32 boundary
+                    }
+                }
+            }
+        }
+        
     }
 }

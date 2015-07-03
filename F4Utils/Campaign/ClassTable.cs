@@ -10,17 +10,17 @@ namespace F4Utils.Campaign
         public static Falcon4EntityClassType[] ReadClassTable(string classTableFilePath)
         {
             if (classTableFilePath == null) throw new ArgumentNullException("classTableFilePath");
-            FileInfo ctFileInfo = new FileInfo(classTableFilePath);
+            var ctFileInfo = new FileInfo(classTableFilePath);
             if (!ctFileInfo.Exists) throw new FileNotFoundException(classTableFilePath);
             byte[] bytes = new byte[ctFileInfo.Length];
             using (var stream = new FileStream(classTableFilePath, FileMode.Open, FileAccess.Read))
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
             {
                 short numEntities = reader.ReadInt16();
-                Falcon4EntityClassType[] classTable = new Falcon4EntityClassType[numEntities];
+                var classTable = new Falcon4EntityClassType[numEntities];
                 for (int i = 0; i < numEntities; i++)
                 {
-                    Falcon4EntityClassType thisClass = new Falcon4EntityClassType();
+                    var thisClass = new Falcon4EntityClassType();
                     thisClass.vuClassData = new VuEntityType();
                     thisClass.vuClassData.id_ = reader.ReadUInt16();
                     thisClass.vuClassData.collisionType_ = reader.ReadUInt16();
@@ -63,5 +63,52 @@ namespace F4Utils.Campaign
                 return classTable;
             }
         }
+        public static void WriteClassTable(string classTableFilePath, Falcon4EntityClassType[] classTable)
+        {
+            if (classTableFilePath == null) throw new ArgumentNullException("classTableFilePath");
+            using (var stream = new FileStream(classTableFilePath, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write((short)classTable.Length);
+                for (int i = 0; i < classTable.Length; i++)
+                {
+                    var thisClass = classTable[i];
+                    writer.Write( thisClass.vuClassData.id_);
+                    writer.Write(thisClass.vuClassData.collisionType_);
+                    writer.Write(thisClass.vuClassData.collisionRadius_);
+                    for (int j = 0; j < 8; j++)
+                    {
+                        writer.Write(thisClass.vuClassData.classInfo_[j]);
+                    }
+                    writer.Write(thisClass.vuClassData.updateRate_);
+                    writer.Write(thisClass.vuClassData.updateTolerance_ );
+                    writer.Write(thisClass.vuClassData.fineUpdateRange_);
+                    writer.Write(thisClass.vuClassData.fineUpdateForceRange_);
+                    writer.Write(thisClass.vuClassData.fineUpdateMultiplier_);
+                    writer.Write(thisClass.vuClassData.damageSeed_ );
+                    writer.Write(thisClass.vuClassData.hitpoints_ );
+                    writer.Write(thisClass.vuClassData.majorRevisionNumber_);
+                    writer.Write(thisClass.vuClassData.minorRevisionNumber_);
+                    writer.Write(thisClass.vuClassData.createPriority_ );
+                    writer.Write(thisClass.vuClassData.managementDomain_);
+                    writer.Write(thisClass.vuClassData.transferable_);
+                    writer.Write(thisClass.vuClassData.private_);
+                    writer.Write(thisClass.vuClassData.tangible_);
+                    writer.Write(thisClass.vuClassData.collidable_);
+                    writer.Write(thisClass.vuClassData.global_);
+                    writer.Write(thisClass.vuClassData.persistent_);
+                    writer.Write(new byte[3]);            //align on int32 boundary
+
+                    for (int j = 0; j < 7; j++)
+                    {
+                        writer.Write(thisClass.visType[j]);
+                    }
+                    writer.Write(thisClass.vehicleDataIndex);
+                    writer.Write(thisClass.dataType);
+                    writer.Write(thisClass.dataPtr);
+                }
+            }
+        }
+
     }
 }

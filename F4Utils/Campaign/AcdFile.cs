@@ -41,7 +41,7 @@ namespace F4Utils.Campaign
         public void Save(string fileName)
         {
             //writes ACD file
-            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Write))
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             using (var writer = new BinaryWriter(stream))
             {
                 for (var i = 0; i < SimACDefTable.Length; i++)

@@ -20,6 +20,12 @@ namespace F4Utils.Campaign
         public GroundUnit(Stream stream, int version)
             : base(stream, version)
         {
+            ReadGroundUnit(stream, version);
+
+        }
+
+        protected void ReadGroundUnit(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 orders = reader.ReadByte();
@@ -28,7 +34,17 @@ namespace F4Utils.Campaign
                 aobj.num_ = reader.ReadUInt32();
                 aobj.creator_ = reader.ReadUInt32();
             }
-
+        }
+        public void WriteGroundUnit(Stream stream, int version)
+        {
+            base.WriteUnit(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(orders);
+                writer.Write(division);
+                writer.Write(aobj.num_);
+                writer.Write(aobj.creator_);
+            }
         }
 
     }

@@ -21,7 +21,12 @@ namespace F4Utils.Campaign.F4Structs
 	    }
         public color(Stream stream)
         {
-            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen:true))
+            Read(stream);
+        }
+
+        private void Read(Stream stream)
+        {
+            using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 r = reader.ReadSingle();
                 g = reader.ReadSingle();
@@ -35,6 +40,24 @@ namespace F4Utils.Campaign.F4Structs
                 x = reader.ReadSingle();
                 y = reader.ReadSingle();
                 L = reader.ReadSingle();
+            }
+        }
+        public void Write(Stream stream)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(r);
+                writer.Write(g);
+                writer.Write(b);
+                writer.Write(h);
+                writer.Write(s);
+                writer.Write(v);
+                writer.Write(X);
+                writer.Write(Y);
+                writer.Write(Z);
+                writer.Write(x);
+                writer.Write(y);
+                writer.Write(L);
             }
         }
 	    public color(float _r,float _g,float _b):this()

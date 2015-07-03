@@ -36,6 +36,11 @@ namespace F4Utils.Campaign.F4Structs
         public TacticData() { }
         public TacticData(Stream stream)
         {
+            Read(stream);
+        }
+
+        private void Read(Stream stream)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 id = reader.ReadInt16();
@@ -62,6 +67,36 @@ namespace F4Utils.Campaign.F4Structs
                 priority = reader.ReadByte();
                 formation = reader.ReadByte();
                 special = reader.ReadByte();
+            }
+        }
+        public void Write(Stream stream)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(id);
+                writer.Write(name);
+                writer.Write(team);
+                writer.Write(domainType);
+                writer.Write(unitSize);
+                writer.Write(minRangeToDest);
+                writer.Write(maxRangeToDest);
+                writer.Write(distToFront);
+                writer.Write(actionList);
+                writer.Write(broken);
+                writer.Write(engaged);
+                writer.Write(combat);
+                writer.Write(losses);
+                writer.Write(retreating);
+                writer.Write(owned);
+                writer.Write(airborne);
+                writer.Write(marine);
+                writer.Write(minOdds);
+                writer.Write(role);
+                writer.Write(fuel);
+                writer.Write(weapons);
+                writer.Write(priority);
+                writer.Write(formation);
+                writer.Write(special);
             }
         }
 	};

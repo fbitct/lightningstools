@@ -43,5 +43,35 @@ namespace F4Utils.Campaign
             }
 
         }
+        public void Save(string fileName)
+        {
+            //writes SWD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)SimWeaponDataTable.Length);
+                for (var i = 0; i < SimWeaponDataTable.Length; i++)
+                {
+                    var entry = SimWeaponDataTable[i];
+                    
+                    writer.Write(entry.flags);
+                    writer.Write(entry.cd);
+                    writer.Write(entry.weight);
+                    writer.Write(entry.area);
+                    writer.Write(entry.xEjection);
+                    writer.Write(entry.yEjection);
+                    writer.Write(entry.zEjection);
+                    for (var j = 0; j < entry.mnemonic.Length; j++)
+                    {
+                        writer.Write(entry.mnemonic[j]);
+                    }
+                    writer.Write(entry.weaponClass);
+                    writer.Write(entry.domain);
+                    writer.Write(entry.weaponType);
+                    writer.Write(entry.dataIdx);
+                }
+            }
+
+        }
     }
 }

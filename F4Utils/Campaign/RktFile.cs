@@ -30,5 +30,21 @@ namespace F4Utils.Campaign
                 return rocketDataTable;
             }
         }
+        public void Save(string fileName)
+        {
+            //writes RKT file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)RocketDataTable.Length);
+                for (var i = 0; i < RocketDataTable.Length; i++)
+                {
+                    var entry = RocketDataTable[i];
+                    writer.Write(entry.weaponId);
+                    writer.Write(entry.nweaponId);
+                    writer.Write(entry.weaponCount);
+                }
+            }
+        }
     }
 }

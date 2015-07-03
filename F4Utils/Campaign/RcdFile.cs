@@ -54,5 +54,37 @@ namespace F4Utils.Campaign
             }
 
         }
+        public void Save(string fileName)
+        {
+            //writes RCD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)RadarDataTable.Length);
+                for (var i = 0; i < RadarDataTable.Length; i++)
+                {
+                    var entry = RadarDataTable[i];
+                    writer.Write(entry.RWRsound);
+                    writer.Write(entry.RWRsymbol);
+                    writer.Write(entry.RDRDataInd);
+                    for (var j = 0; j < (int)AltLethality.NUM_ALT_LETHALITY; j++)
+                    {
+                        writer.Write(entry.Lethality[j]);
+                    }
+                    writer.Write(entry.NominalRange);
+                    writer.Write(entry.BeamHalfAngle);
+                    writer.Write(entry.ScanHalfAngle);
+                    writer.Write(entry.SweepRate);
+                    writer.Write(entry.CoastTime);
+                    writer.Write(entry.LookDownPenalty);
+                    writer.Write(entry.JammingPenalty);
+                    writer.Write(entry.NotchPenalty);
+                    writer.Write(entry.NotchSpeed);
+                    writer.Write(entry.ChaffChance);
+                    writer.Write(entry.flag);
+                }
+            }
+
+        }
     }
 }

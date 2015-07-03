@@ -60,6 +60,11 @@ namespace F4Utils.Campaign
         public Team(Stream stream, int version)
             : this()
         {
+            Read(stream, version);
+        }
+
+        protected void Read(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 id = new VU_ID();
@@ -352,6 +357,186 @@ namespace F4Utils.Campaign
                         lastWingman = 499;
                     }
                 }
+            }
+        }
+        public void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(id.num_);
+                writer.Write(id.creator_);
+
+                writer.Write(entityType);
+                writer.Write(who);
+                writer.Write(cteam);
+                writer.Write(flags);
+
+                if (version > 2)
+                {
+                    for (int j = 0; j < member.Length; j++)
+                    {
+                        writer.Write(member[j]);
+                    }
+                    for (int j = 0; j < stance.Length; j++)
+                    {
+                        writer.Write(stance[j]);
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < 7; j++)
+                    {
+                        writer.Write(member[j]);
+                    }
+                    for (int j = 0; j < 7; j++)
+                    {
+                        writer.Write(stance[j]);
+                    }
+                }
+                writer.Write(firstColonel);
+                writer.Write(firstCommander);
+                writer.Write(firstWingman);
+                writer.Write(lastWingman);
+
+                if (version > 11)
+                {
+                    writer.Write(airExperience);
+                    writer.Write(airDefenseExperience);
+                    writer.Write(groundExperience);
+                    writer.Write(navalExperience);
+                }
+                else
+                {
+                    writer.Write(new byte[4] { 0x80, 0x80, 0x80, 0x80});
+                }
+                
+                writer.Write(initiative);
+                writer.Write(supplyAvail);
+                writer.Write(fuelAvail);
+
+                if (version > 53)
+                {
+                    writer.Write(replacementsAvail);
+                    writer.Write(playerRating);
+                    writer.Write(lastPlayerMission);
+                }
+                if (version < 40)
+                {
+                    writer.Write(new byte[4]);
+                }
+
+                writer.Write(currentStats.airDefenseVehs);
+                writer.Write(currentStats.aircraft);
+                writer.Write(currentStats.groundVehs);
+                writer.Write(currentStats.ships);
+                writer.Write(currentStats.supply);
+                writer.Write(currentStats.fuel);
+                writer.Write(currentStats.airbases);
+                writer.Write(currentStats.supplyLevel);
+                writer.Write(currentStats.fuelLevel);
+
+                writer.Write(startStats.airDefenseVehs);
+                writer.Write(startStats.aircraft);
+                writer.Write(startStats.groundVehs);
+                writer.Write(startStats.ships);
+                writer.Write(startStats.supply);
+                writer.Write(startStats.fuel);
+                writer.Write(startStats.airbases);
+                writer.Write(startStats.supplyLevel);
+                writer.Write(startStats.fuelLevel);
+
+                writer.Write(reinforcement);
+
+                for (int j = 0; j < bonusObjs.Length; j++)
+                {
+                    var thisId = bonusObjs[j];
+                    writer.Write(thisId.num_);
+                    writer.Write(thisId.creator_);
+                }
+                for (int j = 0; j < bonusTime.Length; j++)
+                {
+                    writer.Write(bonusTime[j]);
+                }
+                for (int j = 0; j < objtype_priority.Length; j++)
+                {
+                    writer.Write(objtype_priority[j]);
+                }
+                for (int j = 0; j < unittype_priority.Length; j++)
+                {
+                    writer.Write(unittype_priority[j]);
+                }
+                for (int j = 0; j < mission_priority.Length; j++)
+                {
+                    writer.Write(mission_priority[j]);
+                }
+
+                if (version < 34)
+                {
+                    writer.Write(attackTime);
+                    writer.Write(offensiveLoss);
+                }
+
+                for (int j = 0; j < max_vehicle.Length; j++)
+                {
+                    writer.Write(max_vehicle[j]);
+                }
+
+                if (version > 4)
+                {
+                    writer.Write(teamFlag);
+                    if (version > 32)
+                    {
+                        writer.Write(teamColor);
+                    }
+                    writer.Write(equipment);
+                    writer.Write(Encoding.ASCII.GetBytes(name.PadRight(20, '\0')));
+                }
+
+                if (version > 32)
+                {
+                    writer.Write(Encoding.ASCII.GetBytes(teamMotto.PadRight(20, '\0')));
+                }
+
+                if (version > 33)
+                {
+                    if (version > 50)
+                    {
+                        writer.Write(groundAction.actionTime);
+                        writer.Write(groundAction.actionTimeout);
+                        writer.Write(groundAction.actionObjective.num_ );
+                        writer.Write(groundAction.actionObjective.creator_ );
+                        writer.Write(groundAction.actionType);
+                        writer.Write(groundAction.actionTempo);
+                        writer.Write( groundAction.actionPoints);
+                    }
+                    else if (version > 41)
+                    {
+                        writer.Write(new byte[27]); //dummy
+                    }
+                    else
+                    {
+                        writer.Write(new byte[23]); //dummy
+                    }
+
+                    writer.Write(defensiveAirAction.actionStartTime);
+                    writer.Write(defensiveAirAction.actionStopTime);
+                    writer.Write(defensiveAirAction.actionObjective.num_);
+                    writer.Write(defensiveAirAction.actionObjective.creator_);
+                    writer.Write(defensiveAirAction.lastActionObjective.num_);
+                    writer.Write(defensiveAirAction.lastActionObjective.creator_);
+                    writer.Write(defensiveAirAction.actionType);
+                    writer.Write(new byte[3]);//align on int32 boundary
+
+                    writer.Write(offensiveAirAction.actionStartTime);
+                    writer.Write(offensiveAirAction.actionStopTime);
+                    writer.Write(offensiveAirAction.actionObjective.num_);
+                    writer.Write(offensiveAirAction.actionObjective.creator_);
+                    writer.Write(offensiveAirAction.lastActionObjective.num_);
+                    writer.Write(offensiveAirAction.lastActionObjective.creator_);
+                    writer.Write(offensiveAirAction.actionType);
+                    writer.Write(new byte[3]);//align on int32 boundary
+                }
+
             }
         }
     }

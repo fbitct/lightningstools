@@ -13,5 +13,9 @@ namespace F4Utils.Campaign
         {
 
         }
+        public void WriteAirUnit(Stream stream, int version)
+        {
+            base.WriteUnit(stream, version);
+        }
     }
 }

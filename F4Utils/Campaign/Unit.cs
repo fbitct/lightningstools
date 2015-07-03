@@ -32,6 +32,11 @@ namespace F4Utils.Campaign
         public Unit(Stream stream, int version)
             : base(stream, version)
         {
+            ReadUnit(stream, version);
+        }
+
+        public void ReadUnit(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 last_check = reader.ReadUInt32();
@@ -70,6 +75,60 @@ namespace F4Utils.Campaign
                 DecodeWaypoints(stream, version);
             }
         }
+        public void WriteUnit(Stream stream, int version)
+        {
+            base.WriteCampaignBase(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(last_check);
+                writer.Write(roster);
+                writer.Write(unit_flags);
+                writer.Write(dest_x);
+                writer.Write(dest_y);
+                writer.Write(target_id.num_);
+                writer.Write(target_id.creator_);
+
+                if (version > 1)
+                {
+                    writer.Write(cargo_id.num_);
+                    writer.Write(cargo_id.creator_);
+                }
+                writer.Write(moved);
+                writer.Write(losses);
+                writer.Write(tactic);
+
+                if (version >= 71)
+                {
+                    writer.Write(current_wp);
+                }
+                else
+                {
+                    writer.Write((byte)current_wp);
+                }
+                writer.Write(name_id);
+                writer.Write(reinforcement);
+                EncodeWaypoints(stream, version);
+            }
+        }
+        protected void EncodeWaypoints(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                if (version >= 71)
+                {
+                    writer.Write(numWaypoints);
+                }
+                else
+                {
+                    writer.Write((byte)numWaypoints);
+                }
+                for (int i = 0; i < numWaypoints; i++)
+                {
+                    waypoints[i].Write(stream, version);
+                }
+            }
+        }
+
         protected void DecodeWaypoints(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))

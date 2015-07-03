@@ -63,5 +63,53 @@ namespace F4Utils.Campaign
             }
 
         }
+        public void Save(string fileName)
+        {
+            //writes VCD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)VehicleDataTable.Length);
+                for (var i = 0; i < VehicleDataTable.Length; i++)
+                {
+                    var entry = VehicleDataTable[i];
+                    writer.Write(entry.Index);
+                    writer.Write(entry.HitPoints);
+                    writer.Write(entry.Flags);
+                    writer.Write(entry.Name);
+                    writer.Write(entry.NCTR);
+                    writer.Write(entry.RCSfactor);
+                    writer.Write(entry.MaxWt);
+                    writer.Write(entry.EmptyWt);
+                    writer.Write(entry.FuelWt);
+                    writer.Write(entry.FuelEcon);
+                    writer.Write(entry.EngineSound);
+                    writer.Write(entry.Union1);
+                    writer.Write(entry.LowAlt);
+                    writer.Write(entry.CruiseAlt);
+                    writer.Write(entry.MaxSpeed);
+                    writer.Write(entry.RadarType);
+                    writer.Write(entry.NumberOfPilots);
+                    writer.Write(entry.Union2);
+                    writer.Write(entry.VisibleFlags);
+                    writer.Write(entry.CallsignIndex);
+                    writer.Write(entry.CallsignSlots);
+                    writer.Write(entry.HitChance);
+                    writer.Write(entry.Strength);
+                    writer.Write(entry.Range);
+                    writer.Write(entry.Detection);
+                    for (var j = 0; j < entry.Weapon.Length; j++)
+                    {
+                        writer.Write(entry.Weapon[j]);
+                    }
+                    writer.Write(entry.Weapons);
+                    writer.Write(entry.DamageMod);
+                    writer.Write(entry.visSignature);
+                    writer.Write(entry.irSignature);
+                    writer.Write(entry.pad1);
+                }
+            }
+
+        }
     }
 }

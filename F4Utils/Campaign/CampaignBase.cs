@@ -21,12 +21,13 @@ namespace F4Utils.Campaign
         public short campId;
 
         #endregion
-        protected CampaignBase()
-            : base()
+        protected CampaignBase() { }
+        public CampaignBase(Stream stream, int version):this()
         {
+            ReadCampaignBase(stream, version);
         }
-        public CampaignBase(Stream stream, int version)
-            : this()
+
+        protected void ReadCampaignBase(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
@@ -53,6 +54,27 @@ namespace F4Utils.Campaign
                 owner = reader.ReadByte();
                 campId = reader.ReadInt16();
 
+            }
+        }
+        public void WriteCampaignBase(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(id.num_);
+                writer.Write(id.creator_);
+                writer.Write(entityType);
+                writer.Write(x);
+                writer.Write(y);
+
+                if (version >= 70)
+                {
+                    writer.Write(z);
+                }
+                writer.Write(spotTime);
+                writer.Write(spotted);
+                writer.Write(baseFlags);
+                writer.Write(owner);
+                writer.Write(campId);
             }
         }
     }

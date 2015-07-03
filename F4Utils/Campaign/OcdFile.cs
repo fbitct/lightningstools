@@ -34,11 +34,35 @@ namespace F4Utils.Campaign
                     entry.IconIndex = reader.ReadInt16();
                     entry.Features = reader.ReadByte();
                     entry.RadarFeature = reader.ReadByte();
-                    entry.FirstFeature = reader.ReadByte();
-                    reader.ReadByte(); //padding
+                    entry.FirstFeature = reader.ReadInt16();
                     objDataTable[i] = entry;
                 }
                 return objDataTable;
+            }
+        }
+        private void Save(string fileName)
+        {
+            //writes OCD file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write((short)ObjDataTable.Length);
+                for (var i = 0; i < ObjDataTable.Length; i++)
+                {
+                    var entry = ObjDataTable[i];
+                    writer.Write(entry.Index);
+                    writer.Write(entry.Name);
+                    writer.Write(entry.DataRate);
+                    writer.Write(entry.DeagDistance);
+                    writer.Write(entry.PtDataIndex);
+                    writer.Write(entry.Detection);
+                    writer.Write(entry.DamageMod);
+                    writer.Write((byte)0x00); //padding
+                    writer.Write(entry.IconIndex);
+                    writer.Write(entry.Features);
+                    writer.Write(entry.RadarFeature);
+                    writer.Write(entry.FirstFeature);
+                }
             }
         }
     }

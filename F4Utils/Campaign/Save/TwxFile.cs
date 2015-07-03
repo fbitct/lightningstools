@@ -175,5 +175,111 @@ namespace F4Utils.Campaign.Save
 		    }	
 		
         }
+        public void Save(string fileName)
+        {
+            //writes TWX file
+            using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            using (var writer = new BinaryWriter(stream))
+            {
+                writer.Write(Version);
+                writer.Write(LastCheck);
+                writer.Write(BasicOldCondition);
+                writer.Write(BasicCondition);
+                writer.Write(BasicConditionCounter);
+                CurCondition.Write(stream);
+                writer.Write(ConditionChangeInterval);
+                writer.Write(Model);
+                writer.Write(MapUpdates);
+                writer.Write(MinInterval);
+                writer.Write(MaxInterval);
+                writer.Write(WxProbSunny);
+                writer.Write(WxProbFair);
+                writer.Write(WxProbPoor);
+                writer.Write(WxProbInclement);
+
+                for (var i = 1; i < WeatherConstants.MAXUSERSHIFT; i++)
+                {
+                    writer.Write(WthUserShift[i].ShiftTime);
+                    writer.Write(WthUserShift[i].ShiftnOldCondition);
+                }
+                writer.Write(Wind_Heading_Model);
+                writer.Write(Wind_Heading);
+                writer.Write(Map_Wind_Heading);
+                writer.Write(Map_Wind_Speed);
+
+                for (var i = 1; i < 5; i++)
+                {
+                    writer.Write(WthWind[i].NightSpeed);
+                    writer.Write(WthWind[i].DawnSpeed);
+                    writer.Write(WthWind[i].DaySpeed);
+                    writer.Write(WthWind[i].BurstInterval);
+                    writer.Write(WthWind[i].BurstDuration);
+                    writer.Write(WthWind[i].BurstSpeed);
+                    writer.Write(WthWind[i].BurstDirection);
+                }
+                for (var i = 1; i < 7; i++)
+                {
+                    writer.Write(WthTurbu[i].RotXWind);
+                    writer.Write(WthTurbu[i].RotYWind);
+                    writer.Write(WthTurbu[i].RotZWind);
+                    writer.Write(WthTurbu[i].RotXRot);
+                    writer.Write(WthTurbu[i].RotYRot);
+                    writer.Write(WthTurbu[i].RotZRot);
+                }
+
+                writer.Write(MechLayer);
+                writer.Write(HeatLayer);
+                writer.Write(Occurrence);
+                writer.Write(Duration);
+
+                for (var i = 0; i < 4; i++)
+                {
+                    writer.Write(FogStart[i]);
+                }
+
+                for (var i = 0; i < 4; i++)
+                {
+                    writer.Write(FogEnd[i]);
+                }
+
+                for (var i = 0; i < 4; i++)
+                {
+                    writer.Write(StratusLayer[i]);
+                }
+
+                for (var i = 0; i < 4; i++)
+                {
+                    writer.Write(StratusThick[i]);
+                }
+
+                for (var i = 0; i < 4; i++)
+                {
+                    writer.Write(CumulusLayer[i]);
+                }
+
+                for (var i = 0; i < 4; i++)
+                {
+                    writer.Write(ContrailLayer[i]);
+                }
+
+                writer.Write(CumulusDensity);
+                writer.Write(CumulusSize);
+
+                for (int i = 1; i < 5; i++)
+                {
+                    writer.Write(WthTemp[i].NightTemp);
+                    writer.Write(WthTemp[i].DawnTemp);
+                    writer.Write(WthTemp[i].DayTemp);
+                }
+
+                for (int i = 1; i < 5; i++)
+                {
+                    writer.Write(WthPress[i].NightPress);
+                    writer.Write(WthPress[i].DawnPress);
+                    writer.Write(WthPress[i].DayPress);
+                }
+            }
+
+        }
     }
 }

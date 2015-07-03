@@ -30,6 +30,11 @@ namespace F4Utils.Campaign
         public Objective(Stream stream, int version)
             : base(stream, version)
         {
+            ReadObjective(stream, version);
+        }
+
+        protected void ReadObjective(Stream stream, int version)
+        {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
                 lastRepair = reader.ReadUInt32();
@@ -106,6 +111,66 @@ namespace F4Utils.Campaign
                 else
                 {
                     detect_ratio = null;
+                }
+            }
+        }
+        public void WriteObjective(Stream stream, int version)
+        {
+            base.WriteCampaignBase(stream, version);
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(lastRepair);
+
+                if (version > 1)
+                {
+                    writer.Write(obj_flags);
+                }
+                else
+                {
+                    writer.Write((ushort)obj_flags);
+                }
+
+                writer.Write(supply);
+                writer.Write(fuel);
+                writer.Write(losses);
+                writer.Write((byte)fstatus.Length); 
+
+                for (int i = 0; i < fstatus.Length; i++)
+                {
+                    writer.Write(fstatus[i]);
+                }
+                writer.Write(priority);
+                writer.Write(nameId);
+
+                writer.Write(parent.num_);
+                writer.Write(parent.creator_);
+
+                writer.Write(first_owner);
+                writer.Write(links);
+
+                for (int i = 0; i < links; i++)
+                {
+                    var thisLink = link_data[i];
+                    for (int j = 0; j < (int)MoveType.MOVEMENT_TYPES; j++)
+                    {
+                        writer.Write(thisLink.costs[j]);
+                    }
+                    writer.Write(thisLink.id.num_);
+                    writer.Write(thisLink.id.creator_);
+                }
+
+                if (version >= 20)
+                {
+                    var hasRadarData = (byte)(detect_ratio != null ? detect_ratio.Length : 0);
+                    writer.Write(hasRadarData);
+
+                    if (hasRadarData > 0)
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            writer.Write(detect_ratio[i]);
+                        }
+                    }
                 }
             }
         }
