@@ -20,9 +20,9 @@ namespace F4Utils.Campaign
         public PolFile(Stream stream, int version)
             : this()
         {
-            Decode(stream, version);
+            Read(stream, version);
         }
-        protected void Decode(Stream stream, int version)
+        protected void Read(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
@@ -31,7 +31,7 @@ namespace F4Utils.Campaign
                 primaryObjectives = new PrimaryObjective[numPrimaryObjectives];
                 for (int i = 0; i < numPrimaryObjectives; i++)
                 {
-                    PrimaryObjective thisObjective = new PrimaryObjective();
+                    var thisObjective = new PrimaryObjective();
                     thisObjective.id = new VU_ID();
                     thisObjective.id.num_ = reader.ReadUInt32();
                     thisObjective.id.creator_ = reader.ReadUInt32();
@@ -42,6 +42,28 @@ namespace F4Utils.Campaign
                         {
                             thisObjective.priority[j] = reader.ReadInt16();
                             thisObjective.flags = reader.ReadByte();
+                        }
+                    }
+                }
+            }
+        }
+        protected void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(teammask);
+                writer.Write((short)primaryObjectives.Length);
+                for (int i = 0; i < primaryObjectives.Length; i++)
+                {
+                    var thisObjective = primaryObjectives[i];
+                    writer.Write(thisObjective.id.num_);
+                    writer.Write(thisObjective.id.creator_);
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if ((teammask & (1 << j)) > 0)
+                        {
+                            writer.Write(thisObjective.priority[j]);
+                            writer.Write(thisObjective.flags);
                         }
                     }
                 }

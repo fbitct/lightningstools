@@ -8,6 +8,7 @@ namespace F4Utils.Campaign
     public class Unit : CampaignBase
     {
         #region Public Fields
+        public short unitType;
         public uint last_check;
         public int roster;
         public int unit_flags;

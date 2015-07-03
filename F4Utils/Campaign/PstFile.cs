@@ -19,9 +19,9 @@ namespace F4Utils.Campaign
         public PstFile(Stream stream, int version)
             : this()
         {
-            Decode(stream, version);
+            Read(stream, version);
         }
-        protected void Decode(Stream stream, int version)
+        protected void Read(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
@@ -35,7 +35,7 @@ namespace F4Utils.Campaign
                 persistantObjects = new PersistantObject[numPersistantObjects];
                 for (int i = 0; i < numPersistantObjects; i++)
                 {
-                    PersistantObject thisObject = new PersistantObject();
+                    var thisObject = new PersistantObject();
                     thisObject.x = reader.ReadSingle();
                     thisObject.y = reader.ReadSingle();
                     thisObject.unionData = new PackedVUID();
@@ -46,6 +46,29 @@ namespace F4Utils.Campaign
                     thisObject.visType = reader.ReadInt16();
                     thisObject.flags = reader.ReadInt16();
                     persistantObjects[i] = thisObject;
+                }
+            }
+        }
+        protected void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                if (version < 69)
+                {
+                    return;
+                }
+                writer.Write(persistantObjects.Length);
+                for (int i = 0; i < persistantObjects.Length; i++)
+                {
+                    var thisObject = persistantObjects[i];
+                    writer.Write(thisObject.x);
+                    writer.Write(thisObject.y);
+                    writer.Write(thisObject.unionData.creator_);
+                    writer.Write(thisObject.unionData.num_);
+                    writer.Write(thisObject.unionData.index_);
+                    writer.Write(new byte[3]); //align on Int32 boundary
+                    writer.Write(thisObject.visType);
+                    writer.Write(thisObject.flags);
                 }
             }
         }

@@ -24,7 +24,7 @@ namespace F4Utils.Campaign
         {
             _version = version;
             short numUnits = 0;
-            byte[] expanded = Expand(compressed, out numUnits);
+            var expanded = Expand(compressed, out numUnits);
             if (expanded != null) Decode(expanded, version, numUnits, classTable);
         }
         protected void Decode(byte[] bytes, int version, short numUnits, Falcon4EntityClassType[] classTable)
@@ -37,7 +37,7 @@ namespace F4Utils.Campaign
                 while (i < numUnits)
                 {
                     Unit thisUnit = null;
-                    short thisUnitType = reader.ReadInt16();
+                    var thisUnitType = reader.ReadInt16();
                     if (thisUnitType > 0)
                     {
                         Falcon4EntityClassType classTableEntry = classTable[thisUnitType - 100];
@@ -45,15 +45,15 @@ namespace F4Utils.Campaign
                         {
                             if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_FLIGHT)
                             {
-                                thisUnit = new Flight(stream, version);
+                                thisUnit = new Flight(stream, version) { unitType = thisUnitType };
                             }
                             else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_SQUADRON)
                             {
-                                thisUnit = new Squadron(stream, version);
+                                thisUnit = new Squadron(stream, version) { unitType = thisUnitType };
                             }
                             else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_PACKAGE)
                             {
-                                thisUnit = new Package(stream, version);
+                                thisUnit = new Package(stream, version) { unitType = thisUnitType };
                             }
                             else
                             {
@@ -64,11 +64,11 @@ namespace F4Utils.Campaign
                         {
                             if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_BRIGADE)
                             {
-                                thisUnit = new Brigade(stream, version);
+                                thisUnit = new Brigade(stream, version) { unitType = thisUnitType };
                             }
                             else if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_BATTALION)
                             {
-                                thisUnit = new Battalion(stream, version);
+                                thisUnit = new Battalion(stream, version) { unitType = thisUnitType };
                             }
                             else
                             {
@@ -80,7 +80,7 @@ namespace F4Utils.Campaign
                         {
                             if (classTableEntry.vuClassData.classInfo_[(int)VuClassHierarchy.VU_TYPE] == (byte)Classtable_Types.TYPE_TASKFORCE)
                             {
-                                thisUnit = new TaskForce(stream, version);
+                                thisUnit = new TaskForce(stream, version) { unitType = thisUnitType };
                             }
                             else
                             {
@@ -109,16 +109,71 @@ namespace F4Utils.Campaign
                 }
             }
         }
+        protected byte[] Encode(int version)
+        {
+            using (var stream = new MemoryStream())
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                for (var i = 0; i < units.Length;i++ )
+                {
+                    var thisUnit = units[i];
+                    writer.Write(thisUnit.unitType);
+                    if (thisUnit.unitType > 0)
+                    {
+                        if (thisUnit is Flight)
+                        {
+                            (thisUnit as Flight).WriteFlight(stream, version);
+                        }
+                        else if (thisUnit is Squadron)
+                        {
+                            (thisUnit as Squadron).WriteSquadron(stream, version);
+                        }
+                        else if (thisUnit is Package)
+                        {
+                            (thisUnit as Package).WritePackage(stream, version);
+                        }
+                        else if (thisUnit is Brigade)
+                        {
+                            (thisUnit as Brigade).WriteBrigade(stream, version);
+                        }
+                        else if (thisUnit is Battalion)
+                        {
+                            (thisUnit as Battalion).WriteBattalion(stream, version);
+                        }
+                        else if (thisUnit is TaskForce)
+                        {
+                            (thisUnit as TaskForce).WriteTaskForce(stream, version);
+                        }
+                    }
+                }
+                writer.Flush();
+                stream.Flush();
+                return stream.ToArray();
+            }
+        }
+        protected void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                var uncompressedData = Encode(version);
+                var compressedData = Lzss.Codec.Compress(uncompressedData);
+                writer.Write(compressedData.Length);
+                writer.Write((short)units.Length);
+                writer.Write(uncompressedData.Length);
+                writer.Write(compressedData);
+            }
+
+        }
         protected static byte[] Expand(byte[] compressed, out short numUnits)
         {
             using (var stream = new MemoryStream(compressed))
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
-                int cSize = reader.ReadInt32();
+                var cSize = reader.ReadInt32();
                 numUnits = reader.ReadInt16();
-                int uncompressedSize = reader.ReadInt32();
+                var uncompressedSize = reader.ReadInt32();
                 if (uncompressedSize == 0) return null;
-                byte[] actualCompressed = reader.ReadBytes((int)(compressed.Length - 10));
+                var actualCompressed = reader.ReadBytes((int)(compressed.Length - 10));
                 byte[] uncompressed = null;
                 uncompressed = Lzss.Codec.Decompress(actualCompressed, uncompressedSize);
                 return uncompressed;

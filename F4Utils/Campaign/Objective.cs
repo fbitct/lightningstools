@@ -8,6 +8,7 @@ namespace F4Utils.Campaign
     public class Objective : CampaignBase
     {
         #region Public Fields
+        public short objectiveType;
         public uint lastRepair;
         public uint obj_flags;
         public byte supply;

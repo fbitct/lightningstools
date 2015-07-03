@@ -14,9 +14,9 @@ namespace F4Utils.Campaign
 
         public PltFile(Stream stream, int version)
         {
-            Decode(stream, version);
+            Read(stream, version);
         }
-        protected void Decode(Stream stream, int version)
+        protected void Read(Stream stream, int version)
         {
             using (var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true))
             {
@@ -41,6 +41,31 @@ namespace F4Utils.Campaign
                     CallsignData[j] = reader.ReadByte();
                 }
             }
+        }
+        protected void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                if (version < 60)
+                {
+                    return;
+                }
+                writer.Write(NumPilots);
+                for (var j = 0; j < PilotInfo.Length; j++)
+                {
+                    var thisPilot = PilotInfo[j];
+                    writer.Write(thisPilot.usage);
+                    writer.Write(thisPilot.voice_id);
+                    writer.Write(thisPilot.photo_id);
+                }
+
+                writer.Write(NumCallsigns);
+                for (var j = 0; j < NumCallsigns; j++)
+                {
+                    writer.Write(CallsignData[j]);
+                }
+            }
+
         }
     }
 }
