@@ -84,6 +84,7 @@
     <Compile Include="Exceptions\OperationFailedException.cs" />
     <Compile Include="Generic\EnumAttributeReader.cs" />
     <Compile Include="Generic\PropertyInvoker.cs" />
+    <Compile Include="IO\File\FileComparer.cs" />
     <Compile Include="IO\Ports\ISerialPort.cs" />
     <Compile Include="IO\Ports\SerialPort.cs">
       <SubType>Component</SubType>

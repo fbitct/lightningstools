@@ -44,6 +44,7 @@ namespace F4Utils.Campaign
             using (var stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             using (var writer = new BinaryWriter(stream))
             {
+                writer.Write((short)SimACDefTable.Length);
                 for (var i = 0; i < SimACDefTable.Length; i++)
                 {
                     var entry = SimACDefTable[i];
