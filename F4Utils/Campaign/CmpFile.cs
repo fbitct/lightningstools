@@ -348,6 +348,212 @@ namespace F4Utils.Campaign
                 }
             }
         }
+        protected byte[] Encode()
+        {
+            using (var stream = new MemoryStream())
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                writer.Write(CurrentTime);
+                if (_version >= 48)
+                {
+                    writer.Write(TE_StartTime);
+                    writer.Write(TE_TimeLimit);
+                    if (_version >= 49)
+                    {
+                        writer.Write(TE_VictoryPoints);
+                    }
+                }
+                if (_version >= 52)
+                {
+                    writer.Write(TE_Type);
+                    writer.Write(TE_number_teams);
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        writer.Write(TE_number_aircraft[i]);
+                    }
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        writer.Write(TE_number_f16s[i]);
+                    }
+
+                    writer.Write(TE_team);
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        writer.Write(TE_team_pts[i]);
+                    }
+
+                    writer.Write(TE_flags);
+
+                    for (int i = 0; i < 8; i++)
+                    {
+                        var info = this.TeamBasicInfo[i];
+                        writer.Write(info.teamFlag);
+                        writer.Write(info.teamColor);
+                        writer.Write(Encoding.ASCII.GetBytes(info.teamName.PadRight(20, '\0')));
+                        writer.Write(Encoding.ASCII.GetBytes(info.teamMotto.PadRight(200, '\0')));
+                    }
+                }
+                if (_version >= 19)
+                {
+                    writer.Write(lastMajorEvent);
+                }
+
+                writer.Write(lastResupply);
+                writer.Write(lastRepair);
+                writer.Write(lastReinforcement);
+                writer.Write(TimeStamp);
+
+                writer.Write(Group);
+                writer.Write(GroundRatio);
+                writer.Write(AirRatio);
+                writer.Write(AirDefenseRatio);
+                writer.Write(NavalRatio);
+                writer.Write(Brief);
+                writer.Write(TheaterSizeX);
+                writer.Write(TheaterSizeY);
+                writer.Write(CurrentDay);
+                writer.Write(ActiveTeams);
+                writer.Write(DayZero);
+                writer.Write(EndgameResult);
+                writer.Write(Situation);
+                writer.Write(EnemyAirExp);
+                writer.Write(EnemyADExp);
+                writer.Write(BullseyeName);
+                writer.Write(BullseyeX);
+                writer.Write(BullseyeY);
+
+                writer.Write(Encoding.ASCII.GetBytes(TheaterName.PadRight(40, '\0')));
+                writer.Write(Encoding.ASCII.GetBytes(Scenario.PadRight(40, '\0')));
+                writer.Write(Encoding.ASCII.GetBytes(SaveFile.PadRight(40, '\0')));
+                writer.Write(Encoding.ASCII.GetBytes(UIName.PadRight(40, '\0')));
+
+                writer.Write(PlayerSquadronID.num_);
+                writer.Write(PlayerSquadronID.creator_);
+
+                writer.Write((short)NumRecentEventEntries);
+                if (NumRecentEventEntries > 0)
+                {
+                    for (int i = 0; i < NumRecentEventEntries; i++)
+                    {
+                        var thisNode = RecentEventEntries[i];
+                        writer.Write(thisNode.x);
+                        writer.Write(thisNode.y);
+                        writer.Write(thisNode.time);
+                        writer.Write(thisNode.flags);
+                        writer.Write(thisNode.Team);
+                        writer.Write(new byte[2]); //align on int32 boundary
+                        //skip EventText pointer
+                        writer.Write(new byte[4]);
+                        //skip UiEventNode pointer
+                        writer.Write(new byte[4]);
+
+                        writer.Write((short)thisNode.eventText.Length + 1);
+                        writer.Write(Encoding.ASCII.GetBytes(thisNode.eventText + '\0'));
+                    }
+                }
+
+                writer.Write((short)NumPriorityEventEntries);
+                for (int i = 0; i < NumPriorityEventEntries; i++)
+                {
+                    var thisNode = PriorityEventEntries[i];
+                    writer.Write(thisNode.x);
+                    writer.Write(thisNode.y);
+                    writer.Write(thisNode.time);
+                    writer.Write(thisNode.flags);
+                    writer.Write(thisNode.Team);
+                    writer.Write(new byte[2]);//align on int32 boundary
+                    //skip EventText pointer
+                    writer.Write(new byte[4]);
+                    //skip UiEventNode pointer
+                    writer.Write(new byte[4]);
+                    writer.Write((short)thisNode.eventText.Length + 1);
+                    writer.Write(Encoding.ASCII.GetBytes(thisNode.eventText + '\0'));
+                }
+                writer.Write(CampMapSize);
+                if (CampMapSize > 0)
+                {
+                    writer.Write(CampMap);
+                }
+
+                writer.Write(LastIndexNum);
+                writer.Write(NumAvailableSquadrons);
+                if (NumAvailableSquadrons > 0)
+                {
+                    if (_version < 42)
+                    {
+                        for (int i = 0; i < NumAvailableSquadrons; i++)
+                        {
+                            var thisSquadInfo = SquadInfo[i];
+                            writer.Write(thisSquadInfo.x);
+                            writer.Write(thisSquadInfo.y);
+
+                            writer.Write(thisSquadInfo.id.num_);
+                            writer.Write(thisSquadInfo.id.creator_);
+
+                            writer.Write(thisSquadInfo.descriptionIndex);
+                            writer.Write(thisSquadInfo.nameId);
+                            writer.Write(thisSquadInfo.specialty);
+                            writer.Write(thisSquadInfo.currentStrength);
+                            writer.Write(thisSquadInfo.country);
+
+                            writer.Write(Encoding.ASCII.GetBytes(thisSquadInfo.airbaseName.PadRight(80,'\0')));
+                            writer.Write((byte)0x00);//align on int32 boundary
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < NumAvailableSquadrons; i++)
+                        {
+                            var thisSquadInfo = SquadInfo[i];
+                            writer.Write(thisSquadInfo.x);
+                            writer.Write(thisSquadInfo.y);
+
+                            writer.Write(thisSquadInfo.id.num_);
+                            writer.Write(thisSquadInfo.id.creator_);
+
+                            writer.Write(thisSquadInfo.descriptionIndex);
+                            writer.Write(thisSquadInfo.nameId);
+                            writer.Write(thisSquadInfo.airbaseIcon);
+                            writer.Write(thisSquadInfo.squadronPath);
+
+                            writer.Write(thisSquadInfo.specialty);
+                            writer.Write(thisSquadInfo.currentStrength);
+                            writer.Write(thisSquadInfo.country);
+
+                            writer.Write(Encoding.ASCII.GetBytes(thisSquadInfo.airbaseName.PadRight(80, '\0')));
+                            writer.Write((byte)0x00);//align on int32 boundary
+                        }
+                    }
+                }
+                if (_version >= 31)
+                {
+                    writer.Write(Tempo);
+                }
+                if (_version >= 43)
+                {
+                    writer.Write(CreatorIP);
+                    writer.Write(CreationTime);
+                    writer.Write(CreationRand);
+                }
+                writer.Flush();
+                stream.Flush();
+                return stream.ToArray();
+            }
+        }
+        public void Write(Stream stream, int version)
+        {
+            using (var writer = new BinaryWriter(stream, Encoding.Default, leaveOpen: true))
+            {
+                var uncompressedData = Encode();
+                var compressedData = Lzss.Codec.Compress(uncompressedData);
+                writer.Write(compressedData.Length);
+                writer.Write(uncompressedData.Length);
+                writer.Write(compressedData);
+            }
+        }
         protected static byte[] Expand(byte[] compressed)
         {
             int compressedSize = BitConverter.ToInt32(compressed, 0);

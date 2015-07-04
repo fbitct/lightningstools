@@ -494,7 +494,7 @@ namespace F4Utils.Campaign
 
                 if (version > 32)
                 {
-                    writer.Write(Encoding.ASCII.GetBytes(teamMotto.PadRight(20, '\0')));
+                    writer.Write(Encoding.ASCII.GetBytes(teamMotto.PadRight(200, '\0')));
                 }
 
                 if (version > 33)
