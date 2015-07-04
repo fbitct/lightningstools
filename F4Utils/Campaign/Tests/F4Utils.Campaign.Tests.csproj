@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AcdFileTests.cs" />
     <Compile Include="ClassTableTests.cs" />
+    <Compile Include="DdpFileTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestDatalLocations.cs" />
   </ItemGroup>
