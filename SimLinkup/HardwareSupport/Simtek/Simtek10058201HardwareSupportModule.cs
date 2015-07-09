@@ -169,6 +169,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = -10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -184,6 +186,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = -5;
+            thisSignal.MaxValue = 40;
             return thisSignal;
         }
 
@@ -240,6 +244,10 @@ namespace SimLinkup.HardwareSupport.Simtek
                         else if (aoaInput >= -5 && aoaInput <= 40)
                         {
                             aoaOutputValue = -6.37 + (((aoaInput + 5)/45)*16.37);
+                        }
+                        else
+                        {
+                            aoaOutputValue = 10;
                         }
                     }
 

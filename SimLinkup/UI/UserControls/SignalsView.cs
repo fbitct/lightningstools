@@ -7,23 +7,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Common.UI;
 using Common.MacroProgramming;
 using Common.Math;
+using Common.UI;
+using Common.UI.UserControls;
 namespace SimLinkup.UI.UserControls
 {
     public partial class SignalsView : UserControl
     {
-        private readonly ListViewColumnSorter lvwColumnSorter;
+        private readonly ListViewColumnSorter _columnSorter;
+        private readonly System.Windows.Forms.Timer _timer;
         public SignalsView()
         {
             InitializeComponent();
-            lvwColumnSorter = new ListViewColumnSorter();
-            lvwColumnSorter.SortColumn = 0;
-            lvSignals.ListViewItemSorter = lvwColumnSorter;
+            lvSignals.DoubleBuffered(true);
+            _columnSorter = new ListViewColumnSorter();
+            _columnSorter.SortColumn = 0;
+            lvSignals.ListViewItemSorter = _columnSorter;
+            _timer = new System.Windows.Forms.Timer();
+            _timer.Interval = 20;
+            _timer.Tick += (s, e) =>
+            {
+                UpdateSignalValues();
+                UpdateSignalGraph();
+            };
+            _timer.Enabled = true;
+
         }
 
         public SignalList<Signal> Signals { get; set; }
+
         public void UpdateContents()
         {
             BuildTreeView();
@@ -112,7 +125,6 @@ namespace SimLinkup.UI.UserControls
                         foreach (var signal in signalsThisSubcollection)
                         {
                             var lvi = CreateListViewItemFromSignal(signal);
-                            RegisterForSignalStateChangedEvents(lvi, signal);
                             lvg.Items.Add(lvi);
                             lvSignals.Items.Add(lvi);
                             signalsAlreadyAdded.Add(signal);
@@ -121,7 +133,6 @@ namespace SimLinkup.UI.UserControls
                     foreach (var signal in signalsThisCollection.Except(signalsAlreadyAdded))
                     {
                         var lvi = CreateListViewItemFromSignal(signal);
-                        RegisterForSignalStateChangedEvents(lvi, signal);
                         lvSignals.Items.Add(lvi);
                     }
                 }
@@ -130,7 +141,6 @@ namespace SimLinkup.UI.UserControls
                     foreach (var signal in signalsThisCollection)
                     {
                         var lvi = CreateListViewItemFromSignal(signal);
-                        RegisterForSignalStateChangedEvents(lvi, signal);
                         lvSignals.Items.Add(lvi);
                     }
                 }
@@ -143,7 +153,16 @@ namespace SimLinkup.UI.UserControls
             lvSignals.EndUpdate();
             lvSignals.Sort();
         }
-
+        private void UpdateSignalValues()
+        {
+            lvSignals.BeginUpdate();
+            foreach (var listViewItem in lvSignals.Items)
+            {
+                UpdateListViewTextWithSignalValue((ListViewItem)listViewItem);
+            }
+            lvSignals.EndUpdate();
+            lvSignals.Invalidate();
+        }
         private static ListViewItem CreateListViewItemFromSignal(Signal signal)
         {
             var lvi = new ListViewItem();
@@ -152,26 +171,11 @@ namespace SimLinkup.UI.UserControls
             lvi.Tag = signal;
             return lvi;
         }
-        private void RegisterForSignalStateChangedEvents(ListViewItem listViewItem, Signal signal)
-        {
-            if (signal is DigitalSignal) 
-            { 
-                ((DigitalSignal)signal).SignalChanged += (s, e) => { UpdateSignalValue(listViewItem, signal); }; 
-            }
-            else if (signal is AnalogSignal) 
-            { 
-                ((AnalogSignal)signal).SignalChanged += (s, e) => { UpdateSignalValue(listViewItem, signal); }; 
-            }
-            else if (signal is TextSignal) 
-            { 
-                ((TextSignal)signal).SignalChanged += (s, e) => { UpdateSignalValue(listViewItem, signal); }; 
-            }
-        }
 
-        private void UpdateSignalValue(ListViewItem listViewItem, Signal signal)
+
+        private void UpdateListViewTextWithSignalValue(ListViewItem listViewItem)
         {
-            listViewItem.SubItems["Value"].Text = GetValue(signal);
-            lvSignals.Update();
+            listViewItem.SubItems["Value"].Text = GetValue(SignalFor(listViewItem));
         }
         private static string GetValue(Signal signal) 
         {
@@ -219,27 +223,57 @@ namespace SimLinkup.UI.UserControls
         private void lvSignals_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == lvwColumnSorter.SortColumn)
+            if (e.Column == _columnSorter.SortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (lvwColumnSorter.Order == SortOrder.Ascending)
+                if (_columnSorter.Order == SortOrder.Ascending)
                 {
-                    lvwColumnSorter.Order = SortOrder.Descending;
+                    _columnSorter.Order = SortOrder.Descending;
                 }
                 else
                 {
-                    lvwColumnSorter.Order = SortOrder.Ascending;
+                    _columnSorter.Order = SortOrder.Ascending;
                 }
             }
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
+                _columnSorter.SortColumn = e.Column;
+                _columnSorter.Order = SortOrder.Ascending;
             }
 
             // Perform the sort with these new sort options.
             lvSignals.Sort();
+        }
+
+        private void UpdateSignalGraph()
+        {
+            if (SelectedSignal == null) return;
+            if (pbSignalGraph.Image ==null) 
+            {
+                pbSignalGraph.Image = new Bitmap(pbSignalGraph.ClientSize.Width, pbSignalGraph.ClientSize.Height);
+            }
+            using (var graphics = Graphics.FromImage(pbSignalGraph.Image))
+            {
+                SelectedSignal.DrawGraph(graphics, new Rectangle(0, 0, pbSignalGraph.Image.Width, pbSignalGraph.Image.Height));
+            }
+            pbSignalGraph.Invalidate();
+            pbSignalGraph.Update();
+        }
+        private ListViewItem SelectedListViewItem 
+        {
+            get { return lvSignals.SelectedItems != null && lvSignals.SelectedItems.Count > 0 ? lvSignals.SelectedItems[0] : null; } 
+        }
+        private Signal SignalFor(ListViewItem listViewItem)
+        {
+            return listViewItem != null ? listViewItem.Tag as Signal : null;
+        }
+        private Signal SelectedSignal
+        {
+            get
+            {
+                return SignalFor(SelectedListViewItem);
+            }
         }
     }
 }

@@ -3,10 +3,10 @@
 namespace Common.Statistics
 {
     [Serializable]
-    public struct TimestampedFloatValue
+    public struct TimestampedDecimal
     {
         public DateTime Timestamp;
-        public float Value;
+        public double Value;
     }
 
 }

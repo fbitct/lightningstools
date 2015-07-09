@@ -61,6 +61,9 @@ namespace SimLinkup.HardwareSupport.DirectInput
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                thisSignal.MinValue = 0;
+                thisSignal.MaxValue = 1024;
+
                 analogSignalsToReturn.Add(thisSignal);
             }
 

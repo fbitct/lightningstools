@@ -4,13 +4,13 @@ namespace Common.Statistics
 {
     internal interface IAverageOfSamplesCalculator
     {
-        float AverageSampleValue(List<TimestampedFloatValue> values);
+        double AverageSampleValue(List<TimestampedDecimal> values);
     }
     class AverageOfSamplesCalculator:IAverageOfSamplesCalculator
     {
-        public float AverageSampleValue(List<TimestampedFloatValue> values)
+        public double AverageSampleValue(List<TimestampedDecimal> values)
         {
-            float sum = 0;
+            var sum = 0.0;
             for (var i = 0; i < values.Count; i++)
             {
                 sum += values[i].Value;

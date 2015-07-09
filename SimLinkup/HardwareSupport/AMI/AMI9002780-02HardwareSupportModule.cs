@@ -248,6 +248,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsAngle = true;
+            thisSignal.MinValue = -90;
+            thisSignal.MaxValue = 90;
             return thisSignal;
         }
 
@@ -263,6 +266,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsAngle = true;
+            thisSignal.MinValue = -180;
+            thisSignal.MaxValue = 180;
             return thisSignal;
         }
 
@@ -278,6 +284,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -293,6 +301,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -301,13 +311,16 @@ namespace SimLinkup.HardwareSupport.AMI
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Rate of Turn Indicator (Degrees)";
+            thisSignal.FriendlyName = "Rate of Turn Indicator (% Deflection)";
             thisSignal.Id = "900278002_Rate_Of_Turn_Indicator_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsPercentage = true;
+            thisSignal.MinValue = -1;
+            thisSignal.MaxValue = 1;
             return thisSignal;
         }
 
@@ -409,6 +422,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
+
             return thisSignal;
         }
 
@@ -425,6 +441,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -441,6 +460,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -457,6 +479,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 6.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -473,6 +497,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 6.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -489,6 +515,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 

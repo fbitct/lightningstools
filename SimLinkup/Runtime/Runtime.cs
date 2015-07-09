@@ -15,17 +15,12 @@ namespace SimLinkup.Runtime
 {
     public class Runtime
     {
-        #region Class variables
-
         private static readonly ILog _log = LogManager.GetLogger(typeof (Runtime));
-
-        #endregion
 
         public Runtime()
         {
             Initialize();
         }
-
         public bool IsRunning { get; private set; }
         public ScriptingContext ScriptingContext { get; private set; }
 
@@ -179,7 +174,6 @@ namespace SimLinkup.Runtime
             InitializeMappings();
             _initialized = true;
         }
-
         private Signal ResolveSignal(Signal signalToResolve)
         {
             if (signalToResolve == null) return null;

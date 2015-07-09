@@ -37,19 +37,26 @@ namespace Common.MacroProgramming
         #endregion
 
         [field: NonSerializedAttribute] private static ILog _log = LogManager.GetLogger(typeof (AnalogSignal));
-
         private int _precision = -1; //# decimal places to round values to
         private double _previousState;
         private double _state;
 
+        private bool _isSin;
+        private bool _isCos;
+        
         public int Precision
         {
             get { return _precision; }
             set { _precision = value; }
         }
         public bool IsVoltage { get; set; }
+        public bool IsSine { get { return _isSin; } set { _isSin = value; _isCos = false; IsAngle = true; MinValue = -1; MaxValue = 1; } }
+        public bool IsCosine { get { return _isCos; } set { _isCos = value; _isSin = false; IsAngle = true; MinValue = -1; MaxValue = 1; } }
+        public bool IsAngle {get;set;}
         public bool IsPercentage { get; set; }
-        
+        public double MinValue { get; set; }
+        public double MaxValue { get; set; }
+
         [XmlIgnore]
         public double State
         {
@@ -74,6 +81,7 @@ namespace Common.MacroProgramming
             }
         }
 
+        [XmlIgnore]
         public override string SignalType
         {
             get { return "Analog / Numeric"; }

@@ -180,6 +180,9 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
         private AnalogSignal CreateHydPressureBSINOutputSignal()
@@ -195,6 +198,9 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -211,6 +217,9 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.SourceAddress = null;
             thisSignal.State = 10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -227,6 +236,9 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.SourceAddress = null;
             thisSignal.State = 10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -242,6 +254,9 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 4000;
 
             return thisSignal;
         }
@@ -257,6 +272,8 @@ namespace SimLinkup.HardwareSupport.Malwin
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 4000;
 
             return thisSignal;
         }

@@ -154,6 +154,8 @@ namespace SimLinkup.HardwareSupport.AnalogDevices
                 thisSignal.SignalChanged += DAC_OutputSignalChanged;
                 thisSignal.Precision = -1; //arbitrary decimal precision (limited to 14-16 bits output precision)
                 thisSignal.IsVoltage = true;
+                thisSignal.MinValue = -10;
+                thisSignal.MaxValue = 10;
                 analogSignalsToReturn.Add(thisSignal);
             }
             analogSignals = analogSignalsToReturn.ToArray();

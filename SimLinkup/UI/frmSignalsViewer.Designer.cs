@@ -35,19 +35,21 @@
             // 
             this.signalsView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.signalsView.Location = new System.Drawing.Point(0, 0);
+            this.signalsView.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.signalsView.Name = "signalsView";
             this.signalsView.Signals = null;
-            this.signalsView.Size = new System.Drawing.Size(814, 552);
+            this.signalsView.Size = new System.Drawing.Size(1847, 931);
             this.signalsView.TabIndex = 0;
             // 
             // frmSignalsViewer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(814, 552);
+            this.ClientSize = new System.Drawing.Size(1847, 931);
             this.Controls.Add(this.signalsView);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmSignalsViewer";

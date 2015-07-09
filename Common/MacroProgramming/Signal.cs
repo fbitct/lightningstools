@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Xml.Serialization;
 
 namespace Common.MacroProgramming
@@ -12,6 +13,7 @@ namespace Common.MacroProgramming
         [NonSerialized] private object _publisherObject;
         [NonSerialized] private object _source;
         [NonSerialized] private object _subSource;
+        [NonSerialized] private SignalGraph _signalGraph;
 
         /// <summary>
         ///   The source object which originally published the Signal
@@ -32,7 +34,14 @@ namespace Common.MacroProgramming
             get { return _source; }
             set { _source = value; }
         }
-
+        public void DrawGraph(Graphics graphics, Rectangle targetRectangle)
+        {
+            if (_signalGraph == null)
+            {
+                _signalGraph = new SignalGraph(this);
+            }
+            _signalGraph.Draw(graphics, targetRectangle);
+        }
         /// <summary>
         ///   Descriptive, human-readable name of the source of the signal
         /// </summary>

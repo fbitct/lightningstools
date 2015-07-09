@@ -319,6 +319,8 @@ namespace SimLinkup.HardwareSupport.Phcc
                 thisSignal.SourceAddress = portName;
                 thisSignal.SourceFriendlyName = string.Format("PHCC Device on {0}", portName);
                 thisSignal.State = 0;
+                thisSignal.MinValue = 0;
+                thisSignal.MaxValue = 1023;
                 toReturn.Add(thisSignal);
             }
             return toReturn.ToArray();
@@ -434,6 +436,9 @@ namespace SimLinkup.HardwareSupport.Phcc
                         thisSignal.SubSourceFriendlyName = string.Format("DOA_8SERVO @ {0}", baseAddress);
                         thisSignal.SubSourceAddress = baseAddress;
                         thisSignal.State = 0;
+                        thisSignal.IsAngle = true;
+                        thisSignal.MinValue = -90;
+                        thisSignal.MaxValue = 90;
                         thisSignal.SignalChanged += DOA8ServoOutputSignalChanged;
                         analogSignalsToReturn.Add(thisSignal);
                     }
@@ -459,6 +464,9 @@ namespace SimLinkup.HardwareSupport.Phcc
                         thisSignal.SubSourceAddress = baseAddress;
                         thisSignal.State = 0;
                         thisSignal.SignalChanged += DOAAircoreOutputSignalChanged;
+                        thisSignal.MinValue = 0;
+                        thisSignal.MaxValue = 360;
+                        thisSignal.IsAngle = true;
                         analogSignalsToReturn.Add(thisSignal);
                     }
                     peripheralFloatStates[baseAddress] = new double[4];
@@ -482,7 +490,9 @@ namespace SimLinkup.HardwareSupport.Phcc
                         thisSignal.SubSource = string.Format("DOA_ANOUT1 @ {0}", baseAddress);
                         thisSignal.SubSourceFriendlyName = string.Format("DOA_ANOUT1 @ {0}", baseAddress);
                         thisSignal.SubSourceAddress = baseAddress;
-
+                        thisSignal.MinValue = 0;
+                        thisSignal.MaxValue = 5;
+                        thisSignal.IsVoltage = true;
                         thisSignal.State = 0;
                         thisSignal.SignalChanged += DOAAnOut1SignalChanged;
                         analogSignalsToReturn.Add(thisSignal);
@@ -563,7 +573,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 if (device != null)
                 {
                     var channelNum = channelNumZeroBase + 1;
-                    var newVal = (byte) (Math.Abs(args.CurrentState)*255);
+                    var newVal = (byte)(((Math.Abs(args.CurrentState)) / 5.00 )* 255);
                     device.DoaSendAnOut1(baseAddressByte, (byte) channelNum, newVal);
                     _peripheralFloatStates[baseAddress][channelNum] = newVal;
                 }
@@ -582,7 +592,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 if (device != null)
                 {
                     var motorNum = motorNumZeroBase + 1;
-                    var newPosition = (int) (Math.Abs(args.CurrentState)*1023);
+                    var newPosition = (int) (((Math.Abs(args.CurrentState))/360.00)*1023);
                     device.DoaSendAirCoreMotor(baseAddressByte, (byte) motorNum, newPosition);
                     _peripheralFloatStates[baseAddress][motorNum] = newPosition;
                 }
@@ -601,7 +611,7 @@ namespace SimLinkup.HardwareSupport.Phcc
                 if (device != null)
                 {
                     var servoNum = servoNumZeroBase + 1;
-                    var newPosition = (byte) (Math.Abs(args.CurrentState)*255);
+                    var newPosition = (byte) ((Math.Abs(args.CurrentState +90.00)/180.00)*255);
                     device.DoaSend8ServoPosition(baseAddressByte, (byte) servoNum, newPosition);
                     _peripheralFloatStates[baseAddress][servoNum] = newPosition;
                 }

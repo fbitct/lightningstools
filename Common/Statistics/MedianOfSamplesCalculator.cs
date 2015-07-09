@@ -5,18 +5,18 @@ namespace Common.Statistics
 {
     public interface IMedianOfSamplesCalculator
     {
-        float MedianSampleValue(List<TimestampedFloatValue> values);
+        double MedianSampleValue(List<TimestampedDecimal> values);
     }
     public class MedianOfSamplesCalculator:IMedianOfSamplesCalculator
     {
-        public float MedianSampleValue(List<TimestampedFloatValue> values)
+        public double MedianSampleValue(List<TimestampedDecimal> values)
         {
             if (values.Count == 0)
             {
                 return 0;
             }
 
-            var justTheValues = new float[values.Count];
+            var justTheValues = new double[values.Count];
             for (var i = 0; i < values.Count; i++)
             {
                 justTheValues[i] = values[i].Value;

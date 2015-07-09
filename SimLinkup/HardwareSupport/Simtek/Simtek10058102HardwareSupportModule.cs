@@ -161,14 +161,16 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Outputs";
             thisSignal.CollectionName = "Analog Outputs";
-            thisSignal.FriendlyName = "VVI";
-            thisSignal.Id = "10058102_VVI_To_Instrument";
+            thisSignal.FriendlyName = "Vertical Velocity";
+            thisSignal.Id = "10058102_Vertical_Velocity_To_Instrument";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = -10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -184,6 +186,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = -6000;
+            thisSignal.MaxValue = 6000;
             return thisSignal;
         }
 

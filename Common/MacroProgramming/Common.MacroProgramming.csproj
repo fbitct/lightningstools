@@ -66,6 +66,7 @@
     <Compile Include="Repeater.cs" />
     <Compile Include="Signal.cs" />
     <Compile Include="SignalList.cs" />
+    <Compile Include="SignalGraph.cs" />
     <Compile Include="Split.cs" />
     <Compile Include="TextPassthrough.cs" />
     <Compile Include="TextSignal.cs" />

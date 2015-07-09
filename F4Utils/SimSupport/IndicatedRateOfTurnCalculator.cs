@@ -16,8 +16,8 @@ namespace F4Utils.SimSupport
     public class IndicatedRateOfTurnCalculator : IIndicatedRateOfTurnCalculator
     {
         public const float MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND = 3.0f;
-        private TimestampedFloatValue _lastHeadingSample;
-        private List<TimestampedFloatValue> _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
+        private TimestampedDecimal _lastHeadingSample;
+        private List<TimestampedDecimal> _lastInstantaneousRatesOfTurn = new List<TimestampedDecimal>();
         private readonly IMedianOfSamplesCalculator _medianOfSamplesCalculator = new MedianOfSamplesCalculator();
         private float _lastIndicatedRateOfTurn =0;
         public float DetermineIndicatedRateOfTurn(float currentMagneticHeadingDecimalDegrees)
@@ -30,7 +30,7 @@ namespace F4Utils.SimSupport
 
             //determine the change in heading since our last snapshot
             var currentHeading = currentMagneticHeadingDecimalDegrees;
-            var headingDelta = Common.Math.Util.AngleDelta(_lastHeadingSample.Value, currentHeading);
+            var headingDelta = Common.Math.Util.AngleDelta((float)_lastHeadingSample.Value, currentHeading);
 
             //now calculate the instantaneous rate of turn
             var currentInstantaneousRateOfTurn = (headingDelta / dT) * 1000;
@@ -43,10 +43,10 @@ namespace F4Utils.SimSupport
                                                  Math.Sign(currentInstantaneousRateOfTurn);
             }
 
-            var sample = new TimestampedFloatValue { Timestamp = curTime, Value = currentInstantaneousRateOfTurn };
+            var sample = new TimestampedDecimal { Timestamp = curTime, Value = currentInstantaneousRateOfTurn };
 
             //cull historic rate-of-turn samples older than n seconds
-            var replacementList = new List<TimestampedFloatValue>();
+            var replacementList = new List<TimestampedDecimal>();
             for (var i = 0; i < _lastInstantaneousRatesOfTurn.Count; i++)
             {
                 if (!(Math.Abs(curTime.Subtract(_lastInstantaneousRatesOfTurn[i].Timestamp).TotalMilliseconds) > 1000))
@@ -83,7 +83,7 @@ namespace F4Utils.SimSupport
                 indicatedRateOfTurn = medianRateOfTurn;
             }
 
-            _lastHeadingSample = new TimestampedFloatValue
+            _lastHeadingSample = new TimestampedDecimal
             {
                 Timestamp = curTime,
                 Value = currentMagneticHeadingDecimalDegrees
@@ -93,7 +93,7 @@ namespace F4Utils.SimSupport
         }
         public void Reset()
         {
-            _lastInstantaneousRatesOfTurn = new List<TimestampedFloatValue>();
+            _lastInstantaneousRatesOfTurn = new List<TimestampedDecimal>();
             _lastIndicatedRateOfTurn = 0;
         }
         private static float LimitRateOfTurn(float rateOfTurnDegreesPerSecond)

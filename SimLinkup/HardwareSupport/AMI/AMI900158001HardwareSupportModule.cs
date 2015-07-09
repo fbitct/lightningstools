@@ -487,23 +487,31 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0
+                State = 0,
+                IsAngle =true,
+                MinValue = 0,
+                MaxValue=360
             };
             return thisSignal;
         }
 
         private AnalogSignal CreateHeadingInputSignal()
         {
-            var thisSignal = new AnalogSignal();
-            thisSignal.Category = "Inputs";
-            thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Heading";
-            thisSignal.Id = "900158001_Heading_From_Sim";
-            thisSignal.Index = 0;
-            thisSignal.Source = this;
-            thisSignal.SourceFriendlyName = FriendlyName;
-            thisSignal.SourceAddress = null;
-            thisSignal.State = 0;
+            var thisSignal = new AnalogSignal
+            {
+                Category = "Inputs",
+                CollectionName = "Analog Inputs",
+                FriendlyName = "Heading",
+                Id = "900158001_Heading_From_Sim",
+                Index = 0,
+                Source = this,
+                SourceFriendlyName = FriendlyName,
+                SourceAddress = null,
+                State = 0,
+                IsAngle = true,
+                MinValue = 0,
+                MaxValue = 360
+            };
             return thisSignal;
         }
 
@@ -519,7 +527,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0
+                State = 0,
+                IsAngle = true,
+                MinValue = 0,
+                MaxValue = 360
             };
             return thisSignal;
         }
@@ -530,13 +541,16 @@ namespace SimLinkup.HardwareSupport.AMI
             {
                 Category = "Inputs",
                 CollectionName = "Analog Inputs",
-                FriendlyName = "Bearing",
+                FriendlyName = "Bearing to Beacon",
                 Id = "900158001_Bearing_From_Sim",
                 Index = 0,
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0
+                State = 0,
+                IsAngle = true,
+                MinValue = 0,
+                MaxValue = 360
             };
             return thisSignal;
         }
@@ -553,7 +567,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0
+                State = 0,
+                IsAngle = true,
+                MinValue = 0,
+                MaxValue = 999.9999
             };
             return thisSignal;
         }
@@ -570,7 +587,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0
+                State = 0,
+                IsAngle =true,
+                MinValue = -180,
+                MaxValue = 180
             };
             return thisSignal;
         }
@@ -587,7 +607,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 Source = this,
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
-                State = 0
+                State = 0,
+                IsAngle = true,
+                MinValue = 0,
+                MaxValue = 10
             };
             return thisSignal;
         }
@@ -629,7 +652,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
                 State = 0.00,//volts
-                IsVoltage = true
+                IsVoltage = true,
+                IsSine =true,
+                MinValue=-10,
+                MaxValue=10
             };
             return thisSignal;
         }
@@ -647,6 +673,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine =true;
+            thisSignal.MinValue=-10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -663,6 +692,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -679,7 +711,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 SourceFriendlyName = FriendlyName,
                 SourceAddress = null,
                 State = +10.00,//volts
-                IsVoltage = true
+                IsVoltage = true,
+                IsCosine = true,
+                MinValue = -10,
+                MaxValue = 10,
             };
             return thisSignal;
         }
@@ -696,7 +731,10 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
-            thisSignal.IsVoltage = true;
+            thisSignal.IsVoltage = true; 
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -713,6 +751,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -729,6 +770,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -745,6 +789,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -761,6 +808,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -777,6 +827,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -793,6 +846,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -809,6 +865,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -825,6 +884,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -841,6 +903,9 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -857,6 +922,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00;//volts;
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 

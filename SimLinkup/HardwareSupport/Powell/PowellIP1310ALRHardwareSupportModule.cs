@@ -377,6 +377,9 @@ namespace SimLinkup.HardwareSupport.Powell
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                thisSignal.IsAngle = true;
+                thisSignal.MinValue = 0;
+                thisSignal.MaxValue = 360;
                 _magneticHeadingDegreesInputSignal = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
@@ -395,6 +398,8 @@ namespace SimLinkup.HardwareSupport.Powell
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                thisSignal.MinValue = 0;
+                thisSignal.MaxValue = 64;
                 _rwrSymbolCountInputSignal = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
@@ -416,6 +421,8 @@ namespace SimLinkup.HardwareSupport.Powell
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                thisSignal.MinValue = 0;
+                thisSignal.MaxValue = 64;
                 _rwrObjectSymbolIDInputSignals[i] = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
@@ -435,6 +442,9 @@ namespace SimLinkup.HardwareSupport.Powell
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                thisSignal.IsAngle = true;
+                thisSignal.MinValue = 0;
+                thisSignal.MaxValue = 360;
                 _rwrObjectBearingInputSignals[i] = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }
@@ -455,6 +465,8 @@ namespace SimLinkup.HardwareSupport.Powell
                 thisSignal.SubSourceFriendlyName = null;
                 thisSignal.SubSourceAddress = null;
                 thisSignal.State = 0;
+                thisSignal.MinValue = -1;
+                thisSignal.MaxValue = 3;
                 _rwrObjectLethalityInputSignals[i] = thisSignal;
                 analogSignalsToReturn.Add(thisSignal);
             }

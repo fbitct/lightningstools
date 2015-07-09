@@ -97,7 +97,7 @@
     <Compile Include="Serialization\Util.cs" />
     <Compile Include="Statistics\AverageOfSamplesCalculator.cs" />
     <Compile Include="Statistics\MedianOfSamplesCalculator.cs" />
-    <Compile Include="Statistics\TimestampedFloatValue.cs" />
+    <Compile Include="Statistics\TimestampedDecimal.cs" />
     <Compile Include="Strings\NumericComparer.cs" />
     <Compile Include="Strings\StringLogicalComparer.cs" />
     <Compile Include="Strings\Util.cs" />

@@ -69,16 +69,6 @@ namespace SimLinkup.UI
         }
 
 
-        private void StopAndDisposeRuntime()
-        {
-            if (SharedRuntime != null)
-            {
-                if (SharedRuntime.IsRunning)
-                {
-                    Stop();
-                }
-            }
-        }
 
         private void DisposeRuntime()
         {
@@ -94,8 +84,6 @@ namespace SimLinkup.UI
             if (SharedRuntime != null && SharedRuntime.IsRunning)
             {
                 SharedRuntime.Stop();
-                Common.Util.DisposeObject(SharedRuntime);
-                SharedRuntime = null;
             }
             btnStop.Enabled = false;
             mnuActionsStop.Enabled = false;

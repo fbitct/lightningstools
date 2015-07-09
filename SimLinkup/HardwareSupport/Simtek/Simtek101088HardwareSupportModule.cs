@@ -152,6 +152,9 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -168,6 +171,9 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = 10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
         private AnalogSignal CreateNozzlePositionInputSignal()
@@ -175,14 +181,16 @@ namespace SimLinkup.HardwareSupport.Simtek
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Nozzle Position";
+            thisSignal.FriendlyName = "Nozzle Position (0-100%)";
             thisSignal.Id = "101088_Nozzle_Position_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
-
+            thisSignal.IsPercentage = true;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 100;
             return thisSignal;
         }
 

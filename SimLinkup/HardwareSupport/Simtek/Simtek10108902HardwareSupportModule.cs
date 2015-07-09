@@ -187,6 +187,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 20100;
             return thisSignal;
         }
 
@@ -202,6 +204,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 42000;
             return thisSignal;
         }
 
@@ -217,6 +221,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 42000;
             return thisSignal;
         }
 
@@ -241,6 +247,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -257,6 +265,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -273,6 +283,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 

@@ -40,6 +40,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screen\Util.cs" />
     <Compile Include="TreeNodeNumericComparer.cs" />
+    <Compile Include="UserControls\ControlExtensions.cs" />
     <Compile Include="UserControls\DotControl.cs">
       <SubType>Component</SubType>
     </Compile>

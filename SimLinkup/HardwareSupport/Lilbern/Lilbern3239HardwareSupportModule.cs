@@ -143,6 +143,8 @@ namespace SimLinkup.HardwareSupport.Lilbern
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 99999;
             return thisSignal;
         }
 
@@ -164,6 +166,8 @@ namespace SimLinkup.HardwareSupport.Lilbern
             thisSignal.SourceAddress = null;
             thisSignal.State = -10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = 0;
+            thisSignal.MaxValue = 99999;
             return thisSignal;
         }
 

@@ -286,6 +286,9 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsAngle = true;
+            thisSignal.MinValue = -90;
+            thisSignal.MaxValue = 90;
             return thisSignal;
         }
 
@@ -301,6 +304,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsAngle = true;
+            thisSignal.MinValue = -180;
+            thisSignal.MaxValue = 180;
+
             return thisSignal;
         }
 
@@ -309,13 +316,17 @@ namespace SimLinkup.HardwareSupport.Astronautics
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Horizontal Command Bar (Degrees)";
+            thisSignal.FriendlyName = "Horizontal Command Bar (% Deflection)";
             thisSignal.Id = "12871_Horizontal_Command_Bar_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsPercentage = true;
+            thisSignal.MinValue = -1;
+            thisSignal.MaxValue = 1;
+
             return thisSignal;
         }
 
@@ -324,13 +335,17 @@ namespace SimLinkup.HardwareSupport.Astronautics
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Vertical Command Bar (Degrees)";
+            thisSignal.FriendlyName = "Vertical Command Bar (% Deflection)";
             thisSignal.Id = "12871_Vertical_Command_Bar_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsPercentage = true;
+            thisSignal.MinValue = -1;
+            thisSignal.MaxValue = 1;
+
             return thisSignal;
         }
 
@@ -339,13 +354,17 @@ namespace SimLinkup.HardwareSupport.Astronautics
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Rate of Turn Indicator (Degrees)";
+            thisSignal.FriendlyName = "Rate of Turn Indicator (% Deflection)";
             thisSignal.Id = "12871_Rate_Of_Turn_Indicator_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsPercentage = true;
+            thisSignal.MinValue = -1;
+            thisSignal.MaxValue = 1;
+
             return thisSignal;
         }
 
@@ -354,13 +373,17 @@ namespace SimLinkup.HardwareSupport.Astronautics
             var thisSignal = new AnalogSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Analog Inputs";
-            thisSignal.FriendlyName = "Inclinometer Position";
+            thisSignal.FriendlyName = "Inclinometer Position (% Deflection)";
             thisSignal.Id = "12871_Inclinometer_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
+            thisSignal.IsPercentage = true;
+            thisSignal.MinValue = -1;
+            thisSignal.MaxValue = 1;
+
             return thisSignal;
         }
 
@@ -464,6 +487,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
+
             return thisSignal;
         }
 
@@ -480,6 +507,9 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -496,6 +526,9 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts;
             thisSignal.IsVoltage = true;
+            thisSignal.IsSine = true;
+            thisSignal.MinValue = -1;
+            thisSignal.MaxValue = 1;
             return thisSignal;
         }
 
@@ -512,6 +545,9 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.IsCosine = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -528,6 +564,8 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = 6.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -544,6 +582,8 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = 6.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -560,6 +600,8 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
 
@@ -576,6 +618,8 @@ namespace SimLinkup.HardwareSupport.Astronautics
             thisSignal.SourceAddress = null;
             thisSignal.State = 0.00; //volts
             thisSignal.IsVoltage = true;
+            thisSignal.MinValue = -10;
+            thisSignal.MaxValue = 10;
             return thisSignal;
         }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
