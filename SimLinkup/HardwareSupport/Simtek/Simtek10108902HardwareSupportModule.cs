@@ -297,15 +297,15 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_foreRightOutputSignal != null)
             {
-                _foreRightOutputSignal.State = (((_foreRightFuelInputSignal.State / 1000.00) / 42.00) * 10.00)-10.00;
+                _foreRightOutputSignal.State =  (((_foreRightFuelInputSignal.State / 1000.00) / 42.00) * 20.00)-10.00;
             }
             if (_aftLeftOutputSignal != null)
             {
-                _aftLeftOutputSignal.State = (((_aftLeftFuelInputSignal.State / 1000.00) / 42.00) * 10.00)-10.00;
+                _aftLeftOutputSignal.State =  (((_aftLeftFuelInputSignal.State / 1000.00) / 42.00) * 20.00)-10.00;
             }
             if (_counterOutputSignal != null)
             {
-                _counterOutputSignal.State = ((_totalFuelInputSignal.State / 20100) * 10.00)-10.00;
+                _counterOutputSignal.State = ((_totalFuelInputSignal.State / 20100) * 20.00) - 10.00;
             }
         }
 

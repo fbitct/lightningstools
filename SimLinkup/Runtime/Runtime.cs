@@ -78,10 +78,7 @@ namespace SimLinkup.Runtime
             {
                 foreach (var ssm in ScriptingContext.SimSupportModules)
                 {
-                    if (ssm.IsSimRunning)
-                    {
-                        ssm.Update();
-                    }
+                    ssm.Update();
                 }
             }
         }

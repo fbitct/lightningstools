@@ -82,8 +82,7 @@ namespace F4Utils.SimSupport
 
         private void GetNextFlightDataFromSharedMem()
         {
-            if (_smReader == null) return;
-            _lastFlightData = _smReader.GetCurrentData();
+            _lastFlightData =_smReader !=null && IsSimRunning ? _smReader.GetCurrentData() : new FlightData();
         }
 
 
@@ -284,11 +283,11 @@ namespace F4Utils.SimSupport
 
                     case F4SimOutputs.ADI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_OFF) ==
-                                                          HsiBits.ADI_OFF);
+                                                          HsiBits.ADI_OFF) || !IsSimRunning;
                         break;
                     case F4SimOutputs.ADI__AUX_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_AUX) ==
-                                                          HsiBits.ADI_AUX);
+                                                          HsiBits.ADI_AUX) || !IsSimRunning;
                         break;
                     case F4SimOutputs.ADI__GS_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.ADI_GS) ==
@@ -306,18 +305,18 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.STBY_ADI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.BUP_ADI_OFF) ==
-                                                          HsiBits.BUP_ADI_OFF);
+                                                          HsiBits.BUP_ADI_OFF) || !IsSimRunning;;
                         break;
                     case F4SimOutputs.VVI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.VVI) ==
-                                                          HsiBits.VVI);
+                                                          HsiBits.VVI) || !IsSimRunning;
                         break;
                     case F4SimOutputs.AOA_INDICATOR__AOA_DEGREES:
                         ((AnalogSignal) output).State = _lastFlightData.alpha;
                         break;
                     case F4SimOutputs.AOA_INDICATOR__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.AOA) ==
-                                                          HsiBits.AOA);
+                                                          HsiBits.AOA) || !IsSimRunning;
                         break;
 
 
@@ -377,7 +376,7 @@ namespace F4Utils.SimSupport
                         break;
                     case F4SimOutputs.HSI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.HSI_OFF) ==
-                                                          HsiBits.HSI_OFF);
+                                                          HsiBits.HSI_OFF) || !IsSimRunning;
                         break;
                     case F4SimOutputs.HSI__HSI_MODE:
                         ((AnalogSignal) output).State = _lastFlightData.navMode;
@@ -1003,7 +1002,7 @@ namespace F4Utils.SimSupport
 
                     case F4SimOutputs.POWER__ELEC_POWER_OFF:
                         ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3 &
-                                                           LightBits3.Power_Off) == LightBits3.Power_Off);
+                                                           LightBits3.Power_Off) == LightBits3.Power_Off) || !IsSimRunning;
                         break;
                     case F4SimOutputs.POWER__MAIN_POWER:
                         ((AnalogSignal)output).State = _lastFlightData.MainPower;
@@ -1317,17 +1316,17 @@ namespace F4Utils.SimSupport
                         ((AnalogSignal) output).State = _lastFlightData.RwrObjectCount;
                         break;
                     case F4SimOutputs.RWR__SYMBOL_ID:
-                        ((AnalogSignal) output).State = _lastFlightData.RWRsymbol.Length > ((Signal) output).Index
+                        ((AnalogSignal) output).State = _lastFlightData.RWRsymbol !=null && _lastFlightData.RWRsymbol.Length > ((Signal) output).Index
                                                             ? _lastFlightData.RWRsymbol[((Signal) output).Index.Value]
                                                             : 0;
                         break;
                     case F4SimOutputs.RWR__BEARING_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.bearing.Length > ((Signal) output).Index
+                        ((AnalogSignal)output).State = _lastFlightData.bearing !=null && _lastFlightData.bearing.Length > ((Signal)output).Index
                                                             ? _lastFlightData.bearing[((Signal) output).Index.Value] * DEGREES_PER_RADIAN
                                                             : 0;
                         break;
                     case F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG:
-                        if (_lastFlightData.missileActivity.Length > ((Signal) output).Index)
+                        if (_lastFlightData.missileActivity !=null && _lastFlightData.missileActivity.Length > ((Signal)output).Index)
                         {
                             ((DigitalSignal) output).State =
                                 _lastFlightData.missileActivity[((Signal) output).Index.Value] == 1;
@@ -1338,7 +1337,7 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__MISSILE_LAUNCH_FLAG:
-                        if (_lastFlightData.missileLaunch.Length > ((Signal) output).Index)
+                        if (_lastFlightData.missileLaunch !=null && _lastFlightData.missileLaunch.Length > ((Signal)output).Index)
                         {
                             ((DigitalSignal) output).State =
                                 _lastFlightData.missileLaunch[((Signal) output).Index.Value] == 1;
@@ -1349,7 +1348,7 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__SELECTED_FLAG:
-                        if (_lastFlightData.selected.Length > ((Signal) output).Index)
+                        if (_lastFlightData.selected !=null && _lastFlightData.selected.Length > ((Signal)output).Index)
                         {
                             ((DigitalSignal) output).State = _lastFlightData.selected[((Signal) output).Index.Value] ==
                                                              1;
@@ -1360,7 +1359,7 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__LETHALITY:
-                        ((AnalogSignal) output).State = _lastFlightData.lethality.Length > ((Signal) output).Index
+                        ((AnalogSignal)output).State = _lastFlightData.lethality !=null && _lastFlightData.lethality.Length > ((Signal)output).Index
                                                             ? _lastFlightData.lethality[((Signal) output).Index.Value]
                                                             : 0;
                         break;
