@@ -246,7 +246,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00; //volts
+            thisSignal.State = -10.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
@@ -264,7 +264,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00; //volts
+            thisSignal.State = -10.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
@@ -282,7 +282,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00; //volts
+            thisSignal.State = -10.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
@@ -298,15 +298,15 @@ namespace SimLinkup.HardwareSupport.Simtek
         {
             if (_foreRightOutputSignal != null)
             {
-                _foreRightOutputSignal.State = ((_foreRightFuelInputSignal.State / 1000.00) / 42.00) * 10.00;
+                _foreRightOutputSignal.State = (((_foreRightFuelInputSignal.State / 1000.00) / 42.00) * 10.00)-10.00;
             }
             if (_aftLeftOutputSignal != null)
             {
-                _aftLeftOutputSignal.State = ((_aftLeftFuelInputSignal.State / 1000.00) / 42.00) * 10.00;
+                _aftLeftOutputSignal.State = (((_aftLeftFuelInputSignal.State / 1000.00) / 42.00) * 10.00)-10.00;
             }
             if (_counterOutputSignal != null)
             {
-                _counterOutputSignal.State = (_totalFuelInputSignal.State / 9900) * 10.00;
+                _counterOutputSignal.State = ((_totalFuelInputSignal.State / 9900) * 10.00)-10.00;
             }
         }
 

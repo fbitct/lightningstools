@@ -439,7 +439,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 0.00; //volts;
+            //thisSignal.State = 0.00; //volts;
+            thisSignal.State = Math.Sin(-15.0 * Constants.RADIANS_PER_DEGREE)*10.00; //volts; //HACK - for Dave R. alt that needs to be cal'd at the hardware level still
             thisSignal.IsVoltage = true;
             thisSignal.IsSine = true;
             thisSignal.MinValue = -10;
@@ -458,7 +459,8 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = +10.00; //volts
+//            thisSignal.State = +10.00; //volts
+            thisSignal.State = Math.Cos(-15.0 * Constants.RADIANS_PER_DEGREE) * 10.00; //volts; //HACK - for Dave R. alt that needs to be cal'd at the hardware level still
             thisSignal.IsVoltage = true;
             thisSignal.IsCosine = true;
             thisSignal.MinValue = -10;
@@ -477,7 +479,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 6.00; //volts
+            thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
@@ -495,7 +497,7 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.Source = this;
             thisSignal.SourceFriendlyName = FriendlyName;
             thisSignal.SourceAddress = null;
-            thisSignal.State = 6.00; //volts
+            thisSignal.State = +10.00; //volts
             thisSignal.IsVoltage = true;
             thisSignal.MinValue = -10;
             thisSignal.MaxValue = 10;
