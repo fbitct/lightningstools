@@ -38,6 +38,7 @@ namespace Common.MacroProgramming
 
         [field: NonSerializedAttribute] private static ILog _log = LogManager.GetLogger(typeof (AnalogSignal));
         private int _precision = -1; //# decimal places to round values to
+        private uint _smoothingLevel = 1;
         private double _previousState;
         private double _state;
 
@@ -56,7 +57,11 @@ namespace Common.MacroProgramming
         public bool IsPercentage { get; set; }
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
-
+        public uint SmoothingLevel 
+        { 
+            get { return _smoothingLevel; } 
+            set { _smoothingLevel = value; } 
+        }
         [XmlIgnore]
         public double State
         {
@@ -75,7 +80,7 @@ namespace Common.MacroProgramming
                 if (newVal != _state)
                 {
                     _previousState = _state;
-                    _state = newVal;
+                    _state = _state + ((newVal-State)/SmoothingLevel);
                     UpdateEventListeners();
                 }
             }

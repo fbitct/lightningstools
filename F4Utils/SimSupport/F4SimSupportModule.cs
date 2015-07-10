@@ -22,6 +22,7 @@ namespace F4Utils.SimSupport
         private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
         private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
+        private const uint SMOOTHING_LEVEL = 3;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private readonly Dictionary<string, SimCommand> _simCommands = new Dictionary<string, SimCommand>();
         private FlightData _lastFlightData;
@@ -1410,7 +1411,7 @@ namespace F4Utils.SimSupport
             return simCommand;
         }
 
-        private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType, double minVal=0.0000001, double maxVal=0.0000001, bool isAngle=false, bool isPercentage=false)
+        private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType, double minVal=0.0000001, double maxVal=0.0000001, bool isAngle=false, bool isPercentage=false, uint smoothingLevel=1)
         {
             var indexString = index >= 0 ? "[" + index + "]" : string.Empty;
 
@@ -1458,23 +1459,24 @@ namespace F4Utils.SimSupport
                            IsAngle=isAngle,
                            IsPercentage = isPercentage,
                            MinValue=minVal,
-                           MaxValue=maxVal
+                           MaxValue=maxVal,
+                           SmoothingLevel = smoothingLevel
                        };
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, uint smoothingLevel=1)
         {
-            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage);
+            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage, smoothingLevel);
         }
          private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal, int? index,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, uint smoothingLevel=1)
         {
-            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, index, dataType, minVal, maxVal, isAngle, isPercentage);
+            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, index, dataType, minVal, maxVal, isAngle, isPercentage, smoothingLevel);
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, uint smoothingLevel=1)
         {
-            return CreateNewF4SimOutput(collectionName, subcollectionName, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage);
+            return CreateNewF4SimOutput(collectionName, subcollectionName, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage, smoothingLevel);
         }
 
         private void AddF4SimOutput(ISimOutput output)
@@ -1526,80 +1528,80 @@ namespace F4Utils.SimSupport
                                                 typeof(float), -3500000, 3500000, false, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Altimeter", "Indicated Altitude (feet MSL)",
-                                                F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL, typeof (float),-1000,80000,false,false));
+                                                F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL, typeof (float),-1000,80000,false,false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Altimeter", "Barometric Pressure (inches Hg)",
                                                F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG, typeof(float), 28.10, 31.00, false,false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Vertical Velocity Indicator (VVI)", "Vertical Velocity (feet/min)",
-                                                F4SimOutputs.VVI__VERTICAL_VELOCITY_FPM, typeof (float), -6000,6000, false,false));
+                                                F4SimOutputs.VVI__VERTICAL_VELOCITY_FPM, typeof(float), -6000, 6000, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Vertical Velocity Indicator (VVI)", "OFF flag",
                                                 F4SimOutputs.VVI__OFF_FLAG, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "Sideslip angle [beta] (degrees)",
                                                 F4SimOutputs.FLIGHT_DYNAMICS__SIDESLIP_ANGLE_DEGREES,
-                                                typeof (float), -180,180,true,false));
+                                                typeof(float), -180, 180, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "Climb/Dive Angle [gamma] (degrees)",
                                                 F4SimOutputs.FLIGHT_DYNAMICS__CLIMBDIVE_ANGLE_DEGREES,
-                                                typeof (float), -90,90,true,false));
+                                                typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "Ownship Normal Gs",
-                                                F4SimOutputs.FLIGHT_DYNAMICS__OWNSHIP_NORMAL_GS, typeof (float),-10, 10, false,false));
+                                                F4SimOutputs.FLIGHT_DYNAMICS__OWNSHIP_NORMAL_GS, typeof(float), -10, 10, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "True Airspeed (knots)",
                                                 F4SimOutputs.AIRSPEED_MACH_INDICATOR__TRUE_AIRSPEED_KNOTS,
-                                                typeof (float), 0, 1700, false,false));
+                                                typeof(float), 0, 1700, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "True Altitude (feet MSL)",
-                                                F4SimOutputs.TRUE_ALTITUDE__MSL, typeof (float), -1000, 80000, false,false));
+                                                F4SimOutputs.TRUE_ALTITUDE__MSL, typeof(float), -1000, 80000, false, false, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Airspeed indicator/Machmeter", "Mach number",
-                                                F4SimOutputs.AIRSPEED_MACH_INDICATOR__MACH_NUMBER, typeof (float),0,2.5,false,false));
+                                                F4SimOutputs.AIRSPEED_MACH_INDICATOR__MACH_NUMBER, typeof(float), 0, 2.5, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Airspeed indicator/Machmeter", "Indicated Airspeed (knots)",
                                                 F4SimOutputs.AIRSPEED_MACH_INDICATOR__INDICATED_AIRSPEED_KNOTS,
-                                                typeof (float),0, 850,false,false));
+                                                typeof(float), 0, 850, false, false, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Displays", "HUD", "Wind delta to flight path marker (degrees)",
                                                 F4SimOutputs.HUD__WIND_DELTA_TO_FLIGHT_PATH_MARKER_DEGREES,
-                                                typeof (float), -90, 90, true,false));
+                                                typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
 
-            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #1 Nozzle Percent Open", 
-                                                F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof (float), 0, 100, false,true));
-            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #2 Nozzle Percent Open", 
-                                                F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof (float), 0, 100, false,true));
+            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #1 Nozzle Percent Open",
+                                                F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
+            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #2 Nozzle Percent Open",
+                                                F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Hydraulic Pressure Indicators", "HYD A (Pounds per Square Inch)",
-                                    F4SimOutputs.HYD_PRESSURE_A__PSI, typeof(float), 0, 4000, false, false));
+                                    F4SimOutputs.HYD_PRESSURE_A__PSI, typeof(float), 0, 4000, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Hydraulic Pressure Indicators", "HYD B (Pounds per Square Inch)",
-                                                F4SimOutputs.HYD_PRESSURE_B__PSI, typeof(float), 0, 4000, false,false));
+                                                F4SimOutputs.HYD_PRESSURE_B__PSI, typeof(float), 0, 4000, false, false, SMOOTHING_LEVEL));
 
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel Flow Indicator", "Engine #1 Fuel flow (pounds/hour)",
-                                                F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false,false));
+                                                F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel Flow Indicator", "Engine #2 Fuel flow (pounds/hour)",
-                                                F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false));
+                                                F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "RPM", "Engine #1 RPM (Percent 0-103)",
-                                                F4SimOutputs.RPM1__RPM_PERCENT, typeof (float), 0, 103, false,true));
+                                                F4SimOutputs.RPM1__RPM_PERCENT, typeof(float), 0, 103, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "RPM", "Engine #2 RPM(Percent 0-103)",
-                                                F4SimOutputs.RPM2__RPM_PERCENT, typeof (float), 0, 103, false,true));
+                                                F4SimOutputs.RPM2__RPM_PERCENT, typeof(float), 0, 103, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "FTIT", "Engine #1 Forward Turbine Inlet Temp (Degrees C)",
-                                                F4SimOutputs.FTIT1__FTIT_TEMP_DEG_CELCIUS, typeof (float), 0, 1200, false,false));
+                                                F4SimOutputs.FTIT1__FTIT_TEMP_DEG_CELCIUS, typeof(float), 0, 1200, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "FTIT", "Engine #2 Forward Turbine Inlet Temp (Degrees C)",
-                                                F4SimOutputs.FTIT2__FTIT_TEMP_DEG_CELCIUS, typeof (float), 0, 1200, false, false));
+                                                F4SimOutputs.FTIT2__FTIT_TEMP_DEG_CELCIUS, typeof(float), 0, 1200, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Speedbrake", "Speedbrake position (0 = closed, 1 = 60 Degrees open)",
-                                                F4SimOutputs.SPEED_BRAKE__POSITION, typeof (float), 0, 1, false,true));
+                                                F4SimOutputs.SPEED_BRAKE__POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Speedbrake", "Speedbrake Not Stowed Flag",
                                                 F4SimOutputs.SPEED_BRAKE__NOT_STOWED_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "EPU Fuel", "EPU fuel (Percent 0-100)",
-                                                F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT, typeof (float), 0,100, false,true));
+                                                F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "OIL Pressure", "Engine #1 Oil Pressure (Percent 0-100)",
-                                                F4SimOutputs.OIL_PRESS1__OIL_PRESS_PERCENT, typeof (float), 0,100,false,true));
+                                                F4SimOutputs.OIL_PRESS1__OIL_PRESS_PERCENT, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "OIL Pressure", "Engine #2 Oil Pressure (Percent 0-100)",
-                                                F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT, typeof (float),0,100,false,true));
+                                                F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Cabin Pressure Altimeter", "Cabin Pressure Altitude (in Feet MSL)",
-                                                F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL, typeof (float), 0, 50000, false,false));
+                                                F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL, typeof(float), 0, 50000, false, false, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Compass", "Magnetic Heading (degrees)",
-                                                F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES, typeof (float), 0, 360, true,false));
+                                                F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Gear position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__GEAR_POSITION, typeof (float), 0,1,false,true));
+                                                F4SimOutputs.GEAR_PANEL__GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Nose Gear Down Light",
                                                 F4SimOutputs.GEAR_PANEL__NOSE_GEAR_DOWN_LIGHT, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Left Gear Down Light",
@@ -1607,30 +1609,30 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Right Gear Down Light",
                                                 F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_DOWN_LIGHT, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Nose Gear Position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__NOSE_GEAR_POSITION, typeof (float), 0, 1, false,true));
+                                                F4SimOutputs.GEAR_PANEL__NOSE_GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Left Gear Position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__LEFT_GEAR_POSITION, typeof (float), 0,1,false,true));
+                                                F4SimOutputs.GEAR_PANEL__LEFT_GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Right Gear Position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_POSITION, typeof (float), 0,1,false,true));
+                                                F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Gear handle 'Lollipop' light",
                                                 F4SimOutputs.GEAR_PANEL__GEAR_HANDLE_LIGHT, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Parking brake engaged flag",
                                                 F4SimOutputs.GEAR_PANEL__PARKING_BRAKE_ENGAGED_FLAG, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Pitch (degrees)", F4SimOutputs.ADI__PITCH_DEGREES,
-                                                typeof (float), -90,90,true,false));
+                                                typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Roll (degrees)", F4SimOutputs.ADI__ROLL_DEGREES,
-                                                typeof (float), -180,180,true,false));
+                                                typeof(float), -180, 180, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Glideslope and localizer ILS command bars enabled flag",
                                                 F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Position of glideslope ILS bar",
-                                                F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof (float),-1,1,false,true));
+                                                F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Position of localizer ILS bar",
-                                                F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof (float), -1,1,false,true));
+                                                F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Rate of Turn Indicator Position",
-                                                F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float), -1,1,false,true));
+                                                F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Inclinometer Position",
-                                                F4SimOutputs.ADI__INCLINOMETER_POSITION, typeof(float),-1,1,false,true));
+                                                F4SimOutputs.ADI__INCLINOMETER_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "OFF flag", F4SimOutputs.ADI__OFF_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "AUX flag", F4SimOutputs.ADI__AUX_FLAG, typeof(bool)));
@@ -1640,12 +1642,12 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "OFF flag", F4SimOutputs.STBY_ADI__OFF_FLAG,
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "Pitch (degrees)",
-                                                F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof (float), -90,90,true,false));
+                                                F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "Roll (degrees)", F4SimOutputs.STBY_ADI__ROLL_DEGREES,
-                                                typeof (float),-180,180,true,false));
+                                                typeof(float), -180, 180, true, false, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "AOA Indicator", "Angle of Attack [alpha] (degrees)",
-                                                F4SimOutputs.AOA_INDICATOR__AOA_DEGREES, typeof (float), -5,40, true,false));
+                                                F4SimOutputs.AOA_INDICATOR__AOA_DEGREES, typeof(float), -5, 40, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "AOA Indicator", "OFF flag", F4SimOutputs.AOA_INDICATOR__OFF_FLAG,
                                                 typeof (bool)));
 
@@ -1654,23 +1656,23 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Distance invalid flag",
                                                 F4SimOutputs.HSI__DISTANCE_INVALID_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Desired course (degrees)",
-                                                F4SimOutputs.HSI__DESIRED_COURSE_DEGREES, typeof (float),0,360,true,false));
+                                                F4SimOutputs.HSI__DESIRED_COURSE_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Course deviation (degrees)",
-                                                F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof (float),-20,20, true,false));
+                                                F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof(float), -20, 20, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Course deviation limit (degrees)",
-                                                F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float),-20,20,true,false));
+                                                F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float), -20, 20, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Distance to beacon (nautical miles)",
                                                 F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES,
-                                                typeof (float),0,1000,false,false));
+                                                typeof(float), 0, 1000, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Bearing to beacon (degrees)",
-                                                F4SimOutputs.HSI__BEARING_TO_BEACON_DEGREES, typeof (float),0,360,true,false));
+                                                F4SimOutputs.HSI__BEARING_TO_BEACON_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Current heading (degrees)",
-                                                F4SimOutputs.HSI__CURRENT_HEADING_DEGREES, typeof (float), 0,360,true,false));
+                                                F4SimOutputs.HSI__CURRENT_HEADING_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Desired heading (degrees)",
-                                                F4SimOutputs.HSI__DESIRED_HEADING_DEGREES, typeof (float),0,360,true,false));
+                                                F4SimOutputs.HSI__DESIRED_HEADING_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Localizer course (degrees)",
                                                 F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES,
-                                                typeof (float),0,360,true,false));
+                                                typeof (float),0,360,true,false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "TO Flag", F4SimOutputs.HSI__TO_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "FROM Flag", F4SimOutputs.HSI__FROM_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "OFF Flag", F4SimOutputs.HSI__OFF_FLAG, typeof(bool)));
@@ -1678,11 +1680,11 @@ namespace F4Utils.SimSupport
                                                 F4SimOutputs.HSI__HSI_MODE, typeof (int),0,3,false,false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "TRIM", "Pitch trim (-1 to +1)", F4SimOutputs.TRIM__PITCH_TRIM,
-                                                typeof (float),-1,1,false,true));
+                                                typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "TRIM", "Roll trim (-1 to +1)", F4SimOutputs.TRIM__ROLL_TRIM,
-                                                typeof (float),-1,1,false,true));
+                                                typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "TRIM", "Yaw trim (-1 to +1)", F4SimOutputs.TRIM__YAW_TRIM,
-                                                typeof (float),-1,1,false,true));
+                                                typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
 
             for (var i = 0; i < 5; i++)
             {
@@ -1962,11 +1964,11 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Nose Landing Gear - Weight on Wheels", F4SimOutputs.AIRCRAFT__NOSE_LANDING_GEAR__WEIGHT_ON_WHEELS,
                                                 typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Leading edge flaps position", F4SimOutputs.AIRCRAFT__LEADING_EDGE_FLAPS_POSITION,
-                        typeof(float), 0,1, false,true));
+                        typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Trailing edge flaps position", F4SimOutputs.AIRCRAFT__TRAILING_EDGE_FLAPS_POSITION,
-                                    typeof(float), 0, 1, false,true));
+                                    typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "VTOL position", F4SimOutputs.AIRCRAFT__VTOL_POSITION,
-                                    typeof(float), 0, 1, false, true));
+                                    typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
 
             AddF4SimOutput(CreateNewF4SimOutput("Power", "Electrical Power OFF flag",
                                                 F4SimOutputs.POWER__ELEC_POWER_OFF, typeof(bool)));
@@ -2021,7 +2023,7 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Collision Counter",
                                                 F4SimOutputs.SIM__COLLISION_COUNTER, typeof(int), 0, Int32.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "g Force",
-                                                F4SimOutputs.SIM__GFORCE, typeof(float),0, 10,false,false));
+                                                F4SimOutputs.SIM__GFORCE, typeof(float), 0, 10, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Last Damage",
                                                 F4SimOutputs.SIM__LAST_DAMAGE, typeof(int), 0, Int32.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Damage Force",
@@ -2029,11 +2031,11 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "When Damage",
                                                 F4SimOutputs.SIM__WHEN_DAMAGE, typeof(int), Int32.MinValue, Int32.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Eye X",
-                                                F4SimOutputs.SIM__EYE_X, typeof(float), float.MinValue, float.MaxValue, false, false));
+                                                F4SimOutputs.SIM__EYE_X, typeof(float), float.MinValue, float.MaxValue, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Eye Y",
-                                                F4SimOutputs.SIM__EYE_Y, typeof(float), float.MinValue, float.MaxValue, false, false));
+                                                F4SimOutputs.SIM__EYE_Y, typeof(float), float.MinValue, float.MaxValue, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Eye Z",
-                                                F4SimOutputs.SIM__EYE_Z, typeof(float), float.MinValue, float.MaxValue, false, false));
+                                                F4SimOutputs.SIM__EYE_Z, typeof(float), float.MinValue, float.MaxValue, false, false, SMOOTHING_LEVEL));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Is Firing Gun flag",
                                                 F4SimOutputs.SIM__IS_FIRING_GUN, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Is End Flight flag",
@@ -2140,7 +2142,7 @@ namespace F4Utils.SimSupport
                                                     F4SimOutputs.RWR__SYMBOL_ID, i, typeof(int), 0, Int32.MaxValue, false, false));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                     "Bearing (Degrees)",
-                                                    F4SimOutputs.RWR__BEARING_DEGREES, i, typeof (float), 0, 360, true,false));
+                                                    F4SimOutputs.RWR__BEARING_DEGREES, i, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                    "Missile Activity Flag",
                                                     F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG, i, typeof (bool)));
@@ -2152,7 +2154,7 @@ namespace F4Utils.SimSupport
                                                     F4SimOutputs.RWR__SELECTED_FLAG, i, typeof (bool)));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                     "Lethality",
-                                                    F4SimOutputs.RWR__LETHALITY, i, typeof (float), -1, 3, false,false));
+                                                    F4SimOutputs.RWR__LETHALITY, i, typeof(float), -1, 3, false, false, SMOOTHING_LEVEL));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                    "New Detection Flag",
                                                     F4SimOutputs.RWR__NEWDETECTION_FLAG, i, typeof (bool)));
