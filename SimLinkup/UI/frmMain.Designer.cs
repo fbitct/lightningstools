@@ -168,7 +168,7 @@
             // 
             this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(0, 993);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 1011);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 21, 0);
             this.statusStrip1.Size = new System.Drawing.Size(1839, 22);
@@ -315,7 +315,7 @@
             this.panel.Location = new System.Drawing.Point(0, 65);
             this.panel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panel.Name = "panel";
-            this.panel.Size = new System.Drawing.Size(1839, 928);
+            this.panel.Size = new System.Drawing.Size(1839, 946);
             this.panel.TabIndex = 3;
             // 
             // signalsView
@@ -326,7 +326,7 @@
             this.signalsView.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
             this.signalsView.Name = "signalsView";
             this.signalsView.Signals = null;
-            this.signalsView.Size = new System.Drawing.Size(1839, 928);
+            this.signalsView.Size = new System.Drawing.Size(1839, 946);
             this.signalsView.TabIndex = 0;
             // 
             // frmMain
@@ -334,7 +334,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1839, 1015);
+            this.ClientSize = new System.Drawing.Size(1839, 1033);
             this.Controls.Add(this.panel);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
