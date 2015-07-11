@@ -22,7 +22,7 @@ namespace F4Utils.SimSupport
         private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
         private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
-        private const uint SMOOTHING_LEVEL = 3;
+
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private readonly Dictionary<string, SimCommand> _simCommands = new Dictionary<string, SimCommand>();
         private FlightData _lastFlightData;
@@ -116,16 +116,16 @@ namespace F4Utils.SimSupport
                 switch (simOutputEnumMatch.Value)
                 {
                     case F4SimOutputs.MAP__GROUND_POSITION__FEET_NORTH_OF_MAP_ORIGIN:
-                        ((AnalogSignal) output).State = _lastFlightData.x;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.x);
                         break;
                     case F4SimOutputs.MAP__GROUND_POSITION__FEET_EAST_OF_MAP_ORIGIN:
-                        ((AnalogSignal) output).State = _lastFlightData.y;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.y);
                         break;
                     case F4SimOutputs.MAP__GROUND_SPEED_VECTOR__NORTH_COMPONENT_FPS:
-                        ((AnalogSignal) output).State = _lastFlightData.xDot;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.xDot);
                         break;
                     case F4SimOutputs.MAP__GROUND_SPEED_VECTOR__EAST_COMPONENT_FPS:
-                        ((AnalogSignal) output).State = _lastFlightData.yDot;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.yDot);
                         break;
                     case F4SimOutputs.MAP__GROUND_SPEED_KNOTS:
                         ((AnalogSignal) output).State =
@@ -133,99 +133,99 @@ namespace F4Utils.SimSupport
                                       (_lastFlightData.yDot*_lastFlightData.yDot))/FEET_PER_SECOND_PER_KNOT;
                         break;
                     case F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL:
-                        ((AnalogSignal) output).State = -_lastFlightData.aauz;
+                        SetOutput((AnalogSignal)output,  -_lastFlightData.aauz, true);
                         break;
                     case F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG:
-                        ((AnalogSignal)output).State = _lastFlightData.AltCalReading /100.0f;
+                        SetOutput((AnalogSignal)output, _lastFlightData.AltCalReading /100.0f);
                         break;
                     case F4SimOutputs.TRUE_ALTITUDE__MSL:
-                        ((AnalogSignal) output).State = -_lastFlightData.z;
+                        SetOutput((AnalogSignal)output,  -_lastFlightData.z, true);
                         break;
                     case F4SimOutputs.VVI__VERTICAL_VELOCITY_FPM:
-                        ((AnalogSignal) output).State = -_lastFlightData.zDot*60;
+                        SetOutput((AnalogSignal)output,  -_lastFlightData.zDot*60, true);
                         break;
                     case F4SimOutputs.FLIGHT_DYNAMICS__SIDESLIP_ANGLE_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.beta;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.beta, true);
                         break;
                     case F4SimOutputs.FLIGHT_DYNAMICS__CLIMBDIVE_ANGLE_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.gamma*DEGREES_PER_RADIAN;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.gamma*DEGREES_PER_RADIAN, true);
                         break;
                     case F4SimOutputs.FLIGHT_DYNAMICS__OWNSHIP_NORMAL_GS:
-                        ((AnalogSignal) output).State = _lastFlightData.gs;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.gs, true);
                         break;
                     case F4SimOutputs.AIRSPEED_MACH_INDICATOR__MACH_NUMBER:
-                        ((AnalogSignal) output).State = _lastFlightData.mach;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.mach, true);
                         break;
                     case F4SimOutputs.AIRSPEED_MACH_INDICATOR__INDICATED_AIRSPEED_KNOTS:
-                        ((AnalogSignal) output).State = _lastFlightData.kias;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.kias, true);
                         break;
                     case F4SimOutputs.AIRSPEED_MACH_INDICATOR__TRUE_AIRSPEED_KNOTS:
-                        ((AnalogSignal) output).State = _lastFlightData.vt/FEET_PER_SECOND_PER_KNOT;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.vt/FEET_PER_SECOND_PER_KNOT,true);
                         break;
                     case F4SimOutputs.HUD__WIND_DELTA_TO_FLIGHT_PATH_MARKER_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.windOffset*DEGREES_PER_RADIAN;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.windOffset*DEGREES_PER_RADIAN,true);
                         break;
                     case F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN:
-                        ((AnalogSignal) output).State = _lastFlightData.nozzlePos;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.nozzlePos,true);
                         break;
                     case F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN:
-                        ((AnalogSignal) output).State = _lastFlightData.nozzlePos2;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.nozzlePos2,true);
                         break;
                     case F4SimOutputs.HYD_PRESSURE_A__PSI:
-                        ((AnalogSignal)output).State = _lastFlightData.hydPressureA;
+                        SetOutput((AnalogSignal)output, _lastFlightData.hydPressureA,true);
                         break;
                     case F4SimOutputs.HYD_PRESSURE_B__PSI:
-                        ((AnalogSignal)output).State = _lastFlightData.hydPressureB;
+                        SetOutput((AnalogSignal)output, _lastFlightData.hydPressureB,true);
                         break;
 
                     case F4SimOutputs.FUEL_QTY__INTERNAL_FUEL_POUNDS:
-                        ((AnalogSignal) output).State = _lastFlightData.internalFuel;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.internalFuel,true);
                         break;
                     case F4SimOutputs.FUEL_QTY__EXTERNAL_FUEL_POUNDS:
-                        ((AnalogSignal) output).State = _lastFlightData.externalFuel;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.externalFuel,true);
                         break;
                     case F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR:
-                        ((AnalogSignal) output).State = _lastFlightData.fuelFlow;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.fuelFlow,true);
                         break;
                     case F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR:
-                        ((AnalogSignal)output).State = _lastFlightData.fuelFlow2;
+                        SetOutput((AnalogSignal)output, _lastFlightData.fuelFlow2,true);
                         break;
                     case F4SimOutputs.RPM1__RPM_PERCENT:
-                        ((AnalogSignal) output).State = _lastFlightData.rpm;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.rpm,true);
                         break;
                     case F4SimOutputs.RPM2__RPM_PERCENT:
-                        ((AnalogSignal) output).State = _lastFlightData.rpm2;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.rpm2,true);
                         break;
                     case F4SimOutputs.FTIT1__FTIT_TEMP_DEG_CELCIUS:
-                        ((AnalogSignal) output).State = _lastFlightData.ftit * 100;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.ftit * 100,true);
                         break;
                     case F4SimOutputs.FTIT2__FTIT_TEMP_DEG_CELCIUS:
-                        ((AnalogSignal) output).State = _lastFlightData.ftit2 * 100;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.ftit2 * 100,true);
                         break;
                     case F4SimOutputs.SPEED_BRAKE__POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.speedBrake;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.speedBrake,true);
                         break;
                     case F4SimOutputs.SPEED_BRAKE__NOT_STOWED_FLAG:
                         ((DigitalSignal)output).State = (((LightBits3)_lastFlightData.lightBits3) 
                             & LightBits3.SpeedBrake) == LightBits3.SpeedBrake;
                         break;
                     case F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT:
-                        ((AnalogSignal) output).State = _lastFlightData.epuFuel;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.epuFuel,true);
                         break;
                     case F4SimOutputs.OIL_PRESS1__OIL_PRESS_PERCENT:
-                        ((AnalogSignal) output).State = _lastFlightData.oilPressure;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.oilPressure,true);
                         break;
                     case F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT:
-                        ((AnalogSignal) output).State = _lastFlightData.oilPressure2;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.oilPressure2,true);
                         break;
                     case F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL:
-                        ((AnalogSignal)output).State = _lastFlightData.cabinAlt;
+                        SetOutput((AnalogSignal)output, _lastFlightData.cabinAlt,true);
                         break;
                     case F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES:
-                        ((AnalogSignal)output).State = (360 + (_lastFlightData.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360;
+                        SetOutput((AnalogSignal)output, (360 + (_lastFlightData.yaw / Common.Math.Constants.RADIANS_PER_DEGREE)) % 360,true);
                         break;
                     case F4SimOutputs.GEAR_PANEL__GEAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.gearPos;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.gearPos,true);
                         break;
                     case F4SimOutputs.GEAR_PANEL__NOSE_GEAR_DOWN_LIGHT:
                         ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
@@ -240,13 +240,13 @@ namespace F4Utils.SimSupport
                                                            LightBits3.RightGearDown) == LightBits3.RightGearDown);
                         break;
                     case F4SimOutputs.GEAR_PANEL__NOSE_GEAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.NoseGearPos;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.NoseGearPos,true);
                         break;
                     case F4SimOutputs.GEAR_PANEL__LEFT_GEAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.LeftGearPos;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.LeftGearPos,true);
                         break;
                     case F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_POSITION:
-                        ((AnalogSignal) output).State = _lastFlightData.RightGearPos;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.RightGearPos,true);
                         break;
                     case F4SimOutputs.GEAR_PANEL__GEAR_HANDLE_LIGHT:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 &
@@ -257,29 +257,29 @@ namespace F4Utils.SimSupport
                                                            LightBits3.ParkBrakeOn) == LightBits3.ParkBrakeOn);
                         break;
                     case F4SimOutputs.ADI__PITCH_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.pitch*DEGREES_PER_RADIAN;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN,true);
                         break;
                     case F4SimOutputs.ADI__ROLL_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.roll*DEGREES_PER_RADIAN;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.roll*DEGREES_PER_RADIAN,true);
                         break;
                     case F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS:
                         ((DigitalSignal)output).State = showCommandBars;
                         break;
                     case F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION:
-                        ((AnalogSignal)output).State = (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+                        SetOutput((AnalogSignal)output, (_lastFlightData.AdiIlsVerPos * DEGREES_PER_RADIAN) / GLIDESLOPE_DEVIATION_LIMIT_DEGREES,true);
                         break;
                     case F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION:
-                        ((AnalogSignal)output).State =(_lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN) / LOCALIZER_DEVIATION_LIMIT_DEGREES;
+                        SetOutput((AnalogSignal)output,(_lastFlightData.AdiIlsHorPos * DEGREES_PER_RADIAN) / LOCALIZER_DEVIATION_LIMIT_DEGREES,true);
                         break;
                     case F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION:
                         var rateOfTurn = _rateOfTurnCalculator.DetermineIndicatedRateOfTurn(_lastFlightData.yaw * DEGREES_PER_RADIAN);
                         var percentDeflection = rateOfTurn / IndicatedRateOfTurnCalculator.MAX_INDICATED_RATE_OF_TURN_DECIMAL_DEGREES_PER_SECOND + 1.5f;
                         if (percentDeflection > 1.0f) percentDeflection = 1.0f;
                         if (percentDeflection < -1.0f) percentDeflection = -1.0f;
-                        ((AnalogSignal)output).State = percentDeflection;
+                        SetOutput((AnalogSignal)output, percentDeflection,true);
                         break;
                     case F4SimOutputs.ADI__INCLINOMETER_POSITION:
-                        ((AnalogSignal)output).State = _lastFlightData.beta / SIDESLIP_ANGLE_LIMIT_DEGREES;
+                        SetOutput((AnalogSignal)output, _lastFlightData.beta / SIDESLIP_ANGLE_LIMIT_DEGREES,true);
                         break;
 
                     case F4SimOutputs.ADI__OFF_FLAG:
@@ -299,10 +299,10 @@ namespace F4Utils.SimSupport
                                                           HsiBits.ADI_LOC);
                         break;
                     case F4SimOutputs.STBY_ADI__PITCH_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.pitch*DEGREES_PER_RADIAN;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN,true);
                         break;
                     case F4SimOutputs.STBY_ADI__ROLL_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.roll*DEGREES_PER_RADIAN;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.roll*DEGREES_PER_RADIAN,true);
                         break;
                     case F4SimOutputs.STBY_ADI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.BUP_ADI_OFF) ==
@@ -313,7 +313,7 @@ namespace F4Utils.SimSupport
                                                           HsiBits.VVI) || !IsSimRunning;
                         break;
                     case F4SimOutputs.AOA_INDICATOR__AOA_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.alpha;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.alpha,true);
                         break;
                     case F4SimOutputs.AOA_INDICATOR__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.AOA) ==
@@ -330,34 +330,34 @@ namespace F4Utils.SimSupport
                                                           HsiBits.CourseWarning);
                         break;
                     case F4SimOutputs.HSI__DESIRED_COURSE_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.desiredCourse;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.desiredCourse,true);
                         break;
                     case F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES:
-                        ((AnalogSignal) output).State = courseDeviationDegrees;
+                        SetOutput((AnalogSignal)output,  courseDeviationDegrees,true);
                         break;
                     case F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES:
-                        ((AnalogSignal)output).State = deviationLimitDegrees;
+                        SetOutput((AnalogSignal)output, deviationLimitDegrees);
                         break;
                     case F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES:
-                        ((AnalogSignal) output).State = _lastFlightData.distanceToBeacon;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.distanceToBeacon);
                         break;
                     case F4SimOutputs.HSI__BEARING_TO_BEACON_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.bearingToBeacon;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.bearingToBeacon,true);
                         break;
                     case F4SimOutputs.HSI__CURRENT_HEADING_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.currentHeading;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.currentHeading,true);
                         break;
                     case F4SimOutputs.HSI__DESIRED_HEADING_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.desiredHeading;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.desiredHeading,true);
                         break;
                     case F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.localizerCourse;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.localizerCourse,true);
                         break;
                     case F4SimOutputs.MAP__AIRBASE_FEET_NORTH_OF_MAP_ORIGIN:
-                        ((AnalogSignal)output).State = _lastFlightData.airbaseX;
+                        SetOutput((AnalogSignal)output, _lastFlightData.airbaseX);
                         break;
                     case F4SimOutputs.MAP__AIRBASE_FEET_EAST_OF_MAP_ORIGIN:
-                        ((AnalogSignal)output).State = _lastFlightData.airbaseY;
+                        SetOutput((AnalogSignal)output, _lastFlightData.airbaseY);
                         break;
                     case F4SimOutputs.HSI__TO_FLAG:
                         {
@@ -380,16 +380,16 @@ namespace F4Utils.SimSupport
                                                           HsiBits.HSI_OFF) || !IsSimRunning;
                         break;
                     case F4SimOutputs.HSI__HSI_MODE:
-                        ((AnalogSignal) output).State = _lastFlightData.navMode;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.navMode);
                         break;
                     case F4SimOutputs.TRIM__PITCH_TRIM:
-                        ((AnalogSignal) output).State = _lastFlightData.TrimPitch*2;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.TrimPitch*2,true);
                         break;
                     case F4SimOutputs.TRIM__ROLL_TRIM:
-                        ((AnalogSignal) output).State = _lastFlightData.TrimRoll*2;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.TrimRoll*2,true);
                         break;
                     case F4SimOutputs.TRIM__YAW_TRIM:
-                        ((AnalogSignal) output).State = _lastFlightData.TrimYaw*2;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.TrimYaw*2,true);
                         break;
                     case F4SimOutputs.DED__LINES:
                         {
@@ -424,7 +424,7 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.UFC__TACAN_CHANNEL:
-                        ((AnalogSignal) output).State = _lastFlightData.UFCTChan;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.UFCTChan);
                         break;
                     case F4SimOutputs.UFC__TACAN_BAND_IS_X:
                         ((DigitalSignal) output).State = _lastFlightData.UfcTacanIsX;
@@ -434,7 +434,7 @@ namespace F4Utils.SimSupport
                         break;
 
                     case F4SimOutputs.AUX_COMM__TACAN_CHANNEL:
-                        ((AnalogSignal) output).State = _lastFlightData.AUXTChan;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.AUXTChan);
                         break;
                     case F4SimOutputs.AUX_COMM__TACAN_BAND_IS_X:
                         ((DigitalSignal) output).State = _lastFlightData.AuxTacanIsX;
@@ -443,20 +443,20 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal) output).State = _lastFlightData.AuxTacanIsAA;
                         break;
                     case F4SimOutputs.AUX_COMM__UHF_PRESET:
-                        ((AnalogSignal)output).State = _lastFlightData.BupUhfPreset;
+                        SetOutput((AnalogSignal)output, _lastFlightData.BupUhfPreset);
                         break;
                     case F4SimOutputs.AUX_COMM__UHF_FREQUENCY:
-                        ((AnalogSignal)output).State = _lastFlightData.BupUhfFreq;
+                        SetOutput((AnalogSignal)output, _lastFlightData.BupUhfFreq);
                         break;
 
                     case F4SimOutputs.FUEL_QTY__FOREWARD_QTY_LBS:
-                        ((AnalogSignal) output).State = _lastFlightData.fwd;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.fwd,true);
                         break;
                     case F4SimOutputs.FUEL_QTY__AFT_QTY_LBS:
-                        ((AnalogSignal) output).State = _lastFlightData.aft;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.aft,true);
                         break;
                     case F4SimOutputs.FUEL_QTY__TOTAL_FUEL_LBS:
-                        ((AnalogSignal) output).State = _lastFlightData.total;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.total,true);
                         break;
                     case F4SimOutputs.LMFD__OSB_LABEL_LINES1:
                         {
@@ -808,10 +808,10 @@ namespace F4Utils.SimSupport
                                                           LightBits.AutoPilotOn);
                         break;
                     case F4SimOutputs.CMDS__CHAFF_COUNT:
-                        ((AnalogSignal) output).State = _lastFlightData.ChaffCount;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.ChaffCount);
                         break;
                     case F4SimOutputs.CMDS__FLARE_COUNT:
-                        ((AnalogSignal) output).State = _lastFlightData.FlareCount;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.FlareCount);
                         break;
                     case F4SimOutputs.CMDS__GO:
                         ((DigitalSignal) output).State = (((LightBits2) _lastFlightData.lightBits2 & LightBits2.Go) ==
@@ -838,7 +838,7 @@ namespace F4Utils.SimSupport
                                                           LightBits2.FlareLo);
                         break;
                     case F4SimOutputs.CMDS__MODE:
-                        ((AnalogSignal)output).State = _lastFlightData.cmdsMode;
+                        SetOutput((AnalogSignal)output, _lastFlightData.cmdsMode);
                         break;
                     case F4SimOutputs.ELEC__FLCS_PMG:
                         ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 & LightBits3.FlcsPmg) ==
@@ -992,13 +992,13 @@ namespace F4Utils.SimSupport
                                                           LightBits3.NLGWOW);
                         break;
                     case F4SimOutputs.AIRCRAFT__LEADING_EDGE_FLAPS_POSITION:
-                        ((AnalogSignal)output).State = _lastFlightData.lefPos;
+                        SetOutput((AnalogSignal)output, _lastFlightData.lefPos,true);
                         break;
                     case F4SimOutputs.AIRCRAFT__TRAILING_EDGE_FLAPS_POSITION:
-                        ((AnalogSignal)output).State = _lastFlightData.tefPos;
+                        SetOutput((AnalogSignal)output, _lastFlightData.tefPos,true);
                         break;
                     case F4SimOutputs.AIRCRAFT__VTOL_POSITION:
-                        ((AnalogSignal)output).State = _lastFlightData.vtolPos;
+                        SetOutput((AnalogSignal)output, _lastFlightData.vtolPos,true);
                         break;
 
                     case F4SimOutputs.POWER__ELEC_POWER_OFF:
@@ -1006,7 +1006,7 @@ namespace F4Utils.SimSupport
                                                            LightBits3.Power_Off) == LightBits3.Power_Off) || !IsSimRunning;
                         break;
                     case F4SimOutputs.POWER__MAIN_POWER:
-                        ((AnalogSignal)output).State = _lastFlightData.MainPower;
+                        SetOutput((AnalogSignal)output, _lastFlightData.MainPower);
                         break;
                     case F4SimOutputs.POWER__BUS_POWER_BATTERY:
                         ((DigitalSignal)output).State = (((PowerBits)_lastFlightData.powerBits &
@@ -1042,16 +1042,16 @@ namespace F4Utils.SimSupport
                                                           HsiBits.Flying);
                         break;
                     case F4SimOutputs.SIM__FLIGHTDATA_VERSION_NUM:
-                        ((AnalogSignal) output).State = _lastFlightData.VersionNum;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.VersionNum);
                         break;
                     case F4SimOutputs.SIM__FLIGHTDATA2_VERSION_NUM:
-                        ((AnalogSignal)output).State = _lastFlightData.VersionNum2;
+                        SetOutput((AnalogSignal)output, _lastFlightData.VersionNum2);
                         break;
                     case F4SimOutputs.SIM__CURRENT_TIME:
-                        ((AnalogSignal)output).State = _lastFlightData.currentTime;
+                        SetOutput((AnalogSignal)output, _lastFlightData.currentTime);
                         break;
                     case F4SimOutputs.AIRCRAFT__VEHICLE_ACD:
-                        ((AnalogSignal)output).State = _lastFlightData.vehicleACD;
+                        SetOutput((AnalogSignal)output, _lastFlightData.vehicleACD);
                         break;
                     case F4SimOutputs.SIM__PILOT_CALLSIGN:
                         {
@@ -1078,50 +1078,50 @@ namespace F4Utils.SimSupport
                             {
                                 status = 0;
                             }
-                            ((AnalogSignal)output).State = status;
+                            SetOutput((AnalogSignal)output, status);
                         }
                         break;
                     case F4SimOutputs.SIM__AA_MISSILE_FIRED:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.AAMissileFired;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.AAMissileFired);
                         break;
                     case F4SimOutputs.SIM__AG_MISSILE_FIRED:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.AGMissileFired;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.AGMissileFired);
                         break;
                     case F4SimOutputs.SIM__BOMB_DROPPED:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.BombDropped;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.BombDropped);
                         break;
                     case F4SimOutputs.SIM__FLARE_DROPPED:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.FlareDropped;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.FlareDropped);
                         break;
                     case F4SimOutputs.SIM__CHAFF_DROPPED:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.ChaffDropped;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.ChaffDropped);
                         break;
                     case F4SimOutputs.SIM__BULLETS_FIRED:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.BulletsFired;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.BulletsFired);
                         break;
                     case F4SimOutputs.SIM__COLLISION_COUNTER:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.CollisionCounter;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.CollisionCounter);
                         break;
                     case F4SimOutputs.SIM__GFORCE:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.Gforce;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.Gforce,true);
                         break;
                     case F4SimOutputs.SIM__LAST_DAMAGE:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.lastdamage;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.lastdamage);
                         break;
                     case F4SimOutputs.SIM__DAMAGE_FORCE:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.damageforce;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.damageforce);
                         break;
                     case F4SimOutputs.SIM__WHEN_DAMAGE:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.whendamage;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.whendamage);
                         break;
                     case F4SimOutputs.SIM__EYE_X:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.eyex;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.eyex,true);
                         break;
                     case F4SimOutputs.SIM__EYE_Y:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.eyey;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.eyey,true);
                         break;
                     case F4SimOutputs.SIM__EYE_Z:
-                        ((AnalogSignal)output).State = _lastFlightData.IntellivibeData.eyez;
+                        SetOutput((AnalogSignal)output, _lastFlightData.IntellivibeData.eyez,true);
                         break;
                     case F4SimOutputs.SIM__IS_FIRING_GUN:
                         ((DigitalSignal)output).State = _lastFlightData.IntellivibeData.IsFiringGun;
@@ -1173,16 +1173,16 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = ((ClientFlags)_lastFlightData.RadioClientStatus.ClientFlags & ClientFlags.NoMicrophone) == ClientFlags.NoMicrophone;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__FREQUENCY:
-                        ((AnalogSignal)output).State = 
+                        SetOutput((AnalogSignal)output, 
                             _lastFlightData.RadioClientControlData.Radios != null
                             ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].Frequency
-                            : double.NaN;
+                            : double.NaN);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__RX_VOLUME:
-                        ((AnalogSignal)output).State = 
+                        SetOutput((AnalogSignal)output, 
                             _lastFlightData.RadioClientControlData.Radios != null
                             ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.UHF].RxVolume
-                            : double.NaN;
+                            : double.NaN);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__UHF_RADIO__IS_ON_FLAG:
                         ((DigitalSignal)output).State =
@@ -1197,16 +1197,16 @@ namespace F4Utils.SimSupport
                             : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__FREQUENCY:
-                        ((AnalogSignal)output).State = 
+                        SetOutput((AnalogSignal)output, 
                             _lastFlightData.RadioClientControlData.Radios != null
                             ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].Frequency
-                            : double.NaN;
+                            : double.NaN);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__RX_VOLUME:
-                        ((AnalogSignal)output).State = 
+                        SetOutput((AnalogSignal)output, 
                             _lastFlightData.RadioClientControlData.Radios != null
                             ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.VHF].RxVolume
-                            : double.NaN;
+                            : double.NaN);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__VHF_RADIO__IS_ON_FLAG:
                         ((DigitalSignal)output).State = 
@@ -1221,16 +1221,16 @@ namespace F4Utils.SimSupport
                             : false;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__FREQUENCY:
-                        ((AnalogSignal)output).State = 
+                        SetOutput((AnalogSignal)output, 
                             _lastFlightData.RadioClientControlData.Radios != null
                             ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].Frequency
-                            : double.NaN;
+                            : double.NaN);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__RX_VOLUME:
-                        ((AnalogSignal)output).State = 
+                        SetOutput((AnalogSignal)output, 
                             _lastFlightData.RadioClientControlData.Radios != null
                             ? _lastFlightData.RadioClientControlData.Radios[(int)Radios.GUARD].RxVolume
-                            : double.NaN;
+                            : double.NaN);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__GUARD_RADIO__IS_ON_FLAG:
                         ((DigitalSignal)output).State = 
@@ -1257,7 +1257,7 @@ namespace F4Utils.SimSupport
                             : string.Empty;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PORT_NUMBER:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.PortNumber;
+                        SetOutput((AnalogSignal)output, _lastFlightData.RadioClientControlData.PortNumber);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PASSWORD:
                         ((TextSignal)output).State = 
@@ -1266,7 +1266,7 @@ namespace F4Utils.SimSupport
                             : string.Empty;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__PLAYER_COUNT:
-                        ((AnalogSignal)output).State = _lastFlightData.RadioClientControlData.PlayerCount;
+                        SetOutput((AnalogSignal)output, _lastFlightData.RadioClientControlData.PlayerCount);
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__CONNECTION__SIGNAL_CONNECT_FLAG:
                         ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.SignalConnect;
@@ -1281,29 +1281,29 @@ namespace F4Utils.SimSupport
                         ((DigitalSignal)output).State = _lastFlightData.RadioClientControlData.UseAGC;
                         break;
                     case F4SimOutputs.RADIO_CLIENT_CONTROL__MAIN_DEVICE__IC_VOLUME:
-                        ((AnalogSignal)output).State =
+                        SetOutput((AnalogSignal)output,
                             _lastFlightData.RadioClientControlData.Devices !=null
                             ? _lastFlightData.RadioClientControlData.Devices[(int)Devices.MAIN].IcVolume
-                            : double.NaN;
+                            : double.NaN);
                         break;
 
                     case F4SimOutputs.PILOT__HEADX_OFFSET:
-                        ((AnalogSignal) output).State = _lastFlightData.headX;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.headX,true);
                         break;
                     case F4SimOutputs.PILOT__HEADY_OFFSET:
-                        ((AnalogSignal) output).State = _lastFlightData.headY;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.headY,true);
                         break;
                     case F4SimOutputs.PILOT__HEADZ_OFFSET:
-                        ((AnalogSignal) output).State = _lastFlightData.headZ;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.headZ,true);
                         break;
                     case F4SimOutputs.PILOT__HEAD_PITCH_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.headPitch;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.headPitch,true);
                         break;
                     case F4SimOutputs.PILOT__HEAD_ROLL_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.headRoll;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.headRoll,true);
                         break;
                     case F4SimOutputs.PILOT__HEAD_YAW_DEGREES:
-                        ((AnalogSignal) output).State = _lastFlightData.headYaw;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.headYaw,true);
                         break;
                     case F4SimOutputs.FLIGHT_CONTROL__RUN:
                         ((DigitalSignal) output).State = (((LightBits3) _lastFlightData.lightBits3 &
@@ -1314,17 +1314,17 @@ namespace F4Utils.SimSupport
                                                            LightBits3.FlcsBitFail) == LightBits3.FlcsBitFail);
                         break;
                     case F4SimOutputs.RWR__OBJECT_COUNT:
-                        ((AnalogSignal) output).State = _lastFlightData.RwrObjectCount;
+                        SetOutput((AnalogSignal)output,  _lastFlightData.RwrObjectCount);
                         break;
                     case F4SimOutputs.RWR__SYMBOL_ID:
-                        ((AnalogSignal) output).State = _lastFlightData.RWRsymbol !=null && _lastFlightData.RWRsymbol.Length > ((Signal) output).Index
+                        SetOutput((AnalogSignal)output,  _lastFlightData.RWRsymbol !=null && _lastFlightData.RWRsymbol.Length > ((Signal) output).Index
                                                             ? _lastFlightData.RWRsymbol[((Signal) output).Index.Value]
-                                                            : 0;
+                                                            : 0);
                         break;
                     case F4SimOutputs.RWR__BEARING_DEGREES:
-                        ((AnalogSignal)output).State = _lastFlightData.bearing !=null && _lastFlightData.bearing.Length > ((Signal)output).Index
+                        SetOutput((AnalogSignal)output, _lastFlightData.bearing !=null && _lastFlightData.bearing.Length > ((Signal)output).Index
                                                             ? _lastFlightData.bearing[((Signal) output).Index.Value] * DEGREES_PER_RADIAN
-                                                            : 0;
+                                                            : 0,true);
                         break;
                     case F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG:
                         if (_lastFlightData.missileActivity !=null && _lastFlightData.missileActivity.Length > ((Signal)output).Index)
@@ -1360,9 +1360,9 @@ namespace F4Utils.SimSupport
                         }
                         break;
                     case F4SimOutputs.RWR__LETHALITY:
-                        ((AnalogSignal)output).State = _lastFlightData.lethality !=null && _lastFlightData.lethality.Length > ((Signal)output).Index
+                        SetOutput((AnalogSignal)output, _lastFlightData.lethality !=null && _lastFlightData.lethality.Length > ((Signal)output).Index
                                                             ? _lastFlightData.lethality[((Signal) output).Index.Value]
-                                                            : 0;
+                                                            : 0,true);
                         break;
                     case F4SimOutputs.RWR__NEWDETECTION_FLAG:
                         if (_lastFlightData.newDetection != null)
@@ -1411,7 +1411,7 @@ namespace F4Utils.SimSupport
             return simCommand;
         }
 
-        private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType, double minVal=0.0000001, double maxVal=0.0000001, bool isAngle=false, bool isPercentage=false, uint smoothingLevel=1)
+        private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType, double minVal=0.0000001, double maxVal=0.0000001, bool isAngle=false, bool isPercentage=false)
         {
             var indexString = index >= 0 ? "[" + index + "]" : string.Empty;
 
@@ -1459,24 +1459,78 @@ namespace F4Utils.SimSupport
                            IsAngle=isAngle,
                            IsPercentage = isPercentage,
                            MinValue=minVal,
-                           MaxValue=maxVal,
-                           SmoothingLevel = smoothingLevel
+                           MaxValue=maxVal
                        };
         }
-        private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, uint smoothingLevel=1)
+        private void SetOutput(AnalogSignal signal, double newVal, bool useSmoothing=false)
         {
-            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage, smoothingLevel);
+            var currentState = signal.State;
+
+            var delta = 0.0;
+            var range = 0.0;
+            if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
+            {
+                delta = Common.Math.Util.AngleDelta((float)(currentState +180), (float)(newVal+180));
+                range = 360;
+            }
+            else 
+            {
+                delta = newVal - currentState;
+                range = signal.MaxValue - signal.MinValue;
+            }
+
+            if (double.IsNaN(newVal) || double.IsInfinity(newVal))
+            {
+                newVal = 0;
+            }
+
+            if (double.IsNaN(currentState) || double.IsInfinity(currentState))
+            {
+                currentState = 0;
+            }
+
+
+            const double scale = 0.1;
+            const double add = 0.3;
+            if (useSmoothing)
+            {
+                var deltaPct = Math.Abs(delta / range);
+                delta *= (deltaPct * Math.Max(1.0,(scale + add)));
+            }
+
+            var outputVal=0.0;
+            if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
+            {
+                outputVal =  currentState + delta;
+                if (outputVal < -180)
+                {
+                    outputVal += 360;
+                }
+                else if (outputVal > 180)
+                {
+                    outputVal -= 360;
+                }
+            }
+            else
+            {
+                outputVal = currentState + delta;
+            }
+            signal.State = outputVal;
+        }
+        private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+        {
+            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage);
         }
          private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal, int? index,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, uint smoothingLevel=1)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
         {
-            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, index, dataType, minVal, maxVal, isAngle, isPercentage, smoothingLevel);
+            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, index, dataType, minVal, maxVal, isAngle, isPercentage);
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, uint smoothingLevel=1)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
         {
-            return CreateNewF4SimOutput(collectionName, subcollectionName, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage, smoothingLevel);
+            return CreateNewF4SimOutput(collectionName, subcollectionName, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage);
         }
 
         private void AddF4SimOutput(ISimOutput output)
@@ -1528,80 +1582,80 @@ namespace F4Utils.SimSupport
                                                 typeof(float), -3500000, 3500000, false, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Altimeter", "Indicated Altitude (feet MSL)",
-                                                F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL, typeof (float),-1000,80000,false,false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.ALTIMETER__INDICATED_ALTITUDE__MSL, typeof (float),-1000,80000,false,false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Altimeter", "Barometric Pressure (inches Hg)",
                                                F4SimOutputs.ALTIMETER__BAROMETRIC_PRESSURE_INCHES_HG, typeof(float), 28.10, 31.00, false,false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Vertical Velocity Indicator (VVI)", "Vertical Velocity (feet/min)",
-                                                F4SimOutputs.VVI__VERTICAL_VELOCITY_FPM, typeof(float), -6000, 6000, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.VVI__VERTICAL_VELOCITY_FPM, typeof(float), -6000, 6000, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Vertical Velocity Indicator (VVI)", "OFF flag",
                                                 F4SimOutputs.VVI__OFF_FLAG, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "Sideslip angle [beta] (degrees)",
                                                 F4SimOutputs.FLIGHT_DYNAMICS__SIDESLIP_ANGLE_DEGREES,
-                                                typeof(float), -180, 180, true, false, SMOOTHING_LEVEL));
+                                                typeof(float), -180, 180, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "Climb/Dive Angle [gamma] (degrees)",
                                                 F4SimOutputs.FLIGHT_DYNAMICS__CLIMBDIVE_ANGLE_DEGREES,
-                                                typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
+                                                typeof(float), -90, 90, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "Ownship Normal Gs",
-                                                F4SimOutputs.FLIGHT_DYNAMICS__OWNSHIP_NORMAL_GS, typeof(float), -10, 10, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.FLIGHT_DYNAMICS__OWNSHIP_NORMAL_GS, typeof(float), -10, 10, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "True Airspeed (knots)",
                                                 F4SimOutputs.AIRSPEED_MACH_INDICATOR__TRUE_AIRSPEED_KNOTS,
-                                                typeof(float), 0, 1700, false, false, SMOOTHING_LEVEL));
+                                                typeof(float), 0, 1700, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Flight dynamics", "True Altitude (feet MSL)",
-                                                F4SimOutputs.TRUE_ALTITUDE__MSL, typeof(float), -1000, 80000, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.TRUE_ALTITUDE__MSL, typeof(float), -1000, 80000, false, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Airspeed indicator/Machmeter", "Mach number",
-                                                F4SimOutputs.AIRSPEED_MACH_INDICATOR__MACH_NUMBER, typeof(float), 0, 2.5, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.AIRSPEED_MACH_INDICATOR__MACH_NUMBER, typeof(float), 0, 2.5, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Airspeed indicator/Machmeter", "Indicated Airspeed (knots)",
                                                 F4SimOutputs.AIRSPEED_MACH_INDICATOR__INDICATED_AIRSPEED_KNOTS,
-                                                typeof(float), 0, 850, false, false, SMOOTHING_LEVEL));
+                                                typeof(float), 0, 850, false, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Displays", "HUD", "Wind delta to flight path marker (degrees)",
                                                 F4SimOutputs.HUD__WIND_DELTA_TO_FLIGHT_PATH_MARKER_DEGREES,
-                                                typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
+                                                typeof(float), -90, 90, true, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #1 Nozzle Percent Open",
-                                                F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #2 Nozzle Percent Open",
-                                                F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Hydraulic Pressure Indicators", "HYD A (Pounds per Square Inch)",
-                                    F4SimOutputs.HYD_PRESSURE_A__PSI, typeof(float), 0, 4000, false, false, SMOOTHING_LEVEL));
+                                    F4SimOutputs.HYD_PRESSURE_A__PSI, typeof(float), 0, 4000, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Hydraulic Pressure Indicators", "HYD B (Pounds per Square Inch)",
-                                                F4SimOutputs.HYD_PRESSURE_B__PSI, typeof(float), 0, 4000, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HYD_PRESSURE_B__PSI, typeof(float), 0, 4000, false, false));
 
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel Flow Indicator", "Engine #1 Fuel flow (pounds/hour)",
-                                                F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.FUEL_FLOW1__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel Flow Indicator", "Engine #2 Fuel flow (pounds/hour)",
-                                                F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.FUEL_FLOW2__FUEL_FLOW_POUNDS_PER_HOUR, typeof(float), 0, 99900.00, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "RPM", "Engine #1 RPM (Percent 0-103)",
-                                                F4SimOutputs.RPM1__RPM_PERCENT, typeof(float), 0, 103, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.RPM1__RPM_PERCENT, typeof(float), 0, 103, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "RPM", "Engine #2 RPM(Percent 0-103)",
-                                                F4SimOutputs.RPM2__RPM_PERCENT, typeof(float), 0, 103, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.RPM2__RPM_PERCENT, typeof(float), 0, 103, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "FTIT", "Engine #1 Forward Turbine Inlet Temp (Degrees C)",
-                                                F4SimOutputs.FTIT1__FTIT_TEMP_DEG_CELCIUS, typeof(float), 0, 1200, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.FTIT1__FTIT_TEMP_DEG_CELCIUS, typeof(float), 0, 1200, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "FTIT", "Engine #2 Forward Turbine Inlet Temp (Degrees C)",
-                                                F4SimOutputs.FTIT2__FTIT_TEMP_DEG_CELCIUS, typeof(float), 0, 1200, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.FTIT2__FTIT_TEMP_DEG_CELCIUS, typeof(float), 0, 1200, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Speedbrake", "Speedbrake position (0 = closed, 1 = 60 Degrees open)",
-                                                F4SimOutputs.SPEED_BRAKE__POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.SPEED_BRAKE__POSITION, typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Speedbrake", "Speedbrake Not Stowed Flag",
                                                 F4SimOutputs.SPEED_BRAKE__NOT_STOWED_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "EPU Fuel", "EPU fuel (Percent 0-100)",
-                                                F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.EPU_FUEL__EPU_FUEL_PERCENT, typeof(float), 0, 100, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "OIL Pressure", "Engine #1 Oil Pressure (Percent 0-100)",
-                                                F4SimOutputs.OIL_PRESS1__OIL_PRESS_PERCENT, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.OIL_PRESS1__OIL_PRESS_PERCENT, typeof(float), 0, 100, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "OIL Pressure", "Engine #2 Oil Pressure (Percent 0-100)",
-                                                F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT, typeof(float), 0, 100, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.OIL_PRESS2__OIL_PRESS_PERCENT, typeof(float), 0, 100, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Cabin Pressure Altimeter", "Cabin Pressure Altitude (in Feet MSL)",
-                                                F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL, typeof(float), 0, 50000, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.CABIN_PRESS__CABIN_PRESS_FEET_MSL, typeof(float), 0, 50000, false, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Compass", "Magnetic Heading (degrees)",
-                                                F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.COMPASS__MAGNETIC_HEADING_DEGREES, typeof(float), 0, 360, true, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Gear position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.GEAR_PANEL__GEAR_POSITION, typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Nose Gear Down Light",
                                                 F4SimOutputs.GEAR_PANEL__NOSE_GEAR_DOWN_LIGHT, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Left Gear Down Light",
@@ -1609,30 +1663,30 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Right Gear Down Light",
                                                 F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_DOWN_LIGHT, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Nose Gear Position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__NOSE_GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.GEAR_PANEL__NOSE_GEAR_POSITION, typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Left Gear Position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__LEFT_GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.GEAR_PANEL__LEFT_GEAR_POSITION, typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Right Gear Position (0 = up, 1 = down)",
-                                                F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_POSITION, typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.GEAR_PANEL__RIGHT_GEAR_POSITION, typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Gear handle 'Lollipop' light",
                                                 F4SimOutputs.GEAR_PANEL__GEAR_HANDLE_LIGHT, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "GEAR", "Parking brake engaged flag",
                                                 F4SimOutputs.GEAR_PANEL__PARKING_BRAKE_ENGAGED_FLAG, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Pitch (degrees)", F4SimOutputs.ADI__PITCH_DEGREES,
-                                                typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
+                                                typeof(float), -90, 90, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Roll (degrees)", F4SimOutputs.ADI__ROLL_DEGREES,
-                                                typeof(float), -180, 180, true, false, SMOOTHING_LEVEL));
+                                                typeof(float), -180, 180, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Glideslope and localizer ILS command bars enabled flag",
                                                 F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Position of glideslope ILS bar",
-                                                F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof(float), -1, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Position of localizer ILS bar",
-                                                F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof(float), -1, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Rate of Turn Indicator Position",
-                                                F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float), -1, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Inclinometer Position",
-                                                F4SimOutputs.ADI__INCLINOMETER_POSITION, typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                F4SimOutputs.ADI__INCLINOMETER_POSITION, typeof(float), -1, 1, false, true));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "OFF flag", F4SimOutputs.ADI__OFF_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "AUX flag", F4SimOutputs.ADI__AUX_FLAG, typeof(bool)));
@@ -1642,12 +1696,12 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "OFF flag", F4SimOutputs.STBY_ADI__OFF_FLAG,
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "Pitch (degrees)",
-                                                F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof(float), -90, 90, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof(float), -90, 90, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "Roll (degrees)", F4SimOutputs.STBY_ADI__ROLL_DEGREES,
-                                                typeof(float), -180, 180, true, false, SMOOTHING_LEVEL));
+                                                typeof(float), -180, 180, true, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "AOA Indicator", "Angle of Attack [alpha] (degrees)",
-                                                F4SimOutputs.AOA_INDICATOR__AOA_DEGREES, typeof(float), -5, 40, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.AOA_INDICATOR__AOA_DEGREES, typeof(float), -5, 40, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "AOA Indicator", "OFF flag", F4SimOutputs.AOA_INDICATOR__OFF_FLAG,
                                                 typeof (bool)));
 
@@ -1656,23 +1710,23 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Distance invalid flag",
                                                 F4SimOutputs.HSI__DISTANCE_INVALID_FLAG, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Desired course (degrees)",
-                                                F4SimOutputs.HSI__DESIRED_COURSE_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HSI__DESIRED_COURSE_DEGREES, typeof(float), 0, 360, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Course deviation (degrees)",
-                                                F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof(float), -20, 20, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof(float), -20, 20, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Course deviation limit (degrees)",
-                                                F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float), -20, 20, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float), -20, 20, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Distance to beacon (nautical miles)",
                                                 F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES,
-                                                typeof(float), 0, 1000, false, false, SMOOTHING_LEVEL));
+                                                typeof(float), 0, 1000, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Bearing to beacon (degrees)",
-                                                F4SimOutputs.HSI__BEARING_TO_BEACON_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HSI__BEARING_TO_BEACON_DEGREES, typeof(float), 0, 360, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Current heading (degrees)",
-                                                F4SimOutputs.HSI__CURRENT_HEADING_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HSI__CURRENT_HEADING_DEGREES, typeof(float), 0, 360, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Desired heading (degrees)",
-                                                F4SimOutputs.HSI__DESIRED_HEADING_DEGREES, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.HSI__DESIRED_HEADING_DEGREES, typeof(float), 0, 360, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Localizer course (degrees)",
                                                 F4SimOutputs.HSI__LOCALIZER_COURSE_DEGREES,
-                                                typeof (float),0,360,true,false, SMOOTHING_LEVEL));
+                                                typeof (float),0,360,true,false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "TO Flag", F4SimOutputs.HSI__TO_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "FROM Flag", F4SimOutputs.HSI__FROM_FLAG, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "OFF Flag", F4SimOutputs.HSI__OFF_FLAG, typeof(bool)));
@@ -1680,11 +1734,11 @@ namespace F4Utils.SimSupport
                                                 F4SimOutputs.HSI__HSI_MODE, typeof (int),0,3,false,false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "TRIM", "Pitch trim (-1 to +1)", F4SimOutputs.TRIM__PITCH_TRIM,
-                                                typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                typeof(float), -1, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "TRIM", "Roll trim (-1 to +1)", F4SimOutputs.TRIM__ROLL_TRIM,
-                                                typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                typeof(float), -1, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "TRIM", "Yaw trim (-1 to +1)", F4SimOutputs.TRIM__YAW_TRIM,
-                                                typeof(float), -1, 1, false, true, SMOOTHING_LEVEL));
+                                                typeof(float), -1, 1, false, true));
 
             for (var i = 0; i < 5; i++)
             {
@@ -1964,11 +2018,11 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Nose Landing Gear - Weight on Wheels", F4SimOutputs.AIRCRAFT__NOSE_LANDING_GEAR__WEIGHT_ON_WHEELS,
                                                 typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Leading edge flaps position", F4SimOutputs.AIRCRAFT__LEADING_EDGE_FLAPS_POSITION,
-                        typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                        typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Trailing edge flaps position", F4SimOutputs.AIRCRAFT__TRAILING_EDGE_FLAPS_POSITION,
-                                    typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                    typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "VTOL position", F4SimOutputs.AIRCRAFT__VTOL_POSITION,
-                                    typeof(float), 0, 1, false, true, SMOOTHING_LEVEL));
+                                    typeof(float), 0, 1, false, true));
 
             AddF4SimOutput(CreateNewF4SimOutput("Power", "Electrical Power OFF flag",
                                                 F4SimOutputs.POWER__ELEC_POWER_OFF, typeof(bool)));
@@ -2023,7 +2077,7 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Collision Counter",
                                                 F4SimOutputs.SIM__COLLISION_COUNTER, typeof(int), 0, Int32.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "g Force",
-                                                F4SimOutputs.SIM__GFORCE, typeof(float), 0, 10, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.SIM__GFORCE, typeof(float), 0, 10, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Last Damage",
                                                 F4SimOutputs.SIM__LAST_DAMAGE, typeof(int), 0, Int32.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Damage Force",
@@ -2031,11 +2085,11 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "When Damage",
                                                 F4SimOutputs.SIM__WHEN_DAMAGE, typeof(int), Int32.MinValue, Int32.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Eye X",
-                                                F4SimOutputs.SIM__EYE_X, typeof(float), float.MinValue, float.MaxValue, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.SIM__EYE_X, typeof(float), float.MinValue, float.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Eye Y",
-                                                F4SimOutputs.SIM__EYE_Y, typeof(float), float.MinValue, float.MaxValue, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.SIM__EYE_Y, typeof(float), float.MinValue, float.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Eye Z",
-                                                F4SimOutputs.SIM__EYE_Z, typeof(float), float.MinValue, float.MaxValue, false, false, SMOOTHING_LEVEL));
+                                                F4SimOutputs.SIM__EYE_Z, typeof(float), float.MinValue, float.MaxValue, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Is Firing Gun flag",
                                                 F4SimOutputs.SIM__IS_FIRING_GUN, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Simulation", "Is End Flight flag",
@@ -2142,7 +2196,7 @@ namespace F4Utils.SimSupport
                                                     F4SimOutputs.RWR__SYMBOL_ID, i, typeof(int), 0, Int32.MaxValue, false, false));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                     "Bearing (Degrees)",
-                                                    F4SimOutputs.RWR__BEARING_DEGREES, i, typeof(float), 0, 360, true, false, SMOOTHING_LEVEL));
+                                                    F4SimOutputs.RWR__BEARING_DEGREES, i, typeof(float), 0, 360, true, false));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                    "Missile Activity Flag",
                                                     F4SimOutputs.RWR__MISSILE_ACTIVITY_FLAG, i, typeof (bool)));
@@ -2154,7 +2208,7 @@ namespace F4Utils.SimSupport
                                                     F4SimOutputs.RWR__SELECTED_FLAG, i, typeof (bool)));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                     "Lethality",
-                                                    F4SimOutputs.RWR__LETHALITY, i, typeof(float), -1, 3, false, false, SMOOTHING_LEVEL));
+                                                    F4SimOutputs.RWR__LETHALITY, i, typeof(float), -1, 3, false, false));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                    "New Detection Flag",
                                                     F4SimOutputs.RWR__NEWDETECTION_FLAG, i, typeof (bool)));

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing.Drawing2D;
 
 namespace Common.MacroProgramming
 {
@@ -22,8 +23,15 @@ namespace Common.MacroProgramming
         private static Pen ValueCurvePen = new Pen(Brushes.DarkBlue) { Width = 2f };
         private static Color AreaUnderTheCurveColor=Color.FromArgb(241, 246, 250);
         private static Brush AreaUnderTheCurveBrush = new SolidBrush(AreaUnderTheCurveColor);
+        private static Brush ValueFontColor = Brushes.Black;
+        private static Brush FriendlyNameFontColor = Brushes.Black;
+        private static Brush SubcollectionNameFontColor = Brushes.Black;
+        
         private static Font BigFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
-        private static Font SmallFont = new Font(FontFamily.GenericSansSerif, 6, FontStyle.Regular);
+        private static Font SmallFont = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Bold);
+        private static Font FriendlyNameFont = BigFont;
+        private static Font SubcollectionNameFont = BigFont;
+        private static Font ValueFont = SmallFont;
 
         public SignalGraph(Signal signal, int durationMs = 5000)
         {
@@ -92,12 +100,16 @@ namespace Common.MacroProgramming
             double range = 0;
             float zeroHeight = 0;
             var isFirstSample = true;
-            var xOffset = -(float)(((drawTime.Subtract(_startTime).TotalMilliseconds % (_duration.TotalMilliseconds / 20) * (width / _duration.TotalMilliseconds))));
+            var numYSegments = 20;
+            var numXSegments = 20;
+            var xOffset = -(float)(((drawTime.Subtract(_startTime).TotalMilliseconds % (_duration.TotalMilliseconds / numXSegments) * (width / _duration.TotalMilliseconds))));
 
             var pointList = new List<PointF>();
             foreach (var sample in _signalStateHistory)
             {
                 x2 = width - ((float)(drawTime.Subtract(sample.Timestamp).TotalMilliseconds / _duration.TotalMilliseconds) * width);
+                if (x2 < 0) x2 = 0;
+                if (x2 > width) x2 = width;
                 if (_signal is DigitalSignal)
                 {
                     var thisSignal = _signal as DigitalSignal;
@@ -109,6 +121,8 @@ namespace Common.MacroProgramming
                     var thisSignal = _signal as AnalogSignal;
                     range = (thisSignal.MaxValue - thisSignal.MinValue);
                     y2 = height - (int)(((System.Math.Abs(sample.Value - thisSignal.MinValue)) / range) * height);
+                    if (y2 <0) y2=0;
+                    if (y2 > height) y2 = height;
                     zeroHeight = height - (int)(((System.Math.Abs(-thisSignal.MinValue)) / range) * height);
                     value = (thisSignal.State.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
                 }
@@ -124,21 +138,21 @@ namespace Common.MacroProgramming
                 x1 = x2;
                 y1 = y2;
             }
-            for (var x = (float)width + xOffset; x >= 0; x -= (width / 20.0f))
+            for (var x = (float)width + xOffset; x >= 0; x -= (width / numXSegments))
             {
                 graphics.DrawLine(GridLinePen, new PointF(x, 0), new PointF(x, height));
             }
-            for (var y = 0.0f; y <= height; y += (height / 10.0f))
+            for (var y = 0.0f; y <= height; y += (height / numYSegments))
             {
                 graphics.DrawLine(GridLinePen, new PointF(0, y), new PointF(width, y));
             }
             graphics.DrawLines(ValueCurvePen, pointList.ToArray());
-            graphics.DrawString(value, SmallFont, Brushes.DarkGray, new Rectangle(0, targetRectangle.Height - bottomMarginHeight, width, bottomMarginHeight));
             graphics.DrawLine(ZeroLinePen, new PointF(0, zeroHeight), new PointF(width, zeroHeight));
             graphics.Clip = originalClip;
             graphics.Transform = originalTransform;
-            graphics.DrawString(_signal.SubcollectionName, BigFont, Brushes.Black, new Rectangle(0, 0, width, topMarginHeight));
-            graphics.DrawString(_signal.FriendlyName, BigFont, Brushes.DarkGray, new Rectangle(0, topMarginHeight / 2, width, topMarginHeight));
+            graphics.DrawString(_signal.SubcollectionName, SubcollectionNameFont, SubcollectionNameFontColor, new Rectangle(0, 0, width, topMarginHeight));
+            graphics.DrawString(_signal.FriendlyName, FriendlyNameFont, FriendlyNameFontColor, new Rectangle(0, topMarginHeight / 2, width, topMarginHeight));
+            graphics.DrawString(value, ValueFont, ValueFontColor, new Rectangle(0, targetRectangle.Height - bottomMarginHeight, width, bottomMarginHeight), new StringFormat() { LineAlignment = StringAlignment.Far});
         }
     }
 }

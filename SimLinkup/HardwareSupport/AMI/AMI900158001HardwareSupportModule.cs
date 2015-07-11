@@ -1218,13 +1218,12 @@ namespace SimLinkup.HardwareSupport.AMI
                 && _DMEx1SINOutputSignal != null && _DMEx1COSOutputSignal != null
                 )
             {
-                var distanceToBeaconNauticalMiles = _DMEInputSignal.State;
+                var distanceToBeaconNauticalMiles = Math.Abs(double.IsInfinity (_DMEInputSignal.State) || double.IsNaN (_DMEInputSignal.State) ? 0:_DMEInputSignal.State);
                 if (distanceToBeaconNauticalMiles > MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES)
                 {
                     distanceToBeaconNauticalMiles = MAX_DISTANCE_TO_BEACON_NAUTICAL_MILES;
                 }
                 var distanceToBeaconString = string.Format("{0:000}", distanceToBeaconNauticalMiles);
-
 
                 var DMEx100 = Byte.Parse(distanceToBeaconString.Substring(0, 1));
                 var DMEx10 = Byte.Parse(distanceToBeaconString.Substring(1, 1));
