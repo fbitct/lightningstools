@@ -84,8 +84,8 @@ namespace Common.MacroProgramming
             string value = string.Empty;
             var topMarginHeight = 40;
             var bottomMarginHeight = 20;
-            var width = targetRectangle.Width;
-            var height = targetRectangle.Height - topMarginHeight - bottomMarginHeight;
+            var width = (float)targetRectangle.Width;
+            var height = (float)targetRectangle.Height - topMarginHeight - bottomMarginHeight;
             graphics.SetClip(targetRectangle);
             graphics.Clear(Color.White);
             graphics.TranslateTransform(-targetRectangle.Location.X, -targetRectangle.Location.Y);
@@ -100,8 +100,8 @@ namespace Common.MacroProgramming
             double range = 0;
             float zeroHeight = 0;
             var isFirstSample = true;
-            var numYSegments = 20;
-            var numXSegments = 20;
+            var numYSegments = 20.0f;
+            var numXSegments = 20.0f;
             var xOffset = -(float)(((drawTime.Subtract(_startTime).TotalMilliseconds % (_duration.TotalMilliseconds / numXSegments) * (width / _duration.TotalMilliseconds))));
 
             var pointList = new List<PointF>();
@@ -150,9 +150,9 @@ namespace Common.MacroProgramming
             graphics.DrawLine(ZeroLinePen, new PointF(0, zeroHeight), new PointF(width, zeroHeight));
             graphics.Clip = originalClip;
             graphics.Transform = originalTransform;
-            graphics.DrawString(_signal.SubcollectionName, SubcollectionNameFont, SubcollectionNameFontColor, new Rectangle(0, 0, width, topMarginHeight));
-            graphics.DrawString(_signal.FriendlyName, FriendlyNameFont, FriendlyNameFontColor, new Rectangle(0, topMarginHeight / 2, width, topMarginHeight));
-            graphics.DrawString(value, ValueFont, ValueFontColor, new Rectangle(0, targetRectangle.Height - bottomMarginHeight, width, bottomMarginHeight), new StringFormat() { LineAlignment = StringAlignment.Far});
+            graphics.DrawString(_signal.SubcollectionName, SubcollectionNameFont, SubcollectionNameFontColor, new RectangleF(0, 0, width, topMarginHeight));
+            graphics.DrawString(_signal.FriendlyName, FriendlyNameFont, FriendlyNameFontColor, new RectangleF(0, topMarginHeight / 2, width, topMarginHeight));
+            graphics.DrawString(value, ValueFont, ValueFontColor, new RectangleF(0, targetRectangle.Height - bottomMarginHeight, width, bottomMarginHeight), new StringFormat() { LineAlignment = StringAlignment.Far});
         }
     }
 }
