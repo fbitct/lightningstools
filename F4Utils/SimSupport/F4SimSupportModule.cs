@@ -1676,11 +1676,11 @@ namespace F4Utils.SimSupport
                                                 typeof(float), -90, 90, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Roll (degrees)", F4SimOutputs.ADI__ROLL_DEGREES,
                                                 typeof(float), -180, 180, true, false));
-            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Glideslope and localizer ILS command bars enabled flag",
+            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "ILS command bars enabled flag",
                                                 F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Position of glideslope ILS bar",
+            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "ILS glideslope bar Position",
                                                 F4SimOutputs.ADI__ILS_HORIZONTAL_BAR_POSITION, typeof(float), -1, 1, false, true));
-            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Position of localizer ILS bar",
+            AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "ILS localizer bar Position",
                                                 F4SimOutputs.ADI__ILS_VERTICAL_BAR_POSITION, typeof(float), -1, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Rate of Turn Indicator Position",
                                                 F4SimOutputs.ADI__RATE_OF_TURN_INDICATOR_POSITION, typeof(float), -1, 1, false, true));

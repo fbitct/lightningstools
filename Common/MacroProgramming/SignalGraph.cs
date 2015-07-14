@@ -24,14 +24,17 @@ namespace Common.MacroProgramming
         private static Color AreaUnderTheCurveColor=Color.FromArgb(241, 246, 250);
         private static Brush AreaUnderTheCurveBrush = new SolidBrush(AreaUnderTheCurveColor);
         private static Brush ValueFontColor = Brushes.Black;
+        private static Brush ScaleFontColor = Brushes.LightGray;
         private static Brush FriendlyNameFontColor = Brushes.Black;
         private static Brush SubcollectionNameFontColor = Brushes.Black;
         
         private static Font BigFont = new Font(FontFamily.GenericSansSerif, 12, FontStyle.Bold);
+        private static Font MediumFont = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
         private static Font SmallFont = new Font(FontFamily.GenericSansSerif, 8, FontStyle.Bold);
-        private static Font FriendlyNameFont = BigFont;
         private static Font SubcollectionNameFont = BigFont;
+        private static Font FriendlyNameFont = MediumFont;
         private static Font ValueFont = SmallFont;
+        private static Font ScaleFont = SmallFont;
 
         public SignalGraph(Signal signal, int durationMs = 5000)
         {
@@ -82,6 +85,8 @@ namespace Common.MacroProgramming
             var drawTime = DateTime.Now;
             CaptureNewSample();
             string value = string.Empty;
+            string minValue = string.Empty;
+            string maxValue = string.Empty;
             var topMarginHeight = 40;
             var bottomMarginHeight = 20;
             var width = (float)targetRectangle.Width;
@@ -115,6 +120,9 @@ namespace Common.MacroProgramming
                     var thisSignal = _signal as DigitalSignal;
                     y2 = thisSignal.State ? 0 : height;
                     value = thisSignal.State ? "1" : "0";
+                    minValue = "0";
+                    maxValue = "1";
+                    zeroHeight = height;
                 }
                 else if (_signal is AnalogSignal)
                 {
@@ -124,7 +132,11 @@ namespace Common.MacroProgramming
                     if (y2 <0) y2=0;
                     if (y2 > height) y2 = height;
                     zeroHeight = height - (int)(((System.Math.Abs(-thisSignal.MinValue)) / range) * height);
+                    if (zeroHeight < 0) zeroHeight = 0;
+                    if (zeroHeight > height) zeroHeight = height;
                     value = (thisSignal.State.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
+                    minValue = (thisSignal.MinValue.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
+                    maxValue = (thisSignal.MaxValue.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
                 }
                 if (isFirstSample)
                 {
@@ -151,11 +163,21 @@ namespace Common.MacroProgramming
                 graphics.DrawLines(ValueCurvePen, pointList.ToArray());
             }
             graphics.DrawLine(ZeroLinePen, new PointF(0, zeroHeight), new PointF(width, zeroHeight));
+            var valueTextSize = graphics.MeasureString(value, ValueFont);
+            if (y2 < height / 2.0)
+            {
+                graphics.DrawString(value, ValueFont, ValueFontColor, new RectangleF(0, y2+2, width, valueTextSize.Height), new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
+            }
+            else
+            {
+                graphics.DrawString(value, ValueFont, ValueFontColor, new RectangleF(0, y2 - valueTextSize.Height, width, valueTextSize.Height), new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center });
+            } 
             graphics.Clip = originalClip;
             graphics.Transform = originalTransform;
             graphics.DrawString(_signal.SubcollectionName, SubcollectionNameFont, SubcollectionNameFontColor, new RectangleF(0, 0, width, topMarginHeight));
             graphics.DrawString(_signal.FriendlyName, FriendlyNameFont, FriendlyNameFontColor, new RectangleF(0, topMarginHeight / 2, width, topMarginHeight));
-            graphics.DrawString(value, ValueFont, ValueFontColor, new RectangleF(0, targetRectangle.Height - bottomMarginHeight, width, bottomMarginHeight), new StringFormat() { LineAlignment = StringAlignment.Far});
+            graphics.DrawString(maxValue, ScaleFont, ScaleFontColor, new RectangleF(0, 0, width, topMarginHeight), new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Far });
+            graphics.DrawString(minValue, ScaleFont, ScaleFontColor, new RectangleF(0, targetRectangle.Height - bottomMarginHeight, width, bottomMarginHeight), new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Far });
         }
     }
 }

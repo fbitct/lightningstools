@@ -28,7 +28,6 @@ namespace SimLinkup.UI.UserControls
             _timer.Interval = 20;
             _timer.Tick += (s, e) =>
             {
-                UpdateSignalValues();
                 UpdateSignalGraph();
             };
             _timer.Enabled = true;
@@ -103,7 +102,6 @@ namespace SimLinkup.UI.UserControls
 
             lvSignals.Columns.Clear();
             lvSignals.Columns.Add("Signal");
-            lvSignals.Columns.Add("Value");
 
             lvSignals.BeginUpdate();
             var signalsThisSource = Signals.GetSignalsFromSource(sourceIdentifier);
@@ -153,30 +151,16 @@ namespace SimLinkup.UI.UserControls
             lvSignals.EndUpdate();
             lvSignals.Sort();
         }
-        private void UpdateSignalValues()
-        {
-            lvSignals.BeginUpdate();
-            foreach (var listViewItem in lvSignals.Items)
-            {
-                UpdateListViewTextWithSignalValue((ListViewItem)listViewItem);
-            }
-            lvSignals.EndUpdate();
-            lvSignals.Invalidate();
-        }
+
         private static ListViewItem CreateListViewItemFromSignal(Signal signal)
         {
             var lvi = new ListViewItem();
             lvi.Text = signal.FriendlyName;
-            lvi.SubItems.Add(new ListViewItem.ListViewSubItem { Name = "Value", Text = GetValue(signal) });
             lvi.Tag = signal;
             return lvi;
         }
 
 
-        private void UpdateListViewTextWithSignalValue(ListViewItem listViewItem)
-        {
-            listViewItem.SubItems["Value"].Text = GetValue(SignalFor(listViewItem));
-        }
         private static string GetValue(Signal signal) 
         {
             if (signal is DigitalSignal)
