@@ -146,7 +146,10 @@ namespace Common.MacroProgramming
             {
                 graphics.DrawLine(GridLinePen, new PointF(0, y), new PointF(width, y));
             }
-            graphics.DrawLines(ValueCurvePen, pointList.ToArray());
+            if (pointList != null && pointList.Count > 0)
+            {
+                graphics.DrawLines(ValueCurvePen, pointList.ToArray());
+            }
             graphics.DrawLine(ZeroLinePen, new PointF(0, zeroHeight), new PointF(width, zeroHeight));
             graphics.Clip = originalClip;
             graphics.Transform = originalTransform;

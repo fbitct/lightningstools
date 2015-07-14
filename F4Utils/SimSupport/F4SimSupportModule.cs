@@ -1490,8 +1490,8 @@ namespace F4Utils.SimSupport
             }
 
 
-            const double scale = 0.1;
-            if (useSmoothing)
+            const double scale = 0.95;
+            if (useSmoothing && delta != currentState && newVal !=0)
             {
                 var deltaPct = Math.Abs(delta / range);
                 delta *= (deltaPct * Math.Max(1.0,(scale)));
