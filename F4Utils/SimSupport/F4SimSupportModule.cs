@@ -22,8 +22,8 @@ namespace F4Utils.SimSupport
         private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
         private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
-        private Nullable<double> PITCH_TIME_CONSTANT = null;
-        private Nullable<double> ROLL_TIME_CONSTANT = null;
+        private Nullable<double> PITCH_TIME_CONSTANT = 60;
+        private Nullable<double> ROLL_TIME_CONSTANT = 60;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private readonly Dictionary<string, SimCommand> _simCommands = new Dictionary<string, SimCommand>();
         private FlightData _lastFlightData;
@@ -1467,18 +1467,18 @@ namespace F4Utils.SimSupport
         }
         private void SetOutput(AnalogSignal signal, double newVal)
         {
-            var currentState = signal.State;
+            var currentState = signal.TimestampedState;
 
             var delta = 0.0;
             var range = 0.0;
             if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
             {
-                delta = Common.Math.Util.AngleDelta((float)(currentState +180), (float)(newVal+180));
+                delta = Common.Math.Util.AngleDelta((float)(currentState.Value +180), (float)(newVal+180));
                 range = 360;
             }
             else 
             {
-                delta = newVal - currentState;
+                delta = newVal - currentState.Value;
                 range = signal.MaxValue - signal.MinValue;
             }
 
@@ -1487,15 +1487,23 @@ namespace F4Utils.SimSupport
                 newVal = 0;
             }
 
-            if (double.IsNaN(currentState) || double.IsInfinity(currentState))
+            if (double.IsNaN(currentState.Value) || double.IsInfinity(currentState.Value))
             {
-                currentState = 0;
+                currentState.Value = 0;
             }
+
+            if (signal.TimeConstant.HasValue)
+            {
+                var time = DateTime.Now.Subtract(currentState.Timestamp).TotalMilliseconds;
+                delta *= (System.Math.Min(time, signal.TimeConstant.Value) / signal.TimeConstant.Value);
+            }
+
+
 
             var outputVal=0.0;
             if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
             {
-                outputVal =  currentState + delta;
+                outputVal =  currentState.Value + delta;
                 if (outputVal < -180)
                 {
                     outputVal += 360;
@@ -1507,7 +1515,7 @@ namespace F4Utils.SimSupport
             }
             else
             {
-                outputVal = currentState + delta;
+                outputVal = currentState.Value + delta;
             }
             signal.State = outputVal;
         }

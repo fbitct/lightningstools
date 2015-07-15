@@ -58,8 +58,6 @@ namespace Common.MacroProgramming
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
         public Nullable<double> TimeConstant { get; set; }
-
-        
         [XmlIgnore]
         public virtual double State
         {
@@ -79,28 +77,13 @@ namespace Common.MacroProgramming
                 }
                 if (newVal != _state.Value)
                 {
-                    if (TimeConstant.HasValue)
-                    {
-                        var time = DateTime.Now.Subtract(_state.Timestamp).TotalMilliseconds;
-                        var delta = newVal - _state.Value;
-                        var newState = _state.Value + (delta * (System.Math.Min(time, TimeConstant.Value) / TimeConstant.Value));
-                        _previousState = _state;
-                        _state = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newState };
-                        UpdateEventListeners();
-                    }
-                    else
-                    {
-                        _previousState = _state;
-                        _state = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newVal };
-                        UpdateEventListeners();
-
-                    }
+                    _previousState = _state;
+                    _state = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newVal };
+                    UpdateEventListeners();
                 }
-
-                
             }
         }
-
+        public virtual TimestampedDecimal TimestampedState { get { return _state; } }
         [XmlIgnore]
         public override string SignalType
         {
