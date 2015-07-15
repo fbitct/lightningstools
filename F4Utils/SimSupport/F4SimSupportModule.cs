@@ -1462,7 +1462,7 @@ namespace F4Utils.SimSupport
                 MinValue = minVal,
                 MaxValue = maxVal,
                 TimeConstant = timeConstant,
-                Precision = (dataType == typeof(int)) ? 0: -1
+                Precision = (dataType == typeof (long) || dataType == typeof(int) || dataType == typeof (short) || dataType == typeof (byte)) ? 0: -1
             };
         }
         private void SetOutput(AnalogSignal signal, double newVal)
@@ -1613,7 +1613,7 @@ namespace F4Utils.SimSupport
                                                 F4SimOutputs.AIRSPEED_MACH_INDICATOR__INDICATED_AIRSPEED_KNOTS,
                                                 typeof(float), 0, 850, false, false));
 
-            AddF4SimOutput(CreateNewF4SimOutput("Displays", "HUD", "Wind delta to flight path marker (degrees)",
+            AddF4SimOutput(CreateNewF4SimOutput("HUD", "HUD", "Wind delta to flight path marker (degrees)",
                                                 F4SimOutputs.HUD__WIND_DELTA_TO_FLIGHT_PATH_MARKER_DEGREES,
                                                 typeof(float), -90, 90, true, false));
 
@@ -1756,28 +1756,29 @@ namespace F4Utils.SimSupport
 
             
             AddF4SimOutput(CreateNewF4SimOutput("Up-Front Controls", "TACAN Channel",
-                                                F4SimOutputs.UFC__TACAN_CHANNEL, typeof (int), 0,Int32.MaxValue, false, false));
+                                                F4SimOutputs.UFC__TACAN_CHANNEL, typeof (int), 0, 199, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Up-Front Controls", "Tacan Band is X",
                                                 F4SimOutputs.UFC__TACAN_BAND_IS_X, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Up-Front Controls", "Tacan Mode is AA",
                                                 F4SimOutputs.UFC__TACAN_MODE_IS_AA, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("AUX COMM", "TACAN Channel",
-                                                F4SimOutputs.AUX_COMM__TACAN_CHANNEL, typeof(int), 0, Int32.MaxValue, false, false));
+                                                F4SimOutputs.AUX_COMM__TACAN_CHANNEL, typeof(int), 0, 199, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("AUX COMM", "Tacan Band is X",
                                                 F4SimOutputs.AUX_COMM__TACAN_BAND_IS_X, typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("AUX COMM", "Tacan Mode is AA",
                                                 F4SimOutputs.AUX_COMM__TACAN_MODE_IS_AA, typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("AUX COMM", "UHF Preset",
-                                                F4SimOutputs.AUX_COMM__UHF_PRESET, typeof(int), 0, Int32.MaxValue, false, false));
-            AddF4SimOutput(CreateNewF4SimOutput("AUX COMM", "UHF Frequency",
-                                                F4SimOutputs.AUX_COMM__UHF_FREQUENCY, typeof(int), 0, Int32.MaxValue, false, false));
+
+            AddF4SimOutput(CreateNewF4SimOutput("UHF", "UHF Preset",
+                                                F4SimOutputs.AUX_COMM__UHF_PRESET, typeof(int), 1, 19, false, false));
+            AddF4SimOutput(CreateNewF4SimOutput("UHF", "UHF Frequency",
+                                                F4SimOutputs.AUX_COMM__UHF_FREQUENCY, typeof(int), 0, 399975, false, false));
 
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel QTY", "Internal fuel (pounds)",
-                                                F4SimOutputs.FUEL_QTY__INTERNAL_FUEL_POUNDS, typeof (float), 0, float.MaxValue, false,false));
+                                                F4SimOutputs.FUEL_QTY__INTERNAL_FUEL_POUNDS, typeof (float), 0, 42000, false,false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel QTY", "External fuel (pounds)",
-                                                F4SimOutputs.FUEL_QTY__EXTERNAL_FUEL_POUNDS, typeof (float), 0, float.MaxValue, false,false));
+                                                F4SimOutputs.FUEL_QTY__EXTERNAL_FUEL_POUNDS, typeof (float), 0, 42000, false,false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel QTY", "Foreward fuel quantity (lbs)",
                                                 F4SimOutputs.FUEL_QTY__FOREWARD_QTY_LBS, typeof(float), 0, 42000, false, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Fuel QTY", "Aft fuel quantity (lbs) ",
@@ -1787,17 +1788,17 @@ namespace F4Utils.SimSupport
 
             for (var i = 0; i < 20; i++)
             {
-                AddF4SimOutput(CreateNewF4SimOutput("Left MFD", string.Format("OSB #{0} Label",i+1),"Line 1",
+                AddF4SimOutput(CreateNewF4SimOutput("Left MFD", string.Format("OSB #{0} Label",(i+1).ToString().PadLeft(2,'0')),"Line 1",
                                                     F4SimOutputs.LMFD__OSB_LABEL_LINES1, i, typeof(string)));
-                AddF4SimOutput(CreateNewF4SimOutput("Left MFD", string.Format("OSB #{0} Label", i + 1), "Line 2",
+                AddF4SimOutput(CreateNewF4SimOutput("Left MFD", string.Format("OSB #{0} Label", (i + 1).ToString().PadLeft(2, '0')), "Line 2",
                                                     F4SimOutputs.LMFD__OSB_LABEL_LINES2, i, typeof(string)));
-                AddF4SimOutput(CreateNewF4SimOutput("Left MFD", string.Format("OSB #{0} Label", i + 1), "Inverted Flag",
+                AddF4SimOutput(CreateNewF4SimOutput("Left MFD", string.Format("OSB #{0} Label", (i + 1).ToString().PadLeft(2, '0')), "Inverted Flag",
                                                     F4SimOutputs.LMFD__OSB_INVERTED_FLAGS, i, typeof(bool)));
-                AddF4SimOutput(CreateNewF4SimOutput("Right MFD", string.Format("OSB #{0} Label", i + 1), "Line 1",
+                AddF4SimOutput(CreateNewF4SimOutput("Right MFD", string.Format("OSB #{0} Label", (i + 1).ToString().PadLeft(2, '0')), "Line 1",
                                                     F4SimOutputs.RMFD__OSB_LABEL_LINES1, i, typeof(string)));
-                AddF4SimOutput(CreateNewF4SimOutput("Right MFD", string.Format("OSB #{0} Label", i + 1), "Line 2",
+                AddF4SimOutput(CreateNewF4SimOutput("Right MFD", string.Format("OSB #{0} Label", (i + 1).ToString().PadLeft(2, '0')), "Line 2",
                                                     F4SimOutputs.RMFD__OSB_LABEL_LINES2, i, typeof(string)));
-                AddF4SimOutput(CreateNewF4SimOutput("Right MFD", string.Format("OSB #{0} Label", i + 1), "Inverted Flag",
+                AddF4SimOutput(CreateNewF4SimOutput("Right MFD", string.Format("OSB #{0} Label", (i + 1).ToString().PadLeft(2, '0')), "Inverted Flag",
                                                     F4SimOutputs.RMFD__OSB_INVERTED_FLAGS, i, typeof(bool)));
             }
 
@@ -2004,11 +2005,11 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Panels", "JFS", "RUN Indicator Light", F4SimOutputs.JFS__RUN,
                                                 typeof (bool)));
 
-            AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "MRK BCN Light",
+            AddF4SimOutput(CreateNewF4SimOutput("Marker Beacon", "MRK BCN Light",
                                                 F4SimOutputs.MARKER_BEACON__MRK_BCN_LIGHT, typeof(bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "Outer marker flag",
+            AddF4SimOutput(CreateNewF4SimOutput("Marker Beacon", "Outer marker flag",
                                                 F4SimOutputs.MARKER_BEACON__OUTER_MARKER_FLAG, typeof (bool)));
-            AddF4SimOutput(CreateNewF4SimOutput("MARKER BEACON", "Middle marker flag",
+            AddF4SimOutput(CreateNewF4SimOutput("Marker Beacon", "Middle marker flag",
                                                 F4SimOutputs.MARKER_BEACON__MIDDLE_MARKER_FLAG, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Aircraft", "Vehicle ACD",
@@ -2055,8 +2056,8 @@ namespace F4Utils.SimSupport
                                                 F4SimOutputs.SIM__BMS_PLAYER_IS_FLYING, typeof(bool)));
             for (var i = 0; i < 32; i++)
             {
-                AddF4SimOutput(CreateNewF4SimOutput("Pilots", string.Format("Pilot #{0}", i + 1), string.Format("Callsign", i + 1), F4SimOutputs.SIM__PILOT_CALLSIGN, i, typeof(string)));
-                AddF4SimOutput(CreateNewF4SimOutput("Pilots", string.Format("Pilot #{0}", i + 1), string.Format("Status (0=In UI, 1=Loading, 2=Waiting, 3=Flying, 4=Dead, 5=Unknown)", i + 1), F4SimOutputs.SIM__PILOT_STATUS, i, typeof(int), 0, 5, false,false));
+                AddF4SimOutput(CreateNewF4SimOutput("Pilots", string.Format("Pilot #{0}", (i + 1).ToString().PadLeft(2,'0')), string.Format("Callsign", i + 1), F4SimOutputs.SIM__PILOT_CALLSIGN, i, typeof(string)));
+                AddF4SimOutput(CreateNewF4SimOutput("Pilots", string.Format("Pilot #{0}", (i + 1).ToString().PadLeft(2,'0')), string.Format("Status (0=In UI, 1=Loading, 2=Waiting, 3=Flying, 4=Dead, 5=Unknown)", i + 1), F4SimOutputs.SIM__PILOT_STATUS, i, typeof(int), 0, 5, false, false));
                 /*
                  IN_UI = 0, // UI      - in the UI
                 LOADING = 1, // UI>3D   - loading the sim data
@@ -2195,7 +2196,7 @@ namespace F4Utils.SimSupport
             {
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i+1),
                                                     "Symbol ID",
-                                                    F4SimOutputs.RWR__SYMBOL_ID, i, typeof(int), 0, Int32.MaxValue, false, false));
+                                                    F4SimOutputs.RWR__SYMBOL_ID, i, typeof(int), 0, 255, false, false));
                 AddF4SimOutput(CreateNewF4SimOutput("RWR", string.Format("Threat #{0}", i + 1),
                                                     "Bearing (Degrees)",
                                                     F4SimOutputs.RWR__BEARING_DEGREES, i, typeof(float), 0, 360, true, false));

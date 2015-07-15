@@ -11,6 +11,8 @@ using Common.MacroProgramming;
 using Common.Math;
 using Common.UI;
 using Common.UI.UserControls;
+using Common.Strings;
+using System.Collections;
 namespace SimLinkup.UI.UserControls
 {
     public partial class SignalsView : UserControl
@@ -46,7 +48,7 @@ namespace SimLinkup.UI.UserControls
             tvSignals.Nodes.Clear();
             if (Signals != null)
             {
-                var distinctSignalSources = Signals.GetDistinctSignalSourceNames();
+                var distinctSignalSources = Signals.GetDistinctSignalSourceNames().OrderBy(x=>x).ToList();
                 if (distinctSignalSources != null && distinctSignalSources.Count > 0)
                 {
                     foreach (var signalSource in distinctSignalSources)
@@ -58,7 +60,7 @@ namespace SimLinkup.UI.UserControls
                         var signalsThisSource =
                             Signals.GetSignalsFromSource(signalSource);
 
-                        var signalCategoriesThisSource = signalsThisSource.GetDistinctSignalCategories();
+                        var signalCategoriesThisSource = signalsThisSource.GetDistinctSignalCategories().OrderBy(x=>x).ToList();
                         if (signalCategoriesThisSource != null)
                         {
                             foreach (var signalCategory in signalCategoriesThisSource)
@@ -69,7 +71,7 @@ namespace SimLinkup.UI.UserControls
                                 var signalsThisCategory = signalsThisSource.GetSignalsByCategory(signalCategory);
                                 if (signalsThisCategory != null)
                                 {
-                                    var signalCollections = signalsThisCategory.GetDistinctSignalCollectionNames();
+                                    var signalCollections = signalsThisCategory.GetDistinctSignalCollectionNames().OrderBy(x=>x).ToList();
                                     if (signalCollections != null)
                                     {
                                         foreach (var signalCollectionName in signalCollections)
@@ -109,7 +111,8 @@ namespace SimLinkup.UI.UserControls
             var signalsThisCollection = signalsThisCategory.GetSignalsByCollection(collectionIdentifier);
             if (signalsThisCollection != null)
             {
-                var subCollections = signalsThisCollection.GetUniqueSubcollections(collectionIdentifier);
+                var subCollections = signalsThisCollection.GetUniqueSubcollections(collectionIdentifier).OrderBy(x => x).ToList(); ;
+                
 
                 if (subCollections != null && subCollections.Count > 0)
                 {
@@ -119,7 +122,7 @@ namespace SimLinkup.UI.UserControls
                         var lvg = new ListViewGroup(subcollectionName, HorizontalAlignment.Left);
                         lvSignals.Groups.Add(lvg);
                         var signalsThisSubcollection =
-                            signalsThisCollection.GetSignalsBySubcollectionName(collectionIdentifier, subcollectionName);
+                            signalsThisCollection.GetSignalsBySubcollectionName(collectionIdentifier, subcollectionName).OrderBy(x=>x.FriendlyName).ToList();
                         foreach (var signal in signalsThisSubcollection)
                         {
                             var lvi = CreateListViewItemFromSignal(signal);
