@@ -41,7 +41,7 @@ namespace Common.MacroProgramming
         private int _precision = -1; //# decimal places to round values to
         private TimestampedDecimal _previousState = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
         private TimestampedDecimal _state = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
-
+        private TimestampedDecimal _correlatedState = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
         private bool _isSine;
         private bool _isCosine;
         
@@ -83,6 +83,30 @@ namespace Common.MacroProgramming
                 }
             }
         }
+        [XmlIgnore]
+        public virtual double CorrelatedState
+        {
+            get
+            {
+                return _correlatedState.Value;
+            }
+            set
+            {
+                var newVal =
+                    _precision != -1
+                        ? System.Math.Round(value, _precision)
+                        : value;
+                if (double.IsInfinity(newVal) || double.IsNaN(newVal))
+                {
+                    newVal = 0;
+                }
+                if (newVal != _correlatedState.Value)
+                {
+                    _correlatedState = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newVal };
+                }
+            }
+        }
+
         public virtual TimestampedDecimal TimestampedState { get { return _state; } }
         [XmlIgnore]
         public override string SignalType

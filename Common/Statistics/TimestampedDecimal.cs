@@ -7,6 +7,7 @@ namespace Common.Statistics
     {
         public DateTime Timestamp;
         public double Value;
+        public double CorrelatedValue;
     }
 
 }

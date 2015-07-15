@@ -1468,7 +1468,7 @@ namespace F4Utils.SimSupport
         private void SetOutput(AnalogSignal signal, double newVal)
         {
             var currentState = signal.TimestampedState;
-
+            var originalDelta = 0.0;
             var delta = 0.0;
             var range = 0.0;
             if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
@@ -1492,6 +1492,7 @@ namespace F4Utils.SimSupport
                 currentState.Value = 0;
             }
 
+            originalDelta = delta;
             if (signal.TimeConstant.HasValue)
             {
                 var time = DateTime.Now.Subtract(currentState.Timestamp).TotalMilliseconds;
@@ -1501,6 +1502,7 @@ namespace F4Utils.SimSupport
 
 
             var outputVal=0.0;
+            var correlatedOutputVal = 0.0;
             if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
             {
                 outputVal =  currentState.Value + delta;
@@ -1512,12 +1514,24 @@ namespace F4Utils.SimSupport
                 {
                     outputVal -= 360;
                 }
+
+                correlatedOutputVal = currentState.Value + originalDelta;
+                if (correlatedOutputVal < -180)
+                {
+                    correlatedOutputVal += 360;
+                }
+                else if (correlatedOutputVal > 180)
+                {
+                    correlatedOutputVal -= 360;
+                }
             }
             else
             {
                 outputVal = currentState.Value + delta;
+                correlatedOutputVal = currentState.Value + originalDelta;
             }
             signal.State = outputVal;
+            signal.CorrelatedState = correlatedOutputVal;
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
                                                 Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, Nullable<double> timeConstant = null)

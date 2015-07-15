@@ -19,10 +19,13 @@ namespace Common.MacroProgramming
         private DateTime _startTime = DateTime.Now;
         private static Color GridLineColor = Color.FromArgb(217,234,244);
         private static Color ValueCurveColor = Color.FromArgb(54, 145, 198);
+        private static Color CorrelatedValueCurveColor = Color.LightGray;//Color.FromArgb(236, 222, 240);
+
         private static Pen GridLinePen = new Pen(GridLineColor) { Width = 1f };
         private static Pen ZeroLinePen = new Pen(Brushes.DarkBlue) { Width = 1f };
         private static Pen ValueCurvePen = new Pen(ValueCurveColor) { Width = 2f };
         private static Pen ValueLinePen = new Pen(Brushes.LightBlue) { Width = 1f };
+        private static Pen CorrelatedValueCurvePen = new Pen(CorrelatedValueCurveColor) { Width = 2f };
         private static Pen MinValueLinePen = new Pen(Brushes.DarkRed) { Width = 1f };
         private static Pen MaxValueLinePen = new Pen(Brushes.DarkRed) { Width = 1f };
         private static Color AreaUnderTheCurveColor = Color.FromArgb(241, 246, 250);
@@ -74,7 +77,7 @@ namespace Common.MacroProgramming
             PurgeOldSamples();
             if (_signal is AnalogSignal)
             {
-                _signalStateHistory.Add(new TimestampedDecimal() { Timestamp = DateTime.Now, Value = ((AnalogSignal)_signal).State });
+                _signalStateHistory.Add(new TimestampedDecimal() { Timestamp = DateTime.Now, Value = ((AnalogSignal)_signal).State, CorrelatedValue = ((AnalogSignal)_signal).CorrelatedState });
             }
             else if (_signal is DigitalSignal)
             {
@@ -113,8 +116,12 @@ namespace Common.MacroProgramming
 
             var x1 = 0.0f;
             var y1 = height / 2.0f;
+            var correlatedY1 = height / 2.0f;
+
             var x2 = 0.0f;
             var y2 = height / 2.0f;
+            var correlatedY2 = height / 2.0f;
+
             var minY2 = 0.0f;
             var maxY2 = 0.0f;
             var minVal = 0.0;
@@ -128,7 +135,8 @@ namespace Common.MacroProgramming
             var numXSegments = 20.0f;
             var xOffset = -(float)(((drawTime.Subtract(_startTime).TotalMilliseconds % (_duration.TotalMilliseconds / numXSegments) * (width / _duration.TotalMilliseconds))));
 
-            var pointList = new List<PointF>();
+            var valueCurvePointList = new List<PointF>();
+            var correlatedValueCurvePointList = new List<PointF>();
             
             foreach (var sample in _signalStateHistory)
             {
@@ -182,12 +190,20 @@ namespace Common.MacroProgramming
                         minValString = minVal.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4);
                         maxValString = maxVal.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4);
                     }
+
                     y2 = height - (int)(((System.Math.Abs(sample.Value - thisSignal.MinValue)) / range) * height);
                     if (y2 <0) y2=0;
                     if (y2 > height) y2 = height;
+
+                    correlatedY2 = height - (int)(((System.Math.Abs(sample.CorrelatedValue - thisSignal.MinValue)) / range) * height);
+                    if (correlatedY2 < 0) correlatedY2 = 0;
+                    if (correlatedY2 > height) correlatedY2 = height;
+
+                    
                     zeroHeight = height - (int)(((System.Math.Abs(-thisSignal.MinValue)) / range) * height);
                     if (zeroHeight < 0) zeroHeight = 0;
                     if (zeroHeight > height) zeroHeight = height;
+                    
                     value = (sample.Value.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
                     rangeMinValue = (thisSignal.MinValue.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
                     rangeMaxValue = (thisSignal.MaxValue.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
@@ -198,6 +214,8 @@ namespace Common.MacroProgramming
                 {
                     x1 = x2;
                     y1 = y2;
+                    correlatedY1 = y2;
+
                     minY2 = y2;
                     maxY2 = y2;
                     isFirstSample = false;
@@ -210,12 +228,18 @@ namespace Common.MacroProgramming
                 {
                     maxY2 = y2;
                 }
-                pointList.Add(new PointF(x1, y1));
-                pointList.Add(new PointF(x2, y2));
+
+                valueCurvePointList.Add(new PointF(x1, y1));
+                valueCurvePointList.Add(new PointF(x2, y2));
+
+                correlatedValueCurvePointList.Add(new PointF(x1, correlatedY1));
+                correlatedValueCurvePointList.Add(new PointF(x2, correlatedY2));
+
+                
                 graphics.FillPolygon(AreaUnderTheCurveBrush, new[] { new PointF(x1, y1), new PointF(x2, y2), new PointF(x2, height), new PointF(x1, height) });
                 x1 = x2;
                 y1 = y2;
-
+                correlatedY1 = correlatedY2;
             }
             if (_signal !=null && _signal is AnalogSignal && (_signal as AnalogSignal).IsVoltage)
             {
@@ -235,11 +259,22 @@ namespace Common.MacroProgramming
             }
             graphics.DrawLine(MinValueLinePen, new PointF(0, minY2), new PointF(width, minY2));
             graphics.DrawLine(MaxValueLinePen, new PointF(0, maxY2), new PointF(width, maxY2));
-            if (pointList != null && pointList.Count > 0)
+
+            if (_signal is AnalogSignal && (_signal as AnalogSignal).TimeConstant.HasValue)
             {
-                graphics.DrawLines(ValueCurvePen, pointList.ToArray());
+                if (correlatedValueCurvePointList != null && correlatedValueCurvePointList.Count > 0)
+                {
+                    graphics.DrawLines(CorrelatedValueCurvePen, correlatedValueCurvePointList.ToArray());
+                }
+            }
+
+            if (valueCurvePointList != null && valueCurvePointList.Count > 0)
+            {
+                graphics.DrawLines(ValueCurvePen, valueCurvePointList.ToArray());
             }
             graphics.DrawLine(ValueLinePen, new PointF(0, y2), new PointF(width, y2));
+
+            
             graphics.DrawLine(ZeroLinePen, new PointF(0, zeroHeight), new PointF(width, zeroHeight));
 
             var valueTextSize = graphics.MeasureString(value, ValueFont);
