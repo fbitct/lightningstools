@@ -16,7 +16,8 @@ namespace SimLinkup.Runtime
     public class Runtime
     {
         private static readonly ILog _log = LogManager.GetLogger(typeof (Runtime));
-
+        private AnalogSignal _loopDurationSignal;
+        private AnalogSignal _loopFrequencySignal;
         public Runtime()
         {
             Initialize();
@@ -34,7 +35,47 @@ namespace SimLinkup.Runtime
             RunSetupScripts();
             MainLoop();
         }
+        private void AddPerformanceMonitoringSignals()
+        {
+            _loopDurationSignal =
+                new AnalogSignal
+                {
+                    Category = "Outputs",
+                    CollectionName = "Analog Outputs",
+                    SubcollectionName = "Performance Metrics",
+                    FriendlyName = "Loop Duration (ms)",
+                    Id = "SIMLINKUP__PERFORMANCE__LOOP_DURATION",
+                    Index = 0,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = "SimLinkup",
+                    IsAngle = false,
+                    IsPercentage = false,
+                    MinValue = 0,
+                    MaxValue = 250
+                };
+            ScriptingContext[_loopDurationSignal.Id]=_loopDurationSignal;
 
+
+            _loopFrequencySignal=
+                new AnalogSignal
+                {
+                    Category = "Outputs",
+                    CollectionName = "Analog Outputs",
+                    SubcollectionName = "Performance Metrics",
+                    FriendlyName = "Loop Frequency (Hz)",
+                    Id = "SIMLINKUP__PERFORMANCE__LOOP_FREQUENCY",
+                    Index = 0,
+                    PublisherObject = this,
+                    Source = this,
+                    SourceFriendlyName = "SimLinkup",
+                    IsAngle = false,
+                    IsPercentage = false,
+                    MinValue = 0,
+                    MaxValue = 300
+                };
+            ScriptingContext[_loopFrequencySignal.Id] = _loopFrequencySignal;
+        }
         private void MainLoop()
         {
             _keepRunning = true;
@@ -49,7 +90,12 @@ namespace SimLinkup.Runtime
                     RunLoopScripts();
                 }
                 Application.DoEvents();
-                Thread.Sleep(5);
+                Thread.Sleep(0);
+                var endTime = DateTime.Now;
+                var loopDuration = endTime.Subtract(startTime);
+                _loopDurationSignal.State = loopDuration.TotalMilliseconds;
+                _loopFrequencySignal.State = 1000 / loopDuration.TotalMilliseconds;
+
             }
             IsRunning = false;
         }
@@ -168,6 +214,7 @@ namespace SimLinkup.Runtime
             };
 
             LoadScripts();
+            AddPerformanceMonitoringSignals();
             InitializeMappings();
             _initialized = true;
         }

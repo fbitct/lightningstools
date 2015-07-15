@@ -1490,12 +1490,12 @@ namespace F4Utils.SimSupport
             }
 
 
-            const double scale = 0.95;
-            if (useSmoothing && delta != currentState && newVal !=0)
-            {
-                var deltaPct = Math.Abs(delta / range);
-                delta *= (deltaPct * Math.Max(1.0,(scale)));
-            }
+            //const double scale = 0.95;
+            //if (useSmoothing && delta != currentState && newVal !=0)
+            //{
+            //    var deltaPct = Math.Abs(delta / range);
+            //    delta *= (deltaPct * Math.Max(1.0,(scale)));
+            //}
 
             var outputVal=0.0;
             if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
