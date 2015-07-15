@@ -1461,7 +1461,8 @@ namespace F4Utils.SimSupport
                 IsPercentage = isPercentage,
                 MinValue = minVal,
                 MaxValue = maxVal,
-                TimeConstant = timeConstant
+                TimeConstant = timeConstant,
+                Precision = (dataType == typeof(int)) ? 0: -1
             };
         }
         private void SetOutput(AnalogSignal signal, double newVal)
