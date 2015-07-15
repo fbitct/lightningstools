@@ -1714,9 +1714,9 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Desired course (degrees)",
                                                 F4SimOutputs.HSI__DESIRED_COURSE_DEGREES, typeof(float), 0, 360, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Course deviation (degrees)",
-                                                F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof(float), -20, 20, true, false));
+                                                F4SimOutputs.HSI__COURSE_DEVIATION_DEGREES, typeof(float), -10, 10, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Course deviation limit (degrees)",
-                                                F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float), -20, 20, true, false));
+                                                F4SimOutputs.HSI__COURSE_DEVIATION_LIMIT_DEGREES, typeof(float), -10, 10, true, false));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "HSI", "Distance to beacon (nautical miles)",
                                                 F4SimOutputs.HSI__DISTANCE_TO_BEACON_NAUTICAL_MILES,
                                                 typeof(float), 0, 1000, false, false));

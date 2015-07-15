@@ -589,8 +589,8 @@ namespace SimLinkup.HardwareSupport.AMI
                 SourceAddress = null,
                 State = 0,
                 IsAngle =true,
-                MinValue = -180,
-                MaxValue = 180
+                MinValue = -10,
+                MaxValue = 10
             };
             return thisSignal;
         }

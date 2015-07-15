@@ -191,6 +191,8 @@ namespace Common.MacroProgramming
                     value = (sample.Value.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
                     rangeMinValue = (thisSignal.MinValue.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
                     rangeMaxValue = (thisSignal.MaxValue.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4));
+
+
                 }
                 if (isFirstSample)
                 {
@@ -213,6 +215,15 @@ namespace Common.MacroProgramming
                 graphics.FillPolygon(AreaUnderTheCurveBrush, new[] { new PointF(x1, y1), new PointF(x2, y2), new PointF(x2, height), new PointF(x1, height) });
                 x1 = x2;
                 y1 = y2;
+
+            }
+            if (_signal !=null && _signal is AnalogSignal && (_signal as AnalogSignal).IsVoltage)
+            {
+                minValString += " V";
+                maxValString += " V";
+                rangeMinValue += " V";
+                rangeMaxValue += " V";
+                value += " V";
             }
             for (var x = (float)width + xOffset; x >= 0; x -= (width / numXSegments))
             {
@@ -236,12 +247,12 @@ namespace Common.MacroProgramming
             var valueRectangle = new RectangleF(0, System.Math.Max( y2 - valueTextSize.Height,0), width, valueTextSize.Height);
             graphics.DrawString(value, ValueFont, ValueBrush, valueRectangle, valueFormat);
 
-            var minValueTextSize = graphics.MeasureString(rangeMinValue, MinValueFont);
+            var minValueTextSize = graphics.MeasureString(minValString, MinValueFont);
             var minValueFormat = new StringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center };
             var minValueRectangle = new RectangleF(0, System.Math.Min(maxY2+2, height), width, minValueTextSize.Height);
             graphics.DrawString(string.Format("Min:{0}",minValString), MinValueFont, MinValueBrush, minValueRectangle, minValueFormat);
 
-            var maxValueTextSize = graphics.MeasureString(rangeMaxValue, MaxValueFont);
+            var maxValueTextSize = graphics.MeasureString(maxValString, MaxValueFont);
             var maxValueFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
             var maxValueRectangle = new RectangleF(0, System.Math.Max(minY2- maxValueTextSize.Height,0), width, maxValueTextSize.Height);
             graphics.DrawString(string.Format("Max:{0}",maxValString), MaxValueFont, MaxValueBrush, maxValueRectangle, maxValueFormat);
