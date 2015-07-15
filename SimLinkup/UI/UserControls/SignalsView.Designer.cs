@@ -31,8 +31,8 @@
             this.tvSignals = new System.Windows.Forms.TreeView();
             this.lvSignals = new System.Windows.Forms.ListView();
             this.Source = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.pbSignalGraph = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pbSignalGraph)).BeginInit();
+            this.pbVisualization = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVisualization)).BeginInit();
             this.SuspendLayout();
             // 
             // tvSignals
@@ -63,27 +63,27 @@
             // 
             // pbSignalGraph
             // 
-            this.pbSignalGraph.BackColor = System.Drawing.SystemColors.Control;
-            this.pbSignalGraph.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbSignalGraph.Location = new System.Drawing.Point(1221, 5);
-            this.pbSignalGraph.Name = "pbSignalGraph";
-            this.pbSignalGraph.Size = new System.Drawing.Size(603, 600);
-            this.pbSignalGraph.TabIndex = 0;
-            this.pbSignalGraph.TabStop = false;
+            this.pbVisualization.BackColor = System.Drawing.SystemColors.Control;
+            this.pbVisualization.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbVisualization.Location = new System.Drawing.Point(1221, 5);
+            this.pbVisualization.Name = "pbSignalGraph";
+            this.pbVisualization.Size = new System.Drawing.Size(603, 600);
+            this.pbVisualization.TabIndex = 0;
+            this.pbVisualization.TabStop = false;
             // 
             // SignalsView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.pbSignalGraph);
+            this.Controls.Add(this.pbVisualization);
             this.Controls.Add(this.lvSignals);
             this.Controls.Add(this.tvSignals);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "SignalsView";
             this.Size = new System.Drawing.Size(1833, 921);
-            ((System.ComponentModel.ISupportInitialize)(this.pbSignalGraph)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbVisualization)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -93,6 +93,6 @@
         private System.Windows.Forms.TreeView tvSignals;
         private System.Windows.Forms.ListView lvSignals;
         private System.Windows.Forms.ColumnHeader Source;
-        private System.Windows.Forms.PictureBox pbSignalGraph;
+        private System.Windows.Forms.PictureBox pbVisualization;
     }
 }

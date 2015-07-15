@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using System.Drawing;
+using LightningGauges.Renderers.F16.HSI;
 
 namespace SimLinkup.HardwareSupport.AMI
 {
@@ -15,7 +17,7 @@ namespace SimLinkup.HardwareSupport.AMI
         #region Class variables
 
         private static readonly ILog _log = LogManager.GetLogger(typeof (AMI900158001HardwareSupportModule));
-
+        
         #endregion
 
         #region Instance variables
@@ -71,6 +73,7 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal _DMEx1COSOutputSignal;
         private AnalogSignal _courseDeviationOutputSignal;
 
+        private readonly IHorizontalSituationIndicator _renderer=new HorizontalSituationIndicator();
         #endregion
 
         #region Constructors
@@ -370,6 +373,26 @@ namespace SimLinkup.HardwareSupport.AMI
             }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.BearingToBeaconDegrees = (float)_bearingInputSignal.State;
+            _renderer.InstrumentState.CourseDeviationDegrees = (float)_courseDeviationInputSignal.State;
+            _renderer.InstrumentState.CourseDeviationLimitDegrees = (float)_courseDeviationLimitInputSignal.State;
+            _renderer.InstrumentState.DesiredCourseDegrees = (int)_courseInputSignal.State;
+            _renderer.InstrumentState.DesiredHeadingDegrees = (int)_headingInputSignal.State;
+            _renderer.InstrumentState.DeviationInvalidFlag = _deviationFlagInputSignal.State;
+            _renderer.InstrumentState.DistanceToBeaconNauticalMiles = (float)_DMEInputSignal.State;
+            _renderer.InstrumentState.DmeInvalidFlag = _dmeShutterInputSignal.State;
+            _renderer.InstrumentState.FromFlag = _fromFlagInputSignal.State;
+            _renderer.InstrumentState.MagneticHeadingDegrees = (float)_compassInputSignal.State;
+            _renderer.InstrumentState.OffFlag = _offFlagInputSignal.State;
+            _renderer.InstrumentState.ShowToFromFlag = true;
+            _renderer.InstrumentState.ToFlag = _toFlagInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signal Creation

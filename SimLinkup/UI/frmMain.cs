@@ -184,6 +184,7 @@ namespace SimLinkup.UI
         }
         private void PopulateSignalsView()
         {
+            signalsView.ScriptingContext = SharedRuntime.ScriptingContext;
             signalsView.Signals = SharedRuntime.ScriptingContext.AllSignals;
             signalsView.UpdateContents();
         }

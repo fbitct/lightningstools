@@ -475,6 +475,10 @@
       <Project>{305b6164-1c7d-4627-9774-db6bd5cf50e8}</Project>
       <Name>F4Utils.Terrain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LightningGauges\LightningGauges\LightningGauges.csproj">
+      <Project>{e3e09957-dd05-4dec-961a-915a082c0bc4}</Project>
+      <Name>LightningGauges</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Lzss\LzssManaged\LzssManaged.csproj">
       <Project>{04f20e15-844a-4d30-9ec4-e8fd61a043a9}</Project>
       <Name>LzssManaged</Name>

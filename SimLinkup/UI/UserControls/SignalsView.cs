@@ -13,6 +13,8 @@ using Common.UI;
 using Common.UI.UserControls;
 using Common.Strings;
 using System.Collections;
+using Common.HardwareSupport;
+using SimLinkup.Scripting;
 namespace SimLinkup.UI.UserControls
 {
     public partial class SignalsView : UserControl
@@ -30,12 +32,12 @@ namespace SimLinkup.UI.UserControls
             _timer.Interval = 20;
             _timer.Tick += (s, e) =>
             {
-                UpdateSignalGraph();
+                UpdateVisualization();
             };
             _timer.Enabled = true;
 
         }
-
+        public ScriptingContext ScriptingContext { get; set; }
         public SignalList<Signal> Signals { get; set; }
 
         public void UpdateContents()
@@ -233,19 +235,39 @@ namespace SimLinkup.UI.UserControls
             lvSignals.Sort();
         }
 
-        private void UpdateSignalGraph()
+        private void UpdateVisualization()
         {
-            if (SelectedSignal == null) return;
-            if (pbSignalGraph.Image ==null) 
+            if (pbVisualization.Image == null)
             {
-                pbSignalGraph.Image = new Bitmap(pbSignalGraph.ClientSize.Width, pbSignalGraph.ClientSize.Height);
+                pbVisualization.Image = new Bitmap(pbVisualization.ClientSize.Width, pbVisualization.ClientSize.Height);
             }
-            using (var graphics = Graphics.FromImage(pbSignalGraph.Image))
+
+            using (var graphics = Graphics.FromImage(pbVisualization.Image))
             {
-                SelectedSignal.DrawGraph(graphics, new Rectangle(0, 0, pbSignalGraph.Image.Width, pbSignalGraph.Image.Height));
+                var targetRectangle = new Rectangle(0, 0, pbVisualization.Image.Width, pbVisualization.Image.Height);
+                if (SelectedSignal == null)
+                {
+                    UpdateModuleVisualization(graphics, targetRectangle);
+                }
+                else
+                {
+                    UpdateSignalGraph(graphics, targetRectangle);
+                }
+
             }
-            pbSignalGraph.Invalidate();
-            pbSignalGraph.Update();
+            pbVisualization.Invalidate();
+            pbVisualization.Update();
+        }
+        private void UpdateModuleVisualization(Graphics graphics, Rectangle targetRectangle)
+        {
+            var hsm = SelectedHardwareSupportModule;
+            if (hsm == null) return;
+            hsm.Render(graphics, targetRectangle);
+        }
+
+        private void UpdateSignalGraph(Graphics graphics, Rectangle targetRectangle)
+        {
+            SelectedSignal.DrawGraph(graphics, targetRectangle);
         }
         private ListViewItem SelectedListViewItem 
         {
@@ -261,6 +283,17 @@ namespace SimLinkup.UI.UserControls
             {
                 return SignalFor(SelectedListViewItem);
             }
+        }
+        private IHardwareSupportModule SelectedHardwareSupportModule
+        {
+            get
+            {
+                return HardwareSupportModuleFor(tvSignals.SelectedNode);
+            }
+        }
+        private IHardwareSupportModule HardwareSupportModuleFor(TreeNode treeNode)
+        {
+            return treeNode != null ? ScriptingContext.HardwareSupportModules.Where(x => x.FriendlyName == treeNode.Text).FirstOrDefault() : null;
         }
     }
 }
