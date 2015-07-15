@@ -452,7 +452,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
             var thisSignal = new DigitalSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "Show Command Bars";
+            thisSignal.FriendlyName = "Command Bars Visible Flag";
             thisSignal.Id = "12871_Show_Command_Bars_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;

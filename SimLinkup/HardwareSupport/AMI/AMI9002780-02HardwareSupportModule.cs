@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.AMI
 {
@@ -13,6 +15,9 @@ namespace SimLinkup.HardwareSupport.AMI
     public class AMI900278002HardwareSupportModule : HardwareSupportModuleBase, IDisposable
     {
         #region Class variables
+
+        private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
+        private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
 
         private static readonly ILog _log = LogManager.GetLogger(typeof (AMI900278002HardwareSupportModule));
 
@@ -32,7 +37,16 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal.AnalogSignalChangedEventHandler _verticalCommandBarInputSignalChangedEventHandler;
         private AnalogSignal _rateOfTurnInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _rateOfTurnInputSignalChangedEventHandler;
+        
         private DigitalSignal _showCommandBarsInputSignal;
+        private DigitalSignal _auxFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _auxFlagInputSignalChangedEventHandler;
+        private DigitalSignal _gsFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _gsFlagInputSignalChangedEventHandler;
+        private DigitalSignal _locFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _locFlagInputSignalChangedEventHandler;
+        private DigitalSignal _offFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _offFlagInputSignalChangedEventHandler;
 
         private AnalogSignal _pitchOutputSignal;
         private AnalogSignal _rollSinOutputSignal;
@@ -41,6 +55,12 @@ namespace SimLinkup.HardwareSupport.AMI
         private AnalogSignal _verticalCommandBarOutputSignal;
         private AnalogSignal _rateOfTurnOutputSignal;
 
+        private DigitalSignal _auxFlagOutputSignal;
+        private DigitalSignal _gsFlagOutputSignal;
+        private DigitalSignal _locFlagOutputSignal;
+        private DigitalSignal _offFlagOutputSignal;
+
+        private IADI _renderer = new ADI();
         #endregion
 
         #region Constructors
@@ -94,7 +114,7 @@ namespace SimLinkup.HardwareSupport.AMI
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return new[] {_showCommandBarsInputSignal}; }
+            get { return new[] {_showCommandBarsInputSignal, _auxFlagInputSignal,_gsFlagInputSignal, _locFlagInputSignal, _offFlagInputSignal}; }
         }
 
         public override AnalogSignal[] AnalogOutputs
@@ -111,7 +131,7 @@ namespace SimLinkup.HardwareSupport.AMI
 
         public override DigitalSignal[] DigitalOutputs
         {
-            get { return null; }
+            get { return new[] { _auxFlagOutputSignal, _gsFlagOutputSignal, _locFlagOutputSignal, _offFlagOutputSignal }; }
         }
 
         #endregion
@@ -132,6 +152,10 @@ namespace SimLinkup.HardwareSupport.AMI
                 verticalCommandBar_InputSignalChanged;
             _rateOfTurnInputSignalChangedEventHandler =
                 rateOfTurn_InputSignalChanged;
+            _auxFlagInputSignalChangedEventHandler = auxFlag_InputSignalChanged;
+            _gsFlagInputSignalChangedEventHandler = gsFlag_InputSignalChanged;
+            _locFlagInputSignalChangedEventHandler = locFlag_InputSignalChanged;
+            _offFlagInputSignalChangedEventHandler = offFlag_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -141,10 +165,30 @@ namespace SimLinkup.HardwareSupport.AMI
             _horizontalCommandBarInputSignalChangedEventHandler = null;
             _verticalCommandBarInputSignalChangedEventHandler = null;
             _rateOfTurnInputSignalChangedEventHandler = null;
+            _auxFlagInputSignalChangedEventHandler = null;
+            _gsFlagInputSignalChangedEventHandler = null;
+            _locFlagInputSignalChangedEventHandler = null;
+            _offFlagInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
         {
+            if (_auxFlagInputSignal != null)
+            {
+                _auxFlagInputSignal.SignalChanged += _auxFlagInputSignalChangedEventHandler;
+            }
+            if (_gsFlagInputSignal != null)
+            {
+                _gsFlagInputSignal.SignalChanged += _gsFlagInputSignalChangedEventHandler;
+            }
+            if (_locFlagInputSignal != null)
+            {
+                _locFlagInputSignal.SignalChanged += _locFlagInputSignalChangedEventHandler;
+            }
+            if (_offFlagInputSignal != null)
+            {
+                _offFlagInputSignal.SignalChanged += _offFlagInputSignalChangedEventHandler;
+            }
             if (_pitchInputSignal != null)
             {
                 _pitchInputSignal.SignalChanged += _pitchInputSignalChangedEventHandler;
@@ -169,6 +213,46 @@ namespace SimLinkup.HardwareSupport.AMI
 
         private void UnregisterForInputEvents()
         {
+            if (_auxFlagInputSignal != null && _auxFlagInputSignal != null)
+            {
+                try
+                {
+                    _auxFlagInputSignal.SignalChanged -= _auxFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_gsFlagInputSignal != null && _gsFlagInputSignal != null)
+            {
+                try
+                {
+                    _gsFlagInputSignal.SignalChanged -= _gsFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_locFlagInputSignal != null && _locFlagInputSignal != null)
+            {
+                try
+                {
+                    _locFlagInputSignal.SignalChanged -= _locFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_offFlagInputSignal != null && _offFlagInputSignal != null)
+            {
+                try
+                {
+                    _offFlagInputSignal.SignalChanged -= _offFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
             if (_pitchInputSignalChangedEventHandler != null && _pitchInputSignal != null)
             {
                 try
@@ -223,6 +307,23 @@ namespace SimLinkup.HardwareSupport.AMI
         }
 
         #endregion
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.AuxFlag = _auxFlagInputSignal.State;
+            _renderer.InstrumentState.GlideslopeDeviationDegrees = (float)_horizontalCommandBarInputSignal.State;
+            _renderer.InstrumentState.GlideslopeDeviationLimitDegrees = GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+            _renderer.InstrumentState.GlideslopeFlag = _gsFlagInputSignal.State;
+            _renderer.InstrumentState.LocalizerDeviationDegrees = (float)_verticalCommandBarInputSignal.State;
+            _renderer.InstrumentState.LocalizerDeviationLimitDegrees = LOCALIZER_DEVIATION_LIMIT_DEGREES;
+            _renderer.InstrumentState.LocalizerFlag = _locFlagInputSignal.State;
+            _renderer.InstrumentState.OffFlag = _offFlagInputSignal.State;
+            _renderer.InstrumentState.PitchDegrees = (float)_pitchInputSignal.State;
+            _renderer.InstrumentState.RollDegrees = (float)_rollInputSignal.State;
+            _renderer.InstrumentState.ShowCommandBars = _showCommandBarsInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
+        #endregion
 
         #region Signal Creation
 
@@ -234,6 +335,10 @@ namespace SimLinkup.HardwareSupport.AMI
             _verticalCommandBarInputSignal = CreateVerticalCommandBarInputSignal();
             _rateOfTurnInputSignal = CreateRateOfTurnInputSignal();
             _showCommandBarsInputSignal = CreateShowCommandBarsInputSignal();
+            _auxFlagInputSignal = CreateAuxFlagInputSignal();
+            _gsFlagInputSignal = CreateGSFlagInputSignal();
+            _locFlagInputSignal = CreateLOCFlagInputSignal();
+            _offFlagInputSignal = CreateOffFlagInputSignal();
         }
 
         private AnalogSignal CreatePitchInputSignal()
@@ -383,13 +488,27 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.State = false;
             return thisSignal;
         }
+        private DigitalSignal CreateOFFFlagInputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Inputs";
+            thisSignal.CollectionName = "Digital Inputs";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "900278002_OFF_Flag_From_Sim";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
 
         private DigitalSignal CreateShowCommandBarsInputSignal()
         {
             var thisSignal = new DigitalSignal();
             thisSignal.Category = "Inputs";
             thisSignal.CollectionName = "Digital Inputs";
-            thisSignal.FriendlyName = "Show Command Bars";
+            thisSignal.FriendlyName = "Command Bars Visible Flag";
             thisSignal.Id = "900278002_Show_Command_Bars_From_Sim";
             thisSignal.Index = 0;
             thisSignal.Source = this;
@@ -407,6 +526,71 @@ namespace SimLinkup.HardwareSupport.AMI
             _horizontalCommandBarOutputSignal = CreateHorizontalCommandBarOutputSignal();
             _verticalCommandBarOutputSignal = CreateVerticalCommandBarOutputSignal();
             _rateOfTurnOutputSignal = CreateRateOfTurnOutputSignal();
+            _auxFlagOutputSignal = CreateAuxFlagOutputSignal();
+            _gsFlagOutputSignal = CreateGSFlagOutputSignal();
+            _locFlagOutputSignal = CreateLOCFlagOutputSignal();
+            _offFlagOutputSignal = CreateOFFFlagOutputSignal();
+        }
+        private DigitalSignal CreateAuxFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "AUX Flag";
+            thisSignal.Id = "900278002_AUX_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+
+            return thisSignal;
+
+        }
+        private DigitalSignal CreateGSFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "GS Flag";
+            thisSignal.Id = "900278002_GS_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+
+            return thisSignal;
+        }
+        private DigitalSignal CreateLOCFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "LOC Flag";
+            thisSignal.Id = "900278002_LOC_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+
+            return thisSignal;
+        }
+        private DigitalSignal CreateOFFFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "900278002_OFF_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+
+            return thisSignal;
         }
 
         private AnalogSignal CreatePitchOutputSignal()
@@ -521,7 +705,22 @@ namespace SimLinkup.HardwareSupport.AMI
             thisSignal.MaxValue = 10;
             return thisSignal;
         }
-
+        private void auxFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateAuxFlagOutputValue();
+        }
+        private void gsFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateGSFlagOutputValue();
+        }
+        private void locFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateLOCFlagOutputValue();
+        }
+        private void offFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateOFFFlagOutputValue();
+        }
         private void pitch_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdatePitchOutputValues();
@@ -546,7 +745,22 @@ namespace SimLinkup.HardwareSupport.AMI
         {
             UpdateRateOfTurnOutputValues();
         }
-
+        private void UpdateAuxFlagOutputValue()
+        {
+            _auxFlagOutputSignal.State = _auxFlagInputSignal.State;
+        }
+        private void UpdateGSFlagOutputValue()
+        {
+            _gsFlagOutputSignal.State = _gsFlagInputSignal.State;
+        }
+        private void UpdateLOCFlagOutputValue()
+        {
+            _locFlagOutputSignal.State = _locFlagInputSignal.State;
+        }
+        private void UpdateOFFFlagOutputValue()
+        {
+            _offFlagOutputSignal.State = _offFlagInputSignal.State;
+        }
         private void UpdatePitchOutputValues()
         {
             if (_pitchInputSignal != null)
