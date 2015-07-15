@@ -241,8 +241,8 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.SourceAddress = null;
             thisSignal.State = 0;
             thisSignal.IsAngle = true;
-            thisSignal.MinValue = 0;
-            thisSignal.MaxValue = 360;
+            thisSignal.MinValue = -180;
+            thisSignal.MaxValue = 180;
             return thisSignal;
         }
 

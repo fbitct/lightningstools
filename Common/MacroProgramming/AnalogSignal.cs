@@ -10,18 +10,24 @@ namespace Common.MacroProgramming
     {
         private readonly double _currentState;
         private readonly double _previousState;
+        private readonly double _currentCorrelatedState;
 
-        public AnalogSignalChangedEventArgs(double currentState, double previousState)
+        public AnalogSignalChangedEventArgs(double currentState, double previousState, double currentCorrelatedState=0)
         {
             _currentState = currentState;
+            _currentCorrelatedState = currentCorrelatedState;
             _previousState = previousState;
+
         }
 
         public double CurrentState
         {
             get { return _currentState; }
         }
-
+        public double CurrentCorrelatedState
+        {
+            get { return _currentCorrelatedState; }
+        }
         public double PreviousState
         {
             get { return _previousState; }
@@ -121,7 +127,7 @@ namespace Common.MacroProgramming
         {
             if (SignalChanged != null)
             {
-                SignalChanged(this, new AnalogSignalChangedEventArgs(State, _previousState.Value));
+                SignalChanged(this, new AnalogSignalChangedEventArgs(State, _previousState.Value, CorrelatedState));
             }
         }
     }

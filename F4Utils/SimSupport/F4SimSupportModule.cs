@@ -1542,8 +1542,8 @@ namespace F4Utils.SimSupport
                 outputVal = currentState.Value + delta;
                 correlatedOutputVal = currentState.Value + originalDelta;
             }
-            signal.State = outputVal;
             signal.CorrelatedState = correlatedOutputVal;
+            signal.State = outputVal;
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
                                                 Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, Nullable<double> timeConstant = null)
