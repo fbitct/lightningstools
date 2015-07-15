@@ -137,12 +137,19 @@ namespace Common.MacroProgramming
                 if (x2 > width) x2 = width;
                 if (_signal is DigitalSignal)
                 {
-                    y2 = sample.Value ==0 ? 0 : height;
-                    value = sample.Value ==0 ? "1" : "0";
+                    y2 = sample.Value == 1 ? 0 : height;
+                    value = sample.Value ==1 ? "1" : "0";
                     rangeMinValue = "0";
                     rangeMaxValue = "1";
                     zeroHeight = height;
-                    if (sample.Value ==0)
+                    if (isFirstSample)
+                    {
+                        minVal = sample.Value;
+                        maxVal = sample.Value;
+                        minValString = sample.Value == 1 ? "1" : "0";
+                        maxValString = sample.Value == 1 ? "1" : "0";
+                    }
+                    if (sample.Value == 0)
                     {
                         minVal = 0;
                         minValString = "0";
@@ -165,6 +172,14 @@ namespace Common.MacroProgramming
                     else if (sample.Value > maxVal)
                     {
                         maxVal = sample.Value;
+                        maxValString = maxVal.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4);
+                    }
+
+                    if (isFirstSample)
+                    {
+                        minVal = thisSignal.State;
+                        maxVal = thisSignal.State;
+                        minValString = minVal.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4);
                         maxValString = maxVal.FormatDecimal(thisSignal.Precision > -1 ? thisSignal.Precision : 4);
                     }
                     y2 = height - (int)(((System.Math.Abs(sample.Value - thisSignal.MinValue)) / range) * height);
