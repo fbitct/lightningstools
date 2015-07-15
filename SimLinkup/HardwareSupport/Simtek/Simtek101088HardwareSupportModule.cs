@@ -190,7 +190,7 @@ namespace SimLinkup.HardwareSupport.Simtek
             thisSignal.State = 0;
             thisSignal.IsPercentage = true;
             thisSignal.MinValue = 0;
-            thisSignal.MaxValue = 100;
+            thisSignal.MaxValue = 1;
             return thisSignal;
         }
 

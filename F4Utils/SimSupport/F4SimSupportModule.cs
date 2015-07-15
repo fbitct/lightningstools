@@ -1618,9 +1618,9 @@ namespace F4Utils.SimSupport
                                                 typeof(float), -90, 90, true, false));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #1 Nozzle Percent Open",
-                                                F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true));
+                                                F4SimOutputs.NOZ_POS1__NOZZLE_PERCENT_OPEN, typeof(float), 0, 1, false, true));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Nozzle Position Indicator", "Engine #2 Nozzle Percent Open",
-                                                F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof(float), 0, 100, false, true));
+                                                F4SimOutputs.NOZ_POS2__NOZZLE_PERCENT_OPEN, typeof(float), 0, 1, false, true));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Hydraulic Pressure Indicators", "HYD A (Pounds per Square Inch)",
                                     F4SimOutputs.HYD_PRESSURE_A__PSI, typeof(float), 0, 4000, false, false));
