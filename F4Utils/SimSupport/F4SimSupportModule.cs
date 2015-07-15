@@ -22,7 +22,8 @@ namespace F4Utils.SimSupport
         private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
         private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
         private const float SIDESLIP_ANGLE_LIMIT_DEGREES = 5;
-
+        private Nullable<double> PITCH_TIME_CONSTANT = null;
+        private Nullable<double> ROLL_TIME_CONSTANT = null;
         private readonly Dictionary<string, ISimOutput> _simOutputs = new Dictionary<string, ISimOutput>();
         private readonly Dictionary<string, SimCommand> _simCommands = new Dictionary<string, SimCommand>();
         private FlightData _lastFlightData;
@@ -257,10 +258,10 @@ namespace F4Utils.SimSupport
                                                            LightBits3.ParkBrakeOn) == LightBits3.ParkBrakeOn);
                         break;
                     case F4SimOutputs.ADI__PITCH_DEGREES:
-                        SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN,true);
+                        SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN);
                         break;
                     case F4SimOutputs.ADI__ROLL_DEGREES:
-                        SetOutput((AnalogSignal)output,  _lastFlightData.roll*DEGREES_PER_RADIAN,true);
+                        SetOutput((AnalogSignal)output,  _lastFlightData.roll*DEGREES_PER_RADIAN);
                         break;
                     case F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS:
                         ((DigitalSignal)output).State = showCommandBars;
@@ -299,10 +300,10 @@ namespace F4Utils.SimSupport
                                                           HsiBits.ADI_LOC);
                         break;
                     case F4SimOutputs.STBY_ADI__PITCH_DEGREES:
-                        SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN,true);
+                        SetOutput((AnalogSignal)output,  _lastFlightData.pitch*DEGREES_PER_RADIAN);
                         break;
                     case F4SimOutputs.STBY_ADI__ROLL_DEGREES:
-                        SetOutput((AnalogSignal)output,  _lastFlightData.roll*DEGREES_PER_RADIAN,true);
+                        SetOutput((AnalogSignal)output,  _lastFlightData.roll*DEGREES_PER_RADIAN);
                         break;
                     case F4SimOutputs.STBY_ADI__OFF_FLAG:
                         ((DigitalSignal) output).State = (((HsiBits) _lastFlightData.hsiBits & HsiBits.BUP_ADI_OFF) ==
@@ -1411,7 +1412,7 @@ namespace F4Utils.SimSupport
             return simCommand;
         }
 
-        private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType, double minVal=0.0000001, double maxVal=0.0000001, bool isAngle=false, bool isPercentage=false)
+        private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutput, int? index, Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, Nullable<double> timeConstant = null)
         {
             var indexString = index >= 0 ? "[" + index + "]" : string.Empty;
 
@@ -1430,7 +1431,7 @@ namespace F4Utils.SimSupport
                                SourceFriendlyName = "Falcon BMS",
                            };
             }
-            if (dataType.IsAssignableFrom(typeof (bool)))
+            else if (dataType.IsAssignableFrom(typeof (bool)))
             {
                 return new DigitalSimOutput
                            {
@@ -1446,23 +1447,24 @@ namespace F4Utils.SimSupport
                            };
             }
             return new AnalogSimOutput
-                       {
-                           Category = "Sim Outputs",
-                           CollectionName = collectionName,
-                           SubcollectionName = subcollectionName,
-                           FriendlyName = signalFriendlyName,
-                           Id = "F4_" + Enum.GetName(typeof(F4SimOutputs), simOutput) + indexString,
-                           Index = index,
-                           PublisherObject = this,
-                           Source = (object) _smReader,
-                           SourceFriendlyName = "Falcon BMS",
-                           IsAngle=isAngle,
-                           IsPercentage = isPercentage,
-                           MinValue=minVal,
-                           MaxValue=maxVal
-                       };
+            {
+                Category = "Sim Outputs",
+                CollectionName = collectionName,
+                SubcollectionName = subcollectionName,
+                FriendlyName = signalFriendlyName,
+                Id = "F4_" + Enum.GetName(typeof(F4SimOutputs), simOutput) + indexString,
+                Index = index,
+                PublisherObject = this,
+                Source = (object)_smReader,
+                SourceFriendlyName = "Falcon BMS",
+                IsAngle = isAngle,
+                IsPercentage = isPercentage,
+                MinValue = minVal,
+                MaxValue = maxVal,
+                TimeConstant = timeConstant
+            };
         }
-        private void SetOutput(AnalogSignal signal, double newVal, bool useSmoothing=false)
+        private void SetOutput(AnalogSignal signal, double newVal)
         {
             var currentState = signal.State;
 
@@ -1489,14 +1491,6 @@ namespace F4Utils.SimSupport
                 currentState = 0;
             }
 
-
-            //const double scale = 0.95;
-            //if (useSmoothing && delta != currentState && newVal !=0)
-            //{
-            //    var deltaPct = Math.Abs(delta / range);
-            //    delta *= (deltaPct * Math.Max(1.0,(scale)));
-            //}
-
             var outputVal=0.0;
             if (signal.IsAngle && signal.MinValue == -180 && signal.MaxValue == 180)
             {
@@ -1517,19 +1511,19 @@ namespace F4Utils.SimSupport
             signal.State = outputVal;
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, Nullable<double> timeConstant = null)
         {
-            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage);
+            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage, timeConstant);
         }
          private ISimOutput CreateNewF4SimOutput(string collectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal, int? index,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, Nullable<double> timeConstant = null)
         {
-            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, index, dataType, minVal, maxVal, isAngle, isPercentage);
+            return CreateNewF4SimOutput(collectionName, null, signalFriendlyName, simOutputEnumVal, index, dataType, minVal, maxVal, isAngle, isPercentage, timeConstant);
         }
         private ISimOutput CreateNewF4SimOutput(string collectionName, string subcollectionName, string signalFriendlyName, F4SimOutputs simOutputEnumVal,
-                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false)
+                                                Type dataType, double minVal = 0.0000001, double maxVal = 0.0000001, bool isAngle = false, bool isPercentage = false, Nullable<double> timeConstant = null)
         {
-            return CreateNewF4SimOutput(collectionName, subcollectionName, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage);
+            return CreateNewF4SimOutput(collectionName, subcollectionName, signalFriendlyName, simOutputEnumVal, null, dataType, minVal, maxVal, isAngle, isPercentage, timeConstant);
         }
 
         private void AddF4SimOutput(ISimOutput output)
@@ -1673,9 +1667,9 @@ namespace F4Utils.SimSupport
                                                 F4SimOutputs.GEAR_PANEL__PARKING_BRAKE_ENGAGED_FLAG, typeof (bool)));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Pitch (degrees)", F4SimOutputs.ADI__PITCH_DEGREES,
-                                                typeof(float), -90, 90, true, false));
+                                                typeof(float), -90, 90, true, false, PITCH_TIME_CONSTANT));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "Roll (degrees)", F4SimOutputs.ADI__ROLL_DEGREES,
-                                                typeof(float), -180, 180, true, false));
+                                                typeof(float), -180, 180, true, false,ROLL_TIME_CONSTANT));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "ILS command bars enabled flag",
                                                 F4SimOutputs.ADI__ILS_SHOW_COMMAND_BARS, typeof(bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "ADI", "ILS glideslope bar Position",
@@ -1695,9 +1689,9 @@ namespace F4Utils.SimSupport
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "OFF flag", F4SimOutputs.STBY_ADI__OFF_FLAG,
                                                 typeof (bool)));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "Pitch (degrees)",
-                                                F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof(float), -90, 90, true, false));
+                                                F4SimOutputs.STBY_ADI__PITCH_DEGREES, typeof(float), -90, 90, true, false,PITCH_TIME_CONSTANT));
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "Standby ADI", "Roll (degrees)", F4SimOutputs.STBY_ADI__ROLL_DEGREES,
-                                                typeof(float), -180, 180, true, false));
+                                                typeof(float), -180, 180, true, false,ROLL_TIME_CONSTANT));
 
             AddF4SimOutput(CreateNewF4SimOutput("Instruments", "AOA Indicator", "Angle of Attack [alpha] (degrees)",
                                                 F4SimOutputs.AOA_INDICATOR__AOA_DEGREES, typeof(float), -5, 40, true, false));

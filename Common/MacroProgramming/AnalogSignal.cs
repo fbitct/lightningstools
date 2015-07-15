@@ -1,6 +1,7 @@
 using System;
 using System.Xml.Serialization;
 using log4net;
+using Common.Statistics;
 
 namespace Common.MacroProgramming
 {
@@ -38,8 +39,8 @@ namespace Common.MacroProgramming
 
         [field: NonSerializedAttribute] private static ILog _log = LogManager.GetLogger(typeof (AnalogSignal));
         private int _precision = -1; //# decimal places to round values to
-        private double _previousState=0;
-        private double _state=0;
+        private TimestampedDecimal _previousState = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
+        private TimestampedDecimal _state = new TimestampedDecimal() { Timestamp = DateTime.Now, Value = 0 };
 
         private bool _isSine;
         private bool _isCosine;
@@ -56,26 +57,47 @@ namespace Common.MacroProgramming
         public bool IsPercentage { get; set; }
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
+        public Nullable<double> TimeConstant { get; set; }
+
+        
         [XmlIgnore]
-        public double State
+        public virtual double State
         {
-            get { return _state; }
+            get 
+            {
+                return _state.Value;
+            }
             set
             {
-                var newVal = 
-                    _precision != -1 
-                        ? System.Math.Round(value, _precision) 
+                var newVal =
+                    _precision != -1
+                        ? System.Math.Round(value, _precision)
                         : value;
                 if (double.IsInfinity(newVal) || double.IsNaN(newVal))
                 {
                     newVal = 0;
                 }
-                if (newVal != _state)
+                if (newVal != _state.Value)
                 {
-                    _previousState = _state;
-                    _state = newVal;
-                    UpdateEventListeners();
+                    if (TimeConstant.HasValue)
+                    {
+                        var time = DateTime.Now.Subtract(_state.Timestamp).TotalMilliseconds;
+                        var delta = newVal - _state.Value;
+                        var newState = _state.Value + (delta * (System.Math.Min(time, TimeConstant.Value) / TimeConstant.Value));
+                        _previousState = _state;
+                        _state = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newState };
+                        UpdateEventListeners();
+                    }
+                    else
+                    {
+                        _previousState = _state;
+                        _state = new TimestampedDecimal { Timestamp = DateTime.Now, Value = newVal };
+                        UpdateEventListeners();
+
+                    }
                 }
+
+                
             }
         }
 
@@ -88,11 +110,11 @@ namespace Common.MacroProgramming
         [field: NonSerializedAttribute]
         public event AnalogSignalChangedEventHandler SignalChanged;
 
-        public void UpdateEventListeners()
+        protected virtual void UpdateEventListeners()
         {
             if (SignalChanged != null)
             {
-                SignalChanged(this, new AnalogSignalChangedEventArgs(_state, _previousState));
+                SignalChanged(this, new AnalogSignalChangedEventArgs(State, _previousState.Value));
             }
         }
     }
