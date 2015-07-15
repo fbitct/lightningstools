@@ -5,6 +5,8 @@ using System.Runtime.Remoting;
 using Common.HardwareSupport;
 using Common.MacroProgramming;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Lilbern
 {
@@ -22,6 +24,7 @@ namespace SimLinkup.HardwareSupport.Lilbern
         private AnalogSignal _fuelFlowInputSignal;
         private AnalogSignal.AnalogSignalChangedEventHandler _fuelFlowInputSignalChangedEventHandler;
         private AnalogSignal _fuelFlowOutputSignal;
+        private IFuelFlow _renderer = new FuelFlow();
         private bool _isDisposed;
 
         #endregion
@@ -84,6 +87,15 @@ namespace SimLinkup.HardwareSupport.Lilbern
         }
 
         #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.FuelFlowPoundsPerHour = (float)_fuelFlowInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
+        #endregion
+
 
         #region Signals Handling
 

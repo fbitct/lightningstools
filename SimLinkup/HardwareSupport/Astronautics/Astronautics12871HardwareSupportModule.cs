@@ -6,6 +6,7 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
 
 namespace SimLinkup.HardwareSupport.Astronautics
 {
@@ -15,6 +16,9 @@ namespace SimLinkup.HardwareSupport.Astronautics
         #region Class variables
 
         private static readonly ILog _log = LogManager.GetLogger(typeof (Astronautics12871HardwareSupportModule));
+
+        private const float GLIDESLOPE_DEVIATION_LIMIT_DEGREES = 1.0F;
+        private const float LOCALIZER_DEVIATION_LIMIT_DEGREES = 5.0F;
 
         #endregion
 
@@ -36,6 +40,16 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private DigitalSignal _showCommandBarsInputSignal;
         private DigitalSignal.SignalChangedEventHandler _showCommandBarsInputSignalChangedEventHandler;
 
+        private DigitalSignal _auxFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _auxFlagInputSignalChangedEventHandler;
+        private DigitalSignal _gsFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _gsFlagInputSignalChangedEventHandler;
+        private DigitalSignal _locFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _locFlagInputSignalChangedEventHandler;
+        private DigitalSignal _offFlagInputSignal;
+        private DigitalSignal.SignalChangedEventHandler _offFlagInputSignalChangedEventHandler;
+
+
         private AnalogSignal _pitchSinOutputSignal;
         private AnalogSignal _pitchCosOutputSignal;
         private AnalogSignal _rollCosOutputSignal;
@@ -45,6 +59,12 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private AnalogSignal _rateOfTurnOutputSignal;
         private AnalogSignal _inclinometerOutputSignal;
 
+        private DigitalSignal _auxFlagOutputSignal;
+        private DigitalSignal _gsFlagOutputSignal;
+        private DigitalSignal _locFlagOutputSignal;
+        private DigitalSignal _offFlagOutputSignal;
+
+        private IADI _renderer = new ADI(); 
         #endregion
 
         #region Constructors
@@ -98,7 +118,7 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
         public override DigitalSignal[] DigitalInputs
         {
-            get { return new[] {_showCommandBarsInputSignal}; }
+            get { return new[] {_showCommandBarsInputSignal, _auxFlagInputSignal, _gsFlagInputSignal, _locFlagInputSignal, _offFlagInputSignal}; }
         }
 
         public override AnalogSignal[] AnalogOutputs
@@ -115,9 +135,27 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
         public override DigitalSignal[] DigitalOutputs
         {
-            get { return null; }
+            get { return new[] { _auxFlagOutputSignal, _gsFlagOutputSignal, _locFlagOutputSignal, _offFlagOutputSignal}; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(System.Drawing.Graphics g, System.Drawing.Rectangle destinationRectangle)
+        {
+            _renderer.InstrumentState.AuxFlag = _auxFlagInputSignal.State;
+            _renderer.InstrumentState.GlideslopeDeviationDegrees = (float)_horizontalCommandBarInputSignal.State;
+            _renderer.InstrumentState.GlideslopeDeviationLimitDegrees = GLIDESLOPE_DEVIATION_LIMIT_DEGREES;
+            _renderer.InstrumentState.GlideslopeFlag = _gsFlagInputSignal.State;
+            _renderer.InstrumentState.LocalizerDeviationDegrees = (float)_verticalCommandBarInputSignal.State;
+            _renderer.InstrumentState.LocalizerDeviationLimitDegrees = LOCALIZER_DEVIATION_LIMIT_DEGREES;
+            _renderer.InstrumentState.LocalizerFlag = _locFlagInputSignal.State;
+            _renderer.InstrumentState.OffFlag = _offFlagInputSignal.State;
+            _renderer.InstrumentState.PitchDegrees = (float)_pitchInputSignal.State;
+            _renderer.InstrumentState.RollDegrees = (float)_rollInputSignal.State;
+            _renderer.InstrumentState.ShowCommandBars = _showCommandBarsInputSignal.State;
+            _renderer.Render(g, destinationRectangle);
+        }
         #endregion
 
         #region Signals Handling
@@ -139,6 +177,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _inclinometerInputSignalChangedEventHandler =
                 inclinometer_InputSignalChanged;
             _showCommandBarsInputSignalChangedEventHandler = showCommandBars_InputSignalChanged;
+            _auxFlagInputSignalChangedEventHandler = auxFlag_InputSignalChanged;
+            _gsFlagInputSignalChangedEventHandler = gsFlag_InputSignalChanged;
+            _locFlagInputSignalChangedEventHandler = locFlag_InputSignalChanged;
+            _offFlagInputSignalChangedEventHandler = offFlag_InputSignalChanged;
         }
 
         private void AbandonInputEventHandlers()
@@ -150,10 +192,30 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _rateOfTurnInputSignalChangedEventHandler = null;
             _inclinometerInputSignalChangedEventHandler = null;
             _showCommandBarsInputSignalChangedEventHandler = null;
+            _auxFlagInputSignalChangedEventHandler = null;
+            _gsFlagInputSignalChangedEventHandler = null;
+            _locFlagInputSignalChangedEventHandler = null;
+            _offFlagInputSignalChangedEventHandler = null;
         }
 
         private void RegisterForInputEvents()
         {
+            if (_auxFlagInputSignal != null)
+            {
+                _auxFlagInputSignal.SignalChanged += _auxFlagInputSignalChangedEventHandler;
+            }
+            if (_gsFlagInputSignal != null)
+            {
+                _gsFlagInputSignal.SignalChanged += _gsFlagInputSignalChangedEventHandler;
+            }
+            if (_locFlagInputSignal != null)
+            {
+                _locFlagInputSignal.SignalChanged += _locFlagInputSignalChangedEventHandler;
+            }
+            if (_offFlagInputSignal != null)
+            {
+                _offFlagInputSignal.SignalChanged += _offFlagInputSignalChangedEventHandler;
+            }
             if (_pitchInputSignal != null)
             {
                 _pitchInputSignal.SignalChanged += _pitchInputSignalChangedEventHandler;
@@ -186,6 +248,46 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
         private void UnregisterForInputEvents()
         {
+            if (_auxFlagInputSignalChangedEventHandler != null && _auxFlagInputSignal != null)
+            {
+                try
+                {
+                    _auxFlagInputSignal.SignalChanged -= _auxFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_gsFlagInputSignalChangedEventHandler != null && _gsFlagInputSignal != null)
+            {
+                try
+                {
+                    _gsFlagInputSignal.SignalChanged -= _gsFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_locFlagInputSignalChangedEventHandler != null && _locFlagInputSignal != null)
+            {
+                try
+                {
+                    _locFlagInputSignal.SignalChanged -= _locFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
+            if (_offFlagInputSignalChangedEventHandler != null && _offFlagInputSignal != null)
+            {
+                try
+                {
+                    _offFlagInputSignal.SignalChanged -= _offFlagInputSignalChangedEventHandler;
+                }
+                catch (RemotingException)
+                {
+                }
+            }
             if (_pitchInputSignalChangedEventHandler != null && _pitchInputSignal != null)
             {
                 try
@@ -265,6 +367,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
         private void CreateInputSignals()
         {
+            _auxFlagInputSignal = CreateAuxFlagInputSignal();
+            _gsFlagInputSignal = CreateGSFlagInputSignal();
+            _locFlagInputSignal = CreateLOCFlagInputSignal();
+            _offFlagInputSignal = CreateOffFlagInputSignal();
             _pitchInputSignal = CreatePitchInputSignal();
             _rollInputSignal = CreateRollInputSignal();
             _horizontalCommandBarInputSignal = CreateHorizontalCommandBarInputSignal();
@@ -464,6 +570,10 @@ namespace SimLinkup.HardwareSupport.Astronautics
 
         private void CreateOutputSignals()
         {
+            _auxFlagOutputSignal = CreateAUXFlagOutputSignal();
+            _gsFlagOutputSignal = CreateGSFlagOutputSignal();
+            _locFlagOutputSignal = CreateLOCFlagOutputSignal();
+            _offFlagOutputSignal = CreateOFFFlagOutputSignal();
             _pitchSinOutputSignal = CreatePitchSinOutputSignal();
             _pitchCosOutputSignal = CreatePitchCosOutputSignal();
             _rollSinOutputSignal = CreateRollSinOutputSignal();
@@ -473,7 +583,62 @@ namespace SimLinkup.HardwareSupport.Astronautics
             _rateOfTurnOutputSignal = CreateRateOfTurnOutputSignal();
             _inclinometerOutputSignal = CreateInclinometerOutputSignal();
         }
-
+        private DigitalSignal CreateAUXFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "AUX Flag";
+            thisSignal.Id = "12871_AUX_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateGSFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "GS Flag";
+            thisSignal.Id = "12871_GS_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateLOCFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "LOC Flag";
+            thisSignal.Id = "12871_LOC_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
+        private DigitalSignal CreateOFFFlagOutputSignal()
+        {
+            var thisSignal = new DigitalSignal();
+            thisSignal.Category = "Outputs";
+            thisSignal.CollectionName = "Digital Outputs";
+            thisSignal.FriendlyName = "OFF Flag";
+            thisSignal.Id = "12871_OFF_Flag_To_Instrument";
+            thisSignal.Index = 0;
+            thisSignal.Source = this;
+            thisSignal.SourceFriendlyName = FriendlyName;
+            thisSignal.SourceAddress = null;
+            thisSignal.State = false;
+            return thisSignal;
+        }
         private AnalogSignal CreatePitchSinOutputSignal()
         {
             var thisSignal = new AnalogSignal();
@@ -631,6 +796,22 @@ namespace SimLinkup.HardwareSupport.Astronautics
         {
             UpdateRollOutputValues(args.CurrentState);
         }
+        private void auxFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateAUXFlagOutputValue();
+        }
+        private void gsFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateGSFlagOutputValue();
+        }
+        private void locFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateLOCFlagOutputValue();
+        }
+        private void offFlag_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
+        {
+            UpdateOFFFlagOutputValue();
+        }
         private void showCommandBars_InputSignalChanged(object sender, DigitalSignalChangedEventArgs args)
         {
             UpdateHorizontalCommandBarOutputValues();
@@ -654,6 +835,22 @@ namespace SimLinkup.HardwareSupport.Astronautics
         private void inclinometer_InputSignalChanged(object sender, AnalogSignalChangedEventArgs args)
         {
             UpdateInclinometerOutputValues();
+        }
+        private void UpdateAUXFlagOutputValue()
+        {
+            _auxFlagOutputSignal.State = _auxFlagInputSignal.State;
+        }
+        private void UpdateGSFlagOutputValue()
+        {
+            _gsFlagOutputSignal.State = _gsFlagInputSignal.State;
+        }
+        private void UpdateLOCFlagOutputValue()
+        {
+            _locFlagOutputSignal.State = _locFlagInputSignal.State;
+        }
+        private void UpdateOFFFlagOutputValue()
+        {
+            _offFlagOutputSignal.State = _offFlagInputSignal.State;
         }
 
         private void UpdatePitchOutputValues(double pitchDegrees)

@@ -230,7 +230,7 @@
     <None Include="Content\Mapping\Simtek100294fuelquantityindicator.mapping.orig">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping.orig">
+    <None Include="Content\Mapping\Lilbern3239FuelFlowIndicator.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Mapping\Simtek100181altimeter.mapping.orig">
@@ -261,7 +261,7 @@
     <Content Include="phcc.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Content\Mapping\Astronautics128710primaryADI.mapping.orig">
+    <None Include="Content\Mapping\Astronautics128710primaryADI.mapping">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>

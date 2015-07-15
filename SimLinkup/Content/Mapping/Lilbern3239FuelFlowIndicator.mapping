@@ -18,21 +18,22 @@
       <MappingType>StraightThrough</MappingType>
     </SignalMapping>
 
-    <!-- *********************************************************************-->
-    <!-- MAPPINGS FROM Lilbern HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS -->
-    <!-- *********************************************************************-->
-    <!-- FUEL FLOW POUNDS PER HOUR -->
+    
+    <!-- *********************************************************************--><!--
+    --><!-- MAPPINGS FROM Lilbern HARDWARE SUPPORT MODULE OUTPUTS TO ANALOG DEVICES  DAC CHANNELS --><!--
+    --><!-- *********************************************************************--><!--
+    --><!-- FUEL FLOW POUNDS PER HOUR --><!--
     <SignalMapping>
-      <!-- Lilbern FUEL FLOW INDICATOR HARDWARE SUPPORT MODULE FUEL FLOW POUNDS PER HOUR OUTPUT -->
+      --><!-- Lilbern FUEL FLOW INDICATOR HARDWARE SUPPORT MODULE FUEL FLOW POUNDS PER HOUR OUTPUT --><!--
       <Source xsi:type="AnalogSignal">
         <Id>3239_Fuel_Flow_Pounds_Per_Hour_To_Instrument</Id>
       </Source>
-      <!-- ANALOG DEVICES DAC OUTPUT 35 -->
+      --><!-- ANALOG DEVICES DAC OUTPUT 35 --><!--
       <Destination xsi:type="AnalogSignal">
         <Id>AnalogDevices_AD536x/537x__DAC_OUTPUT[0][35]</Id>
       </Destination>
       <MappingType>StraightThrough</MappingType>
-    </SignalMapping>
+    </SignalMapping>-->
 
 
   </SignalMappings>

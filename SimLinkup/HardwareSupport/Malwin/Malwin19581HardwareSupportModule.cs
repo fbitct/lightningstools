@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using LightningGauges.Renderers.F16;
+using System.Drawing;
 
 namespace SimLinkup.HardwareSupport.Malwin
 {
@@ -30,6 +32,8 @@ namespace SimLinkup.HardwareSupport.Malwin
         private AnalogSignal _hydPressureBSINOutputSignal;
         private AnalogSignal _hydPressureBCOSOutputSignal;
 
+        private IHydraulicPressureGauge _hydARenderer = new HydraulicPressureGauge();
+        private IHydraulicPressureGauge _hydBRenderer = new HydraulicPressureGauge();
         #endregion
 
         #region Constructors
@@ -89,6 +93,31 @@ namespace SimLinkup.HardwareSupport.Malwin
             get { return null; }
         }
 
+        #endregion
+
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            
+            _hydARenderer.InstrumentState.HydraulicPressurePoundsPerSquareInch = (float)_hydPressureAInputSignal.State;
+            var hydARectangle = new Rectangle(destinationRectangle.X, destinationRectangle.Y, destinationRectangle.Width / 2, destinationRectangle.Height / 2);
+            using (var hydABitmap = new Bitmap(hydARectangle.Width, hydARectangle.Height))
+            using (var hydAGraphics = Graphics.FromImage(hydABitmap))
+            {
+                _hydARenderer.Render(hydAGraphics, new Rectangle(0,0, hydARectangle.Width, hydARectangle.Height));
+                g.DrawImage(hydABitmap,hydARectangle);
+            }
+
+            _hydBRenderer.InstrumentState.HydraulicPressurePoundsPerSquareInch = (float)_hydPressureBInputSignal.State;
+            var hydBRectangle = new Rectangle(destinationRectangle.X + destinationRectangle.Width/2, destinationRectangle.Y + destinationRectangle.Height/2, destinationRectangle.Width / 2, destinationRectangle.Height / 2);
+            using (var hydBBitmap = new Bitmap(hydBRectangle.Width, hydBRectangle.Height))
+            using (var hydBGraphics = Graphics.FromImage(hydBBitmap))
+            {
+                _hydBRenderer.Render(hydBGraphics, new Rectangle(0,0, hydBRectangle.Width, hydBRectangle.Height));
+                g.DrawImage(hydBBitmap, hydBRectangle);
+            }
+
+        }
         #endregion
 
         #region Signals Handling

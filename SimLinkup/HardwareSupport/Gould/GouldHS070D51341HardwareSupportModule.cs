@@ -6,6 +6,8 @@ using Common.HardwareSupport;
 using Common.MacroProgramming;
 using Common.Math;
 using log4net;
+using System.Drawing;
+using LightningGauges.Renderers.F16;
 
 namespace SimLinkup.HardwareSupport.Gould
 {
@@ -26,6 +28,7 @@ namespace SimLinkup.HardwareSupport.Gould
         private AnalogSignal _compassSINOutputSignal;
         private AnalogSignal _compassCOSOutputSignal;
 
+        private ICompass _compass = new Compass();
         #endregion
 
         #region Constructors
@@ -86,6 +89,14 @@ namespace SimLinkup.HardwareSupport.Gould
         }
 
         #endregion
+        #region Visualization
+        public override void Render(Graphics g, Rectangle destinationRectangle)
+        {
+            _compass.InstrumentState.MagneticHeadingDegrees = (float)_compassInputSignal.State;
+            _compass.Render(g, destinationRectangle);
+        }
+        #endregion
+
 
         #region Signals Handling
 
